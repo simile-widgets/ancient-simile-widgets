@@ -9,7 +9,11 @@
  */
 
 if (typeof SimileAjax == "undefined") {
-    var SimileAjax = new Object();
+    var SimileAjax = {
+        loaded:     false,
+        error:      null
+    };
+    
     SimileAjax.Platform = new Object();
         /*
             HACK: We need these 2 things here because we cannot simply append
@@ -52,32 +56,30 @@ if (typeof SimileAjax == "undefined") {
         var cssFiles = [
         ];
         
-        try {
-            var url = SimileAjax.findScript("ajax-api.js");
-            if (url != null) {
-                SimileAjax.urlPrefix = url.substr(0, url.indexOf("ajax-api.js"));
-            } else {
-                throw new Error("Failed to derive URL prefix for Simile Ajax API code files");
-            }
-            
-            var includeJavascriptFile = function(filename) {
-                SimileAjax.includeJavascriptFile(SimileAjax.urlPrefix + "scripts/" + filename);
-            };
-            var includeCssFile = function(filename) {
-                SimileAjax.includeCssFile(SimileAjax.urlPrefix + "styles/" + filename);
-            }
-            
-            /*
-             *  Include non-localized files
-             */
-            for (var i = 0; i < javascriptFiles.length; i++) {
-                includeJavascriptFile(javascriptFiles[i]);
-            }
-            for (var i = 0; i < cssFiles.length; i++) {
-                includeCssFile(cssFiles[i]);
-            }
-        } catch (e) {
-            alert(e);
+        var url = SimileAjax.findScript("ajax-api.js");
+        if (url == null) {
+            SimileAjax.error = new Error("Failed to derive URL prefix for Simile Ajax API code files");
+            return;
         }
+        SimileAjax.urlPrefix = url.substr(0, url.indexOf("ajax-api.js"));
+        
+        var includeJavascriptFile = function(filename) {
+            SimileAjax.includeJavascriptFile(SimileAjax.urlPrefix + "scripts/" + filename);
+        };
+        var includeCssFile = function(filename) {
+            SimileAjax.includeCssFile(SimileAjax.urlPrefix + "styles/" + filename);
+        }
+        
+        /*
+         *  Include non-localized files
+         */
+        for (var i = 0; i < javascriptFiles.length; i++) {
+            includeJavascriptFile(javascriptFiles[i]);
+        }
+        for (var i = 0; i < cssFiles.length; i++) {
+            includeCssFile(cssFiles[i]);
+        }
+        
+        SimileAjax.loaded = true;
     })();
 }
