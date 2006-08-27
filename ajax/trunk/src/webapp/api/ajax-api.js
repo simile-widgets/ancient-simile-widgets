@@ -22,25 +22,28 @@ if (typeof SimileAjax == "undefined") {
             before it loads ajax.js and platform.js.
         */
         
-    SimileAjax.findScript = function(substring) {
-        var heads = document.documentElement.getElementsByTagName("head");
+    SimileAjax.findScript = function(doc, substring) {
+        var heads = doc.documentElement.getElementsByTagName("head");
         for (var h = 0; h < heads.length; h++) {
-            var scripts = heads[h].getElementsByTagName("script");
-            for (var s = 0; s < scripts.length; s++) {
-                var url = scripts[s].src;
-                var i = url.indexOf(substring);
-                if (i >= 0) {
-                    return url;
+            var node = heads[h].firstChild;
+            while (node != null) {
+                if (node.nodeType == 1 && node.tagName.toLowerCase() == "script") {
+                    var url = node.src;
+                    var i = url.indexOf(substring);
+                    if (i >= 0) {
+                        return url;
+                    }
                 }
+                node = node.nextSibling;
             }
         }
         return null;
     };
-    SimileAjax.includeJavascriptFile = function(url) {
-        document.write("<script src='" + url + "' type='text/javascript'></script>");
+    SimileAjax.includeJavascriptFile = function(doc, url) {
+        doc.write("<script src='" + url + "' type='text/javascript'></script>");
     };
-    SimileAjax.includeCssFile = function(url) {
-        document.write("<link rel='stylesheet' href='" + url + "' type='text/css'/>");
+    SimileAjax.includeCssFile = function(doc, url) {
+        doc.write("<link rel='stylesheet' href='" + url + "' type='text/css'/>");
     };
     
     (function() {
@@ -56,7 +59,7 @@ if (typeof SimileAjax == "undefined") {
         var cssFiles = [
         ];
         
-        var url = SimileAjax.findScript("ajax-api.js");
+        var url = SimileAjax.findScript(document, "ajax-api.js");
         if (url == null) {
             SimileAjax.error = new Error("Failed to derive URL prefix for Simile Ajax API code files");
             return;
@@ -64,10 +67,10 @@ if (typeof SimileAjax == "undefined") {
         SimileAjax.urlPrefix = url.substr(0, url.indexOf("ajax-api.js"));
         
         var includeJavascriptFile = function(filename) {
-            SimileAjax.includeJavascriptFile(SimileAjax.urlPrefix + "scripts/" + filename);
+            SimileAjax.includeJavascriptFile(document, SimileAjax.urlPrefix + "scripts/" + filename);
         };
         var includeCssFile = function(filename) {
-            SimileAjax.includeCssFile(SimileAjax.urlPrefix + "styles/" + filename);
+            SimileAjax.includeCssFile(document, SimileAjax.urlPrefix + "styles/" + filename);
         }
         
         /*
