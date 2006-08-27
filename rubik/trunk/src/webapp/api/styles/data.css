@@ -1,0 +1,28 @@
+.item {
+	margin: 1em;
+	width: 15em;
+	height: 15em;
+	overflow: auto;
+	float: left;
+	clear: none;
+	padding: 1px;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #aaa;
+	border-right: 1px solid #aaa;
+}
+.item-title {
+	background: #FFFFE0;
+	padding: 2px;
+	border-bottom: 1px solid #ccc;
+}
+.item-body {
+	padding: 0.3em;
+}
+.pair {
+}
+.property-name {
+	color: #888;
+}
+.property-values {
+}

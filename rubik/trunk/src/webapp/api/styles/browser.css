@@ -1,0 +1,310 @@
+body {
+	font-family: Trebuchet MS, Arial, Helvetica, sans serif;
+	font-size: 10pt;
+	margin: 0;
+	overflow-y: scroll;
+}
+
+table {
+	font-size: 100%;
+}
+
+a, a:link, a:active, a:visited {
+	text-decoration: none;
+	border-bottom: 1px dotted;
+	cursor: pointer;
+}
+a:hover {
+	border-bottom: 1px solid;
+	cursor: pointer;
+}
+
+.facet-box {
+	margin: 1em;
+	padding: 1px;
+	border: 1px solid #aaa;
+}
+.facet-title {
+	background: #C0E0FF;
+	padding: 2px;
+	border-bottom: 1px solid #ccc;
+	font-weight: bold;
+}
+.facet-close {
+	float: right;
+	width:1em;
+	font-weight: bold;
+	color: red;
+	cursor: pointer;
+}
+.facet-body {
+	padding: 0.3em;
+	height: 10em;
+	overflow: auto;
+}
+.facet-body-long {
+	padding: 0.3em;
+	height: 20em;
+	overflow: auto;
+}
+.facet-count {
+	font-weight: normal;
+	color: #888;
+}
+.facet-count a {
+	font-weight: bold;
+	color: blue;
+}
+
+.facet-value {
+	width: 100%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.facet-value-filtered {
+	background: #FFFFA0;
+}
+.facet-value-count-ie {
+	color: #aaa;
+	display: inline;
+	width: 1.5em;
+	text-align: right;
+}
+.facet-value-count-ff {
+	color: #aaa;
+	float: left;
+	width: 1.5em;
+	text-align: right;
+}
+.facet-value-control {
+	padding: 0 2px;
+	cursor: pointer;
+}
+
+.facet-value-children {
+	padding-left: 16px;
+}
+
+.facet-footer {
+	background: #eee;
+	padding: 2px;
+	text-align: center;
+}
+
+.grouping-box {
+	margin-bottom: 1em;
+	padding: 0.5em;
+	border: 1px solid #ccc;
+}
+.grouping-heading {
+	font-weight: bold;
+}
+.grouping-option {
+}
+
+.collection-tab {
+	float: right;
+	padding: 1em;
+	width: 10em;
+	height: 3em;
+	margin: 0.5em 0;
+	text-align: center;
+	-moz-border-radius: 15px;
+}
+
+.collection-tab-filtered {
+	float: right;
+	padding: 1em;
+	width: 15em;
+	height: 3em;
+	margin: 0.5em 0;
+	text-align: center;
+	-moz-border-radius: 15px;
+}
+
+.collection-tab-selected {
+	background: white;
+}
+
+.collection-tab-not-selected {
+	background: #ACBECF;
+	cursor: pointer;
+}
+
+.collection-slide-info {
+	color: #888;
+}
+
+.collection-count-info {
+	font-weight: bold;
+}
+
+.scissors {
+	float: right;
+	height: 6em;
+	width: 20px;
+	background: url(../images/scissors.gif) center;
+	cursor: pointer;
+}
+
+.filter-info {
+	color: #aaa;
+	font-size: 50%;
+	margin: 0 1em;
+}
+
+#header-pane {
+	background: #C0E0FF;
+}
+
+#body-pane {
+	display: none;
+}
+
+#footer-pane {
+	height: 5em;
+	clear: both;
+}
+
+#collection-pane {
+	height: 6em;
+	padding: 0 1em;
+	overflow: hidden;
+	font-family: Tahoma, Arial, Helvetica, sans serif;
+	font-size: 80%;
+}
+
+#facet-pane {
+	float: right;
+	width: 20em;
+}
+
+#facet-pane-title {
+	margin: 1em;
+	padding: 0.3em;
+	background: #eee;
+}
+
+#item-pane {
+	margin: 2em;
+	margin-right: 22em;
+}
+
+#item-pane-header {
+	font-size: 200%;
+	font-weight: bold;
+}
+
+#item-pane-body {
+	width: 100%;
+}
+
+#item-pane-views {
+	text-align: center;
+}
+
+#item-pane-table {
+	margin: 1em 0;
+}
+
+#item-pane-table-header {
+	font-weight: bold;
+	background: #888;
+	color: white;
+}
+
+#item-pane-table tr {
+	vertical-align: top;
+}
+
+#item-pane-table td {
+	padding: 2px;
+}
+
+.item-pane-table-odd-row {
+	background: #eee;
+}
+.item-pane-table-even-row {
+}
+
+.value-highlight {
+	background: yellow;
+}
+
+#history {
+	float: left;
+	width: 5em;
+	height: 4em;
+	color: #818E9B;
+	margin: 1em 0;
+	font-weight: bold;
+}
+
+#dialog-box-shadow {
+	position: absolute;
+	z-index: 99;
+	width: 40em;
+	height: 30em;
+	top: 10.5em;
+	left: 10.5em;
+	background: #aaa;
+	-moz-opacity: 0.2;
+}
+
+#grouping-box {
+	position: absolute;
+	z-index: 100;
+	top: 10em;
+	right: 19.5em;
+	width: 20em;
+	background: #eee;
+	border: 1px solid #444;
+	-moz-opacity: 0.9;
+	display: none;
+}
+
+#grouping-box-title {
+	background: #444;
+	color: white;
+	padding: 2px;
+	font-weight: bold;
+}
+
+#grouping-box-close {
+	width: 5em;
+	float: right;
+	cursor: pointer;
+	text-align: right;
+}
+
+#grouping-box-body {
+	margin: 1em;
+}
+
+#pin-button {
+	position: absolute;
+	top: 100px;
+	left: 100px;
+	display: none;
+}
+
+#unpin-button {
+	position: absolute;
+	top: 100px;
+	left: 200px;
+	display: none;
+}
+
+#status-box {
+	position: absolute;
+	left: 35%;
+	right: 35%;
+	top: 10em;
+	padding: 2em;
+	text-align: center;
+	background: #FFE080;
+	font-size: 200%;
+	-moz-border-radius: 20px;
+	opacity: 0.85;
+}
