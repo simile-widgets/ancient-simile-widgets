@@ -22,8 +22,8 @@ if (typeof Rubik == "undefined") {
             "util/set.js",
             
             "database.js",
-            "query-engine.js",
-            "browser.js"
+            "browsing-engine.js",
+            "browsing-ui.js"
         ];
         var cssFiles = [
             "browser.css",

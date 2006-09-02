@@ -3,38 +3,277 @@
  *==================================================
  */
 Rubik.Database = function() {
+    this._types = {};
+    this._properties = {};
+    this._propertyArray = {};
+    
+    this._listeners = new SimileAjax.ListenerQueue();
+    
     this._spo = {};
     this._ops = {};
     this._items = new Rubik.Set();
-    this._listeners = [];
+    
+    /*
+     *  Predefined types and properties
+     */
+    
+    var itemType = new Rubik.Database._Type("Item");
+    itemType._uri = "http://simile.mit.edu/rubik/type#Item";
+    itemType._label = "Item";
+    itemType._pluralLabel = "Items";
+    this._types["Item"] = itemType;
+    
+    var labelProperty = new Rubik.Database._Property("label");
+    labelProperty._uri = "http://www.w3.org/2000/01/rdf-schema#label";
+    labelProperty._valueType = "text";
+    labelProperty._label = "label";
+    labelProperty._pluralLabel = "labels";
+    labelProperty._reverseLabel = "label of";
+    labelProperty._reversePluralLabel = "labels of";
+    labelProperty._groupingLabel = "labels";
+    labelProperty._reverseGroupingLabel = "things being labelled";
+    this._properties["label"] = labelProperty;
+    
+    var typeProperty = new Rubik.Database._Property("type");
+    typeProperty._uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+    typeProperty._valueType = "text";
+    typeProperty._label = "type";
+    typeProperty._pluralLabel = "types";
+    typeProperty._reverseLabel = "type of";
+    typeProperty._reversePluralLabel = "types of";
+    typeProperty._groupingLabel = "types";
+    typeProperty._reverseGroupingLabel = "things of these types";
+    this._properties["type"] = typeProperty;
+    
+    var uriProperty = new Rubik.Database._Property("uri");
+    uriProperty._uri = "http://simile.mit.edu/rubik/property#uri";
+    uriProperty._valueType = "text";
+    uriProperty._label = "URI";
+    uriProperty._pluralLabel = "URIs";
+    uriProperty._reverseLabel = "URI of";
+    uriProperty._reversePluralLabel = "URIs of";
+    uriProperty._groupingLabel = "URIs";
+    uriProperty._reverseGroupingLabel = "things named by these URIs";
+    this._properties["uri"] = uriProperty;
 };
 
-
 Rubik.Database.prototype.addListener = function(listener) {
-    this._listeners.push(listener);
+    this._listeners.add(listener);
 };
 
 Rubik.Database.prototype.removeListener = function(listener) {
-    var listeners = this._listeners;
-    for (var i = 0; i < listeners.length; i++) {
-        if (listeners[i] == listener) {
-            listeners.splice(i, 1);
-            break;
+    this._listeners.remove(listener);
+};
+
+Rubik.Database.prototype.loadTypes = function(typeEntries, baseURI) {
+    this._listeners.fire("onBeforeLoadingTypes", []);
+    try {
+        var lastChar = baseURI.substr(baseURI.length - 1)
+        if (baseURI == "#") {
+            baseURI = baseURI.substr(0, baseURI.length - 1) + "/";
+        } else if (baseURI != "/" && baseURI != ":") {
+            baseURI += "/";
+        }
+    
+        var spo = this._spo;
+        var ops = this._ops;
+        var indexPut = Rubik.Database._indexPut;
+        var indexTriple = function(s, p, o) {
+            indexPut(spo, s, p, o);
+            indexPut(ops, o, p, s);
+        };
+        
+        for (typeID in typeEntries) {
+            var typeEntry = typeEntries[typeID];
+            
+            var type;
+            if (typeID in this._types) {
+                type = this._types[typeID];
+            } else {
+                type = new Rubik.Database._Type(typeID);
+                this._types[typeID] = type;
+            };
+            
+            type._uri = ("uri" in typeEntry) ? 
+                typeEntry.uri : 
+                (baseURI + "type#" + encodeURIComponent(typeID));
+            type._label = ("label" in typeEntry) ? 
+                typeEntry.label : 
+                typeID;
+            type._pluralLabel = ("pluralLabel" in typeEntry) ? 
+                typeEntry.pluralLabel : 
+                type._label;
+        }
+        
+        this._listeners.fire("onAfterLoadingTypes", []);
+    } finally {
+        this._listeners.fire("onFailedLoadingTypes", []);
+    }
+};
+
+Rubik.Database.prototype.loadProperties = function(propertyEntries, baseURI) {
+    this._listeners.fire("onBeforeLoadingProperties", []);
+    try {
+        var lastChar = baseURI.substr(baseURI.length - 1)
+        if (baseURI == "#") {
+            baseURI = baseURI.substr(0, baseURI.length - 1) + "/";
+        } else if (baseURI != "/" && baseURI != ":") {
+            baseURI += "/";
+        }
+    
+        for (propertyID in propertyEntries) {
+            var propertyEntry = propertyEntries[propertyID];
+            
+            var property;
+            if (propertyID in this._properties) {
+                property = this._properties[propertyID];
+            } else {
+                property = new Rubik.Database._Property(propertyID);
+                this._properties[propertyID] = property;
+            };
+            
+            property._uri = ("uri" in propertyEntry) ? propertyEntry.uri : (baseURI + "property#" + encodeURIComponent(propertyID));
+            property._valueType = ("valueType" in propertyEntry) ? propertyEntry.valueType : "text";
+                // text, number, date, boolean, item
+            
+            property._label = ("label" in propertyEntry) ? propertyEntry.label : propertyID;
+            property._pluralLabel = ("pluralLabel" in propertyEntry) ? propertyEntry.pluralLabel : property._label;
+            
+            property._reverseLabel = ("reverseLabel" in propertyEntry) ? propertyEntry.reverseLabel : ("!" + property._label);
+            property._reversePluralLabel = ("reversePluralLabel" in propertyEntry) ? propertyEntry.reversePluralLabel : ("!" + property._pluralLabel);
+            
+            property._groupingLabel = ("groupingLabel" in propertyEntry) ? propertyEntry.groupingLabel : property._label;
+            property._reverseGroupingLabel = ("reverseGroupingLabel" in propertyEntry) ? propertyEntry.reverseGroupingLabel : property._reverseLabel;
+        }
+        
+        this._listeners.fire("onAfterLoadingProperties", []);
+    } finally {
+        this._listeners.fire("onFailedLoadingProperties", []);
+    }
+};
+
+Rubik.Database.prototype.loadItems = function(itemEntries, baseURI) {
+    this._listeners.fire("onBeforeLoadingItems", []);
+    try {
+        var lastChar = baseURI.substr(baseURI.length - 1)
+        if (baseURI == "#") {
+            baseURI = baseURI.substr(0, baseURI.length - 1) + "/";
+        } else if (baseURI != "/" && baseURI != ":") {
+            baseURI += "/";
+        }
+        
+        var spo = this._spo;
+        var ops = this._ops;
+        var indexPut = Rubik.Database._indexPut;
+        var indexTriple = function(s, p, o) {
+            indexPut(spo, s, p, o);
+            indexPut(ops, o, p, s);
+        };
+        
+        for (var i = 0; i < itemEntries.length; i++) {
+            var itemEntry = itemEntries[i];
+            if (!("label" in itemEntry)) {
+                SimileAjax.Debug.warn("Item entry has no label", itemEntry);
+            } else {
+                this._loadItem(itemEntry, indexTriple, baseURI);
+            }
+        }
+        
+        this._listeners.fire("onAfterLoadingItems", []);
+    } finally {
+        this._listeners.fire("onFailedLoadingItems", []);
+    }
+};
+
+Rubik.Database.prototype.getType = function(typeID) {
+    return this._types[typeID];
+};
+
+Rubik.Database.prototype.getProperty = function(propertyID) {
+    return this._properties[propertyID];
+};
+
+Rubik.Database.prototype.getAllItems = function() {
+    var items = new Rubik.Set();
+    items.addSet(this._items);
+    
+    return items;
+};
+
+Rubik.Database.prototype.getAllProperties = function() {
+    if (this._propertyArray == null) {
+        this._propertyArray = [];
+        for (propertyID in this._properties) {
+            this._propertyArray.push(propertyID);
+        }
+    }
+    
+    return [].concat(this._propertyArray);
+};
+
+Rubik.Database.prototype._loadItem = function(itemEntry, indexFunction, baseURI) {
+    var label = itemEntry.label;
+    var id = ("id" in itemEntry) ? itemEntry.id : label;
+    var uri = ("uri" in itemEntry) ? itemEntry.uri : (baseURI + "item#" + encodeURIComponent(id));
+    var type = ("type" in itemEntry) ? itemEntry.type : "Item";
+    
+    this._items.add(id);
+    
+    indexFunction(id, "uri", uri);
+    indexFunction(id, "label", label);
+    indexFunction(id, "type", type);
+    
+    this._ensureTypeExists(type, baseURI);
+    
+    for (p in itemEntry) {
+        if (p != "uri" && p != "label" && p != "id" && p != "type") {
+            this._ensurePropertyExists(p, baseURI);
+            
+            var v = itemEntry[p];
+            if (v instanceof Array) {
+                for (var j = 0; j < v.length; j++) {
+                    indexFunction(id, p, v[j]);
+                }
+            } else {
+                indexFunction(id, p, v);
+            }
         }
     }
 };
 
-Rubik.Database.prototype._fire = function(handlerName, args) {
-    var listeners = [].concat(this._listeners);
-    for (var i = 0; i < listeners.length; i++) {
-        var listener = listeners[i];
-        if (handlerName in listener) {
-            try {
-                listener[handlerName].apply(listener, args);
-            } catch (e) {
-                SimileAjax.Debug.exception(e);
-            }
-        }
+Rubik.Database.prototype.getProperty = function(propertyID) {
+    return this._properties[propertyID];
+};
+
+Rubik.Database.prototype._ensureTypeExists = function(typeID, baseURI) {
+    if (!(typeID in this._types)) {
+        var type = new Rubik.Database._Type(typeID);
+        
+        type._uri = baseURI + "type#" + encodeURIComponent(typeID);
+        type._label = typeID;
+        type._pluralLabel = type._label;
+        
+        this._types[typeID] = type;
+    }
+};
+
+Rubik.Database.prototype._ensurePropertyExists = function(propertyID, baseURI) {
+    if (!(propertyID in this._properties)) {
+        var property = new Rubik.Database._Property(propertyID);
+        
+        property._uri = baseURI + "property#" + encodeURIComponent(propertyID);
+        property._valueType = "text";
+        
+        property._label = propertyID;
+        property._pluralLabel = property._label;
+        
+        property._reverseLabel = "!" + property._label;
+        property._reversePluralLabel = "!" + property._pluralLabel;
+        
+        property._groupingLabel = property._label;
+        property._reverseGroupingLabel = property._reverseLabel;
+        
+        this._properties[propertyID] = property;
     }
 };
 
@@ -100,50 +339,13 @@ Rubik.Database.prototype._indexCountDistinct = function(index, x, y, filter) {
     return count;
 };
 
-Rubik.Database.prototype.loadItems = function(items, url) {
-    var spo = this._spo;
-    var ops = this._ops;
-    var indexPut = Rubik.Database._indexPut;
-    var indexTriple = function(s, p, o) {
-        indexPut(spo, s, p, o);
-        indexPut(ops, o, p, s);
-    };
-    
-    for (var i = 0; i < items.length; i++) {
-        var item = items[i];
-        var label = item.label;
-        var id = ("id" in item) ? item.id : label;
-        var uri = ("uri" in item) ? item.uri : (url + "item#" + id);
-        
-        this._items.add(id);
-        
-        indexTriple(id, "label", label);
-        for (p in item) {
-            var v = item[p];
-            if (v instanceof Array) {
-                for (var j = 0; j < v.length; j++) {
-                    indexTriple(id, p, v[j]);
-                }
-            } else if (p != "uri" && p != "label" && p != "id") {
-                indexTriple(id, p, v);
-            }
-        }
-    }
-    
-    this._fire("onLoadItems", []);
-}
-
-Rubik.Database.prototype.getItems = function() {
-    return this._items;
-}
-
 Rubik.Database.prototype._get = function(index, x, y, set, filter) {
     if (!set) {
         set = new Rubik.Set();
     }
     this._indexFillSet(index, x, y, set, filter);
     return set;
-}
+};
 
 Rubik.Database.prototype._getUnion = function(index, xSet, y, set, filter) {
     if (!set) {
@@ -155,7 +357,7 @@ Rubik.Database.prototype._getUnion = function(index, xSet, y, set, filter) {
         database._indexFillSet(index, x, y, set, filter);
     });
     return set;
-}
+};
 
 Rubik.Database.prototype._countDistinctUnion = function(index, xSet, y, filter) {
     var count = 0;
@@ -164,43 +366,43 @@ Rubik.Database.prototype._countDistinctUnion = function(index, xSet, y, filter) 
         count += database._indexCountDistinct(index, x, y, filter);
     });
     return count;
-}
+};
 
 Rubik.Database.prototype._countDistinct = function(index, x, y, filter) {
     return this._indexCountDistinct(index, x, y, filter);
-}
+};
 
 Rubik.Database.prototype.getObjects = function(s, p, set, filter) {
     return this._get(this._spo, s, p, set, filter);
-}
+};
 
 Rubik.Database.prototype.countDistinctObjects = function(s, p, set, filter) {
     return this._countDistinct(this._spo, s, p, filter);
-}
+};
 
 Rubik.Database.prototype.getObjectsUnion = function(subjects, p, set, filter) {
     return this._getUnion(this._spo, subjects, p, set, filter);
-}
+};
 
 Rubik.Database.prototype.countDistinctObjectsUnion = function(subjects, p, filter) {
     return this._countDistinctUnion(this._spo, subjects, p, filter);
-}
+};
 
 Rubik.Database.prototype.getSubjects = function(o, p, set, filter) {
     return this._get(this._ops, o, p, set, filter);
-}
+};
 
 Rubik.Database.prototype.countDistinctSubjects = function(o, p, set, filter) {
     return this._countDistinct(this._ops, o, p, filter);
-}
+};
 
 Rubik.Database.prototype.getSubjectsUnion = function(objects, p, set, filter) {
     return this._getUnion(this._ops, objects, p, set, filter);
-}
+};
 
 Rubik.Database.prototype.countDistinctSubjectsUnion = function(objects, p, filter) {
     return this._countDistinctUnion(this._ops, objects, p, filter);
-}
+};
 
 Rubik.Database.prototype.getLiteralProperty = function(s, p) {
     var hash = this._spo[s];
@@ -211,4 +413,58 @@ Rubik.Database.prototype.getLiteralProperty = function(s, p) {
         }
     }
     return null;
-}
+};
+
+Rubik.Database.prototype.getTypeLabels = function(set) {
+    var typeIDSet = this.getObjectsUnion(set, "type", null, null);
+    var labels = [];
+    var pluralLabels = [];
+    
+    var database = this;
+    typeIDSet.visit(function(typeID) {
+        var type = database.getType(typeID);
+        if (type != null) {
+            labels.push(type.getLabel());
+            pluralLabels.push(type.getPluralLabel());
+        }
+    });
+    
+    return [ labels, pluralLabels ];
+};
+
+/*==================================================
+ *  Rubik.Database._Type
+ *==================================================
+ */
+Rubik.Database._Type = function(id) {
+    this._id = id;
+};
+
+Rubik.Database._Type.prototype = {
+    getID:          function() { return this._id; },
+    getURI:         function() { return this._uri; },
+    getLabel:       function() { return this._label; },
+    getPluralLabel: function() { return this._pluralLabel; },
+    getSuperTypeID: function() { return this._superTypeID; }
+};
+
+/*==================================================
+ *  Rubik.Database._Property
+ *==================================================
+ */
+Rubik.Database._Property = function(id) {
+    this._id = id;
+};
+
+Rubik.Database._Property.prototype = {
+    getID:          function() { return this._id; },
+    getURI:         function() { return this._uri; },
+    getValueType:   function() { return this._valueType; },
+    
+    getLabel:               function() { return this._label; },
+    getPluralLabel:         function() { return this._pluralLabel; },
+    getReverseLabel:        function() { return this._reverseLabel; },
+    getReversePluralLabel:  function() { return this._reversePluralLabel; },
+    getGroupingLabel:       function() { return this._groupingLabel; },
+    getGroupingPluralLabel: function() { return this._groupingPluralLabel; }
+};

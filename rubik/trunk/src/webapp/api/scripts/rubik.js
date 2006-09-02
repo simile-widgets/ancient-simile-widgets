@@ -26,29 +26,30 @@ function performLongTask(f, message) {
 
 var Rubik = new Object();
 
-Rubik.create = function(controlDiv, browseDiv, viewDiv) {
-    return new Rubik._Impl(controlDiv, browseDiv, viewDiv);
+Rubik.create = function(controlDiv, browseDiv, viewDiv, configuration) {
+    return new Rubik._Impl(controlDiv, browseDiv, viewDiv, configuration);
 };
 
 /*==================================================
  *  Rubik._Impl
  *==================================================
  */
-Rubik._Impl = function(controlDiv, browseDiv, viewDiv) {
+Rubik._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._database = new Rubik.Database();
-    this._queryEngine = new Rubik.QueryEngine(this._database);
-    this._browser = new Rubik.Browser(
+    this._engine = new Rubik.BrowsingEngine(this._database, configuration.engine);
+    this._ui = new Rubik.BrowsingUI(
         this._database, 
-        this._queryEngine, 
+        this._engine, 
         controlDiv,
         browseDiv,
-        viewDiv
+        viewDiv,
+        configuration.ui
     );
 };
 
 Rubik._Impl.prototype.getDatabase = function() { return this._database; };
-Rubik._Impl.prototype.getQueryEngine = function() { return this._queryEngine; };
-Rubik._Impl.prototype.getBrowser = function() { return this._browser; };
+Rubik._Impl.prototype.getBrowsingEngine = function() { return this._engine; };
+Rubik._Impl.prototype.getBrowsignUI = function() { return this._ui; };
 
 Rubik._Impl.prototype.loadJSON = function(url, fDone) {
     var rubik = this;
@@ -64,7 +65,7 @@ Rubik._Impl.prototype.loadJSON = function(url, fDone) {
             if (fDone != null) {
                 fDone();
             }
-            rubik._browser._reconstruct();
+            rubik._ui._reconstruct();
         } catch (e) {
             SimileAjax.Debug.exception(e);
         }
@@ -92,10 +93,10 @@ Rubik._Impl.prototype.getBaseURL = function(url) {
 
 Rubik._Impl.prototype._loadJSON = function(o, url) {
     if ("types" in o) {
-        this._queryEngine.registerTypes(o.types, url);
+        this._database.loadTypes(o.types, url);
     }
     if ("properties" in o) {
-        this._queryEngine.registerProperties(o.properties, url);
+        this._database.loadProperties(o.properties, url);
     }
     if ("items" in o) {
         this._database.loadItems(o.items, url);

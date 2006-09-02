@@ -3,7 +3,7 @@
  *==================================================
  */
  
-Rubik.Browser = function(database, queryEngine, controlDiv, browseDiv, viewDiv) {
+Rubik.BrowsingUI = function(database, queryEngine, controlDiv, browseDiv, viewDiv, configuration) {
     this._database = database;
     this._queryEngine = queryEngine;
     
@@ -13,22 +13,49 @@ Rubik.Browser = function(database, queryEngine, controlDiv, browseDiv, viewDiv) 
 
     this._view = "tile";
     this._pinningHighlight = false;
+    
+    this._showProperties = [];
+    if (configuration != null) {
+        if ("properties" in configuration) {
+            var entries = configuration.properties;
+            for (var i = 0; i < entries.length; i++) {
+                var entry = entries[i];
+                var sp;
+                if (entry instanceof "string") {
+                    sp = {
+                        property: entry,
+                        forward:  true
+                    };
+                } else {
+                    sp = {
+                        property: entry.property,
+                        forward:  ("forward" in entry) ? (entry.forward) : true
+                    }
+                }
+                this._showProperties.push(sp);
+            }
+        }
+        if ("sliding" in configuration && configuration.sliding) {
+            this._supportSliding = true;
+        }
+    }
+    
     this._facetInfos = [];
     this._groupingProperty = "";
     
     //this._reconstruct();
 }
 
-Rubik.Browser.prototype._reconstruct = function(scrollInfo) {
-    Rubik.Browser._pinningHighlight = false;
-    Rubik.Browser._hidePinButtons();
+Rubik.BrowsingUI.prototype._reconstruct = function(scrollInfo) {
+    Rubik.BrowsingUI._pinningHighlight = false;
+    Rubik.BrowsingUI._hidePinButtons();
     
     this._reconstructItemPane();
     this._reconstructFacetPane(scrollInfo);
     this._reconstructCollectionPane();
 }
 
-Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
+Rubik.BrowsingUI.prototype._reconstructFacetPane = function(scrollInfo) {
     var facetPaneBody = this._browseDiv;
     facetPaneBody.innerHTML = "";
     
@@ -39,9 +66,9 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
         /* if (facet.count > 1 || (facet.count == 1 && facet.values[0].count < this._itemCount)) */ 
         if (facet.count > 0) {
             var property = facet.property;
-            var reverse = facet.reverse;
+            var forward = facet.forward;
             
-            var facetKey = property + ":" + reverse;
+            var facetKey = property + ":" + forward;
             var facetInfo = this._facetInfos[facetKey];
             if (facetInfo == null) {
                 facetInfo = [];
@@ -69,7 +96,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
                 aSpan.href = "javascript:void";
                 aSpan.title = (count > 1 ? "Focus on these " : "Focus on this ") + valuesText;
                 aSpan.setAttribute("property", property);
-                aSpan.setAttribute("reverse", reverse ? "true" : "false");
+                aSpan.setAttribute("forward", forward ? "true" : "false");
                 SimileAjax.DOM.registerEvent(aSpan, "click", function(elmt) { browser._performSliding(elmt); return true; });
                 
                 countSpan.appendChild(aSpan);
@@ -105,7 +132,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
                     checkbox.checked = value.selected;
                     checkbox.defaultChecked = value.selected;
                     checkbox.setAttribute("property", property);
-                    checkbox.setAttribute("reverse", reverse ? "true" : "false");
+                    checkbox.setAttribute("forward", forward ? "true" : "false");
                     checkbox.setAttribute("level", value.level);
                     checkbox.setAttribute("value", value.value);
                     SimileAjax.DOM.registerEvent(checkbox, "click", function(elmt) { browser._performFiltering(elmt); return true; });
@@ -113,7 +140,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
                     
                     var expanded;
                     var valueKey = value.value + ":" + value.level;
-                    if (Rubik.Browser._groupingProperty == facetKey) {
+                    if (Rubik.BrowsingUI._groupingProperty == facetKey) {
                         expanded = (level == 0);
                         facetInfo[valueKey] = expanded;
                     } else {
@@ -161,7 +188,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
                 groupA.href = "javascript:void";
                 groupA.innerHTML = "group by";
                 groupA.setAttribute("property", property);
-                groupA.setAttribute("reverse", reverse ? "true" : "false");
+                groupA.setAttribute("forward", forward ? "true" : "false");
                 SimileAjax.DOM.registerEvent(groupA, "click", function(elmt) { browser._performGrouping(elmt); return true; });
                 
                 footerDiv.appendChild(groupA);
@@ -173,7 +200,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
                     closeA.href = "javascript:void";
                     closeA.innerHTML = "collapse";
                     closeA.setAttribute("property", property);
-                    closeA.setAttribute("reverse", reverse ? "true" : "false");
+                    closeA.setAttribute("forward", forward ? "true" : "false");
                     SimileAjax.DOM.registerEvent(closeA, "click", function(elmt) { browser._performCollapsingGroups(elmt); return true; });
                     footerDiv.appendChild(closeA);
                     
@@ -183,7 +210,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
                     openA.href = "javascript:void";
                     openA.innerHTML = "expand";
                     openA.setAttribute("property", property);
-                    openA.setAttribute("reverse", reverse ? "true" : "false");
+                    openA.setAttribute("forward", forward ? "true" : "false");
                     SimileAjax.DOM.registerEvent(openA, "click", function(elmt) { browser._performExpandingGroups(elmt); return true; });
                     footerDiv.appendChild(openA);
                 }
@@ -194,7 +221,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
             facetPaneBody.appendChild(div);
             
             if (scrollInfo) {
-                if (property == scrollInfo.property && reverse == scrollInfo.reverse) {
+                if (property == scrollInfo.property && forward == scrollInfo.forward) {
                     valuesDiv.scrollTop = scrollInfo.scrollTop;
                 }
             }
@@ -202,7 +229,7 @@ Rubik.Browser.prototype._reconstructFacetPane = function(scrollInfo) {
     }
 };
 
-Rubik.Browser.prototype._reconstructItemPane = function() {
+Rubik.BrowsingUI.prototype._reconstructItemPane = function() {
     if (this._view == "tabular") {
         this._reconstructItemPaneAsTable();
     } else {
@@ -210,7 +237,7 @@ Rubik.Browser.prototype._reconstructItemPane = function() {
     }
 }
 
-Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
+Rubik.BrowsingUI.prototype._reconstructItemPaneAsTiles = function() {
     var items = [];
     var browser = this;
     var collection = this._queryEngine.getCurrentCollection();
@@ -222,13 +249,13 @@ Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
         return a.label.localeCompare(b.label);
     });
     
-    Rubik.Browser._itemCount = items.length;
+    Rubik.BrowsingUI._itemCount = items.length;
     
     var itemPaneHeader = document.getElementById("item-pane-header");
     itemPaneHeader.innerHTML = "";
     itemPaneHeader.appendChild(document.createTextNode(
         items.length + " " + 
-        this._queryEngine.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0]
+        this._database.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0].join(", ")
     ));
     
     var originalSize = collection.originalSize();
@@ -236,8 +263,8 @@ Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
         var filterInfoSpan = document.createElement("span");
         filterInfoSpan.className = "filter-info";
         filterInfoSpan.innerHTML = "(filtered from " + 
-            "<a href='javascript:void' onclick='Rubik.Browser._performClearingFilters(); return false;'>" + originalSize + " " +
-            this._queryEngine.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0] +
+            "<a href='javascript:void' onclick='Rubik.BrowsingUI._performClearingFilters(); return false;'>" + originalSize + " " +
+            this._database.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0].join(", ") +
             "</a> originally)";
         itemPaneHeader.appendChild(filterInfoSpan);
     }
@@ -261,7 +288,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
         bodyDiv.className = "item-body";
         itemDiv.appendChild(bodyDiv);
         
-        var pairs = this._queryEngine.getPropertyValuesPairs(item.uri);
+        var pairs = this.getPropertyValuesPairs(item.uri);
         for (var j = 0; j < pairs.length; j++) {
             var pair = pairs[j];
             
@@ -305,7 +332,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
     }
 };
 
-Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
+Rubik.BrowsingUI.prototype._reconstructItemPaneAsTable = function() {
     var items = [];
     var browser = this;
     var collection = this._queryEngine.getCurrentCollection();
@@ -332,7 +359,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
         var filterInfoSpan = document.createElement("span");
         filterInfoSpan.className = "filter-info";
         filterInfoSpan.innerHTML = "(filtered from " + 
-            "<a href='javascript:void' onclick='Rubik.Browser._performClearingFilters(); return false;'>" + originalSize + " " +
+            "<a href='javascript:void' onclick='Rubik.BrowsingUI._performClearingFilters(); return false;'>" + originalSize + " " +
             this._queryEngine.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0] +
             "</a> originally)";
         itemPaneHeader.appendChild(filterInfoSpan);
@@ -365,7 +392,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
     var columns = [];
     for (var i = 0; i < items.length && i < 20; i++) {
         var item = items[i];
-        var pairs = this._queryEngine.getPropertyValuesPairs(item.uri);
+        var pairs = this.getPropertyValuesPairs(item.uri);
         
         var tr = table.insertRow(i);
         if (i % 2 == 1) {
@@ -416,7 +443,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
     table.style.display = "block";
 };
 
-Rubik.Browser.prototype._reconstructCollectionPane = function() {
+Rubik.BrowsingUI.prototype._reconstructCollectionPane = function() {
     var collectionPane = this._controlDiv;
     collectionPane.innerHTML = "";
     
@@ -424,7 +451,7 @@ Rubik.Browser.prototype._reconstructCollectionPane = function() {
     
     var historyDiv = document.createElement("div");
     historyDiv.id = "history";
-    historyDiv.innerHTML = "<a href='javascript:void' onclick='Rubik.Browser.reset();'>Home</a>";
+    historyDiv.innerHTML = "<a href='javascript:void' onclick='Rubik.BrowsingUI.reset();'>Home</a>";
     collectionPane.appendChild(historyDiv);
     
     var count = this._queryEngine.getCollectionCount();
@@ -462,7 +489,7 @@ Rubik.Browser.prototype._reconstructCollectionPane = function() {
         tabDiv.appendChild(slideInfoDiv);
         
         var text = collection.originalSize() + " " + 
-            this._queryEngine.getTypeLabels(collection.getRestrictedSet())[collection.size() > 1 ? 1 : 0];
+            this._database.getTypeLabels(collection.getRestrictedSet())[collection.size() > 1 ? 1 : 0];
         if (filtered) {
             text += ", filtered to " + collection.size();
         }
@@ -482,29 +509,29 @@ Rubik.Browser.prototype._reconstructCollectionPane = function() {
     collectionPane.style.display = (count > 1) ? "block" : "none";
 };
 
-Rubik.Browser.prototype._performFiltering = function(checkbox) {
+Rubik.BrowsingUI.prototype._performFiltering = function(checkbox) {
     var property = checkbox.getAttribute("property");
-    var reverse = checkbox.getAttribute("reverse") == "true";
+    var forward = checkbox.getAttribute("forward") == "true";
     var level = parseInt(checkbox.getAttribute("level"));
     var value = checkbox.getAttribute("value");
     
     var scrollTop = checkbox.parentNode.parentNode.scrollTop;
     
-    this._queryEngine.setValueRestriction(property, reverse, level, value, checkbox.checked);
+    this._queryEngine.setValueRestriction(property, forward, level, value, checkbox.checked);
     
     this._reconstruct({
         property:   property,
-        reverse:    reverse,
+        forward:    forward,
         scrollTop:  scrollTop
     });
 };
 
-Rubik.Browser.prototype._performSliding = function(div) {
+Rubik.BrowsingUI.prototype._performSliding = function(div) {
     var browser = this;
     performLongTask(function() {
         var property = div.getAttribute("property");
-        var reverse = div.getAttribute("reverse") == "true";
-        browser._queryEngine.slide(property, reverse);
+        var forward = div.getAttribute("forward") == "true";
+        browser._queryEngine.slide(property, forward);
         
         browser._facetInfos = [];
         browser._reconstruct();
@@ -513,7 +540,7 @@ Rubik.Browser.prototype._performSliding = function(div) {
     }, "please wait...");
 };
 
-Rubik.Browser.prototype._performFocusing = function(elmt) {
+Rubik.BrowsingUI.prototype._performFocusing = function(elmt) {
     var browser = this;
     if (elmt.className.indexOf("collection-tab") == 0) {
         performLongTask(function() {
@@ -526,7 +553,7 @@ Rubik.Browser.prototype._performFocusing = function(elmt) {
     }
 };
 
-Rubik.Browser.prototype.setLocation = function(newLocation) {
+Rubik.BrowsingUI.prototype.setLocation = function(newLocation) {
     var browser = this;
     performLongTask(function() {
         browser._queryEngine.focus(newLocation);
@@ -535,7 +562,7 @@ Rubik.Browser.prototype.setLocation = function(newLocation) {
     }, "please wait...");
 };
 
-Rubik.Browser.prototype.reset = function() {
+Rubik.BrowsingUI.prototype.reset = function() {
     var browser = this;
     performLongTask(function() {
         browser._queryEngine.truncate(1);
@@ -547,7 +574,7 @@ Rubik.Browser.prototype.reset = function() {
     }, "please wait...");
 };
 
-Rubik.Browser.prototype._performClosing = function(elmt) {
+Rubik.BrowsingUI.prototype._performClosing = function(elmt) {
     var browser = this;
     performLongTask(function() {
         browser._queryEngine.truncate(parseInt(elmt.getAttribute("index")));
@@ -558,7 +585,7 @@ Rubik.Browser.prototype._performClosing = function(elmt) {
     }, "please wait...");
 };
 
-Rubik.Browser.prototype._performClearingFilters = function() {
+Rubik.BrowsingUI.prototype._performClearingFilters = function() {
     var browser = this;
     performLongTask(function() {
         browser._queryEngine.clearAllCurrentFilters();
@@ -566,35 +593,35 @@ Rubik.Browser.prototype._performClearingFilters = function() {
     }, "please wait...");
 }
 
-Rubik.Browser.prototype._performGrouping = function(elmt) {
+Rubik.BrowsingUI.prototype._performGrouping = function(elmt) {
     var browser = this;
     var property = elmt.getAttribute("property");
-    var reverse = elmt.getAttribute("reverse") == "true";
+    var forward = elmt.getAttribute("forward") == "true";
     
     var coords = getAbsoluteCoordinates(elmt.parentNode.parentNode);
     document.getElementById("grouping-box").style.top = coords.y + "px";
     
-    this._fillDialogBoxBody(property, reverse);
-    this._groupingProperty = property + ":" + reverse;
+    this._fillDialogBoxBody(property, forward);
+    this._groupingProperty = property + ":" + forward;
     
     var dialogBox = document.getElementById("grouping-box");
     dialogBox.style.display = "block";
 }
 
-Rubik.Browser.prototype._closeDialogBox = function() {
+Rubik.BrowsingUI.prototype._closeDialogBox = function() {
     var dialogBox = document.getElementById("grouping-box");
     dialogBox.style.display = "none";
     
     this._groupingProperty = "";
 }
 
-Rubik.Browser.prototype._fillDialogBoxBody = function(property, reverse) {
+Rubik.BrowsingUI.prototype._fillDialogBoxBody = function(property, forward) {
     var browser = this;
     
     var dialogBoxBody = document.getElementById("grouping-box-body");
     dialogBoxBody.innerHTML = "";
     
-    var groups = this._queryEngine.getGroups(property, reverse);
+    var groups = this._queryEngine.getGroups(property, forward);
     for (var i = 0; i < groups.length; i++) {
         var group = groups[i];
         var groupingOptions = group.groupingOptions;
@@ -622,9 +649,9 @@ Rubik.Browser.prototype._fillDialogBoxBody = function(property, reverse) {
             option.defaultChecked = groupingOption.selected;
             
             option.setAttribute("property", property);
-            option.setAttribute("reverse", reverse ? "true" : "false");
+            option.setAttribute("forward", forward ? "true" : "false");
             option.setAttribute("groupingProperty", groupingOption.property);
-            option.setAttribute("groupingReverse", groupingOption.reverse ? "true" : "false");
+            option.setAttribute("groupingForward", groupingOption.forward ? "true" : "false");
             option.setAttribute("level", i);
             
             SimileAjax.DOM.registerEvent(option, "click", function(elmt) { browser._performChoosingGroupingOption(elmt); return true; });
@@ -643,7 +670,7 @@ Rubik.Browser.prototype._fillDialogBoxBody = function(property, reverse) {
         if (hasSelection) {
             var clearA = document.createElement("a");
             clearA.setAttribute("property", property);
-            clearA.setAttribute("reverse", reverse ? "true" : "false");
+            clearA.setAttribute("forward", forward ? "true" : "false");
             clearA.setAttribute("level", i);
             clearA.href = "javascript:void";
             clearA.innerHTML = "(ungroup)";
@@ -656,40 +683,40 @@ Rubik.Browser.prototype._fillDialogBoxBody = function(property, reverse) {
     }
 }
 
-Rubik.Browser.prototype._performChoosingGroupingOption = function(elmt) {
+Rubik.BrowsingUI.prototype._performChoosingGroupingOption = function(elmt) {
     var property = elmt.getAttribute("property");
-    var reverse = elmt.getAttribute("reverse") == "true";
+    var forward = elmt.getAttribute("forward") == "true";
     var groupingProperty = elmt.getAttribute("groupingProperty");
-    var groupingReverse = elmt.getAttribute("groupingReverse") == "true";
+    var groupingForward = elmt.getAttribute("groupingForward") == "true";
     var level = parseInt(elmt.getAttribute("level"));
 
-    this._queryEngine.group(property, reverse, level, groupingProperty, groupingReverse);
-    this._fillDialogBoxBody(property, reverse);
+    this._queryEngine.group(property, forward, level, groupingProperty, groupingForward);
+    this._fillDialogBoxBody(property, forward);
     this._reconstructFacetPane();
 }
 
-Rubik.Browser.prototype._performClearingGrouping = function(elmt) {
+Rubik.BrowsingUI.prototype._performClearingGrouping = function(elmt) {
     var property = elmt.getAttribute("property");
-    var reverse = elmt.getAttribute("reverse") == "true";
+    var forward = elmt.getAttribute("forward") == "true";
     var level = parseInt(elmt.getAttribute("level"));
     
-    this._queryEngine.ungroup(property, reverse, level);
-    this._fillDialogBoxBody(property, reverse);
+    this._queryEngine.ungroup(property, forward, level);
+    this._fillDialogBoxBody(property, forward);
     this._reconstructFacetPane();
 }
 
-Rubik.Browser.prototype._performTogglingGroup = function(elmt) {
+Rubik.BrowsingUI.prototype._performTogglingGroup = function(elmt) {
     var checkbox = elmt.previousSibling;
     var property = checkbox.getAttribute("property");
-    var reverse = checkbox.getAttribute("reverse") == "true";
+    var forward = checkbox.getAttribute("forward") == "true";
     var level = checkbox.getAttribute("level");
     var value = checkbox.getAttribute("value");
    
-    var facetKey = property + ":" + reverse;
-    var facetInfo = Rubik.Browser._facetInfos[facetKey];
+    var facetKey = property + ":" + forward;
+    var facetInfo = Rubik.BrowsingUI._facetInfos[facetKey];
     if (facetInfo == null) {
         facetInfo = [];
-        Rubik.Browser._facetInfos[facetKey] = facetInfo;
+        Rubik.BrowsingUI._facetInfos[facetKey] = facetInfo;
     }
     var valueKey = value + ":" + level;
             
@@ -705,12 +732,12 @@ Rubik.Browser.prototype._performTogglingGroup = function(elmt) {
     }
 }
 
-Rubik.Browser.prototype._performCollapsingGroups = function(elmt) {
+Rubik.BrowsingUI.prototype._performCollapsingGroups = function(elmt) {
     var property = elmt.getAttribute("property");
-    var reverse = elmt.getAttribute("reverse") == "true";
+    var forward = elmt.getAttribute("forward") == "true";
     
-    var facetKey = property + ":" + reverse;
-    var facetInfo = Rubik.Browser._facetInfos[facetKey];
+    var facetKey = property + ":" + forward;
+    var facetInfo = Rubik.BrowsingUI._facetInfos[facetKey];
     if (facetInfo == null) {
         facetInfo = [];
         this._facetInfos[facetKey] = facetInfo;
@@ -743,12 +770,12 @@ Rubik.Browser.prototype._performCollapsingGroups = function(elmt) {
     f(valuesDiv);
 }
 
-Rubik.Browser.prototype._performExpandingGroups = function(elmt) {
+Rubik.BrowsingUI.prototype._performExpandingGroups = function(elmt) {
     var property = elmt.getAttribute("property");
-    var reverse = elmt.getAttribute("reverse") == "true";
+    var forward = elmt.getAttribute("forward") == "true";
     
-    var facetKey = property + ":" + reverse;
-    var facetInfo = Rubik.Browser._facetInfos[facetKey];
+    var facetKey = property + ":" + forward;
+    var facetInfo = Rubik.BrowsingUI._facetInfos[facetKey];
     if (facetInfo == null) {
         facetInfo = [];
         this._facetInfos[facetKey] = facetInfo;
@@ -780,32 +807,32 @@ Rubik.Browser.prototype._performExpandingGroups = function(elmt) {
     f(valuesDiv);
 }
 
-Rubik.Browser.prototype._setTabularView = function() {
+Rubik.BrowsingUI.prototype._setTabularView = function() {
     this._view = "tabular";
     this._reconstructItemPane();
 }
 
-Rubik.Browser.prototype._setTileView = function() {
+Rubik.BrowsingUI.prototype._setTileView = function() {
     this._view = "tile";
     this._reconstructItemPane();
 }
 
-Rubik.Browser.prototype._createValueSpan = function(text, omitLink) {
+Rubik.BrowsingUI.prototype._createValueSpan = function(text, omitLink) {
     var valueSpan = document.createElement(omitLink ? "span" : "a");
     valueSpan.setAttribute("name", "value");
-    SimileAjax.DOM.registerEvent(valueSpan, "mouseover", Rubik.Browser._highlightValue);
-    SimileAjax.DOM.registerEvent(valueSpan, "mouseout", Rubik.Browser._unhighlightValue);
+    SimileAjax.DOM.registerEvent(valueSpan, "mouseover", Rubik.BrowsingUI._highlightValue);
+    SimileAjax.DOM.registerEvent(valueSpan, "mouseout", Rubik.BrowsingUI._unhighlightValue);
     if (!omitLink) {
         valueSpan.setAttribute("src", "javascript:(void)");
-        SimileAjax.DOM.registerEvent(valueSpan, "click", Rubik.Browser._focusValue);
+        SimileAjax.DOM.registerEvent(valueSpan, "click", Rubik.BrowsingUI._focusValue);
     }
     valueSpan.innerHTML = text;
     return valueSpan;
 }
 
-Rubik.Browser._highlightValue = function(elmt, evt) {
-    if (Rubik.Browser._pinningHighlight) {
-        Rubik.Browser._showPinButton(document.getElementById("unpin-button"), elmt, evt);
+Rubik.BrowsingUI._highlightValue = function(elmt, evt) {
+    if (Rubik.BrowsingUI._pinningHighlight) {
+        Rubik.BrowsingUI._showPinButton(document.getElementById("unpin-button"), elmt, evt);
         return;
     }
     
@@ -822,11 +849,11 @@ Rubik.Browser._highlightValue = function(elmt, evt) {
             }
         }
         
-        Rubik.Browser._showPinButton(document.getElementById("pin-button"), elmt, evt);
+        Rubik.BrowsingUI._showPinButton(document.getElementById("pin-button"), elmt, evt);
     }
 }
 
-Rubik.Browser._unhighlightValue = function(elmt, evt) {
+Rubik.BrowsingUI._unhighlightValue = function(elmt, evt) {
 /*
     var elmts = document.getElementsByName("value");
     
@@ -837,24 +864,24 @@ Rubik.Browser._unhighlightValue = function(elmt, evt) {
 */
 }
 
-Rubik.Browser._focusValue = function(elmt, evt) {
+Rubik.BrowsingUI._focusValue = function(elmt, evt) {
     focus(elmt.innerHTML);
 }
 
-Rubik.Browser._pinHighlight = function(elmt) {
-    Rubik.Browser._hidePinButton(elmt);
-    Rubik.Browser._pinningHighlight = true;
+Rubik.BrowsingUI._pinHighlight = function(elmt) {
+    Rubik.BrowsingUI._hidePinButton(elmt);
+    Rubik.BrowsingUI._pinningHighlight = true;
 }
 
-Rubik.Browser._unpinHighlight = function(elmt) {
-    Rubik.Browser._hidePinButton(elmt);
-    Rubik.Browser._pinningHighlight = false;
-    Rubik.Browser._unhighlightValue();
+Rubik.BrowsingUI._unpinHighlight = function(elmt) {
+    Rubik.BrowsingUI._hidePinButton(elmt);
+    Rubik.BrowsingUI._pinningHighlight = false;
+    Rubik.BrowsingUI._unhighlightValue();
 }
 
-Rubik.Browser._showPinButton = function(button, elmt, evt) {
-    if (Rubik.Browser._timerID) {
-        window.clearTimeout(Rubik.Browser._timerID);
+Rubik.BrowsingUI._showPinButton = function(button, elmt, evt) {
+    if (Rubik.BrowsingUI._timerID) {
+        window.clearTimeout(Rubik.BrowsingUI._timerID);
     }
     
     var centerX = evt.pageX + 8;
@@ -864,20 +891,56 @@ Rubik.Browser._showPinButton = function(button, elmt, evt) {
     button.style.top = centerY + "px";
     button.style.display = "block";
     
-    Rubik.Browser._timerID = window.setTimeout(
+    Rubik.BrowsingUI._timerID = window.setTimeout(
         function() { 
-            Rubik.Browser._hidePinButton(button); 
-            Rubik.Browser._timerID = null; 
+            Rubik.BrowsingUI._hidePinButton(button); 
+            Rubik.BrowsingUI._timerID = null; 
         }, 
         2000
     );
 }
 
-Rubik.Browser._hidePinButton = function(button) {
+Rubik.BrowsingUI._hidePinButton = function(button) {
     button.style.display = "none";
 }
 
-Rubik.Browser._hidePinButtons = function() {
+Rubik.BrowsingUI._hidePinButtons = function() {
     document.getElementById("pin-button").style.display = "none";
     document.getElementById("unpin-button").style.display = "none";
 }
+
+
+
+Rubik.BrowsingUI.prototype.getPropertyValuesPairs = function(object) {
+    var pairs = [];
+    
+    var queryEngine = this;
+    var enterPair = function(property, values, forward) {
+        if (values.length > 0) {
+            var itemValues = property.getValueType() == "item";
+            var pair = { 
+                property:   forward ? propertyData.getLabel() : propertyData.getReverseLabel(),
+                itemValues: itemValues,
+                values:     []
+            };
+            if (itemValues) {
+                for (var i = 0; i < values.length; i++) {
+                    pair.values.push(queryEngine._database.getLiteralProperty(values[i], "label"));
+                }
+            } else {
+                for (var i = 0; i < values.length; i++) {
+                    pair.values.push(values[i]);
+                }
+            }
+            pairs.push(pair);
+        }
+    };
+    
+    for (var i = 0; i < this._showProperties.length; i++) {
+        var entry = this._showProperties[i];
+        //var property = this._database.getProperty(propertyID);
+        enterPair(this._database.getProperty(entry.property), this._database.getObjects(object, entry.property).toArray(), false);
+    }
+    return pairs;
+};
+
