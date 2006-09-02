@@ -26,7 +26,8 @@ if (typeof Rubik == "undefined") {
             "browser.js"
         ];
         var cssFiles = [
-            "browser.css"
+            "browser.css",
+            "data.css"
         ];
         
         var url = SimileAjax.findScript(document, "rubik-api.js");

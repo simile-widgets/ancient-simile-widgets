@@ -11,12 +11,12 @@ Rubik.Browser = function(database, queryEngine, controlDiv, browseDiv, viewDiv) 
     this._browseDiv = browseDiv;
     this._viewDiv = viewDiv;
 
-    this._view = "tabular";
+    this._view = "tile";
     this._pinningHighlight = false;
     this._facetInfos = [];
     this._groupingProperty = "";
     
-    this._reconstruct();
+    //this._reconstruct();
 }
 
 Rubik.Browser.prototype._reconstruct = function(scrollInfo) {
@@ -237,7 +237,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
         filterInfoSpan.className = "filter-info";
         filterInfoSpan.innerHTML = "(filtered from " + 
             "<a href='javascript:void' onclick='Rubik.Browser._performClearingFilters(); return false;'>" + originalSize + " " +
-            g_queryEngine.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0] +
+            this._queryEngine.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0] +
             "</a> originally)";
         itemPaneHeader.appendChild(filterInfoSpan);
     }
@@ -245,7 +245,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
     var itemPaneBody = document.getElementById("item-pane-body");
     itemPaneBody.innerHTML = "";
     
-    for (var i = 0; i < items.length; i++) {
+    for (var i = 0; i < items.length && i < 10; i++) {
         var item = items[i];
         var itemType = this._database.getLiteralProperty(item.uri, "type");
         
@@ -292,7 +292,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTiles = function() {
                     if (m > 0) {
                         propertyValuesSpan.appendChild(document.createTextNode(", "));
                     }
-                    propertyValuesSpan.appendChild(browser._createValueSpan(pair.values[m], pair.isLiteral));
+                    propertyValuesSpan.appendChild(browser._createValueSpan(pair.values[m], !pair.itemValues));
                 }
                 
                 pairDiv.appendChild(propertyValuesSpan);
@@ -314,7 +314,8 @@ Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
         items.push({ uri: o, label: browser._database.getLiteralProperty(o, "label") });
     });
     items.sort(function(a, b) {
-        return a.label.localeCompare(b.label);
+    try {
+        return a.label.localeCompare(b.label); } catch (e) { console.log(a); }
     });
     
     this._itemCount = items.length;
@@ -332,7 +333,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
         filterInfoSpan.className = "filter-info";
         filterInfoSpan.innerHTML = "(filtered from " + 
             "<a href='javascript:void' onclick='Rubik.Browser._performClearingFilters(); return false;'>" + originalSize + " " +
-            g_queryEngine.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0] +
+            this._queryEngine.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0] +
             "</a> originally)";
         itemPaneHeader.appendChild(filterInfoSpan);
     }
@@ -383,7 +384,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
             for (var n = 0; n < pairs.length; n++) {
                 var pair = pairs[n];
                 if (propertyLabel == pair.propertyLabel) {
-                    addValues(propertyLabel, pair.values, td, pair.isLiteral);
+                    addValues(propertyLabel, pair.values, td, !pair.itemValues);
                     pairs.splice(n, 1);
                     break;
                 }
@@ -394,7 +395,7 @@ Rubik.Browser.prototype._reconstructItemPaneAsTable = function() {
             var pair = pairs[n];
             
             var td = tr.insertCell(columns.length+1);
-            addValues(pair.propertyLabel, pair.values, td, pair.isLiteral);
+            addValues(pair.propertyLabel, pair.values, td, !pair.itemValues);
             columns.push(pair.propertyLabel);
         }
     }

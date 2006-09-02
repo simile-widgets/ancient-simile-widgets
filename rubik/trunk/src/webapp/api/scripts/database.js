@@ -2,8 +2,40 @@
  *  Rubik.Database
  *==================================================
  */
-Rubik.Database = function(objects) {
-    this._initialize(objects);
+Rubik.Database = function() {
+    this._spo = {};
+    this._ops = {};
+    this._items = new Rubik.Set();
+    this._listeners = [];
+};
+
+
+Rubik.Database.prototype.addListener = function(listener) {
+    this._listeners.push(listener);
+};
+
+Rubik.Database.prototype.removeListener = function(listener) {
+    var listeners = this._listeners;
+    for (var i = 0; i < listeners.length; i++) {
+        if (listeners[i] == listener) {
+            listeners.splice(i, 1);
+            break;
+        }
+    }
+};
+
+Rubik.Database.prototype._fire = function(handlerName, args) {
+    var listeners = [].concat(this._listeners);
+    for (var i = 0; i < listeners.length; i++) {
+        var listener = listeners[i];
+        if (handlerName in listener) {
+            try {
+                listener[handlerName].apply(listener, args);
+            } catch (e) {
+                SimileAjax.Debug.exception(e);
+            }
+        }
+    }
 };
 
 Rubik.Database._indexPut = function(index, x, y, z) {
@@ -15,7 +47,7 @@ Rubik.Database._indexPut = function(index, x, y, z) {
     
     var array = hash[y];
     if (!array) {
-        array = [];
+        array = new Array();
         hash[y] = array;
     } else {
         for (var i = 0; i < array.length; i++) {
@@ -68,10 +100,7 @@ Rubik.Database.prototype._indexCountDistinct = function(index, x, y, filter) {
     return count;
 };
 
-Rubik.Database.prototype._initialize = function(objects) {
-    this._spo = {};
-    this._ops = {};
-    
+Rubik.Database.prototype.loadItems = function(items, url) {
     var spo = this._spo;
     var ops = this._ops;
     var indexPut = Rubik.Database._indexPut;
@@ -80,23 +109,32 @@ Rubik.Database.prototype._initialize = function(objects) {
         indexPut(ops, o, p, s);
     };
     
-    for (var i = 0; i < objects.length; i++) {
-        var object = objects[i];
-        var uri = object.uri;
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var label = item.label;
+        var id = ("id" in item) ? item.id : label;
+        var uri = ("uri" in item) ? item.uri : (url + "item#" + id);
         
-        for (p in object) {
-            if (p != "uri") {
-                var v = object[p];
-                if (v instanceof Array) {
-                    for (var j = 0; j < v.length; j++) {
-                        indexTriple(uri, p, v[j]);
-                    }
-                } else {
-                    indexTriple(uri, p, v);
+        this._items.add(id);
+        
+        indexTriple(id, "label", label);
+        for (p in item) {
+            var v = item[p];
+            if (v instanceof Array) {
+                for (var j = 0; j < v.length; j++) {
+                    indexTriple(id, p, v[j]);
                 }
+            } else if (p != "uri" && p != "label" && p != "id") {
+                indexTriple(id, p, v);
             }
         }
     }
+    
+    this._fire("onLoadItems", []);
+}
+
+Rubik.Database.prototype.getItems = function() {
+    return this._items;
 }
 
 Rubik.Database.prototype._get = function(index, x, y, set, filter) {

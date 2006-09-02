@@ -2,17 +2,74 @@
  *  Rubik.QueryEngine
  *==================================================
  */
-Rubik.QueryEngine = function(database, types, properties, rootObjectSet) {
+Rubik.QueryEngine = function(database) {
     this._database = database;
-    this._types = types;
-    this._properties = properties;
+    this._types = {};
+    this._properties = {};
     
     this._collections = [];
     this._slides = [];
     
-    this._addCollection(rootObjectSet);
-    
     this.focus(0);
+};
+
+Rubik.QueryEngine.prototype.setRootCollection = function(objectSet) {
+    this._collections = [];
+    this._slides = [];
+    this._addCollection(objectSet);
+    this.focus(0);
+};
+
+Rubik.QueryEngine.prototype.registerTypes = function(types, url) {
+    for (name in types) {
+        var type = types[name];
+        
+        var newType;
+        if (name in this._types) {
+            newType = this._types[name];
+        } else {
+            newType = { name: name };
+            this._types[name] = newType;
+        };
+        
+        newType.uri = ("uri" in type) ? type.uri : (url + "/type#" + name);
+        newType.label = ("label" in type) ? type.label : name;
+        newType.pluralLabel = ("pluralLabel" in type) ? type.pluralLabel : newType.label;
+    }
+};
+
+Rubik.QueryEngine.prototype.registerProperties = function(properties, url) {
+    for (name in properties) {
+        var property = properties[name];
+        
+        var newProperty;
+        if (name in this._properties) {
+            newProperty = this._properties[name];
+        } else {
+            newProperty= { name: name };
+            this._properties[name] = newProperty;
+        };
+        
+        newProperty.uri = ("uri" in property) ? property.uri : (url + "/property#" + name);
+        newProperty.label = ("label" in property) ? property.label : name;
+        newProperty.pluralLabel = ("pluralLabel" in property) ? property.pluralLabel : newProperty.label;
+        
+        newProperty.itemValues = ("itemValues" in property && property.itemValues);
+        newProperty.canReverse = ("canReverse" in property) ? property.canReverse : newProperty.itemValues;
+        newProperty.canGroup = ("canGroup" in property) ? property.canGroup : newProperty.itemValues;
+        
+        if (newProperty.canReverse) {
+            newProperty.reverseLabel = ("reverseLabel" in property) ? property.reverseLabel : ("!" + name);
+            newProperty.reversePluralLabel = ("reversePluralLabel" in property) ? property.reversePluralLabel : newProperty.reverseLabel;
+        }
+        
+        if (newProperty.canGroup) {
+            newProperty.groupingLabel = ("groupingLabel" in property) ? property.groupingLabel : newProperty.label;
+            if (newProperty.canReverse) {
+                newProperty.reverseGroupingLabel = ("reverseGroupingLabel" in property) ? property.reverseGroupingLabel : newProperty.reverseLabel;
+            }
+        }
+    }
 };
 
 Rubik.QueryEngine.prototype._addCollection = function(objectSet) {
@@ -139,8 +196,8 @@ Rubik.QueryEngine.prototype._computeFacet = function(collection, r, facets) {
                     queryEngine._database.countDistinctSubjects(rangeValue, property, domainSet);
             }
             
-            var label = propertyData2.isLiteral ? 
-                rangeValue : queryEngine._database.getLiteralProperty(rangeValue, "label");
+            var label = propertyData2.itemValues ? 
+                queryEngine._database.getLiteralProperty(rangeValue, "label") : rangeValue;
                 
             var facetValue = {
                 label:      label,
@@ -171,10 +228,10 @@ Rubik.QueryEngine.prototype._computeFacet = function(collection, r, facets) {
         if (level < r.getLevelCount() - 1) {
             domainSets.push(rangeSet);
             return arguments.callee(level + 1, domainSets, map);
-        } else {
+        } else {try {
             results.sort(function(a, b) {
                 return a.label.localeCompare(b.label);
-            });
+            });} catch(e) { console.log(results); }
             return results;
         }
     };
@@ -189,8 +246,14 @@ Rubik.QueryEngine.prototype.getTypeLabels = function(set) {
     var typeLabels = [];
     var pluralTypeLabels = [];
     for (var i = 0; i < typeArray.length; i++) {
-        pluralTypeLabels.push(this._types[typeArray[i]].pluralLabel);
-        typeLabels.push(this._types[typeArray[i]].label);
+        var type = this._types[typeArray[i]];
+        if (type != null) {
+            pluralTypeLabels.push(type.pluralLabel);
+            typeLabels.push(type.label);
+        } else {
+            pluralTypeLabels.push(typeArray[i]);
+            typeLabels.push(typeArray[i]);
+        }
     }
     if (typeLabels.length == 0) {
         typeLabels[0] = "option";
@@ -358,16 +421,16 @@ Rubik.QueryEngine.prototype.getPropertyValuesPairs = function(object) {
         if (values.length > 0) {
             var pair = { 
                 propertyLabel: reverse ? propertyData.reverseLabel : propertyData.label,
-                isLiteral: data.isLiteral,
+                itemValues: propertyData.itemValues,
                 values: []
             };
-            if (data.isLiteral) {
+            if (propertyData.itemValues) {
                 for (var i = 0; i < values.length; i++) {
-                    pair.values.push(values[i]);
+                    pair.values.push(queryEngine._database.getLiteralProperty(values[i], "label"));
                 }
             } else {
                 for (var i = 0; i < values.length; i++) {
-                    pair.values.push(queryEngine._database.getLiteralProperty(values[i], "label"));
+                    pair.values.push(values[i]);
                 }
             }
             pairs.push(pair);
@@ -375,13 +438,11 @@ Rubik.QueryEngine.prototype.getPropertyValuesPairs = function(object) {
     };
     
     for (p in this._properties) {
-        if (p != '______array') {
-            var data = this._properties[p];
-            if (!("canDisplay" in data) || data["canDisplay"]) {
-                enterPair(data, g_database.getObjects(object, p).toArray(), false);
-                if (data.canReverse) {
-                    enterPair(data, g_database.getSubjects(object, p).toArray(), true);
-                }
+        var data = this._properties[p];
+        if (!("canDisplay" in data) || data["canDisplay"]) {
+            enterPair(data, this._database.getObjects(object, p).toArray(), false);
+            if (data.canReverse) {
+                enterPair(data, this._database.getSubjects(object, p).toArray(), true);
             }
         }
     }
@@ -472,7 +533,7 @@ Rubik.QueryEngine.prototype._getGroups = function(collection, restriction) {
                 
                 groupingOption.selected = true;
                 result.values = this._slide2(set, groupingProperty, groupingReverse);
-                result.isLiteral = this._properties[groupingOption.property].isLiteral;
+                result.itemValues = this._properties[groupingOption.property].itemValues;
                 
                 set = result.values;
                 further = groupingOption.further;
@@ -507,26 +568,24 @@ Rubik.QueryEngine.prototype._ungroup = function(collection, restriction, level) 
 Rubik.QueryEngine.prototype._getGroupingOptions = function(set) {
     var options = [];
     for (p in this._properties) {
-        if (p != '______array') {
-            var data = this._properties[p];
-            if (!("canGroup" in data) || data["canGroup"]) {
-                if (this._database.getObjectsUnion(set, p).size()) {
+        var data = this._properties[p];
+        if (!("canGroup" in data) || data["canGroup"]) {
+            if (this._database.getObjectsUnion(set, p).size()) {
+                options.push({ 
+                    property: p, 
+                    reverse: false, 
+                    label: data.groupingLabel, 
+                    further: data.itemValues
+                });
+            }
+            if (data.canReverse) {
+                if (this._database.getSubjectsUnion(set, p).size()) {
                     options.push({ 
                         property: p, 
-                        reverse: false, 
-                        label: data.groupingLabel, 
-                        further: !data.isLiteral
+                        reverse: true, 
+                        label: data.reverseGroupingLabel, 
+                        further: true 
                     });
-                }
-                if (data.canReverse) {
-                    if (this._database.getSubjectsUnion(set, p).size()) {
-                        options.push({ 
-                            property: p, 
-                            reverse: true, 
-                            label: data.reverseGroupingLabel, 
-                            further: true 
-                        });
-                    }
                 }
             }
         }

@@ -8,7 +8,7 @@ function onLoad() {
     rubik.loadJSON("json.js",
         function() {
             rubik.getQueryEngine().setRootCollection(
-                rubik.getDatabase().getSubjects("Person", "type")
+                rubik.getDatabase().getItems()
             );
         }
     );
