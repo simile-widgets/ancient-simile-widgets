@@ -55,6 +55,7 @@ if (typeof SimileAjax == "undefined") {
             "dom.js",
             "graphics.js",
             
+            "ajax.js",
             "history.js",
             "windowing.js"
         ];
