@@ -48,13 +48,15 @@ if (typeof SimileAjax == "undefined") {
     
     (function() {
         var javascriptFiles = [
-            "ajax.js",
-            
             "platform.js",
             "debug.js",
             "xmlhttp.js",
+            "json.js",
             "dom.js",
-            "graphics.js"
+            "graphics.js",
+            
+            "history.js",
+            "windowing.js"
         ];
         var cssFiles = [
         ];
