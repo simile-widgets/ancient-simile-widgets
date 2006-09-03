@@ -5,9 +5,9 @@
 
 SimileAjax.DOM = new Object();
 
-SimileAjax.DOM.registerEventWithObject = function(elmt, eventName, obj, handler) {
+SimileAjax.DOM.registerEventWithObject = function(elmt, eventName, obj, handlerName) {
     SimileAjax.DOM.registerEvent(elmt, eventName, function(elmt2, evt, target) {
-        return handler.call(obj, elmt2, evt, target);
+        return obj[handlerName].call(obj, elmt2, evt, target);
     });
 };
 
@@ -74,6 +74,24 @@ SimileAjax.DOM.cancelEvent = function(evt) {
     }
 };
 
+SimileAjax.DOM.appendClassName = function(elmt, className) {
+    var classes = elmt.className.split(" ");
+    for (var i = 0; i < classes.length; i++) {
+        if (classes[i] == className) {
+            return;
+        }
+    }
+    classes.push(className);
+    elmt.className = classes.join(" ");
+};
+
+SimileAjax.DOM.createInputElement = function(type) {
+    var div = document.createElement("div");
+    div.innerHTML = "<input type='" + type + "' />";
+    
+    return div.firstChild;
+};
+
 SimileAjax.DOM.createDOMFromTemplate = function(doc, template) {
     var result = {};
     result.elmt = SimileAjax.DOM._createDOMFromTemplate(doc, template, result, null);
@@ -82,7 +100,13 @@ SimileAjax.DOM.createDOMFromTemplate = function(doc, template) {
 };
 
 SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, parentElmt) {
-    if (typeof templateNode == "string") {
+    if (templateNode == null) {
+        var node = doc.createTextNode("--null--");
+        if (parentElmt != null) {
+            parentElmt.appendChild(node);
+        }
+        return node;
+    } else if (typeof templateNode != "object") {
         var node = doc.createTextNode(templateNode);
         if (parentElmt != null) {
             parentElmt.appendChild(node);
@@ -100,7 +124,10 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
                 }
             }
             if (elmt == null) {
-                elmt = doc.createElement(templateNode.tag);
+                elmt = tag == "input" ?
+                    SimileAjax.DOM.createInputElement(templateNode.type) :
+                    doc.createElement(tag);
+                    
                 if (parentElmt != null) {
                     parentElmt.appendChild(elmt);
                 }
@@ -125,11 +152,11 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
             } else if (attribute == "title") {
                 elmt.title = value;
             } else if (attribute == "type" && elmt.tagName == "input") {
-                elmt.type = value;
+                // do nothing
                 
             } else if (attribute == "children") {
                 for (var i = 0; i < value.length; i++) {
-                    Longwell.DOM._createDOMFromTemplate(doc, value[i], result, elmt);
+                    SimileAjax.DOM._createDOMFromTemplate(doc, value[i], result, elmt);
                 }
             } else if (attribute != "tag" && attribute != "elmt") {
                 elmt.setAttribute(attribute, value);

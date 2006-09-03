@@ -57,7 +57,7 @@ if (typeof SimileAjax == "undefined") {
             
             "ajax.js",
             "history.js",
-            "windowing.js"
+            "window-manager.js"
         ];
         var cssFiles = [
         ];

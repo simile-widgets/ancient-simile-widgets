@@ -142,7 +142,7 @@ SimileAjax.History._handleIFrameOnLoad = function() {
         while (SimileAjax.History._currentIndex < c && 
                SimileAjax.History._currentIndex - SimileAjax.History._baseIndex < SimileAjax.History._actions.length) {
                
-            var action = SimileAjax.History._actions[this._currentIndex - this._baseIndex];
+            var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
             
             SimileAjax.History._fire("onBeforeRedo", [ action ]);
             try {
@@ -157,10 +157,11 @@ SimileAjax.History._handleIFrameOnLoad = function() {
         
         SimileAjax.History._fire("onAfterRedoSeveral", []);
     } else {
-        SimileAjax.History._iframe.contentDocument.title = 
-            SimileAjax.History.formatHistoryEntryTitle(
-                SimileAjax.History._actions[this._currentIndex - this._baseIndex].label);
-            
+        if (SimileAjax.History._actions.length > 0) {
+            SimileAjax.History._iframe.contentDocument.title = 
+                SimileAjax.History.formatHistoryEntryTitle(
+                    SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex].label);
+        }
         return;
     }
     

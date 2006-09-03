@@ -24,7 +24,7 @@ SimileAjax.WindowManager.initialize = function() {
     SimileAjax.DOM.registerEvent(document.body, "mousemove", SimileAjax.WindowManager._onBodyMouseMove);
     SimileAjax.DOM.registerEvent(document.body, "mouseup",   SimileAjax.WindowManager._onBodyMouseUp);
     
-    SimileAjax.WindowManager._layers.push({});
+    SimileAjax.WindowManager._layers.push({index: 0});
     
     SimileAjax.WindowManager._historyListener = {
         onBeforeUndoSeveral:    function() {},
@@ -52,12 +52,12 @@ SimileAjax.WindowManager.getHighestLayer = function() {
     return SimileAjax.WindowManager._layers[SimileAjax.WindowManager._layers.length - 1];
 };
 
-SimileAjax.WindowManager.registerEventWithObject = function(elmt, eventName, obj, handler, layer) {
+SimileAjax.WindowManager.registerEventWithObject = function(elmt, eventName, obj, handlerName, layer) {
     SimileAjax.WindowManager.registerEvent(
         elmt, 
         eventName, 
         function(elmt2, evt, target) {
-            return handler.call(obj, elmt2, evt, target);
+            return obj[handlerName].call(obj, elmt2, evt, target);
         },
         layer
     );
@@ -81,7 +81,7 @@ SimileAjax.WindowManager.registerEvent = function(elmt, eventName, handler, laye
 };
 
 SimileAjax.WindowManager.pushLayer = function(f) {
-    var layer = { onPop: f };
+    var layer = { onPop: f, index: SimileAjax.WindowManager._layers.length };
     SimileAjax.WindowManager._layers.push(layer);
     
     return layer;
@@ -121,6 +121,14 @@ SimileAjax.WindowManager._popToLayer = function(level) {
         } catch (e) {
         }
     }
+};
+
+SimileAjax.WindowManager._canProcessEventAtLayer = function(layer) {
+    return layer.index == (SimileAjax.WindowManager._layers.length - 1);
+};
+
+SimileAjax.WindowManager._cancelPopups = function() {
+    
 };
 
 SimileAjax.WindowManager._onBodyClick = function(elmt, evt, target) {
