@@ -1,0 +1,44 @@
+/*==================================================
+ * List facet box
+ *==================================================
+ */
+div.rubik-facet-value {
+    clear:          both;
+    white-space:    pre;
+    overflow:       hidden;
+    cursor:         pointer;
+}
+div.rubik-facet-value-filtered {
+	background: #FFFFA0;
+}
+
+div.rubik-facet-value-count {
+    width:          3em;
+    float:          left;
+    text-align:     right;
+    font-family:    monospace;
+    color:          #aaa;
+}
+div.rubik-facet-value-control {
+	padding:    0 2px;
+	cursor:     pointer;
+}
+div.rubik-facet-value-children {
+	padding-left: 16px;
+}
+
+/*==================================================
+ * Grouping box
+ *==================================================
+ */
+div.rubik-groupingBox {
+	margin-bottom:  1em;
+	padding:        0.5em;
+	border:         1px solid #ccc;
+}
+div.rubik-groupingBox-header {
+	font-weight: bold;
+}
+
+div.rubik-groupingBox-option {
+}

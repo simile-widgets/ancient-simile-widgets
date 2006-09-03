@@ -1,12 +1,12 @@
 /*==================================================
  *  Simile Rubik API
  *
- *  Include this file in your HTML file as follows:
+ *  Include Rubik in your HTML file as follows:
+ *    <script src="http://simile.mit.edu/ajax/api/ajax-api.js" type="text/javascript"></script>
  *    <script src="http://simile.mit.edu/rubik/api/rubik-api.js" type="text/javascript"></script>
  *
- *  You should also include the Simile Ajax API 
- *  BEFORE you include Rubik:
- *    <script src="http://simile.mit.edu/ajax/api/ajax-api.js" type="text/javascript"></script>
+ *  You do need to include the Simile Ajax API 
+ *  BEFORE you include Rubik.
  *
  *==================================================
  */
@@ -25,11 +25,23 @@ if (typeof Rubik == "undefined") {
             "browse-engine.js",
             
             "browse-panel.js",
-            "view-panel.js"
+            "facets/list-facet.js",
+            
+            "view-panel.js",
+//            "views/tabular-view.js",
+            "views/tile-view.js",
+            "views/item-view.js"
         ];
         var cssFiles = [
-            "browser.css",
-            "data.css"
+            "rubik.css",
+            
+            "browse-panel.css",
+            "facets/list-facet.css",
+            
+            "view-panel.css",
+//            "views/tabular-view.css",
+            "views/tile-view.css",
+            "views/item-view.css"
         ];
         
         var url = SimileAjax.findScript(document, "rubik-api.js");

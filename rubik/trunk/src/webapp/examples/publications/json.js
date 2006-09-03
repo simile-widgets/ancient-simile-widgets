@@ -14,16 +14,20 @@
         'year': {
         },
         'conferenceURL': {
+            valueType: "url"
         },
         'powerpointURL': {
+            valueType: "url"
         },
         'powerpointKB': {
         },
         'psURL': {
+            valueType: "url"
         },
         'psKB': {
         },
         'pdfURL': {
+            valueType: "url"
         },
         'pdfKB': {
         },

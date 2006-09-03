@@ -1,0 +1,28 @@
+/*==================================================
+ * View Panel styles
+ *==================================================
+ */
+div.rubik-viewPanel {
+}
+
+div.rubik-collectionView {
+}
+
+div.rubik-collectionView-header {
+}
+span.rubik-collectionView-header-count {
+    font-size:      200%;
+}
+span.rubik-collectionView-header-types {
+    padding-left:   0.5em;
+}
+span.rubik-collectionView-header-details {
+    padding-left:   0.5em;
+    color:          #888;
+}
+
+div.rubik-collectionView-body {
+}
+
+div.rubik-collectionView-footer {
+}

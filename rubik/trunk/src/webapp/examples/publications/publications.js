@@ -1,20 +1,22 @@
 var rubik;
 function onLoad() {
     var configuration = {
-        engine: {
+        BrowseEngine: {
             facets: [
+                "type",
                 "venue",
                 "year",
                 "event",
                 "authors"
             ]
         },
-        browsePanel: {
+        TileView: {
             properties: [
+                "authors",
+                "type",
                 "venue",
                 "event",
-                "year",
-                "authors"
+                "year"
             ]
         }
     };

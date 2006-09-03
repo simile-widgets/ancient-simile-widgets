@@ -9,16 +9,10 @@
         }
         
         #control-panel {
-            padding:        0.5em;
-            background:     #eee;
-            border-top:     1px solid #ddd;
-            border-bottom:  1px solid #ddd;
         }
         
         #browse-panel {
             padding:        0.5em;
-            background:     #E5EEE5;
-            border:         1px solid #ddd;
         }
         
         #view-panel {
@@ -39,31 +33,16 @@
 <div id="body">
     <h1>Rubik</h1>
     
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <table cellpadding="0" cellspacing="0" border="0">
         <tr valign="top">
-            <td>
-                <div id="control-panel">Control Panel (to be implemented)</div>
-                <div id="view-panel">
-                    <div id="item-pane-header">
-                    </div>
-                    <div id="item-pane-views">
-                        <a href="javascript:void" onclick="Browser._setTabularView();">tabular view</a> | <a href="javascript:void" onclick="Browser._setTileView();">tile view</a>
-                    </div>
-                    <div id="item-pane-body">
-                    </div>
-                </div>
+            <td width="70%">
+                <div id="control-panel"></div>
+                <div id="view-panel"></div>
             </td>
-            <td width="30%">
+            <td>
                 <div id="browse-panel" style="z-index: 100;"></div>
             </td>
         </tr>
     </table>
 </body>
-    <div id="grouping-box">
-        <div id="grouping-box-title"><div id="grouping-box-close" onclick="Browser._closeDialogBox();">done</div>Grouping</div>
-        <div id="grouping-box-body">
-        </div>
-    </div>
-    <button id="pin-button" onclick="Browser._pinHighlight(this);">Pin</button>
-    <button id="unpin-button" onclick="Browser._unpinHighlight(this);">Un-pin</button>
 </html>

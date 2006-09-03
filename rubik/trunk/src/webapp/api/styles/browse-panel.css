@@ -1,0 +1,46 @@
+/*==================================================
+ * Browse Panel styles
+ *==================================================
+ */
+div.rubik-browsePanel {
+}
+
+/*==================================================
+ * Facet box
+ *==================================================
+ */
+div.rubik-facet {
+	margin:     1em;
+	padding:    1px;
+}
+
+div.rubik-facet-header {
+	padding:        2px;
+	border-bottom:  1px solid #ccc;
+}
+span.rubik-facet-header-title {
+	font-weight:    bold;
+}
+span.rubik-facet-header-detail {
+	color:          #888;
+    padding-left:   0.5em;
+}
+    
+div.rubik-facet-body {
+	padding:        0.3em;
+	height:         10em;
+	overflow:       auto;
+}
+div.rubik-facet-body-long {
+	padding:        0.3em;
+	height:         20em;
+	overflow:       auto;
+}
+
+div.rubik-facet-value-children {
+	padding-left: 16px;
+}
+
+div.rubik-facet-footer {
+	text-align: center;
+}

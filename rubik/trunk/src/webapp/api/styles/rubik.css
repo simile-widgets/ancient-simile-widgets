@@ -1,0 +1,39 @@
+.rubik-ui-protection div {
+    margin:     0;
+    padding:    0;
+}
+.rubik-ui-protection table {
+	font-size: 100%;
+}
+.rubik-ui-protection tr {
+	vertical-align: top;
+}
+
+a.rubik-action, 
+a.rubik-action:link, 
+a.rubik-action:active, 
+a.rubik-action:visited {
+	text-decoration:    none;
+	border-bottom:      1px dotted;
+	cursor:             pointer;
+}
+a.rubik-action:hover {
+	border-bottom:  1px solid;
+	cursor:         pointer;
+}
+
+a.rubik-item, 
+a.rubik-item:link, 
+a.rubik-item:active, 
+a.rubik-item:visited {
+	text-decoration:    none;
+	border-bottom:      1px dotted red;
+	cursor:             pointer;
+}
+a.rubik-item:hover {
+	border-bottom:  1px solid;
+	cursor:         pointer;
+}
+
+span.rubik-value {
+}

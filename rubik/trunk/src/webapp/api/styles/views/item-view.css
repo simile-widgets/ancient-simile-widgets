@@ -1,0 +1,23 @@
+div.rubik-item-view {
+}
+
+div.rubik-item-view-title {
+    font-weight:    bold;
+}
+
+div.rubik-item-view-body {
+	padding: 0.3em;
+}
+
+table.rubik-item-view-properties {
+}
+
+tr.rubik-item-view-property {
+}
+
+td.rubik-item-view-property-name {
+	color: #888;
+}
+
+td.rubik-item-view-property-values {
+}

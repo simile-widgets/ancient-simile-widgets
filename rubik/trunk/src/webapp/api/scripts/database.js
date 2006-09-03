@@ -47,7 +47,7 @@ Rubik.Database = function() {
     
     var uriProperty = new Rubik.Database._Property("uri");
     uriProperty._uri = "http://simile.mit.edu/rubik/property#uri";
-    uriProperty._valueType = "text";
+    uriProperty._valueType = "url";
     uriProperty._label = "URI";
     uriProperty._pluralLabel = "URIs";
     uriProperty._reverseLabel = "URI of";
@@ -69,9 +69,9 @@ Rubik.Database.prototype.loadTypes = function(typeEntries, baseURI) {
     this._listeners.fire("onBeforeLoadingTypes", []);
     try {
         var lastChar = baseURI.substr(baseURI.length - 1)
-        if (baseURI == "#") {
+        if (lastChar == "#") {
             baseURI = baseURI.substr(0, baseURI.length - 1) + "/";
-        } else if (baseURI != "/" && baseURI != ":") {
+        } else if (lastChar != "/" && lastChar != ":") {
             baseURI += "/";
         }
     
@@ -106,8 +106,9 @@ Rubik.Database.prototype.loadTypes = function(typeEntries, baseURI) {
         }
         
         this._listeners.fire("onAfterLoadingTypes", []);
-    } finally {
+    } catch(e) {
         this._listeners.fire("onFailedLoadingTypes", []);
+        throw e;
     }
 };
 
@@ -115,9 +116,9 @@ Rubik.Database.prototype.loadProperties = function(propertyEntries, baseURI) {
     this._listeners.fire("onBeforeLoadingProperties", []);
     try {
         var lastChar = baseURI.substr(baseURI.length - 1)
-        if (baseURI == "#") {
+        if (lastChar == "#") {
             baseURI = baseURI.substr(0, baseURI.length - 1) + "/";
-        } else if (baseURI != "/" && baseURI != ":") {
+        } else if (lastChar != "/" && lastChar != ":") {
             baseURI += "/";
         }
     
@@ -145,20 +146,22 @@ Rubik.Database.prototype.loadProperties = function(propertyEntries, baseURI) {
             property._groupingLabel = ("groupingLabel" in propertyEntry) ? propertyEntry.groupingLabel : property._label;
             property._reverseGroupingLabel = ("reverseGroupingLabel" in propertyEntry) ? propertyEntry.reverseGroupingLabel : property._reverseLabel;
         }
+        this._propertyArray = null;
         
         this._listeners.fire("onAfterLoadingProperties", []);
-    } finally {
+    } catch(e) {
         this._listeners.fire("onFailedLoadingProperties", []);
+        throw e;
     }
 };
 
 Rubik.Database.prototype.loadItems = function(itemEntries, baseURI) {
     this._listeners.fire("onBeforeLoadingItems", []);
     try {
-        var lastChar = baseURI.substr(baseURI.length - 1)
-        if (baseURI == "#") {
+        var lastChar = baseURI.substr(baseURI.length - 1);
+        if (lastChar == "#") {
             baseURI = baseURI.substr(0, baseURI.length - 1) + "/";
-        } else if (baseURI != "/" && baseURI != ":") {
+        } else if (lastChar != "/" && lastChar != ":") {
             baseURI += "/";
         }
         
@@ -179,9 +182,12 @@ Rubik.Database.prototype.loadItems = function(itemEntries, baseURI) {
             }
         }
         
+        this._propertyArray = null;
+        
         this._listeners.fire("onAfterLoadingItems", []);
-    } finally {
+    } catch(e) {
         this._listeners.fire("onFailedLoadingItems", []);
+        throw e;
     }
 };
 

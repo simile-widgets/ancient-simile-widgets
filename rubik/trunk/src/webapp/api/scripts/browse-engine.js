@@ -9,9 +9,11 @@ Rubik.BrowseEngine = function(database, configuration) {
     this._facetEntries = [];
     this._supportSliding = false;
     
-    if (configuration != null) {
-        if ("facets" in configuration) {
-            var facetEntries = configuration.facets;
+    if ("BrowseEngine" in configuration) {
+        var myConfig = configuration["BrowseEngine"];
+        
+        if ("facets" in myConfig) {
+            var facetEntries = myConfig["facets"];
             for (var i = 0; i < facetEntries.length; i++) {
                 var entry = facetEntries[i];
                 var facetEntry;
@@ -29,7 +31,7 @@ Rubik.BrowseEngine = function(database, configuration) {
                 this._facetEntries.push(facetEntry);
             }
         }
-        if ("sliding" in configuration && configuration.sliding) {
+        if ("sliding" in myConfig && myConfig.sliding) {
             this._supportSliding = true;
         }
     }
@@ -254,7 +256,7 @@ Rubik.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
     var pluralValueLabel = typeLabels[1].length > 0 ? typeLabels[1].join(", ") : "options";
     var itemValues = (!r.getForward(-1) || this._database.getProperty(r.getProperty(-1)).getValueType() == "item");
     var facet = {
-        label:              facetLabel,
+        facetLabel:         facetLabel,
         property:           r.property,
         forward:            r.forward,
         count:              values.size(),

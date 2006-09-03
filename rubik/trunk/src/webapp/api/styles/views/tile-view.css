@@ -1,0 +1,7 @@
+table.rubik-tileView-body {
+}
+
+.rubik-tileView-body > tbody > tr > td:first-child {
+    text-align: right;
+    color:      #aaa
+}
