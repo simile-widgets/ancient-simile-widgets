@@ -36,20 +36,15 @@ Rubik.create = function(controlDiv, browseDiv, viewDiv, configuration) {
  */
 Rubik._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._database = new Rubik.Database();
-    this._engine = new Rubik.BrowsingEngine(this._database, configuration.engine);
-    this._ui = new Rubik.BrowsingUI(
-        this._database, 
-        this._engine, 
-        controlDiv,
-        browseDiv,
-        viewDiv,
-        configuration.ui
-    );
+    this._engine = new Rubik.BrowseEngine(this._database, configuration.engine);
+    this._browsePanel = new Rubik.BrowsePanel(this, browseDiv, configuration.browsePanel);
+    this._viewPanel = new Rubik.ViewPanel(this, viewDiv, configuration.viewPanel);
 };
 
 Rubik._Impl.prototype.getDatabase = function() { return this._database; };
-Rubik._Impl.prototype.getBrowsingEngine = function() { return this._engine; };
-Rubik._Impl.prototype.getBrowsignUI = function() { return this._ui; };
+Rubik._Impl.prototype.getBrowseEngine = function() { return this._engine; };
+Rubik._Impl.prototype.getBrowsePanel = function() { return this._browsePanel; };
+Rubik._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
 
 Rubik._Impl.prototype.loadJSON = function(url, fDone) {
     var rubik = this;
@@ -65,7 +60,6 @@ Rubik._Impl.prototype.loadJSON = function(url, fDone) {
             if (fDone != null) {
                 fDone();
             }
-            rubik._ui._reconstruct();
         } catch (e) {
             SimileAjax.Debug.exception(e);
         }

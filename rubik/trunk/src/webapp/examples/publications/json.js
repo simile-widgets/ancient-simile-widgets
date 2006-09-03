@@ -33,7 +33,7 @@
             reversePluralLabel:     "authors of",
             groupingLabel:          "their authors",
             reverseGroupingLabel:   "their work",
-            itemValues:             false
+            valueType:              "item"
         }
     },
     items: [

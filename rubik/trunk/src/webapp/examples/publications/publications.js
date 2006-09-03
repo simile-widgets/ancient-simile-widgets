@@ -1,23 +1,33 @@
 var rubik;
 function onLoad() {
+    var configuration = {
+        engine: {
+            facets: [
+                "venue",
+                "year",
+                "event",
+                "authors"
+            ]
+        },
+        browsePanel: {
+            properties: [
+                "venue",
+                "event",
+                "year",
+                "authors"
+            ]
+        }
+    };
+        
     rubik = Rubik.create(
         document.getElementById("control-panel"),
         document.getElementById("browse-panel"),
         document.getElementById("view-panel"),
-        {
-            engine: {
-                facets: [
-                    "venue",
-                    "year",
-                    "event",
-                    "authors"
-                ]
-            }
-        }
+        configuration
     );
     rubik.loadJSON("json.js",
         function() {
-            rubik.getBrowsingEngine().setRootCollection(
+            rubik.getBrowseEngine().setRootCollection(
                 rubik.getDatabase().getAllItems()
             );
         }

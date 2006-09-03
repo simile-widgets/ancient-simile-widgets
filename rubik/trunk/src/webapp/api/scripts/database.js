@@ -376,7 +376,7 @@ Rubik.Database.prototype.getObjects = function(s, p, set, filter) {
     return this._get(this._spo, s, p, set, filter);
 };
 
-Rubik.Database.prototype.countDistinctObjects = function(s, p, set, filter) {
+Rubik.Database.prototype.countDistinctObjects = function(s, p, filter) {
     return this._countDistinct(this._spo, s, p, filter);
 };
 
@@ -392,7 +392,7 @@ Rubik.Database.prototype.getSubjects = function(o, p, set, filter) {
     return this._get(this._ops, o, p, set, filter);
 };
 
-Rubik.Database.prototype.countDistinctSubjects = function(o, p, set, filter) {
+Rubik.Database.prototype.countDistinctSubjects = function(o, p, filter) {
     return this._countDistinct(this._ops, o, p, filter);
 };
 

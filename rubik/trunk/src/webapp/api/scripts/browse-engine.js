@@ -1,8 +1,8 @@
 /*==================================================
- *  Rubik.BrowsingEngine
+ *  Rubik.BrowseEngine
  *==================================================
  */
-Rubik.BrowsingEngine = function(database, configuration) {
+Rubik.BrowseEngine = function(database, configuration) {
     this._database = database;
     this._listeners = new SimileAjax.ListenerQueue();
     
@@ -38,15 +38,15 @@ Rubik.BrowsingEngine = function(database, configuration) {
     this._slides = [];
 };
 
-Rubik.BrowsingEngine.prototype.addListener = function(listener) {
+Rubik.BrowseEngine.prototype.addListener = function(listener) {
     this._listeners.add(listener);
 };
 
-Rubik.BrowsingEngine.prototype.removeListener = function(listener) {
+Rubik.BrowseEngine.prototype.removeListener = function(listener) {
     this._listeners.remove(listener);
 };
 
-Rubik.BrowsingEngine.prototype.getFocus = function() {
+Rubik.BrowseEngine.prototype.getFocus = function() {
     for (var i = 0; i < this._collections.length; i++) {
         var c = this._collections[i];
         if (c._focused) {
@@ -56,23 +56,23 @@ Rubik.BrowsingEngine.prototype.getFocus = function() {
     return -1;
 };
 
-Rubik.BrowsingEngine.prototype.getCollectionCount = function() {
+Rubik.BrowseEngine.prototype.getCollectionCount = function() {
     return this._collections.length;
 }
 
-Rubik.BrowsingEngine.prototype.getCurrentCollection = function() {
+Rubik.BrowseEngine.prototype.getCurrentCollection = function() {
     return this._collections[this.getFocus()];
 };
 
-Rubik.BrowsingEngine.prototype.getCollection = function(index) {
+Rubik.BrowseEngine.prototype.getCollection = function(index) {
     return this._collections[index];
 }
 
-Rubik.BrowsingEngine.prototype.getSlide = function(index) {
+Rubik.BrowseEngine.prototype.getSlide = function(index) {
     return this._slides[index];
 }
 
-Rubik.BrowsingEngine.prototype.getFacets = function() {
+Rubik.BrowseEngine.prototype.getFacets = function() {
     var facets = [];
     
     var focusIndex = this.getFocus();
@@ -86,7 +86,7 @@ Rubik.BrowsingEngine.prototype.getFacets = function() {
     return facets;
 };
 
-Rubik.BrowsingEngine.prototype.getGroups = function(property, forward) {
+Rubik.BrowseEngine.prototype.getGroups = function(property, forward) {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
     for (var i = 0; i < collection._restrictions.length; i++) {
@@ -95,16 +95,17 @@ Rubik.BrowsingEngine.prototype.getGroups = function(property, forward) {
             return this._getGroups(collection, restriction);
         }
     }
+    return [];
 };
 
-Rubik.BrowsingEngine.prototype.setRootCollection = function(itemSet) {
+Rubik.BrowseEngine.prototype.setRootCollection = function(itemSet) {
     this._collections = [];
     this._slides = [];
     this._addCollection(itemSet)._focused = true;
     this._listeners.fire("onRootCollectionSet", []);
 };
 
-Rubik.BrowsingEngine.prototype.setValueRestriction = function(property, forward, level, value, selected) {
+Rubik.BrowseEngine.prototype.setValueRestriction = function(property, forward, level, value, selected) {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
     for (var i = 0; i < collection._restrictions.length; i++) {
@@ -122,14 +123,14 @@ Rubik.BrowsingEngine.prototype.setValueRestriction = function(property, forward,
     this._listeners.fire("onRestrict", []);
 };
 
-Rubik.BrowsingEngine.prototype.focus = function(index) {
+Rubik.BrowseEngine.prototype.focus = function(index) {
     for (var i = 0; i < this._collections.length; i++) {
         var c = this._collections[i];
         c._focused = (i == index);
     }
 };
 
-Rubik.BrowsingEngine.prototype.slide = function(propertyID, forward) {
+Rubik.BrowseEngine.prototype.slide = function(propertyID, forward) {
     var focusIndex = this.getFocus();
     if (focusIndex < this._collections.length - 1) {
         this._collections = this._collections.slice(0, focusIndex + 1);
@@ -155,7 +156,7 @@ Rubik.BrowsingEngine.prototype.slide = function(propertyID, forward) {
     this._listeners.fire("onSlide", []);
 }
 
-Rubik.BrowsingEngine.prototype.clearAllCurrentFilters = function() {
+Rubik.BrowseEngine.prototype.clearAllCurrentFilters = function() {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
     for (var i = 0; i < collection._restrictions.length; i++) {
@@ -169,7 +170,7 @@ Rubik.BrowsingEngine.prototype.clearAllCurrentFilters = function() {
     this._listeners.fire("onUnrestrictAll", []);
 }
 
-Rubik.BrowsingEngine.prototype.truncate = function(index) {
+Rubik.BrowseEngine.prototype.truncate = function(index) {
     var focusIndex = this.getFocus();
     if (index > 0) {
         this._collections = this._collections.slice(0, index);
@@ -182,7 +183,7 @@ Rubik.BrowsingEngine.prototype.truncate = function(index) {
     this._listeners.fire("onTruncate", []);
 }
 
-Rubik.BrowsingEngine.prototype.group = function(property, forward, level, groupingProperty, groupingForward) {
+Rubik.BrowseEngine.prototype.group = function(property, forward, level, groupingProperty, groupingForward) {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
     for (var i = 0; i < collection._restrictions.length; i++) {
@@ -198,7 +199,7 @@ Rubik.BrowsingEngine.prototype.group = function(property, forward, level, groupi
     }
 };
 
-Rubik.BrowsingEngine.prototype.ungroup = function(property, forward, level) {
+Rubik.BrowseEngine.prototype.ungroup = function(property, forward, level) {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
     for (var i = 0; i < collection._restrictions.length; i++) {
@@ -214,18 +215,18 @@ Rubik.BrowsingEngine.prototype.ungroup = function(property, forward, level) {
     }
 };
 
-Rubik.BrowsingEngine.prototype._addCollection = function(itemSet) {
-    var c = new Rubik.BrowsingEngine._Collection(itemSet);
+Rubik.BrowseEngine.prototype._addCollection = function(itemSet) {
+    var c = new Rubik.BrowseEngine._Collection(itemSet);
     this._initializeRestrictions(c);
     this._collections.push(c);
     return c;
 };
 
-Rubik.BrowsingEngine.prototype._initializeRestrictions = function(collection) {
+Rubik.BrowseEngine.prototype._initializeRestrictions = function(collection) {
     for (var i = 0; i < this._facetEntries.length; i++) {
         var facetEntry = this._facetEntries[i];
         collection._restrictions.push(
-            new Rubik.BrowsingEngine._Restriction(
+            new Rubik.BrowseEngine._Restriction(
                 facetEntry.property, 
                 facetEntry.forward
             )
@@ -233,7 +234,7 @@ Rubik.BrowsingEngine.prototype._initializeRestrictions = function(collection) {
     }
 };
 
-Rubik.BrowsingEngine.prototype._computeFacet = function(collection, r, facets) {
+Rubik.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
     var propertyData = this._database.getProperty(r.property);
     var currentSet = this._restrict(collection._originalSet, collection._restrictions, r);
     
@@ -249,6 +250,9 @@ Rubik.BrowsingEngine.prototype._computeFacet = function(collection, r, facets) {
     
     var facetLabel = r.forward ? propertyData.getPluralLabel() : propertyData.getReversePluralLabel();
     var typeLabels = this._database.getTypeLabels(values);
+    var valueLabel = typeLabels[0].length > 0 ? typeLabels[0].join(", ") : "option";
+    var pluralValueLabel = typeLabels[1].length > 0 ? typeLabels[1].join(", ") : "options";
+    var itemValues = (!r.getForward(-1) || this._database.getProperty(r.getProperty(-1)).getValueType() == "item");
     var facet = {
         label:              facetLabel,
         property:           r.property,
@@ -256,9 +260,10 @@ Rubik.BrowsingEngine.prototype._computeFacet = function(collection, r, facets) {
         count:              values.size(),
         selectedCount:      0,
         filteredCount:      slideSet.size(),
-        valueLabel:         typeLabels[0].join(", "),
-        pluralValueLabel:   typeLabels[1].join(", "),
-        slidable:           this._supportSliding && (!r.getForward(-1) || this._database.getProperty(r.getProperty(-1)).getValueType() == "item"),
+        valueLabel:         valueLabel,
+        pluralValueLabel:   pluralValueLabel,
+        slidable:           this._supportSliding && itemValues,
+        groupable:          itemValues,
         grouped:            r.getLevelCount() > 0,
         values:             []
     };
@@ -346,7 +351,7 @@ Rubik.BrowsingEngine.prototype._computeFacet = function(collection, r, facets) {
     facets.push(facet);
 };
 
-Rubik.BrowsingEngine.prototype._restrict = function(itemSet, restrictions, except) {
+Rubik.BrowseEngine.prototype._restrict = function(itemSet, restrictions, except) {
     var database = this._database;
     
     /*
@@ -388,13 +393,13 @@ Rubik.BrowsingEngine.prototype._restrict = function(itemSet, restrictions, excep
     return itemSet;
 };
 
-Rubik.BrowsingEngine.prototype._slideSet = function(set, property, forward) {
+Rubik.BrowseEngine.prototype._slideSet = function(set, property, forward) {
     return forward ?
         this._database.getObjectsUnion(set, property, null, null) :
         this._database.getSubjectsUnion(set, property, null, null);
 }
 
-Rubik.BrowsingEngine.prototype._slideCollection = function(collection, property, forward) {
+Rubik.BrowseEngine.prototype._slideCollection = function(collection, property, forward) {
 /*
     var r = null;
     for (var i = 0; i < collection._restrictions.length; i++) {
@@ -409,7 +414,7 @@ Rubik.BrowsingEngine.prototype._slideCollection = function(collection, property,
     return this._slideSet(collection._restrictedSet, property, forward);
 };
 
-Rubik.BrowsingEngine.prototype._propagateChanges = function(index) {
+Rubik.BrowseEngine.prototype._propagateChanges = function(index) {
     var collection = this._collections[index];
     
     var prevCollection = collection;
@@ -425,7 +430,7 @@ Rubik.BrowsingEngine.prototype._propagateChanges = function(index) {
     }
 }
 
-Rubik.BrowsingEngine.prototype._getGroups = function(collection, restriction) {
+Rubik.BrowseEngine.prototype._getGroups = function(collection, restriction) {
     var results = [];
     
     var groupings = restriction.groupings;
@@ -469,20 +474,20 @@ Rubik.BrowsingEngine.prototype._getGroups = function(collection, restriction) {
     return results;
 };
 
-Rubik.BrowsingEngine.prototype._group = function(collection, restriction, level, groupingProperty, groupingForward) {
+Rubik.BrowseEngine.prototype._group = function(collection, restriction, level, groupingProperty, groupingForward) {
     if (level < restriction.groupings.length) {
         restriction.groupings = restriction.groupings.slice(0, level);
     }
     restriction.groupings.push({ property: groupingProperty, forward: groupingForward });
 };
 
-Rubik.BrowsingEngine.prototype._ungroup = function(collection, restriction, level) {
+Rubik.BrowseEngine.prototype._ungroup = function(collection, restriction, level) {
     if (level < restriction.groupings.length) {
         restriction.groupings = restriction.groupings.slice(0, level);
     }
 };
 
-Rubik.BrowsingEngine.prototype._getGroupingOptions = function(set) {
+Rubik.BrowseEngine.prototype._getGroupingOptions = function(set) {
     var options = [];
 /*    for (p in this._properties) {
         var data = this._properties[p];
@@ -515,7 +520,7 @@ Rubik.BrowsingEngine.prototype._getGroupingOptions = function(set) {
  *  Restriction
  *==================================================
  */
-Rubik.BrowsingEngine._Restriction = function(property, forward) {
+Rubik.BrowseEngine._Restriction = function(property, forward) {
     this.property = property;
     this.forward = forward;
     this.valueSet = null;
@@ -523,15 +528,19 @@ Rubik.BrowsingEngine._Restriction = function(property, forward) {
     this.selectedCount = 0;
 }
 
-Rubik.BrowsingEngine._Restriction.prototype.isDifferentFrom = function(r) {
+Rubik.BrowseEngine._Restriction.prototype.isDifferentFrom = function(r) {
     return r == null || r.property != this.property || r.forward != this.forward;
 };
 
-Rubik.BrowsingEngine._Restriction.prototype.hasSelection = function() {
+Rubik.BrowseEngine._Restriction.prototype.isSameAs = function(r) {
+    return r != null && r.property == this.property && r.forward == this.forward;
+};
+
+Rubik.BrowseEngine._Restriction.prototype.hasSelection = function() {
     return this.selectedCount > 0;
 }
 
-Rubik.BrowsingEngine._Restriction.prototype.clearSelection = function() {
+Rubik.BrowseEngine._Restriction.prototype.clearSelection = function() {
     this.valueSet = null;
     for (var i = 0; i < this.groupings.length; i++) {
         this.groupings[i].valueSet = null;
@@ -539,7 +548,7 @@ Rubik.BrowsingEngine._Restriction.prototype.clearSelection = function() {
     this.selectedCount = 0;
 }
 
-Rubik.BrowsingEngine._Restriction.prototype.setSelection = function(level, value, selected) {
+Rubik.BrowseEngine._Restriction.prototype.setSelection = function(level, value, selected) {
     if (selected) {
         if (level == -1) {
             if (!this.valueSet) {
@@ -575,19 +584,19 @@ Rubik.BrowsingEngine._Restriction.prototype.setSelection = function(level, value
     }
 }
 
-Rubik.BrowsingEngine._Restriction.prototype.getValueSet = function(level) {
+Rubik.BrowseEngine._Restriction.prototype.getValueSet = function(level) {
     return level < 0 ? this.valueSet : this.groupings[level].valueSet;
 }
 
-Rubik.BrowsingEngine._Restriction.prototype.getProperty = function(level) {
+Rubik.BrowseEngine._Restriction.prototype.getProperty = function(level) {
     return level < 0 ? this.property : this.groupings[level].property;
 }
 
-Rubik.BrowsingEngine._Restriction.prototype.getForward = function(level) {
+Rubik.BrowseEngine._Restriction.prototype.getForward = function(level) {
     return level < 0 ? this.forward : this.groupings[level].forward;
 }
 
-Rubik.BrowsingEngine._Restriction.prototype.getLevelCount = function() {
+Rubik.BrowseEngine._Restriction.prototype.getLevelCount = function() {
     return this.groupings.length;
 }
 
@@ -595,34 +604,34 @@ Rubik.BrowsingEngine._Restriction.prototype.getLevelCount = function() {
  *  Collection
  *==================================================
  */
-Rubik.BrowsingEngine._Collection = function(itemSet) {
+Rubik.BrowseEngine._Collection = function(itemSet) {
     this._originalSet = itemSet;
     this._restrictedSet = itemSet;
     this._restrictions = [];
     this._focused = false;
 }
 
-Rubik.BrowsingEngine._Collection.prototype.size = function() {
+Rubik.BrowseEngine._Collection.prototype.size = function() {
     return this._restrictedSet.size();
 }
 
-Rubik.BrowsingEngine._Collection.prototype.originalSize = function() {
+Rubik.BrowseEngine._Collection.prototype.originalSize = function() {
     return this._originalSet.size();
 }
 
-Rubik.BrowsingEngine._Collection.prototype.getCurrentSet = function() {
+Rubik.BrowseEngine._Collection.prototype.getCurrentSet = function() {
     return this._restrictedSet;
 }
 
-Rubik.BrowsingEngine._Collection.prototype.getOriginalSet = function() {
+Rubik.BrowseEngine._Collection.prototype.getOriginalSet = function() {
     return this._originalSet;
 }
 
-Rubik.BrowsingEngine._Collection.prototype.hasFocus = function() {
+Rubik.BrowseEngine._Collection.prototype.hasFocus = function() {
     return this._focused;
 }
 
-Rubik.BrowsingEngine._Collection.prototype.getRestrictedSet = function() {
+Rubik.BrowseEngine._Collection.prototype.getRestrictedSet = function() {
     return this._restrictedSet;
 }
 
