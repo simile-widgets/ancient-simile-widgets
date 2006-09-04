@@ -1,4 +1,5 @@
 table.rubik-tileView-body {
+    width: 100%;
 }
 
 .rubik-tileView-body > tbody > tr > td:first-child {

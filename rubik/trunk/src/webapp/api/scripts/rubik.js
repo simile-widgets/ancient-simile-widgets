@@ -24,8 +24,6 @@ function performLongTask(f, message) {
     }, 0);
 }
 
-var Rubik = new Object();
-
 Rubik.create = function(controlDiv, browseDiv, viewDiv, configuration) {
     return new Rubik._Impl(controlDiv, browseDiv, viewDiv, configuration);
 };
@@ -179,6 +177,36 @@ Rubik._Impl.prototype.makeValueSpan = function(label, valueType, layer) {
 };
 
 Rubik._Impl.prototype.showItemView = function(itemID, elmt) {
+};
+
+Rubik._Impl.prototype.serializeItem = function(itemID, format) {
+    if (format == "rdf/xml") {
+        var s = "";
+        var uri = this._database.getLiteralProperty(itemID, "uri");
+        s += "<rdf:Description rdf:about='" + uri + "'>\n"
+        
+        var allProperties = this._database.getAllProperties();
+        for (var i = 0; i < allProperties.length; i++) {
+            var propertyID = allProperties[i];
+            var property = this._database.getProperty(propertyID);
+            var propertyURI = property.getURI();
+            var values = this._database.getObjects(itemID, propertyID);
+            
+            if (property.getValueType() == "item") {
+                values.visit(function(value) {
+                    s += "<" + propertyURI + " rdf:resource='" + value + "' />\n";
+                });
+            } else {
+                values.visit(function(value) {
+                    s += "<" + propertyURI + ">" + value + "</propertyURI>\n";
+                });
+            }
+        }
+        
+        s += "</rdf:Description>";
+        return s;
+    }
+    return "";
 };
 
 Rubik._Impl.prototype._loadJSON = function(o, url) {

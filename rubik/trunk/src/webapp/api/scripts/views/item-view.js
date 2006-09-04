@@ -12,14 +12,22 @@ Rubik.ItemView.prototype._constructUI = function(itemID, div, rubik, configurati
     
     var database = rubik.getDatabase();
     var label = database.getLiteralProperty(itemID, "label");
+    
+    var rdfCopyButton = SimileAjax.Graphics.createStructuredDataCopyButton(
+        Rubik.urlPrefix + "images/rdf-copy-button.png", 16, 16, function() {
+            return rubik.serializeItem(itemID, "rdf/xml");
+        }
+    );
+    
     var template = {
         elmt:       div,
         className:  "rubik-item-view",
         children: [
+            { elmt: rdfCopyButton },
             {   tag:        "div",
                 className:  "rubik-item-view-title",
                 title:      label,
-                children:   [ label ]
+                children:   [ label, { elmt: rdfCopyButton } ]
             },
             {   tag:        "div",
                 className:  "rubik-item-view-body",
