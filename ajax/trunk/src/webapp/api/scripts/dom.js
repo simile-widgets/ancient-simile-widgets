@@ -153,7 +153,10 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
                 elmt.title = value;
             } else if (attribute == "type" && elmt.tagName == "input") {
                 // do nothing
-                
+            } else if (attribute == "style") {
+                for (n in value) {
+                    elmt.style[n] = value[n];
+                }
             } else if (attribute == "children") {
                 for (var i = 0; i < value.length; i++) {
                     SimileAjax.DOM._createDOMFromTemplate(doc, value[i], result, elmt);

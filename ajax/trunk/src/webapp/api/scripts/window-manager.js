@@ -157,7 +157,7 @@ SimileAjax.WindowManager._onBodyMouseMove = function(elmt, evt, target) {
             var diffX = evt.clientX - lastCoords.x;
             var diffY = evt.clientY - lastCoords.y;
             
-            lastCoords = { x: evt.clientX, y: evt.clientY };
+            SimileAjax.WindowManager._lastCoords = { x: evt.clientX, y: evt.clientY };
             
             SimileAjax.WindowManager._draggedElementCallback.onDragBy(diffX, diffY);
         } catch (e) {

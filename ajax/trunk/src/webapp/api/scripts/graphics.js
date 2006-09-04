@@ -50,11 +50,11 @@ SimileAjax.Graphics._Animation = function(f, from, to, duration) {
 
 SimileAjax.Graphics._Animation.prototype.run = function() {
     var a = this;
-    window.setTimeout(function() { a.step(); }, 100);
+    window.setTimeout(function() { a.step(); }, 50);
 };
 
 SimileAjax.Graphics._Animation.prototype.step = function() {
-    this.timePassed += 100;
+    this.timePassed += 50;
     
     var timePassedFraction = this.timePassed / this.duration;
     var parameterFraction = -Math.cos(timePassedFraction * Math.PI) / 2 + 0.5;
@@ -68,5 +68,7 @@ SimileAjax.Graphics._Animation.prototype.step = function() {
     
     if (this.timePassed < this.duration) {
         this.run();
+    } else {
+        this.f(this.to, 0);
     }
 };
