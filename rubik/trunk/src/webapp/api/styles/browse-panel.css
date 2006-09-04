@@ -9,6 +9,11 @@ div.rubik-browsePanel {
  * Facet box
  *==================================================
  */
+div.rubik-facet-frame {
+    overflow:   hidden;
+    opacity:    0;
+}
+
 div.rubik-facet {
 	margin:     1em;
 	padding:    1px;
@@ -16,7 +21,6 @@ div.rubik-facet {
 
 div.rubik-facet-header {
 	padding:        2px;
-	border-bottom:  1px solid #ccc;
 }
 span.rubik-facet-header-title {
 	font-weight:    bold;
@@ -27,20 +31,19 @@ span.rubik-facet-header-detail {
 }
     
 div.rubik-facet-body {
-	padding:        0.3em;
 	height:         10em;
 	overflow:       auto;
-}
-div.rubik-facet-body-long {
-	padding:        0.3em;
-	height:         20em;
-	overflow:       auto;
+    border:         1px solid #ddd;
 }
 
-div.rubik-facet-value-children {
-	padding-left: 16px;
+div.rubik-facet-resizer {
+	text-align:     center;
+    cursor:         n-resize;
+    background:     url(../images/down-arrow.png) top center no-repeat;
+    height:         10px;
 }
 
 div.rubik-facet-footer {
 	text-align: center;
+    padding:    2px;
 }

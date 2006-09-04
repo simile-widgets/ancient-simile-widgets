@@ -14,6 +14,32 @@ Rubik.ListFacet = function(rubik, facet, div, configuration) {
     this._constructBody(facet);
 };
 
+Rubik.ListFacet.prototype.dispose = function() {
+    var div = this._dom.elmt;
+    var parentNode = div.parentNode;
+    var height = div.offsetHeight;
+    div.style.overflow = "hidden";
+    
+    var f = function(current, step) {
+        if (step == 0) {
+            parentNode.removeChild(div);
+        } else {
+            div.style.height = Math.floor(height * current / 100) + "px";
+            div.style.opacity = Math.round(current / 10) / 10;
+        }
+    };
+    SimileAjax.Graphics.createAnimation(f, 100, 0, 500).run();
+    
+    this._rubik = null;
+    this._configuration = null;
+    this._dom = null;
+};
+
+Rubik.ListFacet.prototype.update = function(facet) {
+    this._dom.valuesDiv.innerHTML = "";
+    this._constructBody(facet);
+};
+
 Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
     var count = facet.filteredCount;
     var valuesText = count + " " + (count > 1 ? facet.pluralValueLabel : facet.valueLabel);
@@ -30,32 +56,38 @@ Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
     
     var template = {
         elmt:       div,
-        className:  "rubik-facet",
+        className:  "rubik-facet-frame",
+        style:      { height: "1px" },
         children: [
             {   tag:        "div",
-                className:  "rubik-facet-header",
-                children: [ 
-                    {   tag:        "span",
-                        className:  "rubik-facet-header-title",
-                        children:   [ facet.facetLabel ]
-                    },
-                    {   tag:        "span",
-                        className:  "rubik-facet-header-details",
-                        children: [
-                            facet.slidable ?
-                                {   elmt:  rubik.makeActionLink(valuesText, onSlideLinkClick),
-                                    title: tooltip,
-                                    field: "slideLink"
-                                } :
-                                valuesText,
-                            facet.filteredCount < facet.count ? " filtered" : " total"
+                className:  "rubik-facet",
+                children: [
+                    {   tag:        "div",
+                        className:  "rubik-facet-header",
+                        children: [ 
+                            {   tag:        "span",
+                                className:  "rubik-facet-header-title",
+                                children:   [ facet.facetLabel ]
+                            },
+                            {   tag:        "span",
+                                className:  "rubik-facet-header-details",
+                                children: [
+                                    facet.slidable ?
+                                        {   elmt:  rubik.makeActionLink(valuesText, onSlideLinkClick),
+                                            title: tooltip,
+                                            field: "slideLink"
+                                        } :
+                                        valuesText,
+                                    facet.filteredCount < facet.count ? " filtered" : " total"
+                                ]
+                            }
                         ]
+                    },
+                    {   tag:        "div",
+                        className:  "rubik-facet-body",
+                        field:      "valuesDiv"
                     }
                 ]
-            },
-            {   tag:        "div",
-                className:  facet.grouped ? "facet-body-long" : "rubik-facet-body",
-                field:      "valuesDiv"
             }
         ]
     };
@@ -99,10 +131,48 @@ Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
                 field: "expandLink"
             });
         }
-        template.children.push(footerTemplate);
+        template.children[0].children.push(footerTemplate);
     }
     
+    template.children[0].children.push({
+        tag: "div",
+        className: "rubik-facet-resizer",
+        field: "resizerDiv"
+    });
+    
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    
+    var listFacet = this;
+    SimileAjax.WindowManager.registerForDragging(
+        this._dom.resizerDiv,
+        {   onDragStart: function() {
+                this._height = listFacet._dom.valuesDiv.offsetHeight;
+            },
+            onDragBy: function(diffX, diffY) {
+                this._height += diffY;
+                listFacet._dom.valuesDiv.style.height = Math.max(50, this._height) + "px";
+            },
+            onDragEnd: function() {
+            }
+        }
+    );
+    
+    /*
+     *  Animate opening up facet
+     */
+    var facetDiv = div.firstChild;
+    var f = function(current, step) {
+        if (step == 0) {
+            div.style.overflow = "visible";
+            div.style.opacity = 1;
+            div.style.height = "";
+        } else {
+            var height = facetDiv.offsetHeight;
+            div.style.height = Math.floor(height * current / 100) + "px";
+            div.style.opacity = Math.round(current / 10) / 10;
+        }
+    };
+    SimileAjax.Graphics.createAnimation(f, 0, 100, 300).run();
 };
 
 Rubik.ListFacet.prototype._constructBody = function(facet) {

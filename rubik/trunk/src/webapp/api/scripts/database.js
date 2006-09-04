@@ -421,6 +421,17 @@ Rubik.Database.prototype.getLiteralProperty = function(s, p) {
     return null;
 };
 
+Rubik.Database.prototype.getInverseProperty = function(o, p) {
+    var hash = this._ops[o];
+    if (hash) {
+        var array = hash[p];
+        if (array) {
+            return array[0];
+        }
+    }
+    return null;
+};
+
 Rubik.Database.prototype.getTypeLabels = function(set) {
     var typeIDSet = this.getObjectsUnion(set, "type", null, null);
     var labels = [];

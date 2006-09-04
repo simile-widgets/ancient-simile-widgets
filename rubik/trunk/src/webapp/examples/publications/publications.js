@@ -17,7 +17,13 @@ function onLoad() {
                 "venue",
                 "event",
                 "year"
-            ]
+            ],
+            orders: [
+                "type",
+                { property: "year", ascending: false },
+                "label"
+            ],
+            groupLevels: 2
         }
     };
         

@@ -28,6 +28,7 @@ if (typeof Rubik == "undefined") {
             "facets/list-facet.js",
             
             "view-panel.js",
+            "views/ordered-view-frame.js",
 //            "views/tabular-view.js",
             "views/tile-view.js",
             "views/item-view.js"
