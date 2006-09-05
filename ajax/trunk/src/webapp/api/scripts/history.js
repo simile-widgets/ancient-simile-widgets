@@ -115,7 +115,7 @@ SimileAjax.History._handleIFrameOnLoad = function() {
     var q = SimileAjax.History._iframe.contentWindow.location.search;
     var c = (q.length == 0) ? 0 : Math.max(0, parseInt(q.substr(1)));
     
-    if (c < this._currentIndex) { // need to undo
+    if (c < SimileAjax.History._currentIndex) { // need to undo
         SimileAjax.History._fire("onBeforeUndoSeveral", []);
         
         while (SimileAjax.History._currentIndex > c && 
@@ -157,10 +157,16 @@ SimileAjax.History._handleIFrameOnLoad = function() {
         
         SimileAjax.History._fire("onAfterRedoSeveral", []);
     } else {
-        if (SimileAjax.History._actions.length > 0) {
-            SimileAjax.History._iframe.contentDocument.title = 
-                SimileAjax.History.formatHistoryEntryTitle(
-                    SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex].label);
+        var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex - 1;
+        if (index >= 0 && index < SimileAjax.History._actions.length) {
+            var actionLabel = SimileAjax.History._actions[index].label;
+            
+            SimileAjax.History._iframe.contentWindow.document.title = 
+                SimileAjax.History.formatHistoryEntryTitle(actionLabel);
+                    
+            document.title = SimileAjax.History._plainDocumentTitle + " [" + actionLabel + "]";
+        } else {
+            document.title = SimileAjax.History._plainDocumentTitle;
         }
         return;
     }
