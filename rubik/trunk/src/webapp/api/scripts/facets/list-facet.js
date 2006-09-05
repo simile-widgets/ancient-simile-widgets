@@ -11,6 +11,9 @@ Rubik.ListFacet = function(rubik, facet, div, configuration) {
     this._forward = facet.forward;
     this._facetLabel = facet.facetLabel;
     
+    this._dom = null;
+    this._groupingDom = null;
+    
     this._constructFrame(div, facet);
     this._constructBody(facet);
 };
@@ -31,6 +34,10 @@ Rubik.ListFacet.prototype.dispose = function() {
     };
     SimileAjax.Graphics.createAnimation(f, 100, 0, 500).run();
     
+    if (this._groupingDom != null) {
+        this._groupingDom.elmt.parentNode.removeChild(this._groupingDom.elmt);
+        this._groupingDom = null;
+    }
     this._rubik = null;
     this._configuration = null;
     this._dom = null;
@@ -42,18 +49,8 @@ Rubik.ListFacet.prototype.update = function(facet) {
 };
 
 Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
-    var count = facet.filteredCount;
-    var valuesText = count + " " + (count > 1 ? facet.pluralValueLabel : facet.valueLabel);
-    var tooltip = (count > 1 ? "Focus on these " : "Focus on this ") + valuesText;
-    
     var rubik = this._rubik;
     var listFacet = this;
-    
-    var onSlideLinkClick = function(elmt, evt, target) {
-        listFacet._performSliding();
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
-    };
     
     var template = {
         elmt:       div,
@@ -62,25 +59,29 @@ Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
         children: [
             {   tag:        "div",
                 className:  "rubik-facet",
+                field:      "innerFacetDiv",
                 children: [
                     {   tag:        "div",
                         className:  "rubik-facet-header",
                         children: [ 
+                            {   tag:        "div",
+                                className:  "rubik-facet-header-filterControl",
+                                field:      "clearSelectionsDiv",
+                                title:      "Clear these selections",
+                                children:   [
+                                    "",
+                                    {   elmt: SimileAjax.Graphics.createTranslucentImage(
+                                            document, Rubik.urlPrefix + "images/black-check-no-border.png")
+                                    }
+                                ]
+                            },
                             {   tag:        "span",
                                 className:  "rubik-facet-header-title",
                                 children:   [ facet.facetLabel ]
                             },
                             {   tag:        "span",
                                 className:  "rubik-facet-header-details",
-                                children: [
-                                    facet.slidable ?
-                                        {   elmt:  rubik.makeActionLink(valuesText, onSlideLinkClick),
-                                            title: tooltip,
-                                            field: "slideLink"
-                                        } :
-                                        valuesText,
-                                    facet.filteredCount < facet.count ? " filtered" : " total"
-                                ]
+                                children:   []
                             }
                         ]
                     },
@@ -143,7 +144,13 @@ Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
     
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     
-    var listFacet = this;
+    var onClearSelectionsClick = function(elmt, evt, target) {
+        listFacet._clearSelections();
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    };
+    SimileAjax.WindowManager.registerEvent(this._dom.clearSelectionsDiv, "click", onClearSelectionsClick);
+        
     SimileAjax.WindowManager.registerForDragging(
         this._dom.resizerDiv,
         {   onDragStart: function() {
@@ -178,20 +185,34 @@ Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
 
 Rubik.ListFacet.prototype._constructBody = function(facet) {
     var listFacet = this;
+    var createImage = function(url) {
+        return SimileAjax.Graphics.createTranslucentImage(document, Rubik.urlPrefix + url);
+    };
+    
     var constructValue = function(value, containerDiv, level) {
+        var classes = [ "rubik-facet-value" ];
+        if (value.selected) {
+            classes.push("rubik-facet-value-selected");
+        }
+        
         var expanded = true;
         var valueTemplate = {
             tag:        "div",
-            className:  "rubik-facet-value" + (facet.filteredCount < facet.count && value.filtered ? " facet-value-filtered" : ""),
+            className:  classes.join(" "),
             title:      value.label,
             children: [
                 {   tag:        "div",
                     className:  "rubik-facet-value-count",
                     children:   [ value.count ]
                 },
-                {   tag:        "input",
-                    type:       "checkbox",
-                    field:      "checkbox"
+                {   elmt:       createImage("images/gray-check-no-border.png"),
+                    className:  "rubik-facet-grayCheck"
+                },
+                {   elmt:       createImage("images/no-check-no-border.png"),
+                    className:  "rubik-facet-noCheck"
+                },
+                {   elmt:       createImage("images/black-check-no-border.png"),
+                    className:  "rubik-facet-blackCheck"
                 }
             ]
         };
@@ -200,8 +221,7 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
                 tag:        "span",
                 className:  "rubik-facet-value-control",
                 children: [
-                    {   tag:    "img",
-                        src:    expanded ? "images/minus.gif" : "images/plus.gif",
+                    {   elmt:   createImage(expanded ? "images/minus.png" : "images/plush.gif"),
                         title:  "Expand to see values in this group",
                         field:  "expandImg"
                     }
@@ -212,16 +232,16 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
         
         var valueDom = SimileAjax.DOM.createDOMFromTemplate(document, valueTemplate);
         valueDom.value = value.value;
+        valueDom.selected = value.selected;
         valueDom.level = level;
         containerDiv.appendChild(valueDom.elmt);
         
         var onValueCheckboxClick = function(elmt, evt, target) {
-            listFacet._performFiltering(valueDom);
+            listFacet._filter(valueDom);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         };
-        valueDom.checkbox.checked = value.selected;
-        SimileAjax.WindowManager.registerEvent(valueDom.checkbox, "click", onValueCheckboxClick);
+        SimileAjax.WindowManager.registerEvent(valueDom.elmt, "click", onValueCheckboxClick);
         
         if ("expandImg" in valueDom) {
             var onExpandImgClick = function(elmt, evt, target) {
@@ -248,15 +268,22 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
         }
     };
     constructValues(facet.values, this._dom.valuesDiv, -1);
+    
+    if (facet.selectedCount > 0) {
+        this._dom.innerFacetDiv.className = "rubik-facet rubik-facet-hasSelection";
+    } else {
+        this._dom.innerFacetDiv.className = "rubik-facet";
+    }
+    this._dom.clearSelectionsDiv.firstChild.nodeValue = facet.selectedCount;
 };
 
-Rubik.ListFacet.prototype._performFiltering = function(valueDom) {
+Rubik.ListFacet.prototype._filter = function(valueDom) {
     var facetLabel = this._facetLabel;
     var property = this._property;
     var forward = this._forward;
     var level = valueDom.level;
     var value = valueDom.value;
-    var checked = valueDom.checkbox.checked;
+    var checked = !valueDom.selected;
     var browseEngine = this._rubik.getBrowseEngine();
     
     SimileAjax.History.addAction({
@@ -275,7 +302,24 @@ Rubik.ListFacet.prototype._performFiltering = function(valueDom) {
     });
 };
 
-Rubik.ListFacet.prototype._performSliding = function() {
+Rubik.ListFacet.prototype._slide = function() {
+};
+
+Rubik.ListFacet.prototype._clearSelections = function() {
+    var state = {};
+    var property = this._property;
+    var forward = this._forward;
+    var browseEngine = this._rubik.getBrowseEngine();
+    SimileAjax.History.addAction({
+        perform: function() {
+            state.restrictions = browseEngine.clearFacetRestrictions(property, forward);
+        },
+        undo: function() {
+            browseEngine.applyFacetRestrictions(property, forward, state.restrictions);
+        },
+        label: "clear selections",
+        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+    });
 };
 
 Rubik.ListFacet.prototype._performGrouping = function(elmt) {

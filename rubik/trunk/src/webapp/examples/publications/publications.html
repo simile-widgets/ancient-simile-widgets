@@ -46,27 +46,27 @@
             var configuration = {
                 BrowseEngine: {
                     facets: [
-                        "type",
+                        "format",
                         "venue",
                         "year",
                         "event",
-                        "authors"
+                        "author"
                     ]
                 },
                 TileView: {
                     properties: [
                         "authors",
-                        "type",
+                        "format",
                         "venue",
                         "event",
                         "year"
                     ],
                     orders: [
-                        "type",
+                        "format",
                         { property: "year", ascending: false },
                         "label"
                     ],
-                    groupLevels: 2
+                    groupLevels: 1
                 }
             };
                 
@@ -76,10 +76,11 @@
                 document.getElementById("view-panel"),
                 configuration
             );
-            rubik.loadJSON("publications.js",
+            rubik.loadJSON(
+                [ "schema.js", "publications.js", "authors.js" ],
                 function() {
                     rubik.getBrowseEngine().setRootCollection(
-                        rubik.getDatabase().getAllItems()
+                        rubik.getDatabase().getSubjects("Publication", "type")
                     );
                 }
             );

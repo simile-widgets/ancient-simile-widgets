@@ -10,6 +10,7 @@ div.rubik-browsePanel {
  *==================================================
  */
 div.rubik-facet-frame {
+    position:   relative;
     overflow:   hidden;
     opacity:    0;
 }
@@ -22,6 +23,17 @@ div.rubik-facet {
 div.rubik-facet-header {
 	padding:        2px;
 }
+div.rubik-facet-header-filterControl {
+    float:          right;
+    width:          2em;
+    display:        none;
+	background:     #FFFFE0;
+    cursor:         pointer;
+}
+.rubik-facet-hasSelection div.rubik-facet-header-filterControl {
+    display:        block;
+}
+
 span.rubik-facet-header-title {
 	font-weight:    bold;
 }

@@ -3,22 +3,50 @@
  *==================================================
  */
 div.rubik-facet-value {
-    clear:          both;
-    white-space:    pre;
-    overflow:       hidden;
     cursor:         pointer;
+    position:       relative;
+    margin-left:    2em;
+    padding:        2px 0px;
 }
-div.rubik-facet-value-filtered {
-	background: #FFFFA0;
+div.rubik-facet-value-selected {
+	background:     #FFFFE0;
 }
 
 div.rubik-facet-value-count {
-    width:          3em;
-    float:          left;
+    position:       absolute;
+    left:           -2em;
+    width:          2em;
     text-align:     right;
-    font-family:    monospace;
     color:          #aaa;
 }
+
+img.rubik-facet-blackCheck {
+    display:        none;
+}
+img.rubik-facet-grayCheck {
+    display:        inline;
+}
+img.rubik-facet-noCheck {
+    display:        none;
+}
+
+.rubik-facet-hasSelection img.rubik-facet-grayCheck {
+    display:        none;
+}
+.rubik-facet-hasSelection img.rubik-facet-noCheck {
+    display:        inline;
+}
+
+.rubik-facet-value-selected img.rubik-facet-grayCheck {
+    display:        none;
+}
+.rubik-facet-value-selected img.rubik-facet-noCheck {
+    display:        none;
+}
+.rubik-facet-value-selected img.rubik-facet-blackCheck {
+    display:        inline;
+}
+
 div.rubik-facet-value-control {
 	padding:    0 2px;
 	cursor:     pointer;

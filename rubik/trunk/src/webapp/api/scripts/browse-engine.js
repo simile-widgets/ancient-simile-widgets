@@ -4,7 +4,7 @@
  */
 Rubik.BrowseEngine = function(database, configuration) {
     this._database = database;
-    this._listeners = new SimileAjax.ListenerQueue();
+    this._listeners = new SimileAjax.ListenerQueue("onChange");
     
     this._facetEntries = [];
     this._supportSliding = false;
@@ -182,6 +182,43 @@ Rubik.BrowseEngine.prototype.applyRestrictions = function(restrictions) {
     this._listeners.fire("onApplyRestrictions", []);
 }
 
+Rubik.BrowseEngine.prototype.clearFacetRestrictions = function(property, forward) {
+    var focusIndex = this.getFocus();
+    var collection = this._collections[focusIndex];
+    for (var i = 0; i < collection._restrictions.length; i++) {
+        var restriction = collection._restrictions[i];
+        if (restriction.property == property && restriction.forward == forward) {
+            var oldRestriction = restriction;
+            collection._restrictions[i] = new Rubik.BrowseEngine._Restriction(property, forward);
+            collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+
+            this._propagateChanges(focusIndex);
+            this._listeners.fire("onClearFacetRestrictions", []);
+            
+            return oldRestriction;
+        }
+    }
+    return null;
+}
+
+Rubik.BrowseEngine.prototype.applyFacetRestrictions = function(property, forward, restrictions) {
+    if (restrictions != null) {
+        var focusIndex = this.getFocus();
+        var collection = this._collections[focusIndex];
+        for (var i = 0; i < collection._restrictions.length; i++) {
+            var restriction = collection._restrictions[i];
+            if (restriction.property == property && restriction.forward == forward) {
+                collection._restrictions[i] = restrictions;
+                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+    
+                this._propagateChanges(focusIndex);
+                this._listeners.fire("onApplyFacetRestrictions", []);
+                break;
+            }
+        }
+    }
+}
+
 Rubik.BrowseEngine.prototype.truncate = function(index) {
     var focusIndex = this.getFocus();
     if (index > 0) {
@@ -291,6 +328,7 @@ Rubik.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
         var previousSelectedRangeSet = r.getValueSet(level);
         if (previousSelectedRangeSet) {
             rangeSet.addSet(previousSelectedRangeSet);
+            facet.selectedCount += previousSelectedRangeSet.size();
         }
         
         var results = [];

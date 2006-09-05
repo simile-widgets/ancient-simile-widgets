@@ -39,13 +39,7 @@ Rubik.TileView = function(rubik, div, configuration) {
     this._initializeUI();
     
     var view = this;
-    var reconstruct = function() { view._reconstruct(); };
-    this._rubik.getBrowseEngine().addListener({
-        onRootCollectionSet:    reconstruct,
-        onRestrict:             reconstruct,
-        onClearRestrictions:    reconstruct,
-        onApplyRestrictions:    reconstruct
-    });
+    this._rubik.getBrowseEngine().addListener({ onChange: function() { view._reconstruct(); } });
 }
 
 Rubik.TileView.prototype._initializeUI = function() {

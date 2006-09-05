@@ -13,13 +13,7 @@ Rubik.BrowsePanel = function(rubik, div, configuration) {
     this._facetInfos = [];
     
     var browsePanel = this;
-    var reconstruct = function() { browsePanel._reconstruct(); };
-    this._browseEngine.addListener({
-        onRootCollectionSet:    reconstruct,
-        onRestrict:             reconstruct,
-        onClearRestrictions:    reconstruct,
-        onApplyRestrictions:    reconstruct
-    });
+    this._browseEngine.addListener({ onChange: function() { browsePanel._reconstruct(); } });
     
     this._initializeUI();
 };

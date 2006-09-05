@@ -52,25 +52,54 @@ Rubik._Impl.prototype.getBrowseEngine = function() { return this._engine; };
 Rubik._Impl.prototype.getBrowsePanel = function() { return this._browsePanel; };
 Rubik._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
 
-Rubik._Impl.prototype.loadJSON = function(url, fDone) {
+Rubik._Impl.prototype.loadJSON = function(urls, fDone) {
     var rubik = this;
+    if (urls instanceof Array) {
+        urls = [].concat(urls);
+    } else {
+        urls = [ urls ];
+    }
+    
     var fError = function(statusText, status, xmlhttp) {
-        alert("Failed to load data xml from " + url + "\n" + statusText);
+        SimileAjax.Debug.log("Failed to load data xml from " + urls[0] + "\n" + statusText);
+        urls.shift();
+        fNext();
     };
+    
     var fDone2 = function(xmlhttp) {
         try {
-            rubik._loadJSON(
-                eval("(" + xmlhttp.responseText + ")"), 
-                rubik.getBaseURL(url)
-            );
-            if (fDone != null) {
-                fDone();
+            var o = null;
+            try {
+                o = eval("(" + xmlhttp.responseText + ")");
+            } catch (e) {
+                SimileAjax.Debug.log("Syntax error in JSON file at " + urls[0]);
             }
+            
+            if (o != null) {
+                rubik._loadJSON(o, rubik.getBaseURL(urls[0]));
+            }
+            
+            urls.shift();
+            fNext();
         } catch (e) {
             SimileAjax.Debug.exception(e);
         }
     };
-    SimileAjax.XmlHttp.get(url, fError, fDone2);
+    
+    var fNext = function() {
+        if (urls.length > 0) {
+            SimileAjax.XmlHttp.get(urls[0], fError, fDone2);
+        } else {
+            try {
+                if (fDone != null) {
+                    fDone();
+                }
+            } catch (e) {
+                SimileAjax.Debug.exception(e);
+            }
+        }
+    };
+    fNext();
 };
 
 Rubik._Impl.prototype.getBaseURL = function(url) {
