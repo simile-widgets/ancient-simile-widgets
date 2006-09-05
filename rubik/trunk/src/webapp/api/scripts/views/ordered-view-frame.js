@@ -50,8 +50,9 @@ Rubik.OrderedViewFrame.prototype._initializeUI = function() {
     this._divHeader.innerHTML = "";
     this._divFooter.innerHTML = "";
     
+    var self = this;
     var onClearFiltersLinkClick = function(elmt, evt, target) {
-        //
+        self._reset();
         SimileAjax.DOM.cancelEvent(evt);
         return false;
     };
@@ -285,4 +286,19 @@ Rubik.OrderedViewFrame.prototype._processOrder = function(items, order, index) {
     }
     
     return textFunction;
+};
+
+Rubik.OrderedViewFrame.prototype._reset = function() {
+    var state = {};
+    var browseEngine = this._rubik.getBrowseEngine();
+    SimileAjax.History.addAction({
+        perform: function() {
+            state.restrictions = browseEngine.clearRestrictions();
+        },
+        undo: function() {
+            browseEngine.applyRestrictions(state.restrictions);
+        },
+        label: "reset",
+        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+    });
 };

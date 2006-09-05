@@ -17,7 +17,8 @@ Rubik.BrowsePanel = function(rubik, div, configuration) {
     this._browseEngine.addListener({
         onRootCollectionSet:    reconstruct,
         onRestrict:             reconstruct,
-        onUnrestrictAll:        reconstruct
+        onClearRestrictions:    reconstruct,
+        onApplyRestrictions:    reconstruct
     });
     
     this._initializeUI();

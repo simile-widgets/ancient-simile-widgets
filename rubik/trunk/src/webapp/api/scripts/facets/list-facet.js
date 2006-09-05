@@ -9,6 +9,7 @@ Rubik.ListFacet = function(rubik, facet, div, configuration) {
     
     this._property = facet.property;
     this._forward = facet.forward;
+    this._facetLabel = facet.facetLabel;
     
     this._constructFrame(div, facet);
     this._constructBody(facet);
@@ -250,20 +251,31 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
 };
 
 Rubik.ListFacet.prototype._performFiltering = function(valueDom) {
-    this._rubik.getBrowseEngine().setValueRestriction(
-        this._property, 
-        this._forward, 
-        valueDom.level, 
-        valueDom.value, 
-        valueDom.checkbox.checked
-    );
+    var facetLabel = this._facetLabel;
+    var property = this._property;
+    var forward = this._forward;
+    var level = valueDom.level;
+    var value = valueDom.value;
+    var checked = valueDom.checkbox.checked;
+    var browseEngine = this._rubik.getBrowseEngine();
+    
+    SimileAjax.History.addAction({
+        perform: function() {
+            browseEngine.setValueRestriction(
+                property, forward, level, value, checked
+            );
+        },
+        undo: function() {
+            browseEngine.setValueRestriction(
+                property, forward, level, value, !checked
+            );
+        },
+        label: facetLabel + " = " + value,
+        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+    });
 };
 
 Rubik.ListFacet.prototype._performSliding = function() {
-    this._rubik.getBrowseEngine().slide(
-        this._property, 
-        this._forward
-    );
 };
 
 Rubik.ListFacet.prototype._performGrouping = function(elmt) {

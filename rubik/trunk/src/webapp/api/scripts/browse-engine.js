@@ -158,18 +158,28 @@ Rubik.BrowseEngine.prototype.slide = function(propertyID, forward) {
     this._listeners.fire("onSlide", []);
 }
 
-Rubik.BrowseEngine.prototype.clearAllCurrentFilters = function() {
+Rubik.BrowseEngine.prototype.clearRestrictions = function() {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
-    for (var i = 0; i < collection._restrictions.length; i++) {
-        collection._restrictions[i].clearSelection();
-    }
+    var oldRestrictions = collection._restrictions;
     
+    collection._restrictions = [];
     collection._restrictedSet = collection._originalSet;
+    this._initializeRestrictions(collection);
     
     this._propagateChanges(focusIndex);
+    this._listeners.fire("onClearRestrictions", []);
     
-    this._listeners.fire("onUnrestrictAll", []);
+    return oldRestrictions;
+}
+
+Rubik.BrowseEngine.prototype.applyRestrictions = function(restrictions) {
+    var focusIndex = this.getFocus();
+    var collection = this._collections[focusIndex];
+    collection._restrictions = restrictions;
+    collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+    this._propagateChanges(focusIndex);
+    this._listeners.fire("onApplyRestrictions", []);
 }
 
 Rubik.BrowseEngine.prototype.truncate = function(index) {

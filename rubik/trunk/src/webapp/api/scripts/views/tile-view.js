@@ -43,7 +43,8 @@ Rubik.TileView = function(rubik, div, configuration) {
     this._rubik.getBrowseEngine().addListener({
         onRootCollectionSet:    reconstruct,
         onRestrict:             reconstruct,
-        onUnrestrictAll:        reconstruct
+        onClearRestrictions:    reconstruct,
+        onApplyRestrictions:    reconstruct
     });
 }
 
