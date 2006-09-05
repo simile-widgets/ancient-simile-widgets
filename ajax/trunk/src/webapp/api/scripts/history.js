@@ -25,6 +25,7 @@
  
 SimileAjax.History = {
     maxHistoryLength:       10,
+    historyFile:            "__history__.html",
     
     _initialized:           false,
     _listeners:             [],
@@ -37,7 +38,7 @@ SimileAjax.History = {
 };
 
 SimileAjax.History.formatHistoryEntryTitle = function(actionLabel) {
-    return SimileAjax.History._plainDocumentTitle + " - " + actionLabel;
+    return SimileAjax.History._plainDocumentTitle + " {" + actionLabel + "}";
 };
 
 SimileAjax.History.initialize = function() {
@@ -53,7 +54,7 @@ SimileAjax.History.initialize = function() {
     iframe.style.top = "0px";
     iframe.style.left = "0px";
     iframe.style.visibility = "hidden";
-    iframe.src = SimileAjax.urlPrefix + "content/history.html?0";
+    iframe.src = SimileAjax.History.historyFile + "?0";
     
     document.body.appendChild(iframe);
     SimileAjax.DOM.registerEvent(iframe, "load", SimileAjax.History._handleIFrameOnLoad);
@@ -158,16 +159,12 @@ SimileAjax.History._handleIFrameOnLoad = function() {
         SimileAjax.History._fire("onAfterRedoSeveral", []);
     } else {
         var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex - 1;
-        if (index >= 0 && index < SimileAjax.History._actions.length) {
-            var actionLabel = SimileAjax.History._actions[index].label;
+        var title = (index >= 0 && index < SimileAjax.History._actions.length) ?
+            SimileAjax.History.formatHistoryEntryTitle(SimileAjax.History._actions[index].label) :
+            SimileAjax.History._plainDocumentTitle;
             
-            SimileAjax.History._iframe.contentWindow.document.title = 
-                SimileAjax.History.formatHistoryEntryTitle(actionLabel);
-                    
-            document.title = SimileAjax.History._plainDocumentTitle + " [" + actionLabel + "]";
-        } else {
-            document.title = SimileAjax.History._plainDocumentTitle;
-        }
+        SimileAjax.History._iframe.contentWindow.document.title = title;
+        document.title = title;
         return;
     }
     

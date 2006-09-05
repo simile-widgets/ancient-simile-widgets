@@ -3,8 +3,9 @@
  *==================================================
  */
 
-SimileAjax.ListenerQueue = function() {
+SimileAjax.ListenerQueue = function(wildcardHandlerName) {
     this._listeners = [];
+    this._wildcardHandlerName = wildcardHandlerName;
 };
 
 SimileAjax.ListenerQueue.prototype.add = function(listener) {
@@ -28,6 +29,13 @@ SimileAjax.ListenerQueue.prototype.fire = function(handlerName, args) {
         if (handlerName in listener) {
             try {
                 listener[handlerName].apply(listener, args);
+            } catch (e) {
+                SimileAjax.Debug.exception(e);
+            }
+        } else if (this._wildcardHandlerName != null &&
+            this._wildcardHandlerName in listener) {
+            try {
+                listener[this._wildcardHandlerName].apply(listener, [ handlerName ]);
             } catch (e) {
                 SimileAjax.Debug.exception(e);
             }
