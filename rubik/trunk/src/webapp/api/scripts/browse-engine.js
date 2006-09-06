@@ -242,10 +242,10 @@ Rubik.BrowseEngine.prototype.group = function(property, forward, level, grouping
             
             collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
             this._propagateChanges(focusIndex);
-            
-            return results;
+            break;
         }
     }
+    this._listeners.fire("onGroup", []);
 };
 
 Rubik.BrowseEngine.prototype.ungroup = function(property, forward, level) {
@@ -258,10 +258,10 @@ Rubik.BrowseEngine.prototype.ungroup = function(property, forward, level) {
             
             collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
             this._propagateChanges(focusIndex);
-            
-            return results;
+            break;
         }
     }
+    this._listeners.fire("onUngroup", []);
 };
 
 Rubik.BrowseEngine.prototype._addCollection = function(itemSet) {
@@ -313,7 +313,7 @@ Rubik.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
         pluralValueLabel:   pluralValueLabel,
         slidable:           this._supportSliding && itemValues,
         groupable:          itemValues,
-        grouped:            r.getLevelCount() > 0,
+        groupLevelCount:    r.getLevelCount(),
         values:             []
     };
     
@@ -389,10 +389,10 @@ Rubik.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
         if (level < r.getLevelCount() - 1) {
             domainSets.push(rangeSet);
             return arguments.callee(level + 1, domainSets, map);
-        } else {try {
+        } else {
             results.sort(function(a, b) {
                 return a.label.localeCompare(b.label);
-            });} catch(e) { console.log(results); }
+            });
             return results;
         }
     };
@@ -511,6 +511,7 @@ Rubik.BrowseEngine.prototype._getGroups = function(collection, restriction) {
                 set = result.values;
                 
                 groupingOption.selected = true;
+                result.grouped = true;
             }
         }
         
@@ -539,18 +540,21 @@ Rubik.BrowseEngine.prototype._ungroup = function(collection, restriction, level)
 
 Rubik.BrowseEngine.prototype._getGroupingOptions = function(set) {
     var options = [];
-/*    for (p in this._properties) {
-        var data = this._properties[p];
-        if (!("canGroup" in data) || data["canGroup"]) {
-            if (this._database.getObjectsUnion(set, p).size()) {
+    var propertyIDs = this._database.getAllProperties();
+    for (var i = 0; i < propertyIDs.length; i++) {
+        var propertyID = propertyIDs[i];
+        if (propertyID != "label" && propertyID != "uri") {
+            var property = this._database.getProperty(propertyID);
+            var objects = this._database.getObjectsUnion(set, propertyID);
+            if (objects.size() > 0) {
                 options.push({ 
-                    property: p, 
-                    reverse: false, 
-                    label: data.groupingLabel, 
-                    further: data.itemValues
+                    property:   propertyID, 
+                    forward:    true, 
+                    label:      property.getGroupingLabel(), 
+                    further:    property.getValueType() == "item"
                 });
             }
-            if (data.canReverse) {
+            if (false) {//data.canReverse) {
                 if (this._database.getSubjectsUnion(set, p).size()) {
                     options.push({ 
                         property: p, 
@@ -561,7 +565,7 @@ Rubik.BrowseEngine.prototype._getGroupingOptions = function(set) {
                 }
             }
         }
-    } */
+    }
     return options;
 };
 

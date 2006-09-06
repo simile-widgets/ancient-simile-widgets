@@ -138,8 +138,8 @@ Rubik.BrowsePanel.prototype._reconstruct = function() {
 
 Rubik.BrowsePanel.prototype._constructFacet = function(facet) {
     var facetDiv = document.createElement("div");
-    var facet = new Rubik.ListFacet(this._rubik, facet, facetDiv, this._configuration);
-    return [ facetDiv, facet ];
+    var listFacet = new Rubik.ListFacet(this._rubik, facet, facetDiv, this._configuration);
+    return [ facetDiv, listFacet ];
 };
 
 Rubik.BrowsePanel.prototype.setLocation = function(newLocation) {

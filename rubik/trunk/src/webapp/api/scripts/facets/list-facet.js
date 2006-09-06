@@ -12,6 +12,7 @@ Rubik.ListFacet = function(rubik, facet, div, configuration) {
     this._facetLabel = facet.facetLabel;
     
     this._dom = null;
+    this._topValueDoms = null;
     this._groupingDom = null;
     
     this._constructFrame(div, facet);
@@ -41,6 +42,7 @@ Rubik.ListFacet.prototype.dispose = function() {
     this._rubik = null;
     this._configuration = null;
     this._dom = null;
+    this._topValueDoms = null;
 };
 
 Rubik.ListFacet.prototype.update = function(facet) {
@@ -51,7 +53,28 @@ Rubik.ListFacet.prototype.update = function(facet) {
 Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
     var rubik = this._rubik;
     var listFacet = this;
-    
+
+    var onGroupLinkClick = function(elmt, evt, target) {
+        listFacet._openGroupingUI();
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    };
+    var onCollapseLinkClick = function(elmt, evt, target) {
+        listFacet._collapseGroups();
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    };
+    var onExpandLinkClick = function(elmt, evt, target) {
+        listFacet._expandGroups();
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    };
+    var onClearSelectionsClick = function(elmt, evt, target) {
+        listFacet._clearSelections();
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    };
+        
     var template = {
         elmt:       div,
         className:  "rubik-facet-frame",
@@ -88,69 +111,42 @@ Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
                     {   tag:        "div",
                         className:  "rubik-facet-body",
                         field:      "valuesDiv"
+                    },
+                    {   tag:        "div",
+                        className:  "rubik-facet-footer",
+                        style:      { display: facet.groupable ? "block" : "none" },
+                        children: [
+                            {   elmt:  rubik.makeActionLink("group by", onGroupLinkClick),
+                                field: "groupLink"
+                            },
+                            {   tag:    "span",
+                                field:  "groupControlsSpan",
+                                style:  { display: facet.groupLevelCount > 0 ? "inline" : "none" },
+                                children: [
+                                    " | ",
+                                    {   elmt:  rubik.makeActionLink("collapse", onCollapseLinkClick),
+                                        field: "collapseLink"
+                                    },
+                                    " | ",
+                                    {   elmt:  rubik.makeActionLink("expand", onExpandLinkClick),
+                                        field: "expandLink"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {   tag: "div",
+                        className: "rubik-facet-resizer",
+                        field: "resizerDiv"
                     }
                 ]
             }
         ]
     };
     
-    if (facet.groupable) {
-        var onGroupLinkClick = function(elmt, evt, target) {
-            listFacet._performGrouping();
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        };
-        var footerTemplate = {
-            tag:        "div",
-            className:  "rubik-facet-footer",
-            children: [
-                {   elmt:  rubik.makeActionLink("group by", onGroupLinkClick),
-                    field: "groupLink"
-                },
-            ]
-        }
-        
-        if (facet.grouped) {
-            var onCollapseLinkClick = function(elmt, evt, target) {
-                listFacet._performCollapsingGroups();
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            };
-            var onExpandLinkClick = function(elmt, evt, target) {
-                listFacet._performExpandingGroups();
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            };
-            
-            footerTemplate.children.push(" | ");
-            footerTemplate.children.push({
-                elmt:  rubik.makeActionLink("collapse", onCollapseLinkClick),
-                field: "collapseLink"
-            });
-            footerTemplate.children.push(" | ");
-            footerTemplate.children.push({
-                elmt:  rubik.makeActionLink("expand", onExpandLinkClick),
-                field: "expandLink"
-            });
-        }
-        template.children[0].children.push(footerTemplate);
-    }
-    
-    template.children[0].children.push({
-        tag: "div",
-        className: "rubik-facet-resizer",
-        field: "resizerDiv"
-    });
-    
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     
-    var onClearSelectionsClick = function(elmt, evt, target) {
-        listFacet._clearSelections();
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
-    };
     SimileAjax.WindowManager.registerEvent(this._dom.clearSelectionsDiv, "click", onClearSelectionsClick);
-        
     SimileAjax.WindowManager.registerForDragging(
         this._dom.resizerDiv,
         {   onDragStart: function() {
@@ -185,17 +181,26 @@ Rubik.ListFacet.prototype._constructFrame = function(div, facet) {
 
 Rubik.ListFacet.prototype._constructBody = function(facet) {
     var listFacet = this;
+    this._topValueDoms = [];
+    this._dom.groupControlsSpan.style.display = 
+        facet.groupLevelCount > 0 ? "inline" : "none";
+
     var createImage = function(url) {
         return SimileAjax.Graphics.createTranslucentImage(document, Rubik.urlPrefix + url);
     };
     
     var constructValue = function(value, containerDiv, level) {
         var classes = [ "rubik-facet-value" ];
+        var hasChildren = value.children.length > 0;
+        var expanded = level == 0;
+        
         if (value.selected) {
             classes.push("rubik-facet-value-selected");
         }
+        if (hasChildren) {
+            classes.push("rubik-facet-value-hasChildren");
+        }
         
-        var expanded = true;
         var valueTemplate = {
             tag:        "div",
             className:  classes.join(" "),
@@ -203,38 +208,52 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
             children: [
                 {   tag:        "div",
                     className:  "rubik-facet-value-count",
-                    children:   [ value.count ]
+                    children:   [ 
+                        value.count,
+                        {   elmt:       createImage("images/gray-check-no-border.png"),
+                            className:  "rubik-facet-grayCheck"
+                        },
+                        {   elmt:       createImage("images/no-check-no-border.png"),
+                            className:  "rubik-facet-noCheck"
+                        },
+                        {   elmt:       createImage("images/black-check-no-border.png"),
+                            className:  "rubik-facet-blackCheck"
+                        }
+                    ]
                 },
-                {   elmt:       createImage("images/gray-check-no-border.png"),
-                    className:  "rubik-facet-grayCheck"
-                },
-                {   elmt:       createImage("images/no-check-no-border.png"),
-                    className:  "rubik-facet-noCheck"
-                },
-                {   elmt:       createImage("images/black-check-no-border.png"),
-                    className:  "rubik-facet-blackCheck"
+                {   tag:        "div",
+                    className:  "rubik-facet-value-inner",
+                    field:      "innerDiv",
+                    children:   [ 
+                        {   tag:        "div",
+                            className:  "rubik-facet-value-groupControl " +
+                                (expanded ? "rubik-facet-value-expanded" : "rubik-facet-value-collapsed"),
+                            title:      "Toggle group",
+                            field:      "groupControlDiv",
+                            children: [
+                                {   elmt:       createImage("images/expand.png"),
+                                    className:  "rubik-facet-value-expandControl"
+                                },
+                                {   elmt:       createImage("images/collapse.png"),
+                                    className:  "rubik-facet-value-collapseControl"
+                                },
+                                " "
+                            ]
+                        },
+                        value.label 
+                    ]
                 }
             ]
         };
-        if (value.children.length > 0) {
-            valueTemplate.children.push({
-                tag:        "span",
-                className:  "rubik-facet-value-control",
-                children: [
-                    {   elmt:   createImage(expanded ? "images/minus.png" : "images/plush.gif"),
-                        title:  "Expand to see values in this group",
-                        field:  "expandImg"
-                    }
-                ]
-            });
-        }
-        valueTemplate.children.push(value.label);
         
         var valueDom = SimileAjax.DOM.createDOMFromTemplate(document, valueTemplate);
         valueDom.value = value.value;
         valueDom.selected = value.selected;
         valueDom.level = level;
+        valueDom.expanded = expanded;
         containerDiv.appendChild(valueDom.elmt);
+        
+        valueDom.innerDiv.style.marginLeft = ((level + (hasChildren ? 1 : 0)) * 16) + "px";
         
         var onValueCheckboxClick = function(elmt, evt, target) {
             listFacet._filter(valueDom);
@@ -242,16 +261,17 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
             return false;
         };
         SimileAjax.WindowManager.registerEvent(valueDom.elmt, "click", onValueCheckboxClick);
-        
-        if ("expandImg" in valueDom) {
-            var onExpandImgClick = function(elmt, evt, target) {
-                listFacet._performTogglingGroup(valueDom);
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            };
-            SimileAjax.DOM.registerEvent(valueDom.expandImg, "click", onExpandImgClick);
+
+        var onGroupControlDivClick = function(elmt, evt, target) {
+            listFacet._toggleGroup(valueDom);
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        };
+        SimileAjax.WindowManager.registerEvent(valueDom.groupControlDiv, "click", onGroupControlDivClick);
+
+        if (level == 0) {
+            listFacet._topValueDoms.push(valueDom);
         }
-        
         if (value.children.length > 0) {
             var childrenDiv = document.createElement("div");
             childrenDiv.className = "rubik-facet-value-children";
@@ -260,6 +280,8 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
             }
             constructValues(value.children, childrenDiv, level + 1);
             containerDiv.appendChild(childrenDiv);
+            
+            valueDom.childrenDiv = childrenDiv;
         }
     };
     var constructValues = function(values, containerDiv, level) {
@@ -267,8 +289,9 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
             constructValue(values[j], containerDiv, level);
         }
     };
-    constructValues(facet.values, this._dom.valuesDiv, -1);
+    constructValues(facet.values, this._dom.valuesDiv, 0);
     
+    this._groupLevelCount = facet.groupLevelCount;
     if (facet.selectedCount > 0) {
         this._dom.innerFacetDiv.className = "rubik-facet rubik-facet-hasSelection";
     } else {
@@ -278,26 +301,27 @@ Rubik.ListFacet.prototype._constructBody = function(facet) {
 };
 
 Rubik.ListFacet.prototype._filter = function(valueDom) {
-    var facetLabel = this._facetLabel;
     var property = this._property;
     var forward = this._forward;
-    var level = valueDom.level;
-    var value = valueDom.value;
-    var checked = !valueDom.selected;
+    var level = this._groupLevelCount - valueDom.level - 1;
+    var value = valueDom.value; console.log(property + " " + forward + " " + level + " " + value);
+    var selected = !valueDom.selected;
     var browseEngine = this._rubik.getBrowseEngine();
     
     SimileAjax.History.addAction({
         perform: function() {
             browseEngine.setValueRestriction(
-                property, forward, level, value, checked
+                property, forward, level, value, selected
             );
         },
         undo: function() {
             browseEngine.setValueRestriction(
-                property, forward, level, value, !checked
+                property, forward, level, value, !selected
             );
         },
-        label: facetLabel + " = " + value,
+        label: selected ? 
+            ("set " + this._facetLabel + " = " + value) :
+            ("unset " + this._facetLabel + " = " + value),
         uiLayer: SimileAjax.WindowManager.getBaseLayer()
     });
 };
@@ -322,216 +346,171 @@ Rubik.ListFacet.prototype._clearSelections = function() {
     });
 };
 
-Rubik.ListFacet.prototype._performGrouping = function(elmt) {
-    var browsePanel = this;
-    var property = elmt.getAttribute("property");
-    var forward = elmt.getAttribute("forward") == "true";
+Rubik.ListFacet.prototype._openGroupingUI = function() {
+    if (this._groupingDom != null) {
+        return;
+    }
     
-    var coords = SimileAjax.DOM.getPageCoordinates(elmt.parentNode.parentNode);
-    document.getElementById("grouping-box").style.top = coords.top + "px";
+    var coords = SimileAjax.DOM.getPageCoordinates(this._dom.elmt);
+    var align = coords.left < (document.body.scrollWidth / 2) ?
+        "rubik-facet-groupBox-right" : "rubik-facet-groupBox-left";
     
-    this._fillDialogBoxBody(property, forward);
-    this._groupingProperty = property + ":" + forward;
+    var listFacet = this;
+    var onUngroupLinkClick = function(elmt, evt, target) {
+        listFacet._ungroupAll();
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    };
+    var onCloseLinkClick = function(elmt, evt, target) {
+        listFacet._closeGroupingUI();
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    };
+    var groupingBoxTemplate = {
+        tag:        "div",
+        className:  "rubik-facet-groupBox " + align,  
+        children: [
+            {   tag:    "div",
+                field:  "groupsDiv"
+            },
+            {   tag:        "div",
+                className:  "rubik-facet-groupBox-footer",
+                field:      "footerDiv",
+                children: [
+                    {   elmt:  this._rubik.makeActionLink("un-group all", onUngroupLinkClick),
+                        field: "ungroupLink"
+                    },
+                    " | ",
+                    {   elmt:  this._rubik.makeActionLink("close", onCloseLinkClick),
+                        field: "closeLink"
+                    }
+                ]
+            }
+        ]
+    };
+    this._groupingDom = SimileAjax.DOM.createDOMFromTemplate(document, groupingBoxTemplate);
+    this._reconstructGroupingBox();
     
-    var dialogBox = document.getElementById("grouping-box");
-    dialogBox.style.display = "block";
+    this._dom.elmt.appendChild(this._groupingDom.elmt);
 }
 
-Rubik.ListFacet.prototype._closeDialogBox = function() {
-    var dialogBox = document.getElementById("grouping-box");
-    dialogBox.style.display = "none";
-    
-    this._groupingProperty = "";
+Rubik.ListFacet.prototype._closeGroupingUI = function() {
+    if (this._groupingDom != null) {
+        this._groupingDom.elmt.parentNode.removeChild(this._groupingDom.elmt);
+        this._groupingDom = null;
+    }
 }
 
-Rubik.ListFacet.prototype._fillDialogBoxBody = function(property, forward) {
-    var browsePanel = this;
+Rubik.ListFacet.prototype._reconstructGroupingBox = function() {
+    var listFacet = this;
+    this._groupingDom.groupsDiv.innerHTML = "";
     
-    var dialogBoxBody = document.getElementById("grouping-box-body");
-    dialogBoxBody.innerHTML = "";
-    
-    var groups = this._browseEngine.getGroups(property, forward);
-    for (var i = 0; i < groups.length; i++) {
-        var group = groups[i];
+    var makeGroup = function(group, level) {
         var groupingOptions = group.groupingOptions;
         
-        var groupingBoxDiv = document.createElement("div");
-        groupingBoxDiv.className = "grouping-box";
+        var onUngroupLinkClick = function(elmt, evt, target) {
+            listFacet._ungroup(groupDom);
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        };
+        var groupTemplate = {
+            tag:        "div",
+            className:  "rubik-facet-groupBox-group",
+            children: [
+                {   tag:        "div",
+                    className:  "rubik-facet-groupBox-groupHeader",
+                    children:   [ 
+                        i == 0 ? "Group by " : "Group the groups by ",
+                        {   elmt:   listFacet._rubik.makeActionLink("(un-group)", onUngroupLinkClick),
+                            style:  { display: group.grouped ? "inline" : "none" },
+                            field:  "ungroupLink"
+                        }
+                    ]
+                },
+                {   tag:        "div",
+                    className:  "rubik-facet-groupBox-groupBody",
+                    field:      "bodyDiv"
+                }
+            ]
+        };
+        var groupDom = SimileAjax.DOM.createDOMFromTemplate(document, groupTemplate);
+        groupDom.level = level;
+        listFacet._groupingDom.groupsDiv.appendChild(groupDom.elmt);
         
-        var headingDiv = document.createElement("div");
-        headingDiv.className = "grouping-heading";
-        headingDiv.appendChild(document.createTextNode(i == 0 ? "Group by " : "Group the groups by "));
+        var makeGroupOption = function(groupingOption) {
+            var optionTemplate = {
+                tag:        "div",
+                className:  "rubik-facet-groupBox-groupOption",
+                children: [
+                    {   elmt: SimileAjax.Graphics.createTranslucentImage(
+                            document, 
+                            Rubik.urlPrefix + (groupingOption.selected ? "images/option-check.png" : "images/option.png")
+                        )
+                    },
+                    " " + groupingOption.label
+                ]
+            };
+            var optionDom = SimileAjax.DOM.createDOMFromTemplate(document, optionTemplate);
+            optionDom.property = groupingOption.property;
+            optionDom.forward = groupingOption.forward;
+            optionDom.selected = groupingOption.selected;
+            
+            SimileAjax.WindowManager.registerEvent(optionDom.elmt, "click", 
+                function(elmt, evt, target) { 
+                    listFacet._group(groupDom, optionDom); 
+                    SimileAjax.DOM.cancelEvent(evt);
+                    return false;
+                }
+            );
+            groupDom.bodyDiv.appendChild(optionDom.elmt);
+        };
         
-        groupingBoxDiv.appendChild(headingDiv);
-        
-        var hasSelection = false;
         for (var j = 0; j < groupingOptions.length; j++) {
-            var groupingOption = groupingOptions[j];
-            
-            var groupingOptionDiv = document.createElement("div");
-            groupingOptionDiv.className = "grouping-option";
-            
-            var option = document.createElement("input");
-            option.type = "radio";
-            option.name = "level" + i;
-            option.checked = groupingOption.selected;
-            option.defaultChecked = groupingOption.selected;
-            
-            option.setAttribute("property", property);
-            option.setAttribute("forward", forward ? "true" : "false");
-            option.setAttribute("groupingProperty", groupingOption.property);
-            option.setAttribute("groupingForward", groupingOption.forward ? "true" : "false");
-            option.setAttribute("level", i);
-            
-            SimileAjax.DOM.registerEvent(option, "click", function(elmt) { browsePanel._performChoosingGroupingOption(elmt); return true; });
-            
-            groupingOptionDiv.appendChild(option);
-            
-            if (groupingOption.selected) {
-                hasSelection = true;
-            }
-            
-            groupingOptionDiv.appendChild(document.createTextNode(groupingOption.label));
-            
-            groupingBoxDiv.appendChild(groupingOptionDiv);
+            makeGroupOption(groupingOptions[j]);
         }
-        
-        if (hasSelection) {
-            var clearA = document.createElement("a");
-            clearA.setAttribute("property", property);
-            clearA.setAttribute("forward", forward ? "true" : "false");
-            clearA.setAttribute("level", i);
-            clearA.href = "javascript:void";
-            clearA.innerHTML = "(ungroup)";
-            SimileAjax.DOM.registerEvent(clearA, "click", function(elmt) { browsePanel._performClearingGrouping(elmt); return true; });
-            
-            headingDiv.appendChild(clearA);
-        }
-        
-        dialogBoxBody.appendChild(groupingBoxDiv);
+    };
+    
+    var groups = this._rubik.getBrowseEngine().getGroups(this._property, this._forward);
+    for (var i = 0; i < groups.length; i++) {
+        makeGroup(groups[i], i);
     }
 }
 
-Rubik.ListFacet.prototype._performChoosingGroupingOption = function(elmt) {
-    var property = elmt.getAttribute("property");
-    var forward = elmt.getAttribute("forward") == "true";
-    var groupingProperty = elmt.getAttribute("groupingProperty");
-    var groupingForward = elmt.getAttribute("groupingForward") == "true";
-    var level = parseInt(elmt.getAttribute("level"));
+Rubik.ListFacet.prototype._group = function(groupDom, optionDom) {
+    var groupingProperty = optionDom.property;
+    var groupingForward = optionDom.forward;
+    var level = groupDom.level
 
-    this._browseEngine.group(property, forward, level, groupingProperty, groupingForward);
-    this._fillDialogBoxBody(property, forward);
-    this._constructFacetPane();
+    this._rubik.getBrowseEngine().group(this._property, this._forward, level, groupingProperty, groupingForward);
+    this._reconstructGroupingBox();
 }
 
-Rubik.ListFacet.prototype._performClearingGrouping = function(elmt) {
-    var property = elmt.getAttribute("property");
-    var forward = elmt.getAttribute("forward") == "true";
-    var level = parseInt(elmt.getAttribute("level"));
-    
-    this._browseEngine.ungroup(property, forward, level);
-    this._fillDialogBoxBody(property, forward);
-    this._constructFacetPane();
+Rubik.ListFacet.prototype._ungroup = function(groupDom) {
+    this._rubik.getBrowseEngine().ungroup(this._property, this._forward, groupDom.level);
+    this._reconstructGroupingBox();
 }
 
-Rubik.ListFacet.prototype._performTogglingGroup = function(elmt) {
-    var checkbox = elmt.previousSibling;
-    var property = checkbox.getAttribute("property");
-    var forward = checkbox.getAttribute("forward") == "true";
-    var level = checkbox.getAttribute("level");
-    var value = checkbox.getAttribute("value");
-   
-    var facetKey = property + ":" + forward;
-    var facetInfo = Rubik.ListFacet._facetInfos[facetKey];
-    if (facetInfo == null) {
-        facetInfo = [];
-        Rubik.ListFacet._facetInfos[facetKey] = facetInfo;
-    }
-    var valueKey = value + ":" + level;
-            
-    var childrenDiv = elmt.parentNode.nextSibling;
-    if (childrenDiv.style.display == "none") {
-        elmt.firstChild.src = "images/minus.gif";
-        childrenDiv.style.display = "block";
-        facetInfo[valueKey] = true;
-    } else {
-        elmt.firstChild.src = "images/plus.gif";
-        childrenDiv.style.display = "none";
-        facetInfo[valueKey] = false;
+Rubik.ListFacet.prototype._toggleGroup = function(valueDom) {
+    this._changeGroup(valueDom, !valueDom.expanded);
+}
+
+Rubik.ListFacet.prototype._changeGroup = function(valueDom, expanded) {
+    valueDom.expanded = expanded;
+    valueDom.childrenDiv.style.display = expanded ? "block" : "none";
+    valueDom.groupControlDiv.className =
+        "rubik-facet-value-groupControl " +
+        (expanded ? "rubik-facet-value-expanded" : "rubik-facet-value-collapsed");
+}
+
+Rubik.ListFacet.prototype._collapseGroups = function() {
+    for (var i = 0; i < this._topValueDoms.length; i++) {
+        this._changeGroup(this._topValueDoms[i], false);
     }
 }
 
-Rubik.ListFacet.prototype._performCollapsingGroups = function(elmt) {
-    var property = elmt.getAttribute("property");
-    var forward = elmt.getAttribute("forward") == "true";
-    
-    var facetKey = property + ":" + forward;
-    var facetInfo = Rubik.ListFacet._facetInfos[facetKey];
-    if (facetInfo == null) {
-        facetInfo = [];
-        this._facetInfos[facetKey] = facetInfo;
+Rubik.ListFacet.prototype._expandGroups = function(valueDom) {
+    for (var i = 0; i < this._topValueDoms.length; i++) {
+        this._changeGroup(this._topValueDoms[i], true);
     }
-    
-    var browsePanel = this;
-    var f = function(div) {
-        for (var i = 0; i < div.childNodes.length; i++) {
-            var elmt = div.childNodes[i];
-            if (elmt.className == "facet-value-children") {
-                arguments.callee(elmt);
-            } else {
-                var controlSpan = elmt.childNodes[2];
-                if (controlSpan.className == "facet-value-control") {
-                    var checkbox = controlSpan.previousSibling;
-                    var level = checkbox.getAttribute("level");
-                    var value = checkbox.getAttribute("value");
-                    var valueKey = value + ":" + level;
-                    
-                    elmt.nextSibling.style.display = "none";
-                    controlSpan.firstChild.src = "images/plus.gif";
-                    
-                    facetInfo[valueKey] = false;
-                }
-            }
-        }
-    }
-    
-    var valuesDiv = elmt.parentNode.previousSibling;
-    f(valuesDiv);
 }
 
-Rubik.ListFacet.prototype._performExpandingGroups = function(elmt) {
-    var property = elmt.getAttribute("property");
-    var forward = elmt.getAttribute("forward") == "true";
-    
-    var facetKey = property + ":" + forward;
-    var facetInfo = Rubik.ListFacet._facetInfos[facetKey];
-    if (facetInfo == null) {
-        facetInfo = [];
-        this._facetInfos[facetKey] = facetInfo;
-    }
-    
-    var f = function(div) {
-        for (var i = 0; i < div.childNodes.length; i++) {
-            var elmt = div.childNodes[i];
-            if (elmt.className == "facet-value-children") {
-                arguments.callee(elmt);
-            } else {
-                var controlSpan = elmt.childNodes[2];
-                if (controlSpan.className == "facet-value-control") {
-                    var checkbox = controlSpan.previousSibling;
-                    var level = checkbox.getAttribute("level");
-                    var value = checkbox.getAttribute("value");
-                    var valueKey = value + ":" + level;
-                    
-                    elmt.nextSibling.style.display = "block";
-                    controlSpan.firstChild.src = "images/minus.gif";
-                    
-                    facetInfo[valueKey] = true;
-                }
-            }
-        }
-    }
-    
-    var valuesDiv = elmt.parentNode.previousSibling;
-    f(valuesDiv);
-}
