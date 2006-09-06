@@ -36,7 +36,7 @@ SimileAjax.JSON = new Object();
         '"' : '\\"',
         '\\': '\\\\'
     };
-    s = {
+    var s = {
         array: function (x) {
             var a = ['['], b, f, i, l = x.length, v;
             for (i = 0; i < l; i += 1) {

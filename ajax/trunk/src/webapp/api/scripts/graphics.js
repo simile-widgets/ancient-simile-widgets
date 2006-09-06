@@ -17,7 +17,6 @@ SimileAjax.Graphics.createTranslucentImage = function(doc, url, verticalAlign) {
         elmt.setAttribute("src", url);
     } else {
         elmt = doc.createElement("img");
-        elmt.style.display = "inline";
         elmt.style.width = "1px";  // just so that IE will calculate the size property
         elmt.style.height = "1px";
         elmt.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='image')";
