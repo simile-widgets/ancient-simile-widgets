@@ -88,6 +88,23 @@ Rubik.BrowseEngine.prototype.getFacets = function() {
     return facets;
 };
 
+Rubik.BrowseEngine.prototype.getFacet = function(property, forward) {
+    var facets = [];
+    
+    var focusIndex = this.getFocus();
+    if (focusIndex >= 0) {
+        var collection = this._collections[focusIndex];
+        for (var i = 0; i < collection._restrictions.length; i++) {
+            var r = collection._restrictions[i];
+            if (r.property == property && r.forward == forward) {
+                this._computeFacet(collection, r, facets);
+                break;
+            }
+        }
+    }
+    return facets.length > 0 ? facets[0] : null;
+};
+
 Rubik.BrowseEngine.prototype.getGroups = function(property, forward) {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
@@ -238,10 +255,12 @@ Rubik.BrowseEngine.prototype.group = function(property, forward, level, grouping
     for (var i = 0; i < collection._restrictions.length; i++) {
         var restriction = collection._restrictions[i];
         if (restriction.property == property && restriction.forward == forward) {
-            var results = this._group(collection, restriction, level, groupingProperty, groupingForward);
-            
-            collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
-            this._propagateChanges(focusIndex);
+            if (this._group(collection, restriction, level, groupingProperty, groupingForward)) {
+                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+                this._propagateChanges(focusIndex);
+                
+                this._listeners.fire("onRestrict", []);
+            }
             break;
         }
     }
@@ -254,10 +273,12 @@ Rubik.BrowseEngine.prototype.ungroup = function(property, forward, level) {
     for (var i = 0; i < collection._restrictions.length; i++) {
         var restriction = collection._restrictions[i];
         if (restriction.property == property && restriction.forward == forward) {
-            var results = this._ungroup(collection, restriction, level);
-            
-            collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
-            this._propagateChanges(focusIndex);
+            if (this._ungroup(collection, restriction, level)) {
+                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+                this._propagateChanges(focusIndex);
+                
+                this._listeners.fire("onRestrict", []);
+            }
             break;
         }
     }
@@ -507,8 +528,7 @@ Rubik.BrowseEngine.prototype._getGroups = function(collection, restriction) {
             if (groupingOption.property == groupingProperty &&
                 groupingOption.forward == groupingForward) {
                 
-                result.values = this._slideSet(set, groupingProperty, groupingForward);
-                set = result.values;
+                set = this._slideSet(set, groupingProperty, groupingForward);
                 
                 groupingOption.selected = true;
                 result.grouped = true;
@@ -526,16 +546,34 @@ Rubik.BrowseEngine.prototype._getGroups = function(collection, restriction) {
 };
 
 Rubik.BrowseEngine.prototype._group = function(collection, restriction, level, groupingProperty, groupingForward) {
+    var changed = false;
     if (level < restriction.groupings.length) {
+        for (var i = level; i < restriction.groupings.length; i++) {
+            var selection = restriction.groupings[i].valueSet;
+            if (selection != null && selection.size() > 0) {
+                changed = true;
+                break;
+            }
+        }
         restriction.groupings = restriction.groupings.slice(0, level);
     }
     restriction.groupings.push({ property: groupingProperty, forward: groupingForward });
+    return changed;
 };
 
 Rubik.BrowseEngine.prototype._ungroup = function(collection, restriction, level) {
+    var changed = false;
     if (level < restriction.groupings.length) {
+        for (var i = level; i < restriction.groupings.length; i++) {
+            var selection = restriction.groupings[i].valueSet;
+            if (selection != null && selection.size() > 0) {
+                changed = true;
+                break;
+            }
+        }
         restriction.groupings = restriction.groupings.slice(0, level);
     }
+    return changed;
 };
 
 Rubik.BrowseEngine.prototype._getGroupingOptions = function(set) {

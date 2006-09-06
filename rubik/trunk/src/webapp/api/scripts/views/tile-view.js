@@ -39,7 +39,13 @@ Rubik.TileView = function(rubik, div, configuration) {
     this._initializeUI();
     
     var view = this;
-    this._rubik.getBrowseEngine().addListener({ onChange: function() { view._reconstruct(); } });
+    this._rubik.getBrowseEngine().addListener({ 
+        onChange: function(handlerName) { 
+            if (handlerName != "onGroup" && handlerName != "onUngroup") {
+                view._reconstruct(); 
+            }
+        } 
+    });
 }
 
 Rubik.TileView.prototype._initializeUI = function() {
@@ -133,6 +139,8 @@ Rubik.TileView.prototype._reconstruct = function() {
     };
     
     this._orderedViewFrame.onNewItem = function(itemID, index) {
+        //if (index > 10) return;
+        
         if (state.table == null) {
             state.table = document.createElement("table");
             state.table.className = "rubik-tileView-body";

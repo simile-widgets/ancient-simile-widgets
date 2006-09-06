@@ -13,7 +13,13 @@ Rubik.BrowsePanel = function(rubik, div, configuration) {
     this._facetInfos = [];
     
     var browsePanel = this;
-    this._browseEngine.addListener({ onChange: function() { browsePanel._reconstruct(); } });
+    this._browseEngine.addListener({ 
+        onChange: function(handlerName) { 
+            if (handlerName != "onGroup" && handlerName != "onUngroup") {
+                browsePanel._reconstruct(); 
+            }
+        } 
+    });
     
     this._initializeUI();
 };

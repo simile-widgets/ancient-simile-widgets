@@ -483,11 +483,31 @@ Rubik.ListFacet.prototype._group = function(groupDom, optionDom) {
 
     this._rubik.getBrowseEngine().group(this._property, this._forward, level, groupingProperty, groupingForward);
     this._reconstructGroupingBox();
+    
+    var facet = this._rubik.getBrowseEngine().getFacet(this._property, this._forward);
+    if (facet != null) {
+        this.update(facet);
+    }
 }
 
 Rubik.ListFacet.prototype._ungroup = function(groupDom) {
     this._rubik.getBrowseEngine().ungroup(this._property, this._forward, groupDom.level);
     this._reconstructGroupingBox();
+    
+    var facet = this._rubik.getBrowseEngine().getFacet(this._property, this._forward);
+    if (facet != null) {
+        this.update(facet);
+    }
+}
+
+Rubik.ListFacet.prototype._ungroupAll = function() {
+    this._rubik.getBrowseEngine().ungroup(this._property, this._forward, 0);
+    this._reconstructGroupingBox();
+    
+    var facet = this._rubik.getBrowseEngine().getFacet(this._property, this._forward);
+    if (facet != null) {
+        this.update(facet);
+    }
 }
 
 Rubik.ListFacet.prototype._toggleGroup = function(valueDom) {
