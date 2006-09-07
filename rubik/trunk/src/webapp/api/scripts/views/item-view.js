@@ -4,13 +4,36 @@
  */
  
 Rubik.ItemView = function(itemID, div, rubik, configuration) {
-    this._constructUI(itemID, div, rubik, configuration);
+    var myConfig = ("ItemView" in configuration) ? configuration["ItemView"] : {};
+    
+    var viewTemplateURL = null;
+    var viewSelector = myConfig["viewSelector"];
+    if (viewSelector != null) {
+        viewTemplateURL = viewSelector.call(null, itemID, rubik);
+    }
+    if (viewTemplateURL == null) {
+        this._constructDefaultUI(itemID, div, rubik, myConfig);
+    } else {
+        this._constructFromViewTemplate(itemID, div, rubik, configuration, viewTemplateURL);
+    }
 };
 
-Rubik.ItemView.prototype._constructUI = function(itemID, div, rubik, configuration) {
+Rubik.ItemView._commonProperties = null;
+Rubik.ItemView.prototype._constructDefaultUI = function(itemID, div, rubik, myConfig) {
+    var database = rubik.getDatabase();
+    
+    var properties = null;
+    if ("properties" in myConfig) {
+        properties = myConfig.properties;
+    } else {
+        if (Rubik.ItemView._commonProperties == null) {
+            Rubik.ItemView._commonProperties = database.getAllProperties();
+        }
+        properties = Rubik.ItemView._commonProperties;
+    }
+    
     div.innerHTML = "";
     
-    var database = rubik.getDatabase();
     var label = database.getLiteralProperty(itemID, "label");
     
     var rdfCopyButton = SimileAjax.Graphics.createStructuredDataCopyButton(
@@ -43,7 +66,7 @@ Rubik.ItemView.prototype._constructUI = function(itemID, div, rubik, configurati
     var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     
     var pairs = Rubik.ViewPanel.getPropertyValuesPairs(
-        itemID, configuration.properties, database);
+        itemID, properties, database);
         
     for (var j = 0; j < pairs.length; j++) {
         var pair = pairs[j];
@@ -74,4 +97,72 @@ Rubik.ItemView.prototype._constructUI = function(itemID, div, rubik, configurati
             }
         }
     }
+};
+
+Rubik.ItemView._compiledTemplates = {};
+
+Rubik.ItemView.prototype._constructFromViewTemplate = 
+    function(itemID, div, rubik, configuration, viewTemplateURL) {
+    
+    var job = {
+        itemView:       this,
+        itemID:         itemID,
+        div:            div,
+        rubik:          rubik,
+        configuration:  configuration
+    };
+    
+    var compiledTemplate = Rubik.ItemView._compiledTemplates[viewTemplateURL];
+    if (compiledTemplate == null) {
+        compiledTemplate = Rubik.ItemView._startCompilingTemplate(viewTemplateURL);
+        Rubik.ItemView._compiledTemplates[viewTemplateURL] = compiledTemplate;
+        
+        compiledTemplate.jobs.push(job);
+    } else if (!compiledTemplate.compiled) {
+        compiledTemplate.jobs.push(job);
+    } else {
+        Rubik.ItemView._performConstructFromViewTemplateJob(compiledTemplate, job);
+    }
+};
+
+Rubik.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
+};
+
+Rubik.ItemView._startCompilingTemplate = function(viewTemplateURL) {
+    var compiledTemplate = {
+        url:        viewTemplateURL,
+        template:   null,
+        compiled:   false,
+        jobs:       []
+    };
+    
+    var fError = function(statusText, status, xmlhttp) {
+        SimileAjax.Debug.log("Failed to load view template from " + viewTemplateURL + "\n" + statusText);
+    };
+    var fDone = function(xmlhttp) {
+        try {
+            compiledTemplate.template = Rubik.ItemView._compileTemplateXml(xmlhttp.responseXML.documentElement);
+            compiledTemplate.compiled = true;
+            
+            for (var i = 0; i < compiledTemplate.jobs.length; i++) {
+                try {
+                    Rubik.ItemView._performConstructFromViewTemplateJob(
+                        compiledTemplate, compiledTemplate.jobs[i]);
+                } catch (e) {
+                    SimileAjax.Debug.exception(e);
+                }
+            }
+            compiledTemplate.jobs = null;
+        } catch (e) {
+            SimileAjax.Debug.exception(e);
+        }
+    };
+    
+    SimileAjax.XmlHttp.get(viewTemplateURL, fError, fDone);
+
+    return compiledTemplate;
+};
+
+Rubik.ItemView._compileTemplateXml = function(xml) {
+    console.log(xml);
 };

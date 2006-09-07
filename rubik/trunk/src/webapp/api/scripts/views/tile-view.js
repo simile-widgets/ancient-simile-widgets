@@ -6,35 +6,7 @@
 Rubik.TileView = function(rubik, div, configuration) {
     this._rubik = rubik;
     this._div = div;
-    this._itemViewConfiguration = {
-        properties: null
-    };
-    
-    if ("TileView" in configuration) {
-        this._configuration = configuration["TileView"];
-        
-        if ("properties" in this._configuration) {
-            this._itemViewConfiguration.properties = [];
-            
-            var entries = this._configuration.properties;
-            for (var i = 0; i < entries.length; i++) {
-                var entry = entries[i];
-                var sp;
-                if (typeof entry == "string") {
-                    sp = {
-                        property: entry,
-                        forward:  true
-                    };
-                } else {
-                    sp = {
-                        property: entry.property,
-                        forward:  ("forward" in entry) ? (entry.forward) : true
-                    }
-                }
-                this._itemViewConfiguration.properties.push(sp);
-            }
-        }
-    }
+    this._configuration = configuration;
     
     this._initializeUI();
     
@@ -67,22 +39,10 @@ Rubik.TileView.prototype._initializeUI = function() {
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     this._orderedViewFrame = new Rubik.OrderedViewFrame(
-        this._rubik, this._dom.headerDiv, this._dom.footerDiv, this._configuration);
+        this._rubik, this._dom.headerDiv, this._dom.footerDiv, this._configuration["TileView"]);
 };
 
 Rubik.TileView.prototype._reconstruct = function() {
-    if (this._itemViewConfiguration.properties == null) {
-        this._itemViewConfiguration.properties = [];
-        
-        var propertyIDs = this._rubik.getDatabase().getAllProperties();
-        for (var i = 0; i < propertyIDs.length; i++) {
-            this._itemViewConfiguration.properties.push({
-                property:   propertyIDs[i],
-                forward:    true
-            });
-        }
-    }
-    
     var view = this;
     var state = {
         div:            this._dom.bodyDiv,
@@ -160,7 +120,7 @@ Rubik.TileView.prototype._reconstruct = function() {
         var tdItemView = tr.insertCell(1);
         
         var itemViewDiv = document.createElement("div");
-        var itemView = new Rubik.ItemView(itemID, itemViewDiv, view._rubik, view._itemViewConfiguration);
+        var itemView = new Rubik.ItemView(itemID, itemViewDiv, view._rubik, view._configuration);
         tdItemView.appendChild(itemViewDiv);
     };
                 

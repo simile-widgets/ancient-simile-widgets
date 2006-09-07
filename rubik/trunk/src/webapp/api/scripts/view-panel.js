@@ -64,7 +64,11 @@ Rubik.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, datab
     
     for (var i = 0; i < propertyEntries.length; i++) {
         var entry = propertyEntries[i];
-        enterPair(entry.property, entry.forward);
+        if (typeof entry == "string") {
+            enterPair(entry, true);
+        } else {
+            enterPair(entry.property, entry.forward);
+        }
     }
     return pairs;
 };

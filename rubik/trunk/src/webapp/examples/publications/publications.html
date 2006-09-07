@@ -54,19 +54,22 @@
                     ]
                 },
                 TileView: {
-                    properties: [
-                        "author",
-                        "format",
-                        "venue",
-                        "event",
-                        "year"
-                    ],
                     orders: [
                         "format",
                         { property: "year", ascending: false },
                         "label"
                     ],
                     groupLevels: 1
+                },
+                ItemView: {
+                    properties: [
+                        "author",
+                        "format",
+                        "venue",
+                        "event",
+                        "year"
+                    ]//,
+                    //viewSelector: function(itemID, rubik) { return "publication-item.xml"; }
                 }
             };
                 

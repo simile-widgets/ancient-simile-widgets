@@ -1,0 +1,5 @@
+<div>
+    <span content=".author" />. <b content=".label" />. 
+    <span if-exists=".venue"><i>{.venue}</i>.</span>
+    <span content=".year" />.
+</div>
