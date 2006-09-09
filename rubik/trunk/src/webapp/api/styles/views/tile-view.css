@@ -3,6 +3,7 @@ table.rubik-tileView-body {
 }
 
 .rubik-tileView-body > tbody > tr > td:first-child {
+    width:      3em;
     text-align: right;
     color:      #aaa
 }

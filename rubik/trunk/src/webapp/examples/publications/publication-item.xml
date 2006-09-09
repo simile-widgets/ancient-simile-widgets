@@ -1,5 +1,8 @@
 <div>
-    <span content=".author" />. <b content=".label" />. 
-    <span if-exists=".venue"><i>{.venue}</i>.</span>
+    <span style="color: #008" content=".label" />. 
+    <i if-exists=".venue"><span content=".venue" />,</i>
     <span content=".year" />.
+    <ul content=".author">
+        <li content="value" />
+    </ul>
 </div>

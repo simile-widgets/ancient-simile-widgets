@@ -304,7 +304,7 @@ Rubik.ListFacet.prototype._filter = function(valueDom) {
     var property = this._property;
     var forward = this._forward;
     var level = this._groupLevelCount - valueDom.level - 1;
-    var value = valueDom.value; console.log(property + " " + forward + " " + level + " " + value);
+    var value = valueDom.value;
     var selected = !valueDom.selected;
     var browseEngine = this._rubik.getBrowseEngine();
     

@@ -125,9 +125,6 @@ Rubik.ItemView.prototype._constructFromViewTemplate =
     }
 };
 
-Rubik.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
-};
-
 Rubik.ItemView._startCompilingTemplate = function(viewTemplateURL) {
     var compiledTemplate = {
         url:        viewTemplateURL,
@@ -141,7 +138,7 @@ Rubik.ItemView._startCompilingTemplate = function(viewTemplateURL) {
     };
     var fDone = function(xmlhttp) {
         try {
-            compiledTemplate.template = Rubik.ItemView._compileTemplateXml(xmlhttp.responseXML.documentElement);
+            compiledTemplate.template = Rubik.ItemView._compileTemplate(xmlhttp.responseXML.documentElement);
             compiledTemplate.compiled = true;
             
             for (var i = 0; i < compiledTemplate.jobs.length; i++) {
@@ -163,6 +160,189 @@ Rubik.ItemView._startCompilingTemplate = function(viewTemplateURL) {
     return compiledTemplate;
 };
 
-Rubik.ItemView._compileTemplateXml = function(xml) {
-    console.log(xml);
+Rubik.ItemView._compileTemplate = function(rootNode) {
+    return Rubik.ItemView._processTemplateNode(rootNode);
 };
+
+Rubik.ItemView._processTemplateNode = function(node) {
+    if (node.nodeType == 1) {
+        return Rubik.ItemView._processTemplateElement(node);
+    } else {
+        return node.nodeValue;
+    }
+};
+
+Rubik.ItemView._processTemplateElement = function(elmt) {
+    var templateNode = {
+        tag:        elmt.tagName,
+        content:    null,
+        condition:  null,
+        attributes: [],
+        children:   null
+    };
+    
+    var attributes = elmt.attributes;
+    for (var i = 0; i < attributes.length; i++) {
+        var attribute = attributes[i];
+        var name = attribute.nodeName;
+        var value = attribute.nodeValue;
+        
+        if (name == "content") {
+            templateNode.content = Rubik.ItemView._parseTemplateExpression(value);
+        } else if (name == "if-exists") {
+            templateNode.condition = {
+                test:       "exists",
+                expression: Rubik.ItemView._parseTemplateExpression(value)
+            };
+        } else {
+            templateNode.attributes.push({
+                name:   name,
+                value:  value
+            });
+        }
+    }
+    
+    var childNode = elmt.firstChild;
+    if (childNode != null) {
+        templateNode.children = [];
+        while (childNode != null) {
+            templateNode.children.push(Rubik.ItemView._processTemplateNode(childNode));
+            childNode = childNode.nextSibling;
+        }
+    }
+    return templateNode;
+};
+
+Rubik.ItemView._parseTemplateExpression = function(s) {
+    var expression = {
+        root:  "value",
+        path:  []
+    };
+    if (s.length > 0) {
+        var dotBang = s.search(/[\.!]/);
+        if (dotBang > 0) {
+            expression.root = s.substr(0, dotBang);
+        }
+        
+        var regex = /[\.!][^\.!]+/g;
+        var result;
+        while ((result = regex.exec(s)) != null) {
+            var segment = result[0];
+            expression.path.push({
+                property:   segment.substr(1),
+                forward:    segment.substr(0,1) == "."
+            });
+        }
+    }
+    return expression;
+};
+
+Rubik.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
+    Rubik.ItemView._constructFromViewTemplateNode(
+        job.itemID, "item", compiledTemplate.template, job.div, job.rubik);
+};
+
+Rubik.ItemView._constructFromViewTemplateNode = function(
+    value, valueType, templateNode, parentElmt, rubik
+) {
+    if (typeof templateNode == "string") {
+        parentElmt.appendChild(document.createTextNode(templateNode));
+        return;
+    }
+    
+    var database = rubik.getDatabase();
+    if (templateNode.condition != null) {
+        if (templateNode.condition.test == "exists") {
+            if (Rubik.ItemView._executeExpression(
+                    value, 
+                    valueType,
+                    templateNode.condition.expression, 
+                    database
+                ).values.size() == 0) {
+                return;
+            }
+        }
+    }
+    
+    var elmt = Rubik.ItemView._constructElmtWithAttributes(value, valueType, templateNode, parentElmt, database);
+    var children = templateNode.children;
+    if (templateNode.content != null) {
+        var results = Rubik.ItemView._executeExpression(value, valueType, templateNode.content, database);
+        if (children != null) {
+            results.values.visit(function(childValue) {
+                for (var i = 0; i < children.length; i++) {
+                    Rubik.ItemView._constructFromViewTemplateNode(
+                        childValue, results.valueType, children[i], elmt, rubik);
+                }
+            });
+        } else {
+            Rubik.ItemView._constructDefaultValueList(results.values, results.valueType, elmt, rubik);
+        }
+    } else if (children != null) {
+        for (var i = 0; i < children.length; i++) {
+            Rubik.ItemView._constructFromViewTemplateNode(value, valueType, children[i], elmt, rubik);
+        }
+    }
+    parentElmt.appendChild(elmt);
+};
+
+Rubik.ItemView._executeExpression = function(value, valueType, expression, database) {
+    var set = new Rubik.Set();
+    set.add(eval(expression.root));
+    
+    for (var i = 0; i < expression.path.length; i++) {
+        var segment = expression.path[i];
+        if (segment.forward) {
+            set = database.getObjectsUnion(set, segment.property);
+            
+            var property = database.getProperty(segment.property);
+            valueType = property != null ? property.getValueType() : "text";
+        } else {
+            set = database.getSubjectsUnion(set, segment.property);
+            valueType = "item";
+        }
+    }
+    
+    return {
+        valueType:  valueType,
+        values:     set
+    };
+};
+
+Rubik.ItemView._constructElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
+    var elmt = document.createElement(templateNode.tag);
+    
+    var attributes = templateNode.attributes;
+    for (var i = 0; i < attributes.length; i++) {
+        var attribute = attributes[i];
+        elmt.setAttribute(attribute.name, attribute.value);
+    }
+    return elmt;
+};
+
+Rubik.ItemView._constructDefaultValueList = function(values, valueType, parentElmt, rubik) {
+    var database = rubik.getDatabase();
+    if (valueType == "item") {
+        var first = true;
+        values.visit(function(value) {
+            if (first) {
+                first = false;
+            } else {
+                parentElmt.appendChild(document.createTextNode(", "));
+            }
+            parentElmt.appendChild(rubik.makeItemSpan(value));
+        });
+    } else {
+        var first = true;
+        values.visit(function(value) {
+            if (first) {
+                first = false;
+            } else {
+                parentElmt.appendChild(document.createTextNode(", "));
+            }
+            parentElmt.appendChild(rubik.makeValueSpan(value, valueType));
+        });
+    }
+};
+
+

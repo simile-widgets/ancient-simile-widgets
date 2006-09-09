@@ -12,7 +12,7 @@
             year:	'1997',
             psURL:	'http://haystack.lcs.mit.edu/papers/haystack.ps.gz',
             psKB:	'68',
-            author: [ 'Adar Eytan' ]
+            author: [ 'Eytan Adar' ]
         },
         {	label:	'Personalizing Search via Automated Analysis of Interests and Activities',
             type:	'Publication',
@@ -22,7 +22,7 @@
             conferenceURL:	'http://www.sigir2005.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/teevan.sigir05.pdf',
             pdfKB:	'102',
-            author: [ 'Jaime Teevan', 'Susan T. Dumais', 'Eric Horvitz' ]
+            author: [ 'Jaime Teevan', 'Susan Dumais', 'Eric Horvitz' ]
         },
         {	label:	'Thresher: Automating the Unwrapping of Semantic Content from the World Wide Web',
             type:	'Publication',
@@ -32,7 +32,7 @@
             conferenceURL:	'http://www2005.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/www2005-thresher.pdf',
             pdfKB:	'396',
-            author: [ 'Andrew Hogue', 'David R. Karger' ]
+            author: [ 'Andrew Hogue', 'David Karger' ]
         },
         {	label:	'Magnet: Supporting Navigation in Semistructured Data Environments',
             type:	'Publication',
@@ -42,7 +42,7 @@
             conferenceURL:	'http://cimic.rutgers.edu/~sigmod05/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/magnet-sigmod2005.pdf',
             pdfKB:	'579',
-            author: [ 'Vineet Sinha', 'David R. Karger' ]
+            author: [ 'Vineet Sinha', 'David Karger' ]
         },
         {	label:	'Haystack: A General Purpose Information Management Tool for End Users of Semistructured Data',
             type:	'Publication',
@@ -51,7 +51,7 @@
             venue:	'CIDR',
             conferenceURL:	'http://www-db.cs.wisc.edu/cidr/cidr2005/',
             pdfURL:	'http://www-db.cs.wisc.edu/cidr/cidr2005/papers/P02.pdf',
-            author: [ 'David R. Karger', 'Karun Bakshi', 'David Huynh', 'Dennis Quan', 'Vineet Sinha' ]
+            author: [ 'David Karger', 'Karun Bakshi', 'David Huynh', 'Dennis Quan', 'Vineet Sinha' ]
         },
         {	label:	'How to Make a Semantic Web Browser',
             type:	'Publication',
@@ -61,7 +61,7 @@
             conferenceURL:	'http://www.www2004.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/www2004-browser.pdf',
             pdfKB:	'441',
-            author: [ 'Dennis Quan', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'David Karger' ]
         },
         {	label:	'The Perfect Search Engine is Not Enough: A Study of Orienteering Behavior in Directed Search',
             type:	'Publication',
@@ -71,7 +71,7 @@
             conferenceURL:	'http://www.chi2004.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/chi2004-perfectse.pdf',
             pdfKB:	'314',
-            author: [ 'Jaime Teevan', 'Christine Alvarado', 'Mark S. Ackerman', 'David R. Karger' ]
+            author: [ 'Jaime Teevan', 'Christine Alvarado', 'Mark Ackerman', 'David Karger' ]
         },
         {	label:	'Haystack: A Platform for Authoring End User Semantic Web Applications',
             type:	'Publication',
@@ -81,7 +81,7 @@
             conferenceURL:	'http://iswc2003.semanticweb.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/iswc2003-haystack.pdf',
             pdfKB:	'153',
-            author: [ 'Dennis Quan', 'David Huynh', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'David Huynh', 'David Karger' ]
         },
         {	label:	'Implicit Feedback for Inferring User Preference: A Bibliography',
             type:	'Publication',
@@ -101,7 +101,7 @@
             conferenceURL:	'http://www.uist.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/uist2003-uicont.pdf',
             pdfKB:	'111',
-            author: [ 'Dennis Quan', 'David Huynh', 'David R. Karger', 'Robert Miller' ]
+            author: [ 'Dennis Quan', 'David Huynh', 'David Karger', 'Robert Miller' ]
         },
         {	label:	'Tackling the Poor Assumptions of Naive Bayes Text Classifiers',
             type:	'Publication',
@@ -111,7 +111,7 @@
             conferenceURL:	'http://www.hpl.hp.com/conferences/icml03/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/rennie.icml03.ps.gz',
             pdfKB:	'223',
-            author: [ 'Jason D. M. Rennie', 'Lawrence Shi', 'Jaime Teevan', 'David R. Karger' ]
+            author: [ 'Jason Rennie', 'Lawrence Shi', 'Jaime Teevan', 'David Karger' ]
         },
         {	label:	'User Interfaces for Supporting Multiple Categorization',
             type:	'Publication',
@@ -121,7 +121,7 @@
             conferenceURL:	'http://www.interact2003.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/interact2003-multicat.pdf',
             pdfKB:	'175',
-            author: [ 'Dennis Quan', 'Karun Bakshi', 'David Huynh', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'Karun Bakshi', 'David Huynh', 'David Karger' ]
         },
         {	label:	'Empiricial Development of an Exponential Probabilistic Model for Text Retrieval: Using Textual Analysis to Build a Better Model',
             type:	'Publication',
@@ -133,7 +133,7 @@
             psKB:	'339',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/teevan.sigir03.pdf',
             pdfKB:	'157',
-            author: [ 'Jaime Teevan', 'David R. Karger' ]
+            author: [ 'Jaime Teevan', 'David Karger' ]
         },
         {	label:	'RDF Authoring Environments for End Users',
             type:	'Publication',
@@ -142,7 +142,7 @@
             venue:	'SWFAT',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/swfat2003.pdf',
             pdfKB:	'494',
-            author: [ 'Dennis Quan', 'David R. Karger', 'David Huynh' ]
+            author: [ 'Dennis Quan', 'David Karger', 'David Huynh' ]
         },
         {	label:	'Sticky Notes for the Semantic Web',
             type:	'Publication',
@@ -152,7 +152,7 @@
             conferenceURL:	'http://www.iuiconf.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/iui2003-annotation.pdf',
             pdfKB:	'88',
-            author: [ 'David R. Karger', 'Boris Katz', 'Jimmy Lin', 'Dennis Quan' ]
+            author: [ 'David Karger', 'Boris Katz', 'Jimmy Lin', 'Dennis Quan' ]
         },
         {	label:	'Natural Language Annotations for the Semantic Web',
             type:	'Publication',
@@ -171,7 +171,7 @@
             conferenceURL:	'http://www.acm.org/pubs/contents/proceedings/series/cikm/',
             psURL:	'http://haystack.lcs.mit.edu/papers/cikm99.ps',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/cikm99.pdf',
-            author: [ 'Eytan Adar', 'David R. Karger', 'Lynn A. Stein' ]
+            author: [ 'Eytan Adar', 'David Karger', 'Lynn Stein' ]
         },
         {	label:	'Haystack: Metadata-Enabled Information Management',
             type:	'Publication',
@@ -181,7 +181,7 @@
             conferenceURL:	'http://www.uist.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/uist2003-demo.pdf',
             pdfKB:	'125',
-            author: [ 'Dennis Quan', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'David Karger' ]
         },
         {	label:	'Haystack: A Platform for Authoring End User Semantic Web Applications',
             type:	'Publication',
@@ -192,7 +192,7 @@
             conferenceURL:	'http://www.www2003.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/www2003-developer.pdf',
             pdfKB:	'20',
-            author: [ 'Dennis Quan', 'David Huynh', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'David Huynh', 'David Karger' ]
         },
         {	label:	'A Unified Abstraction for Messaging on the Semantic Web',
             type:	'Publication',
@@ -203,7 +203,7 @@
             conferenceURL:	'http://www.www2003.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/www2003-messaging.pdf',
             pdfKB:	'307',
-            author: [ 'Dennis Quan', 'Karun Bakshi', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'Karun Bakshi', 'David Karger' ]
         },
         {	label:	'User Interaction Experience for Semantic Web Information',
             type:	'Publication',
@@ -214,7 +214,7 @@
             conferenceURL:	'http://www.www2003.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/www2003-ui.pdf',
             pdfKB:	'252',
-            author: [ 'David Huynh', 'Dennis Quan', 'David R. Karger' ]
+            author: [ 'David Huynh', 'Dennis Quan', 'David Karger' ]
         },
         {	label:	'Haystack: A Platform for Creating, Organizing and Visualizing Semistructured Information',
             type:	'Publication',
@@ -224,7 +224,7 @@
             conferenceURL:	'http://www.iuiconf.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/iui2003-demo.pdf',
             pdfKB:	'97',
-            author: [ 'David Huynh', 'David R. Karger', 'Dennis Quan', 'Vineet Sinha' ]
+            author: [ 'David Huynh', 'David Karger', 'Dennis Quan', 'Vineet Sinha' ]
         },
         {	label:	'Machine Learning on Web Documents',
             type:	'Publication',
@@ -432,7 +432,7 @@
             event:	'Student Oxygen Workshop',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/sow2002-ontology.pdf',
             pdfKB:	'17',
-            author: [ 'Dennis Quan', 'David Huynh', 'Vineet Sinha', 'David R. Karger', 'Marina Zhurakhinskaya' ]
+            author: [ 'Dennis Quan', 'David Huynh', 'Vineet Sinha', 'David Karger', 'Marina Zhurakhinskaya' ]
         },
         {	label:	'Semantic Navigation Through Semi-structured Information',
             type:	'Publication',
@@ -441,7 +441,7 @@
             event:	'Student Oxygen Workshop',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/sow2002-semnav.pdf',
             pdfKB:	'37',
-            author: [ 'Vineet Sinha', 'Dennis Quan', 'David Huynh', 'David R. Karger' ]
+            author: [ 'Vineet Sinha', 'Dennis Quan', 'David Huynh', 'David Karger' ]
         },
         {	label:	'Metadata-supported Agent Infrastructure',
             type:	'Publication',
@@ -450,7 +450,7 @@
             event:	'Student Oxygen Workshop',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/sow2002-agents.pdf',
             pdfKB:	'16',
-            author: [ 'Dennis Quan', 'David Huynh', 'Vineet Sinha', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'David Huynh', 'Vineet Sinha', 'David Karger' ]
         },
         {	label:	'Adenine: A Metadata Programming Language',
             type:	'Publication',
@@ -459,7 +459,7 @@
             event:	'Student Oxygen Workshop',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/sow2002-adenine.pdf',
             pdfKB:	'18',
-            author: [ 'Dennis Quan', 'David Huynh', 'Vineet Sinha', 'David R. Karger' ]
+            author: [ 'Dennis Quan', 'David Huynh', 'Vineet Sinha', 'David Karger' ]
         },
         {	label:	'The Semantic User Interface Paradigm for Presenting Semi-structured Information',
             type:	'Publication',
@@ -468,7 +468,7 @@
             event:	'Student Oxygen Workshop',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/sow2002-ui.pdf',
             pdfKB:	'17',
-            author: [ 'David Huynh', 'Dennis Quan', 'Vineet Sinha', 'David R. Karger' ]
+            author: [ 'David Huynh', 'Dennis Quan', 'Vineet Sinha', 'David Karger' ]
         },
         {	label:	'Displaying Dynamic Information',
             type:	'Publication',
@@ -490,7 +490,7 @@
             venue:	'AI Memo',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/alvarado.aim03.pdf',
             pdfKB:	'413',
-            author: [ 'Christine Alvarado', 'Jaime Teevan', 'Mark S. Ackerman', 'David R. Karger' ]
+            author: [ 'Christine Alvarado', 'Jaime Teevan', 'Mark Ackerman', 'David Karger' ]
         },
         {	label:	'How People Re-Find Information When the Web Changes',
             type:	'Publication',
@@ -518,7 +518,7 @@
             conferenceURL:	'http://iswc2005.semanticweb.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/SemDesk-Final.pdf',
             pdfKB:	'1465',
-            author: [ 'Karun Bakshi', 'David R. Karger' ]
+            author: [ 'Karun Bakshi', 'David Karger' ]
         },
         {	label:	'Semantic Web Applications',
             type:	'Publication',
@@ -529,7 +529,7 @@
             conferenceURL:	'http://iswc2005.semanticweb.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/EndUserInteraction-Final.pdf',
             pdfKB:	'1288',
-            author: [ 'Karun Bakshi', 'David R. Karger' ]
+            author: [ 'Karun Bakshi', 'David Karger' ]
         },
         {	label:	'Beyond the Commons: Investigating the Value of Personalizing Web Search',
             type:	'Publication',
@@ -540,7 +540,7 @@
             conferenceURL:	'http://adiret.cs.uni-magdeburg.de/pia2005/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/teevan.pia2005.pdf',
             pdfKB:	'50',
-            author: [ 'Jaime Teevan', 'Susan T. Dumais', 'Eric Horvitz' ]
+            author: [ 'Jaime Teevan', 'Susan Dumais', 'Eric Horvitz' ]
         },
         {	label:	'Prerequisites for a Personalizable User Interface',
             type:	'Publication',
@@ -551,7 +551,7 @@
             conferenceURL:	'http://www.iuiconf.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/iui2004-adaptiveui.pdf',
             pdfKB:	'154',
-            author: [ 'David R. Karger', 'Dennis Quan' ]
+            author: [ 'David Karger', 'Dennis Quan' ]
         },
         {	label:	'Wrapper Induction for End-User Semantic Content Development',
             type:	'Publication',
@@ -562,7 +562,7 @@
             conferenceURL:	'http://www.www2004.org/',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/idsw2004-wrapperinduction.pdf',
             pdfKB:	'93',
-            author: [ 'Andrew Hogue', 'David R. Karger' ]
+            author: [ 'Andrew Hogue', 'David Karger' ]
         },
         {	label:	'Haystack: A Platform for Creating, Organizing and Visualizing Information Using RDF',
             type:	'Publication',
@@ -572,7 +572,7 @@
             venue:	'WWW',
             pdfURL:	'http://haystack.lcs.mit.edu/papers/sww02.pdf',
             pdfKB:	'310',
-            author: [ 'David Huynh', 'David R. Karger', 'Dennis Quan' ]
+            author: [ 'David Huynh', 'David Karger', 'Dennis Quan' ]
         }
     ]
 }
