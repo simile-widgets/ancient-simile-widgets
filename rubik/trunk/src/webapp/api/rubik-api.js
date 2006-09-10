@@ -2,7 +2,7 @@
  *  Simile Rubik API
  *
  *  Include Rubik in your HTML file as follows:
- *    <script src="http://simile.mit.edu/ajax/api/ajax-api.js" type="text/javascript"></script>
+ *    <script src="http://simile.mit.edu/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
  *    <script src="http://simile.mit.edu/rubik/api/rubik-api.js" type="text/javascript"></script>
  *
  *  You do need to include the Simile Ajax API 
@@ -13,7 +13,7 @@
 
 if (typeof Rubik == "undefined") {
     var Rubik = {
-        loaded: false
+        loaded:     false
     };
     
     (function() {
@@ -45,29 +45,74 @@ if (typeof Rubik == "undefined") {
             "views/item-view.css"
         ];
         
-        var url = SimileAjax.findScript(document, "rubik-api.js");
-        if (url == null) {
-            Rubik.error = new Error("Failed to derive URL prefix for Simile Rubik API code files");
-            return;
-        }
-        Rubik.urlPrefix = url.substr(0, url.indexOf("rubik-api.js"));
+        var theme = "classic";
+        var locales = [ "en" ];
+        var gmapKey = null;
         
-        var includeJavascriptFile = function(filename) {
-            SimileAjax.includeJavascriptFile(document, Rubik.urlPrefix + "scripts/" + filename);
+        var processURLParameters = function(parameters) {
+            for (var i = 0; i < parameters.length; i++) {
+                var p = parameters[i];
+                if (p.name == "theme") {
+                    theme = p.value;
+                } else if (p.name == "locale") {
+                    // ISO-639 language codes, optional ISO-3166 country codes (2 characters)
+                    var segments = p.value.split("-");
+                    if (segments.length > 1) {
+                        locales.push(segments[0]);
+                    }
+                    locales.push(p.value);
+                } else if (p.name == "gmapkey") {
+                    gmapKey = p.value;
+                }
+            }
         };
-        var includeCssFile = function(filename) {
-            SimileAjax.includeCssFile(document, Rubik.urlPrefix + "styles/" + filename);
+        
+        if (typeof Rubik_urlPrefix == "string") {
+            Rubik.urlPrefix = Rubik_urlPrefix;
+            if ("Rubik_parameters" in window) {
+                processURLParameters(Rubik_parameters);
+            }
+        } else {
+            var url = SimileAjax.findScript(document, "rubik-api.js");
+            if (url == null) {
+                Rubik.error = new Error("Failed to derive URL prefix for Simile Rubik API code files");
+                return;
+            }
+            Rubik.urlPrefix = url.substr(0, url.indexOf("rubik-api.js"));
+        
+            processURLParameters(SimileAjax.parseURLParameters(url));
         }
         
         /*
-         *  Include non-localized files
+         *  External components
          */
-        for (var i = 0; i < javascriptFiles.length; i++) {
-            includeJavascriptFile(javascriptFiles[i]);
+        if (gmapKey != null) {
+            SimileAjax.includeJavascriptFile(
+                document, 
+                "http://maps.google.com/maps?file=api&v=2&key=" + gmapKey
+            );
         }
-        for (var i = 0; i < cssFiles.length; i++) {
-            includeCssFile(cssFiles[i]);
-        }
+        
+        /*
+         *  Core scripts and styles
+         */
+        SimileAjax.includeJavascriptFiles(document, Rubik.urlPrefix + "scripts/", javascriptFiles);
+        SimileAjax.includeCssFiles(document, Rubik.urlPrefix + "styles/", cssFiles);
+        
+        /*
+         *  Theme and localization
+         */
+        SimileAjax.includeJavascriptFiles(
+            document, 
+            Rubik.urlPrefix + "themes/", 
+            [ theme + "/theme.js" ]
+        );
+        
+        var localeFiles = [];
+        for (var i = 0; i < locales.length; i++) {
+            localeFiles.push(locales[i] + "/locale.js");
+        };
+        SimileAjax.includeJavascriptFiles(document, Rubik.urlPrefix + "locales/", localeFiles);
         
         Rubik.loaded = true;
     })();
