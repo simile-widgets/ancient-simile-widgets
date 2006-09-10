@@ -2,7 +2,5 @@
     <span style="color: #008" content=".label" />. 
     <i if-exists=".venue"><span content=".venue" />,</i>
     <span content=".year" />.
-    <ul content=".author">
-        <li content="value" />
-    </ul>
+    <div style="margin: 1em; font-variant: italic" content=".author" />
 </div>

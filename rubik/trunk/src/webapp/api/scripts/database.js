@@ -11,6 +11,7 @@ Rubik.Database = function() {
     
     this._spo = {};
     this._ops = {};
+    this._listpso = {};
     this._items = new Rubik.Set();
     
     /*
@@ -237,6 +238,8 @@ Rubik.Database.prototype._loadItem = function(itemEntry, indexFunction, baseURI)
             
             var v = itemEntry[p];
             if (v instanceof Array) {
+                //Rubik.Database._indexPutList(this._listpso, p, id, v);
+                
                 for (var j = 0; j < v.length; j++) {
                     indexFunction(id, p, v[j]);
                 }
@@ -302,6 +305,21 @@ Rubik.Database._indexPut = function(index, x, y, z) {
         }
     }
     array.push(z);
+};
+
+Rubik.Database._indexPutList = function(index, x, y, list) {
+    var hash = index[x];
+    if (!hash) {
+        hash = {};
+        index[x] = hash;
+    }
+    
+    var array = hash[y];
+    if (!array) {
+        hash[y] = list;
+    } else {
+        hash[y] = hash[y].concat(list);
+    }
 };
 
 Rubik.Database.prototype._indexFillSet = function(index, x, y, set, filter) {
@@ -428,6 +446,14 @@ Rubik.Database.prototype.getInverseProperty = function(o, p) {
         if (array) {
             return array[0];
         }
+    }
+    return null;
+};
+
+Rubik.Database.prototype.getListProperty = function(s, p) {
+    var hash = this._listpso[p];
+    if (hash) {
+        return hash[s];
     }
     return null;
 };
