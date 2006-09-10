@@ -1,8 +1,8 @@
-table.rubik-tileView-body {
+table.exhibit-tileView-body {
     width: 100%;
 }
 
-.rubik-tileView-body > tbody > tr > td:first-child {
+.exhibit-tileView-body > tbody > tr > td:first-child {
     width:      3em;
     text-align: right;
     color:      #aaa

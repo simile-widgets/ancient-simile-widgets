@@ -1,24 +1,24 @@
 /*==================================================
- *  Simile Rubik API
+ *  Simile Exhibit API
  *
- *  Include Rubik in your HTML file as follows:
+ *  Include Exhibit in your HTML file as follows:
  *    <script src="http://simile.mit.edu/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
- *    <script src="http://simile.mit.edu/rubik/api/rubik-api.js" type="text/javascript"></script>
+ *    <script src="http://simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
  *
  *  You do need to include the Simile Ajax API 
- *  BEFORE you include Rubik.
+ *  BEFORE you include Exhibit.
  *
  *==================================================
  */
 
-if (typeof Rubik == "undefined") {
-    var Rubik = {
+if (typeof Exhibit == "undefined") {
+    var Exhibit = {
         loaded:     false
     };
     
     (function() {
         var javascriptFiles = [
-            "rubik.js",
+            "exhibit.js",
             "util/set.js",
             
             "database.js",
@@ -34,7 +34,7 @@ if (typeof Rubik == "undefined") {
             "views/item-view.js"
         ];
         var cssFiles = [
-            "rubik.css",
+            "exhibit.css",
             
             "browse-panel.css",
             "facets/list-facet.css",
@@ -67,18 +67,18 @@ if (typeof Rubik == "undefined") {
             }
         };
         
-        if (typeof Rubik_urlPrefix == "string") {
-            Rubik.urlPrefix = Rubik_urlPrefix;
-            if ("Rubik_parameters" in window) {
-                processURLParameters(Rubik_parameters);
+        if (typeof Exhibit_urlPrefix == "string") {
+            Exhibit.urlPrefix = Exhibit_urlPrefix;
+            if ("Exhibit_parameters" in window) {
+                processURLParameters(Exhibit_parameters);
             }
         } else {
-            var url = SimileAjax.findScript(document, "rubik-api.js");
+            var url = SimileAjax.findScript(document, "exhibit-api.js");
             if (url == null) {
-                Rubik.error = new Error("Failed to derive URL prefix for Simile Rubik API code files");
+                Exhibit.error = new Error("Failed to derive URL prefix for Simile Exhibit API code files");
                 return;
             }
-            Rubik.urlPrefix = url.substr(0, url.indexOf("rubik-api.js"));
+            Exhibit.urlPrefix = url.substr(0, url.indexOf("exhibit-api.js"));
         
             processURLParameters(SimileAjax.parseURLParameters(url));
         }
@@ -96,15 +96,15 @@ if (typeof Rubik == "undefined") {
         /*
          *  Core scripts and styles
          */
-        SimileAjax.includeJavascriptFiles(document, Rubik.urlPrefix + "scripts/", javascriptFiles);
-        SimileAjax.includeCssFiles(document, Rubik.urlPrefix + "styles/", cssFiles);
+        SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "scripts/", javascriptFiles);
+        SimileAjax.includeCssFiles(document, Exhibit.urlPrefix + "styles/", cssFiles);
         
         /*
          *  Theme and localization
          */
         SimileAjax.includeJavascriptFiles(
             document, 
-            Rubik.urlPrefix + "themes/", 
+            Exhibit.urlPrefix + "themes/", 
             [ theme + "/theme.js" ]
         );
         
@@ -112,8 +112,8 @@ if (typeof Rubik == "undefined") {
         for (var i = 0; i < locales.length; i++) {
             localeFiles.push(locales[i] + "/locale.js");
         };
-        SimileAjax.includeJavascriptFiles(document, Rubik.urlPrefix + "locales/", localeFiles);
+        SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "locales/", localeFiles);
         
-        Rubik.loaded = true;
+        Exhibit.loaded = true;
     })();
 }

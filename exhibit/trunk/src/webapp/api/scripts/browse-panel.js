@@ -1,12 +1,12 @@
 /*==================================================
- *  Rubik.BrowsePanel
+ *  Exhibit.BrowsePanel
  *==================================================
  */
  
-Rubik.BrowsePanel = function(rubik, div, configuration) {
-    this._rubik = rubik;
-    this._database = rubik.getDatabase();
-    this._browseEngine = rubik.getBrowseEngine();
+Exhibit.BrowsePanel = function(exhibit, div, configuration) {
+    this._exhibit = exhibit;
+    this._database = exhibit.getDatabase();
+    this._browseEngine = exhibit.getBrowseEngine();
     this._div = div;
     
     this._configure(configuration);
@@ -24,20 +24,20 @@ Rubik.BrowsePanel = function(rubik, div, configuration) {
     this._initializeUI();
 };
 
-Rubik.BrowsePanel.prototype._configure = function(configuration) {
+Exhibit.BrowsePanel.prototype._configure = function(configuration) {
     if ("BrowsePanel" in configuration) {
         var myConfig = configuration["BrowsePanel"];
     }
 };
 
-Rubik.BrowsePanel.prototype._initializeUI = function() {
+Exhibit.BrowsePanel.prototype._initializeUI = function() {
     this._div.innerHTML = "";
     
-    Rubik.protectUI(this._div);
-    SimileAjax.DOM.appendClassName(this._div, "rubik-browsePanel");
+    Exhibit.protectUI(this._div);
+    SimileAjax.DOM.appendClassName(this._div, "exhibit-browsePanel");
 };
 
-Rubik.BrowsePanel.prototype._reconstruct = function() {
+Exhibit.BrowsePanel.prototype._reconstruct = function() {
     var newFacets = this._browseEngine.getFacets();
     /*  Note that the order of facets never changes, although
         some might disappear and reappear at different times.
@@ -142,13 +142,13 @@ Rubik.BrowsePanel.prototype._reconstruct = function() {
     this._facetInfos = newFacetInfos;
 };
 
-Rubik.BrowsePanel.prototype._constructFacet = function(facet) {
+Exhibit.BrowsePanel.prototype._constructFacet = function(facet) {
     var facetDiv = document.createElement("div");
-    var listFacet = new Rubik.ListFacet(this._rubik, facet, facetDiv, this._configuration);
+    var listFacet = new Exhibit.ListFacet(this._exhibit, facet, facetDiv, this._configuration);
     return [ facetDiv, listFacet ];
 };
 
-Rubik.BrowsePanel.prototype.setLocation = function(newLocation) {
+Exhibit.BrowsePanel.prototype.setLocation = function(newLocation) {
     var browsePanel = this;
     performLongTask(function() {
         browsePanel._browseEngine.focus(newLocation);
@@ -157,7 +157,7 @@ Rubik.BrowsePanel.prototype.setLocation = function(newLocation) {
     }, "please wait...");
 };
 
-Rubik.BrowsePanel.prototype.reset = function() {
+Exhibit.BrowsePanel.prototype.reset = function() {
     var browsePanel = this;
     performLongTask(function() {
         browsePanel._browseEngine.truncate(1);

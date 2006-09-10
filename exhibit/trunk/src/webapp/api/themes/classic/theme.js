@@ -8,7 +8,7 @@
     var cssFiles = [
     ];
 
-    var urlPrefix = Rubik.urlPrefix + "themes/classic/";
+    var urlPrefix = Exhibit.urlPrefix + "themes/classic/";
     SimileAjax.includeJavascriptFiles(document, urlPrefix + "scripts/", javascriptFiles);
     SimileAjax.includeCssFiles(document, urlPrefix + "styles/", cssFiles);
 })();

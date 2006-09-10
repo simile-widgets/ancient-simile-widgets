@@ -2,60 +2,60 @@
  * Browse Panel styles
  *==================================================
  */
-div.rubik-browsePanel {
+div.exhibit-browsePanel {
 }
 
 /*==================================================
  * Facet box
  *==================================================
  */
-div.rubik-facet-frame {
+div.exhibit-facet-frame {
     position:   relative;
     overflow:   hidden;
     opacity:    0;
 }
 
-div.rubik-facet {
+div.exhibit-facet {
 	margin:     1em;
 	padding:    1px;
 }
 
-div.rubik-facet-header {
+div.exhibit-facet-header {
 	padding:        2px;
 }
-div.rubik-facet-header-filterControl {
+div.exhibit-facet-header-filterControl {
     float:          right;
     width:          2em;
     display:        none;
 	background:     #FFFFE0;
     cursor:         pointer;
 }
-.rubik-facet-hasSelection div.rubik-facet-header-filterControl {
+.exhibit-facet-hasSelection div.exhibit-facet-header-filterControl {
     display:        block;
 }
 
-span.rubik-facet-header-title {
+span.exhibit-facet-header-title {
 	font-weight:    bold;
 }
-span.rubik-facet-header-detail {
+span.exhibit-facet-header-detail {
 	color:          #888;
     padding-left:   0.5em;
 }
     
-div.rubik-facet-body {
+div.exhibit-facet-body {
 	height:         10em;
 	overflow:       auto;
     border:         1px solid #ddd;
 }
 
-div.rubik-facet-resizer {
+div.exhibit-facet-resizer {
 	text-align:     center;
     cursor:         n-resize;
     background:     url(../images/down-arrow.png) top center no-repeat;
     height:         10px;
 }
 
-div.rubik-facet-footer {
+div.exhibit-facet-footer {
 	text-align: center;
     padding:    2px;
 }

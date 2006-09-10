@@ -1,10 +1,10 @@
 /*==================================================
- *  Rubik.ViewPanel
+ *  Exhibit.ViewPanel
  *==================================================
  */
  
-Rubik.ViewPanel = function(rubik, div, configuration) {
-    this._rubik = rubik;
+Exhibit.ViewPanel = function(exhibit, div, configuration) {
+    this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
     
@@ -12,23 +12,23 @@ Rubik.ViewPanel = function(rubik, div, configuration) {
     this._initializeUI();
 }
 
-Rubik.ViewPanel.prototype._initializeUI = function() {
+Exhibit.ViewPanel.prototype._initializeUI = function() {
     this._div.innerHTML = "";
     
-    Rubik.protectUI(this._div);
-    SimileAjax.DOM.appendClassName(this._div, "rubik-viewPanel");
+    Exhibit.protectUI(this._div);
+    SimileAjax.DOM.appendClassName(this._div, "exhibit-viewPanel");
     
     var collectionViewDiv = document.createElement("div");
     this._div.appendChild(collectionViewDiv);
     
-    this._view = new Rubik.TileView(
-        this._rubik, 
+    this._view = new Exhibit.TileView(
+        this._exhibit, 
         collectionViewDiv, 
         this._configuration
     );
 };
 
-Rubik.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, database) {
+Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, database) {
     var pairs = [];
     var enterPair = function(propertyID, forward) {
         var property = database.getProperty(propertyID);

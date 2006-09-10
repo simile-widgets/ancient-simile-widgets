@@ -74,8 +74,8 @@
         <!-- Configure a context directly - no XML parser required   -->
         <!-- ======================================================= -->
         <Item>
-          <New id="aContext"  class="org.mortbay.jetty.handler.ContextHandler">
-            <Set name="contextPath">/rubik</Set>
+          <New id="aContext" class="org.mortbay.jetty.handler.ContextHandler">
+            <Set name="contextPath">/exhibit</Set>
             <Set name="resourceBase">./src/webapp/</Set>
             <Set name="handler">
               <New id="javadocServletHandler" class="org.mortbay.jetty.servlet.ServletHandler">
@@ -83,7 +83,7 @@
                     <Array type="org.mortbay.jetty.servlet.ServletHolder">
                         <Item>
                            <New class="org.mortbay.jetty.servlet.ServletHolder">
-                               <Set name="name">Rubik</Set>
+                               <Set name="name">Exhibit</Set>
                                <Set name="className">org.mortbay.jetty.servlet.DefaultServlet</Set>
                            </New>
                         </Item>
@@ -95,7 +95,7 @@
                         <Item>
                            <New class="org.mortbay.jetty.servlet.ServletMapping">
                              <Set name="pathSpec">/</Set>
-                             <Set name="servletName">Rubik</Set>
+                             <Set name="servletName">Exhibit</Set>
                            </New>
                         </Item>
                     </Array>
@@ -105,7 +105,7 @@
           </New>
         </Item>
         <Item>
-          <New id="aContext"  class="org.mortbay.jetty.handler.ContextHandler">
+          <New id="aContext" class="org.mortbay.jetty.handler.ContextHandler">
             <Set name="contextPath">/ajax</Set>
             <Set name="resourceBase">../ajax/src/webapp/</Set>
             <Set name="handler">

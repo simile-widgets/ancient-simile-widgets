@@ -1,60 +1,60 @@
 /*==================================================
- *  Rubik.ItemView
+ *  Exhibit.ItemView
  *==================================================
  */
  
-Rubik.ItemView = function(itemID, div, rubik, configuration) {
+Exhibit.ItemView = function(itemID, div, exhibit, configuration) {
     var myConfig = ("ItemView" in configuration) ? configuration["ItemView"] : {};
     
     var viewTemplateURL = null;
     var viewSelector = myConfig["viewSelector"];
     if (viewSelector != null) {
-        viewTemplateURL = viewSelector.call(null, itemID, rubik);
+        viewTemplateURL = viewSelector.call(null, itemID, exhibit);
     }
     if (viewTemplateURL == null) {
-        this._constructDefaultUI(itemID, div, rubik, myConfig);
+        this._constructDefaultUI(itemID, div, exhibit, myConfig);
     } else {
-        this._constructFromViewTemplate(itemID, div, rubik, configuration, viewTemplateURL);
+        this._constructFromViewTemplate(itemID, div, exhibit, configuration, viewTemplateURL);
     }
 };
 
-Rubik.ItemView._commonProperties = null;
-Rubik.ItemView.prototype._constructDefaultUI = function(itemID, div, rubik, myConfig) {
-    var database = rubik.getDatabase();
+Exhibit.ItemView._commonProperties = null;
+Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, myConfig) {
+    var database = exhibit.getDatabase();
     
     var properties = null;
     if ("properties" in myConfig) {
         properties = myConfig.properties;
     } else {
-        if (Rubik.ItemView._commonProperties == null) {
-            Rubik.ItemView._commonProperties = database.getAllProperties();
+        if (Exhibit.ItemView._commonProperties == null) {
+            Exhibit.ItemView._commonProperties = database.getAllProperties();
         }
-        properties = Rubik.ItemView._commonProperties;
+        properties = Exhibit.ItemView._commonProperties;
     }
     
     var label = database.getLiteralProperty(itemID, "label");
     
     var rdfCopyButton = SimileAjax.Graphics.createStructuredDataCopyButton(
-        Rubik.urlPrefix + "images/rdf-copy-button.png", 16, 16, function() {
-            return rubik.serializeItem(itemID, "rdf/xml");
+        Exhibit.urlPrefix + "images/rdf-copy-button.png", 16, 16, function() {
+            return exhibit.serializeItem(itemID, "rdf/xml");
         }
     );
     
     var template = {
         elmt:       div,
-        className:  "rubik-item-view",
+        className:  "exhibit-item-view",
         children: [
             { elmt: rdfCopyButton },
             {   tag:        "div",
-                className:  "rubik-item-view-title",
+                className:  "exhibit-item-view-title",
                 title:      label,
                 children:   [ label, { elmt: rdfCopyButton } ]
             },
             {   tag:        "div",
-                className:  "rubik-item-view-body",
+                className:  "exhibit-item-view-body",
                 children: [
                     {   tag:        "table",
-                        className:  "rubik-item-view-properties",
+                        className:  "exhibit-item-view-properties",
                         field:      "propertiesTable"
                     }
                 ]
@@ -63,83 +63,83 @@ Rubik.ItemView.prototype._constructDefaultUI = function(itemID, div, rubik, myCo
     };
     var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     
-    var pairs = Rubik.ViewPanel.getPropertyValuesPairs(
+    var pairs = Exhibit.ViewPanel.getPropertyValuesPairs(
         itemID, properties, database);
         
     for (var j = 0; j < pairs.length; j++) {
         var pair = pairs[j];
         
         var tr = dom.propertiesTable.insertRow(j);
-        tr.className = "rubik-item-view-property";
+        tr.className = "exhibit-item-view-property";
         
         var tdName = tr.insertCell(0);
-        tdName.className = "rubik-item-view-property-name";
+        tdName.className = "exhibit-item-view-property-name";
         tdName.innerHTML = pair.propertyLabel + ": ";
         
         var tdValues = tr.insertCell(1);
-        tdValues.className = "rubik-item-view-property-values";
+        tdValues.className = "exhibit-item-view-property-values";
         
         if (pair.valueType == "item") {
             for (var m = 0; m < pair.values.length; m++) {
                 if (m > 0) {
                     tdValues.appendChild(document.createTextNode(", "));
                 }
-                tdValues.appendChild(rubik.makeItemSpan(pair.values[m]));
+                tdValues.appendChild(exhibit.makeItemSpan(pair.values[m]));
             }
         } else {
             for (var m = 0; m < pair.values.length; m++) {
                 if (m > 0) {
                     tdValues.appendChild(document.createTextNode(", "));
                 }
-                tdValues.appendChild(rubik.makeValueSpan(pair.values[m], pair.valueType));
+                tdValues.appendChild(exhibit.makeValueSpan(pair.values[m], pair.valueType));
             }
         }
     }
 };
 
-Rubik.ItemView._compiledTemplates = {};
+Exhibit.ItemView._compiledTemplates = {};
 
-Rubik.ItemView.prototype._constructFromViewTemplate = 
-    function(itemID, div, rubik, configuration, viewTemplateURL) {
+Exhibit.ItemView.prototype._constructFromViewTemplate = 
+    function(itemID, div, exhibit, configuration, viewTemplateURL) {
     
     var job = {
         itemView:       this,
         itemID:         itemID,
         div:            div,
-        rubik:          rubik,
+        exhibit:          exhibit,
         configuration:  configuration
     };
     
-    var compiledTemplate = Rubik.ItemView._compiledTemplates[viewTemplateURL];
+    var compiledTemplate = Exhibit.ItemView._compiledTemplates[viewTemplateURL];
     if (compiledTemplate == null) {
-        Rubik.ItemView._startCompilingTemplate(viewTemplateURL, job);
+        Exhibit.ItemView._startCompilingTemplate(viewTemplateURL, job);
     } else if (!compiledTemplate.compiled) {
         compiledTemplate.jobs.push(job);
     } else {
-        Rubik.ItemView._performConstructFromViewTemplateJob(compiledTemplate, job);
+        Exhibit.ItemView._performConstructFromViewTemplateJob(compiledTemplate, job);
     }
 };
 
-Rubik.ItemView._startCompilingTemplate = function(viewTemplateURL, job) {
+Exhibit.ItemView._startCompilingTemplate = function(viewTemplateURL, job) {
     var compiledTemplate = {
         url:        viewTemplateURL,
         template:   null,
         compiled:   false,
         jobs:       [ job ]
     };
-    Rubik.ItemView._compiledTemplates[viewTemplateURL] = compiledTemplate;
+    Exhibit.ItemView._compiledTemplates[viewTemplateURL] = compiledTemplate;
     
     var fError = function(statusText, status, xmlhttp) {
         SimileAjax.Debug.log("Failed to load view template from " + viewTemplateURL + "\n" + statusText);
     };
     var fDone = function(xmlhttp) {
         try {
-            compiledTemplate.template = Rubik.ItemView._compileTemplate(xmlhttp.responseXML.documentElement);
+            compiledTemplate.template = Exhibit.ItemView._compileTemplate(xmlhttp.responseXML.documentElement);
             compiledTemplate.compiled = true;
             
             for (var i = 0; i < compiledTemplate.jobs.length; i++) {
                 try {
-                    Rubik.ItemView._performConstructFromViewTemplateJob(
+                    Exhibit.ItemView._performConstructFromViewTemplateJob(
                         compiledTemplate, compiledTemplate.jobs[i]);
                 } catch (e) {
                     SimileAjax.Debug.exception(e);
@@ -156,25 +156,25 @@ Rubik.ItemView._startCompilingTemplate = function(viewTemplateURL, job) {
     return compiledTemplate;
 };
 
-Rubik.ItemView._compileTemplate = function(rootNode) {
-    return Rubik.ItemView._processTemplateNode(rootNode);
+Exhibit.ItemView._compileTemplate = function(rootNode) {
+    return Exhibit.ItemView._processTemplateNode(rootNode);
 };
 
-Rubik.ItemView._processTemplateNode = function(node) {
+Exhibit.ItemView._processTemplateNode = function(node) {
     if (node.nodeType == 1) {
-        return Rubik.ItemView._processTemplateElement(node);
+        return Exhibit.ItemView._processTemplateElement(node);
     } else {
         return node.nodeValue.replace(/\s+/g, " ");
     }
 };
 
-Rubik.ItemView._startingSpaces = /^\s+/;
-Rubik.ItemView._endingSpaces = /\s+$/;
-Rubik.ItemView._trimString = function(s) {
-    return s.replace(Rubik.ItemView._startingSpaces, '').replace(Rubik.ItemView._endingSpaces, '');
+Exhibit.ItemView._startingSpaces = /^\s+/;
+Exhibit.ItemView._endingSpaces = /\s+$/;
+Exhibit.ItemView._trimString = function(s) {
+    return s.replace(Exhibit.ItemView._startingSpaces, '').replace(Exhibit.ItemView._endingSpaces, '');
 };
 
-Rubik.ItemView._processTemplateElement = function(elmt) {
+Exhibit.ItemView._processTemplateElement = function(elmt) {
     var templateNode = {
         tag:        elmt.tagName,
         content:    null,
@@ -191,11 +191,11 @@ Rubik.ItemView._processTemplateElement = function(elmt) {
         var value = attribute.nodeValue;
         
         if (name == "content") {
-            templateNode.content = Rubik.ItemView._parseTemplateExpression(value);
+            templateNode.content = Exhibit.ItemView._parseTemplateExpression(value);
         } else if (name == "if-exists") {
             templateNode.condition = {
                 test:       "exists",
-                expression: Rubik.ItemView._parseTemplateExpression(value)
+                expression: Exhibit.ItemView._parseTemplateExpression(value)
             };
         } else if (name == "style") {
             var styles = value.split(";");
@@ -203,8 +203,8 @@ Rubik.ItemView._processTemplateElement = function(elmt) {
                 var pair = styles[s].split(":");
                 if (pair.length > 1) {
                     templateNode.styles.push({
-                        name:   Rubik.ItemView._trimString(pair[0]),
-                        value:  Rubik.ItemView._trimString(pair[1])
+                        name:   Exhibit.ItemView._trimString(pair[0]),
+                        value:  Exhibit.ItemView._trimString(pair[1])
                     });
                 }
             }
@@ -220,14 +220,14 @@ Rubik.ItemView._processTemplateElement = function(elmt) {
     if (childNode != null) {
         templateNode.children = [];
         while (childNode != null) {
-            templateNode.children.push(Rubik.ItemView._processTemplateNode(childNode));
+            templateNode.children.push(Exhibit.ItemView._processTemplateNode(childNode));
             childNode = childNode.nextSibling;
         }
     }
     return templateNode;
 };
 
-Rubik.ItemView._parseTemplateExpression = function(s) {
+Exhibit.ItemView._parseTemplateExpression = function(s) {
     var expression = {
         root:  "value",
         path:  []
@@ -264,23 +264,23 @@ Rubik.ItemView._parseTemplateExpression = function(s) {
     return expression;
 };
 
-Rubik.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
-    Rubik.ItemView._constructFromViewTemplateNode(
-        job.itemID, "item", compiledTemplate.template, job.div, job.rubik);
+Exhibit.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
+    Exhibit.ItemView._constructFromViewTemplateNode(
+        job.itemID, "item", compiledTemplate.template, job.div, job.exhibit);
 };
 
-Rubik.ItemView._constructFromViewTemplateNode = function(
-    value, valueType, templateNode, parentElmt, rubik
+Exhibit.ItemView._constructFromViewTemplateNode = function(
+    value, valueType, templateNode, parentElmt, exhibit
 ) {
     if (typeof templateNode == "string") {
         parentElmt.appendChild(document.createTextNode(templateNode));
         return;
     }
     
-    var database = rubik.getDatabase();
+    var database = exhibit.getDatabase();
     if (templateNode.condition != null) {
         if (templateNode.condition.test == "exists") {
-            if (Rubik.ItemView._executeExpression(
+            if (Exhibit.ItemView._executeExpression(
                     value, 
                     valueType,
                     templateNode.condition.expression, 
@@ -291,15 +291,15 @@ Rubik.ItemView._constructFromViewTemplateNode = function(
         }
     }
     
-    var elmt = Rubik.ItemView._constructElmtWithAttributes(value, valueType, templateNode, parentElmt, database);
+    var elmt = Exhibit.ItemView._constructElmtWithAttributes(value, valueType, templateNode, parentElmt, database);
     var children = templateNode.children;
     if (templateNode.content != null) {
-        var results = Rubik.ItemView._executeExpression(value, valueType, templateNode.content, database);
+        var results = Exhibit.ItemView._executeExpression(value, valueType, templateNode.content, database);
         if (children != null) {
             var processOneValue = function(childValue) {
                 for (var i = 0; i < children.length; i++) {
-                    Rubik.ItemView._constructFromViewTemplateNode(
-                        childValue, results.valueType, children[i], elmt, rubik);
+                    Exhibit.ItemView._constructFromViewTemplateNode(
+                        childValue, results.valueType, children[i], elmt, exhibit);
                 }
             };
             if (results.values instanceof Array) {
@@ -310,19 +310,19 @@ Rubik.ItemView._constructFromViewTemplateNode = function(
                 results.values.visit(processOneValue);
             }
         } else {
-            Rubik.ItemView._constructDefaultValueList(results.values, results.valueType, elmt, rubik);
+            Exhibit.ItemView._constructDefaultValueList(results.values, results.valueType, elmt, exhibit);
         }
     } else if (children != null) {
         for (var i = 0; i < children.length; i++) {
-            Rubik.ItemView._constructFromViewTemplateNode(value, valueType, children[i], elmt, rubik);
+            Exhibit.ItemView._constructFromViewTemplateNode(value, valueType, children[i], elmt, exhibit);
         }
     }
     parentElmt.appendChild(elmt);
 };
 
-Rubik.ItemView._executeExpression = function(value, valueType, expression, database) {
+Exhibit.ItemView._executeExpression = function(value, valueType, expression, database) {
     var count = 1;
-    var set = new Rubik.Set();
+    var set = new Exhibit.Set();
     set.add(eval(expression.root));
     
     for (var i = 0; i < expression.path.length; i++) {
@@ -354,7 +354,7 @@ Rubik.ItemView._executeExpression = function(value, valueType, expression, datab
     };
 };
 
-Rubik.ItemView._constructElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
+Exhibit.ItemView._constructElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
     var elmt = document.createElement(templateNode.tag);
     
     var attributes = templateNode.attributes;
@@ -370,8 +370,8 @@ Rubik.ItemView._constructElmtWithAttributes = function(value, valueType, templat
     return elmt;
 };
 
-Rubik.ItemView._constructDefaultValueList = function(values, valueType, parentElmt, rubik) {
-    var database = rubik.getDatabase();
+Exhibit.ItemView._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
+    var database = exhibit.getDatabase();
     var first = true;
     var index = 0;
     var addDelimiter = function() {
@@ -387,11 +387,11 @@ Rubik.ItemView._constructDefaultValueList = function(values, valueType, parentEl
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(rubik.makeItemSpan(value));
+            parentElmt.appendChild(exhibit.makeItemSpan(value));
         } :
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(rubik.makeValueSpan(value, valueType));
+            parentElmt.appendChild(exhibit.makeValueSpan(value, valueType));
         };
         
     if (values instanceof Array) {

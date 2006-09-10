@@ -9,7 +9,7 @@
     var cssFiles = [
     ];
 
-    var urlPrefix = Rubik.urlPrefix + "locales/en/";
+    var urlPrefix = Exhibit.urlPrefix + "locales/en/";
     SimileAjax.includeJavascriptFiles(document, urlPrefix + "scripts/", javascriptFiles);
     SimileAjax.includeCssFiles(document, urlPrefix + "styles/", cssFiles);
 })();

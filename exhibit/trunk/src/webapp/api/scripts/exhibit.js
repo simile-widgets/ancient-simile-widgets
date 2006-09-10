@@ -1,5 +1,5 @@
 /*==================================================
- *  Rubik
+ *  Exhibit
  *==================================================
  */
 var g_historyLocation = 0;
@@ -24,36 +24,36 @@ function performLongTask(f, message) {
     }, 0);
 }
 
-Rubik.create = function(controlDiv, browseDiv, viewDiv, configuration) {
-    return new Rubik._Impl(controlDiv, browseDiv, viewDiv, configuration);
+Exhibit.create = function(controlDiv, browseDiv, viewDiv, configuration) {
+    return new Exhibit._Impl(controlDiv, browseDiv, viewDiv, configuration);
 };
 
-Rubik.protectUI = function(elmt) {
-    SimileAjax.DOM.appendClassName(elmt, "rubik-ui-protection");
+Exhibit.protectUI = function(elmt) {
+    SimileAjax.DOM.appendClassName(elmt, "exhibit-ui-protection");
 };
 
 /*==================================================
- *  Rubik._Impl
+ *  Exhibit._Impl
  *==================================================
  */
-Rubik._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
+Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     if (configuration == null) {
         configuration = {};
     }
     
-    this._database = new Rubik.Database();
-    this._engine = new Rubik.BrowseEngine(this._database, configuration);
-    this._browsePanel = new Rubik.BrowsePanel(this, browseDiv, configuration);
-    this._viewPanel = new Rubik.ViewPanel(this, viewDiv, configuration);
+    this._database = new Exhibit.Database();
+    this._engine = new Exhibit.BrowseEngine(this._database, configuration);
+    this._browsePanel = new Exhibit.BrowsePanel(this, browseDiv, configuration);
+    this._viewPanel = new Exhibit.ViewPanel(this, viewDiv, configuration);
 };
 
-Rubik._Impl.prototype.getDatabase = function() { return this._database; };
-Rubik._Impl.prototype.getBrowseEngine = function() { return this._engine; };
-Rubik._Impl.prototype.getBrowsePanel = function() { return this._browsePanel; };
-Rubik._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
+Exhibit._Impl.prototype.getDatabase = function() { return this._database; };
+Exhibit._Impl.prototype.getBrowseEngine = function() { return this._engine; };
+Exhibit._Impl.prototype.getBrowsePanel = function() { return this._browsePanel; };
+Exhibit._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
 
-Rubik._Impl.prototype.loadJSON = function(urls, fDone) {
-    var rubik = this;
+Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
+    var exhibit = this;
     if (urls instanceof Array) {
         urls = [].concat(urls);
     } else {
@@ -76,7 +76,7 @@ Rubik._Impl.prototype.loadJSON = function(urls, fDone) {
             }
             
             if (o != null) {
-                rubik._loadJSON(o, rubik.getBaseURL(urls[0]));
+                exhibit._loadJSON(o, exhibit.getBaseURL(urls[0]));
             }
             
             urls.shift();
@@ -102,7 +102,7 @@ Rubik._Impl.prototype.loadJSON = function(urls, fDone) {
     fNext();
 };
 
-Rubik._Impl.prototype.getBaseURL = function(url) {
+Exhibit._Impl.prototype.getBaseURL = function(url) {
     if (url.indexOf("://") < 0) {
         var url2 = this.getBaseURL(document.location.href);
         if (url.substr(0,1) == "/") {
@@ -120,10 +120,10 @@ Rubik._Impl.prototype.getBaseURL = function(url) {
     }
 };
 
-Rubik._Impl.prototype.makeActionLink = function(text, handler, layer) {
+Exhibit._Impl.prototype.makeActionLink = function(text, handler, layer) {
     var a = document.createElement("a");
     a.href = "javascript:";
-    a.className = "rubik-action";
+    a.className = "exhibit-action";
     a.innerHTML = text;
     
     var handler2 = function(elmt, evt, target) {
@@ -139,10 +139,10 @@ Rubik._Impl.prototype.makeActionLink = function(text, handler, layer) {
     return a;
 };
 
-Rubik._Impl.prototype.makeActionLinkWithObject = function(text, obj, handlerName, layer) {
+Exhibit._Impl.prototype.makeActionLinkWithObject = function(text, obj, handlerName, layer) {
     var a = document.createElement("a");
     a.href = "javascript:";
-    a.className = "rubik-action";
+    a.className = "exhibit-action";
     a.innerHTML = text;
     
     var handler2 = function(elmt, evt, target) {
@@ -158,11 +158,11 @@ Rubik._Impl.prototype.makeActionLinkWithObject = function(text, obj, handlerName
     return a;
 };
 
-Rubik._Impl.prototype.enableActionLink = function(a, enabled) {
+Exhibit._Impl.prototype.enableActionLink = function(a, enabled) {
     a.setAttribute("disabled", enabled ? "false" : "true");
 };
 
-Rubik._Impl.prototype.makeItemSpan = function(itemID, label, layer) {
+Exhibit._Impl.prototype.makeItemSpan = function(itemID, label, layer) {
     if (label == null) {
         label = this._database.getLiteralProperty(itemID, "label");
     }
@@ -172,12 +172,12 @@ Rubik._Impl.prototype.makeItemSpan = function(itemID, label, layer) {
     
     var a = document.createElement("a");
     a.href = "javascript:";
-    a.className = "rubik-item";
+    a.className = "exhibit-item";
     a.innerHTML = label;
     
-    var rubik = this;
+    var exhibit = this;
     var handler = function(elmt, evt, target) {
-        rubik.showItemView(itemID, elmt);
+        exhibit.showItemView(itemID, elmt);
         SimileAjax.DOM.cancelEvent(evt);
         return false;
     }
@@ -186,9 +186,9 @@ Rubik._Impl.prototype.makeItemSpan = function(itemID, label, layer) {
     return a;
 };
 
-Rubik._Impl.prototype.makeValueSpan = function(label, valueType, layer) {
+Exhibit._Impl.prototype.makeValueSpan = function(label, valueType, layer) {
     var span = document.createElement("span");
-    span.className = "rubik-value";
+    span.className = "exhibit-value";
     if (valueType == "url") {
         var a = document.createElement("a");
         a.target = "_blank";
@@ -205,10 +205,10 @@ Rubik._Impl.prototype.makeValueSpan = function(label, valueType, layer) {
     return span;
 };
 
-Rubik._Impl.prototype.showItemView = function(itemID, elmt) {
+Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
 };
 
-Rubik._Impl.prototype.serializeItem = function(itemID, format) {
+Exhibit._Impl.prototype.serializeItem = function(itemID, format) {
     if (format == "rdf/xml") {
         var s = "";
         var uri = this._database.getLiteralProperty(itemID, "uri");
@@ -238,7 +238,7 @@ Rubik._Impl.prototype.serializeItem = function(itemID, format) {
     return "";
 };
 
-Rubik._Impl.prototype._loadJSON = function(o, url) {
+Exhibit._Impl.prototype._loadJSON = function(o, url) {
     if ("types" in o) {
         this._database.loadTypes(o.types, url);
     }

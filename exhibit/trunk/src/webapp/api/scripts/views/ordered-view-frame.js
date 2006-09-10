@@ -1,10 +1,10 @@
 /*==================================================
- *  Rubik.OrderedViewFrame
+ *  Exhibit.OrderedViewFrame
  *==================================================
  */
  
-Rubik.OrderedViewFrame = function(rubik, divHeader, divFooter, configuration) {
-    this._rubik = rubik;
+Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration) {
+    this._exhibit = exhibit;
     this._divHeader = divHeader;
     this._divFooter = divFooter;
     
@@ -46,7 +46,7 @@ Rubik.OrderedViewFrame = function(rubik, divHeader, divFooter, configuration) {
     this._initializeUI();
 };
 
-Rubik.OrderedViewFrame.prototype._initializeUI = function() {
+Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
     this._divHeader.innerHTML = "";
     this._divFooter.innerHTML = "";
     
@@ -59,22 +59,22 @@ Rubik.OrderedViewFrame.prototype._initializeUI = function() {
     
     var headerTemplate = {
         elmt: this._divHeader,
-        className: "rubik-collectionView-header",
+        className: "exhibit-collectionView-header",
         children: [
             {   tag:    "div",
                 field:  "noResultDiv",
                 style:  { display: "none" },
                 children: [
                     {   tag:        "span",
-                        className:  "rubik-collectionView-header-count",
+                        className:  "exhibit-collectionView-header-count",
                         children:   [ "0" ]
                     },
                     {   tag:        "span",
-                        className:  "rubik-collectionView-header-types",
+                        className:  "exhibit-collectionView-header-types",
                         children:   [ "results" ]
                     },
                     {   tag:        "span",
-                        className:  "rubik-collectionView-header-details",
+                        className:  "exhibit-collectionView-header-details",
                         children:   [ "Remove some filters to get some results." ]
                     }
                 ]
@@ -84,21 +84,21 @@ Rubik.OrderedViewFrame.prototype._initializeUI = function() {
                 style:  { display: "none" },
                 children: [
                     {   tag:        "span",
-                        className:  "rubik-collectionView-header-count",
+                        className:  "exhibit-collectionView-header-count",
                         field:      "itemCountSpan"
                     },
                     {   tag:        "span",
-                        className:  "rubik-collectionView-header-types",
+                        className:  "exhibit-collectionView-header-types",
                         field:      "typesSpan"
                     },
                     {   tag:        "span",
-                        className:  "rubik-collectionView-header-details",
+                        className:  "exhibit-collectionView-header-details",
                         field:      "noFilterDetailsSpan",
                         style:      { display: "none" },
                         children:   [ "total" ]
                     },
                     {   tag:        "span",
-                        className:  "rubik-collectionView-header-details",
+                        className:  "exhibit-collectionView-header-details",
                         field:      "filteredDetailsSpan",
                         style:      { display: "none" },
                         children: [
@@ -107,7 +107,7 @@ Rubik.OrderedViewFrame.prototype._initializeUI = function() {
                                 field:  "originalCountSpan"
                             },
                             " originally (",
-                            {   elmt:  this._rubik.makeActionLink("reset", onClearFiltersLinkClick),
+                            {   elmt:  this._exhibit.makeActionLink("reset", onClearFiltersLinkClick),
                                 title: "Clear all filters and see the original items",
                                 field: "clearFiltersLink"
                             },
@@ -121,14 +121,14 @@ Rubik.OrderedViewFrame.prototype._initializeUI = function() {
     this._headerDom = SimileAjax.DOM.createDOMFromTemplate(document, headerTemplate);
 };
 
-Rubik.OrderedViewFrame.prototype.reconstruct = function() {
-    var rubik = this._rubik;
-    var database = rubik.getDatabase();
+Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
+    var exhibit = this._exhibit;
+    var database = exhibit.getDatabase();
     
     /*
      *  Get the current collection and check if it's empty
      */
-    var collection = rubik.getBrowseEngine().getCurrentCollection();
+    var collection = exhibit.getBrowseEngine().getCurrentCollection();
     var currentSet = collection.getCurrentSet();
     if (currentSet.size() == 0) {
         this._headerDom.noResultDiv.style.display = "block";
@@ -211,8 +211,8 @@ Rubik.OrderedViewFrame.prototype.reconstruct = function() {
     }
 };
 
-Rubik.OrderedViewFrame.prototype._processOrder = function(items, order, index) {
-    var database = this._rubik.getDatabase();
+Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index) {
+    var database = this._exhibit.getDatabase();
     
     var property = order.property;
     var multiply = order.ascending ? 1 : -1;
@@ -288,9 +288,9 @@ Rubik.OrderedViewFrame.prototype._processOrder = function(items, order, index) {
     return textFunction;
 };
 
-Rubik.OrderedViewFrame.prototype._reset = function() {
+Exhibit.OrderedViewFrame.prototype._reset = function() {
     var state = {};
-    var browseEngine = this._rubik.getBrowseEngine();
+    var browseEngine = this._exhibit.getBrowseEngine();
     SimileAjax.History.addAction({
         perform: function() {
             state.restrictions = browseEngine.clearRestrictions();

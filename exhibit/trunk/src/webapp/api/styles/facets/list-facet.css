@@ -2,17 +2,17 @@
  * List facet value
  *==================================================
  */
-div.rubik-facet-value {
+div.exhibit-facet-value {
     cursor:         pointer;
     position:       relative;
     margin-left:    3em;
     padding:        2px 0px;
 }
-div.rubik-facet-value-selected {
+div.exhibit-facet-value-selected {
 	background:     #FFFFE0;
 }
 
-div.rubik-facet-value-count {
+div.exhibit-facet-value-count {
     position:       absolute;
     left:           -3em;
     width:          3em;
@@ -20,14 +20,14 @@ div.rubik-facet-value-count {
     color:          #aaa;
 }
 
-div.rubik-facet-value-inner {
+div.exhibit-facet-value-inner {
     position:       relative;
 }
-.rubik-facet-value-hasChildren div.rubik-facet-value-inner {
+.exhibit-facet-value-hasChildren div.exhibit-facet-value-inner {
     font-style:     italic;
 }
 
-div.rubik-facet-value-groupControl {
+div.exhibit-facet-value-groupControl {
     position:       absolute;
     left:           -16px;
     width:          16px;
@@ -37,59 +37,59 @@ div.rubik-facet-value-groupControl {
     white-space:    pre;
 }
 
-.rubik-facet-value-hasChildren div.rubik-facet-value-groupControl {
+.exhibit-facet-value-hasChildren div.exhibit-facet-value-groupControl {
     display:        block;
 }
-img.rubik-facet-value-expandControl {
+img.exhibit-facet-value-expandControl {
     display:        none;
     vertical-align: middle;
 }
-img.rubik-facet-value-collapseControl {
+img.exhibit-facet-value-collapseControl {
     display:        none;
     vertical-align: middle;
 }
-.rubik-facet-value-collapsed img.rubik-facet-value-expandControl {
+.exhibit-facet-value-collapsed img.exhibit-facet-value-expandControl {
     display:        inline;
 }
-.rubik-facet-value-expanded img.rubik-facet-value-collapseControl {
-    display:        inline;
-}
-
-img.rubik-facet-blackCheck {
-    display:        none;
-}
-img.rubik-facet-grayCheck {
-    display:        inline;
-}
-img.rubik-facet-noCheck {
-    display:        none;
-}
-
-.rubik-facet-hasSelection img.rubik-facet-grayCheck {
-    display:        none;
-}
-.rubik-facet-hasSelection img.rubik-facet-noCheck {
+.exhibit-facet-value-expanded img.exhibit-facet-value-collapseControl {
     display:        inline;
 }
 
-.rubik-facet-value-selected img.rubik-facet-grayCheck {
+img.exhibit-facet-blackCheck {
     display:        none;
 }
-.rubik-facet-value-selected img.rubik-facet-noCheck {
+img.exhibit-facet-grayCheck {
+    display:        inline;
+}
+img.exhibit-facet-noCheck {
     display:        none;
 }
-.rubik-facet-value-selected img.rubik-facet-blackCheck {
+
+.exhibit-facet-hasSelection img.exhibit-facet-grayCheck {
+    display:        none;
+}
+.exhibit-facet-hasSelection img.exhibit-facet-noCheck {
     display:        inline;
 }
 
-div.rubik-facet-value-children {
+.exhibit-facet-value-selected img.exhibit-facet-grayCheck {
+    display:        none;
+}
+.exhibit-facet-value-selected img.exhibit-facet-noCheck {
+    display:        none;
+}
+.exhibit-facet-value-selected img.exhibit-facet-blackCheck {
+    display:        inline;
+}
+
+div.exhibit-facet-value-children {
 }
 
 /*==================================================
  * Grouping box
  *==================================================
  */
-div.rubik-facet-groupBox {
+div.exhibit-facet-groupBox {
     position:       absolute;
     margin:         1em;
     padding:        2px;
@@ -97,33 +97,33 @@ div.rubik-facet-groupBox {
 	border:         2px solid #aaa;
     background:     white;
 }
-div.rubik-facet-groupBox-left {
+div.exhibit-facet-groupBox-left {
     left:           -16em;
     width:          15em;
 }
-div.rubik-facet-groupBox-right {
+div.exhibit-facet-groupBox-right {
     right:          -16em;
     width:          15em;
 }
-div.rubik-facet-groupBox-footer {
+div.exhibit-facet-groupBox-footer {
     text-align:     center;
     background:     #FFFFE0;
     padding:        3px;
 }
 
-div.rubik-facet-groupBox-group {
+div.exhibit-facet-groupBox-group {
 }
-div.rubik-facet-groupBox-groupHeader {
+div.exhibit-facet-groupBox-groupHeader {
     background:     #FFFFE0;
     padding:        3px;
     border-bottom:  1px solid #aaa;
 }
-div.rubik-facet-groupBox-groupOption {
+div.exhibit-facet-groupBox-groupOption {
     cursor:         pointer;
     padding:        3px;
 }
 
-div.rubik-facet-groupBox-groupFooter {
+div.exhibit-facet-groupBox-groupFooter {
     text-align:     right;
     padding:        3px;
 }

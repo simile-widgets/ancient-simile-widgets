@@ -2,50 +2,50 @@
  * View Panel styles
  *==================================================
  */
-div.rubik-viewPanel {
+div.exhibit-viewPanel {
 }
 
-div.rubik-collectionView {
+div.exhibit-collectionView {
 }
 
-div.rubik-collectionView-header {
+div.exhibit-collectionView-header {
 }
-span.rubik-collectionView-header-count {
+span.exhibit-collectionView-header-count {
     font-size:      200%;
 }
-span.rubik-collectionView-header-types {
+span.exhibit-collectionView-header-types {
     padding-left:   0.5em;
 }
-span.rubik-collectionView-header-details {
+span.exhibit-collectionView-header-details {
     padding-left:   0.5em;
     color:          #888;
 }
 
-div.rubik-collectionView-body {
+div.exhibit-collectionView-body {
 }
 
-div.rubik-collectionView-group {
+div.exhibit-collectionView-group {
 }
 
-div.rubik-collectionView-group-content {
+div.exhibit-collectionView-group-content {
     margin-left: 1em;
 }
 
-div.rubik-collectionView-group h1 {
+div.exhibit-collectionView-group h1 {
     font-size:      150%;
     margin:         1em 0;
     background:     #eee;
     border-bottom:  1px solid #888;
 }
 
-div.rubik-collectionView-group h2 {
+div.exhibit-collectionView-group h2 {
     font-size:      120%;
     margin:         0.5em 0;
     background:     #eee;
 }
 
-.rubik-collectionView-group h3 {
+.exhibit-collectionView-group h3 {
 }
 
-div.rubik-collectionView-footer {
+div.exhibit-collectionView-footer {
 }

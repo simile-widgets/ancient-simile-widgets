@@ -1,17 +1,17 @@
 /*==================================================
- *  Rubik.TileView
+ *  Exhibit.TileView
  *==================================================
  */
  
-Rubik.TileView = function(rubik, div, configuration) {
-    this._rubik = rubik;
+Exhibit.TileView = function(exhibit, div, configuration) {
+    this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
     
     this._initializeUI();
     
     var view = this;
-    this._rubik.getBrowseEngine().addListener({ 
+    this._exhibit.getBrowseEngine().addListener({ 
         onChange: function(handlerName) { 
             if (handlerName != "onGroup" && handlerName != "onUngroup") {
                 view._reconstruct(); 
@@ -20,7 +20,7 @@ Rubik.TileView = function(rubik, div, configuration) {
     });
 }
 
-Rubik.TileView.prototype._initializeUI = function() {
+Exhibit.TileView.prototype._initializeUI = function() {
     this._div.innerHTML = "";
     var template = {
         elmt: this._div,
@@ -29,7 +29,7 @@ Rubik.TileView.prototype._initializeUI = function() {
                 field: "headerDiv"
             },
             {   tag: "div",
-                className: "rubik-collectionView-body",
+                className: "exhibit-collectionView-body",
                 field: "bodyDiv"
             },
             {   tag: "div",
@@ -38,11 +38,11 @@ Rubik.TileView.prototype._initializeUI = function() {
         ]
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
-    this._orderedViewFrame = new Rubik.OrderedViewFrame(
-        this._rubik, this._dom.headerDiv, this._dom.footerDiv, this._configuration["TileView"]);
+    this._orderedViewFrame = new Exhibit.OrderedViewFrame(
+        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._configuration["TileView"]);
 };
 
-Rubik.TileView.prototype._reconstruct = function() {
+Exhibit.TileView.prototype._reconstruct = function() {
     var view = this;
     var state = {
         div:            this._dom.bodyDiv,
@@ -70,7 +70,7 @@ Rubik.TileView.prototype._reconstruct = function() {
         closeGroups(groupLevel);
         var groupTemplate = {
             tag: "div",
-            className: "rubik-collectionView-group",
+            className: "exhibit-collectionView-group",
             children: [
                 {   tag: "h" + (groupLevel + 1),
                     children: [ 
@@ -84,7 +84,7 @@ Rubik.TileView.prototype._reconstruct = function() {
                     field: "header"
                 },
                 {   tag: "div",
-                    className: "rubik-collectionView-group-content",
+                    className: "exhibit-collectionView-group-content",
                     field: "contentDiv"
                 }
             ]
@@ -103,7 +103,7 @@ Rubik.TileView.prototype._reconstruct = function() {
         
         if (state.table == null) {
             state.table = document.createElement("table");
-            state.table.className = "rubik-tileView-body";
+            state.table.className = "exhibit-tileView-body";
             state.div.appendChild(state.table);
         }
         
@@ -120,7 +120,7 @@ Rubik.TileView.prototype._reconstruct = function() {
         var tdItemView = tr.insertCell(1);
         
         var itemViewDiv = document.createElement("div");
-        var itemView = new Rubik.ItemView(itemID, itemViewDiv, view._rubik, view._configuration);
+        var itemView = new Exhibit.ItemView(itemID, itemViewDiv, view._exhibit, view._configuration);
         tdItemView.appendChild(itemViewDiv);
     };
                 
