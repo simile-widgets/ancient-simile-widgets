@@ -68,28 +68,12 @@ Exhibit.TileView.prototype._reconstruct = function() {
     
     this._orderedViewFrame.onNewGroup = function(groupSortKey, keyType, groupLevel) {
         closeGroups(groupLevel);
-        var groupTemplate = {
-            tag: "div",
-            className: "exhibit-collectionView-group",
-            children: [
-                {   tag: "h" + (groupLevel + 1),
-                    children: [ 
-                        groupSortKey,
-                        " (",
-                        {   tag: "span",
-                            field: "countSpan"
-                        },
-                        ")"
-                    ],
-                    field: "header"
-                },
-                {   tag: "div",
-                    className: "exhibit-collectionView-group-content",
-                    field: "contentDiv"
-                }
-            ]
-        };
-        var groupDom = SimileAjax.DOM.createDOMFromTemplate(document, groupTemplate);
+        
+        var groupDom = Exhibit.TileView.theme.constructGroup(
+            view._exhibit,
+            groupLevel,
+            groupSortKey
+        );
         
         state.div.appendChild(groupDom.elmt);
         state.div = groupDom.contentDiv;
@@ -102,8 +86,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
         //if (index > 10) return;
         
         if (state.table == null) {
-            state.table = document.createElement("table");
-            state.table.className = "exhibit-tileView-body";
+            state.table = Exhibit.TileView.theme.constructTable(view._exhibit);
             state.div.appendChild(state.table);
         }
         

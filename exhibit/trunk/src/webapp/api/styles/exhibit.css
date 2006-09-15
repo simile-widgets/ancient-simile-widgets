@@ -1,3 +1,9 @@
+/*==================================================
+ * Exhibit styles
+ *
+ * Note that almost all CSS code is in themes.
+ *==================================================
+ */
 .exhibit-ui-protection div {
     margin:     0;
     padding:    0;
@@ -7,33 +13,4 @@
 }
 .exhibit-ui-protection tr {
 	vertical-align: top;
-}
-
-a.exhibit-action, 
-a.exhibit-action:link, 
-a.exhibit-action:active, 
-a.exhibit-action:visited {
-	text-decoration:    none;
-	border-bottom:      1px dotted;
-	cursor:             pointer;
-}
-a.exhibit-action:hover {
-	border-bottom:  1px solid;
-	cursor:         pointer;
-}
-
-a.exhibit-item, 
-a.exhibit-item:link, 
-a.exhibit-item:active, 
-a.exhibit-item:visited {
-	text-decoration:    none;
-	border-bottom:      1px dotted red;
-	cursor:             pointer;
-}
-a.exhibit-item:hover {
-	border-bottom:  1px solid;
-	cursor:         pointer;
-}
-
-span.exhibit-value {
 }

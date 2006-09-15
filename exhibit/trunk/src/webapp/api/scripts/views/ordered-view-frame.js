@@ -51,74 +51,15 @@ Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
     this._divFooter.innerHTML = "";
     
     var self = this;
-    var onClearFiltersLinkClick = function(elmt, evt, target) {
-        self._reset();
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
-    };
-    
-    var headerTemplate = {
-        elmt: this._divHeader,
-        className: "exhibit-collectionView-header",
-        children: [
-            {   tag:    "div",
-                field:  "noResultDiv",
-                style:  { display: "none" },
-                children: [
-                    {   tag:        "span",
-                        className:  "exhibit-collectionView-header-count",
-                        children:   [ "0" ]
-                    },
-                    {   tag:        "span",
-                        className:  "exhibit-collectionView-header-types",
-                        children:   [ "results" ]
-                    },
-                    {   tag:        "span",
-                        className:  "exhibit-collectionView-header-details",
-                        children:   [ "Remove some filters to get some results." ]
-                    }
-                ]
-            },
-            {   tag:    "div",
-                field:  "resultsDiv",
-                style:  { display: "none" },
-                children: [
-                    {   tag:        "span",
-                        className:  "exhibit-collectionView-header-count",
-                        field:      "itemCountSpan"
-                    },
-                    {   tag:        "span",
-                        className:  "exhibit-collectionView-header-types",
-                        field:      "typesSpan"
-                    },
-                    {   tag:        "span",
-                        className:  "exhibit-collectionView-header-details",
-                        field:      "noFilterDetailsSpan",
-                        style:      { display: "none" },
-                        children:   [ "total" ]
-                    },
-                    {   tag:        "span",
-                        className:  "exhibit-collectionView-header-details",
-                        field:      "filteredDetailsSpan",
-                        style:      { display: "none" },
-                        children: [
-                            " filtered from ",
-                            {   tag:    "span",
-                                field:  "originalCountSpan"
-                            },
-                            " originally (",
-                            {   elmt:  this._exhibit.makeActionLink("reset", onClearFiltersLinkClick),
-                                title: "Clear all filters and see the original items",
-                                field: "clearFiltersLink"
-                            },
-                            ")"
-                        ]
-                    }
-                ]
-            }
-        ]
-    };
-    this._headerDom = SimileAjax.DOM.createDOMFromTemplate(document, headerTemplate);
+    this._headerDom = Exhibit.OrderedViewFrame.theme.createHeaderDom(
+        this._exhibit, 
+        this._divHeader, 
+        function(elmt, evt, target) {
+            self._reset();
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        }
+    );
 };
 
 Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
@@ -130,11 +71,13 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
      */
     var collection = exhibit.getBrowseEngine().getCurrentCollection();
     var currentSet = collection.getCurrentSet();
-    if (currentSet.size() == 0) {
-        this._headerDom.noResultDiv.style.display = "block";
-        this._headerDom.resultsDiv.style.display = "none";
-        return;
-    }
+    var currentCount = currentSet.size();
+    
+    /*
+     *  Set the header UI
+     */
+    this._headerDom.setCounts(currentCount, collection.originalSize());
+    this._headerDom.setTypes(database.getTypeLabels(currentSet)[currentCount > 1 ? 1 : 0]);
     
     /*
      *  Sort the items
@@ -157,31 +100,6 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
         return c;
     }
     items.sort(masterSortFunction);
-    
-    /*
-     *  Set the header UI
-     */
-    this._headerDom.noResultDiv.style.display = "none";
-    this._headerDom.resultsDiv.style.display = "block";
-    
-    var typeLabelArrays = database.getTypeLabels(currentSet);
-    var typeLabelArray = typeLabelArrays[items.length > 1 ? 1 : 0];
-    var typeLabel = (typeLabelArray.length == 0) ?
-        "Items" :
-        (typeLabelArray.length > 3 ? "Items" : typeLabelArray.join(", "));
-        
-    this._headerDom.itemCountSpan.innerHTML = items.length;
-    this._headerDom.typesSpan.innerHTML = typeLabel;
-    
-    var originalSize = collection.originalSize();
-    if (originalSize != items.length) {
-        this._headerDom.noFilterDetailsSpan.style.display = "none";
-        this._headerDom.filteredDetailsSpan.style.display = "inline";
-        this._headerDom.originalCountSpan.innerHTML = originalSize;
-    } else {
-        this._headerDom.noFilterDetailsSpan.style.display = "inline";
-        this._headerDom.filteredDetailsSpan.style.display = "none";
-    }
     
     /*
      *  Generate item views
@@ -233,7 +151,7 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
                 var item = items[i];
                 var valueItem = database.getLiteralProperty(item.id, property);
                 var value = valueItem == null ? null : database.getLiteralProperty(valueItem, "label");
-                item.sortKeys.push(value == null ? "(missing)" : value);
+                item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
             }
         } else if (valueType == "number") {
             for (var i = 0; i < items.length; i++) {
@@ -273,7 +191,7 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 var value = database.getLiteralProperty(item.id, property);
-                item.sortKeys.push(value == null ? "(missing)" : value);
+                item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
             }
         }
     } else {
@@ -281,7 +199,7 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
             var item = items[i];
             var valueItem = database.getInverseProperty(item.id, property);
             var value = valueItem == null ? null : database.getLiteralProperty(valueItem, "label");
-            item.sortKeys.push(value == null ? "(missing)" : value);
+            item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
         }
     }
     

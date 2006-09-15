@@ -131,8 +131,8 @@ Exhibit.BrowsePanel.prototype._reconstruct = function() {
         var oldFacet = oldFacets[oldFacetIndex];
         
         var oldFacetKey = getKey(oldFacet);
-        if (oldFacetKey in oldFacetKeys) {
-            SimileAjax.Debug.log("Facet merging algorithm is broken");
+        if (!(oldFacetKey in oldFacetKeys)) {
+            SimileAjax.Debug.log("Facet merging algorithm is broken " + oldFacetKey);
         }
         
         oldFacet.facet.dispose();
@@ -146,25 +146,4 @@ Exhibit.BrowsePanel.prototype._constructFacet = function(facet) {
     var facetDiv = document.createElement("div");
     var listFacet = new Exhibit.ListFacet(this._exhibit, facet, facetDiv, this._configuration);
     return [ facetDiv, listFacet ];
-};
-
-Exhibit.BrowsePanel.prototype.setLocation = function(newLocation) {
-    var browsePanel = this;
-    performLongTask(function() {
-        browsePanel._browseEngine.focus(newLocation);
-        browsePanel._facetInfos = [];
-        browsePanel._reconstruct();
-    }, "please wait...");
-};
-
-Exhibit.BrowsePanel.prototype.reset = function() {
-    var browsePanel = this;
-    performLongTask(function() {
-        browsePanel._browseEngine.truncate(1);
-        browsePanel._browseEngine.clearAllCurrentFilters();
-        browsePanel._facetInfos = [];
-        browsePanel._reconstruct();
-        
-        setHistoryPosition(browsePanel._focusIndex);
-    }, "please wait...");
 };

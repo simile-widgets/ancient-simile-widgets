@@ -2,28 +2,6 @@
  *  Exhibit
  *==================================================
  */
-var g_historyLocation = 0;
-
-function advanceHistory() {
-}
-
-function setHistoryPosition(newPosition) {
-}
-
-function showStatus(message) {
-}
-
-function hideStatus() {
-}
-
-function performLongTask(f, message) {
-    showStatus(message);
-    setTimeout(function() {
-        try { f(); } catch (e) {}
-        hideStatus();
-    }, 0);
-}
-
 Exhibit.create = function(controlDiv, browseDiv, viewDiv, configuration) {
     return new Exhibit._Impl(controlDiv, browseDiv, viewDiv, configuration);
 };

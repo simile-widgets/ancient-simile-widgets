@@ -17,45 +17,47 @@ Exhibit.Database = function() {
     /*
      *  Predefined types and properties
      */
+     
+    var l10n = Exhibit.Database.l10n;
     
     var itemType = new Exhibit.Database._Type("Item");
-    itemType._uri = "http://simile.mit.edu/exhibit/type#Item";
-    itemType._label = "Item";
-    itemType._pluralLabel = "Items";
-    this._types["Item"] = itemType;
+    itemType._uri           = "http://simile.mit.edu/exhibit/type#Item";
+    itemType._label         = l10n.itemType.label;
+    itemType._pluralLabel   = l10n.itemType.pluralLabel;
+    this._types["Item"]     = itemType;
     
     var labelProperty = new Exhibit.Database._Property("label");
-    labelProperty._uri = "http://www.w3.org/2000/01/rdf-schema#label";
-    labelProperty._valueType = "text";
-    labelProperty._label = "label";
-    labelProperty._pluralLabel = "labels";
-    labelProperty._reverseLabel = "label of";
-    labelProperty._reversePluralLabel = "labels of";
-    labelProperty._groupingLabel = "labels";
-    labelProperty._reverseGroupingLabel = "things being labelled";
-    this._properties["label"] = labelProperty;
+    labelProperty._uri                  = "http://www.w3.org/2000/01/rdf-schema#label";
+    labelProperty._valueType            = "text";
+    labelProperty._label                = l10n.labelProperty.label;
+    labelProperty._pluralLabel          = l10n.labelProperty.pluralLabel;
+    labelProperty._reverseLabel         = l10n.labelProperty.reverseLabel;
+    labelProperty._reversePluralLabel   = l10n.labelProperty.reversePluralLabel;
+    labelProperty._groupingLabel        = l10n.labelProperty.groupingLabel;
+    labelProperty._reverseGroupingLabel = l10n.labelProperty.reverseGroupingLabel;
+    this._properties["label"]           = labelProperty;
     
     var typeProperty = new Exhibit.Database._Property("type");
-    typeProperty._uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-    typeProperty._valueType = "text";
-    typeProperty._label = "type";
-    typeProperty._pluralLabel = "types";
-    typeProperty._reverseLabel = "type of";
-    typeProperty._reversePluralLabel = "types of";
-    typeProperty._groupingLabel = "types";
-    typeProperty._reverseGroupingLabel = "things of these types";
-    this._properties["type"] = typeProperty;
+    typeProperty._uri                   = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+    typeProperty._valueType             = "text";
+    typeProperty._label                 = "type";
+    typeProperty._pluralLabel           = l10n.typeProperty.label;
+    typeProperty._reverseLabel          = l10n.typeProperty.reverseLabel;
+    typeProperty._reversePluralLabel    = l10n.typeProperty.reversePluralLabel;
+    typeProperty._groupingLabel         = l10n.typeProperty.groupingLabel;
+    typeProperty._reverseGroupingLabel  = l10n.typeProperty.reverseGroupingLabel;
+    this._properties["type"]            = typeProperty;
     
     var uriProperty = new Exhibit.Database._Property("uri");
-    uriProperty._uri = "http://simile.mit.edu/exhibit/property#uri";
-    uriProperty._valueType = "url";
-    uriProperty._label = "URI";
-    uriProperty._pluralLabel = "URIs";
-    uriProperty._reverseLabel = "URI of";
-    uriProperty._reversePluralLabel = "URIs of";
-    uriProperty._groupingLabel = "URIs";
-    uriProperty._reverseGroupingLabel = "things named by these URIs";
-    this._properties["uri"] = uriProperty;
+    uriProperty._uri                    = "http://simile.mit.edu/exhibit/property#uri";
+    uriProperty._valueType              = "url";
+    uriProperty._label                  = "URI";
+    uriProperty._pluralLabel            = "URIs";
+    uriProperty._reverseLabel           = "URI of";
+    uriProperty._reversePluralLabel     = "URIs of";
+    uriProperty._groupingLabel          = "URIs";
+    uriProperty._reverseGroupingLabel   = "things named by these URIs";
+    this._properties["uri"]             = uriProperty;
 };
 
 Exhibit.Database.prototype.addListener = function(listener) {

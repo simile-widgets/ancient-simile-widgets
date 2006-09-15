@@ -371,19 +371,6 @@ Exhibit.ItemView._constructElmtWithAttributes = function(value, valueType, templ
 };
 
 Exhibit.ItemView._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
-    var database = exhibit.getDatabase();
-    var first = true;
-    var index = 0;
-    var addDelimiter = function() {
-        var last = (++index == count);
-        if (first) {
-            first = false;
-        } else if (count > 2) {
-            parentElmt.appendChild(document.createTextNode(last ? ", and " : ", "));
-        } else {
-            parentElmt.appendChild(document.createTextNode(" and "));
-        }
-    };
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
@@ -395,14 +382,15 @@ Exhibit.ItemView._constructDefaultValueList = function(values, valueType, parent
         };
         
     if (values instanceof Array) {
-        var count = values.length;
+        var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.length);
         for (var i = 0; i < values.length; i++) {
             processOneValue(values[i]);
         }
     } else {
-        var count = values.size();
+        var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.size());
         values.visit(processOneValue);
     }
+    addDelimiter();
 };
 
 

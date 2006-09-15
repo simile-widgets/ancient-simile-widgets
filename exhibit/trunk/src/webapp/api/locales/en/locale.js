@@ -5,6 +5,10 @@
  */
 (function() {
     var javascriptFiles = [
+        "exhibit.js",
+        "database.js",
+        "list-facet.js",
+        "ordered-view-frame.js"
     ];
     var cssFiles = [
     ];

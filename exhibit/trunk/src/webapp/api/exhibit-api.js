@@ -34,15 +34,7 @@ if (typeof Exhibit == "undefined") {
             "views/item-view.js"
         ];
         var cssFiles = [
-            "exhibit.css",
-            
-            "browse-panel.css",
-            "facets/list-facet.css",
-            
-            "view-panel.css",
-//            "views/tabular-view.css",
-            "views/tile-view.css",
-            "views/item-view.css"
+            "exhibit.css"
         ];
         
         var theme = "classic";
