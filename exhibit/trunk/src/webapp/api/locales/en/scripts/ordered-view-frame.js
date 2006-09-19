@@ -4,7 +4,8 @@
  */
  
 Exhibit.OrderedViewFrame.l10n = {
-    resetFiltersLabel: "reset",
+    resetFiltersLabel:  "reset",
+    thenSortByLabel:    "then by...",
     
     createNoResultsTemplate: function(
         countClass,
@@ -27,7 +28,7 @@ Exhibit.OrderedViewFrame.l10n = {
             }
         ];
     },
-    createResultsTemplate: function(
+    createResultsSummaryTemplate: function(
         countClass,
         typesClass,
         detailsClass,
@@ -63,6 +64,20 @@ Exhibit.OrderedViewFrame.l10n = {
                     },
                     ")"
                 ]
+            }
+        ];
+    },    
+    createSortingControlsTemplate: function(
+        thenSortByActionLink
+    ) {
+        return [
+            "sorted by: ",
+            {   tag:    "span",
+                field:  "ordersSpan"
+            },
+            "; ",
+            {   elmt:  thenSortByActionLink,
+                title: "Further sort the items"
             }
         ];
     }

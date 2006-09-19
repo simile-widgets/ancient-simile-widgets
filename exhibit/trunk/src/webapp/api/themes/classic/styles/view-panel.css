@@ -20,6 +20,9 @@ span.exhibit-collectionView-header-details {
     padding-left:   0.5em;
     color:          #888;
 }
+div.exhibit-collectionView-header-sortControls {
+    text-align:     center;
+}
 
 div.exhibit-collectionView-body {
 }

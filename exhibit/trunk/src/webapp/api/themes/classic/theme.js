@@ -30,5 +30,55 @@ Exhibit.Theme = {
         return SimileAjax.Graphics.createTranslucentImage(
             doc, Exhibit.Theme.urlPrefix + url
         );
+    },
+    
+    createPopupMenuDom: function(element) {
+        var div = document.createElement("div");
+        div.className = "exhibit-menu-popup exhibit-ui-protection";
+        
+        var dom = {
+            elmt: div,
+            close: function() {
+                document.body.removeChild(this.elmt);
+            },
+            open: function() {
+                var self = this;
+                this.layer = SimileAjax.WindowManager.pushLayer(function() { self.close(); }, true);
+                    
+                var docWidth = document.body.offsetWidth;
+                var docHeight = document.body.offsetHeight;
+            
+                var coords = SimileAjax.DOM.getPageCoordinates(element);
+                div.style.top = (coords.top + element.scrollHeight) + "px";
+                div.style.right = (docWidth - (coords.left + element.scrollWidth)) + "px";
+            
+                document.body.appendChild(this.elmt);
+            },
+            appendMenuItem: function(label, icon, onClick) {
+                var self = this;
+                var a = document.createElement("a");
+                a.className = "exhibit-menu-item";
+                a.href = "javascript:";
+                SimileAjax.WindowManager.registerEvent(a, "click", function(elmt, evt, target) {
+                    onClick(elmt, evt, target);
+                    SimileAjax.WindowManager.popLayer(self.layer);
+                    SimileAjax.DOM.cancelEvent(evt);
+                    return false;
+                });
+                
+                var div = document.createElement("div");
+                a.appendChild(div);
+        
+                if (icon != null) {
+                    div.appendChild(SimileAjax.Graphics.createTranslucentImage(document, icon));
+                    div.appendChild(document.createTextNode(" " + label));
+                } else {
+                    div.appendChild(document.createTextNode(label));
+                }
+                
+                this.elmt.appendChild(a);
+            }
+        };
+        return dom;
     }
 };

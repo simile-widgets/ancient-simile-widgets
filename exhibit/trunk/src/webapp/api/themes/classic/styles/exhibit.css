@@ -30,3 +30,31 @@ a.exhibit-item:hover {
 
 span.exhibit-value {
 }
+
+/*
+ *  Menu Popup
+ */
+div.exhibit-menu-popup {
+    position:       absolute;
+    width:          20em;
+    z-index:        1000;
+    background:     #FFFFE0;
+    border:         1px solid #aaa;
+}
+
+a.exhibit-menu-item {
+    text-decoration:    none;
+}
+
+a.exhibit-menu-item div {
+    padding:            0.25em;
+}
+
+a.exhibit-menu-item div img {
+    vertical-align:     middle;
+    margin-right:       4px;
+}
+
+a:hover.exhibit-menu-item div {
+    background:         #DFDFC8;
+}
