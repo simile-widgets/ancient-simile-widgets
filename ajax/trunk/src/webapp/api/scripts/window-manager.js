@@ -70,6 +70,7 @@ SimileAjax.WindowManager.registerEvent = function(elmt, eventName, handler, laye
     
     var handler2 = function(elmt, evt, target) {
         if (SimileAjax.WindowManager._canProcessEventAtLayer(layer)) {
+            SimileAjax.WindowManager._popToLayer(layer.index);
             return handler(elmt, evt, target);
         } else {
             SimileAjax.DOM.cancelEvent(evt);
@@ -80,8 +81,8 @@ SimileAjax.WindowManager.registerEvent = function(elmt, eventName, handler, laye
     SimileAjax.DOM.registerEvent(elmt, eventName, handler2);
 };
 
-SimileAjax.WindowManager.pushLayer = function(f) {
-    var layer = { onPop: f, index: SimileAjax.WindowManager._layers.length };
+SimileAjax.WindowManager.pushLayer = function(f, ephemeral) {
+    var layer = { onPop: f, index: SimileAjax.WindowManager._layers.length, ephemeral: (ephemeral) };
     SimileAjax.WindowManager._layers.push(layer);
     
     return layer;
@@ -114,7 +115,7 @@ SimileAjax.WindowManager.registerForDragging = function(elmt, callback, layer) {
 SimileAjax.WindowManager._popToLayer = function(level) {
     while (level+1 < SimileAjax.WindowManager._layers.length) {
         try {
-            var layer = SimileAjax.WindowManager_layers.pop();
+            var layer = SimileAjax.WindowManager._layers.pop();
             if (layer.onPop != null) {
                 layer.onPop();
             }
@@ -124,11 +125,23 @@ SimileAjax.WindowManager._popToLayer = function(level) {
 };
 
 SimileAjax.WindowManager._canProcessEventAtLayer = function(layer) {
-    return layer.index == (SimileAjax.WindowManager._layers.length - 1);
+    if (layer.index == (SimileAjax.WindowManager._layers.length - 1)) {
+        return true;
+    }
+    for (var i = layer.index + 1; i < SimileAjax.WindowManager._layers.length; i++) {
+        if (!SimileAjax.WindowManager._layers[i].ephemeral) {
+            return false;
+        }
+    }
+    return true;
 };
 
 SimileAjax.WindowManager._cancelPopups = function() {
-    
+    var i = SimileAjax.WindowManager._layers.length - 1;
+    while (i > 0 && SimileAjax.WindowManager._layers[i].ephemeral) {
+        i--;
+    }
+    SimileAjax.WindowManager._popToLayer(i);
 };
 
 SimileAjax.WindowManager._onBodyClick = function(elmt, evt, target) {
