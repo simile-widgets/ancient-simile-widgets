@@ -99,6 +99,7 @@ if (typeof SimileAjax == "undefined") {
             "json.js",
             "dom.js",
             "graphics.js",
+            "date-time.js",
             
             "ajax.js",
             "history.js",
