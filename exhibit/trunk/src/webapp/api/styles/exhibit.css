@@ -14,3 +14,6 @@
 .exhibit-ui-protection tr {
 	vertical-align: top;
 }
+a img {
+    border: none;
+}
