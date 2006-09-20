@@ -38,6 +38,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                         )
                     },
                     {   tag:        "div",
+                        field:      "sortControlsDiv",
                         className:  "exhibit-collectionView-header-sortControls",
                         children: l10n.createSortingControlsTemplate(
                             exhibit.makeActionLink(l10n.thenSortByLabel, onThenSortBy)
@@ -67,6 +68,8 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
         
         dom.itemCountSpan.innerHTML = resultsCount;
         dom.originalCountSpan.innerHTML = originalCount;
+        
+        dom.sortControlsDiv.style.display = (resultsCount == 0) ? "none" : "block";
     };
     dom.setTypes = function(typeLabels) {
         var typeLabel = (typeLabels.length > 0 && typeLabels.length <= 3) ?

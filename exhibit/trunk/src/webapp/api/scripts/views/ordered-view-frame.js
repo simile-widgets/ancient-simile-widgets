@@ -139,81 +139,82 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
      */
     this._headerDom.setCounts(currentCount, collection.originalSize());
     this._headerDom.setTypes(database.getTypeLabels(currentSet)[currentCount > 1 ? 1 : 0]);
+    this._footerDom.setCounts(currentCount, this._initialCount, this._showAll);
     
-    /*
-     *  Sort the items
-     */
     var items = [];
     currentSet.visit(function(itemID) { items.push({ id: itemID, sortKeys: [] }); });
-    
-    var orders = this._orders;
-    var sortFunctions = [];
-    for (var x = 0; x < orders.length; x++) {
-        sortFunctions.push(this._processOrder(items, orders[x], x));
-    }
-    var masterSortFunction = function(item1, item2) {
-        var c = 0;
-        var i = 0;
-        while (c == 0 && i < sortFunctions.length) {
-            c = sortFunctions[i](item1, item2);
-            i++;
+    if (items.length > 0) {
+        /*
+         *  Sort the items
+         */
+        var orders = this._orders;
+        var sortFunctions = [];
+        for (var x = 0; x < orders.length; x++) {
+            sortFunctions.push(this._processOrder(items, orders[x], x));
         }
-        return c;
-    }
-    items.sort(masterSortFunction);
-    
-    /*
-     *  Generate item views
-     */
-    var sortKeys = [];
-    var groupLevels = orders.length - 1;
-    for (var i = 0; i < orders.length; i++) {
-        sortKeys.push(null);
-    }
-    
-    var max = this._showAll ? items.length : Math.min(items.length, this._initialCount);
-    for (var i = 0; i < max; i++) {
-        var item = items[i];
-        
-        var g = 0;
-        while (g < groupLevels && item.sortKeys[g] == sortKeys[g]) {
-            g++;
-        }
-        
-        while (g < groupLevels) {
-            sortKeys[g] = item.sortKeys[g];
-            
-            this.onNewGroup(sortKeys[g], orders[g].valueType, g);
-            
-            g++;
-        }
-        
-        this.onNewItem(item.id, i);
-    }
-    
-    /*
-     *  Build sort controls
-     */
-    var orderDoms = [];
-    var buildOrderDom = function(order, index) {
-        var property = database.getProperty(order.property);
-        var orderDom = Exhibit.OrderedViewFrame.theme.createOrderDom(
-            exhibit,
-            (order.forward) ? property.getPluralLabel() : property.getReversePluralLabel(),
-            function(elmt, evt, target) {
-                self._openSortPopup(elmt, index);
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
+        var masterSortFunction = function(item1, item2) {
+            var c = 0;
+            var i = 0;
+            while (c == 0 && i < sortFunctions.length) {
+                c = sortFunctions[i](item1, item2);
+                i++;
             }
-        );
-        orderDoms.push(orderDom);
-    };
-    for (var i = 0; i < orders.length; i++) {
-        buildOrderDom(orders[i], i);
+            return c;
+        }
+        items.sort(masterSortFunction);
+    
+        /*
+         *  Generate item views
+         */
+        var sortKeys = [];
+        var groupLevels = orders.length - 1;
+        for (var i = 0; i < orders.length; i++) {
+            sortKeys.push(null);
+        }
+        
+        var max = this._showAll ? items.length : Math.min(items.length, this._initialCount);
+        for (var i = 0; i < max; i++) {
+            var item = items[i];
+            
+            var g = 0;
+            while (g < groupLevels && item.sortKeys[g] == sortKeys[g]) {
+                g++;
+            }
+            
+            while (g < groupLevels) {
+                sortKeys[g] = item.sortKeys[g];
+                
+                this.onNewGroup(sortKeys[g], orders[g].valueType, g);
+                
+                g++;
+            }
+            
+            this.onNewItem(item.id, i);
+        }
+        
+        /*
+         *  Build sort controls
+         */
+        var orderDoms = [];
+        var buildOrderDom = function(order, index) {
+            var property = database.getProperty(order.property);
+            var orderDom = Exhibit.OrderedViewFrame.theme.createOrderDom(
+                exhibit,
+                (order.forward) ? property.getPluralLabel() : property.getReversePluralLabel(),
+                function(elmt, evt, target) {
+                    self._openSortPopup(elmt, index);
+                    SimileAjax.DOM.cancelEvent(evt);
+                    return false;
+                }
+            );
+            orderDoms.push(orderDom);
+        };
+        for (var i = 0; i < orders.length; i++) {
+            buildOrderDom(orders[i], i);
+        }
+        this._headerDom.setOrders(orderDoms);
+        this._headerDom.enableThenByAction(orderDoms.length < this._possibleOrders.length);
     }
-    this._headerDom.setOrders(orderDoms);
-    this._headerDom.enableThenByAction(orderDoms.length < this._possibleOrders.length);
-    this._footerDom.setCounts(items.length, this._initialCount, this._showAll);
 };
 
 Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index) {

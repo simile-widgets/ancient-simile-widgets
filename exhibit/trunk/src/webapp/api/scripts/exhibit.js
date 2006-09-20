@@ -50,6 +50,7 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
             try {
                 o = eval("(" + xmlhttp.responseText + ")");
             } catch (e) {
+                SimileAjax.Debug.exception(e);
                 SimileAjax.Debug.log("Syntax error in JSON file at " + urls[0]);
             }
             
