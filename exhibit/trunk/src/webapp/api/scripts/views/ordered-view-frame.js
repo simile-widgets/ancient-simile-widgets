@@ -48,7 +48,7 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         if ("possibleOrders" in configuration) {
             this._possibleOrders = [];
             
-            var possibleOrders = configuration.orders;
+            var possibleOrders = configuration.possibleOrders;
             var hasLabel = false;
             for (var i = 0; i < possibleOrders.length; i++) {
                 var order = possibleOrders[i];
