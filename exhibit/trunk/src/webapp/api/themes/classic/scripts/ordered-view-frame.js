@@ -85,6 +85,9 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
         }
         addDelimiter();
     };
+    dom.enableThenByAction = function(enabled) {
+        exhibit.enableActionLink(dom.thenByLink, enabled);
+    };
     
     return dom;
 };

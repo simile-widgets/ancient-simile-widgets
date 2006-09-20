@@ -6,7 +6,13 @@
 Exhibit.OrderedViewFrame.l10n = {
     resetFiltersLabel:  "reset",
     thenSortByLabel:    "then by...",
-    
+    removeOrderLabel:   "Remove this order",
+    formatSortActionTitle: function(propertyLabel, sortLabel) {
+        return "Sorted by " + propertyLabel + " (" + sortLabel + ")";
+    },
+    formatRemoveOrderActionTitle: function(propertyLabel, sortLabel) {
+        return "Removed order by " + propertyLabel + " (" + sortLabel + ")";
+    },
     createNoResultsTemplate: function(
         countClass,
         typesClass,
@@ -77,7 +83,8 @@ Exhibit.OrderedViewFrame.l10n = {
             },
             "; ",
             {   elmt:  thenSortByActionLink,
-                title: "Further sort the items"
+                title: "Further sort the items",
+                field: "thenByLink"
             }
         ];
     }

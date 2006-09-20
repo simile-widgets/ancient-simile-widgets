@@ -15,6 +15,20 @@ a.exhibit-action:hover {
 	cursor:         pointer;
 }
 
+a.exhibit-action-disabled, 
+a.exhibit-action-disabled:link, 
+a.exhibit-action-disabled:active, 
+a.exhibit-action-disabled:visited {
+	text-decoration:    none;
+	border-bottom:      1px dotted;
+	cursor:             pointer;
+    opacity:            0.5;
+}
+a.exhibit-action-disabled:hover {
+	border-bottom:  1px solid;
+	cursor:         pointer;
+}
+
 a.exhibit-item, 
 a.exhibit-item:link, 
 a.exhibit-item:active, 
@@ -36,7 +50,7 @@ span.exhibit-value {
  */
 div.exhibit-menu-popup {
     position:       absolute;
-    width:          20em;
+    width:          15em;
     z-index:        1000;
     background:     #FFFFE0;
     border:         1px solid #aaa;
@@ -46,15 +60,16 @@ a.exhibit-menu-item {
     text-decoration:    none;
 }
 
-a.exhibit-menu-item div {
-    padding:            0.25em;
+a.exhibit-menu-item > div {
+    padding:            2px 2px 2px 20px;
+    text-indent:        -18px;
+}
+
+a:hover.exhibit-menu-item > div {
+    background:         #DFDFC8;
 }
 
 a.exhibit-menu-item div img {
     vertical-align:     middle;
-    margin-right:       4px;
-}
-
-a:hover.exhibit-menu-item div {
-    background:         #DFDFC8;
+    margin-right:       2px;
 }

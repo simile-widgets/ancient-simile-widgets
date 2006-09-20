@@ -30,5 +30,27 @@ Exhibit.Database.l10n = {
         reversePluralLabel:     "URIs of",
         groupingLabel:          "URIs",
         reverseGroupingLabel:   "things named by these URIs"
+    },
+    sortLabels: {
+        "text": {
+            ascending:  "a - z",
+            descending: "z - a"
+        },
+        "number": {
+            ascending:  "smallest first",
+            descending: "largest first"
+        },
+        "date": {
+            ascending:  "earliest first",
+            descending: "latest first"
+        },
+        "boolean": {
+            ascending:  "false first",
+            descending: "true first"
+        },
+        "item": {
+            ascending:  "a - z",
+            descending: "z - a"
+        }
     }
 };

@@ -69,14 +69,16 @@ Exhibit.Theme = {
                 var div = document.createElement("div");
                 a.appendChild(div);
         
-                if (icon != null) {
-                    div.appendChild(SimileAjax.Graphics.createTranslucentImage(document, icon));
-                    div.appendChild(document.createTextNode(" " + label));
-                } else {
-                    div.appendChild(document.createTextNode(label));
-                }
+                div.appendChild(SimileAjax.Graphics.createTranslucentImage(document, 
+                    icon != null ? icon : (Exhibit.Theme.urlPrefix + "images/blank-16x16.png")));
+                    
+                div.appendChild(document.createTextNode(label));
                 
                 this.elmt.appendChild(a);
+            },
+            appendSeparator: function() {
+                var hr = document.createElement("hr");
+                this.elmt.appendChild(hr);
             }
         };
         return dom;

@@ -138,6 +138,7 @@ Exhibit._Impl.prototype.makeActionLinkWithObject = function(text, obj, handlerNa
 
 Exhibit._Impl.prototype.enableActionLink = function(a, enabled) {
     a.setAttribute("disabled", enabled ? "false" : "true");
+    a.className = enabled ? "exhibit-action" : "exhibit-action-disabled";
 };
 
 Exhibit._Impl.prototype.makeItemSpan = function(itemID, label, layer) {

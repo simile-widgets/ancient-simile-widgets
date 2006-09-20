@@ -27,6 +27,9 @@
             groupingLabel:          "their authors",
             reverseGroupingLabel:   "their work",
             valueType:              "item"
+        },
+        'year': {
+            valueType:              "number"
         }
     }
 }

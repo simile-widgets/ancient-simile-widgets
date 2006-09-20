@@ -56,10 +56,13 @@
                 TileView: {
                     orders: [
                         "format",
-                        { property: "year", ascending: false },
-                        "label"
+                        { property: "year", ascending: false }
                     ],
-                    groupLevels: 1
+                    possibleOrders: [
+                        "author",
+                        { property: "year", ascending: false },
+                        "format"
+                    ],
                 },
                 ItemView: {
                     properties: [
