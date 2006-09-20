@@ -22,6 +22,7 @@ span.exhibit-collectionView-header-details {
 }
 div.exhibit-collectionView-header-sortControls {
     text-align:     center;
+    margin:         1em 0;
 }
 
 div.exhibit-collectionView-body {
@@ -51,4 +52,6 @@ div.exhibit-collectionView-group h2 {
 }
 
 div.exhibit-collectionView-footer {
+    text-align: center;
+    margin:     2em 0;
 }

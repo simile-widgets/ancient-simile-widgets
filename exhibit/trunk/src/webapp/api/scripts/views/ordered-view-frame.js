@@ -20,6 +20,8 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
             ascending:  true
         }
     ];
+    this._initialCount = 10;
+    this._showAll = false;
     
     if (configuration != null) {
         if ("orders" in configuration) {
@@ -74,6 +76,12 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
                 });
             }
         }
+        if ("initialCount" in configuration) {
+            this._initialCount = configuration.initialCount;
+        }
+        if ("showAll" in configuration) {
+            this._showAll = configuration.showAll;
+        }
     }
     
     this._initializeUI();
@@ -94,6 +102,20 @@ Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
         },
         function(elmt, evt, target) {
             self._openSortPopup(elmt, -1);
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        }
+    );
+    this._footerDom = Exhibit.OrderedViewFrame.theme.createFooterDom(
+        this._exhibit, 
+        this._divFooter, 
+        function(elmt, evt, target) {
+            self._setShowAll(true);
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        },
+        function(elmt, evt, target) {
+            self._setShowAll(false);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         }
@@ -149,7 +171,8 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
         sortKeys.push(null);
     }
     
-    for (var i = 0; i < items.length; i++) {
+    var max = this._showAll ? items.length : Math.min(items.length, this._initialCount);
+    for (var i = 0; i < max; i++) {
         var item = items[i];
         
         var g = 0;
@@ -190,6 +213,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     }
     this._headerDom.setOrders(orderDoms);
     this._headerDom.enableThenByAction(orderDoms.length < this._possibleOrders.length);
+    this._footerDom.setCounts(items.length, this._initialCount, this._showAll);
 };
 
 Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index) {
@@ -240,7 +264,7 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
                     value = value.getTime();
                 } else {
                     try {
-                        value = Date.parse(value);
+                        value = SimileAjax.DateTime.parseIso8601DateTime(value).getTime();
                     } catch (e) {
                         value = Number.NEGATIVE_INFINITY;
                     }
@@ -464,4 +488,9 @@ Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
             propertyLabel, order.ascending ? sortLabels.ascending : sortLabels.descending),
         uiLayer: SimileAjax.WindowManager.getBaseLayer()
     });
+};
+
+Exhibit.OrderedViewFrame.prototype._setShowAll = function(showAll) {
+    this._showAll = showAll;
+    this.parentReconstruct();
 };

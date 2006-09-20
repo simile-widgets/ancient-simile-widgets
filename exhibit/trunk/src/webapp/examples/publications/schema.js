@@ -29,7 +29,7 @@
             valueType:              "item"
         },
         'year': {
-            valueType:              "number"
+            valueType:              "date"
         }
     }
 }

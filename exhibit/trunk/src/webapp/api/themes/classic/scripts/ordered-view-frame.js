@@ -102,3 +102,35 @@ Exhibit.OrderedViewFrame.theme.createOrderDom = function(
     
     return { elmt: a };
 }
+
+Exhibit.OrderedViewFrame.theme.createFooterDom = function(
+    exhibit, 
+    footerDiv,
+    onShowAll,
+    onDontShowAll
+) {
+    var l10n = Exhibit.OrderedViewFrame.l10n;
+    var footerTemplate = {
+        elmt:       footerDiv,
+        className:  "exhibit-collectionView-footer",
+        children:   []
+    };
+    
+    var dom = SimileAjax.DOM.createDOMFromTemplate(document, footerTemplate);
+    dom.setCounts = function(count, limitCount, showAll) {
+        dom.elmt.innerHTML = "";
+        if (count > limitCount) {
+            if (showAll) {
+                dom.elmt.appendChild(
+                    exhibit.makeActionLink(
+                        l10n.formatDontShowAll(limitCount), onDontShowAll));
+            } else {
+                dom.elmt.appendChild(
+                    exhibit.makeActionLink(
+                        l10n.formatShowAll(count), onShowAll));
+            }
+        }
+    };
+    
+    return dom;
+}
