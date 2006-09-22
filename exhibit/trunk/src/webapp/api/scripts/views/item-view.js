@@ -176,12 +176,13 @@ Exhibit.ItemView._trimString = function(s) {
 
 Exhibit.ItemView._processTemplateElement = function(elmt) {
     var templateNode = {
-        tag:        elmt.tagName,
-        content:    null,
-        condition:  null,
-        attributes: [],
-        styles:     [],
-        children:   null
+        tag:                elmt.tagName,
+        content:            null,
+        condition:          null,
+        contentAttributes:  null,
+        attributes:         [],
+        styles:             [],
+        children:           null
     };
     
     var attributes = elmt.attributes;
@@ -209,10 +210,21 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
                 }
             }
         } else {
-            templateNode.attributes.push({
-                name:   name,
-                value:  value
-            });
+            var x = name.indexOf("-content");
+            if (x > 0) {
+                if (templateNode.contentAttributes == null) {
+                    templateNode.contentAttributes = [];
+                }
+                templateNode.contentAttributes.push({
+                    name:       name.substr(0, x),
+                    expression: Exhibit.ItemView._parseTemplateExpression(value)
+                });
+            } else {
+                templateNode.attributes.push({
+                    name:   name,
+                    value:  value
+                });
+            }
         }
     }
     
@@ -292,6 +304,19 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
     }
     
     var elmt = Exhibit.ItemView._constructElmtWithAttributes(value, valueType, templateNode, parentElmt, database);
+    if (templateNode.contentAttributes != null) {
+        var contentAttributes = templateNode.contentAttributes;
+        for (var i = 0; i < contentAttributes.length; i++) {
+            var attribute = contentAttributes[i];
+            var values = [];
+            
+            Exhibit.ItemView._executeExpression(
+                value, valueType, attribute.expression, database).values.visit(function(v) { values.push(v); });
+                
+            elmt.setAttribute(attribute.name, values.join(";"));
+        }
+    }
+    
     var children = templateNode.children;
     if (templateNode.content != null) {
         var results = Exhibit.ItemView._executeExpression(value, valueType, templateNode.content, database);
