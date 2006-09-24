@@ -40,14 +40,27 @@ Exhibit.MapView.theme.constructDom = function(
                                         onClearFilters
                                     )
                                 )
+                            },
+                            {   tag:        "div",
+                                className:  "exhibit-mapView-mappableDetails",
+                                field:      "mappableDiv"
                             }
                         ]
                     }
                 ]
             },
             {   tag:        "div",
-                className:  "exhibit-mapView-map",
-                field:      "mapDiv"
+                className:  "exhibit-mapView-mapContainer",
+                children: [
+                    {   tag:    "div",
+                        className:  "exhibit-mapView-map",
+                        field:      "mapDiv"
+                    }
+                ]
+            },
+            {   tag: "div",
+                className: "exhibit-mapView-resizer",
+                field: "resizerDiv"
             }
         ]
     };
@@ -70,10 +83,15 @@ Exhibit.MapView.theme.constructDom = function(
             dom.filteredDetailsSpan.style.display = "none";
         }
         
+        if (mappableCount != resultsCount) {
+            dom.mappableDiv.style.display = "block";
+            dom.mappableDiv.innerHTML = l10n.formatMappableCount(mappableCount);
+        } else {
+            dom.mappableDiv.style.display = "none";
+        }
+        
         dom.itemCountSpan.innerHTML = resultsCount;
         dom.originalCountSpan.innerHTML = originalCount;
-        
-        dom.sortControlsDiv.style.display = (resultsCount == 0) ? "none" : "block";
     };
     dom.setTypes = function(typeLabels) {
         var typeLabel = (typeLabels.length > 0 && typeLabels.length <= 3) ?
@@ -85,5 +103,20 @@ Exhibit.MapView.theme.constructDom = function(
     dom.getMapDiv = function() {
         return dom.mapDiv;
     };
+    
+    SimileAjax.WindowManager.registerForDragging(
+        dom.resizerDiv,
+        {   onDragStart: function() {
+                this._height = dom.mapDiv.offsetHeight;
+            },
+            onDragBy: function(diffX, diffY) {
+                this._height += diffY;
+                dom.mapDiv.style.height = Math.max(50, this._height) + "px";
+            },
+            onDragEnd: function() {
+                dom.map.checkResize();
+            }
+        }
+    );
     return dom;
 };

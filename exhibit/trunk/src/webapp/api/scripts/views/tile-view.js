@@ -51,7 +51,7 @@ Exhibit.TileView.prototype._initializeUI = function() {
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     this._orderedViewFrame = new Exhibit.OrderedViewFrame(
-        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._globalConfiguration["TileView"]);
+        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._configuration);
         
     var self = this;
     this._orderedViewFrame.parentReconstruct = function() {

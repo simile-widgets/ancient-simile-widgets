@@ -53,17 +53,6 @@
                         "event"
                     ]
                 },
-                TileView: {
-                    orders: [
-                        "format",
-                        { property: "year", ascending: false }
-                    ],
-                    possibleOrders: [
-                        "author",
-                        { property: "year", ascending: false },
-                        "format"
-                    ]
-                },
                 ItemView: {
                     properties: [
                         "author",
@@ -76,8 +65,26 @@
                 },
                 ViewPanel: {
                     views: [
-                        Exhibit.TileView,
-                        Exhibit.MapView
+                        {   constructor: Exhibit.TileView,
+                            configuration: {
+                                orders: [
+                                    "format",
+                                    { property: "year", ascending: false }
+                                ],
+                                possibleOrders: [
+                                    "author",
+                                    { property: "year", ascending: false },
+                                    "format"
+                                ]
+                            }
+                        },
+                        {   constructor: Exhibit.MapView,
+                            configuration: {
+                                type:   "hybrid",
+                                latlng: ".latlng",
+                                color:  ".venue"
+                            }
+                        }
                     ]
                 }
             };

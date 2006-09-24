@@ -177,12 +177,7 @@ Exhibit.Database.prototype.loadItems = function(itemEntries, baseURI) {
         };
         
         for (var i = 0; i < itemEntries.length; i++) {
-            var itemEntry = itemEntries[i];
-            if (!("label" in itemEntry)) {
-                SimileAjax.Debug.warn("Item entry has no label", itemEntry);
-            } else {
-                this._loadItem(itemEntry, indexTriple, baseURI);
-            }
+            this._loadItem(itemEntries[i], indexTriple, baseURI);
         }
         
         this._propertyArray = null;
@@ -221,18 +216,31 @@ Exhibit.Database.prototype.getAllProperties = function() {
 };
 
 Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseURI) {
-    var label = itemEntry.label;
-    var id = ("id" in itemEntry) ? itemEntry.id : label;
-    var uri = ("uri" in itemEntry) ? itemEntry.uri : (baseURI + "item#" + encodeURIComponent(id));
-    var type = ("type" in itemEntry) ? itemEntry.type : "Item";
+    if (!("label" in itemEntry) && !("id" in itemEntry)) {
+        SimileAjax.Debug.warn("Item entry has no label and no id", itemEntry);
+        return;
+    }
     
-    this._items.add(id);
-    
-    indexFunction(id, "uri", uri);
-    indexFunction(id, "label", label);
-    indexFunction(id, "type", type);
-    
-    this._ensureTypeExists(type, baseURI);
+    var id;
+    if (!("label" in itemEntry)) {
+        id = itemEntry.id;
+        if (!this._items.contains(id)) {
+            SimileAjax.Debug.warn("Cannot add new item containing no label", itemEntry);
+        }
+    } else {
+        var label = itemEntry.label;
+        var id = ("id" in itemEntry) ? itemEntry.id : label;
+        var uri = ("uri" in itemEntry) ? itemEntry.uri : (baseURI + "item#" + encodeURIComponent(id));
+        var type = ("type" in itemEntry) ? itemEntry.type : "Item";
+        
+        this._items.add(id);
+        
+        indexFunction(id, "uri", uri);
+        indexFunction(id, "label", label);
+        indexFunction(id, "type", type);
+        
+        this._ensureTypeExists(type, baseURI);
+    }
     
     for (p in itemEntry) {
         if (p != "uri" && p != "label" && p != "id" && p != "type") {

@@ -1,3 +1,15 @@
+div.exhibit-mapView-mapContainer {
+    border: 1px solid #738699
+}
 div.exhibit-mapView-map {
-    width: 100%;
+}
+div.exhibit-mapView-resizer {
+    text-align:     center;
+    cursor:         n-resize;
+    background:     url(../images/down-arrow.png) top center no-repeat;
+    height:         10px;
+}
+div.exhibit-mapView-mappableDetails {
+    padding:        1em;
+    text-align:     center;
 }

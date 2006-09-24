@@ -67,7 +67,7 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
         if ("initialView" in c) {
             this._viewIndex = Math.max(0, 
                 Math.min(
-                    this._configuration.initialView, 
+                    c.initialView, 
                     this._viewConstructors.length - 1
                 )
             );

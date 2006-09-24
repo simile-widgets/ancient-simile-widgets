@@ -21,6 +21,7 @@ if (typeof Exhibit == "undefined") {
             "exhibit.js",
             "util/set.js",
             
+            "expression.js",
             "database.js",
             "browse-engine.js",
             

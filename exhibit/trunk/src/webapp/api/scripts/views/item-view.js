@@ -192,21 +192,33 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         var value = attribute.nodeValue;
         
         if (name == "content") {
-            templateNode.content = Exhibit.ItemView._parseTemplateExpression(value);
+            templateNode.content = Exhibit.Expression.parse(value);
         } else if (name == "if-exists") {
             templateNode.condition = {
                 test:       "exists",
-                expression: Exhibit.ItemView._parseTemplateExpression(value)
+                expression: Exhibit.Expression.parse(value)
             };
         } else if (name == "style") {
             var styles = value.split(";");
             for (var s = 0; s < styles.length; s++) {
                 var pair = styles[s].split(":");
                 if (pair.length > 1) {
-                    templateNode.styles.push({
-                        name:   Exhibit.ItemView._trimString(pair[0]),
-                        value:  Exhibit.ItemView._trimString(pair[1])
-                    });
+                    var n = Exhibit.ItemView._trimString(pair[0]);
+                    var v = Exhibit.ItemView._trimString(pair[1]);
+                    if (n == "float") {
+                        n = "cssFloat";
+                    } else if (n == "-moz-opacity") {
+                        n = "MozOpacity";
+                    } else {
+                        if (n.indexOf("-") > 0) {
+                            var segments = n.split("-");
+                            n = segments[0];
+                            for (var x = 1; x < segments.length; x++) {
+                                n += segments[x].substr(0, 1).toUpperCase() + segments[x].substr(1);
+                            }
+                        }
+                    }
+                    templateNode.styles.push({ name: n, value: v });
                 }
             }
         } else {
@@ -217,7 +229,7 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
                 }
                 templateNode.contentAttributes.push({
                     name:       name.substr(0, x),
-                    expression: Exhibit.ItemView._parseTemplateExpression(value)
+                    expression: Exhibit.Expression.parse(value)
                 });
             } else {
                 templateNode.attributes.push({
@@ -239,43 +251,6 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
     return templateNode;
 };
 
-Exhibit.ItemView._parseTemplateExpression = function(s) {
-    var expression = {
-        root:  "value",
-        path:  []
-    };
-    if (s.length > 0) {
-        var dotBang = s.search(/[\.!]/);
-        if (dotBang > 0) {
-            expression.root = s.substr(0, dotBang);
-        }
-        
-        var regex = /[\.!][^\.!]+/g;
-        var result;
-        while ((result = regex.exec(s)) != null) {
-            var segment = result[0];
-            
-            var dotBang = segment.substr(0,1);
-            var property = segment.substr(1);
-            var isList = false;
-            
-            var at = property.indexOf("@");
-            if (at > 0) {
-                if (property.substr(at + 1) == "list") {
-                    isList = true;
-                }
-                property = property.substr(0, at);
-            }
-            expression.path.push({
-                property:   property,
-                forward:    dotBang == ".",
-                isList:     isList
-            });
-        }
-    }
-    return expression;
-};
-
 Exhibit.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
     Exhibit.ItemView._constructFromViewTemplateNode(
         job.itemID, "item", compiledTemplate.template, job.div, job.exhibit);
@@ -292,12 +267,12 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
     var database = exhibit.getDatabase();
     if (templateNode.condition != null) {
         if (templateNode.condition.test == "exists") {
-            if (Exhibit.ItemView._executeExpression(
-                    value, 
-                    valueType,
-                    templateNode.condition.expression, 
+            if (!templateNode.condition.expression.testExists(
+                    { "value" : value }, 
+                    { "value" : valueType },
+                    "value",
                     database
-                ).count == 0) {
+                )) {
                 return;
             }
         }
@@ -310,8 +285,12 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
             var attribute = contentAttributes[i];
             var values = [];
             
-            Exhibit.ItemView._executeExpression(
-                value, valueType, attribute.expression, database).values.visit(function(v) { values.push(v); });
+            attribute.expression.evaluate(
+                { "value" : value }, 
+                { "value" : valueType }, 
+                "value",
+                database
+            ).values.visit(function(v) { values.push(v); });
                 
             elmt.setAttribute(attribute.name, values.join(";"));
         }
@@ -319,7 +298,12 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
     
     var children = templateNode.children;
     if (templateNode.content != null) {
-        var results = Exhibit.ItemView._executeExpression(value, valueType, templateNode.content, database);
+        var results = templateNode.content.evaluate(
+            { "value" : value }, 
+            { "value" : valueType }, 
+            "value",
+            database
+        );
         if (children != null) {
             var processOneValue = function(childValue) {
                 for (var i = 0; i < children.length; i++) {
@@ -343,40 +327,6 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
         }
     }
     parentElmt.appendChild(elmt);
-};
-
-Exhibit.ItemView._executeExpression = function(value, valueType, expression, database) {
-    var count = 1;
-    var set = new Exhibit.Set();
-    set.add(eval(expression.root));
-    
-    for (var i = 0; i < expression.path.length; i++) {
-        var segment = expression.path[i];
-        if (segment.forward) {
-            /* if (i == expression.path.length - 1 && segment.isList && set.size() == 1) {
-                set.visit(function(value) {
-                    set = database.getListProperty(value, segment.property);
-                    count = set.length;
-                });
-            } else */ {
-                set = database.getObjectsUnion(set, segment.property);
-                count = set.size();
-            }
-            
-            var property = database.getProperty(segment.property);
-            valueType = property != null ? property.getValueType() : "text";
-        } else {
-            set = database.getSubjectsUnion(set, segment.property);
-            count = set.size();
-            valueType = "item";
-        }
-    }
-    
-    return {
-        valueType:  valueType,
-        values:     set,
-        count:      count
-    };
 };
 
 Exhibit.ItemView._constructElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
