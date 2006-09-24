@@ -8,6 +8,78 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
     this._div = div;
     this._configuration = configuration;
     
+    this._viewConstructors = [];
+    this._viewConfigs = [];
+    this._viewLabels = [];
+    this._viewTooltips = [];
+    this._viewIndex = 0;
+    
+    if ("ViewPanel" in configuration) {
+        var c = configuration.ViewPanel;
+        if ("views" in c) {
+            var views = c.views;
+            
+            for (var i = 0; i < views.length; i++) {
+                var view = views[i];
+                
+                var constructor = null;
+                var label = null;
+                var tooltip = null;
+                var config = null;
+                
+                if (typeof view == "function") {
+                    constructor = view;
+                } else {
+                    constructor = view.constructor;
+                    if ("label" in view) {
+                        label = view.label;
+                    }
+                    if ("tooltip" in view) {
+                        tooltip = view.tooltip;
+                    }
+                    if ("configuration" in view) {
+                        config = view.configuration;
+                    }
+                }
+                
+                if (label == null) {
+                    if ("l10n" in constructor && "viewLabel" in constructor.l10n) {
+                        label = constructor.l10n.viewLabel;
+                    } else {
+                        label = "" + constructor;
+                    }
+                }
+                if (tooltip == null) {
+                    if ("l10n" in constructor && "viewTooltip" in constructor.l10n) {
+                        tooltip = constructor.l10n.viewTooltip;
+                    } else {
+                        tooltip = label;
+                    }
+                }
+                
+                this._viewConstructors.push(constructor);
+                this._viewConfigs.push(config != null ? config : {});
+                this._viewLabels.push(label);
+                this._viewTooltips.push(tooltip);
+            }
+        }
+        
+        if ("initialView" in c) {
+            this._viewIndex = Math.max(0, 
+                Math.min(
+                    this._configuration.initialView, 
+                    this._viewConstructors.length - 1
+                )
+            );
+        }
+    }
+    
+    if (this._viewConstructors.length == 0) {
+        this._viewConstructors.push(Exhibit.TileView);
+        this._viewLabels.push(Exhibit.TileView.l10n.viewLabel);
+        this._viewTooltips.push(Exhibit.TileView.l10n.viewTooltip);
+    }
+    
     this._view = null;
     this._initializeUI();
 }
@@ -15,17 +87,43 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
 Exhibit.ViewPanel.prototype._initializeUI = function() {
     this._div.innerHTML = "";
     
-    Exhibit.protectUI(this._div);
-    SimileAjax.DOM.appendClassName(this._div, "exhibit-viewPanel");
+    var self = this;
+    this._dom = Exhibit.ViewPanel.theme.constructDom(
+        this._exhibit,
+        this._div,
+        this._viewLabels,
+        this._viewTooltips,
+        function(index) {
+            self._selectView(index);
+        }
+    );
     
-    var collectionViewDiv = document.createElement("div");
-    this._div.appendChild(collectionViewDiv);
+    this._createView();
+};
+
+Exhibit.ViewPanel.prototype._createView = function() {
+    if (this._view) {
+        this._view.dispose();
+    }
     
-    this._view = new Exhibit.TileView(
+    var viewContainer = this._dom.getViewContainer();
+    viewContainer.innerHTML = "";
+    
+    var viewDiv = document.createElement("div");
+    viewContainer.appendChild(viewDiv);
+    
+    this._view = new this._viewConstructors[this._viewIndex](
         this._exhibit, 
-        collectionViewDiv, 
+        viewDiv, 
+        this._viewConfigs[this._viewIndex],
         this._configuration
     );
+    this._dom.setViewIndex(this._viewIndex);
+};
+
+Exhibit.ViewPanel.prototype._selectView = function(index) {
+    this._viewIndex = index;
+    this._createView();
 };
 
 Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, database) {

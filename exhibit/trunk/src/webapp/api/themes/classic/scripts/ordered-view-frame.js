@@ -19,7 +19,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
             {   tag:    "div",
                 field:  "noResultDiv",
                 style:  { display: "none" },
-                children: l10n.createNoResultsTemplate(
+                children: Exhibit.ViewPanel.l10n.createNoResultsTemplate(
                     "exhibit-collectionView-header-count",
                     "exhibit-collectionView-header-types",
                     "exhibit-collectionView-header-details"
@@ -30,11 +30,14 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                 style:  { display: "none" },
                 children: [
                     {   tag:    "div",
-                        children: l10n.createResultsSummaryTemplate(
+                        children: Exhibit.ViewPanel.l10n.createResultsSummaryTemplate(
                             "exhibit-collectionView-header-count",
                             "exhibit-collectionView-header-types",
                             "exhibit-collectionView-header-details",
-                            exhibit.makeActionLink(l10n.resetFiltersLabel, onClearFilters)
+                            exhibit.makeActionLink(
+                                Exhibit.ViewPanel.l10n.resetFiltersLabel, 
+                                onClearFilters
+                            )
                         )
                     },
                     {   tag:        "div",

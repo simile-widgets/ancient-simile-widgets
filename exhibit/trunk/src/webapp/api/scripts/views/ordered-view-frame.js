@@ -87,6 +87,18 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     this._initializeUI();
 };
 
+Exhibit.OrderedViewFrame.prototype.dispose = function() {
+    this._headerDom = null;
+    this._footerDom = null;
+    
+    this._divHeader.innerHTML = "";
+    this._divFooter.innerHTML = "";
+    this._divHeader = null;
+    this._divFooter = null;
+    
+    this._exhibit = null;
+};
+
 Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
     this._divHeader.innerHTML = "";
     this._divFooter.innerHTML = "";
@@ -131,19 +143,23 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
      *  Get the current collection and check if it's empty
      */
     var collection = exhibit.getBrowseEngine().getCurrentCollection();
-    var currentSet = collection.getCurrentSet();
-    var currentCount = currentSet.size();
+    var items = [];
+    var originalSize = 0;
+    if (collection != null) {
+        var currentSet = collection.getCurrentSet();
+        currentSet.visit(function(itemID) { items.push({ id: itemID, sortKeys: [] }); });
+        originalSize = collection.originalSize();
+    }
     
     /*
      *  Set the header UI
      */
-    this._headerDom.setCounts(currentCount, collection.originalSize());
-    this._headerDom.setTypes(database.getTypeLabels(currentSet)[currentCount > 1 ? 1 : 0]);
-    this._footerDom.setCounts(currentCount, this._initialCount, this._showAll);
+    this._headerDom.setCounts(items.length, originalSize);
+    this._footerDom.setCounts(items.length, this._initialCount, this._showAll);
     
-    var items = [];
-    currentSet.visit(function(itemID) { items.push({ id: itemID, sortKeys: [] }); });
     if (items.length > 0) {
+        this._headerDom.setTypes(database.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0]);
+        
         /*
          *  Sort the items
          */

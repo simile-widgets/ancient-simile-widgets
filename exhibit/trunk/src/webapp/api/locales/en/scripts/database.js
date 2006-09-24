@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.Database localization
+ *  Exhibit.Database English localization
  *==================================================
  */
 Exhibit.Database.l10n = {

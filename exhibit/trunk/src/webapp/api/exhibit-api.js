@@ -29,8 +29,8 @@ if (typeof Exhibit == "undefined") {
             
             "view-panel.js",
             "views/ordered-view-frame.js",
-//            "views/tabular-view.js",
             "views/tile-view.js",
+            "views/map-view.js",
             "views/item-view.js"
         ];
         var cssFiles = [

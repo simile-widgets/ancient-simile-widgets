@@ -8,7 +8,10 @@
         "exhibit.js",
         "database.js",
         "list-facet.js",
-        "ordered-view-frame.js"
+        "view-panel.js",
+        "ordered-view-frame.js",
+        "tile-view.js",
+        "map-view.js"
     ];
     var cssFiles = [
     ];

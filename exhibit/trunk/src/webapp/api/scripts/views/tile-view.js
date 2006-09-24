@@ -3,10 +3,11 @@
  *==================================================
  */
  
-Exhibit.TileView = function(exhibit, div, configuration) {
+Exhibit.TileView = function(exhibit, div, configuration, globalConfiguration) {
     this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
+    this._globalConfiguration = globalConfiguration;
     
     this._initializeUI();
     
@@ -18,7 +19,18 @@ Exhibit.TileView = function(exhibit, div, configuration) {
             }
         } 
     });
-}
+};
+
+Exhibit.TileView.prototype.dispose = function() {
+    this._orderedViewFrame.dispose();
+    
+    this._div.innerHTML = "";
+    
+    this._dom = null;
+    this._orderedViewFrame = null;
+    this._div = null;
+    this._exhibit = null;
+};
 
 Exhibit.TileView.prototype._initializeUI = function() {
     this._div.innerHTML = "";
@@ -39,12 +51,14 @@ Exhibit.TileView.prototype._initializeUI = function() {
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     this._orderedViewFrame = new Exhibit.OrderedViewFrame(
-        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._configuration["TileView"]);
+        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._globalConfiguration["TileView"]);
         
     var self = this;
     this._orderedViewFrame.parentReconstruct = function() {
         self._reconstruct();
     }
+    
+    this._reconstruct();
 };
 
 Exhibit.TileView.prototype._reconstruct = function() {
@@ -108,7 +122,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
         var tdItemView = tr.insertCell(1);
         
         var itemViewDiv = document.createElement("div");
-        var itemView = new Exhibit.ItemView(itemID, itemViewDiv, view._exhibit, view._configuration);
+        var itemView = new Exhibit.ItemView(itemID, itemViewDiv, view._exhibit, view._globalConfiguration);
         tdItemView.appendChild(itemViewDiv);
     };
                 

@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.ListFacet theme
+ *  Exhibit.ListFacet English localization
  *==================================================
  */
  

@@ -5,8 +5,10 @@
 (function() {
     var javascriptFiles = [
         "list-facet.js",
+        "view-panel.js",
         "ordered-view-frame.js",
-        "tile-view.js"
+        "tile-view.js",
+        "map-view.js"
     ];
     var cssFiles = [
         "exhibit.css",
@@ -16,6 +18,7 @@
         
         "view-panel.css",
         "tile-view.css",
+        "map-view.css",
         "item-view.css"
     ];
 
