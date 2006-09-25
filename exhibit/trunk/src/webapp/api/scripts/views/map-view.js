@@ -66,8 +66,8 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
             var markerExpression = Exhibit.Expression.parse(configuration.marker);
             getMarkerKey = function(itemID, database) {
                 var key = markerExpression.evaluateSingle(
-                    { "value" : value }, 
-                    { "value" : valueType }, 
+                    { "value" : itemID }, 
+                    { "value" : "item" }, 
                     "value",
                     database
                 ).value;
@@ -100,8 +100,27 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
 };
 
 Exhibit.MapView._markers = [
+    {   color:  "FF9000"
+    },
+    {   color:  "5D7CBA"
+    },
+    {   color:  "A97838"
+    },
+    {   color:  "8B9BBA"
+    },
+    {   color:  "FFC77F"
+    },
+    {   color:  "003EBA"
+    },
+    {   color:  "29447B"
+    },
+    {   color:  "543C1C"
+    }
 ];
 Exhibit.MapView._wildcardMarker = {
+};
+Exhibit.MapView._mixMarker = {
+    color:  "FFFFFF"
 };
 
 Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProperty, outputTextArea, database) {
@@ -230,7 +249,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
     
     this._dom.map.clearOverlays();
     if (currentSize > 0) {
-        var colorKeys = [];
+        var locationToData = {};
         
         currentSet.visit(function(itemID) {
             var latlng;
@@ -250,27 +269,83 @@ Exhibit.MapView.prototype._reconstruct = function() {
                     self._markerKeyCache[itemID] = markerKey;
                 }
                 
-                var marker;
-                if (markerKey in self._markerCache) {
-                    marker = self._markerCache[markerKey];
-                } else if (self._maxMarker >= Exhibit.MapView._markers.length) {
-                    marker = Exhibit.MapView._wildcardMarker;
-                    self._markerCache[markerKey] = marker;
-                } else {
-                    marker = Exhibit.MapView._markers[self._maxMarker++];
-                    self._markerCache[markerKey] = marker;
+                var latlngKey = latlng.lat + "," + latlng.lng;
+                var locationData = locationToData[latlngKey];
+                if (!(locationData)) {
+                    locationData = {
+                        latlng:     latlng,
+                        items:      [],
+                        markerKey:  markerKey
+                    };
+                    locationToData[latlngKey] = locationData;
+                } else if (locationData.markerKey != markerKey) {
+                    locationData.markerKey = null;
                 }
                 
-                var point = new GLatLng(latlng.lat, latlng.lng);
-                var marker = new GMarker(point, G_DEFAULT_ICON);
-                GEvent.addListener(marker, "click", function() { marker.openInfoWindow(links); });
+                locationData.items.push(itemID);
                 
-                self._dom.map.addOverlay(marker);
                 mappableSize++;
             }
         });
         
+        for (latlngKey in locationToData) {
+            var locationData = locationToData[latlngKey];
+            
+            var markerData;
+            if (locationData.markerKey == null) {
+                markerData = Exhibit.MapView._mixMarker;
+            } else {
+                if (locationData.markerKey in this._markerCache) {
+                    markerData = this._markerCache[locationData.markerKey];
+                } else if (this._maxMarker >= Exhibit.MapView._markers.length) {
+                    markerData = Exhibit.MapView._wildcardMarker;
+                    this._markerCache[locationData.markerKey] = markerData;
+                } else {
+                    markerData = Exhibit.MapView._markers[this._maxMarker++];
+                    this._markerCache[locationData.markerKey] = markerData;
+                }
+            }
+            
+            var icon;
+            if (locationData.items.length == 1) {
+                if (!("icon" in markerData)) {
+                    markerData.icon = Exhibit.MapView._makeIcon(markerData.color, "space");
+                }
+                icon = markerData.icon;
+            } else {
+                icon = Exhibit.MapView._makeIcon(markerData.color, 
+                    locationData.items.length > 10 ? "..." : locationData.items.length);
+            }
+            
+            var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
+            var marker = new GMarker(point, icon);
+            
+            GEvent.addListener(marker, "click", function() { marker.openInfoWindow(links); });
+            this._dom.map.addOverlay(marker);
+        }
+        
         this._dom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
     }
     this._dom.setCounts(currentSize, mappableSize, originalSize);
+};
+
+Exhibit.MapView._iconData = {
+    iconSize:           new GSize(40, 34),
+    iconAnchor:         new GPoint(20, 34),
+    shadowSize:         new GSize(50, 34),
+    infoWindowAnchor:   new GPoint(20, 1),
+    imageMap:           [ 6,0, 6,22, 15,22, 20,34, 25,25, 34,22, 34,0 ]
+};
+Exhibit.MapView._makeIcon = function(color, label) {
+    var data = Exhibit.MapView._iconData;
+    var icon = new GIcon(G_DEFAULT_ICON);
+    icon.image = Exhibit.urlPrefix + "images/map-markers/m-" + color + "-" + label + ".png";
+    icon.shadow = Exhibit.urlPrefix + "images/map-marker-shadow.png";
+    icon.iconSize = data.iconSize;
+    icon.iconAnchor = data.iconAnchor;
+    icon.imageMap = data.imageMap;
+    icon.shadowSize = data.shadowSize;
+    icon.infoWindowAnchor = data.infoWindowAnchor;
+    
+    return icon;
 };
