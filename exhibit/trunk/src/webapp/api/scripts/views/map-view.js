@@ -118,12 +118,17 @@ Exhibit.MapView._markers = [
     }
 ];
 Exhibit.MapView._wildcardMarker = {
+    color:  "888888"
 };
 Exhibit.MapView._mixMarker = {
     color:  "FFFFFF"
 };
 
-Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProperty, outputTextArea, database) {
+Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProperty, outputTextArea, database, accuracy) {
+    if (accuracy == undefined) {
+        accuracy = 4;
+    }
+    
     var expression = Exhibit.Expression.parse(addressExpressionString);
     var jobs = [];
     set.visit(function(item) {
@@ -144,22 +149,37 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
     var cont = function() {
         if (jobs.length > 0) {
             var job = jobs.shift();
-            geocoder.getLatLng(
+            geocoder.getLocations(
                 job.address,
-                function(point) {
-                    if (point) {
-                        results.push({ item: job.item, point: point });
+                function(json) {
+                    if ("Placemark" in json) {
+                        json.Placemark.sort(function(p1, p2) {
+                            return p2.AddressDetails.Accuracy - p1.AddressDetails.Accuracy;
+                        });
+                    }
+                    
+                    if ("Placemark" in json && 
+                        json.Placemark.length > 0 && 
+                        json.Placemark[0].AddressDetails.Accuracy >= accuracy) {
+                        
+                        var coords = json.Placemark[0].Point.coordinates;
+                        var lat = coords[1];
+                        var lng = coords[0];
+                        results.push("\t{ id: '" + job.item + "', " + outputProperty + ": '" + lat + "," + lng + "' }");
+                    } else {
+                        var segments = job.address.split(",");
+                        if (segments.length == 1) {
+                            results.push("\t{ id: '" + job.item + "' }");
+                        } else {
+                            job.address = segments.slice(1).join(",").replace(/^\s+/, "");
+                            jobs.unshift(job); // do it again
+                        }
                     }
                     cont();
                 }
             );
         } else {
-            var s = [];
-            for (var i = 0; i < results.length; i++) {
-                var r = results[i];
-                s.push("\t{ id: '" + r.item + "', " + outputProperty + ": '" + r.point.lat() + "," + r.point.lng() + "' }");
-            }
-            outputTextArea.value = s.join(",\n");
+            outputTextArea.value = results.join(",\n");
         }
     };
     cont();
@@ -330,17 +350,25 @@ Exhibit.MapView.prototype._reconstruct = function() {
 };
 
 Exhibit.MapView._iconData = {
-    iconSize:           new GSize(40, 34),
-    iconAnchor:         new GPoint(20, 34),
-    shadowSize:         new GSize(50, 34),
-    infoWindowAnchor:   new GPoint(20, 1),
+    iconSize:           new GSize(40, 35),
+    iconAnchor:         new GPoint(20, 35),
+    shadowSize:         new GSize(55, 40),
+    infoWindowAnchor:   new GPoint(19, 1),
     imageMap:           [ 6,0, 6,22, 15,22, 20,34, 25,25, 34,22, 34,0 ]
 };
+Exhibit.MapView._markerUrlPrefix = "http://simile.mit.edu/graphics/maps/markers/";
+Exhibit.MapView._defaultMarkerShape = "square";
+
 Exhibit.MapView._makeIcon = function(color, label) {
     var data = Exhibit.MapView._iconData;
     var icon = new GIcon(G_DEFAULT_ICON);
-    icon.image = Exhibit.urlPrefix + "images/map-markers/m-" + color + "-" + label + ".png";
-    icon.shadow = Exhibit.urlPrefix + "images/map-marker-shadow.png";
+    var shape = Exhibit.MapView._defaultMarkerShape;
+    icon.image = Exhibit.MapView._markerUrlPrefix + 
+        [   shape,
+            color,
+            [ "m", shape, color, label + ".png" ].join("-")
+        ].join("/");
+    icon.shadow = Exhibit.MapView._markerUrlPrefix + [ "m", shape, "shadow.png" ].join("-");
     icon.iconSize = data.iconSize;
     icon.iconAnchor = data.iconAnchor;
     icon.imageMap = data.imageMap;
