@@ -65,7 +65,7 @@ SimileAjax.WindowManager.registerEventWithObject = function(elmt, eventName, obj
 
 SimileAjax.WindowManager.registerEvent = function(elmt, eventName, handler, layer) {
     if (layer == null) {
-        layer = SimileAjax.WindowManager.getBaseLayer();
+        layer = SimileAjax.WindowManager.getHighestLayer();
     }
     
     var handler2 = function(elmt, evt, target) {
