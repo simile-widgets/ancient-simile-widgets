@@ -4,11 +4,11 @@
  */
 (function() {
     var javascriptFiles = [
-        "list-facet.js",
-        "view-panel.js",
-        "ordered-view-frame.js",
-        "tile-view.js",
-        "map-view.js"
+        "list-facet-theme.js",
+        "view-panel-theme.js",
+        "ordered-view-frame-theme.js",
+        "tile-view-theme.js",
+        "map-view-theme.js"
     ];
     var cssFiles = [
         "exhibit.css",

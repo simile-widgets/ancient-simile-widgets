@@ -5,13 +5,13 @@
  */
 (function() {
     var javascriptFiles = [
-        "exhibit.js",
-        "database.js",
-        "list-facet.js",
-        "view-panel.js",
-        "ordered-view-frame.js",
-        "tile-view.js",
-        "map-view.js"
+        "exhibit-l10n.js",
+        "database-l10n.js",
+        "list-facet-l10n.js",
+        "view-panel-l10n.js",
+        "ordered-view-frame-l10n.js",
+        "tile-view-l10n.js",
+        "map-view-l10n.js"
     ];
     var cssFiles = [
     ];
