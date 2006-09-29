@@ -154,6 +154,7 @@ Exhibit.MapView.theme.constructLegendBlockDom = function(
     var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     for (var i = 0; i < icons.length; i++) {
         var div = document.createElement("div");
+        div.className = "exhibit-mapView-legendBlock-entry";
         div.appendChild(SimileAjax.Graphics.createTranslucentImage(document, icons[i]));
         div.appendChild(document.createTextNode(" " + labels[i]));
         dom.elmt.appendChild(div);
