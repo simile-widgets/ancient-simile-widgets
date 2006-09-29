@@ -132,13 +132,13 @@ Exhibit.Database.prototype.loadProperties = function(propertyEntries, baseURI) {
             if (propertyID in this._properties) {
                 property = this._properties[propertyID];
             } else {
-                property = new Exhibit.Database._Property(propertyID);
+                property = new Exhibit.Database._Property(propertyID, this);
                 this._properties[propertyID] = property;
             };
             
             property._uri = ("uri" in propertyEntry) ? propertyEntry.uri : (baseURI + "property#" + encodeURIComponent(propertyID));
             property._valueType = ("valueType" in propertyEntry) ? propertyEntry.valueType : "text";
-                // text, number, date, boolean, item
+                // text, number, date, boolean, item, url
             
             property._label = ("label" in propertyEntry) ? propertyEntry.label : propertyID;
             property._pluralLabel = ("pluralLabel" in propertyEntry) ? propertyEntry.pluralLabel : property._label;
@@ -244,7 +244,7 @@ Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseUR
     
     for (p in itemEntry) {
         if (p != "uri" && p != "label" && p != "id" && p != "type") {
-            this._ensurePropertyExists(p, baseURI);
+            this._ensurePropertyExists(p, baseURI)._onNewData();
             
             var v = itemEntry[p];
             if (v instanceof Array) {
@@ -293,6 +293,10 @@ Exhibit.Database.prototype._ensurePropertyExists = function(propertyID, baseURI)
         property._reverseGroupingLabel = property._reverseLabel;
         
         this._properties[propertyID] = property;
+        
+        return property;
+    } else {
+        return this._properties[propertyID];
     }
 };
 
@@ -460,6 +464,31 @@ Exhibit.Database.prototype.getSubject = function(o, p) {
     return null;
 };
 
+Exhibit.Database.prototype.getSubjectsInRange = function(p, min, max, inclusive, set, filter) {
+    if (!set) {
+        set = new Exhibit.Set();
+    }
+    
+    var property = this.getProperty(p);
+    if (property != null) {
+        var rangeIndex = property.getRangeIndex();
+        if (rangeIndex != null) {
+            var f = (filter != null) ?
+                function(item) {
+                    if (filter.contains(item)) {
+                        set.add(item);
+                    }
+                } :
+                function(item) {
+                    set.add(item);
+                };
+                
+            rangeIndex.getRange(f, min, max, inclusive);
+        }
+    }
+    return set;
+};
+
 Exhibit.Database.prototype.getListProperty = function(s, p) {
     var hash = this._listpso[p];
     if (hash) {
@@ -505,8 +534,10 @@ Exhibit.Database._Type.prototype = {
  *  Exhibit.Database._Property
  *==================================================
  */
-Exhibit.Database._Property = function(id) {
+Exhibit.Database._Property = function(id, database) {
     this._id = id;
+    this._database = database;
+    this._rangeIndex = null;
 };
 
 Exhibit.Database._Property.prototype = {
@@ -519,5 +550,149 @@ Exhibit.Database._Property.prototype = {
     getReverseLabel:        function() { return this._reverseLabel; },
     getReversePluralLabel:  function() { return this._reversePluralLabel; },
     getGroupingLabel:       function() { return this._groupingLabel; },
-    getGroupingPluralLabel: function() { return this._groupingPluralLabel; }
+    getGroupingPluralLabel: function() { return this._groupingPluralLabel; },
+};
+
+Exhibit.Database._Property.prototype._onNewData = function() {
+    this._rangeIndex = null;
+};
+
+Exhibit.Database._Property.prototype.getRangeIndex = function() {
+    if (this._rangeIndex == null) {
+        this._buildRangeIndex();
+    }
+    return this._rangeIndex;
+};
+
+Exhibit.Database._Property.prototype._buildRangeIndex = function() {
+    var getter;
+    var database = this._database;
+    var p = this._id;
+    
+    switch (this.getValueType()) {
+    case "number":
+        getter = function(item, f) {
+            database.getObjects(item, p, null, null).visit(function(value) {
+                if (typeof value != "number") {
+                    value = parseFloat(value);
+                }
+                if (!isNaN(value)) {
+                    f(value);
+                }
+            });
+        };
+        break;
+    case "date":
+        getter = function(item, f) {
+            database.getObjects(item, p, null, null).visit(function(value) {
+                if (value != null && !(value instanceof Date)) {
+                    value = SimileAjax.DateTime.parseIso8601DateTime(value);
+                }
+                if (value instanceof Date) {
+                    f(value.getTime());
+                }
+            });
+        };
+        break;
+    default:
+        getter = function(item, f) {};
+    }
+    
+    this._rangeIndex = new Exhibit.Database._RangeIndex(
+        this._database.getAllItems(),
+        getter
+    );
+};
+
+/*==================================================
+ *  Exhibit.Database._RangeIndex
+ *==================================================
+ */
+Exhibit.Database._RangeIndex = function(items, getter) {
+    pairs = [];
+    items.visit(function(item) {
+        getter(item, function(value) {
+            pairs.push({ item: item, value: value });
+        });
+    });
+    
+    pairs.sort(function(p1, p2) {
+        var c = p1.value - p2.value;
+        return c != 0 ? c : p1.item.localeCompare(p2.item);
+    });
+    
+    this._pairs = pairs;
+};
+
+Exhibit.Database._RangeIndex.prototype.getCount = function() {
+    return this._pairs.count();
+};
+
+Exhibit.Database._RangeIndex.prototype.getMin = function() {
+    return this._pairs.length > 0 ? 
+        this._pairs[0].value : 
+        Number.POSITIVE_INFINITY;
+};
+
+Exhibit.Database._RangeIndex.prototype.getMax = function() {
+    return this._pairs.length > 0 ? 
+        this._pairs[this._pairs.length - 1].value : 
+        Number.NEGATIVE_INFINITY;
+};
+
+Exhibit.Database._RangeIndex.prototype.getRange = function(visitor, min, max, inclusive) {
+    var startIndex = this._indexOf(min);
+    var pairs = this._pairs;
+    var l = pairs.length;
+    
+    inclusive = (inclusive);
+    
+    while (startIndex < l) {
+        var pair = pairs[startIndex++];
+        var value = pair.value;
+        if (value < max || (value == max && inclusive)) {
+            visitor(pair.item);
+        } else {
+            break;
+        }
+    }
+};
+
+Exhibit.Database._RangeIndex.prototype.countRange = function(min, max, inclusive) {
+    var startIndex = this._indexOf(min);
+    var endIndex = this._indexOf(max);
+    
+    if (inclusive) {
+        var pairs = this._pairs;
+        var l = pairs.length;
+        while (endIndex < l) {
+            if (pairs[endIndex].value == max) {
+                endIndex++;
+            } else {
+                break;
+            }
+        }
+    }
+    return endIndex - startIndex;
+};
+
+Exhibit.Database._RangeIndex.prototype._indexOf = function(v) {
+    var pairs = this._pairs;
+    if (pairs.length == 0 || pairs[0] == v) {
+        return 0;
+    }
+    
+    var from = 0;
+    var to = pairs.length;
+    while (from + 1 < to) {
+        var middle = (from + to) >> 1;
+        var v2 = pairs[middle];
+        if (v2 >= v) {
+            to = middle;
+        } else {
+            from = middle;
+        }
+    }
+    
+    return to;
 };
