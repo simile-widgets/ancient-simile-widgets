@@ -61,7 +61,11 @@
                         "event",
                         "year"
                     ],
-                    viewSelector: function(itemID, exhibit) { return "publication-item.xml"; }
+                    viewSelector: function(itemID, exhibit) { 
+                        var type = exhibit.getDatabase().getObject(itemID, "type");
+                        return ("Publication" == type) ?
+                            "publication-item.xml" : "author-item.xml"; 
+                    }
                 },
                 ViewPanel: {
                     views: [
@@ -76,13 +80,6 @@
                                     { property: "year", ascending: false },
                                     "format"
                                 ]
-                            }
-                        },
-                        {   constructor: Exhibit.MapView,
-                            configuration: {
-                                type:   "hybrid",
-                                latlng: ".latlng",
-                                color:  ".venue"
                             }
                         }
                     ]

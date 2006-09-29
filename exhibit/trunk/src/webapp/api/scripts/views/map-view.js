@@ -90,13 +90,14 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
     this._initializeUI();
     
     var view = this;
-    this._exhibit.getBrowseEngine().addListener({ 
+    this._listener = { 
         onChange: function(handlerName) { 
             if (handlerName != "onGroup" && handlerName != "onUngroup") {
                 view._reconstruct(); 
             }
         } 
-    });
+    };
+    this._exhibit.getBrowseEngine().addListener(this._listener);
 };
 
 Exhibit.MapView._markers = [
@@ -186,6 +187,8 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
 };
 
 Exhibit.MapView.prototype.dispose = function() {
+    this._exhibit.getBrowseEngine().removeListener(this._listener);
+    
     this._dom.map = null;
     this._dom = null;
     
@@ -268,6 +271,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
     }
     
     this._dom.map.clearOverlays();
+    this._dom.clearLegend();
     if (currentSize > 0) {
         var locationToData = {};
         
@@ -308,45 +312,94 @@ Exhibit.MapView.prototype._reconstruct = function() {
             }
         });
         
-        for (latlngKey in locationToData) {
-            var locationData = locationToData[latlngKey];
+        var usedKeys = {};
+        var addMarkerAtLocation = function(locationData) {
+            var items = locationData.items;
             
             var markerData;
             if (locationData.markerKey == null) {
                 markerData = Exhibit.MapView._mixMarker;
             } else {
-                if (locationData.markerKey in this._markerCache) {
-                    markerData = this._markerCache[locationData.markerKey];
-                } else if (this._maxMarker >= Exhibit.MapView._markers.length) {
-                    markerData = Exhibit.MapView._wildcardMarker;
-                    this._markerCache[locationData.markerKey] = markerData;
+                usedKeys[locationData.markerKey] = true;
+                if (locationData.markerKey in self._markerCache) {
+                    markerData = self._markerCache[locationData.markerKey];
                 } else {
-                    markerData = Exhibit.MapView._markers[this._maxMarker++];
-                    this._markerCache[locationData.markerKey] = markerData;
+                    markerData = Exhibit.MapView._markers[self._maxMarker];
+                    self._markerCache[locationData.markerKey] = markerData;
+                    self._maxMarker = (self._maxMarker + 1) % Exhibit.MapView._markers.length;
                 }
             }
             
             var icon;
-            if (locationData.items.length == 1) {
+            if (items.length == 1) {
                 if (!("icon" in markerData)) {
                     markerData.icon = Exhibit.MapView._makeIcon(markerData.color, "space");
                 }
                 icon = markerData.icon;
             } else {
                 icon = Exhibit.MapView._makeIcon(markerData.color, 
-                    locationData.items.length > 10 ? "..." : locationData.items.length);
+                    locationData.items.length > 50 ? "..." : locationData.items.length);
             }
             
             var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
             var marker = new GMarker(point, icon);
             
-            GEvent.addListener(marker, "click", function() { marker.openInfoWindow(links); });
-            this._dom.map.addOverlay(marker);
+            GEvent.addListener(marker, "click", function() { marker.openInfoWindow(self._createInfoWindow(items)); });
+            self._dom.map.addOverlay(marker);
         }
+        for (latlngKey in locationToData) {
+            addMarkerAtLocation(locationToData[latlngKey]);
+        }
+        
+        var legendLabels = [];
+        var legendIcons = [];
+        var shape = Exhibit.MapView._defaultMarkerShape;
+        for (markerKey in this._markerCache) {
+            if (markerKey in usedKeys) {
+                var markerData = this._markerCache[markerKey];
+                legendLabels.push(markerKey);
+                legendIcons.push(Exhibit.MapView._markerUrlPrefix + 
+                    [   shape,
+                        markerData.color,
+                        [ "m", shape, markerData.color, "legend.png" ].join("-")
+                    ].join("/")
+                );
+            }
+        }
+        legendLabels.push(Exhibit.MapView.l10n.mixedLegendKey);
+        legendIcons.push(Exhibit.MapView._markerUrlPrefix + 
+            [   shape,
+                "FFFFFF",
+                [ "m", shape, "FFFFFF", "legend.png" ].join("-")
+            ].join("/")
+        );
+        
+        this._dom.addLegendBlock(Exhibit.MapView.theme.constructLegendBlockDom(
+            this._exhibit,
+            Exhibit.MapView.l10n.colorLegendTitle,
+            legendIcons,
+            legendLabels
+        ));
         
         this._dom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
     }
     this._dom.setCounts(currentSize, mappableSize, originalSize);
+};
+
+Exhibit.MapView.prototype._createInfoWindow = function(items) {
+    if (items.length > 1) {
+        var ul = document.createElement("ul");
+        for (var i = 0; i < items.length; i++) {
+            var li = document.createElement("li");
+            li.appendChild(this._exhibit.makeItemSpan(items[i]));
+            ul.appendChild(li);
+        }
+        return ul;
+    } else {
+        var itemViewDiv = document.createElement("div");
+        var itemView = new Exhibit.ItemView(items[0], itemViewDiv, this._exhibit, this._globalConfiguration);
+        return itemViewDiv;
+    }
 };
 
 Exhibit.MapView._iconData = {

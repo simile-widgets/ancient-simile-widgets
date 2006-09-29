@@ -18,6 +18,7 @@ Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     if (configuration == null) {
         configuration = {};
     }
+    this._configuration = configuration;
     
     this._database = new Exhibit.Database();
     this._engine = new Exhibit.BrowseEngine(this._database, configuration);
@@ -186,6 +187,18 @@ Exhibit._Impl.prototype.makeValueSpan = function(label, valueType, layer) {
 };
 
 Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
+    var coords = SimileAjax.DOM.getPageCoordinates(elmt);
+    var bubble = SimileAjax.Graphics.createBubbleForPoint(
+        document, 
+        coords.left + Math.round(elmt.offsetWidth / 2), 
+        coords.top + Math.round(elmt.offsetHeight / 2), 
+        400, // px
+        300  // px
+    );
+    
+    var itemViewDiv = document.createElement("div");
+    var itemView = new Exhibit.ItemView(itemID, itemViewDiv, this, this._configuration);
+    bubble.content.appendChild(itemViewDiv);
 };
 
 Exhibit._Impl.prototype.serializeItem = function(itemID, format) {

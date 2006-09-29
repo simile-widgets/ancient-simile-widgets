@@ -61,6 +61,10 @@ Exhibit.MapView.theme.constructDom = function(
             {   tag: "div",
                 className: "exhibit-mapView-resizer",
                 field: "resizerDiv"
+            },
+            {   tag: "div",
+                className:  "exhibit-mapView-legend",
+                field: "legendDiv"
             }
         ]
     };
@@ -103,6 +107,14 @@ Exhibit.MapView.theme.constructDom = function(
     dom.getMapDiv = function() {
         return dom.mapDiv;
     };
+    dom.clearLegend = function() {
+        dom.legendDiv.innerHTML = "<table cellspacing='10'><tr valign='top'></tr></table>";
+    };
+    dom.addLegendBlock = function(blockDom) {
+        var tr = dom.legendDiv.firstChild.rows[0];
+        var td = tr.insertCell(tr.cells.length);
+        td.appendChild(blockDom.elmt);
+    };
     
     SimileAjax.WindowManager.registerForDragging(
         dom.resizerDiv,
@@ -120,3 +132,31 @@ Exhibit.MapView.theme.constructDom = function(
     );
     return dom;
 };
+
+Exhibit.MapView.theme.constructLegendBlockDom = function(
+    exhibit,
+    title,
+    icons,
+    labels
+) {
+    var l10n = Exhibit.MapView.l10n;
+    var template = {
+        tag:        "div",
+        className:  "exhibit-mapView-legendBlock",
+        children: [
+            {   tag:        "div",
+                className:  "exhibit-mapView-legendBlock-title",
+                children:   [ title ]
+            }
+        ]
+    };
+    
+    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    for (var i = 0; i < icons.length; i++) {
+        var div = document.createElement("div");
+        div.appendChild(SimileAjax.Graphics.createTranslucentImage(document, icons[i]));
+        div.appendChild(document.createTextNode(" " + labels[i]));
+        dom.elmt.appendChild(div);
+    }
+    return dom;
+}
