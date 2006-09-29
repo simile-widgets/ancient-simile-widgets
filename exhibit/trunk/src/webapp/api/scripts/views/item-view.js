@@ -32,7 +32,7 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
         properties = Exhibit.ItemView._commonProperties;
     }
     
-    var label = database.getLiteralProperty(itemID, "label");
+    var label = database.getObject(itemID, "label");
     
     var rdfCopyButton = SimileAjax.Graphics.createStructuredDataCopyButton(
         Exhibit.urlPrefix + "images/rdf-copy-button.png", 16, 16, function() {

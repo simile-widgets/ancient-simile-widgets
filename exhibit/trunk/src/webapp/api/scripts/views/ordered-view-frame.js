@@ -253,14 +253,14 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
         if (valueType == "item") {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var valueItem = database.getLiteralProperty(item.id, property);
-                var value = valueItem == null ? null : database.getLiteralProperty(valueItem, "label");
+                var valueItem = database.getObject(item.id, property);
+                var value = valueItem == null ? null : database.getObject(valueItem, "label");
                 item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
             }
         } else if (valueType == "number") {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var value = database.getLiteralProperty(item.id, property);
+                var value = database.getObject(item.id, property);
                 if (!(typeof value == "number")) {
                     try {
                         value = parseFloat(value);
@@ -276,7 +276,7 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
         } else if (valueType == "date") {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var value = database.getLiteralProperty(item.id, property);
+                var value = database.getObject(item.id, property);
                 if (value != null && value instanceof Date) {
                     value = value.getTime();
                 } else {
@@ -294,15 +294,15 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
         } else {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var value = database.getLiteralProperty(item.id, property);
+                var value = database.getObject(item.id, property);
                 item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
             }
         }
     } else {
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
-            var valueItem = database.getInverseProperty(item.id, property);
-            var value = valueItem == null ? null : database.getLiteralProperty(valueItem, "label");
+            var valueItem = database.getSubject(item.id, property);
+            var value = valueItem == null ? null : database.getObject(valueItem, "label");
             item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
         }
     }

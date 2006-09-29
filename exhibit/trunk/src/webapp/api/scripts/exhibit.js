@@ -144,7 +144,7 @@ Exhibit._Impl.prototype.enableActionLink = function(a, enabled) {
 
 Exhibit._Impl.prototype.makeItemSpan = function(itemID, label, layer) {
     if (label == null) {
-        label = this._database.getLiteralProperty(itemID, "label");
+        label = this._database.getObject(itemID, "label");
     }
     if (label == null) {
         label = itemID;
@@ -191,7 +191,7 @@ Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
 Exhibit._Impl.prototype.serializeItem = function(itemID, format) {
     if (format == "rdf/xml") {
         var s = "";
-        var uri = this._database.getLiteralProperty(itemID, "uri");
+        var uri = this._database.getObject(itemID, "uri");
         s += "<rdf:Description rdf:about='" + uri + "'>\n"
         
         var allProperties = this._database.getAllProperties();

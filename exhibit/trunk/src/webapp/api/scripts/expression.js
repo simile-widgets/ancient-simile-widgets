@@ -106,13 +106,13 @@ Exhibit.Expression._Impl.prototype.evaluateSingle = function(
                     count = set.length;
                 });
             } else */ {
-                value = database.getLiteralProperty(value, segment.property);
+                value = database.getObject(value, segment.property);
             }
             
             var property = database.getProperty(segment.property);
             valueType = property != null ? property.getValueType() : "text";
         } else {
-            value = database.getInverseProperty(value, segment.property);
+            value = database.getSubject(value, segment.property);
             valueType = "item";
         }
     }

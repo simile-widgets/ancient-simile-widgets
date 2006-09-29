@@ -379,7 +379,7 @@ Exhibit.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
             }
             
             var label = propertyData2.itemValues ? 
-                queryEngine._database.getLiteralProperty(rangeValue, "label") : rangeValue;
+                queryEngine._database.getObject(rangeValue, "label") : rangeValue;
                 
             var facetValue = {
                 label:      label,

@@ -148,7 +148,7 @@ Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, dat
             
             if (itemValues) {
                 values.visit(function(value) {
-                    var label = database.getLiteralProperty(value, "label");
+                    var label = database.getObject(value, "label");
                     pair.values.push(label != null ? label : value);
                 });
             } else {

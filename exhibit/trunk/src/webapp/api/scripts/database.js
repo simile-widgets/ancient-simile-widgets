@@ -438,7 +438,7 @@ Exhibit.Database.prototype.countDistinctSubjectsUnion = function(objects, p, fil
     return this._countDistinctUnion(this._ops, objects, p, filter);
 };
 
-Exhibit.Database.prototype.getLiteralProperty = function(s, p) {
+Exhibit.Database.prototype.getObject = function(s, p) {
     var hash = this._spo[s];
     if (hash) {
         var array = hash[p];
@@ -449,7 +449,7 @@ Exhibit.Database.prototype.getLiteralProperty = function(s, p) {
     return null;
 };
 
-Exhibit.Database.prototype.getInverseProperty = function(o, p) {
+Exhibit.Database.prototype.getSubject = function(o, p) {
     var hash = this._ops[o];
     if (hash) {
         var array = hash[p];

@@ -62,7 +62,7 @@ Rubik.ViewPanel.prototype._reconstructItemPaneAsTiles = function() {
     var collection = this._browseEngine.getCurrentCollection();
     var currentSet = collection.getCurrentSet();
     currentSet.visit(function(o) {
-        items.push({ uri: o, label: browser._database.getLiteralProperty(o, "label") });
+        items.push({ uri: o, label: browser._database.getObject(o, "label") });
     });
     items.sort(function(a, b) {
         return a.label.localeCompare(b.label);
@@ -93,7 +93,7 @@ Rubik.ViewPanel.prototype._reconstructItemPaneAsTiles = function() {
     
     for (var i = 0; i < items.length && i < 10; i++) {
         var item = items[i];
-        var itemType = this._database.getLiteralProperty(item.uri, "type");
+        var itemType = this._database.getObject(item.uri, "type");
         
         var itemDiv = document.createElement("div");
         itemDiv.className = "item type-" + itemType;
@@ -157,7 +157,7 @@ Rubik.ViewPanel.prototype._reconstructItemPaneAsTable = function() {
     var collection = this._browseEngine.getCurrentCollection();
     var currentSet = collection.getCurrentSet();
     currentSet.visit(function(o) {
-        items.push({ uri: o, label: browser._database.getLiteralProperty(o, "label") });
+        items.push({ uri: o, label: browser._database.getObject(o, "label") });
     });
     items.sort(function(a, b) {
     try {
@@ -301,7 +301,7 @@ Rubik.ViewPanel.prototype.getPropertyValuesPairs = function(object) {
             if (itemValues) {
                 for (var i = 0; i < values.length; i++) {
                     var value = values[i];
-                    var label = database.getLiteralProperty(value, "label");
+                    var label = database.getObject(value, "label");
                     pair.values.push(label != null ? label : value);
                 }
             } else {
