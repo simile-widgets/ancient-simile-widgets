@@ -26,6 +26,7 @@
 SimileAjax.History = {
     maxHistoryLength:       10,
     historyFile:            "__history__.html",
+    enabled:               true,
     
     _initialized:           false,
     _listeners:             [],
@@ -46,20 +47,22 @@ SimileAjax.History.initialize = function() {
         return;
     }
     
-    var iframe = document.createElement("iframe");
-    iframe.id = "simile-ajax-history";
-    iframe.style.position = "absolute";
-    iframe.style.width = "10px";
-    iframe.style.height = "10px";
-    iframe.style.top = "0px";
-    iframe.style.left = "0px";
-    iframe.style.visibility = "hidden";
-    iframe.src = SimileAjax.History.historyFile + "?0";
-    
-    document.body.appendChild(iframe);
-    SimileAjax.DOM.registerEvent(iframe, "load", SimileAjax.History._handleIFrameOnLoad);
-    
-    SimileAjax.History._iframe = iframe;
+    if (SimileAjax.History.enabled) {
+        var iframe = document.createElement("iframe");
+        iframe.id = "simile-ajax-history";
+        iframe.style.position = "absolute";
+        iframe.style.width = "10px";
+        iframe.style.height = "10px";
+        iframe.style.top = "0px";
+        iframe.style.left = "0px";
+        iframe.style.visibility = "hidden";
+        iframe.src = SimileAjax.History.historyFile + "?0";
+        
+        document.body.appendChild(iframe);
+        SimileAjax.DOM.registerEvent(iframe, "load", SimileAjax.History._handleIFrameOnLoad);
+        
+        SimileAjax.History._iframe = iframe;
+    }
     SimileAjax.History._initialized = true;
 };
 
@@ -86,21 +89,22 @@ SimileAjax.History.addAction = function(action) {
     
     try {
         action.perform();
-        
-        SimileAjax.History._actions = SimileAjax.History._actions.slice(
-            0, SimileAjax.History._currentIndex - SimileAjax.History._baseIndex);
+        if (SimileAjax.History.enabled) {
+            SimileAjax.History._actions = SimileAjax.History._actions.slice(
+                0, SimileAjax.History._currentIndex - SimileAjax.History._baseIndex);
+                
+            SimileAjax.History._actions.push(action);
+            SimileAjax.History._currentIndex++;
             
-        SimileAjax.History._actions.push(action);
-        SimileAjax.History._currentIndex++;
-        
-        var diff = SimileAjax.History._actions.length - SimileAjax.History.maxHistoryLength;
-        if (diff > 0) {
-            SimileAjax.History._actions = SimileAjax.History._actions.slice(diff);
-            SimileAjax.History._baseIndex += diff;
+            var diff = SimileAjax.History._actions.length - SimileAjax.History.maxHistoryLength;
+            if (diff > 0) {
+                SimileAjax.History._actions = SimileAjax.History._actions.slice(diff);
+                SimileAjax.History._baseIndex += diff;
+            }
+            
+            SimileAjax.History._iframe.contentWindow.location.search = 
+                "?" + SimileAjax.History._currentIndex;
         }
-        
-        SimileAjax.History._iframe.contentWindow.location.search = 
-            "?" + SimileAjax.History._currentIndex;
     } catch (e) {
         SimileAjax.Debug.exception(e);
     }
