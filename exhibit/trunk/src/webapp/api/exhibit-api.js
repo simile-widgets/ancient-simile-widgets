@@ -32,6 +32,7 @@ if (typeof Exhibit == "undefined") {
             "views/ordered-view-frame.js",
             "views/tile-view.js",
             "views/map-view.js",
+            "views/timeline-view.js",
             "views/item-view.js"
         ];
         var cssFiles = [
@@ -41,6 +42,9 @@ if (typeof Exhibit == "undefined") {
         var theme = "classic";
         var locales = [ "en" ];
         var gmapKey = null;
+        
+        var includeMap = false;
+        var includeTimeline = false;
         
         var processURLParameters = function(parameters) {
             for (var i = 0; i < parameters.length; i++) {
@@ -56,6 +60,17 @@ if (typeof Exhibit == "undefined") {
                     locales.push(p.value);
                 } else if (p.name == "gmapkey") {
                     gmapKey = p.value;
+                    includeMap = true;
+                } else if (p.name == "views") {
+                    var views = p.value.split(",");
+                    for (var j = 0; j < views.length; j++) {
+                        var view = views[j];
+                        if (view == "timeline") {
+                            includeTimeline = true;
+                        } else if (view == "map") {
+                            includeMap = true;
+                        }
+                    }
                 }
             }
         };
@@ -79,10 +94,16 @@ if (typeof Exhibit == "undefined") {
         /*
          *  External components
          */
-        if (gmapKey != null) {
+        if (gmapKey != null && includeMap) {
             SimileAjax.includeJavascriptFile(
                 document, 
                 "http://maps.google.com/maps?file=api&v=2&key=" + gmapKey
+            );
+        }
+        if (includeTimeline) {
+            SimileAjax.includeJavascriptFile(
+                document, 
+                "http://simile.mit.edu/timeline/api/timeline-api.js"
             );
         }
         

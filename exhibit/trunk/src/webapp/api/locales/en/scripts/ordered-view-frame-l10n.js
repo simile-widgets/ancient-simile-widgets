@@ -12,6 +12,7 @@ Exhibit.OrderedViewFrame.l10n = {
     formatRemoveOrderActionTitle: function(propertyLabel, sortLabel) {
         return "Removed order by " + propertyLabel + " (" + sortLabel + ")";
     },
+    resetActionTitle:   "Reset",
     formatDontShowAll: function(limitCount) {
         return "Show only the first " + limitCount + " results";
     },

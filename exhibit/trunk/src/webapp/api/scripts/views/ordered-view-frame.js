@@ -320,7 +320,7 @@ Exhibit.OrderedViewFrame.prototype._reset = function() {
         undo: function() {
             browseEngine.applyRestrictions(state.restrictions);
         },
-        label: "reset",
+        label: Exhibit.OrderedViewFrame.l10n.resetActionTitle,
         uiLayer: SimileAjax.WindowManager.getBaseLayer()
     });
 };

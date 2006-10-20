@@ -1,6 +1,7 @@
-/*==================================================
+/*======================================================================
  *  Exhibit.BrowseEngine
- *==================================================
+ *  http://simile.mit.edu/wiki2/Exhibit/API/BrowseEngine
+ *======================================================================
  */
 Exhibit.BrowseEngine = function(database, configuration) {
     this._database = database;

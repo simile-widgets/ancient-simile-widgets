@@ -8,7 +8,8 @@
         "view-panel-theme.js",
         "ordered-view-frame-theme.js",
         "tile-view-theme.js",
-        "map-view-theme.js"
+        "map-view-theme.js",
+        "timeline-view-theme.js"
     ];
     var cssFiles = [
         "exhibit.css",
@@ -19,6 +20,7 @@
         "view-panel.css",
         "tile-view.css",
         "map-view.css",
+        "timeline-view.css",
         "item-view.css"
     ];
 

@@ -1,6 +1,7 @@
-/*==================================================
+/*======================================================================
  *  Exhibit
- *==================================================
+ *  http://simile.mit.edu/wiki2/Exhibit/API/Exhibit
+ *======================================================================
  */
 Exhibit.create = function(controlDiv, browseDiv, viewDiv, configuration) {
     return new Exhibit._Impl(controlDiv, browseDiv, viewDiv, configuration);

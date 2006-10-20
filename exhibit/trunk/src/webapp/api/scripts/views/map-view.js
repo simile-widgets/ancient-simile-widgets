@@ -200,8 +200,18 @@ Exhibit.MapView.prototype.dispose = function() {
 };
 
 Exhibit.MapView.prototype._initializeUI = function() {
+    var self = this;
+    
     this._div.innerHTML = "";
-    this._dom = Exhibit.MapView.theme.constructDom(this._exhibit, this._div, function() {});
+    this._dom = Exhibit.MapView.theme.constructDom(
+        this._exhibit, 
+        this._div, 
+        function(elmt, evt, target) {
+            self._reset();
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        }
+    );
     
     var mapDiv = this._dom.getMapDiv();
     mapDiv.style.height = "400px";
@@ -313,6 +323,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
         });
         
         var usedKeys = {};
+        var shape = Exhibit.MapView._defaultMarkerShape;
         var addMarkerAtLocation = function(locationData) {
             var items = locationData.items;
             
@@ -333,18 +344,23 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var icon;
             if (items.length == 1) {
                 if (!("icon" in markerData)) {
-                    markerData.icon = Exhibit.MapView._makeIcon(markerData.color, "space");
+                    markerData.icon = Exhibit.MapView._makeIcon(shape, markerData.color, "space");
                 }
                 icon = markerData.icon;
             } else {
-                icon = Exhibit.MapView._makeIcon(markerData.color, 
-                    locationData.items.length > 50 ? "..." : locationData.items.length);
+                icon = Exhibit.MapView._makeIcon(
+                    shape, 
+                    markerData.color, 
+                    locationData.items.length > 50 ? "..." : locationData.items.length
+                );
             }
             
             var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
             var marker = new GMarker(point, icon);
             
-            GEvent.addListener(marker, "click", function() { marker.openInfoWindow(self._createInfoWindow(items)); });
+            GEvent.addListener(marker, "click", function() { 
+                marker.openInfoWindow(self._createInfoWindow(items)); 
+            });
             self._dom.map.addOverlay(marker);
         }
         for (latlngKey in locationToData) {
@@ -402,20 +418,26 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
     }
 };
 
-Exhibit.MapView._iconData = {
-    iconSize:           new GSize(40, 35),
-    iconAnchor:         new GPoint(20, 35),
-    shadowSize:         new GSize(55, 40),
-    infoWindowAnchor:   new GPoint(19, 1),
-    imageMap:           [ 6,0, 6,22, 15,22, 20,34, 25,25, 34,22, 34,0 ]
-};
+Exhibit.MapView._iconData = null;
 Exhibit.MapView._markerUrlPrefix = "http://simile.mit.edu/graphics/maps/markers/";
 Exhibit.MapView._defaultMarkerShape = "square";
 
-Exhibit.MapView._makeIcon = function(color, label) {
+Exhibit.MapView._makeIcon = function(shape, color, label) {
+    /*
+     *  Some static initialization is delayed until here.
+     */
+    if (Exhibit.MapView._iconData == null) {
+        Exhibit.MapView._iconData = {
+            iconSize:           new GSize(40, 35),
+            iconAnchor:         new GPoint(20, 35),
+            shadowSize:         new GSize(55, 40),
+            infoWindowAnchor:   new GPoint(19, 1),
+            imageMap:           [ 6,0, 6,22, 15,22, 20,34, 25,25, 34,22, 34,0 ]
+        };
+    }
+    
     var data = Exhibit.MapView._iconData;
     var icon = new GIcon(G_DEFAULT_ICON);
-    var shape = Exhibit.MapView._defaultMarkerShape;
     icon.image = Exhibit.MapView._markerUrlPrefix + 
         [   shape,
             color,
@@ -429,4 +451,19 @@ Exhibit.MapView._makeIcon = function(color, label) {
     icon.infoWindowAnchor = data.infoWindowAnchor;
     
     return icon;
+};
+
+Exhibit.MapView.prototype._reset = function() {
+    var state = {};
+    var browseEngine = this._exhibit.getBrowseEngine();
+    SimileAjax.History.addAction({
+        perform: function() {
+            state.restrictions = browseEngine.clearRestrictions();
+        },
+        undo: function() {
+            browseEngine.applyRestrictions(state.restrictions);
+        },
+        label: Exhibit.OrderedViewFrame.l10n.resetActionTitle,
+        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+    });
 };
