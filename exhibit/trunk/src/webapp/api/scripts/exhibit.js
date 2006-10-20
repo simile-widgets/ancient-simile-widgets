@@ -25,6 +25,14 @@ Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._engine = new Exhibit.BrowseEngine(this._database, configuration);
     this._browsePanel = new Exhibit.BrowsePanel(this, browseDiv, configuration);
     this._viewPanel = new Exhibit.ViewPanel(this, viewDiv, configuration);
+    
+    this._exporters = "exporters" in configuration ? configuration.exporters : {};
+    this._exporters["rdf/xml"] = {
+        exporter:   Exhibit.RdfXmlExporter
+    };
+    this._exporters["smw"] = {
+        exporter:   Exhibit.SemanticWikitextExporter
+    };
 };
 
 Exhibit._Impl.prototype.getDatabase = function() { return this._database; };
@@ -200,6 +208,10 @@ Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
     var itemViewDiv = document.createElement("div");
     var itemView = new Exhibit.ItemView(itemID, itemViewDiv, this, this._configuration);
     bubble.content.appendChild(itemViewDiv);
+};
+
+Exhibit._Impl.prototype.getExporters = function() {
+    return this._exporters;
 };
 
 Exhibit._Impl.prototype.serializeItem = function(itemID, format) {

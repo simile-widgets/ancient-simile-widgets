@@ -34,21 +34,28 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
     
     var label = database.getObject(itemID, "label");
     
-    var rdfCopyButton = SimileAjax.Graphics.createStructuredDataCopyButton(
-        Exhibit.urlPrefix + "images/rdf-copy-button.png", 16, 16, function() {
-            return exhibit.serializeItem(itemID, "rdf/xml");
-        }
-    );
+    var exporters = exhibit.getExporters();
+    var exportButtons = [];
+    for (format in exporters) {
+        var exporter = exporters[format].exporter;
+        var icon = exporter.icon;
+        exportButtons.push({
+            elmt: SimileAjax.Graphics.createStructuredDataCopyButton(
+                icon.url, icon.width, icon.height, function() {
+                    return exporter.exportOne(itemID, exhibit);
+                }
+            )
+        });
+    }    
     
     var template = {
         elmt:       div,
         className:  "exhibit-item-view",
         children: [
-            { elmt: rdfCopyButton },
             {   tag:        "div",
                 className:  "exhibit-item-view-title",
                 title:      label,
-                children:   [ label, { elmt: rdfCopyButton } ]
+                children:   [ label ].concat(exportButtons)
             },
             {   tag:        "div",
                 className:  "exhibit-item-view-body",
@@ -177,8 +184,9 @@ Exhibit.ItemView._trimString = function(s) {
 Exhibit.ItemView._processTemplateElement = function(elmt) {
     var templateNode = {
         tag:                elmt.tagName,
-        content:            null,
+        controls:           null,
         condition:          null,
+        content:            null,
         contentAttributes:  null,
         attributes:         [],
         styles:             [],
@@ -191,7 +199,9 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         var name = attribute.nodeName;
         var value = attribute.nodeValue;
         
-        if (name == "content") {
+        if (name == "controls") {
+            templateNode.controls = value;
+        } else if (name == "content") {
             templateNode.content = Exhibit.Expression.parse(value);
         } else if (name == "if-exists") {
             templateNode.condition = {
@@ -297,7 +307,23 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
     }
     
     var children = templateNode.children;
-    if (templateNode.content != null) {
+    if (templateNode.controls != null) {
+        switch (templateNode.controls) {
+        case "exporters":
+            var exporters = exhibit.getExporters();
+            var exportButtons = [];
+            for (format in exporters) {
+                var exporter = exporters[format].exporter;
+                var icon = exporter.icon;
+                elmt.appendChild(SimileAjax.Graphics.createStructuredDataCopyButton(
+                    icon.url, icon.width, icon.height, function() {
+                        return exporter.exportOne(value, exhibit);
+                    }
+                ));
+            }
+            break;
+        }
+    } else if (templateNode.content != null) {
         var results = templateNode.content.evaluate(
             { "value" : value }, 
             { "value" : valueType }, 
