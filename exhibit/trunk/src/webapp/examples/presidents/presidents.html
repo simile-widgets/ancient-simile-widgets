@@ -37,6 +37,23 @@
                                 ]
                             }
                         },
+                        {   constructor: Exhibit.ThumbnailView,
+                            label: "Photos",
+                            configuration: {
+                                orders: [
+                                    ".party",
+                                    ".term"
+                                ],
+                                possibleOrders: [
+                                    ".religion",
+                                    ".party",
+                                    ".birth",
+                                    ".death",
+                                    ".term"
+                                ],
+                                viewSelector: function(itemID, exhibit) { return "president-thumbnail.xml"; }
+                            }
+                        },
                         {   constructor: Exhibit.MapView,
                             label: "Birth Places",
                             configuration: {
@@ -132,6 +149,19 @@
         }
         div.item {
             border:     1px solid #aaa;
+        }
+        div.thumbnail {
+            border:     1px solid #aaa;
+            padding:    1em;
+            margin:     1em;
+            width:      100px;
+            height:     130px;
+            float:      left;
+            text-align: center;
+        }
+        div.thumbnail div {
+            height:     100px;
+            overflow:   hidden;
         }
     </style>
 </head>

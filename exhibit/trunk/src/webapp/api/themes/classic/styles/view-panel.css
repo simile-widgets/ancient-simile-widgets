@@ -67,6 +67,7 @@ div.exhibit-collectionView-group h2 {
 }
 
 div.exhibit-collectionView-footer {
+    clear:      both;
     text-align: center;
     margin:     2em 0;
 }

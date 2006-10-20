@@ -12,7 +12,8 @@
         "ordered-view-frame-l10n.js",
         "tile-view-l10n.js",
         "map-view-l10n.js",
-        "timeline-view-l10n.js"
+        "timeline-view-l10n.js",
+        "thumbnail-view-l10n.js"
     ];
     var cssFiles = [
     ];

@@ -33,6 +33,7 @@ if (typeof Exhibit == "undefined") {
             "views/tile-view.js",
             "views/map-view.js",
             "views/timeline-view.js",
+            "views/thumbnail-view.js",
             "views/item-view.js"
         ];
         var cssFiles = [
