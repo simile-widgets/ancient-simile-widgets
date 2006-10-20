@@ -17,19 +17,13 @@ Exhibit.BrowseEngine = function(database, configuration) {
             var facetEntries = myConfig["facets"];
             for (var i = 0; i < facetEntries.length; i++) {
                 var entry = facetEntries[i];
-                var facetEntry;
-                if (typeof entry == "string") {
-                    facetEntry = {
-                        property: entry,
-                        forward:  true
-                    };
-                } else {
-                    facetEntry = {
-                        property: entry.property,
-                        forward:  ("forward" in entry) ? (entry.forward) : true
+                var expression = Exhibit.Expression.parse(entry);
+                if (expression.isPath()) {
+                    var path = expression.getPath();
+                    if (path.getSegmentCount() == 1) {
+                        this._facetEntries.push(path.getSegment(0));
                     }
                 }
-                this._facetEntries.push(facetEntry);
             }
         }
         if ("sliding" in myConfig && myConfig.sliding) {

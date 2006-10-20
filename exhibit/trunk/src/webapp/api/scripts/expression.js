@@ -9,7 +9,7 @@ Exhibit.Expression.parse = function(s) {
     if (s.length > 0) {
         var dotBang = s.search(/[\.!]/);
         if (dotBang > 0) {
-            expression.rootName = s.substr(0, dotBang);
+            expression._path.setRootName(s.substr(0, dotBang));
         }
         
         var regex = /[\.!][^\.!]+/g;
@@ -28,19 +28,18 @@ Exhibit.Expression.parse = function(s) {
                 }
                 property = property.substr(0, at);
             }
-            expression.path.push({
-                property:   property,
-                forward:    dotBang == ".",
-                isList:     isList
-            });
+            expression._path.appendSegment(
+                property,
+                dotBang == ".",
+                isList
+            );
         }
     }
     return expression;
 };
 
 Exhibit.Expression._Impl = function() {
-    this.rootName = null;
-    this.path = [];
+    this._path = new Exhibit.Expression.Path();
 };
 
 Exhibit.Expression._Impl.prototype.evaluate = function(
@@ -49,15 +48,87 @@ Exhibit.Expression._Impl.prototype.evaluate = function(
     defaultRootName, 
     database
 ) {
+    return this._path.evaluate(roots, rootValueTypes, defaultRootName, database);
+};
+
+Exhibit.Expression._Impl.prototype.evaluateSingle = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    return this._path.evaluateSingle(roots, rootValueTypes, defaultRootName, database);
+};
+
+Exhibit.Expression._Impl.prototype.testExists = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    return this._path.testExists(roots, rootValueTypes, defaultRootName, database);
+};
+
+Exhibit.Expression._Impl.prototype.isPath = function() {
+    return true;
+};
+
+Exhibit.Expression._Impl.prototype.getPath = function() {
+    return this._path;
+};
+
+/*==================================================
+ *  Exhibit.Expression.Path
+ *==================================================
+ */
+Exhibit.Expression.Path = function() {
+    this._rootName = null;
+    this._segments = [];
+};
+
+Exhibit.Expression.Path.prototype.setRootName = function(rootName) {
+    this._rootName = rootName;
+};
+
+Exhibit.Expression.Path.prototype.appendSegment = function(property, forward, isList) {
+    this._segments.push({
+        property:   property,
+        forward:    forward,
+        isList:     isList
+    });
+};
+
+Exhibit.Expression.Path.prototype.getSegment = function(index) {
+    if (index < this._segments.length) {
+        var segment = this._segments[index];
+        return {
+            property:   segment.property,
+            forward:    segment.forward
+        };
+    } else {
+        return null;
+    }
+};
+
+Exhibit.Expression.Path.prototype.getSegmentCount = function() {
+    return this._segments.length;
+};
+
+Exhibit.Expression.Path.prototype.evaluate = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
     var count = 1;
     var set = new Exhibit.Set();
     
-    var rootName = this.rootName != null ? this.rootName : defaultRootName;
+    var rootName = this._rootName != null ? this._rootName : defaultRootName;
     var valueType = rootValueTypes[rootName];
     set.add(roots[rootName]);
     
-    for (var i = 0; i < this.path.length; i++) {
-        var segment = this.path[i];
+    for (var i = 0; i < this._segments.length; i++) {
+        var segment = this._segments[i];
         if (segment.forward) {
             /* if (i == expression.path.length - 1 && segment.isList && set.size() == 1) {
                 set.visit(function(value) {
@@ -85,7 +156,7 @@ Exhibit.Expression._Impl.prototype.evaluate = function(
     };
 };
 
-Exhibit.Expression._Impl.prototype.evaluateSingle = function(
+Exhibit.Expression.Path.prototype.evaluateSingle = function(
     roots, 
     rootValueTypes, 
     defaultRootName, 
@@ -93,12 +164,12 @@ Exhibit.Expression._Impl.prototype.evaluateSingle = function(
 ) {
     var count = 1;
     
-    var rootName = this.rootName != null ? this.rootName : defaultRootName;
+    var rootName = this._rootName != null ? this._rootName : defaultRootName;
     var value = roots[rootName];
     var valueType = rootValueTypes[rootName];
     
-    for (var i = 0; i < this.path.length && value != null; i++) {
-        var segment = this.path[i];
+    for (var i = 0; i < this._segments.length && value != null; i++) {
+        var segment = this._segments[i];
         if (segment.forward) {
             /* if (i == expression.path.length - 1 && segment.isList && set.size() == 1) {
                 set.visit(function(value) {
@@ -123,7 +194,7 @@ Exhibit.Expression._Impl.prototype.evaluateSingle = function(
     };
 };
 
-Exhibit.Expression._Impl.prototype.testExists = function(
+Exhibit.Expression.Path.prototype.testExists = function(
     roots, 
     rootValueTypes, 
     defaultRootName, 
@@ -131,3 +202,4 @@ Exhibit.Expression._Impl.prototype.testExists = function(
 ) {
     return this.evaluateSingle(roots, rootValueTypes, defaultRootName, database).value != null;
 };
+

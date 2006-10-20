@@ -30,18 +30,27 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
             var orders = configuration.orders;
             for (var i = 0; i < orders.length; i++) {
                 var order = orders[i];
+                var expr;
+                var ascending = true;
+                
                 if (typeof order == "string") {
-                    this._orders.push({
-                        property:   order,
-                        forward:    true,
-                        ascending:  true
-                    });
+                    expr = order;
                 } else {
-                    this._orders.push({
-                        property:   order.property,
-                        forward:    ("forward" in order) ? (order.forward) : true,
-                        ascending:  ("ascending" in order) ? (order.ascending) : true
-                    });
+                    expr = order.expression,
+                    ascending = ("ascending" in order) ? (order.ascending) : true;
+                }
+                
+                var expression = Exhibit.Expression.parse(expr);
+                if (expression.isPath()) {
+                    var path = expression.getPath();
+                    if (path.getSegmentCount() == 1) {
+                        var segment = path.getSegment(0);
+                        this._orders.push({
+                            property:   segment.property,
+                            forward:    segment.forward,
+                            ascending:  ascending
+                        });
+                    }
                 }
             }
         }
@@ -52,19 +61,31 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
             var hasLabel = false;
             for (var i = 0; i < possibleOrders.length; i++) {
                 var order = possibleOrders[i];
-                var possibleOrder = (typeof order == "string") ?
-                    {   property:   order,
-                        forward:    true,
-                        ascending:  true
-                    } :
-                    {   property:   order.property,
-                        forward:    ("forward" in order) ? (order.forward) : true,
-                        ascending:  ("ascending" in order) ? (order.ascending) : true
-                    };
-                    
-                this._possibleOrders.push(possibleOrder);
-                if (possibleOrder.property == "label" && possibleOrder.forward) {
-                    hasLabel = true;
+                var expr;
+                var ascending = true;
+                
+                if (typeof order == "string") {
+                    expr = order;
+                } else {
+                    expr = order.expression,
+                    ascending = ("ascending" in order) ? (order.ascending) : true;
+                }
+                
+                var expression = Exhibit.Expression.parse(expr);
+                if (expression.isPath()) {
+                    var path = expression.getPath();
+                    if (path.getSegmentCount() == 1) {
+                        var segment = path.getSegment(0);
+                        this._possibleOrders.push({
+                            property:   segment.property,
+                            forward:    segment.forward,
+                            ascending:  ascending
+                        });
+                        
+                        if (segment.property == "label" && segment.forward) {
+                            hasLabel = true;
+                        }
+                    }
                 }
             }
             
