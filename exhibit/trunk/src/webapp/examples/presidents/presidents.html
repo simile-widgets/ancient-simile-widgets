@@ -22,6 +22,40 @@
                 },
                 ViewPanel: {
                     views: [
+                        {   constructor: Exhibit.TabularView,
+                            label: "Table",
+                            configuration: {
+                                orders: [
+                                    ".term"
+                                ],
+                                columns: [
+                                    ".term",
+                                    {   expression: ".label",
+                                        label:      "name"
+                                    },
+                                    {   expression: ".imageURL",
+                                        format:     "image",
+                                        label:      "photo"
+                                    },
+                                    ".party",
+                                    ".birth",
+                                    ".death",
+                                    ".religion"
+                                ],
+                                rowStyler: function(item, database, tr) {
+                                    var party = database.getObject(item, "party");
+                                    var color = "white";
+                                    switch (party) {
+                                    case "Federalist":              color = "#E7E7AD"; break;
+                                    case "Democratic-Republican":   color = "#FFDFAD"; break;
+                                    case "Democratic":              color = "#DEEFFF"; break;
+                                    case "Whig":                    color = "#FFFFCE"; break;
+                                    case "Republican":              color = "#FFE3E7"; break;
+                                    }
+                                    tr.style.background = color;
+                                }
+                            }
+                        },
                         {   constructor: Exhibit.TileView,
                             label: "Details",
                             configuration: {
@@ -156,7 +190,6 @@
             margin:     1em;
             width:      100px;
             height:     130px;
-            float:      left;
             text-align: center;
         }
         div.thumbnail div {

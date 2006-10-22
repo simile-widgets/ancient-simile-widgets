@@ -17,22 +17,25 @@ Exhibit.ThumbnailView = function(exhibit, div, configuration, globalConfiguratio
     this._initializeUI();
     
     var view = this;
-    this._exhibit.getBrowseEngine().addListener({ 
+    this._listener = { 
         onChange: function(handlerName) { 
             if (handlerName != "onGroup" && handlerName != "onUngroup") {
                 view._reconstruct(); 
             }
         } 
-    });
+    };
+    this._exhibit.getBrowseEngine().addListener(this._listener);
 };
 
 Exhibit.ThumbnailView.prototype.dispose = function() {
-    this._orderedViewFrame.dispose();
+    this._exhibit.getBrowseEngine().removeListener(this._listener);
     
     this._div.innerHTML = "";
     
-    this._dom = null;
+    this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
+    
+    this._dom = null;
     this._div = null;
     this._exhibit = null;
 };
@@ -119,6 +122,8 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
         }
         
         var itemViewDiv = document.createElement("div");
+        itemViewDiv.style.cssFloat = "left";
+        
         var itemView = new Exhibit.ItemView(itemID, itemViewDiv, view._exhibit, view._itemViewConfiguration);
         state.itemContainer.appendChild(itemViewDiv);
     };

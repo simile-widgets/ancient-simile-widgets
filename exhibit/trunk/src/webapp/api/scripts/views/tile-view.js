@@ -12,22 +12,25 @@ Exhibit.TileView = function(exhibit, div, configuration, globalConfiguration) {
     this._initializeUI();
     
     var view = this;
-    this._exhibit.getBrowseEngine().addListener({ 
+    this._listener = { 
         onChange: function(handlerName) { 
             if (handlerName != "onGroup" && handlerName != "onUngroup") {
                 view._reconstruct(); 
             }
         } 
-    });
+    };
+    this._exhibit.getBrowseEngine().addListener(this._listener);
 };
 
 Exhibit.TileView.prototype.dispose = function() {
-    this._orderedViewFrame.dispose();
+    this._exhibit.getBrowseEngine().removeListener(this._listener);
     
     this._div.innerHTML = "";
     
-    this._dom = null;
+    this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
+    
+    this._dom = null;
     this._div = null;
     this._exhibit = null;
 };

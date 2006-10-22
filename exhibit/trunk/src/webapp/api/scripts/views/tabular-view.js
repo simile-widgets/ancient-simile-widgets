@@ -1,323 +1,329 @@
 /*==================================================
- *  Rubik.ViewPanel
+ *  Exhibit.TabularView
  *==================================================
  */
- 
-Rubik.ViewPanel = function(rubik, viewDiv, configuration) {
-    this._rubik = rubik;
-    this._database = rubik.getDatabase();
-    this._browseEngine = rubik.getBrowseEngine();
-    this._viewDiv = viewDiv;
-    this._view = "tile";
+
+Exhibit.TabularView = function(exhibit, div, configuration, globalConfiguration) {
+    this._exhibit = exhibit;
+    this._div = div;
+    this._configuration = configuration;
+    this._globalConfiguration = globalConfiguration;
     
-    this._showProperties = [];
+    this._initialCount = 10;
+    this._showAll = true;
+    this._sortColumn = 0;
+    this._sortAscending = true;
+    this._rowStyler = null;
+    
     if (configuration != null) {
-        if ("properties" in configuration) {
-            var entries = configuration.properties;
-            for (var i = 0; i < entries.length; i++) {
-                var entry = entries[i];
-                var sp;
-                if (typeof entry == "string") {
-                    sp = {
-                        property: entry,
-                        forward:  true
-                    };
+        if ("columns" in configuration) {
+            this._columns = [];
+            
+            var columns = configuration.columns;
+            for (var i = 0; i < columns.length; i++) {
+                var column = columns[i];
+                var expr;
+                var styler = null;
+                var label = null;
+                var format = null;
+                
+                if (typeof column == "string") {
+                    expr = column;
                 } else {
-                    sp = {
-                        property: entry.property,
-                        forward:  ("forward" in entry) ? (entry.forward) : true
-                    }
+                    expr = column.expression;
+                    styler = column.styler;
+                    label = column.label;
+                    format = column.format;
                 }
-                this._showProperties.push(sp);
-            }
-        }
-        if ("sliding" in configuration && configuration.sliding) {
-            this._supportSliding = true;
-        }
-    }
-    
-    this._groupingProperty = "";
-    
-    var viewPanel = this;
-    var reconstruct = function() { viewPanel._reconstruct(); };
-    this._browseEngine.addListener({
-        onRootCollectionSet: reconstruct,
-        onRestrict: reconstruct
-    });
-    
-    //this._reconstruct();
-}
+                
+                var expression = Exhibit.Expression.parse(expr);
+                if (expression.isPath()) {
+                    var path = expression.getPath();
+                    if (path.getSegmentCount() == 1) {
+                        var segment = path.getSegment(0);
+                        
+                        if (format == null) {
+                            format = "list";
+                        }
 
-Rubik.ViewPanel.prototype._reconstruct = function() {
-    if (this._view == "tabular") {
-        this._reconstructItemPaneAsTable();
-    } else {
-        this._reconstructItemPaneAsTiles();
-    }
-}
-
-Rubik.ViewPanel.prototype._reconstructItemPaneAsTiles = function() {
-    var items = [];
-    var browser = this;
-    var collection = this._browseEngine.getCurrentCollection();
-    var currentSet = collection.getCurrentSet();
-    currentSet.visit(function(o) {
-        items.push({ uri: o, label: browser._database.getObject(o, "label") });
-    });
-    items.sort(function(a, b) {
-        return a.label.localeCompare(b.label);
-    });
-    
-    Rubik.ViewPanel._itemCount = items.length;
-    
-    var itemPaneHeader = document.getElementById("item-pane-header");
-    itemPaneHeader.innerHTML = "";
-    itemPaneHeader.appendChild(document.createTextNode(
-        items.length + " " + 
-        this._database.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0].join(", ")
-    ));
-    
-    var originalSize = collection.originalSize();
-    if (originalSize > items.length) {
-        var filterInfoSpan = document.createElement("span");
-        filterInfoSpan.className = "filter-info";
-        filterInfoSpan.innerHTML = "(filtered from " + 
-            "<a href='javascript:void' onclick='Rubik.ViewPanel._performClearingFilters(); return false;'>" + originalSize + " " +
-            this._database.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0].join(", ") +
-            "</a> originally)";
-        itemPaneHeader.appendChild(filterInfoSpan);
-    }
-    
-    var itemPaneBody = document.getElementById("item-pane-body");
-    itemPaneBody.innerHTML = "";
-    
-    for (var i = 0; i < items.length && i < 10; i++) {
-        var item = items[i];
-        var itemType = this._database.getObject(item.uri, "type");
-        
-        var itemDiv = document.createElement("div");
-        itemDiv.className = "item type-" + itemType;
-        
-        var titleDiv = document.createElement("div");
-        titleDiv.className = "item-title";
-        titleDiv.appendChild(this._createValueSpan(item.label, false));
-        itemDiv.appendChild(titleDiv);
-        
-        var bodyDiv = document.createElement("div");
-        bodyDiv.className = "item-body";
-        itemDiv.appendChild(bodyDiv);
-        
-        var pairs = this.getPropertyValuesPairs(item.uri);
-        for (var j = 0; j < pairs.length; j++) {
-            var pair = pairs[j];
-            
-            if (pair.propertyLabel == "image") {
-                for (var m = 0; m < pair.values.length; m++) {
-                    var img = document.createElement("img");
-                    img.className = "thumbnail";
-                    img.setAttribute("src", pair.values[m]);
-                    if (bodyDiv.firstChild == null) {
-                        bodyDiv.appendChild(img);
-                    } else {
-                        bodyDiv.insertBefore(img, bodyDiv.firstChild);
+                        this._columns.push({
+                            property:   segment.property,
+                            forward:    segment.forward,
+                            styler:     styler,
+                            label:      label,
+                            format:     format
+                        });
                     }
                 }
-            } else {
-                var pairDiv = document.createElement("div");
-                pairDiv.className = "pair";
-                
-                var propertyNameSpan = document.createElement("span");
-                propertyNameSpan.className = "property-name";
-                propertyNameSpan.innerHTML = pair.propertyLabel + ": ";
-                pairDiv.appendChild(propertyNameSpan);
-                
-                var propertyValuesSpan = document.createElement("span");
-                propertyValuesSpan.className = "property-values";
-                
-                for (var m = 0; m < pair.values.length; m++) {
-                    if (m > 0) {
-                        propertyValuesSpan.appendChild(document.createTextNode(", "));
-                    }
-                    propertyValuesSpan.appendChild(browser._createValueSpan(pair.values[m], !pair.itemValues));
-                }
-                
-                pairDiv.appendChild(propertyValuesSpan);
-                
-                bodyDiv.appendChild(pairDiv);
             }
         }
         
-        itemPaneBody.appendChild(itemDiv);
+        if ("sortColumn" in configuration) {
+            this._sortColumn = configuration.sortColumn;
+        }
+        if ("sortAscending" in configuration) {
+            this._sortAscending = (configuration.sortAscending);
+        }
+        
+        if ("initialCount" in configuration) {
+            this._initialCount = configuration.initialCount;
+        }
+        if ("showAll" in configuration) {
+            this._showAll = configuration.showAll;
+        }
+        
+        if ("rowStyler" in configuration) {
+            this._rowStyler = configuration.rowStyler;
+        }
     }
+    if (this._columns.length == 0) {
+        this._columns.push(
+            {   property:   "label",
+                forward:    true,
+                styler:     null,
+                label:      exhibit.getDatabase().getProperty("label").getLabel(),
+                format:     "list"
+            }
+        );
+    }
+    this._sortColumn = Math.max(0, Math.min(this._sortColumn, this._columns.length - 1));
+    
+    this._initializeUI();
+    
+    var view = this;
+    this._listener = { 
+        onChange: function(handlerName) { 
+            if (handlerName != "onGroup" && handlerName != "onUngroup") {
+                view._reconstruct(); 
+            }
+        } 
+    };
+    this._exhibit.getBrowseEngine().addListener(this._listener);
 };
 
-Rubik.ViewPanel.prototype._reconstructItemPaneAsTable = function() {
+Exhibit.TabularView.prototype.dispose = function() {
+    this._exhibit.getBrowseEngine().removeListener(this._listener);
+    
+    this._div.innerHTML = "";
+    
+    this._dom = null;
+    this._div = null;
+    this._exhibit = null;
+};
+
+Exhibit.TabularView.prototype._initializeUI = function() {
+    var self = this;
+    
+    this._div.innerHTML = "";
+    this._dom = Exhibit.TabularView.theme.createDom(
+        this._exhibit, 
+        this._div, 
+        function(elmt, evt, target) {
+            self._reset();
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        }
+    );
+    
+    this._reconstruct();
+};
+
+Exhibit.TabularView.prototype._reconstruct = function() {
+    var self = this;
+    var exhibit = this._exhibit;
+    var database = exhibit.getDatabase();
+    
+    var bodyDiv = this._dom.bodyDiv;
+    bodyDiv.innerHTML = "";
+
+    /*
+     *  Get the current collection and check if it's empty
+     */
+    var collection = exhibit.getBrowseEngine().getCurrentCollection();
     var items = [];
-    var browser = this;
-    var collection = this._browseEngine.getCurrentCollection();
-    var currentSet = collection.getCurrentSet();
-    currentSet.visit(function(o) {
-        items.push({ uri: o, label: browser._database.getObject(o, "label") });
-    });
-    items.sort(function(a, b) {
-    try {
-        return a.label.localeCompare(b.label); } catch (e) { console.log(a); }
-    });
-    
-    this._itemCount = items.length;
-    
-    var itemPaneHeader = document.getElementById("item-pane-header");
-    itemPaneHeader.innerHTML = "";
-    itemPaneHeader.appendChild(document.createTextNode(
-        items.length + " " + 
-        this._browseEngine.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0]
-    ));
-    
-    var originalSize = collection.originalSize();
-    if (originalSize > items.length) {
-        var filterInfoSpan = document.createElement("span");
-        filterInfoSpan.className = "filter-info";
-        filterInfoSpan.innerHTML = "(filtered from " + 
-            "<a href='javascript:void' onclick='Rubik.ViewPanel._performClearingFilters(); return false;'>" + originalSize + " " +
-            this._browseEngine.getTypeLabels(collection.getOriginalSet())[originalSize > 1 ? 1 : 0] +
-            "</a> originally)";
-        itemPaneHeader.appendChild(filterInfoSpan);
+    var originalSize = 0;
+    if (collection != null) {
+        var currentSet = collection.getCurrentSet();
+        currentSet.visit(function(itemID) { items.push({ id: itemID, sortKey: "" }); });
+        originalSize = collection.originalSize();
     }
     
-    var itemPaneBody = document.getElementById("item-pane-body");
-    itemPaneBody.innerHTML = "";
+    /*
+     *  Set the header UI
+     */
+    this._dom.setCounts(items.length, originalSize);
     
-    var table = document.createElement("table");
-    table.style.display = "none";
-    table.id = "item-pane-table";
-    
-    var addValues = function(propertyLabel, values, td, isLiteral) {
-        if (propertyLabel == "image") {
-            for (var m = 0; m < values.length; m++) {
-                var img = document.createElement("img");
-                img.setAttribute("src", values[m]);
-                td.appendChild(img);
-            }
-        } else {
-            for (var m = 0; m < values.length; m++) {
-                if (m > 0) {
-                    td.appendChild(document.createTextNode(", "));
-                }
-                td.appendChild(browser._createValueSpan(values[m], isLiteral));
-            }
-        }                    
-    }
-    
-    var columns = [];
-    for (var i = 0; i < items.length && i < 20; i++) {
-        var item = items[i];
-        var pairs = this.getPropertyValuesPairs(item.uri);
+    if (items.length > 0) {
+        this._dom.setTypes(database.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0]);
         
-        var tr = table.insertRow(i);
-        if (i % 2 == 1) {
-            tr.className = "item-pane-table-odd-row";
-        } else {
-            tr.className = "item-pane-table-even-row";
+        /*
+         *  Sort the items
+         */
+        var sortColumn = this._columns[this._sortColumn];
+        items.sort(this._createSortFunction(
+            items, sortColumn.property, sortColumn.forward, this._sortAscending));
+    
+        var table = document.createElement("table");
+        table.cellPadding = 5;
+        table.border = 1;
+        
+        /*
+         *  Create the column headers
+         */
+        var th = table.createTHead();
+        var tr = th.insertRow(0);
+        for (var i = 0; i < this._columns.length; i++) {
+            var column = this._columns[i];
+            if (column.label == null) {
+                var property = database.getProperty(column.property);
+                column.label = column.forward ? property.getLabel() : property.getReverseLabel();
+            }
+            var td = document.createElement("th");
+            td.innerHTML = column.label;
+            tr.appendChild(td);
         }
         
-        var tdLabel = tr.insertCell(0);
-        tdLabel.appendChild(this._createValueSpan(item.label), false);
-        
-        for (var j = 0; j < columns.length; j++) {
-            var propertyLabel = columns[j];
-            var td = tr.insertCell(j+1);
+        /*
+         *  Create item rows
+         */
+        var max = this._showAll ? items.length : Math.min(items.length, this._initialCount);
+        for (var i = 0; i < max; i++) {
+            var item = items[i];
+            tr = table.insertRow(i + 1);
             
-            for (var n = 0; n < pairs.length; n++) {
-                var pair = pairs[n];
-                if (propertyLabel == pair.propertyLabel) {
-                    addValues(propertyLabel, pair.values, td, !pair.itemValues);
-                    pairs.splice(n, 1);
+            if (this._rowStyler != null) {
+                this._rowStyler(item.id, database, tr);
+            }
+            
+            for (var c = 0; c < this._columns.length; c++) {
+                var column = this._columns[c];
+                var property = database.getProperty(column.property);
+                var td = tr.insertCell(c);
+                
+                var values = column.forward ? 
+                    database.getObjects(item.id, column.property) :
+                    database.getSubjects(item.id, column.property);
+                var valueType = column.forward ?
+                    property.getValueType() :
+                    "item";
+                    
+                switch (column.format) {
+                case "image":
+                    values.visit(function(url) {
+                        var img = document.createElement("img");
+                        img.src = url;
+                        td.appendChild(img);
+                    });
                     break;
+                default:
+                    Exhibit.TabularView._constructDefaultValueList(values, valueType, td, exhibit);
                 }
             }
         }
         
-        for (var n = 0; n < pairs.length; n++) {
-            var pair = pairs[n];
-            
-            var td = tr.insertCell(columns.length+1);
-            addValues(pair.propertyLabel, pair.values, td, !pair.itemValues);
-            columns.push(pair.propertyLabel);
-        }
+        bodyDiv.appendChild(table);
     }
-    
-    var tr = table.insertRow(0);
-    tr.id = "item-pane-table-header";
-    
-    var td = tr.insertCell(0);
-    td.innerHTML = "label";
-    
-    for (var j = 0; j < columns.length; j++) {
-        var propertyLabel = columns[j];
-        var td = tr.insertCell(j+1);
-        td.innerHTML = propertyLabel;
-    }
-        
-    itemPaneBody.appendChild(table);
-    table.style.display = "block";
 };
 
-Rubik.ViewPanel.prototype._setTabularView = function() {
-    this._view = "tabular";
-    this._reconstructItemPane();
-}
-
-Rubik.ViewPanel.prototype._setTileView = function() {
-    this._view = "tile";
-    this._reconstructItemPane();
-}
-
-Rubik.ViewPanel.prototype._createValueSpan = function(text, omitLink) {
-    var valueSpan = document.createElement(omitLink ? "span" : "a");
-    valueSpan.setAttribute("name", "value");
-    SimileAjax.DOM.registerEvent(valueSpan, "mouseover", Rubik.ViewPanel._highlightValue);
-    SimileAjax.DOM.registerEvent(valueSpan, "mouseout", Rubik.ViewPanel._unhighlightValue);
-    if (!omitLink) {
-        valueSpan.setAttribute("src", "javascript:(void)");
-        SimileAjax.DOM.registerEvent(valueSpan, "click", Rubik.ViewPanel._focusValue);
-    }
-    valueSpan.innerHTML = text;
-    return valueSpan;
-}
-
-Rubik.ViewPanel.prototype.getPropertyValuesPairs = function(object) {
-    var pairs = [];
+Exhibit.TabularView.prototype._createSortFunction = function(items, property, forward, ascending) {
+    var database = this._exhibit.getDatabase();
+    var multiply = ascending ? 1 : -1;
     
-    var queryEngine = this;
-    var database = this._database;
-    var enterPair = function(property, values, forward) {
-        if (values.length > 0) {
-            var itemValues = property.getValueType() == "item";
-            var pair = { 
-                propertyLabel:  forward ? property.getLabel() : property.getReverseLabel(),
-                itemValues:     itemValues,
-                values:         []
-            };
-            if (itemValues) {
-                for (var i = 0; i < values.length; i++) {
-                    var value = values[i];
-                    var label = database.getObject(value, "label");
-                    pair.values.push(label != null ? label : value);
-                }
-            } else {
-                for (var i = 0; i < values.length; i++) {
-                    pair.values.push(values[i]);
-                }
-            }
-            pairs.push(pair);
-        }
+    var numericFunction = function(item1, item2) {
+        return multiply * (item1.sortKey - item2.sortKey);
+    };
+    var textFunction = function(item1, item2) {
+        return multiply * item1.sortKey.localeCompare(item2.sortKey);
     };
     
-    for (var i = 0; i < this._showProperties.length; i++) {
-        var entry = this._showProperties[i];
-        //var property = this._database.getProperty(propertyID);
-        enterPair(this._database.getProperty(entry.property), this._database.getObjects(object, entry.property).toArray(), true);
+    if (forward) {
+        var valueType = database.getProperty(property).getValueType();
+        
+        if (valueType == "item") {
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var valueItem = database.getObject(item.id, property);
+                var value = (valueItem == null) ? null : database.getObject(valueItem, "label");
+                item.sortKey = (value == null) ? Exhibit.l10n.missingSortKey : value;
+            }
+        } else if (valueType == "number") {
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var value = database.getObject(item.id, property);
+                if (!(typeof value == "number")) {
+                    try {
+                        value = parseFloat(value);
+                    } catch (e) {
+                        value = Number.NEGATIVE_INFINITY;
+                    }
+                }
+                item.sortKey = value;
+            }
+            
+            return numericFunction;
+        } else if (valueType == "date") {
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var value = database.getObject(item.id, property);
+                if (value != null && value instanceof Date) {
+                    value = value.getTime();
+                } else {
+                    try {
+                        value = SimileAjax.DateTime.parseIso8601DateTime(value).getTime();
+                    } catch (e) {
+                        value = Number.NEGATIVE_INFINITY;
+                    }
+                }
+                item.sortKey = value;
+            }
+            
+            return numericFunction;
+        } else {
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var value = database.getObject(item.id, property);
+                item.sortKey = (value == null) ? Exhibit.l10n.missingSortKey : value;
+            }
+        }
+    } else {
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var valueItem = database.getSubject(item.id, property);
+            var value = valueItem == null ? null : database.getObject(valueItem, "label");
+            item.sortKey = (value == null) ? Exhibit.l10n.missingSortKey : value;
+        }
     }
-    return pairs;
+    
+    return textFunction;
 };
 
+Exhibit.TabularView.prototype._reset = function() {
+    var state = {};
+    var browseEngine = this._exhibit.getBrowseEngine();
+    SimileAjax.History.addAction({
+        perform: function() {
+            state.restrictions = browseEngine.clearRestrictions();
+        },
+        undo: function() {
+            browseEngine.applyRestrictions(state.restrictions);
+        },
+        label: Exhibit.TabularView.l10n.resetActionTitle,
+        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+    });
+};
+
+Exhibit.TabularView._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
+    var processOneValue = (valueType == "item") ?
+        function(value) {
+            addDelimiter();
+            parentElmt.appendChild(exhibit.makeItemSpan(value));
+        } :
+        function(value) {
+            addDelimiter();
+            parentElmt.appendChild(exhibit.makeValueSpan(value, valueType));
+        };
+        
+    var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.size());
+    values.visit(processOneValue);
+    addDelimiter();
+};

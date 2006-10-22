@@ -34,6 +34,7 @@ if (typeof Exhibit == "undefined") {
             "views/map-view.js",
             "views/timeline-view.js",
             "views/thumbnail-view.js",
+            "views/tabular-view.js",
             "views/item-view.js",
             
             "exporters/rdf-xml-exporter.js",

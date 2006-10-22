@@ -10,7 +10,8 @@
         "tile-view-theme.js",
         "map-view-theme.js",
         "timeline-view-theme.js",
-        "thumbnail-view-theme.js"
+        "thumbnail-view-theme.js",
+        "tabular-view-theme.js"
     ];
     var cssFiles = [
         "exhibit.css",
@@ -23,6 +24,7 @@
         "map-view.css",
         "timeline-view.css",
         "thumbnail-view.css",
+        "tabular-view.css",
         "item-view.css"
     ];
 

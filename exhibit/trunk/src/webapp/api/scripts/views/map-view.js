@@ -189,10 +189,10 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
 Exhibit.MapView.prototype.dispose = function() {
     this._exhibit.getBrowseEngine().removeListener(this._listener);
     
+    this._div.innerHTML = "";
+    
     this._dom.map = null;
     this._dom = null;
-    
-    this._div.innerHTML = "";
     this._div = null;
     this._exhibit = null;
     

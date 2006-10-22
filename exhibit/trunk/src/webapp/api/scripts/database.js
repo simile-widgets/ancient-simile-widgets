@@ -551,7 +551,7 @@ Exhibit.Database._Property.prototype = {
     getReverseLabel:        function() { return this._reverseLabel; },
     getReversePluralLabel:  function() { return this._reversePluralLabel; },
     getGroupingLabel:       function() { return this._groupingLabel; },
-    getGroupingPluralLabel: function() { return this._groupingPluralLabel; },
+    getGroupingPluralLabel: function() { return this._groupingPluralLabel; }
 };
 
 Exhibit.Database._Property.prototype._onNewData = function() {
