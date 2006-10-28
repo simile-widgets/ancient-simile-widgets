@@ -343,11 +343,21 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
             Exhibit.ItemView._constructFromViewTemplateNode(value, valueType, children[i], elmt, exhibit);
         }
     }
-    parentElmt.appendChild(elmt);
 };
 
 Exhibit.ItemView._constructElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
-    var elmt = document.createElement(templateNode.tag);
+    var elmt;
+    switch (templateNode.tag) {
+    case "tr":
+        elmt = parentElmt.insertRow(parentElmt.rows.length);
+        break;
+    case "td":
+        elmt = parentElmt.insertCell(parentElmt.cells.length);
+        break;
+    default:
+        elmt = document.createElement(templateNode.tag);
+        parentElmt.appendChild(elmt);
+    }
     
     var attributes = templateNode.attributes;
     for (var i = 0; i < attributes.length; i++) {

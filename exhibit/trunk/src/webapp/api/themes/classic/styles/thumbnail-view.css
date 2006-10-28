@@ -5,3 +5,12 @@ div.exhibit-thumbnailView-group {
 div.exhibit-thumbnailView-body {
 }
 
+div.exhibit-thumbnailView-itemContainer {
+    float:      left;
+}
+
+div.exhibit-thumbnailView-itemContainer-IE {
+    float:      left;
+    width:      0;
+    overflow:   visible;
+}

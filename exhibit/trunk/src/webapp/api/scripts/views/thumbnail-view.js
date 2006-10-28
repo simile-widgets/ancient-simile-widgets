@@ -122,7 +122,9 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
         }
         
         var itemViewDiv = document.createElement("div");
-        itemViewDiv.style.cssFloat = "left";
+        itemViewDiv.className = SimileAjax.Platform.browser.isIE ?
+            "exhibit-thumbnailView-itemContainer-IE" :
+            "exhibit-thumbnailView-itemContainer";
         
         var itemView = new Exhibit.ItemView(itemID, itemViewDiv, view._exhibit, view._itemViewConfiguration);
         state.itemContainer.appendChild(itemViewDiv);

@@ -9,6 +9,10 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
     this._configuration = configuration;
     this._globalConfiguration = globalConfiguration;
     
+    this._densityFactor = 50;
+    this._topBandIntervalPixels = 150;
+    this._bottomBandIntervalPixels = 200;
+    
     var getDurations = null;
     try {
         var getStart = null;
@@ -35,10 +39,15 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
         
         if ("start" in configuration) {
             getStart = makeAccessor(configuration.start);
+        } else {
+            getStart = function(itemID, database) { return null; }
         }
         if ("end" in configuration) {
             getEnd = makeAccessor(configuration.end);
+        } else {
+            getEnd = function(itemID, database) { return null; }
         }
+        
         var getStartEnd = function(itemID, database) {
             return {
                 start:  getStart(itemID, database),
@@ -57,7 +66,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
                     database
                 ).values.visit(function(v) {
                     var startEnd = getStartEnd(v, database);
-                    if (startEnd.start != null && startEnd.end != null) {
+                    if (startEnd.start != null) {
                         pairs.push(startEnd);
                     }
                 });
@@ -65,6 +74,16 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
             };
         } else {
             getDurations = getStartEnd;
+        }
+        
+        if ("topBandIntervalPixels" in configuration) {
+            this._topBandIntervalPixels = configuration.topBandIntervalPixels;
+        }
+        if ("bottomBandIntervalPixels" in configuration) {
+            this._bottomBandIntervalPixels = configuration.bottomBandIntervalPixels;
+        }
+        if ("densityFactor" in configuration) {
+            this._densityFactor = configuration.densityFactor;
         }
     } catch (e) {
         SimileAjax.Debug.exception(e);
@@ -196,7 +215,7 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
         var intervalUnit = Timeline.DateTime.MILLENNIUM;
         while (intervalUnit > 0) {
             var intervalLength = Timeline.DateTime.gregorianUnitLengths[intervalUnit];
-            if (duration / intervalLength > 50) {
+            if (duration / intervalLength > this._densityFactor) {
                 break;
             }
             intervalUnit--;
@@ -206,14 +225,14 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
             Timeline.createBandInfo({
                 width:          "75%", 
                 intervalUnit:   intervalUnit, 
-                intervalPixels: 150,
+                intervalPixels: this._topBandIntervalPixels,
                 eventSource:    this._eventSource,
                 date:           earliest
             }),
             Timeline.createBandInfo({
                 width:          "25%", 
                 intervalUnit:   intervalUnit + 1, 
-                intervalPixels: 200,
+                intervalPixels: this._bottomBandIntervalPixels,
                 eventSource:    this._eventSource,
                 date:           earliest,
                 showEventText:  false, 
@@ -289,7 +308,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             }
             
             if ((durations instanceof Array && durations.length > 0) ||
-                (durations.start != null && durations.end != null)) {
+                (durations.start != null)) {
                 plottableSize++;
                 
                 var markerKey;
