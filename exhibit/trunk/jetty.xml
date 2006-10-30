@@ -24,16 +24,6 @@
     <Set name="connectors">
       <Array type="org.mortbay.jetty.Connector">
 
-        <!-- NIO causes files to be locked on Windows. So we use BIO instead.
-        <Item>
-          <New class="org.mortbay.jetty.nio.SelectChannelConnector">
-            <Set name="port">8080</Set>
-            <Set name="maxIdleTime">30000</Set>
-            <Set name="Acceptors">2</Set>
-          </New>
-        </Item>
-        -->
-
         <Item>
           <New class="org.mortbay.jetty.bio.SocketConnector">
             <Set name="port">8888</Set>
@@ -55,9 +45,6 @@
            </Item>
            <Item>
              <New id="defaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
-           </Item>
-           <Item>
-             <New id="requestLog" class="org.mortbay.jetty.handler.RequestLogHandler"/>
            </Item>
          </Array>
         </Set>
@@ -107,7 +94,7 @@
         <Item>
           <New id="aContext" class="org.mortbay.jetty.handler.ContextHandler">
             <Set name="contextPath">/ajax</Set>
-            <Set name="resourceBase">../ajax/src/webapp/</Set>
+            <Set name="resourceBase">./src/ajax/</Set>
             <Set name="handler">
               <New id="javadocServletHandler" class="org.mortbay.jetty.servlet.ServletHandler">
                 <Set name="servlets">
@@ -138,21 +125,6 @@
 
       </Array>
      </Set>
-    </Ref>
-
-    <!-- =========================================================== -->
-    <!-- Configure Request Log                                       -->
-    <!-- =========================================================== -->
-    <Ref id="requestLog">
-      <Set name="requestLog">
-        <New id="requestLogImpl" class="org.mortbay.jetty.NCSARequestLog">
-          <Arg><SystemProperty name="jetty.home" default="."/>/logs/yyyy_mm_dd.request.log</Arg>
-          <Set name="retainDays">90</Set>
-          <Set name="append">true</Set>
-          <Set name="extended">false</Set>
-          <Set name="LogTimeZone">GMT-0500</Set>
-        </New>
-      </Set>
     </Ref>
 
     <!-- =========================================================== -->
