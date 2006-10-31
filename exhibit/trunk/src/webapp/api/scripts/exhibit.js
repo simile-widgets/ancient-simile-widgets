@@ -1,6 +1,6 @@
 /*======================================================================
  *  Exhibit
- *  http://simile.mit.edu/wiki2/Exhibit/API/Exhibit
+ *  http://simile.mit.edu/wiki/Exhibit/API/Exhibit
  *======================================================================
  */
 Exhibit.create = function(controlDiv, browseDiv, viewDiv, configuration) {

@@ -1,6 +1,6 @@
 /*======================================================================
  *  Exhibit.BrowsePanel
- *  http://simile.mit.edu/wiki2/Exhibit/API/BrowsePanel
+ *  http://simile.mit.edu/wiki/Exhibit/API/BrowsePanel
  *======================================================================
  */
  

@@ -1,6 +1,6 @@
 /*======================================================================
  *  Exhibit.Database
- *  http://simile.mit.edu/wiki2/Exhibit/API/Database
+ *  http://simile.mit.edu/wiki/Exhibit/API/Database
  *======================================================================
  */
 Exhibit.Database = function() {
