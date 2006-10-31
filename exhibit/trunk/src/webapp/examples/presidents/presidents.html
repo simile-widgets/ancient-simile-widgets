@@ -1,17 +1,20 @@
 <html>
 <head>
     <title>SIMILE | Exhibit | Presidents</title>
-    <link rel='stylesheet' href='../../styles.css' type='text/css' />
-    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
     <script src="/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
-    <script src="/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQ_WLz7LpUMtzN755Z1xScTjdiF-xRJO2-n-QiclGr93ekHLb-pnN0tgQ" type="text/javascript"></script>
-    <!-- 
-        <script src="/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRSylhg9g0eQz1XKe-_yPVNDnmXWIBTUt28bG_PRAGM7qphNqG1dqxdQkQ" type="text/javascript"></script>
-    -->
+
+    <!-- key for the simile web site -->
+    <!-- script src="/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQ_WLz7LpUMtzN755Z1xScTjdiF-xRJO2-n-QiclGr93ekHLb-pnN0tgQ" type="text/javascript"></script-->
+
+    <!-- key for the local host -->
+    <script src="/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAAusru4d5JfzaqJCJYkYlYlRTRYMMr9E_iYboHSHMQOKiCoeYD4BQxBAJZ1DpPNP7kGNCoqGJ8woY3HA" type="text/javascript"></script>
+
     <script type="text/javascript">
         var exhibit;
+        
         function onLoad() {
+
             var configuration = {
                 BrowseEngine: {
                     facets: [
@@ -131,6 +134,7 @@
                 document.getElementById("view-panel"),
                 configuration
             );
+
             exhibit.loadJSON(
                 [ "schema.js", "presidents.js" ],
                 function() {
@@ -153,40 +157,82 @@
     </script>
     <style>
         body {
-            overflow-y: scroll;
-        }
-        table {
-            font-size: 100%;
-        }
-        
-        #control-panel {
-        }
-        
-        #browse-panel {
-            padding:        0.5em;
+		    margin: 0px;
+		    padding: 0px;
+		    font-family: "georgia", "times", "times new roman", serif;
+		    color: #222;
+		    background-color: #fff;
+		    font-size: 12px;
+		    quotes: "\201C" "\201E" "\2018" "\2019";
         }
         
-        #view-panel {
-            padding:    2em;
+        #frame {
+        	width: 100%;
+        	height: 100%;
+        	padding: 0px;
+        	margin: 0px;
+        	border-collapse: collapse;
         }
-        
-        #exhibit h1 {
+
+		#frame tr {
+			vertical-align: top;
+		}
+			        
+        #content {
+        	width: 70%;
+        	padding: 2em;
+        	background-color: #eee;
+		}
+
+		#content h1 {
+			color: navy;
+			border-bottom: 1px solid #cc0000;
+		}
+		
+		#sidebar {
+        	width: 30%;
+			white-space: nowrap;
+			background-color: #fff;
+			background-image: url(images/whitehouse.jpg);
+			background-position: bottom right;
+			background-repeat: no-repeat;
+			background-attachment: fixed; 
+			border-left: 1px solid #ccc;
+		}
+		
+		#view-panel {
+			margin-top: 3em;
+		}
+		
+        #view-panel table {
+        	border-length: 0px;
+        	border-collapse: collapse;
+        }
+
+		#view-panel h1 {
+			border: none;
+			font-size: 120%;
+		}
+
+        #view-panel h1 {
             border: none;
             background: none;
             padding: 0;
             margin: 1em 0;
         }
-        #exhibit h2 {
+
+        #view-panel h2 {
             border: none;
             background: none;
             padding: 0;
             margin: 0.5em;
         }
-        #exhibit h1,h2,h3,h4 {
+
+        .item {
+            border: 1px solid #aaa;
+            padding: 0.3em;
         }
-        div.item {
-            border:     1px solid #aaa;
-        }
+		
         div.thumbnail {
             border:     1px solid #aaa;
             padding:    1em;
@@ -195,35 +241,36 @@
             height:     130px;
             text-align: center;
         }
+
         div.thumbnail div {
             height:     100px;
             overflow:   hidden;
-        }
+        }        
+
+		.exhibit-facet-body {
+			background-color: #eee;
+		}
+		
+		.exhibit-facet-header-title {
+			color: navy;
+		}
     </style>
 </head>
-<body onload="onLoad();">
-<ul id="path">
-  <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
-  <li><a href="http://simile.mit.edu/exhibit/" title="Exhibit">Exhibit</a></li>
-  <li><a href="http://simile.mit.edu/exhibit/examples/" title="Examples">Examples</a></li>
-  <li><span>American Presidents</span></li>
-</ul>
 
-<div id="body">
-    <h1>American Presidents</h1>
-    <div style="width: 100%">
-        <table cellpadding="0" cellspacing="0" border="0" id="exhibit" width="100%">
-            <tr valign="top">
-                <td width="70%">
-                    <div id="control-panel"></div>
-                    <div id="view-panel"></div>
-                </td>
-                <td>
-                    <div id="browse-panel" style="z-index: 100;"></div>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
+<body onload="onLoad();">
+
+   <table id="frame">
+    <tr>
+     <td id="content">
+       <h1>US Presidents</h1>
+	   <div id="control-panel"></div>
+	   <div id="view-panel"></div>
+     </td>
+	 <td id="sidebar">
+       <div id="browse-panel"></div>
+	 </td>
+	</tr>
+   </table>
+
 </body>
 </html>
