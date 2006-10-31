@@ -1,0 +1,4 @@
+<div class="thumbnail">
+    <div><img src-content=".imageURL" /></div>
+    <span content="value" />
+</div>

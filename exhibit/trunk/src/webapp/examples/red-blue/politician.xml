@@ -1,0 +1,18 @@
+<div class="item">
+    <span control="copy-button" style="float: right" />
+    <table cellspacing="5">
+        <tr>
+            <td><img src-content=".image" /></td>
+            <td>
+                <h1><span content=".label" /></h1>
+                
+                <div>Party: <span content=".party" /></div>
+                <div if-exists="!governor">Governor of: <span content="!governor" /></div>
+                <div if-exists="!seniorSenator">Senior senator of: <span content="!seniorSenator" /></div>
+                <div if-exists="!juniorSenator">Junior senator of: <span content="!juniorSenator" /></div>
+                
+                <p if-exists=".url"><a href-content=".url">More info...</a></p>
+            </td>
+        </tr>
+    </table>
+</div>

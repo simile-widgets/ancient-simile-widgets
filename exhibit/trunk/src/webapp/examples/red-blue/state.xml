@@ -1,0 +1,4 @@
+<div class="state">
+    <span control="copy-button" style="float: right" />
+    <h1><span content=".label" /></h1>
+</div>

@@ -1,0 +1,202 @@
+<html>
+<head>
+    <title>SIMILE | Exhibit | Red-Blue States</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+    
+    <script src="/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
+    <script src="/exhibit/api/exhibit-api.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var exhibit;
+        function onLoad() {
+            var makePoliticianStyler = function(prop) {
+                return function(item, database, td) {
+                    var party = database.getObject(item, "majorParty");
+                    var politicianParty = database.getObject(database.getObject(item, prop), "party");
+                    if (party != politicianParty) {
+                        var color = "white";
+                        switch (politicianParty) {
+                        case "Democrat":     color = "#97A9F4"; break;
+                        case "Republican":   color = "#FA9696"; break;
+                        }
+                        td.style.background = color;
+                    }
+                }
+            };
+            var houseStyler = function(item, database, td) {
+                var party = database.getObject(item, "majorParty");
+                var democrats = database.getObject(item, "houseDemocrats");
+                var republicans = database.getObject(item, "houseRepublicans");
+
+                var color = "white";
+                if (democrats == republicans) {
+                    color = "#aaa";
+                } else if (party == "Democrat") {
+                    if (democrats < republicans) {
+                        color = "#FA9696";
+                    }
+                } else if (party == "Republican") {
+                    if (democrats > republicans) {
+                        color = "#97A9F4";
+                    }
+                }
+                td.style.background = color;
+            };
+            
+            var configuration = {
+                BrowseEngine: {
+                    facets: [
+                        ".majorParty"
+                    ]
+                },
+                ItemView: {
+                    viewSelector: function(itemID, exhibit) { 
+                        var type = exhibit.getDatabase().getObject(itemID, "type");
+                        return type == "State" ? "state.xml" : "politician.xml"; 
+                    }
+                },
+                ViewPanel: {
+                    views: [
+                        {   constructor: Exhibit.TabularView,
+                            label: "Table",
+                            configuration: {
+                                sortColumn:     1,
+                                sortAscending:  false,
+                                columns: [
+                                    {   expression: ".label",
+                                        label:      "state",
+                                        styler: function(item, database, td) {
+                                            var party = database.getObject(item, "majorParty");
+                                            var color = "white";
+                                            switch (party) {
+                                            case "Democrat":     color = "#97A9F4"; break;
+                                            case "Republican":   color = "#FA9696"; break;
+                                            }
+                                            td.style.background = color;
+                                        }
+                                    },
+                                    {   expression: ".kerrySupport",
+                                        label:      "K"
+                                    },
+                                    {   expression: ".bushSupport",
+                                        label:      "B"
+                                    },
+                                    {   expression: ".supportDiff",
+                                        label:      "Dif"
+                                    },
+                                    {   expression: ".governor",
+                                        styler:     makePoliticianStyler("governor")
+                                    },
+                                    {   expression: ".seniorSenator",
+                                        styler:     makePoliticianStyler("seniorSenator")
+                                    },
+                                    {   expression: ".juniorSenator",
+                                        styler:     makePoliticianStyler("juniorSenator")
+                                    },
+                                    {   expression: ".houseDemocrats",
+                                        label:      "House D",
+                                        styler:     houseStyler
+                                    },
+                                    {   expression: ".houseRepublicans",
+                                        label:      "House R",
+                                        styler:     houseStyler
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            };
+                
+            exhibit = Exhibit.create(
+                document.getElementById("control-panel"),
+                document.getElementById("browse-panel"),
+                document.getElementById("view-panel"),
+                configuration
+            );
+            exhibit.loadJSON(
+                [ "schema.js", "states.js", "politicians.js" ],
+                function() {
+                    exhibit.getBrowseEngine().setRootCollection(
+                        exhibit.getDatabase().getSubjects("State", "type")
+                    );
+                }
+            );
+        }
+    </script>
+    <style>
+        body {
+            overflow-y: scroll;
+        }
+        table {
+            font-size: 100%;
+        }
+        
+        #control-panel {
+        }
+        
+        #browse-panel {
+            padding:        0.5em;
+        }
+        
+        #view-panel {
+            padding:    2em;
+        }
+        
+        #exhibit h1 {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 1em 0;
+        }
+        #exhibit h2 {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0.5em;
+        }
+        #exhibit h1,h2,h3,h4 {
+        }
+        div.item {
+            border:     1px solid #aaa;
+        }
+        div.thumbnail {
+            border:     1px solid #aaa;
+            padding:    1em;
+            margin:     1em;
+            width:      100px;
+            height:     130px;
+            text-align: center;
+        }
+        div.thumbnail div {
+            height:     100px;
+            overflow:   hidden;
+        }
+    </style>
+</head>
+<body onload="onLoad();">
+<ul id="path">
+  <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+  <li><a href="http://simile.mit.edu/exhibit/" title="Exhibit">Exhibit</a></li>
+  <li><a href="http://simile.mit.edu/exhibit/examples/" title="Examples">Examples</a></li>
+  <li><span>Red Blue States</span></li>
+</ul>
+
+<div id="body">
+    <h1>Red Blue States</h1>
+    <div style="width: 100%">
+        <table cellpadding="0" cellspacing="0" border="0" id="exhibit" width="100%">
+            <tr valign="top">
+                <td width="70%">
+                    <div id="control-panel"></div>
+                    <div id="view-panel"></div>
+                </td>
+                <td>
+                    <div id="browse-panel" style="z-index: 100;"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>
