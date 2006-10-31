@@ -218,6 +218,10 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                 default:
                     Exhibit.TabularView._constructDefaultValueList(values, valueType, td, exhibit);
                 }
+                
+                if (column.styler != null) {
+                    column.styler(item.id, database, td);
+                }
             }
         }
         
