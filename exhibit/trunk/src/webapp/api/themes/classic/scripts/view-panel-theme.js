@@ -22,6 +22,7 @@ Exhibit.ViewPanel.theme.constructDom = function(
                 field:      "viewSelectionDiv"
             },
             {   tag:        "div",
+                className:  "exhibit-viewPanel-viewContainer",
                 field:      "viewContainerDiv"
             }
         ]

@@ -20,6 +20,13 @@ span.exhibit-viewPanel-viewSelection-selectedView {
     border-bottom:  3px solid red;
 }
 
+div.exhibit-viewPanel-viewContainer {
+}
+
+/*==================================================
+ * Collection View styles
+ *==================================================
+ */
 div.exhibit-collectionView {
 }
 
