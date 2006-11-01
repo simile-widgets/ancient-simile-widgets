@@ -199,12 +199,42 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
             return c;
         }
         items.sort(masterSortFunction);
-    
+        
+        /*
+         *  Detect how deep we need to group
+         */
+        var checkGroupingLevel = function(level, start, end) {
+            var result = -1;
+            if (level < orders.length) {
+                var sortKey = items[start].sortKeys[level];
+                var i = start + 1;
+                
+                while (i < end) {
+                    var item = items[i];
+                    var itemSortKey = item.sortKeys[level];
+                    
+                    if (itemSortKey != sortKey) {
+                        if (i - start > 1) {
+                            result = Math.max(result, Math.max(level, checkGroupingLevel(level + 1, start, i)));
+                        }
+                        sortKey = itemSortKey;
+                        start = i;
+                    }
+                    i++;
+                }
+                
+                if (i - start > 1) {
+                    result = Math.max(result, Math.max(level, checkGroupingLevel(level + 1, start, i)));
+                }
+            }
+            return result;
+        }
+        var groupLevels = checkGroupingLevel(0, 0, items.length) + 1;
+        
         /*
          *  Generate item views
          */
         var sortKeys = [];
-        var groupLevels = orders.length - 1;
         for (var i = 0; i < orders.length; i++) {
             sortKeys.push(null);
         }
