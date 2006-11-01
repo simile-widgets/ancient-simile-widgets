@@ -172,15 +172,27 @@ Exhibit.TabularView.prototype._reconstruct = function() {
          */
         var th = table.createTHead();
         var tr = th.insertRow(0);
-        for (var i = 0; i < this._columns.length; i++) {
-            var column = this._columns[i];
+        var createColumnHeader = function(i) {
+            var column = self._columns[i];
             if (column.label == null) {
                 var property = database.getProperty(column.property);
                 column.label = column.forward ? property.getLabel() : property.getReverseLabel();
             }
+            
             var td = document.createElement("th");
-            td.innerHTML = column.label;
+            Exhibit.TabularView.theme.createColumnHeader(
+                exhibit, td, column.label, i == self._sortColumn, self._sortAscending,
+                function(elmt, evt, target) {
+                    self._doSort(i);
+                    SimileAjax.DOM.cancelEvent(evt);
+                    return false;
+                }
+            );
+                
             tr.appendChild(td);
+        };
+        for (var i = 0; i < this._columns.length; i++) {
+            createColumnHeader(i);
         }
         
         /*
@@ -312,6 +324,29 @@ Exhibit.TabularView.prototype._reset = function() {
             browseEngine.applyRestrictions(state.restrictions);
         },
         label: Exhibit.TabularView.l10n.resetActionTitle,
+        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+    });
+};
+
+Exhibit.TabularView.prototype._doSort = function(columnIndex) {
+    var oldSortColumn = this._sortColumn;
+    var oldSortAscending = this._sortAscending;
+    var newSortColumn = columnIndex;
+    var newSortAscending = oldSortColumn == newSortColumn ? !oldSortAscending : true;
+    
+    var self = this;
+    SimileAjax.History.addAction({
+        perform: function() {
+            self._sortColumn = newSortColumn;
+            self._sortAscending = newSortAscending;
+            self._reconstruct();
+        },
+        undo: function() {
+            self._sortColumn = oldSortColumn;
+            self._sortAscending = oldSortAscending;
+            self._reconstruct();
+        },
+        label: Exhibit.TabularView.l10n.makeSortActionTitle(this._columns[columnIndex].label, newSortAscending),
         uiLayer: SimileAjax.WindowManager.getBaseLayer()
     });
 };

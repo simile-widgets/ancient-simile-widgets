@@ -7,3 +7,11 @@ table.exhibit-tabularView-body {
     text-align: right;
     color:      #aaa
 }
+
+.exhibit-tabularView-columnHeader {
+    cursor: pointer;
+}
+
+.exhibit-tabularView-columnHeader-sorted {
+    cursor: pointer;
+}
