@@ -5,10 +5,38 @@
  
 Exhibit.TimelineView.theme = new Object();
 
+Exhibit.TimelineView.theme.markers = [
+    {   color:      "FF9000",
+        textColor:  "000000"
+    },
+    {   color:      "5D7CBA",
+        textColor:  "000000"
+    },
+    {   color:      "A97838",
+        textColor:  "000000"
+    },
+    {   color:      "8B9BBA",
+        textColor:  "000000"
+    },
+    {   color:      "BF955F",
+        textColor:  "000000"
+    },
+    {   color:      "003EBA",
+        textColor:  "FFFFFF"
+    },
+    {   color:      "29447B",
+        textColor:  "FFFFFF"
+    },
+    {   color:      "543C1C",
+        textColor:  "FFFFFF"
+    }
+];
+
 Exhibit.TimelineView.theme.constructDom = function(
     exhibit,
     div,
-    onClearFilters
+    onClearFilters,
+    onRelayout
 ) {
     var l10n = Exhibit.TimelineView.l10n;
     var template = {
@@ -30,6 +58,9 @@ Exhibit.TimelineView.theme.constructDom = function(
                         field:  "resultsDiv",
                         style:  { display: "none" },
                         children: [
+                            {   elmt:   exhibit.makeCopyButton(null),
+                                style:  { cssFloat: "right" }
+                            },
                             {   tag:    "div",
                                 children: Exhibit.ViewPanel.l10n.createResultsSummaryTemplate(
                                     "exhibit-collectionView-header-count",
@@ -50,7 +81,7 @@ Exhibit.TimelineView.theme.constructDom = function(
                 ]
             },
             {   tag:        "div",
-                className:  "exhibit-timelineView-mapContainer",
+                className:  "exhibit-timelineView-timelineContainer",
                 children: [
                     {   tag:        "div",
                         className:  "exhibit-timelineView-timeline",
@@ -58,18 +89,29 @@ Exhibit.TimelineView.theme.constructDom = function(
                     }
                 ]
             },
-            {   tag: "div",
-                className: "exhibit-timelineView-resizer",
-                field: "resizerDiv"
+            {   tag:        "div",
+                className:  "exhibit-timelineView-resizer",
+                field:      "resizerDiv"
             },
-            {   tag: "div",
+            {   tag:        "div",
+                className:  "exhibit-timelineView-controls",
+                children: [
+                    {   tag:    "button",
+                        field:  "relayoutButton",
+                        children: [ l10n.relayoutButtonLabel ]
+                    }
+                ]
+            },
+            {   tag:        "div",
                 className:  "exhibit-timelineView-legend",
-                field: "legendDiv"
+                field:      "legendDiv"
             }
         ]
     };
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    SimileAjax.WindowManager.registerEvent(dom.relayoutButton, "click", onRelayout);
+
     dom.setCounts = function(resultsCount, plottableCount, originalCount) {
         if (resultsCount == 0) {
             dom.noResultDiv.style.display = "block";
@@ -155,6 +197,7 @@ Exhibit.TimelineView.theme.constructLegendBlockDom = function(
     for (var i = 0; i < colors.length; i++) {
         var div = document.createElement("div");
         div.className = "exhibit-timelineView-legendBlock-entry";
+        div.style.color = colors[i];
         
         var span = document.createElement("span");
         span.className = "exhibit-timelineView-legendBlock-swatch";

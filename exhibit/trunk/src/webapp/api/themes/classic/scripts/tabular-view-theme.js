@@ -28,6 +28,9 @@ Exhibit.TabularView.theme.createDom = function(
                 field:  "resultsDiv",
                 style:  { display: "none" },
                 children: [
+                    {   elmt:   exhibit.makeCopyButton(null),
+                        style:  { cssFloat: "right" }
+                    },
                     {   tag:    "div",
                         children: Exhibit.ViewPanel.l10n.createResultsSummaryTemplate(
                             "exhibit-collectionView-header-count",

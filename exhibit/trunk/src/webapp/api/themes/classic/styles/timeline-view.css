@@ -1,7 +1,9 @@
-div.exhibit-timelineView-mapContainer {
+div.exhibit-timelineView-timelineContainer {
     border: 1px solid #738699
 }
-div.exhibit-timelineView-map {
+div.exhibit-timelineView-timeline {
+    font-family: Trebuchet MS, Helvetica, sans serif;
+    font-size:   10pt;
 }
 div.exhibit-timelineView-resizer {
     text-align:     center;
@@ -9,9 +11,12 @@ div.exhibit-timelineView-resizer {
     background:     url(../images/down-arrow.png) top center no-repeat;
     height:         10px;
 }
-div.exhibit-timelineView-mappableDetails {
+div.exhibit-timelineView-plottableDetails {
     padding:        1em;
     text-align:     center;
+}
+div.exhibit-timelineView-controls {
+    text-align:     right;
 }
 div.exhibit-timelineView-legend {
     margin-top:     1em;

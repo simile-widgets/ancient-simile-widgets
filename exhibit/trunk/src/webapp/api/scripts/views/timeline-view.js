@@ -130,41 +130,6 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
     this._exhibit.getBrowseEngine().addListener(this._listener);
 };
 
-Exhibit.TimelineView._markers = [
-    {   color:  "FF9000",
-        textColor:  "000000"
-    },
-    {   color:  "5D7CBA",
-        textColor:  "000000"
-    },
-    {   color:  "A97838",
-        textColor:  "000000"
-    },
-    {   color:  "8B9BBA",
-        textColor:  "000000"
-    },
-    {   color:  "FFC77F",
-        textColor:  "000000"
-    },
-    {   color:  "003EBA",
-        textColor:  "000000"
-    },
-    {   color:  "29447B",
-        textColor:  "000000"
-    },
-    {   color:  "543C1C",
-        textColor:  "000000"
-    }
-];
-Exhibit.TimelineView._wildcardMarker = {
-    color:  "888888",
-    textColor:  "000000"
-};
-Exhibit.TimelineView._mixMarker = {
-    color:  "FFFFFF",
-    textColor:  "000000"
-};
-
 Exhibit.TimelineView.prototype.dispose = function() {
     this._exhibit.getBrowseEngine().removeListener(this._listener);
     
@@ -184,6 +149,12 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
         this._div, 
         function(elmt, evt, target) {
             self._reset();
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        },
+        function(elmt, evt, target) {
+            self._largestSize = 0;
+            self._reconstruct();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         }
@@ -221,23 +192,28 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
             intervalUnit--;
         }
         
+        var theme = Timeline.ClassicTheme.create();
+        theme.event.bubble.width = 300;
+        theme.event.bubble.height = 250;
         var bandInfos = [
             Timeline.createBandInfo({
                 width:          "75%", 
                 intervalUnit:   intervalUnit, 
                 intervalPixels: this._topBandIntervalPixels,
                 eventSource:    this._eventSource,
-                date:           earliest
+                //date:           earliest,
+                theme:          theme
             }),
             Timeline.createBandInfo({
                 width:          "25%", 
                 intervalUnit:   intervalUnit + 1, 
                 intervalPixels: this._bottomBandIntervalPixels,
                 eventSource:    this._eventSource,
-                date:           earliest,
+                //date:           earliest,
                 showEventText:  false, 
                 trackHeight:    0.5,
-                trackGap:       0.2
+                trackGap:       0.2,
+                theme:          theme
             })
         ];
         bandInfos[1].syncWith = 0;
@@ -288,11 +264,14 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 null, // link url
                 null, // icon url
                 "#" + markerData.color,
-                "#" + markerData.textColor
+                "#" + (duration.end == null ? markerData.color : markerData.textColor)
             );
             evt._itemID = itemID;
             evt.getProperty = function(name) {
                 return database.getObject(this._itemID, name);
+            };
+            evt.fillInfoBubble = function(elmt, theme, labeller) {
+                self._fillInfoBubble(this, elmt, theme, labeller);
             };
             
             events.push(evt);
@@ -323,9 +302,9 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 if (markerKey in self._markerCache) {
                     markerData = self._markerCache[markerKey];
                 } else {
-                    markerData = Exhibit.TimelineView._markers[self._maxMarker];
+                    markerData = Exhibit.TimelineView.theme.markers[self._maxMarker];
                     self._markerCache[markerKey] = markerData;
-                    self._maxMarker = (self._maxMarker + 1) % Exhibit.TimelineView._markers.length;
+                    self._maxMarker = (self._maxMarker + 1) % Exhibit.TimelineView.theme.markers.length;
                 }
                 
                 if (durations instanceof Array) {
@@ -354,8 +333,6 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 legendColors.push("#" + markerData.color);
             }
         }
-        legendLabels.push(Exhibit.TimelineView.l10n.mixedLegendKey);
-        legendColors.push("#FFFFFF");
         
         this._dom.addLegendBlock(Exhibit.TimelineView.theme.constructLegendBlockDom(
             this._exhibit,
@@ -365,25 +342,21 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         ));
         
         this._dom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
+        
+        var band = this._dom.timeline.getBand(0);
+        var centerDate = band.getCenterVisibleDate();
+        if (centerDate < this._eventSource.getEarliestDate()) {
+            band.scrollToCenter(this._eventSource.getEarliestDate());
+        } else if (centerDate > this._eventSource.getLatestDate()) {
+            band.scrollToCenter(this._eventSource.getLatestDate());
+        }
     }
     
     this._dom.setCounts(currentSize, plottableSize, originalSize);
 };
 
-Exhibit.TimelineView.prototype._createInfoWindow = function(items) {
-    if (items.length > 1) {
-        var ul = document.createElement("ul");
-        for (var i = 0; i < items.length; i++) {
-            var li = document.createElement("li");
-            li.appendChild(this._exhibit.makeItemSpan(items[i]));
-            ul.appendChild(li);
-        }
-        return ul;
-    } else {
-        var itemViewDiv = document.createElement("div");
-        var itemView = new Exhibit.ItemView(items[0], itemViewDiv, this._exhibit, this._globalConfiguration);
-        return itemViewDiv;
-    }
+Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {
+    new Exhibit.ItemView(evt._itemID, elmt, this._exhibit, this._globalConfiguration);
 };
 
 Exhibit.TimelineView.prototype._reset = function() {
