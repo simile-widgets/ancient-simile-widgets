@@ -155,7 +155,11 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
                 // do nothing
             } else if (attribute == "style") {
                 for (n in value) {
-                    elmt.style[n] = value[n];
+                    var v = value[n];
+                    if (n == "float") {
+                        n = SimileAjax.Platform.browser.isIE ? "styleFloat" : "cssFloat";
+                    }
+                    elmt.style[n] = v;
                 }
             } else if (attribute == "children") {
                 for (var i = 0; i < value.length; i++) {
