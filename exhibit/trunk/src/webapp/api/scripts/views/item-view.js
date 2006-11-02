@@ -216,7 +216,7 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
                     var n = Exhibit.ItemView._trimString(pair[0]);
                     var v = Exhibit.ItemView._trimString(pair[1]);
                     if (n == "float") {
-                        n = "cssFloat";
+                        n = SimileAjax.Platform.browser.isIE ? "styleFloat" : "cssFloat";
                     } else if (n == "-moz-opacity") {
                         n = "MozOpacity";
                     } else {
