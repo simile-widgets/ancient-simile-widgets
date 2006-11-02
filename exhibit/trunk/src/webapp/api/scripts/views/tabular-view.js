@@ -39,21 +39,15 @@ Exhibit.TabularView = function(exhibit, div, configuration, globalConfiguration)
                 var expression = Exhibit.Expression.parse(expr);
                 if (expression.isPath()) {
                     var path = expression.getPath();
-                    if (path.getSegmentCount() == 1) {
-                        var segment = path.getSegment(0);
-                        
-                        if (format == null) {
-                            format = "list";
-                        }
-
-                        this._columns.push({
-                            property:   segment.property,
-                            forward:    segment.forward,
-                            styler:     styler,
-                            label:      label,
-                            format:     format
-                        });
+                    if (format == null) {
+                        format = "list";
                     }
+                    this._columns.push({
+                        expression: expression,
+                        styler:     styler,
+                        label:      label,
+                        format:     format
+                    });
                 }
             }
         }
@@ -78,8 +72,7 @@ Exhibit.TabularView = function(exhibit, div, configuration, globalConfiguration)
     }
     if (this._columns.length == 0) {
         this._columns.push(
-            {   property:   "label",
-                forward:    true,
+            {   expression: Exhibit.Expression.parse(".label"),
                 styler:     null,
                 label:      exhibit.getDatabase().getProperty("label").getLabel(),
                 format:     "list"
@@ -160,8 +153,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
          *  Sort the items
          */
         var sortColumn = this._columns[this._sortColumn];
-        items.sort(this._createSortFunction(
-            items, sortColumn.property, sortColumn.forward, this._sortAscending));
+        items.sort(this._createSortFunction(items, sortColumn.expression, this._sortAscending));
     
         var table = document.createElement("table");
         table.cellPadding = 5;
@@ -175,8 +167,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         var createColumnHeader = function(i) {
             var column = self._columns[i];
             if (column.label == null) {
-                var property = database.getProperty(column.property);
-                column.label = column.forward ? property.getLabel() : property.getReverseLabel();
+                column.label = self._getColumnLabel(column.expression);
             }
             
             var td = document.createElement("th");
@@ -212,23 +203,24 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                 var property = database.getProperty(column.property);
                 var td = tr.insertCell(c);
                 
-                var values = column.forward ? 
-                    database.getObjects(item.id, column.property) :
-                    database.getSubjects(item.id, column.property);
-                var valueType = column.forward ?
-                    property.getValueType() :
-                    "item";
-                    
+                var results = column.expression.evaluate(
+                    { "value" : item.id }, 
+                    { "value" : "item" }, 
+                    "value",
+                    database
+                );
+        
                 switch (column.format) {
                 case "image":
-                    values.visit(function(url) {
+                    results.values.visit(function(url) {
                         var img = document.createElement("img");
                         img.src = url;
                         td.appendChild(img);
                     });
                     break;
                 default:
-                    Exhibit.TabularView._constructDefaultValueList(values, valueType, td, exhibit);
+                    Exhibit.TabularView._constructDefaultValueList(
+                        results.values, results.valueType, td, exhibit);
                 }
                 
                 if (column.styler != null) {
@@ -241,7 +233,15 @@ Exhibit.TabularView.prototype._reconstruct = function() {
     }
 };
 
-Exhibit.TabularView.prototype._createSortFunction = function(items, property, forward, ascending) {
+Exhibit.TabularView.prototype._getColumnLabel = function(expression) {
+    var database = this._exhibit.getDatabase();
+    var path = expression.getPath();
+    var segment = path.getSegment(path.getSegmentCount() - 1);
+    var property = database.getProperty(segment.property);
+    return segment.forward ? property.getLabel() : property.getReverseLabel();
+};
+
+Exhibit.TabularView.prototype._createSortFunction = function(items, expression, ascending) {
     var database = this._exhibit.getDatabase();
     var multiply = ascending ? 1 : -1;
     
@@ -251,21 +251,31 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, property, fo
     var textFunction = function(item1, item2) {
         return multiply * item1.sortKey.localeCompare(item2.sortKey);
     };
+
+    var path = expression.getPath();
+    var segment = path.getSegment(path.getSegmentCount() - 1);
+    var getValue = function(item) {
+        return path.evaluateSingle(
+            { "value" : item.id }, 
+            { "value" : "item" }, 
+            "value",
+            database
+        ).value;
+    };
     
-    if (forward) {
-        var valueType = database.getProperty(property).getValueType();
-        
+    if (segment.forward) {
+        var valueType = database.getProperty(segment.property).getValueType();
         if (valueType == "item") {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var valueItem = database.getObject(item.id, property);
-                var value = (valueItem == null) ? null : database.getObject(valueItem, "label");
-                item.sortKey = (value == null) ? Exhibit.l10n.missingSortKey : value;
+                var valueItem = getValue(item);
+                var valueLabel = (valueItem == null) ? null : database.getObject(valueItem, "label");
+                item.sortKey = (valueLabel == null) ? Exhibit.l10n.missingSortKey : valueLabel;
             }
         } else if (valueType == "number") {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var value = database.getObject(item.id, property);
+                var value = getValue(item);
                 if (!(typeof value == "number")) {
                     try {
                         value = parseFloat(value);
@@ -280,7 +290,7 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, property, fo
         } else if (valueType == "date") {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var value = database.getObject(item.id, property);
+                var value = getValue(item);
                 if (value != null && value instanceof Date) {
                     value = value.getTime();
                 } else {
@@ -297,16 +307,16 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, property, fo
         } else {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                var value = database.getObject(item.id, property);
+                var value = getValue(item);
                 item.sortKey = (value == null) ? Exhibit.l10n.missingSortKey : value;
             }
         }
     } else {
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
-            var valueItem = database.getSubject(item.id, property);
-            var value = valueItem == null ? null : database.getObject(valueItem, "label");
-            item.sortKey = (value == null) ? Exhibit.l10n.missingSortKey : value;
+            var valueItem = getValue(item);
+            var valueLabel = valueItem == null ? null : database.getObject(valueItem, "label");
+            item.sortKey = (valueLabel == null) ? Exhibit.l10n.missingSortKey : valueLabel;
         }
     }
     
