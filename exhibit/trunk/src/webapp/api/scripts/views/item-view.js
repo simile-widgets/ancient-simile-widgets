@@ -199,6 +199,14 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         var name = attribute.nodeName;
         var value = attribute.nodeValue;
         
+        if (name == "cellspacing") {
+            name = "cellSpacing";
+        } else if (name == "cellpadding") {
+            name = "cellPadding";
+        } else if (name == "bgcolor") {
+            name = "bgColor";
+        }
+        
         if (name == "control") {
             templateNode.control = value;
         } else if (name == "content") {
