@@ -30,10 +30,12 @@
             valueType:              "number"
         },
         'inDate': {
-            valueType:              "date"
+            valueType:              "date",
+            label:                  "in office"
         },
         'outDate': {
-            valueType:              "date"
+            valueType:              "date",
+            label:                  "out office"
         },
         'birth': {
             valueType:              "date"

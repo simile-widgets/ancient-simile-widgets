@@ -44,10 +44,16 @@
                                         label:      "photo"
                                     },
                                     ".party",
-                                    ".birth",
-                                    ".death",
+                                    {   expression: ".presidency.inDate",
+                                        label:      "took office"
+                                    },
+                                    {   expression: ".presidency.outDate",
+                                        label:      "left office"
+                                    },
                                     ".religion"
                                 ],
+                                sortColumn: 4,
+                                sortAscending: true,
                                 rowStyler: function(item, database, tr) {
                                     var party = database.getObject(item, "party");
                                     var color = "white";
