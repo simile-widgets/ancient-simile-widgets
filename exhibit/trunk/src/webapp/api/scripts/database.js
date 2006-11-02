@@ -205,6 +205,10 @@ Exhibit.Database.prototype.getAllItems = function() {
     return items;
 };
 
+Exhibit.Database.prototype.containsItem = function(itemID) {
+    return this._items.contains(itemID);
+};
+
 Exhibit.Database.prototype.getAllProperties = function() {
     if (this._propertyArray == null) {
         this._propertyArray = [];

@@ -77,10 +77,10 @@ a.exhibit-menu-item div img {
 /*
  *  Copy Button and Dialog Box
  */
-button.exhibit-copy-button {
+button.exhibit-copyButton {
 }
 
-div.exhibit-copy-dialog {
+div.exhibit-copyDialog {
     position:       fixed;
     z-index:        1000;
     background:     #B2E8FF;
@@ -91,12 +91,34 @@ div.exhibit-copy-dialog {
     top:            10em;
 }
 
-div.exhibit-copy-dialog textarea {
+div.exhibit-copyDialog textarea {
     width:          100%;
     font-size:      90%;
     color:          #888;
 }
 
-div.exhibit-copy-dialog button {
+div.exhibit-copyDialog button {
     float:          right;
+}
+
+/*
+ *  Focus Dialog Box
+ */
+div.exhibit-focusDialog {
+    position:       fixed;
+    z-index:        1000;
+    background:     #B2E8FF;
+    border:         1px solid #aaa;
+    padding:        2em;
+    left:           25%;
+    right:          25%;
+    top:            10em;
+}
+
+div.exhibit-focusDialog-viewContainer {
+}
+
+div.exhibit-focusDialog-controls {
+    margin:         1em;
+    text-align:     center;
 }

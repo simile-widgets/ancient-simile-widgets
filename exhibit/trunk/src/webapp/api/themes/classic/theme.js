@@ -94,14 +94,14 @@ Exhibit.Theme = {
     },
     createCopyButton: function(all) {
         var button = document.createElement("button");
-        button.className = "exhibit-copy-button";
+        button.className = "exhibit-copyButton";
         button.innerHTML = all ? Exhibit.l10n.copyAllButtonLabel : Exhibit.l10n.copyButtonLabel;
         return button;
     },
     createCopyDialogBox: function(string) {
         var template = {
             tag:        "div",
-            className:  "exhibit-copy-dialog exhibit-ui-protection",
+            className:  "exhibit-copyDialog exhibit-ui-protection",
             children: [
                 {   tag:        "button",
                     field:      "closeButton",
@@ -125,6 +125,61 @@ Exhibit.Theme = {
             document.body.appendChild(dom.elmt);
             dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
             dom.textarea.select();
+            
+            SimileAjax.WindowManager.registerEvent(
+                dom.closeButton, 
+                "click", 
+                function(elmt, evt, target) {
+                    SimileAjax.WindowManager.popLayer(dom.layer);
+                    SimileAjax.DOM.cancelEvent(evt);
+                    return false;
+                }, 
+                dom.layer
+            );
+            SimileAjax.WindowManager.registerEvent(
+                dom.textarea, 
+                "keyup", 
+                function(elmt, evt, target) {
+                    if (evt.keyCode == 27) { // ESC
+                        SimileAjax.WindowManager.popLayer(dom.layer);
+                        SimileAjax.DOM.cancelEvent(evt);
+                        return false;
+                    }
+                    return true;
+                }, 
+                dom.layer
+            );
+        };
+        
+        return dom;
+    },
+    createFocusDialogBox: function() {
+        var template = {
+            tag:        "div",
+            className:  "exhibit-focusDialog exhibit-ui-protection",
+            children: [
+                {   tag:        "div",
+                    className:  "exhibit-focusDialog-viewContainer",
+                    field:      "viewContainer"
+                },
+                {   tag:        "div",
+                    className:  "exhibit-focusDialog-controls",
+                    children: [
+                        {   tag:        "button",
+                            field:      "closeButton",
+                            children:    [ Exhibit.l10n.focusDialogBoxCloseButtonLabel ]
+                        }
+                    ]
+                }
+            ]
+        };
+        var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+        dom.close = function() {
+            document.body.removeChild(dom.elmt);
+        };
+        dom.open = function() {
+            document.body.appendChild(dom.elmt);
+            dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
             
             SimileAjax.WindowManager.registerEvent(
                 dom.closeButton, 

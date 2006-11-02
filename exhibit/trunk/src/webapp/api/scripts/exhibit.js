@@ -332,8 +332,12 @@ Exhibit._Impl.prototype._parseURL = function() {
 };
 
 Exhibit._Impl.prototype._tryToFocusOnItem = function() {
-    if (this._focusID != null) {
-        alert(this._focusID);
+    if (this._focusID != null && this._database.containsItem(this._focusID)) {
+        var dom = Exhibit.Theme.createFocusDialogBox();
+        var itemView = new Exhibit.ItemView(this._focusID, dom.viewContainer, this, this._configuration);
+        dom.open();
+        
+        this._focusID = null;
     }
 };
 

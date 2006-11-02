@@ -231,13 +231,14 @@ Exhibit.ListFacet.theme.constructFacetItem = function(
         }
     };
     
-    SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelect);
+    SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelect, SimileAjax.WindowManager.getBaseLayer());
     SimileAjax.WindowManager.registerEvent(dom.groupControlDiv, "click", 
         function(elmt, evt, target) {
             dom.toggleGroup();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
-        }
+        },
+        SimileAjax.WindowManager.getBaseLayer()
     );
     
     return dom;

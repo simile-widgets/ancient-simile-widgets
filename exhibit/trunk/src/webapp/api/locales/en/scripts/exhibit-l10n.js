@@ -17,6 +17,11 @@ Exhibit.l10n = {
         "Copy this code to your clipboard as you would copy any text. Press ESC to close this dialog box.",
         
     /*
+     *  Focusdialog box
+     */
+    focusDialogBoxCloseButtonLabel:  "Close",
+     
+    /*
      *  Common exporters' labels
      */
     rdfXmlExporterLabel:            "Semantic Web (RDF/XML) format",
