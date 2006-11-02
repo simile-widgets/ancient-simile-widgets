@@ -6,6 +6,7 @@
 Exhibit.l10n = {
     missingLabel:   "missing",
     missingSortKey: "(missing)",
+    itemLinkLabel:  "link",
     
     /*
      *  Copy button and dialog box

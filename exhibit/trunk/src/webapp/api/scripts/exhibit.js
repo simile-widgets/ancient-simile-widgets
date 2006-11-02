@@ -76,7 +76,7 @@ Exhibit._Impl.prototype.getPermanentLink = function() {
 };
 
 Exhibit._Impl.prototype.getItemLink = function(itemID) {
-    return Exhibit._getURLWithoutQuery() + "#" + encodeURIComponent(itemID);
+    return Exhibit._getURLWithoutQueryAndHash() + "#" + encodeURIComponent(itemID);
 };
 
 Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
@@ -347,6 +347,18 @@ Exhibit._Impl.prototype._deserializeState = function(s) {
 
 Exhibit._Impl.prototype._serializeState = function(state) {
     return Exhibit._anythingToJSON(state);
+};
+
+Exhibit._getURLWithoutQueryAndHash = function() {
+    var url = document.location.href;
+    var hash = url.indexOf("#");
+    var question = url.indexOf("?");
+    if (hash >= 0) {
+        url = url.substr(0, hash);
+    } else if (question >= 0) {
+        url = url.substr(0, question);
+    }
+    return url;
 };
 
 Exhibit._getURLWithoutQuery = function() {

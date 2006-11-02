@@ -9,6 +9,7 @@
                 <div>Religions: <span content=".religion" /></div>
                 <div>Birth: <span content=".birth" />, <span content=".birthPlace" /></div>
                 <div if-exists=".death">Death: <span content=".death" />, <span content=".deathPlace" /></div>
+                <div control="item-link" />
             </td>
         </tr>
     </table>

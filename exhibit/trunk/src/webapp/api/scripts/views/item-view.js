@@ -312,7 +312,12 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
         case "copy-button":
             elmt.appendChild(exhibit.makeCopyButton(value));
             break;
-        case "link":
+        case "item-link":
+            var a = document.createElement("a");
+            a.innerHTML = Exhibit.l10n.itemLinkLabel;
+            a.href = exhibit.getItemLink(value);
+            a.target = "new";
+            elmt.appendChild(a);
         }
     } else if (templateNode.content != null) {
         var results = templateNode.content.evaluate(
