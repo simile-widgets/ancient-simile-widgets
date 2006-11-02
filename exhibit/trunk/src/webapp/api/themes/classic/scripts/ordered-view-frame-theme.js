@@ -30,7 +30,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                 style:  { display: "none" },
                 children: [
                     {   elmt:   exhibit.makeCopyButton(null),
-                        style:  { cssFloat: "right" }
+                        style:  { "float": "right" }
                     },
                     {   tag:    "div",
                         children: Exhibit.ViewPanel.l10n.createResultsSummaryTemplate(
