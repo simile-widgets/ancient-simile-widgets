@@ -149,12 +149,12 @@ Exhibit.ItemView._startCompilingTemplate = function(viewTemplateURL, job) {
                     Exhibit.ItemView._performConstructFromViewTemplateJob(
                         compiledTemplate, compiledTemplate.jobs[i]);
                 } catch (e) {
-                    SimileAjax.Debug.exception(e);
+                    SimileAjax.Debug.exception("ItemView: Error constructing view template in job queue", e);
                 }
             }
             compiledTemplate.jobs = null;
         } catch (e) {
-            SimileAjax.Debug.exception(e);
+            SimileAjax.Debug.exception("ItemView: Error compiling view template and processing template job queue", e);
         }
     };
     

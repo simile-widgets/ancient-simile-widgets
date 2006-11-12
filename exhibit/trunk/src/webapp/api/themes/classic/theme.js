@@ -123,6 +123,8 @@ Exhibit.Theme = {
             document.body.removeChild(dom.elmt);
         };
         dom.open = function() {
+            dom.elmt.style.top = (document.body.scrollTop + 100) + "px";
+            
             document.body.appendChild(dom.elmt);
             dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
             dom.textarea.select();
@@ -154,7 +156,7 @@ Exhibit.Theme = {
         
         return dom;
     },
-    createFocusDialogBox: function() {
+    createFocusDialogBox: function(itemID, exhibit, configuration) {
         var template = {
             tag:        "div",
             className:  "exhibit-focusDialog exhibit-ui-protection",
@@ -179,8 +181,11 @@ Exhibit.Theme = {
             document.body.removeChild(dom.elmt);
         };
         dom.open = function() {
-            document.body.appendChild(dom.elmt);
             dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
+            var itemView = new Exhibit.ItemView(itemID, dom.viewContainer, exhibit, configuration);
+            
+            dom.elmt.style.top = (document.body.scrollTop + 100) + "px";
+            document.body.appendChild(dom.elmt);
             
             SimileAjax.WindowManager.registerEvent(
                 dom.closeButton, 
@@ -189,19 +194,6 @@ Exhibit.Theme = {
                     SimileAjax.WindowManager.popLayer(dom.layer);
                     SimileAjax.DOM.cancelEvent(evt);
                     return false;
-                }, 
-                dom.layer
-            );
-            SimileAjax.WindowManager.registerEvent(
-                dom.textarea, 
-                "keyup", 
-                function(elmt, evt, target) {
-                    if (evt.keyCode == 27) { // ESC
-                        SimileAjax.WindowManager.popLayer(dom.layer);
-                        SimileAjax.DOM.cancelEvent(evt);
-                        return false;
-                    }
-                    return true;
                 }, 
                 dom.layer
             );

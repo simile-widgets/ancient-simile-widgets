@@ -226,7 +226,7 @@ Exhibit.Database.prototype.getAllProperties = function() {
 
 Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseURI) {
     if (!("label" in itemEntry) && !("id" in itemEntry)) {
-        SimileAjax.Debug.warn("Item entry has no label and no id", itemEntry);
+        SimileAjax.Debug.warn("Item entry has no label and no id: " + itemEntry);
         return;
     }
     
@@ -234,7 +234,7 @@ Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseUR
     if (!("label" in itemEntry)) {
         id = itemEntry.id;
         if (!this._items.contains(id)) {
-            SimileAjax.Debug.warn("Cannot add new item containing no label", itemEntry);
+            SimileAjax.Debug.warn("Cannot add new item containing no label: " + itemEntry);
         }
     } else {
         var label = itemEntry.label;

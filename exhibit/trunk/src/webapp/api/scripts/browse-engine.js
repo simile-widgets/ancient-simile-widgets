@@ -65,7 +65,9 @@ Exhibit.BrowseEngine.prototype.getCollectionCount = function() {
 }
 
 Exhibit.BrowseEngine.prototype.getCurrentCollection = function() {
-    return this._collections[this.getFocus()];
+    var index = this.getFocus();
+    var length = this._collections.length;
+    return (index >= 0 && index < length) ? this._collections[index] : null;
 };
 
 Exhibit.BrowseEngine.prototype.getCollection = function(index) {

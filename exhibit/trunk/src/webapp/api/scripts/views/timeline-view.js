@@ -86,7 +86,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
             this._densityFactor = configuration.densityFactor;
         }
     } catch (e) {
-        SimileAjax.Debug.exception(e);
+        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
     }
     
     var getMarkerKey = null;
@@ -105,7 +105,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
             }
         }
     } catch (e) {
-        SimileAjax.Debug.exception(e);
+        SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view", e);
     }
     
     this._getDurations = (getDurations != null) ? getDurations : function(itemID, database) { return {}; };

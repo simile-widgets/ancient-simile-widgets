@@ -89,14 +89,13 @@ button:hover.exhibit-copyButton {
 }
 
 div.exhibit-copyDialog {
-    position:       fixed;
+    position:       absolute;
     z-index:        1000;
     background:     #B2E8FF;
     border:         1px solid #aaa;
     padding:        2em;
     left:           25%;
     right:          25%;
-    top:            10em;
 }
 
 div.exhibit-copyDialog textarea {
@@ -113,14 +112,13 @@ div.exhibit-copyDialog button {
  *  Focus Dialog Box
  */
 div.exhibit-focusDialog {
-    position:       fixed;
+    position:       absolute;
     z-index:        1000;
     background:     #B2E8FF;
     border:         1px solid #aaa;
     padding:        2em;
     left:           25%;
     right:          25%;
-    top:            10em;
 }
 
 div.exhibit-focusDialog-viewContainer {

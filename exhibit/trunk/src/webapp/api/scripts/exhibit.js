@@ -99,8 +99,7 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
             try {
                 o = eval("(" + xmlhttp.responseText + ")");
             } catch (e) {
-                SimileAjax.Debug.exception(e);
-                SimileAjax.Debug.log("Syntax error in JSON file at " + urls[0]);
+                SimileAjax.Debug.exception("Exhibit: Error evaluating JSON results from " + urls[0], e);
             }
             
             if (o != null) {
@@ -110,7 +109,7 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
             urls.shift();
             fNext();
         } catch (e) {
-            SimileAjax.Debug.exception(e);
+            SimileAjax.Debug.exception("Exhibit: Error loading next JSON URL", e);
         }
     };
     
@@ -130,7 +129,7 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
                     }
                 }
             } catch (e) {
-                SimileAjax.Debug.exception(e);
+                SimileAjax.Debug.exception("Exhibit: Error loading next JSON URL", e);
             }
         }
     };
@@ -256,7 +255,7 @@ Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
     bubble.content.appendChild(itemViewDiv);
 };
 
-Exhibit._Impl.prototype.makeCopyButton = function(itemID) {
+Exhibit._Impl.prototype.makeCopyButton = function(itemID, layer) {
     var self = this;
     var button = Exhibit.Theme.createCopyButton(itemID == null);
     var handler = function(elmt, evt, target) {
@@ -264,7 +263,9 @@ Exhibit._Impl.prototype.makeCopyButton = function(itemID) {
         SimileAjax.DOM.cancelEvent(evt);
         return false;
     }
-    SimileAjax.WindowManager.registerEvent(button, "click", handler);
+    SimileAjax.WindowManager.registerEvent(
+        button, "click", handler, layer != null ? layer : SimileAjax.WindowManager.getHighestLayer());
+        
     return button;
 };
 
@@ -304,14 +305,13 @@ Exhibit._Impl.prototype._parseURL = function() {
     
     var hash = document.location.hash;
     if (hash.length > 1) {
-        this._focusID = hash.substr(1);
+        this._focusID = decodeURIComponent(hash.substr(1));
     }
 };
 
 Exhibit._Impl.prototype._tryToFocusOnItem = function() {
     if (this._focusID != null && this._database.containsItem(this._focusID)) {
-        var dom = Exhibit.Theme.createFocusDialogBox();
-        var itemView = new Exhibit.ItemView(this._focusID, dom.viewContainer, this, this._configuration);
+        var dom = Exhibit.Theme.createFocusDialogBox(this._focusID, this, this._configuration);
         dom.open();
         
         this._focusID = null;

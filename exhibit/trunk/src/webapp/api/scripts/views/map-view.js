@@ -57,7 +57,7 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
             }
         }
     } catch (e) {
-        SimileAjax.Debug.exception(e);
+        SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
     }
     
     var getMarkerKey = null;
@@ -76,7 +76,7 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
             }
         }
     } catch (e) {
-        SimileAjax.Debug.exception(e);
+        SimileAjax.Debug.exception("MapView: Error processing marker configuration of map view", e);
     }
     
     this._getLatLng = (getLatLng != null) ? getLatLng : function(itemID, database) { return {}; };
