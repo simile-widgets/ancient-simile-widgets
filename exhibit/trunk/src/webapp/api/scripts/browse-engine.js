@@ -31,8 +31,20 @@ Exhibit.BrowseEngine = function(database, configuration) {
         }
     }
     
+    var self = this;
+    this._databaseListener = {
+        onAfterLoadingItems: function() {
+            delete self._cachedRootFacets;
+        }
+    };
+    this._database.addListener(this._databaseListener);
+    
     this._collections = [];
     this._slides = [];
+};
+
+Exhibit.BrowseEngine.prototype.dispose = function() {
+    this._database.removeListener(this._databaseListener);
 };
 
 Exhibit.BrowseEngine.prototype.addListener = function(listener) {
@@ -84,9 +96,31 @@ Exhibit.BrowseEngine.prototype.getFacets = function() {
     var focusIndex = this.getFocus();
     if (focusIndex >= 0) {
         var collection = this._collections[focusIndex];
-        for (var i = 0; i < collection._restrictions.length; i++) {
-            var r = collection._restrictions[i];
-            this._computeFacet(collection, r, facets);
+        
+        var isRoot = (focusIndex == 0);
+        var empty = true;
+        
+        if (isRoot) {
+            for (var i = 0; i < collection._restrictions.length; i++) {
+                var r = collection._restrictions[i];
+                if (r.hasSelection()) {
+                    empty = false;
+                    break;
+                }
+            }
+        }
+        
+        if (isRoot && empty && "_cachedRootFacets" in this) {
+            facets = this._cachedRootFacets;
+        } else {
+            for (var i = 0; i < collection._restrictions.length; i++) {
+                var r = collection._restrictions[i];
+                this._computeFacet(collection, r, facets);
+            }
+            
+            if (isRoot && empty) {
+                this._cachedRootFacets = facets;
+            }
         }
     }
     return facets;
@@ -125,6 +159,9 @@ Exhibit.BrowseEngine.prototype.setRootCollection = function(itemSet) {
     this._collections = [];
     this._slides = [];
     this._addCollection(itemSet)._focused = true;
+    
+    delete this._cachedRootFacets;
+    
     this._listeners.fire("onRootCollectionSet", []);
 };
 
