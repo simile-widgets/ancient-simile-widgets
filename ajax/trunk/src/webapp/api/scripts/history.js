@@ -81,27 +81,32 @@ SimileAjax.History.removeListener = function(listener) {
 SimileAjax.History.addAction = function(action) {
     SimileAjax.History.initialize();
     
-    try {
-        action.perform();
-        if (SimileAjax.History.enabled) {
-            SimileAjax.History._actions = SimileAjax.History._actions.slice(
-                0, SimileAjax.History._currentIndex - SimileAjax.History._baseIndex);
+    SimileAjax.History._listeners.fire("onBeforePerform", [ action ]);
+    window.setTimeout(function() {
+        try {
+            action.perform();
+            SimileAjax.History._listeners.fire("onAfterPerform", [ action ]);
                 
-            SimileAjax.History._actions.push(action);
-            SimileAjax.History._currentIndex++;
-            
-            var diff = SimileAjax.History._actions.length - SimileAjax.History.maxHistoryLength;
-            if (diff > 0) {
-                SimileAjax.History._actions = SimileAjax.History._actions.slice(diff);
-                SimileAjax.History._baseIndex += diff;
+            if (SimileAjax.History.enabled) {
+                SimileAjax.History._actions = SimileAjax.History._actions.slice(
+                    0, SimileAjax.History._currentIndex - SimileAjax.History._baseIndex);
+                    
+                SimileAjax.History._actions.push(action);
+                SimileAjax.History._currentIndex++;
+                
+                var diff = SimileAjax.History._actions.length - SimileAjax.History.maxHistoryLength;
+                if (diff > 0) {
+                    SimileAjax.History._actions = SimileAjax.History._actions.slice(diff);
+                    SimileAjax.History._baseIndex += diff;
+                }
+                
+                SimileAjax.History._iframe.contentWindow.location.search = 
+                    "?" + SimileAjax.History._currentIndex;
             }
-            
-            SimileAjax.History._iframe.contentWindow.location.search = 
-                "?" + SimileAjax.History._currentIndex;
+        } catch (e) {
+            SimileAjax.Debug.exception("Error adding action {" + action.label + "} to history", e);
         }
-    } catch (e) {
-        SimileAjax.Debug.exception("Error adding action {" + action.label + "} to history", e);
-    }
+    }, 0);
 };
 
 SimileAjax.History._handleIFrameOnLoad = function() {
@@ -114,47 +119,54 @@ SimileAjax.History._handleIFrameOnLoad = function() {
     var q = SimileAjax.History._iframe.contentWindow.location.search;
     var c = (q.length == 0) ? 0 : Math.max(0, parseInt(q.substr(1)));
     
+    var finishUp = function() {
+        var diff = c - SimileAjax.History._currentIndex;
+        SimileAjax.History._currentIndex += diff;
+        SimileAjax.History._baseIndex += diff;
+            
+        SimileAjax.History._iframe.contentWindow.location.search = "?" + c;
+    };
+    
     if (c < SimileAjax.History._currentIndex) { // need to undo
         SimileAjax.History._listeners.fire("onBeforeUndoSeveral", []);
-        
-        while (SimileAjax.History._currentIndex > c && 
-               SimileAjax.History._currentIndex > SimileAjax.History._baseIndex) {
-               
-            SimileAjax.History._currentIndex--;
-            
-            var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
-            
-            SimileAjax.History._listeners.fire("onBeforeUndo", [ action ]);
-            try {
-                action.undo();
-                SimileAjax.History._listeners.fire("onAfterUndo", [ action, true ]);
-            } catch (e) {
-                SimileAjax.History._listeners.fire("onAfterUndo", [ action, false ]);
+        window.setTimeout(function() {
+            while (SimileAjax.History._currentIndex > c && 
+                   SimileAjax.History._currentIndex > SimileAjax.History._baseIndex) {
+                   
+                SimileAjax.History._currentIndex--;
+                
+                var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
+                
+                try {
+                    action.undo();
+                } catch (e) {
+                    SimileAjax.Debug.exception("History: Failed to undo action {" + action.label + "}");
+                }
             }
-        }
-        
-        SimileAjax.History._listeners.fire("onAfterUndoSeveral", []);
-        
+            
+            SimileAjax.History._listeners.fire("onAfterUndoSeveral", []);
+            finishUp();
+        }, 0);
     } else if (c > SimileAjax.History._currentIndex) { // need to redo
         SimileAjax.History._listeners.fire("onBeforeRedoSeveral", []);
-        
-        while (SimileAjax.History._currentIndex < c && 
-               SimileAjax.History._currentIndex - SimileAjax.History._baseIndex < SimileAjax.History._actions.length) {
-               
-            var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
-            
-            SimileAjax.History._listeners.fire("onBeforeRedo", [ action ]);
-            try {
-                action.perform();
-                SimileAjax.History._listeners.fire("onAfterRedo", [ action, true ]);
-            } catch (e) {
-                SimileAjax.History._listeners.fire("onAfterRedo", [ action, false ]);
+        window.setTimeout(function() {
+            while (SimileAjax.History._currentIndex < c && 
+                   SimileAjax.History._currentIndex - SimileAjax.History._baseIndex < SimileAjax.History._actions.length) {
+                   
+                var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
+                
+                try {
+                    action.perform();
+                } catch (e) {
+                    SimileAjax.Debug.exception("History: Failed to redo action {" + action.label + "}");
+                }
+                
+                SimileAjax.History._currentIndex++;
             }
             
-            SimileAjax.History._currentIndex++;
-        }
-        
-        SimileAjax.History._listeners.fire("onAfterRedoSeveral", []);
+            SimileAjax.History._listeners.fire("onAfterRedoSeveral", []);
+            finishUp();
+        }, 0);
     } else {
         var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex - 1;
         var title = (index >= 0 && index < SimileAjax.History._actions.length) ?
@@ -163,12 +175,5 @@ SimileAjax.History._handleIFrameOnLoad = function() {
             
         SimileAjax.History._iframe.contentWindow.document.title = title;
         document.title = title;
-        return;
     }
-    
-    var diff = c - SimileAjax.History._currentIndex;
-    SimileAjax.History._currentIndex += diff;
-    SimileAjax.History._baseIndex += diff;
-        
-    SimileAjax.History._iframe.contentWindow.location.search = "?" + c;
 };
