@@ -33,7 +33,7 @@ SimileAjax.XmlHttp._onReadyStateChange = function(xmlhttp, fError, fDone) {
                 }
             }
         } catch (e) {
-            SimileAjax.Debug.exception(e);
+            SimileAjax.Debug.exception("XmlHttp: Error handling onReadyStateChange", e);
         }
         break;
     }

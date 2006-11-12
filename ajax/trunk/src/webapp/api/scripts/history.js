@@ -29,7 +29,7 @@ SimileAjax.History = {
     enabled:               true,
     
     _initialized:           false,
-    _listeners:             [],
+    _listeners:             new SimileAjax.ListenerQueue(),
     
     _actions:               [],
     _baseIndex:             0,
@@ -69,19 +69,13 @@ SimileAjax.History.initialize = function() {
 SimileAjax.History.addListener = function(listener) {
     SimileAjax.History.initialize();
     
-    SimileAjax.History._listeners.push(listener);
+    SimileAjax.History._listeners.add(listener);
 };
 
 SimileAjax.History.removeListener = function(listener) {
     SimileAjax.History.initialize();
     
-    var listeners = SimileAjax.History._listeners;
-    for (var i = 0; i < listeners.length; i++) {
-        if (listeners[i] == listener) {
-            listeners.splice(i, 1);
-            break;
-        }
-    }
+    SimileAjax.History._listeners.remove(listener);
 };
 
 SimileAjax.History.addAction = function(action) {
@@ -106,7 +100,7 @@ SimileAjax.History.addAction = function(action) {
                 "?" + SimileAjax.History._currentIndex;
         }
     } catch (e) {
-        SimileAjax.Debug.exception(e);
+        SimileAjax.Debug.exception("Error adding action {" + action.label + "} to history", e);
     }
 };
 
@@ -121,7 +115,7 @@ SimileAjax.History._handleIFrameOnLoad = function() {
     var c = (q.length == 0) ? 0 : Math.max(0, parseInt(q.substr(1)));
     
     if (c < SimileAjax.History._currentIndex) { // need to undo
-        SimileAjax.History._fire("onBeforeUndoSeveral", []);
+        SimileAjax.History._listeners.fire("onBeforeUndoSeveral", []);
         
         while (SimileAjax.History._currentIndex > c && 
                SimileAjax.History._currentIndex > SimileAjax.History._baseIndex) {
@@ -130,37 +124,37 @@ SimileAjax.History._handleIFrameOnLoad = function() {
             
             var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
             
-            SimileAjax.History._fire("onBeforeUndo", [ action ]);
+            SimileAjax.History._listeners.fire("onBeforeUndo", [ action ]);
             try {
                 action.undo();
-                SimileAjax.History._fire("onAfterUndo", [ action, true ]);
+                SimileAjax.History._listeners.fire("onAfterUndo", [ action, true ]);
             } catch (e) {
-                SimileAjax.History._fire("onAfterUndo", [ action, false ]);
+                SimileAjax.History._listeners.fire("onAfterUndo", [ action, false ]);
             }
         }
         
-        SimileAjax.History._fire("onAfterUndoSeveral", []);
+        SimileAjax.History._listeners.fire("onAfterUndoSeveral", []);
         
     } else if (c > SimileAjax.History._currentIndex) { // need to redo
-        SimileAjax.History._fire("onBeforeRedoSeveral", []);
+        SimileAjax.History._listeners.fire("onBeforeRedoSeveral", []);
         
         while (SimileAjax.History._currentIndex < c && 
                SimileAjax.History._currentIndex - SimileAjax.History._baseIndex < SimileAjax.History._actions.length) {
                
             var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
             
-            SimileAjax.History._fire("onBeforeRedo", [ action ]);
+            SimileAjax.History._listeners.fire("onBeforeRedo", [ action ]);
             try {
                 action.perform();
-                SimileAjax.History._fire("onAfterRedo", [ action, true ]);
+                SimileAjax.History._listeners.fire("onAfterRedo", [ action, true ]);
             } catch (e) {
-                SimileAjax.History._fire("onAfterRedo", [ action, false ]);
+                SimileAjax.History._listeners.fire("onAfterRedo", [ action, false ]);
             }
             
             SimileAjax.History._currentIndex++;
         }
         
-        SimileAjax.History._fire("onAfterRedoSeveral", []);
+        SimileAjax.History._listeners.fire("onAfterRedoSeveral", []);
     } else {
         var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex - 1;
         var title = (index >= 0 && index < SimileAjax.History._actions.length) ?
@@ -177,18 +171,4 @@ SimileAjax.History._handleIFrameOnLoad = function() {
     SimileAjax.History._baseIndex += diff;
         
     SimileAjax.History._iframe.contentWindow.location.search = "?" + c;
-};
-
-SimileAjax.History._fire = function(handlerName, args) {
-    var listeners = [].concat(SimileAjax.History._listeners);
-    for (var i = 0; i < listeners.length; i++) {
-        var listener = listeners[i];
-        if (handlerName in listener) {
-            try {
-                listener[handlerName].apply(listener, args);
-            } catch (e) {
-                SimileAjax.Debug.exception(e);
-            }
-        }
-    }
 };

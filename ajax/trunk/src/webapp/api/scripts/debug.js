@@ -3,7 +3,9 @@
  *==================================================
  */
 
-SimileAjax.Debug = new Object();
+SimileAjax.Debug = {
+    silent: false
+};
 
 SimileAjax.Debug.log = function(msg) {
     var f;
@@ -20,7 +22,22 @@ SimileAjax.Debug.log = function(msg) {
     f(msg);
 };
 
-SimileAjax.Debug.exception = function(e) {
+SimileAjax.Debug.warn = function(msg) {
+    var f;
+    if ("console" in window && "warn" in window.console) { // FireBug installed
+        f = function(msg2) {
+            console.warn(msg2);
+        }
+    } else {
+        f = function(msg2) {
+            alert(msg2);
+        }
+    }
+    SimileAjax.Debug.warn = f;
+    f(msg);
+};
+
+SimileAjax.Debug.exception = function(msg, e) {
     var f;
     if ("console" in window && "error" in window.console) { // FireBug installed
         f = function(e2) {
@@ -28,15 +45,15 @@ SimileAjax.Debug.exception = function(e) {
         }
     } else {
         f = SimileAjax.Platform.browser.isIE ?
-            function(e2) {
-                alert("Caught exception: " + e2.message);
+            function(msg2, e2) {
+                alert("Caught exception: " + msg2 + "\n\nDetails: " + e2.description);
             } :
-            function(e2) {
-                alert("Caught exception: " + e2);
+            function(msg2, e2) {
+                alert("Caught exception: " + msg2 + "\n\nDetails: " + e2);
             };
     }
     SimileAjax.Debug.exception = f;
-    f(e);
+    f(msg, e);
 };
 
 SimileAjax.Debug.objectToString = function(o) {

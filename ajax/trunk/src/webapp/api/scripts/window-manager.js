@@ -158,7 +158,7 @@ SimileAjax.WindowManager._handleMouseDown = function(elmt, evt, callback) {
         
         SimileAjax.WindowManager._draggedElementCallback.onDragStart();
     } catch (e) {
-        SimileAjax.Debug.exception(e);
+        SimileAjax.Debug.exception("WindowManager: Error handling mouse down", e);
         SimileAjax.WindowManager._cancelDragging();
     }
 };
@@ -174,7 +174,7 @@ SimileAjax.WindowManager._onBodyMouseMove = function(elmt, evt, target) {
             
             SimileAjax.WindowManager._draggedElementCallback.onDragBy(diffX, diffY);
         } catch (e) {
-            SimileAjax.Debug.exception(e);
+            SimileAjax.Debug.exception("WindowManager: Error handling mouse move", e);
             SimileAjax.WindowManager._cancelDragging();
         }
     }
