@@ -205,6 +205,10 @@ Exhibit.Database.prototype.getAllItems = function() {
     return items;
 };
 
+Exhibit.Database.prototype.getAllItemsCount = function() {
+    return this._items.size();
+};
+
 Exhibit.Database.prototype.containsItem = function(itemID) {
     return this._items.contains(itemID);
 };

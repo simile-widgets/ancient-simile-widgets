@@ -121,6 +121,13 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
             try {
                 if (fDone != null) {
                     fDone();
+                } else {
+                    var browseEngine = exhibit.getBrowseEngine();
+                    var database = exhibit.getDatabase();
+                    if (browseEngine.getCollectionCount() == 0 &&
+                        database.getAllItemsCount() > 0) {
+                        browseEngine.setRootCollection(database.getAllItems());
+                    }
                 }
             } catch (e) {
                 SimileAjax.Debug.exception(e);
@@ -265,36 +272,6 @@ Exhibit._Impl.prototype.getExporters = function() {
     return this._exporters;
 };
 
-Exhibit._Impl.prototype.serializeItem = function(itemID, format) {
-    if (format == "rdf/xml") {
-        var s = "";
-        var uri = this._database.getObject(itemID, "uri");
-        s += "<rdf:Description rdf:about='" + uri + "'>\n"
-        
-        var allProperties = this._database.getAllProperties();
-        for (var i = 0; i < allProperties.length; i++) {
-            var propertyID = allProperties[i];
-            var property = this._database.getProperty(propertyID);
-            var propertyURI = property.getURI();
-            var values = this._database.getObjects(itemID, propertyID);
-            
-            if (property.getValueType() == "item") {
-                values.visit(function(value) {
-                    s += "<" + propertyURI + " rdf:resource='" + value + "' />\n";
-                });
-            } else {
-                values.visit(function(value) {
-                    s += "<" + propertyURI + ">" + value + "</propertyURI>\n";
-                });
-            }
-        }
-        
-        s += "</rdf:Description>";
-        return s;
-    }
-    return "";
-};
-
 Exhibit._Impl.prototype._loadJSON = function(o, url) {
     if ("types" in o) {
         this._database.loadTypes(o.types, url);
@@ -349,27 +326,6 @@ Exhibit._Impl.prototype._serializeState = function(state) {
     return Exhibit._anythingToJSON(state);
 };
 
-Exhibit._getURLWithoutQueryAndHash = function() {
-    var url = document.location.href;
-    var hash = url.indexOf("#");
-    var question = url.indexOf("?");
-    if (hash >= 0) {
-        url = url.substr(0, hash);
-    } else if (question >= 0) {
-        url = url.substr(0, question);
-    }
-    return url;
-};
-
-Exhibit._getURLWithoutQuery = function() {
-    var url = document.location.href;
-    var question = url.indexOf("?");
-    if (question >= 0) {
-        url = url.substr(0, question);
-    }
-    return url;
-};
-
 Exhibit._Impl.prototype._showCopyMenu = function(elmt, itemID) {
     var exhibit = this;
     var popupDom = Exhibit.Theme.createPopupMenuDom(elmt);
@@ -394,6 +350,43 @@ Exhibit._Impl.prototype._showCopyMenu = function(elmt, itemID) {
         makeMenuItem(exporters[format].exporter);
     }
     popupDom.open();
+};
+
+Exhibit._getURLWithoutQueryAndHash = function() {
+    var url;
+    if ("_urlWithoutQueryAndHash" in Exhibit) {
+        url = Exhibit._urlWithoutQueryAndHash;
+    } else {
+        url = document.location.href;
+        
+        var hash = url.indexOf("#");
+        var question = url.indexOf("?");
+        if (hash >= 0) {
+            url = url.substr(0, hash);
+        } else if (question >= 0) {
+            url = url.substr(0, question);
+        }
+        
+        Exhibit._urlWithoutQueryAndHash = url;
+    }
+    return url;
+};
+
+Exhibit._getURLWithoutQuery = function() {
+    var url;
+    if ("_urlWithoutQuery" in Exhibit) {
+        url = Exhibit._urlWithoutQuery;
+    } else {
+        url = document.location.href;
+        
+        var question = url.indexOf("?");
+        if (question >= 0) {
+            url = url.substr(0, question);
+        }
+        
+        Exhibit._urlWithoutQuery = url;
+    }
+    return url;
 };
 
 Exhibit._anythingToJSON = function(x) {
