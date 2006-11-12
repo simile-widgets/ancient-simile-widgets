@@ -148,7 +148,7 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {
-            self._reset();
+            self._exhibit.getViewPanel().resetBrowseQuery();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         },
@@ -357,19 +357,4 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
 
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {
     new Exhibit.ItemView(evt._itemID, elmt, this._exhibit, this._globalConfiguration);
-};
-
-Exhibit.TimelineView.prototype._reset = function() {
-    var state = {};
-    var browseEngine = this._exhibit.getBrowseEngine();
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = browseEngine.clearRestrictions();
-        },
-        undo: function() {
-            browseEngine.applyRestrictions(state.restrictions);
-        },
-        label: Exhibit.OrderedViewFrame.l10n.resetActionTitle,
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
-    });
 };

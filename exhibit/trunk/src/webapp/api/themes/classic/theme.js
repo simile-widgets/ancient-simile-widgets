@@ -200,5 +200,64 @@ Exhibit.Theme = {
         };
         
         return dom;
+    },
+    createBusyIndicator: function() {
+        var urlPrefix = Exhibit.Theme.urlPrefix;
+        var containerDiv = document.createElement("div");
+        if (SimileAjax.Graphics.pngIsTranslucent) {
+            
+            var topDiv = document.createElement("div");
+            topDiv.style.height = "33px";
+            topDiv.style.background = "url(" + urlPrefix + "images/message-top-left.png) top left no-repeat";
+            topDiv.style.paddingLeft = "44px";
+            containerDiv.appendChild(topDiv);
+            
+            var topRightDiv = document.createElement("div");
+            topRightDiv.style.height = "33px";
+            topRightDiv.style.background = "url(" + urlPrefix + "images/message-top-right.png) top right no-repeat";
+            topDiv.appendChild(topRightDiv);
+            
+            var middleDiv = document.createElement("div");
+            middleDiv.style.background = "url(" + urlPrefix + "images/message-left.png) top left repeat-y";
+            middleDiv.style.paddingLeft = "44px";
+            containerDiv.appendChild(middleDiv);
+            
+            var middleRightDiv = document.createElement("div");
+            middleRightDiv.style.background = "url(" + urlPrefix + "images/message-right.png) top right repeat-y";
+            middleRightDiv.style.paddingRight = "44px";
+            middleDiv.appendChild(middleRightDiv);
+            
+            var contentDiv = document.createElement("div");
+            middleRightDiv.appendChild(contentDiv);
+            
+            var bottomDiv = document.createElement("div");
+            bottomDiv.style.height = "55px";
+            bottomDiv.style.background = "url(" + urlPrefix + "images/message-bottom-left.png) bottom left no-repeat";
+            bottomDiv.style.paddingLeft = "44px";
+            containerDiv.appendChild(bottomDiv);
+            
+            var bottomRightDiv = document.createElement("div");
+            bottomRightDiv.style.height = "55px";
+            bottomRightDiv.style.background = "url(" + urlPrefix + "images/message-bottom-right.png) bottom right no-repeat";
+            bottomDiv.appendChild(bottomRightDiv);
+        } else {
+            containerDiv.style.border = "2px solid #7777AA";
+            containerDiv.style.padding = "20px";
+            containerDiv.style.background = "white";
+            Timeline.Graphics.setOpacity(containerDiv, 90);
+            
+            var contentDiv = document.createElement("div");
+            containerDiv.appendChild(contentDiv);
+        }
+        
+        containerDiv.className = "exhibit-busyIndicator";
+        contentDiv.className = "exhibit-busyIndicator-content";
+        
+        var img = document.createElement("img");
+        img.src = urlPrefix + "images/progress-running.gif";
+        contentDiv.appendChild(img);
+        contentDiv.appendChild(document.createTextNode(" " + Exhibit.l10n.busyIndicatorMessage));
+        
+        return containerDiv;
     }
 };

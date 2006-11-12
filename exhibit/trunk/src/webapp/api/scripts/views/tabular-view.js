@@ -112,7 +112,7 @@ Exhibit.TabularView.prototype._initializeUI = function() {
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {
-            self._reset();
+            self._exhibit.getViewPanel().resetBrowseQuery();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         }
@@ -200,7 +200,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             
             for (var c = 0; c < this._columns.length; c++) {
                 var column = this._columns[c];
-                var property = database.getProperty(column.property);
                 var td = tr.insertCell(c);
                 
                 var results = column.expression.evaluate(
@@ -323,21 +322,6 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
     return textFunction;
 };
 
-Exhibit.TabularView.prototype._reset = function() {
-    var state = {};
-    var browseEngine = this._exhibit.getBrowseEngine();
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = browseEngine.clearRestrictions();
-        },
-        undo: function() {
-            browseEngine.applyRestrictions(state.restrictions);
-        },
-        label: Exhibit.TabularView.l10n.resetActionTitle,
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
-    });
-};
-
 Exhibit.TabularView.prototype._doSort = function(columnIndex) {
     var oldSortColumn = this._sortColumn;
     var oldSortAscending = this._sortAscending;
@@ -357,7 +341,8 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
             self._reconstruct();
         },
         label: Exhibit.TabularView.l10n.makeSortActionTitle(this._columns[columnIndex].label, newSortAscending),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
+        lengthy: true
     });
 };
 

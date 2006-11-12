@@ -8,6 +8,8 @@ Exhibit.l10n = {
     missingSortKey: "(missing)",
     itemLinkLabel:  "link",
     
+    busyIndicatorMessage:   "Working...",
+    
     /*
      *  Copy button and dialog box
      */

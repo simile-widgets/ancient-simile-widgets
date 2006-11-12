@@ -129,7 +129,7 @@ Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
         this._exhibit, 
         this._divHeader, 
         function(elmt, evt, target) {
-            self._reset();
+            self._exhibit.getViewPanel().resetBrowseQuery();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         },
@@ -361,21 +361,6 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
     return textFunction;
 };
 
-Exhibit.OrderedViewFrame.prototype._reset = function() {
-    var state = {};
-    var browseEngine = this._exhibit.getBrowseEngine();
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = browseEngine.clearRestrictions();
-        },
-        undo: function() {
-            browseEngine.applyRestrictions(state.restrictions);
-        },
-        label: Exhibit.OrderedViewFrame.l10n.resetActionTitle,
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
-    });
-};
-
 Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
     var self = this;
     var database = this._exhibit.getDatabase();
@@ -526,7 +511,8 @@ Exhibit.OrderedViewFrame.prototype._reSort = function(index, propertyID, forward
         },
         label: Exhibit.OrderedViewFrame.l10n.formatSortActionTitle(
             propertyLabel, ascending ? sortLabels.ascending : sortLabels.descending),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
+        lengthy: true
     });
 };
 
@@ -554,7 +540,8 @@ Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
         },
         label: Exhibit.OrderedViewFrame.l10n.formatRemoveOrderActionTitle(
             propertyLabel, order.ascending ? sortLabels.ascending : sortLabels.descending),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
+        lengthy: true
     });
 };
 

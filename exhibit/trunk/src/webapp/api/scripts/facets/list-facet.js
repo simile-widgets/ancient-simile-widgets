@@ -149,7 +149,8 @@ Exhibit.ListFacet.prototype._filter = function(valueDom) {
         label: selected ? 
             ("set " + this._facetLabel + " = " + value) :
             ("unset " + this._facetLabel + " = " + value),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
+        lengthy: true
     });
 };
 
@@ -169,7 +170,8 @@ Exhibit.ListFacet.prototype._clearSelections = function() {
             browseEngine.applyFacetRestrictions(property, forward, state.restrictions);
         },
         label: "clear selections",
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
+        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
+        lengthy: true
     });
 };
 

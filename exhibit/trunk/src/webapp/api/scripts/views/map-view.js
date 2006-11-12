@@ -207,7 +207,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {
-            self._reset();
+            self._exhibit.getViewPanel().resetBrowseQuery();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         }
@@ -451,19 +451,4 @@ Exhibit.MapView._makeIcon = function(shape, color, label) {
     icon.infoWindowAnchor = data.infoWindowAnchor;
     
     return icon;
-};
-
-Exhibit.MapView.prototype._reset = function() {
-    var state = {};
-    var browseEngine = this._exhibit.getBrowseEngine();
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = browseEngine.clearRestrictions();
-        },
-        undo: function() {
-            browseEngine.applyRestrictions(state.restrictions);
-        },
-        label: Exhibit.OrderedViewFrame.l10n.resetActionTitle,
-        uiLayer: SimileAjax.WindowManager.getBaseLayer()
-    });
 };

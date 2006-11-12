@@ -134,6 +134,22 @@ Exhibit.ViewPanel.prototype._selectView = function(index) {
     this._createView();
 };
 
+Exhibit.ViewPanel.prototype.resetBrowseQuery = function() {
+    var state = {};
+    var browseEngine = this._exhibit.getBrowseEngine();
+    SimileAjax.History.addAction({
+        perform: function() {
+            state.restrictions = browseEngine.clearRestrictions();
+        },
+        undo: function() {
+            browseEngine.applyRestrictions(state.restrictions);
+        },
+        label:      Exhibit.OrderedViewFrame.l10n.resetActionTitle,
+        uiLayer:    SimileAjax.WindowManager.getBaseLayer(),
+        lengthy:    true
+    });
+};
+
 Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, database) {
     var pairs = [];
     var enterPair = function(propertyID, forward) {

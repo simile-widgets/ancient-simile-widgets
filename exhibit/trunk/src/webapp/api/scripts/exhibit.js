@@ -25,6 +25,7 @@ Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._engine = new Exhibit.BrowseEngine(this._database, configuration);
     this._browsePanel = new Exhibit.BrowsePanel(this, browseDiv, configuration);
     this._viewPanel = new Exhibit.ViewPanel(this, viewDiv, configuration);
+    this._busyIndicator = Exhibit.Theme.createBusyIndicator();
     
     this._exporters = "exporters" in configuration ? configuration.exporters : {};
     this._exporters["rdf/xml"] = {
@@ -36,12 +37,38 @@ Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     
     var self = this;
     this._focusID = null;
-    this._listener = {
+    this._databaseListener = {
         onAfterLoadingItems: function() {
             self._tryToFocusOnItem();
         }
     };
-    this._database.addListener(this._listener);
+    this._database.addListener(this._databaseListener);
+    
+    this._historyListener = {
+        onBeforePerform: function(action) {
+            if (action.lengthy) {
+                self._showBusyIndicator();
+            }
+        },
+        onAfterPerform: function(action) {
+            if (action.lengthy) {
+                self._hideBusyIndicator();
+            }
+        },
+        onBeforeUndoSeveral: function() {
+            self._showBusyIndicator();
+        },
+        onAfterUndoSeveral: function() {
+            self._hideBusyIndicator();
+        },
+        onBeforeRedoSeveral: function() {
+            self._showBusyIndicator();
+        },
+        onAfterRedoSeveral: function() {
+            self._hideBusyIndicator();
+        }
+    };
+    SimileAjax.History.addListener(this._historyListener);
     
     this._parseURL();
 };
@@ -52,6 +79,8 @@ Exhibit._Impl.prototype.getBrowsePanel = function() { return this._browsePanel; 
 Exhibit._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
 
 Exhibit._Impl.prototype.dispose = function() {
+    SimileAjax.History.removeListener(this._historyListener);
+    this._database.removeListener(this._databaseListener);
 };
 
 Exhibit._Impl.prototype.getPermanentLink = function() {
@@ -105,12 +134,12 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
             if (o != null) {
                 exhibit._loadJSON(o, exhibit.getBaseURL(urls[0]));
             }
-            
-            urls.shift();
-            fNext();
         } catch (e) {
             SimileAjax.Debug.exception("Exhibit: Error loading next JSON URL", e);
         }
+        
+        urls.shift();
+        fNext();
     };
     
     var fNext = function() {
@@ -130,10 +159,14 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
                 }
             } catch (e) {
                 SimileAjax.Debug.exception("Exhibit: Error loading next JSON URL", e);
+            } finally {
+                exhibit._hideBusyIndicator();
             }
         }
     };
-    fNext();
+    
+    exhibit._showBusyIndicator();
+    setTimeout(fNext, 0);
 };
 
 Exhibit._Impl.prototype.getBaseURL = function(url) {
@@ -350,6 +383,26 @@ Exhibit._Impl.prototype._showCopyMenu = function(elmt, itemID) {
         makeMenuItem(exporters[format].exporter);
     }
     popupDom.open();
+};
+
+Exhibit._Impl.prototype._showBusyIndicator = function() {
+    var scrollTop = ("scrollTop" in document.body) ?
+        document.body.scrollTop :
+        document.body.parentNode.scrollTop;
+    var height = ("innerHeight" in window) ?
+        window.innerHeight :
+        ("clientHeight" in document.body ?
+            document.body.clientHeight :
+            document.body.parentNode.clientHeight);
+        
+    var top = Math.floor(scrollTop + height / 3);
+    
+    this._busyIndicator.style.top = top + "px";
+    document.body.appendChild(this._busyIndicator);
+};
+
+Exhibit._Impl.prototype._hideBusyIndicator = function() {
+    document.body.removeChild(this._busyIndicator);
 };
 
 Exhibit._getURLWithoutQueryAndHash = function() {

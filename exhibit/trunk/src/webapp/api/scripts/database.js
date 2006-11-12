@@ -270,7 +270,7 @@ Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseUR
 };
 
 Exhibit.Database.prototype.getProperty = function(propertyID) {
-    return this._properties[propertyID];
+    return propertyID in this._properties ? this._properties[propertyID] : null;
 };
 
 Exhibit.Database.prototype._ensureTypeExists = function(typeID, baseURI) {
