@@ -11,7 +11,22 @@
  *==================================================
  */
 
-if (typeof Exhibit == "undefined") {
+if (typeof SimileAjax == "undefined") {
+    window.alert(
+        "ERROR:\n" +
+        "You need to include the Simile AJAX API\n" +
+        "before including the Exhibit API.\n" +
+        "\n" +
+        "We will open the relevant documentation\n" +
+        "after you click OK.\n" +
+        "\n" +
+        "If you don't see the documentation, it's\n" +
+        "because your browser is blocking our pop-up.\n" +
+        "Please set your browser to allow our pop-up\n" +
+        "and refresh this page."
+    );
+    window.open("http://simile.mit.edu/wiki/Exhibit/How_to_include_the_Exhibit_API", "_blank");
+} else if (typeof Exhibit == "undefined") {
     var Exhibit = {
         loaded:     false
     };
