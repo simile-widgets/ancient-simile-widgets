@@ -5,6 +5,7 @@
 (function() {
     var javascriptFiles = [
         "list-facet-theme.js",
+        "browse-panel-theme.js",
         "view-panel-theme.js",
         "ordered-view-frame-theme.js",
         "tile-view-theme.js",

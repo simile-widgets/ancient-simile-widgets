@@ -51,6 +51,19 @@ Exhibit.BrowsePanel.prototype._reconstruct = function() {
         some might disappear and reappear at different times.
     */
     
+    if (newFacets.length > 0) {
+        this._reconstructFacets(newFacets);
+    } else {
+        this._showHelp();
+    }
+};
+    
+Exhibit.BrowsePanel.prototype._showHelp = function() {
+    this._div.innerHTML = "";
+    Exhibit.BrowsePanel.theme.constructConfigureHelpDom(this._exhibit, this._div);
+};
+
+Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
     var getKey = function(f) {
         return f.property + ":" + f.forward;
     };

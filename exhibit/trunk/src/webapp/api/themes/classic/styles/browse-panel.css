@@ -5,6 +5,13 @@
 div.exhibit-browsePanel {
 }
 
+div.exhibit-browsePanel-notConfigureMessage {
+    border:     1px solid #604800;
+    padding:    1em;
+    background: #FFFFE0;
+    text-align: center;
+}
+
 /*==================================================
  * Facet box
  *==================================================
