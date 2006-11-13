@@ -33,35 +33,31 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
     }
     
     var label = database.getObject(itemID, "label");
-    
-    var exporters = exhibit.getExporters();
-    var exportButtons = [];
-    for (format in exporters) {
-        var exporter = exporters[format].exporter;
-        var icon = exporter.icon;
-        exportButtons.push({
-            elmt: SimileAjax.Graphics.createStructuredDataCopyButton(
-                icon.url, icon.width, icon.height, function() {
-                    return exporter.exportOne(itemID, exhibit);
-                }
-            )
-        });
-    }    
-    
     var template = {
         elmt:       div,
-        className:  "exhibit-item-view",
+        className:  "exhibit-itemView",
         children: [
             {   tag:        "div",
-                className:  "exhibit-item-view-title",
+                className:  "exhibit-itemView-title",
                 title:      label,
-                children:   [ label ].concat(exportButtons)
+                children:   [ 
+                    {   elmt:       exhibit.makeCopyButton(itemID),
+                        className:  "exhibit-copyButton exhibit-itemView-copyButton",
+                    },
+                    label + " (",
+                    {   tag:        "a",
+                        href:       exhibit.getItemLink(itemID),
+                        target:     "_blank",
+                        children:   Exhibit.l10n.itemLinkLabel
+                    },
+                    ")"
+                ]
             },
             {   tag:        "div",
-                className:  "exhibit-item-view-body",
+                className:  "exhibit-itemView-body",
                 children: [
                     {   tag:        "table",
-                        className:  "exhibit-item-view-properties",
+                        className:  "exhibit-itemView-properties",
                         field:      "propertiesTable"
                     }
                 ]
@@ -77,14 +73,14 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
         var pair = pairs[j];
         
         var tr = dom.propertiesTable.insertRow(j);
-        tr.className = "exhibit-item-view-property";
+        tr.className = "exhibit-itemView-property";
         
         var tdName = tr.insertCell(0);
-        tdName.className = "exhibit-item-view-property-name";
+        tdName.className = "exhibit-itemView-property-name";
         tdName.innerHTML = pair.propertyLabel + ": ";
         
         var tdValues = tr.insertCell(1);
-        tdValues.className = "exhibit-item-view-property-values";
+        tdValues.className = "exhibit-itemView-property-values";
         
         if (pair.valueType == "item") {
             for (var m = 0; m < pair.values.length; m++) {
@@ -324,7 +320,7 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
             var a = document.createElement("a");
             a.innerHTML = Exhibit.l10n.itemLinkLabel;
             a.href = exhibit.getItemLink(value);
-            a.target = "new";
+            a.target = "_blank";
             elmt.appendChild(a);
         }
     } else if (templateNode.content != null) {

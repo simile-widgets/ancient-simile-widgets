@@ -1,24 +1,31 @@
-div.exhibit-item-view {
-    position: relative;
+div.exhibit-itemView {
+    border:         1px solid #aaa;
+    margin-bottom:  1em;
 }
 
-div.exhibit-item-view-title {
+div.exhibit-itemView-title {
     font-weight:    bold;
+    background:     #eee;
+    padding:        2px;
 }
 
-div.exhibit-item-view-body {
+.exhibit-itemView-copyButton {
+    float:  right;
+}
+
+div.exhibit-itemView-body {
 	padding: 0.3em;
 }
 
-table.exhibit-item-view-properties {
+table.exhibit-itemView-properties {
 }
 
-tr.exhibit-item-view-property {
+tr.exhibit-itemView-property {
 }
 
-td.exhibit-item-view-property-name {
+td.exhibit-itemView-property-name {
 	color: #888;
 }
 
-td.exhibit-item-view-property-values {
+td.exhibit-itemView-property-values {
 }
