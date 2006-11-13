@@ -40,8 +40,8 @@ SimileAjax.Debug.warn = function(msg) {
 SimileAjax.Debug.exception = function(msg, e) {
     var f;
     if ("console" in window && "error" in window.console) { // FireBug installed
-        f = function(e2) {
-            console.error("%o", e2);
+        f = function(msg2, e2) {
+            console.error(msg2 + " %o", e2);
         }
     } else {
         f = SimileAjax.Platform.browser.isIE ?
