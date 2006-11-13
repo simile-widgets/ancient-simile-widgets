@@ -34,6 +34,9 @@ Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._exporters["smw"] = {
         exporter:   Exhibit.SemanticWikitextExporter
     };
+    this._exporters["exhibit-json"] = {
+        exporter:   Exhibit.ExhibitJsonExporter
+    };
     
     var self = this;
     this._focusID = null;

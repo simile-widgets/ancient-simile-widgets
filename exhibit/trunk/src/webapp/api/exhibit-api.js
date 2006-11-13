@@ -54,6 +54,7 @@ if (typeof SimileAjax == "undefined") {
             
             "exporters/rdf-xml-exporter.js",
             "exporters/semantic-wikitext-exporter.js",
+            "exporters/exhibit-json-exporter.js",
             "exporters/bibtex-exporter.js",
         ];
         var cssFiles = [

@@ -27,8 +27,9 @@ Exhibit.l10n = {
     /*
      *  Common exporters' labels
      */
-    rdfXmlExporterLabel:            "Semantic Web (RDF/XML) format",
-    smwExporterLabel:               "Semantic MediaWiki Extension wikitext",
+    rdfXmlExporterLabel:            "RDF/XML",
+    smwExporterLabel:               "Semantic wikitext",
+    exhibitJsonExporterLabel:       "Exhibit JSON",
     
     /*
      *  List composition
