@@ -129,9 +129,22 @@ Exhibit.ViewPanel.prototype._createView = function() {
     this._dom.setViewIndex(this._viewIndex);
 };
 
-Exhibit.ViewPanel.prototype._selectView = function(index) {
-    this._viewIndex = index;
-    this._createView();
+Exhibit.ViewPanel.prototype._selectView = function(newIndex) {
+    var oldIndex = this._viewIndex;
+    var self = this;
+    SimileAjax.History.addAction({
+        perform: function() {
+            self._viewIndex = newIndex;
+            self._createView();
+        },
+        undo: function() {
+            self._viewIndex = oldIndex;
+            self._createView();
+        },
+        label:      Exhibit.ViewPanel.l10n.createSelectViewActionTitle(self._viewLabels[newIndex]),
+        uiLayer:    SimileAjax.WindowManager.getBaseLayer(),
+        lengthy:    true
+    });
 };
 
 Exhibit.ViewPanel.prototype.resetBrowseQuery = function() {

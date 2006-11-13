@@ -5,6 +5,9 @@
  
 Exhibit.ViewPanel.l10n = {
     resetFiltersLabel:  "reset",
+    createSelectViewActionTitle: function(viewLabel) {
+        return "select " + viewLabel + " view";
+    },
     createNoResultsTemplate: function(
         countClass,
         typesClass,
