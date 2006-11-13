@@ -17,6 +17,7 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
     onClearAllSelections
 ) {
     var l10n = Exhibit.ListFacet.l10n;
+    
     var template = {
         elmt:       div,
         className:  "exhibit-facet-frame",

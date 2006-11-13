@@ -6,11 +6,6 @@
 Exhibit.SemanticWikitextExporter = {
     getLabel: function() {
         return Exhibit.l10n.smwExporterLabel;
-    },
-    icon: {
-        url:    Exhibit.urlPrefix + "images/rdf-copy-button.png",
-        width:  16,
-        height: 16
     }
 };
 
@@ -38,17 +33,25 @@ Exhibit.SemanticWikitextExporter._exportOne = function(itemID, exhibit) {
         var propertyID = allProperties[i];
         var property = database.getProperty(propertyID);
         var values = database.getObjects(itemID, propertyID);
+        var valueType = property.getValueType();
         
-        if (property.getValueType() == "item") {
+        if (valueType == "item") {
             values.visit(function(value) {
                 s += "[[" + propertyID + "::" + value + "]]\n";
             });
         } else {
-            values.visit(function(value) {
-                s += "[[" + propertyID + ":=" + value + "]]\n";
-            });
+            if (valueType == "url") {
+                values.visit(function(value) {
+                    s += "[[" + propertyID + ":=" + exhibit.resolveURL(value) + "]]\n";
+                });
+            } else {
+                values.visit(function(value) {
+                    s += "[[" + propertyID + ":=" + value + "]]\n";
+                });
+            }
         }
     }
+    s += "[[origin:=" + exhibit.getItemLink(itemID) + "]]\n";
     
     s += "\n";
     return s;

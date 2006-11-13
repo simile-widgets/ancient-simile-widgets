@@ -22,7 +22,7 @@ Exhibit.Database = function() {
     var l10n = Exhibit.Database.l10n;
     
     var itemType = new Exhibit.Database._Type("Item");
-    itemType._uri           = "http://simile.mit.edu/exhibit/type#Item";
+    itemType._uri           = "http://simile.mit.edu/2006/11/exhibit#Item";
     itemType._label         = l10n.itemType.label;
     itemType._pluralLabel   = l10n.itemType.pluralLabel;
     this._types["Item"]     = itemType;
@@ -50,7 +50,7 @@ Exhibit.Database = function() {
     this._properties["type"]            = typeProperty;
     
     var uriProperty = new Exhibit.Database._Property("uri");
-    uriProperty._uri                    = "http://simile.mit.edu/exhibit/property#uri";
+    uriProperty._uri                    = "http://simile.mit.edu/2006/11/exhibit#uri";
     uriProperty._valueType              = "url";
     uriProperty._label                  = "URI";
     uriProperty._pluralLabel            = "URIs";
@@ -222,6 +222,53 @@ Exhibit.Database.prototype.getAllProperties = function() {
     }
     
     return [].concat(this._propertyArray);
+};
+
+Exhibit.Database.prototype.getNamespaces = function(idToQualifiedName, prefixToBase) {
+    var bases = {};
+    for (propertyID in this._properties) {
+        var property = this._properties[propertyID];
+        var uri = property.getURI();
+        
+        var hash = uri.indexOf("#");
+        if (hash > 0) {
+            var base = uri.substr(0, hash + 1);
+            bases[base] = true;
+            
+            idToQualifiedName[propertyID] = {
+                base:       base,
+                localName:  uri.substr(hash + 1)
+            };
+            continue;
+        }
+        
+        var slash = uri.lastIndexOf("/");
+        if (slash > 0) {
+            var base = uri.substr(0, slash + 1);
+            bases[base] = true;
+            
+            idToQualifiedName[propertyID] = {
+                base:       base,
+                localName:  uri.substr(slash + 1)
+            };
+            continue;
+        }
+    }
+    
+    var baseToPrefix = {};
+    var letters = "abcdefghijklmnopqrstuvwxyz";
+    var i = 0;
+    
+    for (base in bases) {
+        var prefix = letters.substr(i++,1);
+        prefixToBase[prefix] = base;
+        baseToPrefix[base] = prefix;
+    }
+    
+    for (propertyID in idToQualifiedName) {
+        var qname = idToQualifiedName[propertyID];
+        qname.prefix = baseToPrefix[qname.base];
+    }
 };
 
 Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseURI) {

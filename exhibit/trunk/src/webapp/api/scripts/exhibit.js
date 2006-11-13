@@ -187,6 +187,18 @@ Exhibit._Impl.prototype.getBaseURL = function(url) {
     }
 };
 
+Exhibit._Impl.prototype.resolveURL = function(url) {
+    if (url.indexOf("://") < 0) {
+        var url2 = this.getBaseURL(document.location.href);
+        if (url.substr(0,1) == "/") {
+            url = url2.substr(0, url2.indexOf("/", url2.indexOf("://") + 3)) + url;
+        } else {
+            url = url2 + url;
+        }
+    }
+    return url;
+};
+
 Exhibit._Impl.prototype.makeActionLink = function(text, handler, layer) {
     var a = document.createElement("a");
     a.href = "javascript:";
