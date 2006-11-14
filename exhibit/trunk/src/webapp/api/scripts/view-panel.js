@@ -13,8 +13,12 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
     this._viewConfigs = [];
     this._viewLabels = [];
     this._viewTooltips = [];
+    this._viewDomConfigs = [];
     this._viewIndex = 0;
     
+    /*
+     *  Construct from configuration
+     */
     if ("ViewPanel" in configuration) {
         var c = configuration.ViewPanel;
         if ("views" in c) {
@@ -62,6 +66,7 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
                 this._viewConfigs.push(config != null ? config : {});
                 this._viewLabels.push(label);
                 this._viewTooltips.push(tooltip);
+                this._viewDomConfigs.push(null);
             }
         }
         
@@ -74,6 +79,52 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
             );
         }
     }
+    
+    /*
+     *  Construct from DOM
+     */
+    var node = this._div.firstChild;
+    while (node != null) {
+        if (node.nodeType == 1) {
+            var name = node.getAttribute("name");
+            if (name == "exhibit-view") {
+                try {
+                    var constructor = eval(node.getAttribute("constructor"));
+                    if (typeof constructor == "function") {
+                        var label = node.getAttribute("label");
+                        var tooltip = node.getAttribute("title");
+                        
+                        if (label == null) {
+                            if ("l10n" in constructor && "viewLabel" in constructor.l10n) {
+                                label = constructor.l10n.viewLabel;
+                            } else {
+                                label = "" + constructor;
+                            }
+                        }
+                        if (tooltip == null) {
+                            if ("l10n" in constructor && "viewTooltip" in constructor.l10n) {
+                                tooltip = constructor.l10n.viewTooltip;
+                            } else {
+                                tooltip = label;
+                            }
+                        }
+                        
+                        this._viewConstructors.push(constructor);
+                        this._viewConfigs.push({});
+                        this._viewLabels.push(label);
+                        this._viewTooltips.push(tooltip);
+                        this._viewDomConfigs.push(node);
+                    } else {
+                        // TODO: error message
+                    }
+                } catch (e) {
+                    // TODO: error message
+                }
+            }
+        }
+        node = node.nextSibling;
+    }
+    Exhibit.ViewPanel.extractItemViewDomConfiguration(this._div, configuration);
     
     if (this._viewConstructors.length == 0) {
         this._viewConstructors.push(Exhibit.TileView);
@@ -124,6 +175,7 @@ Exhibit.ViewPanel.prototype._createView = function() {
         this._exhibit, 
         viewDiv, 
         this._viewConfigs[this._viewIndex],
+        this._viewDomConfigs[this._viewIndex],
         this._configuration
     );
     this._dom.setViewIndex(this._viewIndex);
@@ -208,3 +260,28 @@ Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, dat
     return pairs;
 };
 
+Exhibit.ViewPanel.extractItemViewDomConfiguration = function(parentNode, configuration) {
+    var node = parentNode.firstChild;
+    while (node != null) {
+        if (node.nodeType == 1) {
+            var name = node.getAttribute("name");
+            if (name == "exhibit-itemView") {
+                var url = node.getAttribute("template-file");
+                if (url != null && url.length > 0) {
+                    configuration["ItemView"] = {
+                        viewSelector: function(itemID, exhibit) { return url; }
+                    };
+                } else {
+                    var id = node.getAttribute("template-node");
+                    var elmt = document.getElementById(id);
+                    if (elmt != null) {
+                        configuration["ItemView"] = {
+                            viewSelector: function(itemID, exhibit) { return elmt; }
+                        };
+                    }
+                }
+            }
+        }
+        node = node.nextSibling;
+    }
+};

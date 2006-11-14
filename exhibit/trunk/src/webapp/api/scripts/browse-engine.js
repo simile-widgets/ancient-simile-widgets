@@ -14,17 +14,7 @@ Exhibit.BrowseEngine = function(database, configuration) {
         var myConfig = configuration["BrowseEngine"];
         
         if ("facets" in myConfig) {
-            var facetEntries = myConfig["facets"];
-            for (var i = 0; i < facetEntries.length; i++) {
-                var entry = facetEntries[i];
-                var expression = Exhibit.Expression.parse(entry);
-                if (expression.isPath()) {
-                    var path = expression.getPath();
-                    if (path.getSegmentCount() == 1) {
-                        this._facetEntries.push(path.getSegment(0));
-                    }
-                }
-            }
+            this.setFacets(myConfig["facets"]);
         }
         if ("sliding" in myConfig && myConfig.sliding) {
             this._supportSliding = true;
@@ -60,6 +50,19 @@ Exhibit.BrowseEngine.prototype.getState = function() {
 };
 
 Exhibit.BrowseEngine.prototype.setState = function(state) {
+};
+
+Exhibit.BrowseEngine.prototype.setFacets = function(facetEntries) {
+    for (var i = 0; i < facetEntries.length; i++) {
+        var entry = facetEntries[i];
+        var expression = Exhibit.Expression.parse(entry);
+        if (expression.isPath()) {
+            var path = expression.getPath();
+            if (path.getSegmentCount() == 1) {
+                this._facetEntries.push(path.getSegment(0));
+            }
+        }
+    }
 };
 
 Exhibit.BrowseEngine.prototype.getFocus = function() {

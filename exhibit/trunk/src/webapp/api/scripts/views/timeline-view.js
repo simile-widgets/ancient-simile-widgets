@@ -3,7 +3,7 @@
  *==================================================
  */
  
-Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration) {
+Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
     this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
@@ -39,14 +39,23 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
         
         if ("start" in configuration) {
             getStart = makeAccessor(configuration.start);
-        } else {
-            getStart = function(itemID, database) { return null; }
+        } else if (domConfiguration != null) {
+            var start = domConfiguration.getAttribute("start");
+            if (start != null && start.length > 0) {
+                getStart = makeAccessor(start);
+            }
         }
+        getStart = getStart != null ? getStart : function(itemID, database) { return null; }
+        
         if ("end" in configuration) {
             getEnd = makeAccessor(configuration.end);
-        } else {
-            getEnd = function(itemID, database) { return null; }
+        } else if (domConfiguration != null) {
+            var end = domConfiguration.getAttribute("end");
+            if (end != null && end.length > 0) {
+                getEnd = makeAccessor(end);
+            }
         }
+        getEnd = getEnd != null ? getEnd : function(itemID, database) { return null; }
         
         var getStartEnd = function(itemID, database) {
             return {
@@ -55,9 +64,9 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
             };
         }
         
-        if ("proxy" in configuration) {
-            var expr = Exhibit.Expression.parse(configuration.proxy);
-            getDurations = function(itemID, database) {
+        var makeGetDurations = function(s) {
+            var expr = Exhibit.Expression.parse(s);
+            return function(itemID, database) {
                 var pairs = [];
                 expr.evaluate(
                     { "value" : itemID }, 
@@ -72,9 +81,18 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
                 });
                 return pairs;
             };
-        } else {
-            getDurations = getStartEnd;
+        };
+        
+        if ("proxy" in configuration) {
+            getDurations = makeGetDurations(configuration.proxy);
+        } else if (domConfiguration != null) {
+            var proxy = domConfiguration.getAttribute("proxy");
+            if (proxy != null && proxy.length > 0) {
+                getDurations = makeGetDurations(proxy);
+            }
         }
+        getDurations = getDurations != null ? getDurations : getStartEnd;
+        
         
         if ("topBandIntervalPixels" in configuration) {
             this._topBandIntervalPixels = configuration.topBandIntervalPixels;
@@ -85,15 +103,32 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
         if ("densityFactor" in configuration) {
             this._densityFactor = configuration.densityFactor;
         }
+        
+        if (domConfiguration != null) {
+            var topBandIntervalPixels = domConfiguration.getAttribute("topBandIntervalPixels");
+            if (topBandIntervalPixels != null && topBandIntervalPixels.length > 0) {
+                this._topBandIntervalPixels = parseInt(topBandIntervalPixels);
+            }
+            
+            var bottomBandIntervalPixels = domConfiguration.getAttribute("bottomBandIntervalPixels");
+            if (bottomBandIntervalPixels != null && bottomBandIntervalPixels.length > 0) {
+                this._bottomBandIntervalPixels = parseInt(bottomBandIntervalPixels);
+            }
+            
+            var densityFactor = domConfiguration.getAttribute("densityFactor");
+            if (densityFactor != null && densityFactor.length > 0) {
+                this._densityFactor = parseFloat(densityFactor);
+            }
+        }
     } catch (e) {
         SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
     }
     
     var getMarkerKey = null;
     try {
-        if ("marker" in configuration) {
-            var markerExpression = Exhibit.Expression.parse(configuration.marker);
-            getMarkerKey = function(itemID, database) {
+        var makeGetMarker = function(s) {
+            var markerExpression = Exhibit.Expression.parse(s);
+            return function(itemID, database) {
                 var key = markerExpression.evaluateSingle(
                     { "value" : itemID }, 
                     { "value" : "item" }, 
@@ -102,6 +137,15 @@ Exhibit.TimelineView = function(exhibit, div, configuration, globalConfiguration
                 ).value;
                 
                 return key != null ? key : "";
+            }
+        };
+        
+        if ("marker" in configuration) {
+            getMarkerKey = makeGetMarker(configuration.marker);
+        } else if (domConfiguration != null) {
+            var marker = domConfiguration.getAttribute("marker");
+            if (marker != null && marker.length > 0) {
+                getMarkerKey = makeGetMarker(marker);
             }
         }
     } catch (e) {

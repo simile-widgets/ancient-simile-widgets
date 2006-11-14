@@ -3,7 +3,7 @@
  *==================================================
  */
  
-Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
+Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
     this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
@@ -11,9 +11,9 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
     
     var getLatLng = null;
     try {
-        if ("latlng" in configuration) {
-            var latlngExpression = Exhibit.Expression.parse(configuration.latlng);
-            getLatLng = function(itemID, database) {
+        var makeGetLatLng = function(s) {
+            var latlngExpression = Exhibit.Expression.parse(s);
+            return function(itemID, database) {
                 var result = {};
                 var x = latlngExpression.evaluateSingle(
                     { "value" : itemID }, 
@@ -30,11 +30,12 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
                     }
                 }
                 return result;
-            }
-        } else if ("lat" in configuration && "lng" in configuration) {
-            var latExpression = Exhibit.Expression.parse(configuration.lat);
-            var lngExpression = Exhibit.Expression.parse(configuration.lng);
-            getLatLng = function(itemID, database) {
+            };
+        };
+        var makeGetLatLng2 = function(lat, lng) {
+            var latExpression = Exhibit.Expression.parse(lat);
+            var lngExpression = Exhibit.Expression.parse(lng);
+            return function(itemID, database) {
                 var result = {};
                 var lat = latExpression.evaluateSingle(
                     { "value" : itemID }, 
@@ -55,6 +56,23 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
                 }
                 return result;
             }
+        };
+        
+        if ("latlng" in configuration) {
+            getLatLng = makeGetLatLng(configuration.latlng);
+        } else if ("lat" in configuration && "lng" in configuration) {
+            getLatLng = makeGetLatLng2(configuration.lat, configuration.lng);
+        } else if (domConfiguration != null) {
+            var latlng = domConfiguration.getAttribute("latlng");
+            if (latlng != null && latlng.length > 0) {
+                getLatLng = makeGetLatLng(latlng);
+            } else {
+                var lat = domConfiguration.getAttribute("lat");
+                var lng = domConfiguration.getAttribute("lng");
+                if (lat != null && lng != null && lat.length > 0 && lng.length > 0) {
+                    getLatLng = makeGetLatLng2(lat, lng);
+                }
+            }
         }
     } catch (e) {
         SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
@@ -62,9 +80,9 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
     
     var getMarkerKey = null;
     try {
-        if ("marker" in configuration) {
-            var markerExpression = Exhibit.Expression.parse(configuration.marker);
-            getMarkerKey = function(itemID, database) {
+        var makeGetMarker = function(s) {
+            var markerExpression = Exhibit.Expression.parse(s);
+            return function(itemID, database) {
                 var key = markerExpression.evaluateSingle(
                     { "value" : itemID }, 
                     { "value" : "item" }, 
@@ -73,6 +91,15 @@ Exhibit.MapView = function(exhibit, div, configuration, globalConfiguration) {
                 ).value;
                 
                 return key != null ? key : "";
+            };
+        };
+        
+        if ("marker" in configuration) {
+            getMarkerKey = makeGetMarker(configuration.marker);
+        } else if (domConfiguration != null) {
+            var marker = domConfiguration.getAttribute("marker");
+            if (marker != null && marker.length > 0) {
+                getMarkerKey = makeGetMarker(marker);
             }
         }
     } catch (e) {

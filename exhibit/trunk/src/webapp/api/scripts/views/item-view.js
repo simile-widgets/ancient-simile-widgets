@@ -42,7 +42,7 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
                 title:      label,
                 children:   [ 
                     {   elmt:       exhibit.makeCopyButton(itemID),
-                        className:  "exhibit-copyButton exhibit-itemView-copyButton",
+                        className:  "exhibit-copyButton exhibit-itemView-copyButton"
                     },
                     label + " (",
                     {   tag:        "a",

@@ -3,10 +3,11 @@
  *==================================================
  */
  
-Exhibit.TileView = function(exhibit, div, configuration, globalConfiguration) {
+Exhibit.TileView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
     this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
+    this._domConfiguration = domConfiguration;
     this._globalConfiguration = globalConfiguration;
     
     this._initializeUI();
@@ -54,7 +55,7 @@ Exhibit.TileView.prototype._initializeUI = function() {
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     this._orderedViewFrame = new Exhibit.OrderedViewFrame(
-        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._configuration);
+        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._configuration, this._domConfiguration);
         
     var self = this;
     this._orderedViewFrame.parentReconstruct = function() {

@@ -3,12 +3,83 @@
  *  http://simile.mit.edu/wiki/Exhibit/API/Exhibit
  *======================================================================
  */
-Exhibit.create = function(controlDiv, browseDiv, viewDiv, configuration) {
-    return new Exhibit._Impl(controlDiv, browseDiv, viewDiv, configuration);
+Exhibit.create = function(data, rootTypes) {
+    var exhibit = Exhibit._internalCreate({});
+    
+    var showError = function() {
+        window.alert(
+            "Exhibit.create() expects a Javascript object or \n" +
+            "the ID of a <data> or <table> element.\n\n" +
+            "We will redirect you to the relevant documentation after this message."
+        );
+        window.open("", "_blank");
+        return;
+    };
+    
+    if (typeof data == "string") {
+        var elmt = document.getElementById(data);
+        if (elmt == null) {
+            showError();
+        } else {
+            var tagName = elmt.tagName.toLowerCase();
+            
+            if (tagName == "data") {
+                exhibit.loadDataFromDomNode(elmt);
+            } else if (tagName == "table") {
+                exhibit.loadDataFromTable(elmt);
+            } else {
+                showError();
+            }
+        }
+    } else if (typeof data == "object") {
+        exhibit.loadData(data);
+    } else {
+        showError();
+    }
+    
+    exhibit.setRootTypes(rootTypes);
+};
+
+Exhibit.createFromFiles = function(urls, rootTypes) {
+    var exhibit = Exhibit._internalCreate({});
+    exhibit.loadJSON(urls, function() {
+        exhibit.setRootTypes(rootTypes);
+    });
+};
+
+Exhibit.createAdvanced = function(configuration, controlDiv, browseDiv, viewDiv) {
+    return Exhibit._internalCreate({
+        controlDiv:     controlDiv,
+        browseDiv:      browseDiv,
+        viewDiv:        viewDiv,
+        configuration:  configuration
+    });
 };
 
 Exhibit.protectUI = function(elmt) {
     SimileAjax.DOM.appendClassName(elmt, "exhibit-ui-protection");
+};
+
+Exhibit._internalCreate = function(settings) {
+    if (!("controlDiv" in settings) || settings.controlDiv == null) {
+        settings.controlDiv = document.getElementById("exhibit-control-panel");
+    }
+    if (!("browseDiv" in settings) || settings.browseDiv == null) {
+        settings.browseDiv = document.getElementById("exhibit-browse-panel");
+    }
+    if (!("viewDiv" in settings) || settings.viewDiv == null) {
+        settings.viewDiv = document.getElementById("exhibit-view-panel");
+    }
+    if (!("configuration" in settings) || settings.configuration == null) {
+        settings.configuration = {};
+    }
+    
+    return new Exhibit._Impl(
+        settings.controlDiv, 
+        settings.browseDiv, 
+        settings.viewDiv, 
+        settings.configuration
+    );
 };
 
 /*==================================================
@@ -16,9 +87,6 @@ Exhibit.protectUI = function(elmt) {
  *==================================================
  */
 Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
-    if (configuration == null) {
-        configuration = {};
-    }
     this._configuration = configuration;
     
     this._database = new Exhibit.Database();
@@ -84,6 +152,18 @@ Exhibit._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
 Exhibit._Impl.prototype.dispose = function() {
     SimileAjax.History.removeListener(this._historyListener);
     this._database.removeListener(this._databaseListener);
+};
+
+Exhibit._Impl.prototype.setRootTypes = function(rootTypes) {
+    if (typeof rootTypes == "string") {
+        this.getBrowseEngine().setRootCollection(this.getDatabase().getSubjects(rootTypes, "type"));
+    } else if (rootTypes instanceof Array) {
+        this.getBrowseEngine().setRootCollection(
+            this.getDatabase().getSubjectsUnion(new Exhibit.Set(rootTypes), "type")
+        );
+    } else {
+        this.getBrowseEngine().setRootCollection(this.getDatabase().getAllItems());
+    }
 };
 
 Exhibit._Impl.prototype.getPermanentLink = function() {
@@ -170,6 +250,18 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
     
     exhibit._showBusyIndicator();
     setTimeout(fNext, 0);
+};
+
+Exhibit._Impl.prototype.loadDataFromDomNode = function(node) {
+    window.alert("not yet implemented");
+};
+
+Exhibit._Impl.prototype.loadDataFromTable = function(table) {
+    window.alert("not yet implemented");
+};
+
+Exhibit._Impl.prototype.loadData = function(data) {
+    this._loadJSON(data, Exhibit._getURLWithoutQueryAndHash());
 };
 
 Exhibit._Impl.prototype.getBaseURL = function(url) {

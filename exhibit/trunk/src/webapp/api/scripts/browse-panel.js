@@ -33,8 +33,15 @@ Exhibit.BrowsePanel.prototype.setState = function(state) {
 };
 
 Exhibit.BrowsePanel.prototype._configure = function(configuration) {
-    if ("BrowsePanel" in configuration) {
-        var myConfig = configuration["BrowsePanel"];
+    if (configuration == null || !("BrowseEngine" in configuration)) {
+        var s = this._div.getAttribute("facets");
+        if (s != null && s.length > 0) {
+            var a = s.split(",");
+            for (var i = 0; i < a.length; i++) {
+                a[i] = a[i].replace(/^\s+/, '').replace(/\s+$/, '');
+            }
+            this._browseEngine.setFacets(a);
+        }
     }
 };
 

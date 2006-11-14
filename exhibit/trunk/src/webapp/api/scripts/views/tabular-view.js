@@ -3,7 +3,7 @@
  *==================================================
  */
 
-Exhibit.TabularView = function(exhibit, div, configuration, globalConfiguration) {
+Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
     this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
