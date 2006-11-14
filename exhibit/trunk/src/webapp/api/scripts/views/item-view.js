@@ -50,7 +50,7 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
                     {   tag:        "a",
                         href:       exhibit.getItemLink(itemID),
                         target:     "_blank",
-                        children:   Exhibit.l10n.itemLinkLabel
+                        children:   [ Exhibit.l10n.itemLinkLabel ]
                     },
                     ")"
                 ]
@@ -227,8 +227,14 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         var name = attribute.nodeName;
         var value = attribute.nodeValue;
         
+        if (value == null || typeof value != "string" || value.length == 0 || name == "contentEditable") {
+            continue;
+        }
+        
         if (name == "id") {
             continue;
+        } else if (name == "class") {
+            name = "className";
         } else if (name == "cellspacing") {
             name = "cellSpacing";
         } else if (name == "cellpadding") {

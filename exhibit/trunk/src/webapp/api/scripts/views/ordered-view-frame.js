@@ -8,18 +8,8 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     this._divHeader = divHeader;
     this._divFooter = divFooter;
     
-    this._orders = [
-        {   property:   "label",
-            forward:    true,
-            ascending:  true
-        }
-    ];
-    this._possibleOrders = [
-        {   property:   "label",
-            forward:    true,
-            ascending:  true
-        }
-    ];
+    this._orders = null;
+    this._possibleOrders = null;
     this._initialCount = 10;
     this._showAll = false;
     
@@ -61,6 +51,23 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         if (showAll != null && showAll.length > 0) {
             this._showAll = (showAll == "true");
         }
+    }
+    
+    if (this._orders == null) {
+        this._orders = [
+            {   property:   "label",
+                forward:    true,
+                ascending:  true
+            }
+        ];
+    }
+    if (this._possibleOrders == null) {
+        this._possibleOrders = [
+            {   property:   "label",
+                forward:    true,
+                ascending:  true
+            }
+        ];
     }
     
     this._initializeUI();

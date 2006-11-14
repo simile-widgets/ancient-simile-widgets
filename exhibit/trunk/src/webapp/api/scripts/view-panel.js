@@ -86,6 +86,8 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
     var node = this._div.firstChild;
     while (node != null) {
         if (node.nodeType == 1) {
+            node.style.display = "none";
+            
             var name = node.getAttribute("name");
             if (name == "exhibit-view") {
                 try {
@@ -144,12 +146,17 @@ Exhibit.ViewPanel.prototype.setState = function(state) {
 };
 
 Exhibit.ViewPanel.prototype._initializeUI = function() {
-    this._div.innerHTML = "";
+    var div = document.createElement("div");
+    if (this._div.firstChild != null) {
+        this._div.insertBefore(div, this._div.firstChild);
+    } else {
+        this._div.appendChild(div);
+    }
     
     var self = this;
     this._dom = Exhibit.ViewPanel.theme.constructDom(
         this._exhibit,
-        this._div,
+        this._div.firstChild,
         this._viewLabels,
         this._viewTooltips,
         function(index) {
