@@ -285,8 +285,13 @@ Exhibit.ViewPanel.extractItemViewDomConfiguration = function(parentNode, configu
                         configuration["ItemView"] = {
                             viewSelector: function(itemID, exhibit) { return elmt; }
                         };
+                    } else {
+                        configuration["ItemView"] = {
+                            viewSelector: function(itemID, exhibit) { return node; }
+                        };
                     }
                 }
+                break;
             }
         }
         node = node.nextSibling;

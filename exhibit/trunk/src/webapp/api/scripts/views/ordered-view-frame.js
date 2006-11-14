@@ -53,20 +53,17 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         }
     }
     
-    if (this._orders == null) {
-        this._orders = [
-            {   property:   "label",
-                forward:    true,
-                ascending:  true
-            }
-        ];
-    }
     if (this._possibleOrders == null) {
         this._possibleOrders = [
             {   property:   "label",
                 forward:    true,
                 ascending:  true
             }
+        ];
+    }
+    if (this._orders == null) {
+        this._orders = [
+            this._possibleOrders[0]
         ];
     }
     
