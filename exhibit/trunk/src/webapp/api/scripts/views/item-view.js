@@ -234,7 +234,9 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         if (name == "id") {
             continue;
         } else if (name == "class") {
-            name = "className";
+            if (SimileAjax.Platform.browser.isIE) {
+                name = "className";
+            }
         } else if (name == "cellspacing") {
             name = "cellSpacing";
         } else if (name == "cellpadding") {
