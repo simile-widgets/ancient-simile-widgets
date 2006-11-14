@@ -272,7 +272,7 @@ Exhibit.ViewPanel.extractItemViewDomConfiguration = function(parentNode, configu
                         viewSelector: function(itemID, exhibit) { return url; }
                     };
                 } else {
-                    var id = node.getAttribute("template-node");
+                    var id = node.getAttribute("template");
                     var elmt = document.getElementById(id);
                     if (elmt != null) {
                         configuration["ItemView"] = {

@@ -4,40 +4,56 @@
  *======================================================================
  */
 Exhibit.create = function(data, rootTypes) {
-    var exhibit = Exhibit._internalCreate({});
-    
-    var showError = function() {
-        window.alert(
-            "Exhibit.create() expects a Javascript object or \n" +
-            "the ID of a <data> or <table> element.\n\n" +
-            "We will redirect you to the relevant documentation after this message."
-        );
-        window.open("", "_blank");
-        return;
-    };
-    
-    if (typeof data == "string") {
-        var elmt = document.getElementById(data);
-        if (elmt == null) {
-            showError();
-        } else {
-            var tagName = elmt.tagName.toLowerCase();
-            
-            if (tagName == "data") {
-                exhibit.loadDataFromDomNode(elmt);
-            } else if (tagName == "table") {
-                exhibit.loadDataFromTable(elmt);
-            } else {
-                showError();
+    if (data == null) {
+        var urls = [];
+        var heads = document.documentElement.getElementsByTagName("head");
+        for (var h = 0; h < heads.length; h++) {
+            var links = heads[h].getElementsByTagName("link");
+            for (var l = 0; l < links.length; l++) {
+                var link = links[l];
+                if (link.rel == "exhibit") {
+                    urls.push(link.href);
+                }
             }
         }
-    } else if (typeof data == "object") {
-        exhibit.loadData(data);
+        return Exhibit.createFromFiles(urls, rootTypes);
     } else {
-        showError();
+        var exhibit = Exhibit._internalCreate({});
+        
+        var showError = function() {
+            window.alert(
+                "Exhibit.create() expects a Javascript object or \n" +
+                "the ID of a <data> or <table> element.\n\n" +
+                "We will redirect you to the relevant documentation after this message."
+            );
+            window.open("", "_blank");
+            return exhibit;
+        };
+        
+        if (typeof data == "string") {
+            var elmt = document.getElementById(data);
+            if (elmt == null) {
+                showError();
+            } else {
+                var tagName = elmt.tagName.toLowerCase();
+                
+                if (tagName == "data") {
+                    exhibit.loadDataFromDomNode(elmt);
+                } else if (tagName == "table") {
+                    exhibit.loadDataFromTable(elmt);
+                } else {
+                    showError();
+                }
+            }
+        } else if (typeof data == "object") {
+            exhibit.loadData(data);
+        } else {
+            showError();
+        }
+        
+        exhibit.setRootTypes(rootTypes);
+        return exhibit;
     }
-    
-    exhibit.setRootTypes(rootTypes);
 };
 
 Exhibit.createFromFiles = function(urls, rootTypes) {

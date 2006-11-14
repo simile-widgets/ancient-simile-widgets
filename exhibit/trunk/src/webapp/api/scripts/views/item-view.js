@@ -6,15 +6,17 @@
 Exhibit.ItemView = function(itemID, div, exhibit, configuration) {
     var myConfig = ("ItemView" in configuration) ? configuration["ItemView"] : {};
     
-    var viewTemplateURL = null;
+    var viewTemplate = null;
     var viewSelector = myConfig["viewSelector"];
     if (viewSelector != null) {
-        viewTemplateURL = viewSelector.call(null, itemID, exhibit);
+        viewTemplate = viewSelector.call(null, itemID, exhibit);
     }
-    if (viewTemplateURL == null) {
+    if (viewTemplate == null) {
         this._constructDefaultUI(itemID, div, exhibit, myConfig);
+    } else if (typeof viewTemplate == "string") {
+        this._constructFromViewTemplateURL(itemID, div, exhibit, configuration, viewTemplate);
     } else {
-        this._constructFromViewTemplate(itemID, div, exhibit, configuration, viewTemplateURL);
+        this._constructFromViewTemplateDOM(itemID, div, exhibit, configuration, viewTemplate);
     }
 };
 
@@ -102,7 +104,7 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
 
 Exhibit.ItemView._compiledTemplates = {};
 
-Exhibit.ItemView.prototype._constructFromViewTemplate = 
+Exhibit.ItemView.prototype._constructFromViewTemplateURL = 
     function(itemID, div, exhibit, configuration, viewTemplateURL) {
     
     var job = {
@@ -121,6 +123,36 @@ Exhibit.ItemView.prototype._constructFromViewTemplate =
     } else {
         Exhibit.ItemView._performConstructFromViewTemplateJob(compiledTemplate, job);
     }
+};
+
+Exhibit.ItemView.prototype._constructFromViewTemplateDOM = 
+    function(itemID, div, exhibit, configuration, viewTemplateNode) {
+    
+    var job = {
+        itemView:       this,
+        itemID:         itemID,
+        div:            div,
+        exhibit:        exhibit,
+        configuration:  configuration
+    };
+    
+    var id = viewTemplateNode.id;
+    if (id == null || id.length == 0) {
+        id = "exhibitViewTemplate" + Math.floor(Math.random() * 10000);
+        viewTemplateNode.id = id;
+    }
+    
+    var compiledTemplate = Exhibit.ItemView._compiledTemplates[id];
+    if (compiledTemplate == null) {
+        compiledTemplate = {
+            url:        id,
+            template:   Exhibit.ItemView._compileTemplate(viewTemplateNode),
+            compiled:   true,
+            jobs:       []
+        };
+        Exhibit.ItemView._compiledTemplates[id] = compiledTemplate;
+    }
+    Exhibit.ItemView._performConstructFromViewTemplateJob(compiledTemplate, job);
 };
 
 Exhibit.ItemView._startCompilingTemplate = function(viewTemplateURL, job) {
@@ -195,7 +227,9 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         var name = attribute.nodeName;
         var value = attribute.nodeValue;
         
-        if (name == "cellspacing") {
+        if (name == "id") {
+            continue;
+        } else if (name == "cellspacing") {
             name = "cellSpacing";
         } else if (name == "cellpadding") {
             name = "cellPadding";
@@ -268,6 +302,14 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
 Exhibit.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
     Exhibit.ItemView._constructFromViewTemplateNode(
         job.itemID, "item", compiledTemplate.template, job.div, job.exhibit);
+        
+    var node = job.div.firstChild;
+    var tagName = node.tagName;
+    if (tagName == "span") {
+        node.style.display = "inline";
+    } else {
+        node.style.display = "block";
+    }
 };
 
 Exhibit.ItemView._constructFromViewTemplateNode = function(
