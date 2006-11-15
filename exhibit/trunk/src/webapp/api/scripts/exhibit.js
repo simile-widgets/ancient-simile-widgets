@@ -11,7 +11,7 @@ Exhibit.create = function(data, rootTypes) {
             var links = heads[h].getElementsByTagName("link");
             for (var l = 0; l < links.length; l++) {
                 var link = links[l];
-                if (link.rel == "exhibit") {
+                if (link.rel == "exhibit/data") {
                     urls.push(link.href);
                 }
             }

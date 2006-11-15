@@ -88,10 +88,10 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
         if (node.nodeType == 1) {
             node.style.display = "none";
             
-            var name = node.getAttribute("name");
-            if (name == "exhibit-view") {
+            var role = node.getAttribute("role");
+            if (role == "exhibit-view") {
                 try {
-                    var constructor = eval(node.getAttribute("constructor"));
+                    var constructor = eval(node.getAttribute("view-class"));
                     if (typeof constructor == "function") {
                         var label = node.getAttribute("label");
                         var tooltip = node.getAttribute("title");
@@ -271,8 +271,8 @@ Exhibit.ViewPanel.extractItemViewDomConfiguration = function(parentNode, configu
     var node = parentNode.firstChild;
     while (node != null) {
         if (node.nodeType == 1) {
-            var name = node.getAttribute("name");
-            if (name == "exhibit-itemView") {
+            var role = node.getAttribute("role");
+            if (role == "exhibit-lens") {
                 var url = node.getAttribute("template-file");
                 if (url != null && url.length > 0) {
                     configuration["ItemView"] = {
