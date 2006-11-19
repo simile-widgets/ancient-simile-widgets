@@ -500,9 +500,9 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
         }
         return ul;
     } else {
-        var itemViewDiv = document.createElement("div");
-        var itemView = new Exhibit.ItemView(items[0], itemViewDiv, this._exhibit, this._globalConfiguration);
-        return itemViewDiv;
+        var itemLensDiv = document.createElement("div");
+        var itemLens = new Exhibit.Lens(items[0], itemLensDiv, this._exhibit, this._globalConfiguration);
+        return itemLensDiv;
     }
 };
 

@@ -26,7 +26,7 @@
         "timeline-view.css",
         "thumbnail-view.css",
         "tabular-view.css",
-        "item-view.css"
+        "lens.css"
     ];
 
     var urlPrefix = Exhibit.urlPrefix + "themes/classic/";

@@ -403,5 +403,5 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
 };
 
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {
-    new Exhibit.ItemView(evt._itemID, elmt, this._exhibit, this._globalConfiguration);
+    new Exhibit.Lens(evt._itemID, elmt, this._exhibit, this._globalConfiguration);
 };

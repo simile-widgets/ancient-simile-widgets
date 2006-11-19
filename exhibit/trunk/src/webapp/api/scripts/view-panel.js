@@ -138,7 +138,7 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
         }
         node = node.nextSibling;
     }
-    Exhibit.ViewPanel.extractItemViewDomConfiguration(this._div, configuration);
+    Exhibit.ViewPanel.extractItemLensDomConfiguration(this._div, configuration);
     
     if (this._viewConstructors.length == 0) {
         this._viewConstructors.push(Exhibit.TileView);
@@ -279,7 +279,7 @@ Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, dat
     return pairs;
 };
 
-Exhibit.ViewPanel.extractItemViewDomConfiguration = function(parentNode, configuration) {
+Exhibit.ViewPanel.extractItemLensDomConfiguration = function(parentNode, configuration) {
     var node = parentNode.firstChild;
     while (node != null) {
         if (node.nodeType == 1) {
@@ -287,19 +287,19 @@ Exhibit.ViewPanel.extractItemViewDomConfiguration = function(parentNode, configu
             if (role == "exhibit-lens") {
                 var url = Exhibit.getAttribute(node, "templateFile");
                 if (url != null && url.length > 0) {
-                    configuration["ItemView"] = {
-                        viewSelector: function(itemID, exhibit) { return url; }
+                    configuration["Lens"] = {
+                        lensSelector: function(itemID, exhibit) { return url; }
                     };
                 } else {
                     var id = Exhibit.getAttribute(node, "template");
                     var elmt = document.getElementById(id);
                     if (elmt != null) {
-                        configuration["ItemView"] = {
-                            viewSelector: function(itemID, exhibit) { return elmt; }
+                        configuration["Lens"] = {
+                            lensSelector: function(itemID, exhibit) { return elmt; }
                         };
                     } else {
-                        configuration["ItemView"] = {
-                            viewSelector: function(itemID, exhibit) { return node; }
+                        configuration["Lens"] = {
+                            lensSelector: function(itemID, exhibit) { return node; }
                         };
                     }
                 }

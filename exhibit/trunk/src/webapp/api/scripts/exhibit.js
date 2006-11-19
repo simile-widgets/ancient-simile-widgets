@@ -377,7 +377,7 @@ Exhibit._Impl.prototype.makeItemSpan = function(itemID, label, layer) {
     
     var exhibit = this;
     var handler = function(elmt, evt, target) {
-        exhibit.showItemView(itemID, elmt);
+        exhibit.showItemInPopup(itemID, elmt);
         SimileAjax.DOM.cancelEvent(evt);
         return false;
     }
@@ -405,7 +405,7 @@ Exhibit._Impl.prototype.makeValueSpan = function(label, valueType, layer) {
     return span;
 };
 
-Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
+Exhibit._Impl.prototype.showItemInPopup = function(itemID, elmt) {
     var coords = SimileAjax.DOM.getPageCoordinates(elmt);
     var bubble = SimileAjax.Graphics.createBubbleForPoint(
         document, 
@@ -415,9 +415,9 @@ Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
         300  // px
     );
     
-    var itemViewDiv = document.createElement("div");
-    var itemView = new Exhibit.ItemView(itemID, itemViewDiv, this, this._configuration);
-    bubble.content.appendChild(itemViewDiv);
+    var itemLensDiv = document.createElement("div");
+    var itemLens = new Exhibit.Lens(itemID, itemLensDiv, this, this._configuration);
+    bubble.content.appendChild(itemLensDiv);
 };
 
 Exhibit._Impl.prototype.makeCopyButton = function(itemID, layer) {

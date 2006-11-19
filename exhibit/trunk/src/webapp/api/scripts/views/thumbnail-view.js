@@ -9,14 +9,14 @@ Exhibit.ThumbnailView = function(exhibit, div, configuration, domConfiguration, 
     this._configuration = configuration;
     this._domConfiguration = domConfiguration;
     this._globalConfiguration = globalConfiguration;
-    this._itemViewConfiguration = {};
+    this._lensConfiguration = {};
     
     if (domConfiguration != null) {
-        Exhibit.ViewPanel.extractItemViewDomConfiguration(
-            domConfiguration, this._itemViewConfiguration);
+        Exhibit.ViewPanel.extractItemLensDomConfiguration(
+            domConfiguration, this._lensConfiguration);
     }
-    if ("viewSelector" in configuration) {
-        this._itemViewConfiguration["ItemView"].viewSelector = configuration.viewSelector;
+    if ("lensSelector" in configuration) {
+        this._lensConfiguration["Lens"].lensSelector = configuration.lensSelector;
     }
     
     this._initializeUI();
@@ -126,13 +126,13 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
             state.groupCounts[i]++;
         }
         
-        var itemViewDiv = document.createElement("div");
-        itemViewDiv.className = SimileAjax.Platform.browser.isIE ?
+        var itemLensDiv = document.createElement("div");
+        itemLensDiv.className = SimileAjax.Platform.browser.isIE ?
             "exhibit-thumbnailView-itemContainer-IE" :
             "exhibit-thumbnailView-itemContainer";
         
-        var itemView = new Exhibit.ItemView(itemID, itemViewDiv, view._exhibit, view._itemViewConfiguration);
-        state.itemContainer.appendChild(itemViewDiv);
+        var itemLens = new Exhibit.Lens(itemID, itemLensDiv, view._exhibit, view._lensConfiguration);
+        state.itemContainer.appendChild(itemLensDiv);
     };
                 
     this._div.style.display = "none";

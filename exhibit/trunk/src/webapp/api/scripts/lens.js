@@ -1,50 +1,50 @@
 /*==================================================
- *  Exhibit.ItemView
+ *  Exhibit.Lens
  *==================================================
  */
  
-Exhibit.ItemView = function(itemID, div, exhibit, configuration) {
-    var myConfig = ("ItemView" in configuration) ? configuration["ItemView"] : {};
+Exhibit.Lens = function(itemID, div, exhibit, configuration) {
+    var myConfig = ("Lens" in configuration) ? configuration["Lens"] : {};
     
-    var viewTemplate = null;
-    var viewSelector = myConfig["viewSelector"];
-    if (viewSelector != null) {
-        viewTemplate = viewSelector.call(null, itemID, exhibit);
+    var lensTemplate = null;
+    var lensSelector = myConfig["lensSelector"];
+    if (lensSelector != null) {
+        lensTemplate = lensSelector.call(null, itemID, exhibit);
     }
-    if (viewTemplate == null) {
+    if (lensTemplate == null) {
         this._constructDefaultUI(itemID, div, exhibit, myConfig);
-    } else if (typeof viewTemplate == "string") {
-        this._constructFromViewTemplateURL(itemID, div, exhibit, configuration, viewTemplate);
+    } else if (typeof lensTemplate == "string") {
+        this._constructFromLensTemplateURL(itemID, div, exhibit, configuration, lensTemplate);
     } else {
-        this._constructFromViewTemplateDOM(itemID, div, exhibit, configuration, viewTemplate);
+        this._constructFromLensTemplateDOM(itemID, div, exhibit, configuration, lensTemplate);
     }
 };
 
-Exhibit.ItemView._commonProperties = null;
-Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, myConfig) {
+Exhibit.Lens._commonProperties = null;
+Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit, myConfig) {
     var database = exhibit.getDatabase();
     
     var properties = null;
     if ("properties" in myConfig) {
         properties = myConfig.properties;
     } else {
-        if (Exhibit.ItemView._commonProperties == null) {
-            Exhibit.ItemView._commonProperties = database.getAllProperties();
+        if (Exhibit.Lens._commonProperties == null) {
+            Exhibit.Lens._commonProperties = database.getAllProperties();
         }
-        properties = Exhibit.ItemView._commonProperties;
+        properties = Exhibit.Lens._commonProperties;
     }
     
     var label = database.getObject(itemID, "label");
     var template = {
         elmt:       div,
-        className:  "exhibit-itemView",
+        className:  "exhibit-lens",
         children: [
             {   tag:        "div",
-                className:  "exhibit-itemView-title",
+                className:  "exhibit-lens-title",
                 title:      label,
                 children:   [ 
                     {   elmt:       exhibit.makeCopyButton(itemID),
-                        className:  "exhibit-copyButton exhibit-itemView-copyButton"
+                        className:  "exhibit-copyButton exhibit-lens-copyButton"
                     },
                     label + " (",
                     {   tag:        "a",
@@ -56,10 +56,10 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
                 ]
             },
             {   tag:        "div",
-                className:  "exhibit-itemView-body",
+                className:  "exhibit-lens-body",
                 children: [
                     {   tag:        "table",
-                        className:  "exhibit-itemView-properties",
+                        className:  "exhibit-lens-properties",
                         field:      "propertiesTable"
                     }
                 ]
@@ -75,14 +75,14 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
         var pair = pairs[j];
         
         var tr = dom.propertiesTable.insertRow(j);
-        tr.className = "exhibit-itemView-property";
+        tr.className = "exhibit-lens-property";
         
         var tdName = tr.insertCell(0);
-        tdName.className = "exhibit-itemView-property-name";
+        tdName.className = "exhibit-lens-property-name";
         tdName.innerHTML = pair.propertyLabel + ": ";
         
         var tdValues = tr.insertCell(1);
-        tdValues.className = "exhibit-itemView-property-values";
+        tdValues.className = "exhibit-lens-property-values";
         
         if (pair.valueType == "item") {
             for (var m = 0; m < pair.values.length; m++) {
@@ -102,114 +102,108 @@ Exhibit.ItemView.prototype._constructDefaultUI = function(itemID, div, exhibit, 
     }
 };
 
-Exhibit.ItemView._compiledTemplates = {};
+Exhibit.Lens._compiledTemplates = {};
 
-Exhibit.ItemView.prototype._constructFromViewTemplateURL = 
-    function(itemID, div, exhibit, configuration, viewTemplateURL) {
+Exhibit.Lens.prototype._constructFromLensTemplateURL = 
+    function(itemID, div, exhibit, configuration, lensTemplateURL) {
     
     var job = {
-        itemView:       this,
-        itemID:         itemID,
-        div:            div,
-        exhibit:          exhibit,
-        configuration:  configuration
-    };
-    
-    var compiledTemplate = Exhibit.ItemView._compiledTemplates[viewTemplateURL];
-    if (compiledTemplate == null) {
-        Exhibit.ItemView._startCompilingTemplate(viewTemplateURL, job);
-    } else if (!compiledTemplate.compiled) {
-        compiledTemplate.jobs.push(job);
-    } else {
-        Exhibit.ItemView._performConstructFromViewTemplateJob(compiledTemplate, job);
-    }
-};
-
-Exhibit.ItemView.prototype._constructFromViewTemplateDOM = 
-    function(itemID, div, exhibit, configuration, viewTemplateNode) {
-    
-    var job = {
-        itemView:       this,
+        lens:           this,
         itemID:         itemID,
         div:            div,
         exhibit:        exhibit,
         configuration:  configuration
     };
     
-    var id = viewTemplateNode.id;
+    var compiledTemplate = Exhibit.Lens._compiledTemplates[lensTemplateURL];
+    if (compiledTemplate == null) {
+        Exhibit.Lens._startCompilingTemplate(lensTemplateURL, job);
+    } else if (!compiledTemplate.compiled) {
+        compiledTemplate.jobs.push(job);
+    } else {
+        Exhibit.Lens._performConstructFromLensTemplateJob(compiledTemplate, job);
+    }
+};
+
+Exhibit.Lens.prototype._constructFromLensTemplateDOM = 
+    function(itemID, div, exhibit, configuration, lensTemplateNode) {
+    
+    var job = {
+        lens:           this,
+        itemID:         itemID,
+        div:            div,
+        exhibit:        exhibit,
+        configuration:  configuration
+    };
+    
+    var id = lensTemplateNode.id;
     if (id == null || id.length == 0) {
-        id = "exhibitViewTemplate" + Math.floor(Math.random() * 10000);
-        viewTemplateNode.id = id;
+        id = "exhibitlensTemplate" + Math.floor(Math.random() * 10000);
+        lensTemplateNode.id = id;
     }
     
-    var compiledTemplate = Exhibit.ItemView._compiledTemplates[id];
+    var compiledTemplate = Exhibit.Lens._compiledTemplates[id];
     if (compiledTemplate == null) {
         compiledTemplate = {
             url:        id,
-            template:   Exhibit.ItemView._compileTemplate(viewTemplateNode),
+            template:   Exhibit.Lens._compileTemplate(lensTemplateNode),
             compiled:   true,
             jobs:       []
         };
-        Exhibit.ItemView._compiledTemplates[id] = compiledTemplate;
+        Exhibit.Lens._compiledTemplates[id] = compiledTemplate;
     }
-    Exhibit.ItemView._performConstructFromViewTemplateJob(compiledTemplate, job);
+    Exhibit.Lens._performConstructFromLensTemplateJob(compiledTemplate, job);
 };
 
-Exhibit.ItemView._startCompilingTemplate = function(viewTemplateURL, job) {
+Exhibit.Lens._startCompilingTemplate = function(lensTemplateURL, job) {
     var compiledTemplate = {
-        url:        viewTemplateURL,
+        url:        lensTemplateURL,
         template:   null,
         compiled:   false,
         jobs:       [ job ]
     };
-    Exhibit.ItemView._compiledTemplates[viewTemplateURL] = compiledTemplate;
+    Exhibit.Lens._compiledTemplates[lensTemplateURL] = compiledTemplate;
     
     var fError = function(statusText, status, xmlhttp) {
-        SimileAjax.Debug.log("Failed to load view template from " + viewTemplateURL + "\n" + statusText);
+        SimileAjax.Debug.log("Failed to load view template from " + lensTemplateURL + "\n" + statusText);
     };
     var fDone = function(xmlhttp) {
         try {
-            compiledTemplate.template = Exhibit.ItemView._compileTemplate(xmlhttp.responseXML.documentElement);
+            compiledTemplate.template = Exhibit.Lens._compileTemplate(xmlhttp.responseXML.documentElement);
             compiledTemplate.compiled = true;
             
             for (var i = 0; i < compiledTemplate.jobs.length; i++) {
                 try {
-                    Exhibit.ItemView._performConstructFromViewTemplateJob(
+                    Exhibit.Lens._performConstructFromLensTemplateJob(
                         compiledTemplate, compiledTemplate.jobs[i]);
                 } catch (e) {
-                    SimileAjax.Debug.exception("ItemView: Error constructing view template in job queue", e);
+                    SimileAjax.Debug.exception("Lens: Error constructing lens template in job queue", e);
                 }
             }
             compiledTemplate.jobs = null;
         } catch (e) {
-            SimileAjax.Debug.exception("ItemView: Error compiling view template and processing template job queue", e);
+            SimileAjax.Debug.exception("Lens: Error compiling lens template and processing template job queue", e);
         }
     };
     
-    SimileAjax.XmlHttp.get(viewTemplateURL, fError, fDone);
+    SimileAjax.XmlHttp.get(lensTemplateURL, fError, fDone);
 
     return compiledTemplate;
 };
 
-Exhibit.ItemView._compileTemplate = function(rootNode) {
-    return Exhibit.ItemView._processTemplateNode(rootNode);
+Exhibit.Lens._compileTemplate = function(rootNode) {
+    return Exhibit.Lens._processTemplateNode(rootNode);
 };
 
-Exhibit.ItemView._processTemplateNode = function(node) {
+Exhibit.Lens._processTemplateNode = function(node) {
     if (node.nodeType == 1) {
-        return Exhibit.ItemView._processTemplateElement(node);
+        return Exhibit.Lens._processTemplateElement(node);
     } else {
         return node.nodeValue.replace(/\s+/g, " ");
     }
 };
 
-Exhibit.ItemView._startingSpaces = /^\s+/;
-Exhibit.ItemView._endingSpaces = /\s+$/;
-Exhibit.ItemView._trimString = function(s) {
-    return s.replace(Exhibit.ItemView._startingSpaces, '').replace(Exhibit.ItemView._endingSpaces, '');
-};
-
-Exhibit.ItemView._processTemplateElement = function(elmt) {
+Exhibit.Lens._processTemplateElement = function(elmt) {
     var templateNode = {
         tag:                elmt.tagName,
         control:            null,
@@ -259,8 +253,8 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
                 for (var s = 0; s < styles.length; s++) {
                     var pair = styles[s].split(":");
                     if (pair.length > 1) {
-                        var n = Exhibit.ItemView._trimString(pair[0]);
-                        var v = Exhibit.ItemView._trimString(pair[1]);
+                        var n = pair[0].trim();
+                        var v = pair[1].trim();
                         if (n == "float") {
                             n = SimileAjax.Platform.browser.isIE ? "styleFloat" : "cssFloat";
                         } else if (n == "-moz-opacity") {
@@ -302,15 +296,15 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
     if (childNode != null) {
         templateNode.children = [];
         while (childNode != null) {
-            templateNode.children.push(Exhibit.ItemView._processTemplateNode(childNode));
+            templateNode.children.push(Exhibit.Lens._processTemplateNode(childNode));
             childNode = childNode.nextSibling;
         }
     }
     return templateNode;
 };
 
-Exhibit.ItemView._performConstructFromViewTemplateJob = function(compiledTemplate, job) {
-    Exhibit.ItemView._constructFromViewTemplateNode(
+Exhibit.Lens._performConstructFromLensTemplateJob = function(compiledTemplate, job) {
+    Exhibit.Lens._constructFromLensTemplateNode(
         job.itemID, "item", compiledTemplate.template, job.div, job.exhibit);
         
     var node = job.div.firstChild;
@@ -322,7 +316,7 @@ Exhibit.ItemView._performConstructFromViewTemplateJob = function(compiledTemplat
     }
 };
 
-Exhibit.ItemView._constructFromViewTemplateNode = function(
+Exhibit.Lens._constructFromLensTemplateNode = function(
     value, valueType, templateNode, parentElmt, exhibit
 ) {
     if (typeof templateNode == "string") {
@@ -344,7 +338,7 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
         }
     }
     
-    var elmt = Exhibit.ItemView._constructElmtWithAttributes(value, valueType, templateNode, parentElmt, database);
+    var elmt = Exhibit.Lens._constructElmtWithAttributes(value, valueType, templateNode, parentElmt, database);
     if (templateNode.contentAttributes != null) {
         var contentAttributes = templateNode.contentAttributes;
         for (var i = 0; i < contentAttributes.length; i++) {
@@ -385,7 +379,7 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
         if (children != null) {
             var processOneValue = function(childValue) {
                 for (var i = 0; i < children.length; i++) {
-                    Exhibit.ItemView._constructFromViewTemplateNode(
+                    Exhibit.Lens._constructFromLensTemplateNode(
                         childValue, results.valueType, children[i], elmt, exhibit);
                 }
             };
@@ -397,16 +391,16 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
                 results.values.visit(processOneValue);
             }
         } else {
-            Exhibit.ItemView._constructDefaultValueList(results.values, results.valueType, elmt, exhibit);
+            Exhibit.Lens._constructDefaultValueList(results.values, results.valueType, elmt, exhibit);
         }
     } else if (children != null) {
         for (var i = 0; i < children.length; i++) {
-            Exhibit.ItemView._constructFromViewTemplateNode(value, valueType, children[i], elmt, exhibit);
+            Exhibit.Lens._constructFromLensTemplateNode(value, valueType, children[i], elmt, exhibit);
         }
     }
 };
 
-Exhibit.ItemView._constructElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
+Exhibit.Lens._constructElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
     var elmt;
     switch (templateNode.tag) {
     case "tr":
@@ -433,7 +427,7 @@ Exhibit.ItemView._constructElmtWithAttributes = function(value, valueType, templ
     return elmt;
 };
 
-Exhibit.ItemView._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
+Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();

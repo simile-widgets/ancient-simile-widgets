@@ -51,7 +51,7 @@ if (typeof SimileAjax == "undefined") {
             "views/timeline-view.js",
             "views/thumbnail-view.js",
             "views/tabular-view.js",
-            "views/item-view.js",
+            "lens.js",
             
             "exporters/rdf-xml-exporter.js",
             "exporters/semantic-wikitext-exporter.js",

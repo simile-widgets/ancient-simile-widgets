@@ -123,11 +123,11 @@ Exhibit.TileView.prototype._reconstruct = function() {
         var tdIndex = tr.insertCell(0);
         tdIndex.innerHTML = (index + 1) + ".";
         
-        var tdItemView = tr.insertCell(1);
+        var tdItemLens = tr.insertCell(1);
         
-        var itemViewDiv = document.createElement("div");
-        var itemView = new Exhibit.ItemView(itemID, itemViewDiv, view._exhibit, view._globalConfiguration);
-        tdItemView.appendChild(itemViewDiv);
+        var itemLensDiv = document.createElement("div");
+        var itemLens = new Exhibit.Lens(itemID, itemLensDiv, view._exhibit, view._globalConfiguration);
+        tdItemLens.appendChild(itemLensDiv);
     };
                 
     this._div.style.display = "none";
