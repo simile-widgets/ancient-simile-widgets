@@ -280,32 +280,60 @@ Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, dat
 };
 
 Exhibit.ViewPanel.extractItemLensDomConfiguration = function(parentNode, configuration) {
+    var defaultTemplate = null;
+    var typeToTemplate = null;
+    
     var node = parentNode.firstChild;
     while (node != null) {
         if (node.nodeType == 1) {
             var role = Exhibit.getAttribute(node, "role");
             if (role == "exhibit-lens") {
+                var itemTypes = Exhibit.getAttribute(node, "itemTypes");
+                var template = null;
+                
                 var url = Exhibit.getAttribute(node, "templateFile");
                 if (url != null && url.length > 0) {
-                    configuration["Lens"] = {
-                        lensSelector: function(itemID, exhibit) { return url; }
-                    };
+                    template = url;
                 } else {
                     var id = Exhibit.getAttribute(node, "template");
                     var elmt = document.getElementById(id);
                     if (elmt != null) {
-                        configuration["Lens"] = {
-                            lensSelector: function(itemID, exhibit) { return elmt; }
-                        };
+                        template = elmt;
                     } else {
-                        configuration["Lens"] = {
-                            lensSelector: function(itemID, exhibit) { return node; }
-                        };
+                        template = node;
                     }
                 }
-                break;
+                
+                if (template != null) {
+                    if (itemTypes == null) {
+                        defaultTemplate = template;
+                    } else {
+                        if (typeToTemplate == null) {
+                            typeToTemplate = {};
+                        }
+                        
+                        itemTypes = itemTypes.split(",");
+                        for (var i = 0; i < itemTypes.length; i++) {
+                            typeToTemplate[itemTypes[i].trim()] = template;
+                        }
+                    }
+                }
             }
         }
         node = node.nextSibling;
+    }
+    
+    if (typeToTemplate != null) {
+        configuration["Lens"] = {
+            lensSelector: function(itemID, exhibit) { 
+                var type = exhibit.getDatabase().getObject(itemID, "type");
+                var template = typeToTemplate[type];
+                return template != null ? template : defaultTemplate; 
+            }
+        };
+    } else if (defaultTemplate != null) {
+        configuration["Lens"] = {
+            lensSelector: function(itemID, exhibit) { return defaultTemplate; }
+        };
     }
 };
