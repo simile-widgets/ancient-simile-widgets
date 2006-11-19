@@ -30,24 +30,24 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         }
     }
     if (domConfiguration != null) {
-        var orders = domConfiguration.getAttribute("orders");
+        var orders = Exhibit.getAttribute(domConfiguration, "orders");
         if (orders != null && orders.length > 0) {
             this._orders = [];
             this._configureOrders(orders.split(","));
         }
         
-        var possibleOrders = domConfiguration.getAttribute("possibleOrders");
+        var possibleOrders = Exhibit.getAttribute(domConfiguration, "possibleOrders");
         if (possibleOrders != null && possibleOrders.length > 0) {
             this._possibleOrders = [];
             this._configurePossibleOrders(possibleOrders.split(","));
         }
         
-        var initialCount = domConfiguration.getAttribute("initialCount");
+        var initialCount = Exhibit.getAttribute(domConfiguration, "initialCount");
         if (initialCount != null && initialCount.length > 0) {
             this._initialCount = parseInt(initialCount);
         }
         
-        var showAll = domConfiguration.getAttribute("showAll");
+        var showAll = Exhibit.getAttribute(domConfiguration, "showAll");
         if (showAll != null && showAll.length > 0) {
             this._showAll = (showAll == "true");
         }

@@ -230,64 +230,66 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         if (value == null || typeof value != "string" || value.length == 0 || name == "contentEditable") {
             continue;
         }
-        
-        if (name == "id") {
-            continue;
-        } else if (name == "class") {
-            if (SimileAjax.Platform.browser.isIE) {
-                name = "className";
-            }
-        } else if (name == "cellspacing") {
-            name = "cellSpacing";
-        } else if (name == "cellpadding") {
-            name = "cellPadding";
-        } else if (name == "bgcolor") {
-            name = "bgColor";
-        }
-        
-        if (name == "control") {
-            templateNode.control = value;
-        } else if (name == "content") {
-            templateNode.content = Exhibit.Expression.parse(value);
-        } else if (name == "if-exists") {
-            templateNode.condition = {
-                test:       "exists",
-                expression: Exhibit.Expression.parse(value)
-            };
-        } else if (name == "style") {
-            var styles = value.split(";");
-            for (var s = 0; s < styles.length; s++) {
-                var pair = styles[s].split(":");
-                if (pair.length > 1) {
-                    var n = Exhibit.ItemView._trimString(pair[0]);
-                    var v = Exhibit.ItemView._trimString(pair[1]);
-                    if (n == "float") {
-                        n = SimileAjax.Platform.browser.isIE ? "styleFloat" : "cssFloat";
-                    } else if (n == "-moz-opacity") {
-                        n = "MozOpacity";
-                    } else {
-                        if (n.indexOf("-") > 0) {
-                            var segments = n.split("-");
-                            n = segments[0];
-                            for (var x = 1; x < segments.length; x++) {
-                                n += segments[x].substr(0, 1).toUpperCase() + segments[x].substr(1);
-                            }
-                        }
+        if (name.length > 3 && name.substr(0,3) == "ex:") {
+            name = name.substr(3);
+            if (name == "control") {
+                templateNode.control = value;
+            } else if (name == "content") {
+                templateNode.content = Exhibit.Expression.parse(value);
+            } else if (name == "if-exists") {
+                templateNode.condition = {
+                    test:       "exists",
+                    expression: Exhibit.Expression.parse(value)
+                };
+            } else {
+                var x = name.indexOf("-content");
+                if (x > 0) {
+                    if (templateNode.contentAttributes == null) {
+                        templateNode.contentAttributes = [];
                     }
-                    templateNode.styles.push({ name: n, value: v });
+                    templateNode.contentAttributes.push({
+                        name:       name.substr(0, x),
+                        expression: Exhibit.Expression.parse(value)
+                    });
                 }
             }
         } else {
-            var x = name.indexOf("-content");
-            if (x > 0) {
-                if (templateNode.contentAttributes == null) {
-                    templateNode.contentAttributes = [];
+            if (name == "style") {
+                var styles = value.split(";");
+                for (var s = 0; s < styles.length; s++) {
+                    var pair = styles[s].split(":");
+                    if (pair.length > 1) {
+                        var n = Exhibit.ItemView._trimString(pair[0]);
+                        var v = Exhibit.ItemView._trimString(pair[1]);
+                        if (n == "float") {
+                            n = SimileAjax.Platform.browser.isIE ? "styleFloat" : "cssFloat";
+                        } else if (n == "-moz-opacity") {
+                            n = "MozOpacity";
+                        } else {
+                            if (n.indexOf("-") > 0) {
+                                var segments = n.split("-");
+                                n = segments[0];
+                                for (var x = 1; x < segments.length; x++) {
+                                    n += segments[x].substr(0, 1).toUpperCase() + segments[x].substr(1);
+                                }
+                            }
+                        }
+                        templateNode.styles.push({ name: n, value: v });
+                    }
                 }
-                templateNode.contentAttributes.push({
-                    name:       name.substr(0, x),
-                    expression: Exhibit.Expression.parse(value)
-                });
-            } else {
+            } else if (name != "id") {
+                if (name == "class") {
+                    if (SimileAjax.Platform.browser.isIE) {
+                        name = "className";
+                    }
+                } else if (name == "cellspacing") {
+                    name = "cellSpacing";
+                } else if (name == "cellpadding") {
+                    name = "cellPadding";
+                } else if (name == "bgcolor") {
+                    name = "bgColor";
+                }
+                
                 templateNode.attributes.push({
                     name:   name,
                     value:  value

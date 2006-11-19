@@ -63,12 +63,12 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
         } else if ("lat" in configuration && "lng" in configuration) {
             getLatLng = makeGetLatLng2(configuration.lat, configuration.lng);
         } else if (domConfiguration != null) {
-            var latlng = domConfiguration.getAttribute("latlng");
+            var latlng = Exhibit.getAttribute(domConfiguration, "latlng");
             if (latlng != null && latlng.length > 0) {
                 getLatLng = makeGetLatLng(latlng);
             } else {
-                var lat = domConfiguration.getAttribute("lat");
-                var lng = domConfiguration.getAttribute("lng");
+                var lat = Exhibit.getAttribute(domConfiguration, "lat");
+                var lng = Exhibit.getAttribute(domConfiguration, "lng");
                 if (lat != null && lng != null && lat.length > 0 && lng.length > 0) {
                     getLatLng = makeGetLatLng2(lat, lng);
                 }
@@ -97,7 +97,7 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
         if ("marker" in configuration) {
             getMarkerKey = makeGetMarker(configuration.marker);
         } else if (domConfiguration != null) {
-            var marker = domConfiguration.getAttribute("marker");
+            var marker = Exhibit.getAttribute(domConfiguration, "marker");
             if (marker != null && marker.length > 0) {
                 getMarkerKey = makeGetMarker(marker);
             }

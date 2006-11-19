@@ -76,6 +76,15 @@ Exhibit.protectUI = function(elmt) {
     SimileAjax.DOM.appendClassName(elmt, "exhibit-ui-protection");
 };
 
+Exhibit.getAttribute = function(elmt, name) {
+    try {
+        var value = elmt.getAttribute(name);
+        return (value != null) ? value : elmt.getAttribute("ex:" + name);
+    } catch (e) {
+        return null;
+    }
+};
+
 Exhibit._internalCreate = function(settings) {
     if (!("controlDiv" in settings) || settings.controlDiv == null) {
         settings.controlDiv = document.getElementById("exhibit-control-panel");

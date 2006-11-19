@@ -88,13 +88,13 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
         if (node.nodeType == 1) {
             node.style.display = "none";
             
-            var role = node.getAttribute("role");
+            var role = Exhibit.getAttribute(node, "role");
             if (role == "exhibit-view") {
                 try {
-                    var constructor = eval(node.getAttribute("view-class"));
+                    var constructor = eval(Exhibit.getAttribute(node, "viewClass"));
                     if (typeof constructor == "function") {
-                        var label = node.getAttribute("label");
-                        var tooltip = node.getAttribute("title");
+                        var label = Exhibit.getAttribute(node, "label");
+                        var tooltip = Exhibit.getAttribute(node, "title");
                         
                         if (label == null) {
                             if ("l10n" in constructor && "viewLabel" in constructor.l10n) {
@@ -271,15 +271,15 @@ Exhibit.ViewPanel.extractItemViewDomConfiguration = function(parentNode, configu
     var node = parentNode.firstChild;
     while (node != null) {
         if (node.nodeType == 1) {
-            var role = node.getAttribute("role");
+            var role = Exhibit.getAttribute(node, "role");
             if (role == "exhibit-lens") {
-                var url = node.getAttribute("template-file");
+                var url = Exhibit.getAttribute(node, "templateFile");
                 if (url != null && url.length > 0) {
                     configuration["ItemView"] = {
                         viewSelector: function(itemID, exhibit) { return url; }
                     };
                 } else {
-                    var id = node.getAttribute("template");
+                    var id = Exhibit.getAttribute(node, "template");
                     var elmt = document.getElementById(id);
                     if (elmt != null) {
                         configuration["ItemView"] = {

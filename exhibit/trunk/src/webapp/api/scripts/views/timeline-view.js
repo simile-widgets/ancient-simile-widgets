@@ -40,7 +40,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
         if ("start" in configuration) {
             getStart = makeAccessor(configuration.start);
         } else if (domConfiguration != null) {
-            var start = domConfiguration.getAttribute("start");
+            var start = Exhibit.getAttribute(domConfiguration, "start");
             if (start != null && start.length > 0) {
                 getStart = makeAccessor(start);
             }
@@ -50,7 +50,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
         if ("end" in configuration) {
             getEnd = makeAccessor(configuration.end);
         } else if (domConfiguration != null) {
-            var end = domConfiguration.getAttribute("end");
+            var end = Exhibit.getAttribute(domConfiguration, "end");
             if (end != null && end.length > 0) {
                 getEnd = makeAccessor(end);
             }
@@ -86,7 +86,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
         if ("proxy" in configuration) {
             getDurations = makeGetDurations(configuration.proxy);
         } else if (domConfiguration != null) {
-            var proxy = domConfiguration.getAttribute("proxy");
+            var proxy = Exhibit.getAttribute(domConfiguration, "proxy");
             if (proxy != null && proxy.length > 0) {
                 getDurations = makeGetDurations(proxy);
             }
@@ -105,17 +105,17 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
         }
         
         if (domConfiguration != null) {
-            var topBandIntervalPixels = domConfiguration.getAttribute("topBandIntervalPixels");
+            var topBandIntervalPixels = Exhibit.getAttribute(domConfiguration, "topBandIntervalPixels");
             if (topBandIntervalPixels != null && topBandIntervalPixels.length > 0) {
                 this._topBandIntervalPixels = parseInt(topBandIntervalPixels);
             }
             
-            var bottomBandIntervalPixels = domConfiguration.getAttribute("bottomBandIntervalPixels");
+            var bottomBandIntervalPixels = Exhibit.getAttribute(domConfiguration, "bottomBandIntervalPixels");
             if (bottomBandIntervalPixels != null && bottomBandIntervalPixels.length > 0) {
                 this._bottomBandIntervalPixels = parseInt(bottomBandIntervalPixels);
             }
             
-            var densityFactor = domConfiguration.getAttribute("densityFactor");
+            var densityFactor = Exhibit.getAttribute(domConfiguration, "densityFactor");
             if (densityFactor != null && densityFactor.length > 0) {
                 this._densityFactor = parseFloat(densityFactor);
             }
@@ -143,7 +143,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
         if ("marker" in configuration) {
             getMarkerKey = makeGetMarker(configuration.marker);
         } else if (domConfiguration != null) {
-            var marker = domConfiguration.getAttribute("marker");
+            var marker = Exhibit.getAttribute(domConfiguration, "marker");
             if (marker != null && marker.length > 0) {
                 getMarkerKey = makeGetMarker(marker);
             }

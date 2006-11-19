@@ -34,7 +34,7 @@ Exhibit.BrowsePanel.prototype.setState = function(state) {
 
 Exhibit.BrowsePanel.prototype._configure = function(configuration) {
     if (configuration == null || !("BrowseEngine" in configuration)) {
-        var s = this._div.getAttribute("facets");
+        var s = Exhibit.getAttribute(this._div, "facets");
         if (s != null && s.length > 0) {
             var a = s.split(",");
             for (var i = 0; i < a.length; i++) {

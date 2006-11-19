@@ -28,7 +28,8 @@ if (typeof SimileAjax == "undefined") {
     window.open("http://simile.mit.edu/wiki/Exhibit/How_to_include_the_Exhibit_API", "_blank");
 } else if (typeof Exhibit == "undefined") {
     var Exhibit = {
-        loaded:     false
+        loaded:     false,
+        namespace:  "http://simile.mit.edu/2006/11/exhibit#"
     };
     
     (function() {
