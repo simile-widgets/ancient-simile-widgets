@@ -2,11 +2,7 @@
  *  Simile Exhibit API
  *
  *  Include Exhibit in your HTML file as follows:
- *    <script src="http://simile.mit.edu/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
  *    <script src="http://simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
- *
- *  You do need to include the Simile Ajax API 
- *  BEFORE you include Exhibit.
  *
  *==================================================
  */
