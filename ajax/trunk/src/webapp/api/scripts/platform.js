@@ -47,7 +47,7 @@ SimileAjax.Platform.browser = {
     SimileAjax.Platform.browser.isMozilla = (ua.indexOf("mozilla") != -1);
     SimileAjax.Platform.browser.isFirefox = (ua.indexOf("firefox") != -1);
     SimileAjax.Platform.browser.isOpera = (an.indexOf("opera") != -1);
-    //SimileAjax.Platform.browser.isSafari = (an.indexOf("safari") != -1);
+    SimileAjax.Platform.browser.isSafari = (an.indexOf("safari") != -1);
     
     var parseVersionString = function(s) {
         var a = s.split(".");
@@ -82,6 +82,14 @@ SimileAjax.Platform.browser = {
         if (offset >= 0) {
             parseVersionString(ua.substring(offset + 8, indexOf(ua, " ", offset)));
         }
+    }
+    
+    if (!("localeCompare" in String.prototype)) {
+        String.prototype.localeCompare = function (s) {
+            if (this < s) return -1;
+            else if (this > s) return 1;
+            else return 0;
+        };
     }
 })();
 
