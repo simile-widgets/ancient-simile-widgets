@@ -11,28 +11,17 @@
  *==================================================
  */
 
-if (typeof SimileAjax == "undefined") {
-    window.alert(
-        "ERROR:\n" +
-        "You need to include the Simile AJAX API\n" +
-        "before including the Exhibit API.\n" +
-        "\n" +
-        "We will open the relevant documentation\n" +
-        "after you click OK.\n" +
-        "\n" +
-        "If you don't see the documentation, it's\n" +
-        "because your browser is blocking our pop-up.\n" +
-        "Please set your browser to allow our pop-up\n" +
-        "and refresh this page."
-    );
-    window.open("http://simile.mit.edu/wiki/Exhibit/How_to_include_the_Exhibit_API", "_blank");
-} else if (typeof Exhibit == "undefined") {
-    var Exhibit = {
-        loaded:     false,
-        namespace:  "http://simile.mit.edu/2006/11/exhibit#"
-    };
+(function() {
+    var loadMe = function() {
+        if (typeof window.Exhibit != "undefined") {
+            return;
+        }
     
-    (function() {
+        window.Exhibit = {
+            loaded:     false,
+            namespace:  "http://simile.mit.edu/2006/11/exhibit#"
+        };
+    
         var javascriptFiles = [
             "exhibit.js",
             "util/set.js",
@@ -154,5 +143,32 @@ if (typeof SimileAjax == "undefined") {
         SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "locales/", localeFiles);
         
         Exhibit.loaded = true;
-    })();
-}
+    };
+    
+    /*
+     *  Load SimileAjax if it's not already loaded
+     */
+    if (typeof SimileAjax == "undefined") {
+        window.SimileAjax_onLoad = loadMe;
+        
+        var url = "http://simile.mit.edu/ajax/api/simile-ajax-api.js";
+        var createScriptElement = function() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.language = "JavaScript";
+            script.src = url;
+            document.getElementsByTagName("head")[0].appendChild(script);
+        }
+        if (document.body == null) {
+            try {
+                document.write("<script src='" + url + "' type='text/javascript'></script>");
+            } catch (e) {
+                createScriptElement();
+            }
+        } else {
+            createScriptElement();
+        }
+    } else {
+        loadMe();
+    }
+})();
