@@ -11,13 +11,12 @@ Exhibit.ThumbnailView = function(exhibit, div, configuration, domConfiguration, 
     this._globalConfiguration = globalConfiguration;
     this._itemViewConfiguration = {};
     
-    if ("viewSelector" in configuration) {
-        this._itemViewConfiguration["ItemView"] = {
-            viewSelector: configuration.viewSelector
-        }
-    } else if (domConfiguration != null) {
+    if (domConfiguration != null) {
         Exhibit.ViewPanel.extractItemViewDomConfiguration(
             domConfiguration, this._itemViewConfiguration);
+    }
+    if ("viewSelector" in configuration) {
+        this._itemViewConfiguration["ItemView"].viewSelector = configuration.viewSelector;
     }
     
     this._initializeUI();

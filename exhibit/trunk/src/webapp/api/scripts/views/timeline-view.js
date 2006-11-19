@@ -37,23 +37,25 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
             };
         };
         
-        if ("start" in configuration) {
-            getStart = makeAccessor(configuration.start);
-        } else if (domConfiguration != null) {
+        if (domConfiguration != null) {
             var start = Exhibit.getAttribute(domConfiguration, "start");
             if (start != null && start.length > 0) {
                 getStart = makeAccessor(start);
             }
         }
+        if ("start" in configuration) {
+            getStart = makeAccessor(configuration.start);
+        } 
         getStart = getStart != null ? getStart : function(itemID, database) { return null; }
         
-        if ("end" in configuration) {
-            getEnd = makeAccessor(configuration.end);
-        } else if (domConfiguration != null) {
+        if (domConfiguration != null) {
             var end = Exhibit.getAttribute(domConfiguration, "end");
             if (end != null && end.length > 0) {
                 getEnd = makeAccessor(end);
             }
+        }
+        if ("end" in configuration) {
+            getEnd = makeAccessor(configuration.end);
         }
         getEnd = getEnd != null ? getEnd : function(itemID, database) { return null; }
         
@@ -83,26 +85,17 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
             };
         };
         
-        if ("proxy" in configuration) {
-            getDurations = makeGetDurations(configuration.proxy);
-        } else if (domConfiguration != null) {
+        if (domConfiguration != null) {
             var proxy = Exhibit.getAttribute(domConfiguration, "proxy");
             if (proxy != null && proxy.length > 0) {
                 getDurations = makeGetDurations(proxy);
             }
         }
+        if ("proxy" in configuration) {
+            getDurations = makeGetDurations(configuration.proxy);
+        }
         getDurations = getDurations != null ? getDurations : getStartEnd;
         
-        
-        if ("topBandIntervalPixels" in configuration) {
-            this._topBandIntervalPixels = configuration.topBandIntervalPixels;
-        }
-        if ("bottomBandIntervalPixels" in configuration) {
-            this._bottomBandIntervalPixels = configuration.bottomBandIntervalPixels;
-        }
-        if ("densityFactor" in configuration) {
-            this._densityFactor = configuration.densityFactor;
-        }
         
         if (domConfiguration != null) {
             var topBandIntervalPixels = Exhibit.getAttribute(domConfiguration, "topBandIntervalPixels");
@@ -119,6 +112,15 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
             if (densityFactor != null && densityFactor.length > 0) {
                 this._densityFactor = parseFloat(densityFactor);
             }
+        }
+        if ("topBandIntervalPixels" in configuration) {
+            this._topBandIntervalPixels = configuration.topBandIntervalPixels;
+        }
+        if ("bottomBandIntervalPixels" in configuration) {
+            this._bottomBandIntervalPixels = configuration.bottomBandIntervalPixels;
+        }
+        if ("densityFactor" in configuration) {
+            this._densityFactor = configuration.densityFactor;
         }
     } catch (e) {
         SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
@@ -140,13 +142,14 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
             }
         };
         
-        if ("marker" in configuration) {
-            getMarkerKey = makeGetMarker(configuration.marker);
-        } else if (domConfiguration != null) {
+        if (domConfiguration != null) {
             var marker = Exhibit.getAttribute(domConfiguration, "marker");
             if (marker != null && marker.length > 0) {
                 getMarkerKey = makeGetMarker(marker);
             }
+        }
+        if ("marker" in configuration) {
+            getMarkerKey = makeGetMarker(configuration.marker);
         }
     } catch (e) {
         SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view", e);

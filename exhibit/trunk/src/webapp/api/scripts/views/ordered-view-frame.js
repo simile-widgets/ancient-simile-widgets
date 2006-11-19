@@ -13,22 +13,9 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     this._initialCount = 10;
     this._showAll = false;
     
-    if (configuration != null) {
-        if ("orders" in configuration) {
-            this._orders = [];
-            this._configureOrders(configuration.orders);
-        }
-        if ("possibleOrders" in configuration) {
-            this._possibleOrders = [];
-            this._configurePossibleOrders(configuration.possibleOrders);
-        }
-        if ("initialCount" in configuration) {
-            this._initialCount = configuration.initialCount;
-        }
-        if ("showAll" in configuration) {
-            this._showAll = configuration.showAll;
-        }
-    }
+    /*
+     *  First, get configurations from the dom, if any
+     */
     if (domConfiguration != null) {
         var orders = Exhibit.getAttribute(domConfiguration, "orders");
         if (orders != null && orders.length > 0) {
@@ -53,6 +40,27 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         }
     }
     
+    /*
+     *  Then override them from the configuration object
+     */
+    if ("orders" in configuration) {
+        this._orders = [];
+        this._configureOrders(configuration.orders);
+    }
+    if ("possibleOrders" in configuration) {
+        this._possibleOrders = [];
+        this._configurePossibleOrders(configuration.possibleOrders);
+    }
+    if ("initialCount" in configuration) {
+        this._initialCount = configuration.initialCount;
+    }
+    if ("showAll" in configuration) {
+        this._showAll = configuration.showAll;
+    }
+    
+    /*
+     *  Fix up configuration in case author makes mistakes
+     */
     if (this._possibleOrders == null) {
         this._possibleOrders = [
             {   property:   "label",
@@ -67,6 +75,9 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         ];
     }
     
+    /*
+     *  Initialize the UI
+     */
     this._initializeUI();
 };
 
@@ -282,7 +293,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
             while (g < groupLevels) {
                 sortKeys[g] = item.sortKeys[g];
                 
-                this.onNewGroup(sortKeys[g], orders[g].valueType, g);
+                this.onNewGroup(sortKeys[g], orders[g].keyType, g);
                 
                 g++;
             }

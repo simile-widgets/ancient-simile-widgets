@@ -35,7 +35,7 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
                 if (typeof view == "function") {
                     constructor = view;
                 } else {
-                    constructor = view.constructor;
+                    constructor = view.viewClass;
                     if ("label" in view) {
                         label = view.label;
                     }
@@ -95,6 +95,7 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
                     if (typeof constructor == "function") {
                         var label = Exhibit.getAttribute(node, "label");
                         var tooltip = Exhibit.getAttribute(node, "title");
+                        var config = null;
                         
                         if (label == null) {
                             if ("l10n" in constructor && "viewLabel" in constructor.l10n) {
@@ -111,8 +112,19 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
                             }
                         }
                         
+                        var o = Exhibit.getAttribute(node, "configuration");
+                        if (o != null) {
+                            try {
+                                o = eval(o);
+                                if (typeof o == "object") {
+                                    config = o;
+                                }
+                            } catch (e) {
+                            }
+                        }
+                        
                         this._viewConstructors.push(constructor);
-                        this._viewConfigs.push({});
+                        this._viewConfigs.push(config != null ? config : {});
                         this._viewLabels.push(label);
                         this._viewTooltips.push(tooltip);
                         this._viewDomConfigs.push(node);

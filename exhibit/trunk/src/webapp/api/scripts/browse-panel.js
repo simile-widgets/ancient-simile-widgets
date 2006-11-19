@@ -5,6 +5,17 @@
  */
  
 Exhibit.BrowsePanel = function(exhibit, div, configuration) {
+    if (configuration == null) {
+        var o = Exhibit.getAttribute(div, "configuration");
+        try {
+            o = eval(o);
+            if (typeof o == "object") {
+                configuration = o;
+            }
+        } catch (e) {
+        }
+    }
+    
     this._exhibit = exhibit;
     this._database = exhibit.getDatabase();
     this._browseEngine = exhibit.getBrowseEngine();
@@ -38,7 +49,7 @@ Exhibit.BrowsePanel.prototype._configure = function(configuration) {
         if (s != null && s.length > 0) {
             var a = s.split(",");
             for (var i = 0; i < a.length; i++) {
-                a[i] = a[i].replace(/^\s+/, '').replace(/\s+$/, '');
+                a[i] = a[i].trim();
             }
             this._browseEngine.setFacets(a);
         }

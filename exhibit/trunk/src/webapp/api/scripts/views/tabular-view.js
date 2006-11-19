@@ -11,65 +11,142 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
     
     this._initialCount = 10;
     this._showAll = true;
+    
+    this._columns = [];
     this._sortColumn = 0;
     this._sortAscending = true;
     this._rowStyler = null;
     
-    if (configuration != null) {
-        if ("columns" in configuration) {
-            this._columns = [];
-            
-            var columns = configuration.columns;
-            for (var i = 0; i < columns.length; i++) {
-                var column = columns[i];
-                var expr;
-                var styler = null;
-                var label = null;
-                var format = null;
-                
-                if (typeof column == "string") {
-                    expr = column;
-                } else {
-                    expr = column.expression;
-                    styler = column.styler;
-                    label = column.label;
-                    format = column.format;
-                }
-                
-                var expression = Exhibit.Expression.parse(expr);
-                if (expression.isPath()) {
-                    var path = expression.getPath();
-                    if (format == null) {
-                        format = "list";
-                    }
-                    this._columns.push({
-                        expression: expression,
-                        styler:     styler,
-                        label:      label,
-                        format:     format
-                    });
-                }
+    /*
+     *  First, get configurations from the dom, if any
+     */
+    if (domConfiguration != null) {
+        var expressions = [];
+        var labels = [];
+        var formats = [];
+        
+        var s = Exhibit.getAttribute(domConfiguration, "columns");
+        if (s != null && s.length > 0) {
+            var a = s.split(",");
+            for (var i = 0; i < a.length; i++) {
+                expressions.push(a[i].trim());
             }
         }
         
-        if ("sortColumn" in configuration) {
-            this._sortColumn = configuration.sortColumn;
-        }
-        if ("sortAscending" in configuration) {
-            this._sortAscending = (configuration.sortAscending);
-        }
-        
-        if ("initialCount" in configuration) {
-            this._initialCount = configuration.initialCount;
-        }
-        if ("showAll" in configuration) {
-            this._showAll = configuration.showAll;
+        s = Exhibit.getAttribute(domConfiguration, "columnLabels");
+        if (s != null && s.length > 0) {
+            var a = s.split(",");
+            for (var i = 0; i < a.length; i++) {
+                labels.push(a[i].trim());
+            }
         }
         
-        if ("rowStyler" in configuration) {
-            this._rowStyler = configuration.rowStyler;
+        s = Exhibit.getAttribute(domConfiguration, "columnFormats");
+        if (s != null && s.length > 0) {
+            var a = s.split(",");
+            for (var i = 0; i < a.length; i++) {
+                formats.push(a[i].trim());
+            }
+        }
+        
+        for (var i = 0; i < expressions.length; i++) {
+            var expression = Exhibit.Expression.parse(expressions[i]);
+            if (expression.isPath()) {
+                var path = expression.getPath();
+                var format = formats[i];
+                if (format == null) {
+                    format = "list";
+                }
+                this._columns.push({
+                    expression: expression,
+                    styler:     null,
+                    label:      labels[i],
+                    format:     format
+                });
+            }
+        }
+        
+        s = Exhibit.getAttribute(domConfiguration, "sortColumn");
+        if (s != null) {
+            this._sortColumn = parseInt(s);
+        }
+        s = Exhibit.getAttribute(domConfiguration, "sortAscending");
+        if (s != null) {
+            this._sortAscending = (s == "true");
+        }
+        s = Exhibit.getAttribute(domConfiguration, "initialCount");
+        if (s != null) {
+            this._initialCount = parseInt(s);
+        }
+        s = Exhibit.getAttribute(domConfiguration, "showAll");
+        if (s != null) {
+            this._showAll = (s == "true");
+        }
+        s = Exhibit.getAttribute(domConfiguration, "rowStyler");
+        if (s != null) {
+            var f = eval(s);
+            if (typeof f == "function") {
+                this._rowStyler = f;
+            }
         }
     }
+    
+    /*
+     *  Then override them from the configuration object
+     */
+    if ("columns" in configuration) {
+        var columns = configuration.columns;
+        for (var i = 0; i < columns.length; i++) {
+            var column = columns[i];
+            var expr;
+            var styler = null;
+            var label = null;
+            var format = null;
+            
+            if (typeof column == "string") {
+                expr = column;
+            } else {
+                expr = column.expression;
+                styler = column.styler;
+                label = column.label;
+                format = column.format;
+            }
+            
+            var expression = Exhibit.Expression.parse(expr);
+            if (expression.isPath()) {
+                var path = expression.getPath();
+                if (format == null) {
+                    format = "list";
+                }
+                this._columns.push({
+                    expression: expression,
+                    styler:     styler,
+                    label:      label,
+                    format:     format
+                });
+            }
+        }
+    }
+    if ("sortColumn" in configuration) {
+        this._sortColumn = configuration.sortColumn;
+    }
+    if ("sortAscending" in configuration) {
+        this._sortAscending = (configuration.sortAscending);
+    }
+    
+    if ("initialCount" in configuration) {
+        this._initialCount = configuration.initialCount;
+    }
+    if ("showAll" in configuration) {
+        this._showAll = configuration.showAll;
+    }
+    if ("rowStyler" in configuration) {
+        this._rowStyler = configuration.rowStyler;
+    }
+    
+    /*
+     *  Fix up configuration in case author makes mistakes
+     */
     if (this._columns.length == 0) {
         this._columns.push(
             {   expression: Exhibit.Expression.parse(".label"),
@@ -81,6 +158,9 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
     }
     this._sortColumn = Math.max(0, Math.min(this._sortColumn, this._columns.length - 1));
     
+    /*
+     *  Initialize UI and hook up event listeners
+     */
     this._initializeUI();
     
     var view = this;

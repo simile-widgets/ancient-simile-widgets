@@ -9,6 +9,9 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
     this._configuration = configuration;
     this._globalConfiguration = globalConfiguration;
     
+    /*
+     *  Getter for lat/lng
+     */
     var getLatLng = null;
     try {
         var makeGetLatLng = function(s) {
@@ -58,11 +61,7 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
             }
         };
         
-        if ("latlng" in configuration) {
-            getLatLng = makeGetLatLng(configuration.latlng);
-        } else if ("lat" in configuration && "lng" in configuration) {
-            getLatLng = makeGetLatLng2(configuration.lat, configuration.lng);
-        } else if (domConfiguration != null) {
+        if (domConfiguration != null) {
             var latlng = Exhibit.getAttribute(domConfiguration, "latlng");
             if (latlng != null && latlng.length > 0) {
                 getLatLng = makeGetLatLng(latlng);
@@ -74,10 +73,20 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
                 }
             }
         }
+        
+        if ("latlng" in configuration) {
+            getLatLng = makeGetLatLng(configuration.latlng);
+        } else if ("lat" in configuration && "lng" in configuration) {
+            getLatLng = makeGetLatLng2(configuration.lat, configuration.lng);
+        }
     } catch (e) {
         SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
     }
+    this._getLatLng = (getLatLng != null) ? getLatLng : function(itemID, database) { return {}; };
     
+    /*
+     *  Getter for marker key
+     */
     var getMarkerKey = null;
     try {
         var makeGetMarker = function(s) {
@@ -94,26 +103,90 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
             };
         };
         
-        if ("marker" in configuration) {
-            getMarkerKey = makeGetMarker(configuration.marker);
-        } else if (domConfiguration != null) {
+        if (domConfiguration != null) {
             var marker = Exhibit.getAttribute(domConfiguration, "marker");
             if (marker != null && marker.length > 0) {
                 getMarkerKey = makeGetMarker(marker);
             }
         }
+        if ("marker" in configuration) {
+            getMarkerKey = makeGetMarker(configuration.marker);
+        }
     } catch (e) {
         SimileAjax.Debug.exception("MapView: Error processing marker configuration of map view", e);
     }
-    
-    this._getLatLng = (getLatLng != null) ? getLatLng : function(itemID, database) { return {}; };
     this._getMarkerKey = (getMarkerKey != null) ? getMarkerKey : function(itemID, database) { return ""; };
+    
+    /*
+     *  Map settings
+     */
+    this._mapSettings = {
+        center:         [ 20, 0 ],
+        zoom:           2,
+        size:           "small",
+        scaleControl:   true,
+        type:           "normal"
+    };
+    if (domConfiguration != null) {
+        var s = Exhibit.getAttribute(domConfiguration, "center");
+        if (s != null && s.length > 0) {
+            var a = s.split(",");
+            if (a.length == 2) {
+                a[0] = parseFloat(a[0]);
+                a[1] = parseFloat(a[1]);
+                if (typeof a[0] == "number" && typeof a[1] == "number") {
+                    this._mapSettings.center = a;
+                }
+            }
+        }
         
+        s = Exhibit.getAttribute(domConfiguration, "zoom");
+        if (s != null && s.length > 0) {
+            this._mapSettings.zoom = parseInt(s);
+        }
+        
+        s = Exhibit.getAttribute(domConfiguration, "size");
+        if (s != null && s.length > 0) {
+            this._mapSettings.size = s;
+        }
+        
+        s = Exhibit.getAttribute(domConfiguration, "scaleControl");
+        if (s != null && s.length > 0) {
+            this._mapSettings.scaleControl = (s == "true");
+        }
+        
+        s = Exhibit.getAttribute(domConfiguration, "type");
+        if (s != null && s.length > 0) {
+            this._mapSettings.type = s;
+        }
+    }
+    if ("center" in configuration) {
+        this._mapSettings.center = this._configuration.center;
+    }
+    if ("zoom" in configuration) {
+        this._mapSettings.zoom = configuration.zoom;
+    }
+    if ("size" in configuration) {
+        this._mapSettings.size = configuration.size;
+    }
+    if ("scaleControl" in configuration) {
+        this._mapSettings.scaleControl = configuration.scaleControl;
+    }
+    if ("type" in configuration) {
+        this._mapSettings.type = configuration.type;
+    }
+    
+    /*
+     *  Internal stuff such as caches
+     */
     this._latlngCache = new Object();
     this._markerKeyCache = new Object();
     this._markerCache = new Object();
     this._maxMarker = 0;
     
+    /*
+     *  Initialize UI and register event listeners
+     */
     this._initializeUI();
     
     var view = this;
@@ -246,43 +319,31 @@ Exhibit.MapView.prototype._initializeUI = function() {
     if ("constructMap" in this._configuration) {
         this._dom.map = this._configuration.constructMap(mapDiv);
     } else {
+        var settings = this._mapSettings;
+        
         this._dom.map = new GMap2(mapDiv);
         this._dom.map.enableDoubleClickZoom();
         this._dom.map.enableContinuousZoom();
         
-        if ("center" in this._configuration) {
-            var lat = this._configuration.center[0];
-            var lng = this._configuration.center[1];
-        } else {
-            var lat = 20;
-            var lng = 0;
-        }
-        var zoom = ("zoom" in this._configuration) ? this._configuration.zoom : 2;
-        this._dom.map.setCenter(new GLatLng(lat, lng), zoom);
+        this._dom.map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
+        this._dom.map.addControl(settings.size == "small" ? 
+            new GSmallMapControl() : new GLargeMapControl());
         
-        if ("size" in this._configuration && this._configuration.size == "small") {
-            this._dom.map.addControl(new GSmallMapControl());
-        } else {
-            this._dom.map.addControl(new GLargeMapControl());
-        }
-        
-        if (!("scaleControl" in this._configuration) || this._configuration.scaleControl) {
+        if (settings.scaleControl) {
             this._dom.map.addControl(new GScaleControl());
         }
-        
         this._dom.map.addControl(new GMapTypeControl());
-        if ("type" in this._configuration) {
-            switch (this._configuration.type) {
-            case "normal":
-                this._dom.map.setMapType(G_NORMAL_MAP);
-                break;
-            case "satellite":
-                this._dom.map.setMapType(G_SATELLITE_MAP);
-                break;
-            case "hybrid":
-                this._dom.map.setMapType(G_HYBRID_MAP);
-                break;
-            }
+        
+        switch (settings.type) {
+        case "normal":
+            this._dom.map.setMapType(G_NORMAL_MAP);
+            break;
+        case "satellite":
+            this._dom.map.setMapType(G_SATELLITE_MAP);
+            break;
+        case "hybrid":
+            this._dom.map.setMapType(G_HYBRID_MAP);
+            break;
         }
     }
     this._reconstruct();
