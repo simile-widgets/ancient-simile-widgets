@@ -41,6 +41,8 @@ if (typeof SimileAjax == "undefined") {
             "database.js",
             "browse-engine.js",
             
+            "control-panel.js",
+            
             "browse-panel.js",
             "facets/list-facet.js",
             

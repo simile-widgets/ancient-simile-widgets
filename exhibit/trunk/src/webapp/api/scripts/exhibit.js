@@ -114,22 +114,21 @@ Exhibit._internalCreate = function(settings) {
 Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._configuration = configuration;
     
+    this._exporters = [
+        Exhibit.RdfXmlExporter,
+        Exhibit.SemanticWikitextExporter,
+        Exhibit.ExhibitJsonExporter
+    ];
+    if ("exporters" in configuration) {
+        this._exporters = this._exporters.concat(configuration.exporters);
+    }
+    
     this._database = new Exhibit.Database();
     this._engine = new Exhibit.BrowseEngine(this._database, configuration);
+    this._controlPanel = new Exhibit.ControlPanel(this, controlDiv, configuration);
     this._browsePanel = new Exhibit.BrowsePanel(this, browseDiv, configuration);
     this._viewPanel = new Exhibit.ViewPanel(this, viewDiv, configuration);
     this._busyIndicator = Exhibit.Theme.createBusyIndicator();
-    
-    this._exporters = "exporters" in configuration ? configuration.exporters : {};
-    this._exporters["rdf/xml"] = {
-        exporter:   Exhibit.RdfXmlExporter
-    };
-    this._exporters["smw"] = {
-        exporter:   Exhibit.SemanticWikitextExporter
-    };
-    this._exporters["exhibit-json"] = {
-        exporter:   Exhibit.ExhibitJsonExporter
-    };
     
     var self = this;
     this._focusID = null;
@@ -438,6 +437,10 @@ Exhibit._Impl.prototype.getExporters = function() {
     return this._exporters;
 };
 
+Exhibit._Impl.prototype.addExporter = function(exporter) {
+    this._exporters.push(exporter);
+};
+
 Exhibit._Impl.prototype._loadJSON = function(o, url) {
     if ("types" in o) {
         this._database.loadTypes(o.types, url);
@@ -511,8 +514,8 @@ Exhibit._Impl.prototype._showCopyMenu = function(elmt, itemID) {
     }
     
     var exporters = exhibit.getExporters();
-    for (format in exporters) {
-        makeMenuItem(exporters[format].exporter);
+    for (var i = 0; i < exporters.length; i++) {
+        makeMenuItem(exporters[i]);
     }
     popupDom.open();
 };
