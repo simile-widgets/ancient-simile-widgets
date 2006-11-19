@@ -43,7 +43,8 @@
             "exporters/rdf-xml-exporter.js",
             "exporters/semantic-wikitext-exporter.js",
             "exporters/exhibit-json-exporter.js",
-            "exporters/bibtex-exporter.js",
+            "exporters/tsv-exporter.js",
+            "exporters/bibtex-exporter.js"
         ];
         var cssFiles = [
             "exhibit.css"

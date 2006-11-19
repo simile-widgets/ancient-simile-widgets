@@ -117,7 +117,8 @@ Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._exporters = [
         Exhibit.RdfXmlExporter,
         Exhibit.SemanticWikitextExporter,
-        Exhibit.ExhibitJsonExporter
+        Exhibit.ExhibitJsonExporter,
+        Exhibit.TSVExporter
     ];
     if ("exporters" in configuration) {
         this._exporters = this._exporters.concat(configuration.exporters);

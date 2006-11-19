@@ -30,6 +30,7 @@ Exhibit.l10n = {
     rdfXmlExporterLabel:            "RDF/XML",
     smwExporterLabel:               "Semantic wikitext",
     exhibitJsonExporterLabel:       "Exhibit JSON",
+    tsvExporterLabel:               "Tab Separated Values",
     
     /*
      *  List composition
