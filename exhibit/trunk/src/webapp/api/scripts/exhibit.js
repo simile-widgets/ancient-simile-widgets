@@ -538,7 +538,11 @@ Exhibit._Impl.prototype._showBusyIndicator = function() {
 };
 
 Exhibit._Impl.prototype._hideBusyIndicator = function() {
-    document.body.removeChild(this._busyIndicator);
+    try {
+        document.body.removeChild(this._busyIndicator);
+    } catch(e) {
+        // silent
+    }
 };
 
 Exhibit._getURLWithoutQueryAndHash = function() {
