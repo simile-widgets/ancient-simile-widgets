@@ -142,8 +142,10 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
     
     if (this._viewConstructors.length == 0) {
         this._viewConstructors.push(Exhibit.TileView);
+        this._viewConfigs.push({});
         this._viewLabels.push(Exhibit.TileView.l10n.viewLabel);
         this._viewTooltips.push(Exhibit.TileView.l10n.viewTooltip);
+        this._viewDomConfigs.push(null);
     }
     
     this._view = null;
