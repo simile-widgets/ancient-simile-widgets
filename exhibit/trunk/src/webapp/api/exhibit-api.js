@@ -139,6 +139,7 @@
         };
         SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "locales/", localeFiles);
         
+        SimileAjax.includeJavascriptFile(document, Exhibit.urlPrefix + "scripts/create.js");
         Exhibit.loaded = true;
     };
     
