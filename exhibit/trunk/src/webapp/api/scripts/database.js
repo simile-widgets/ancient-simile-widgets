@@ -342,8 +342,8 @@ Exhibit.Database.prototype._ensurePropertyExists = function(propertyID, baseURI)
         property._label = propertyID;
         property._pluralLabel = property._label;
         
-        property._reverseLabel = "!" + property._label;
-        property._reversePluralLabel = "!" + property._pluralLabel;
+        property._reverseLabel = "reverse of " + property._label;
+        property._reversePluralLabel = "reverse of " + property._pluralLabel;
         
         property._groupingLabel = property._label;
         property._reverseGroupingLabel = property._reverseLabel;

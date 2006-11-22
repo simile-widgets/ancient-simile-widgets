@@ -182,7 +182,7 @@ Exhibit.Theme = {
         };
         dom.open = function() {
             dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
-            var itemView = new Exhibit.ItemView(itemID, dom.viewContainer, exhibit, configuration);
+            var lens = new Exhibit.Lens(itemID, dom.viewContainer, exhibit, configuration);
             
             dom.elmt.style.top = (document.body.scrollTop + 100) + "px";
             document.body.appendChild(dom.elmt);

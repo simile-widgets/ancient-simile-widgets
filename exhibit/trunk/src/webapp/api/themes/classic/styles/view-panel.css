@@ -60,14 +60,11 @@ div.exhibit-collectionView-group-content {
 div.exhibit-collectionView-group h1 {
     font-size:      150%;
     margin:         1em 0;
-    background:     #eee;
-    border-bottom:  1px solid #888;
 }
 
 div.exhibit-collectionView-group h2 {
     font-size:      120%;
     margin:         0.5em 0;
-    background:     #eee;
 }
 
 .exhibit-collectionView-group h3 {
