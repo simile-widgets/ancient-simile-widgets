@@ -84,7 +84,7 @@ SimileAjax.DateTime.setIso8601Time = function (dateObject, string) {
     // then work out the time
     var d = string.match(SimileAjax.DateTime._timeRegexp);
     if(!d) {
-        dojo.debug("invalid time string: " + string);
+        SimileAjax.Debug.warn("Invalid time string: " + string);
         return false;
     }
     var hours = d[1];

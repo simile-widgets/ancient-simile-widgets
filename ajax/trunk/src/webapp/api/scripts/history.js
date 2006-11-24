@@ -178,6 +178,6 @@ SimileAjax.History._handleIFrameOnLoad = function() {
             document.title = title;
         }
     } catch (e) {
-        SimileAjax.Debug.log(e);
+        // silent
     }
 };
