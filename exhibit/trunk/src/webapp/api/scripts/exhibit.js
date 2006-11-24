@@ -107,6 +107,8 @@ Exhibit._internalCreate = function(settings) {
     );
 };
 
+Exhibit.docRoot = "http://simile.mit.edu/wiki/";
+
 /*==================================================
  *  Exhibit._Impl
  *==================================================

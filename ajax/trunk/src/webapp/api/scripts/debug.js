@@ -15,7 +15,9 @@ SimileAjax.Debug.log = function(msg) {
         }
     } else {
         f = function(msg2) {
-            alert(msg2);
+            if (!SimileAjax.Debug.silent) {
+                alert(msg2);
+            }
         }
     }
     SimileAjax.Debug.log = f;
@@ -30,7 +32,9 @@ SimileAjax.Debug.warn = function(msg) {
         }
     } else {
         f = function(msg2) {
-            alert(msg2);
+            if (!SimileAjax.Debug.silent) {
+                alert(msg2);
+            }
         }
     }
     SimileAjax.Debug.warn = f;
@@ -46,14 +50,25 @@ SimileAjax.Debug.exception = function(msg, e) {
     } else {
         f = SimileAjax.Platform.browser.isIE ?
             function(msg2, e2) {
-                alert("Caught exception: " + msg2 + "\n\nDetails: " + e2.description);
+                if (!SimileAjax.Debug.silent) {
+                    alert("Caught exception: " + msg2 + "\n\nDetails: " + e2.description);
+                }
             } :
             function(msg2, e2) {
-                alert("Caught exception: " + msg2 + "\n\nDetails: " + e2);
+                if (!SimileAjax.Debug.silent) {
+                    alert("Caught exception: " + msg2 + "\n\nDetails: " + e2);
+                }
             };
     }
     SimileAjax.Debug.exception = f;
     f(msg, e);
+};
+
+SimileAjax.Debug.showHelp = function(message, url, target) {
+    target = (target) ? target : "_blank";
+    if (window.confirm(message)) {
+        window.open(url, target);
+    }
 };
 
 SimileAjax.Debug.objectToString = function(o) {

@@ -115,65 +115,69 @@ SimileAjax.History._handleIFrameOnLoad = function() {
      *  navigates backward or forward. We need to adjust
      *  the application's state accordingly.
      */
-     
-    var q = SimileAjax.History._iframe.contentWindow.location.search;
-    var c = (q.length == 0) ? 0 : Math.max(0, parseInt(q.substr(1)));
     
-    var finishUp = function() {
-        var diff = c - SimileAjax.History._currentIndex;
-        SimileAjax.History._currentIndex += diff;
-        SimileAjax.History._baseIndex += diff;
-            
-        SimileAjax.History._iframe.contentWindow.location.search = "?" + c;
-    };
-    
-    if (c < SimileAjax.History._currentIndex) { // need to undo
-        SimileAjax.History._listeners.fire("onBeforeUndoSeveral", []);
-        window.setTimeout(function() {
-            while (SimileAjax.History._currentIndex > c && 
-                   SimileAjax.History._currentIndex > SimileAjax.History._baseIndex) {
-                   
-                SimileAjax.History._currentIndex--;
+    try {
+        var q = SimileAjax.History._iframe.contentWindow.location.search;
+        var c = (q.length == 0) ? 0 : Math.max(0, parseInt(q.substr(1)));
+        
+        var finishUp = function() {
+            var diff = c - SimileAjax.History._currentIndex;
+            SimileAjax.History._currentIndex += diff;
+            SimileAjax.History._baseIndex += diff;
                 
-                var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
-                
-                try {
-                    action.undo();
-                } catch (e) {
-                    SimileAjax.Debug.exception("History: Failed to undo action {" + action.label + "}");
-                }
-            }
-            
-            SimileAjax.History._listeners.fire("onAfterUndoSeveral", []);
-            finishUp();
-        }, 0);
-    } else if (c > SimileAjax.History._currentIndex) { // need to redo
-        SimileAjax.History._listeners.fire("onBeforeRedoSeveral", []);
-        window.setTimeout(function() {
-            while (SimileAjax.History._currentIndex < c && 
-                   SimileAjax.History._currentIndex - SimileAjax.History._baseIndex < SimileAjax.History._actions.length) {
-                   
-                var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
-                
-                try {
-                    action.perform();
-                } catch (e) {
-                    SimileAjax.Debug.exception("History: Failed to redo action {" + action.label + "}");
+            SimileAjax.History._iframe.contentWindow.location.search = "?" + c;
+        };
+        
+        if (c < SimileAjax.History._currentIndex) { // need to undo
+            SimileAjax.History._listeners.fire("onBeforeUndoSeveral", []);
+            window.setTimeout(function() {
+                while (SimileAjax.History._currentIndex > c && 
+                       SimileAjax.History._currentIndex > SimileAjax.History._baseIndex) {
+                       
+                    SimileAjax.History._currentIndex--;
+                    
+                    var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
+                    
+                    try {
+                        action.undo();
+                    } catch (e) {
+                        SimileAjax.Debug.exception("History: Failed to undo action {" + action.label + "}");
+                    }
                 }
                 
-                SimileAjax.History._currentIndex++;
-            }
-            
-            SimileAjax.History._listeners.fire("onAfterRedoSeveral", []);
-            finishUp();
-        }, 0);
-    } else {
-        var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex - 1;
-        var title = (index >= 0 && index < SimileAjax.History._actions.length) ?
-            SimileAjax.History.formatHistoryEntryTitle(SimileAjax.History._actions[index].label) :
-            SimileAjax.History._plainDocumentTitle;
-            
-        SimileAjax.History._iframe.contentWindow.document.title = title;
-        document.title = title;
+                SimileAjax.History._listeners.fire("onAfterUndoSeveral", []);
+                finishUp();
+            }, 0);
+        } else if (c > SimileAjax.History._currentIndex) { // need to redo
+            SimileAjax.History._listeners.fire("onBeforeRedoSeveral", []);
+            window.setTimeout(function() {
+                while (SimileAjax.History._currentIndex < c && 
+                       SimileAjax.History._currentIndex - SimileAjax.History._baseIndex < SimileAjax.History._actions.length) {
+                       
+                    var action = SimileAjax.History._actions[SimileAjax.History._currentIndex - SimileAjax.History._baseIndex];
+                    
+                    try {
+                        action.perform();
+                    } catch (e) {
+                        SimileAjax.Debug.exception("History: Failed to redo action {" + action.label + "}");
+                    }
+                    
+                    SimileAjax.History._currentIndex++;
+                }
+                
+                SimileAjax.History._listeners.fire("onAfterRedoSeveral", []);
+                finishUp();
+            }, 0);
+        } else {
+            var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex - 1;
+            var title = (index >= 0 && index < SimileAjax.History._actions.length) ?
+                SimileAjax.History.formatHistoryEntryTitle(SimileAjax.History._actions[index].label) :
+                SimileAjax.History._plainDocumentTitle;
+                
+            SimileAjax.History._iframe.contentWindow.document.title = title;
+            document.title = title;
+        }
+    } catch (e) {
+        SimileAjax.Debug.log(e);
     }
 };

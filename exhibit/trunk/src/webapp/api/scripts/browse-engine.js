@@ -46,21 +46,31 @@ Exhibit.BrowseEngine.prototype.removeListener = function(listener) {
 };
 
 Exhibit.BrowseEngine.prototype.getState = function() {
+    // TODO: Implement
     return null;
 };
 
 Exhibit.BrowseEngine.prototype.setState = function(state) {
+    // TODO: Implement
 };
 
 Exhibit.BrowseEngine.prototype.setFacets = function(facetEntries) {
     for (var i = 0; i < facetEntries.length; i++) {
         var entry = facetEntries[i];
-        var expression = Exhibit.Expression.parse(entry);
-        if (expression.isPath()) {
-            var path = expression.getPath();
-            if (path.getSegmentCount() == 1) {
-                this._facetEntries.push(path.getSegment(0));
+        try {
+            var expression = Exhibit.Expression.parse(entry);
+            if (expression.isPath()) {
+                var path = expression.getPath();
+                if (path.getSegmentCount() == 1) {
+                    this._facetEntries.push(path.getSegment(0));
+                }
             }
+        } catch(e) {
+            SimileAjax.Debug.showHelp(
+                Exhibit.BrowseEngine.l10n.errorParsingFacetExpressionMessage(entry),
+                Exhibit.docRoot + "Exhibit/Configuring_Browse_Panel"
+            );
+            break;
         }
     }
 };
@@ -80,17 +90,17 @@ Exhibit.BrowseEngine.prototype.getCollectionCount = function() {
 }
 
 Exhibit.BrowseEngine.prototype.getCurrentCollection = function() {
-    var index = this.getFocus();
-    var length = this._collections.length;
-    return (index >= 0 && index < length) ? this._collections[index] : null;
+    return this.getCollection(this.getFocus());
 };
 
 Exhibit.BrowseEngine.prototype.getCollection = function(index) {
-    return this._collections[index];
+    var length = this._collections.length;
+    return (index >= 0 && index < length) ? this._collections[index] : null;
 }
 
 Exhibit.BrowseEngine.prototype.getSlide = function(index) {
-    return this._slides[index];
+    var length = this._slides.length;
+    return (index >= 0 && index < length) ? this._slides[index] : null;
 }
 
 Exhibit.BrowseEngine.prototype.getFacets = function() {
@@ -159,31 +169,41 @@ Exhibit.BrowseEngine.prototype.getGroups = function(property, forward) {
 };
 
 Exhibit.BrowseEngine.prototype.setRootCollection = function(itemSet) {
-    this._collections = [];
-    this._slides = [];
-    this._addCollection(itemSet)._focused = true;
-    
-    delete this._cachedRootFacets;
-    
-    this._listeners.fire("onRootCollectionSet", []);
+    if (itemSet != null) {
+        this._collections = [];
+        this._slides = [];
+        this._addCollection(itemSet)._focused = true;
+        
+        delete this._cachedRootFacets;
+        
+        this._listeners.fire("onRootCollectionSet", []);
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.setRootCollection is called with null argument");
+    }
 };
 
 Exhibit.BrowseEngine.prototype.setValueRestriction = function(property, forward, level, value, selected) {
     var focusIndex = this.getFocus();
-    var collection = this._collections[focusIndex];
-    for (var i = 0; i < collection._restrictions.length; i++) {
-        var restriction = collection._restrictions[i];
-        if (restriction.property == property && restriction.forward == forward) {
-            restriction.setSelection(level, value, selected);
-            break;
+    if (focusIndex >= 0 && focusIndex < this._collections.length) {
+        var collection = this._collections[focusIndex];
+        for (var i = 0; i < collection._restrictions.length; i++) {
+            var restriction = collection._restrictions[i];
+            if (restriction.property == property && restriction.forward == forward) {
+                restriction.setSelection(level, value, selected);
+                
+                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+                
+                this._propagateChanges(focusIndex);
+                
+                this._listeners.fire("onRestrict", []);
+                
+                return;
+            }
         }
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.setValueRestriction is called with invalid property and forward");
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.setValueRestriction is called when there is no collection");
     }
-    
-    collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
-    
-    this._propagateChanges(focusIndex);
-    
-    this._listeners.fire("onRestrict", []);
 };
 
 Exhibit.BrowseEngine.prototype.focus = function(index) {
@@ -221,112 +241,148 @@ Exhibit.BrowseEngine.prototype.slide = function(propertyID, forward) {
 
 Exhibit.BrowseEngine.prototype.clearRestrictions = function() {
     var focusIndex = this.getFocus();
-    var collection = this._collections[focusIndex];
-    var oldRestrictions = collection._restrictions;
-    
-    collection._restrictions = [];
-    collection._restrictedSet = collection._originalSet;
-    this._initializeRestrictions(collection);
-    
-    this._propagateChanges(focusIndex);
-    this._listeners.fire("onClearRestrictions", []);
-    
-    return oldRestrictions;
+    if (focusIndex >= 0 && focusIndex < this._collections.length) {
+        var collection = this._collections[focusIndex];
+        var oldRestrictions = collection._restrictions;
+        
+        collection._restrictions = [];
+        collection._restrictedSet = collection._originalSet;
+        this._initializeRestrictions(collection);
+        
+        this._propagateChanges(focusIndex);
+        this._listeners.fire("onClearRestrictions", []);
+        
+        return oldRestrictions;
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.clearRestrictions is called when there is no collection");
+        return null;
+    }
 }
 
 Exhibit.BrowseEngine.prototype.applyRestrictions = function(restrictions) {
     var focusIndex = this.getFocus();
-    var collection = this._collections[focusIndex];
-    collection._restrictions = restrictions;
-    collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
-    this._propagateChanges(focusIndex);
-    this._listeners.fire("onApplyRestrictions", []);
+    if (focusIndex >= 0 && focusIndex < this._collections.length) {
+        var collection = this._collections[focusIndex];
+        collection._restrictions = restrictions;
+        collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+        this._propagateChanges(focusIndex);
+        this._listeners.fire("onApplyRestrictions", []);
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.applyRestrictions is called when there is no collection");
+        return null;
+    }
 }
 
 Exhibit.BrowseEngine.prototype.clearFacetRestrictions = function(property, forward) {
     var focusIndex = this.getFocus();
-    var collection = this._collections[focusIndex];
-    for (var i = 0; i < collection._restrictions.length; i++) {
-        var restriction = collection._restrictions[i];
-        if (restriction.property == property && restriction.forward == forward) {
-            var oldRestriction = restriction;
-            collection._restrictions[i] = new Exhibit.BrowseEngine._Restriction(property, forward);
-            collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+    if (focusIndex >= 0 && focusIndex < this._collections.length) {
+        var collection = this._collections[focusIndex];
+        for (var i = 0; i < collection._restrictions.length; i++) {
+            var restriction = collection._restrictions[i];
+            if (restriction.property == property && restriction.forward == forward) {
+                var oldRestriction = restriction;
+                collection._restrictions[i] = new Exhibit.BrowseEngine._Restriction(property, forward);
+                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
 
-            this._propagateChanges(focusIndex);
-            this._listeners.fire("onClearFacetRestrictions", []);
-            
-            return oldRestriction;
+                this._propagateChanges(focusIndex);
+                this._listeners.fire("onClearFacetRestrictions", []);
+                
+                return oldRestriction;
+            }
         }
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.clearFacetRestrictions is called with invalid property and forward");
+        return null;
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.clearFacetRestrictions is called when there is no collection");
+        return null;
     }
-    return null;
 }
 
 Exhibit.BrowseEngine.prototype.applyFacetRestrictions = function(property, forward, restrictions) {
     if (restrictions != null) {
         var focusIndex = this.getFocus();
-        var collection = this._collections[focusIndex];
-        for (var i = 0; i < collection._restrictions.length; i++) {
-            var restriction = collection._restrictions[i];
-            if (restriction.property == property && restriction.forward == forward) {
-                collection._restrictions[i] = restrictions;
-                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
-    
-                this._propagateChanges(focusIndex);
-                this._listeners.fire("onApplyFacetRestrictions", []);
-                break;
+        if (focusIndex >= 0 && focusIndex < this._collections.length) {
+            var collection = this._collections[focusIndex];
+            for (var i = 0; i < collection._restrictions.length; i++) {
+                var restriction = collection._restrictions[i];
+                if (restriction.property == property && restriction.forward == forward) {
+                    collection._restrictions[i] = restrictions;
+                    collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+        
+                    this._propagateChanges(focusIndex);
+                    this._listeners.fire("onApplyFacetRestrictions", []);
+                    return;
+                }
             }
+            SimileAjax.Debug.log("Exhibit.BrowseEngine.applyFacetRestrictions is called with invalid property and forward");
+        } else {
+            SimileAjax.Debug.log("Exhibit.BrowseEngine.applyFacetRestrictions is called when there is no collection");
         }
     }
 }
 
 Exhibit.BrowseEngine.prototype.truncate = function(index) {
     var focusIndex = this.getFocus();
-    if (index > 0) {
-        this._collections = this._collections.slice(0, index);
-        this._slides = this._slides.slice(0, index - 1);
-        if (focusIndex >= index) {
-            this.focus(index - 1);
+    if (focusIndex >= 0 && focusIndex < this._collections.length) {
+        if (index > 0) {
+            this._collections = this._collections.slice(0, index);
+            this._slides = this._slides.slice(0, index - 1);
+            if (focusIndex >= index) {
+                this.focus(index - 1);
+            }
         }
+        
+        this._listeners.fire("onTruncate", []);
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.truncate is called when there is no collection");
+        return null;
     }
-    
-    this._listeners.fire("onTruncate", []);
 }
 
 Exhibit.BrowseEngine.prototype.group = function(property, forward, level, groupingProperty, groupingForward) {
     var focusIndex = this.getFocus();
-    var collection = this._collections[focusIndex];
-    for (var i = 0; i < collection._restrictions.length; i++) {
-        var restriction = collection._restrictions[i];
-        if (restriction.property == property && restriction.forward == forward) {
-            if (this._group(collection, restriction, level, groupingProperty, groupingForward)) {
-                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
-                this._propagateChanges(focusIndex);
-                
-                this._listeners.fire("onRestrict", []);
+    if (focusIndex >= 0 && focusIndex < this._collections.length) {
+        var collection = this._collections[focusIndex];
+        for (var i = 0; i < collection._restrictions.length; i++) {
+            var restriction = collection._restrictions[i];
+            if (restriction.property == property && restriction.forward == forward) {
+                if (this._group(collection, restriction, level, groupingProperty, groupingForward)) {
+                    collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+                    this._propagateChanges(focusIndex);
+                    
+                    this._listeners.fire("onRestrict", []);
+                }
+                this._listeners.fire("onGroup", []);
+                return;
             }
-            break;
         }
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.group is called with invalid property and forward");
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.group is called when there is no collection");
     }
-    this._listeners.fire("onGroup", []);
 };
 
 Exhibit.BrowseEngine.prototype.ungroup = function(property, forward, level) {
     var focusIndex = this.getFocus();
-    var collection = this._collections[focusIndex];
-    for (var i = 0; i < collection._restrictions.length; i++) {
-        var restriction = collection._restrictions[i];
-        if (restriction.property == property && restriction.forward == forward) {
-            if (this._ungroup(collection, restriction, level)) {
-                collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
-                this._propagateChanges(focusIndex);
-                
-                this._listeners.fire("onRestrict", []);
+    if (focusIndex >= 0 && focusIndex < this._collections.length) {
+        var collection = this._collections[focusIndex];
+        for (var i = 0; i < collection._restrictions.length; i++) {
+            var restriction = collection._restrictions[i];
+            if (restriction.property == property && restriction.forward == forward) {
+                if (this._ungroup(collection, restriction, level)) {
+                    collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
+                    this._propagateChanges(focusIndex);
+                    
+                    this._listeners.fire("onRestrict", []);
+                }
+                this._listeners.fire("onUngroup", []);
+                return;
             }
-            break;
         }
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.ungroup is called with invalid property and forward");
+    } else {
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.ungroup is called when there is no collection");
     }
-    this._listeners.fire("onUngroup", []);
 };
 
 Exhibit.BrowseEngine.prototype._addCollection = function(itemSet) {
