@@ -55,6 +55,13 @@ Exhibit.BrowseEngine.prototype.setState = function(state) {
 };
 
 Exhibit.BrowseEngine.prototype.setFacets = function(facetEntries) {
+    var showHelp = function() {
+        SimileAjax.Debug.showHelp(
+            Exhibit.BrowseEngine.l10n.errorParsingFacetExpressionMessage(entry),
+            Exhibit.docRoot + "Exhibit/Configuring_Browse_Panel"
+        );
+    };
+    
     for (var i = 0; i < facetEntries.length; i++) {
         var entry = facetEntries[i];
         try {
@@ -64,12 +71,12 @@ Exhibit.BrowseEngine.prototype.setFacets = function(facetEntries) {
                 if (path.getSegmentCount() == 1) {
                     this._facetEntries.push(path.getSegment(0));
                 }
+            } else {
+                showHelp();
             }
         } catch(e) {
-            SimileAjax.Debug.showHelp(
-                Exhibit.BrowseEngine.l10n.errorParsingFacetExpressionMessage(entry),
-                Exhibit.docRoot + "Exhibit/Configuring_Browse_Panel"
-            );
+            SimileAjax.Debug.log(e);
+            showHelp();
             break;
         }
     }
@@ -794,6 +801,7 @@ Exhibit.BrowseEngine._Restriction.prototype.getLevelCount = function() {
 
 /*==================================================
  *  Collection
+ *  http://simile.mit.edu/wiki/Exhibit/API/BrowseEngine/Collection
  *==================================================
  */
 Exhibit.BrowseEngine._Collection = function(itemSet) {
