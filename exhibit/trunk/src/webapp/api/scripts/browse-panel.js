@@ -7,12 +7,22 @@
 Exhibit.BrowsePanel = function(exhibit, div, configuration) {
     if (configuration == null) {
         var o = Exhibit.getAttribute(div, "configuration");
-        try {
-            o = eval(o);
-            if (typeof o == "object") {
-                configuration = o;
+        if (o != null && o.length > 0) {
+            try {
+                o = eval(o);
+                if (typeof o == "object") {
+                    configuration = o;
+                } else {
+                    SimileAjax.Debug.log(
+                        "The ex:configuration attribute value in <div id=\"exhibit-browse-panel\"> does not evaluate to an object"
+                    );
+                }
+            } catch (e) {
+                SimileAjax.Debug.exception(
+                    "The ex:configuration attribute value in <div id=\"exhibit-browse-panel\"> is not a valid Javascript expression",
+                    e
+                );
             }
-        } catch (e) {
         }
     }
     
@@ -37,10 +47,12 @@ Exhibit.BrowsePanel = function(exhibit, div, configuration) {
 };
 
 Exhibit.BrowsePanel.prototype.getState = function() {
+    // TODO: Implement
     return null;
 };
 
 Exhibit.BrowsePanel.prototype.setState = function(state) {
+    // TODO: Implement
 };
 
 Exhibit.BrowsePanel.prototype._configure = function(configuration) {

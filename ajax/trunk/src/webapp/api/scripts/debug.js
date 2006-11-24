@@ -64,13 +64,6 @@ SimileAjax.Debug.exception = function(msg, e) {
     f(msg, e);
 };
 
-SimileAjax.Debug.showHelp = function(message, url, target) {
-    target = (target) ? target : "_blank";
-    if (window.confirm(message)) {
-        window.open(url, target);
-    }
-};
-
 SimileAjax.Debug.objectToString = function(o) {
     return SimileAjax.Debug._objectToString(o, "");
 };

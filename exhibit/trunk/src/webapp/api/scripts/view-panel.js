@@ -5,6 +5,27 @@
  */
  
 Exhibit.ViewPanel = function(exhibit, div, configuration) {
+    if (configuration == null) {
+        var o = Exhibit.getAttribute(div, "configuration");
+        if (o != null && o.length > 0) {
+            try {
+                o = eval(o);
+                if (typeof o == "object") {
+                    configuration = o;
+                } else {
+                    SimileAjax.Debug.log(
+                        "The ex:configuration attribute value in <div id=\"exhibit-view-panel\"> does not evaluate to an object"
+                    );
+                }
+            } catch (e) {
+                SimileAjax.Debug.exception(
+                    "The ex:configuration attribute value in <div id=\"exhibit-view-panel\"> is not a valid Javascript expression",
+                    e
+                );
+            }
+        }
+    }
+    
     this._exhibit = exhibit;
     this._div = div;
     this._configuration = configuration;
@@ -34,7 +55,7 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
                 
                 if (typeof view == "function") {
                     constructor = view;
-                } else {
+                } else if ("viewClass" in view) {
                     constructor = view.viewClass;
                     if ("label" in view) {
                         label = view.label;
@@ -45,6 +66,12 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
                     if ("configuration" in view) {
                         config = view.configuration;
                     }
+                } else {
+                    Exhibit.showHelp(
+                        Exhibit.ViewPanel.l10n.missingViewClassMessage,
+                        Exhibit.docRoot + "Exhibit/Configuring_Views"
+                    );
+                    continue;
                 }
                 
                 if (label == null) {
@@ -71,12 +98,7 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
         }
         
         if ("initialView" in c) {
-            this._viewIndex = Math.max(0, 
-                Math.min(
-                    c.initialView, 
-                    this._viewConstructors.length - 1
-                )
-            );
+            this._viewIndex = Math.max(0, Math.min(c.initialView, this._viewConstructors.length - 1));
         }
     }
     
@@ -90,8 +112,9 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
             
             var role = Exhibit.getAttribute(node, "role");
             if (role == "exhibit-view") {
+                var viewClass = Exhibit.getAttribute(node, "viewClass");
                 try {
-                    var constructor = eval(Exhibit.getAttribute(node, "viewClass"));
+                    var constructor = eval(viewClass);
                     if (typeof constructor == "function") {
                         var label = Exhibit.getAttribute(node, "label");
                         var tooltip = Exhibit.getAttribute(node, "title");
@@ -129,10 +152,16 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
                         this._viewTooltips.push(tooltip);
                         this._viewDomConfigs.push(node);
                     } else {
-                        // TODO: error message
+                        Exhibit.showHelp(
+                            Exhibit.ViewPanel.l10n.viewClassNotFunctionMessage(viewClass),
+                            Exhibit.docRoot + "Exhibit/Configuring_Views"
+                        );
                     }
                 } catch (e) {
-                    // TODO: error message
+                    Exhibit.showJavascriptExpressionValidation(
+                        Exhibit.ViewPanel.l10n.badViewClassMessage(viewClass),
+                        viewClass
+                    );
                 }
             }
         }

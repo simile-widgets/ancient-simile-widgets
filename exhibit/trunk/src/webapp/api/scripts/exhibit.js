@@ -85,6 +85,37 @@ Exhibit.getAttribute = function(elmt, name) {
     }
 };
 
+Exhibit.showHelp = function(message, url, target) {
+    target = (target) ? target : "_blank";
+    if (url != null) {
+        if (window.confirm(message + "\n\n" + Exhibit.l10n.showDocumentationMessage)) {
+            window.open(url, target);
+        }
+    } else {
+        window.alert(message);
+    }
+};
+
+Exhibit.showJavascriptExpressionValidation = function(message, expression) {
+    var target = "validation";
+    if (window.confirm(message + "\n\n" + Exhibit.l10n.showJavascriptValidationMessage)) {
+        window.open(Exhibit.validator + "?expresson=" + encodeURIComponent(expression), target);
+    }
+};
+
+Exhibit.showJsonFileValidation = function(message, url) {
+    var target = "validation";
+    if (url.indexOf("file:") == 0) {
+        if (window.confirm(message + "\n\n" + Exhibit.l10n.showJsonValidationFormMessage)) {
+            window.open(Exhibit.validator, target);
+        }
+    } else {
+        if (window.confirm(message + "\n\n" + Exhibit.l10n.showJsonValidationMessage)) {
+            window.open(Exhibit.validator + "?url=" + url, target);
+        }
+    }
+};
+
 Exhibit._internalCreate = function(settings) {
     if (!("controlDiv" in settings) || settings.controlDiv == null) {
         settings.controlDiv = document.getElementById("exhibit-control-panel");
@@ -108,6 +139,7 @@ Exhibit._internalCreate = function(settings) {
 };
 
 Exhibit.docRoot = "http://simile.mit.edu/wiki/";
+Exhibit.validator = "http://simile.mit.edu/babel/validator";
 
 /*==================================================
  *  Exhibit._Impl
@@ -175,6 +207,7 @@ Exhibit._Impl.prototype.getDatabase = function() { return this._database; };
 Exhibit._Impl.prototype.getBrowseEngine = function() { return this._engine; };
 Exhibit._Impl.prototype.getBrowsePanel = function() { return this._browsePanel; };
 Exhibit._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
+Exhibit._Impl.prototype.getControlPanel = function() { return this._controlPanel; };
 
 Exhibit._Impl.prototype.dispose = function() {
     SimileAjax.History.removeListener(this._historyListener);
@@ -227,7 +260,7 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
     }
     
     var fError = function(statusText, status, xmlhttp) {
-        SimileAjax.Debug.log("Failed to load data xml from " + urls[0] + "\n" + statusText);
+        Exhibit.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(urls[0]));
         urls.shift();
         fNext();
     };
@@ -235,10 +268,11 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
     var fDone2 = function(xmlhttp) {
         try {
             var o = null;
+            var url = exhibit.resolveURL(urls[0]);
             try {
                 o = eval("(" + xmlhttp.responseText + ")");
             } catch (e) {
-                SimileAjax.Debug.exception("Exhibit: Error evaluating JSON results from " + urls[0], e);
+                Exhibit.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url), url);
             }
             
             if (o != null) {

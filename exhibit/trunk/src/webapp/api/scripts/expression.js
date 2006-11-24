@@ -1,5 +1,6 @@
 /*==================================================
  *  Exhibit.Expression
+ *  http://simile.mit.edu/wiki/Exhibit/API/Expression
  *==================================================
  */
 Exhibit.Expression = new Object();

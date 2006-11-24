@@ -8,7 +8,19 @@ Exhibit.l10n = {
     missingSortKey: "(missing)",
     itemLinkLabel:  "link",
     
-    busyIndicatorMessage:   "Working...",
+    busyIndicatorMessage:       "Working...",
+    showDocumentationMessage:   "We will show the relevant documentation after this message.",
+    showJavascriptValidationMessage: "We will explain the error in details after this message.",
+    
+    showJsonValidationMessage: "We will explain the error in details after this message.",
+    showJsonValidationFormMessage: "We will browse to a web service where you can upload and check your code after this message.",
+    
+    badJsonMessage: function(url) {
+        return "The JSON data file\n  " + url + "\ncontains errors.";
+    },
+    failedToLoadDataFileMessage: function(url) {
+        return "We cannot locate the data file\n  " + url + "\nCheck that the file name is correct.";
+    },
     
     /*
      *  Copy button and dialog box

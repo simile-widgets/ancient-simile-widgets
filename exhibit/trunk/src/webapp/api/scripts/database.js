@@ -79,40 +79,33 @@ Exhibit.Database.prototype.loadTypes = function(typeEntries, baseURI) {
             baseURI += "/";
         }
     
-        var spo = this._spo;
-        var ops = this._ops;
-        var indexPut = Exhibit.Database._indexPut;
-        var indexTriple = function(s, p, o) {
-            indexPut(spo, s, p, o);
-            indexPut(ops, o, p, s);
-        };
-        
         for (typeID in typeEntries) {
-            var typeEntry = typeEntries[typeID];
-            
-            var type;
-            if (typeID in this._types) {
-                type = this._types[typeID];
-            } else {
-                type = new Exhibit.Database._Type(typeID);
-                this._types[typeID] = type;
-            };
-            
-            type._uri = ("uri" in typeEntry) ? 
-                typeEntry.uri : 
-                (baseURI + "type#" + encodeURIComponent(typeID));
-            type._label = ("label" in typeEntry) ? 
-                typeEntry.label : 
-                typeID;
-            type._pluralLabel = ("pluralLabel" in typeEntry) ? 
-                typeEntry.pluralLabel : 
-                type._label;
+            if (typeID != undefined && typeID != null) {
+                var typeEntry = typeEntries[typeID];
+                
+                var type;
+                if (typeID in this._types) {
+                    type = this._types[typeID];
+                } else {
+                    type = new Exhibit.Database._Type(typeID);
+                    this._types[typeID] = type;
+                };
+                
+                type._uri = ("uri" in typeEntry) ? 
+                    typeEntry.uri : 
+                    (baseURI + "type#" + encodeURIComponent(typeID));
+                type._label = ("label" in typeEntry) ? 
+                    typeEntry.label : 
+                    typeID;
+                type._pluralLabel = ("pluralLabel" in typeEntry) ? 
+                    typeEntry.pluralLabel : 
+                    type._label;
+            }
         }
         
         this._listeners.fire("onAfterLoadingTypes", []);
     } catch(e) {
-        this._listeners.fire("onFailedLoadingTypes", []);
-        throw e;
+        SimileAjax.Debug.exception("Database.loadTypes failed", e);
     }
 };
 
@@ -154,8 +147,7 @@ Exhibit.Database.prototype.loadProperties = function(propertyEntries, baseURI) {
         
         this._listeners.fire("onAfterLoadingProperties", []);
     } catch(e) {
-        this._listeners.fire("onFailedLoadingProperties", []);
-        throw e;
+        SimileAjax.Debug.exception("Database.loadProperties failed", e);
     }
 };
 
@@ -178,15 +170,17 @@ Exhibit.Database.prototype.loadItems = function(itemEntries, baseURI) {
         };
         
         for (var i = 0; i < itemEntries.length; i++) {
-            this._loadItem(itemEntries[i], indexTriple, baseURI);
+            var entry = itemEntries[i];
+            if (entry != null && typeof entry != "undefined") {
+                this._loadItem(itemEntries[i], indexTriple, baseURI);
+            }
         }
         
         this._propertyArray = null;
         
         this._listeners.fire("onAfterLoadingItems", []);
     } catch(e) {
-        this._listeners.fire("onFailedLoadingItems", []);
-        throw e;
+        SimileAjax.Debug.exception("Database.loadItems failed", e);
     }
 };
 
@@ -195,7 +189,18 @@ Exhibit.Database.prototype.getType = function(typeID) {
 };
 
 Exhibit.Database.prototype.getProperty = function(propertyID) {
-    return this._properties[propertyID];
+    return propertyID in this._properties ? this._properties[propertyID] : null;
+};
+
+Exhibit.Database.prototype.getAllProperties = function() {
+    if (this._propertyArray == null) {
+        this._propertyArray = [];
+        for (propertyID in this._properties) {
+            this._propertyArray.push(propertyID);
+        }
+    }
+    
+    return [].concat(this._propertyArray);
 };
 
 Exhibit.Database.prototype.getAllItems = function() {
@@ -211,17 +216,6 @@ Exhibit.Database.prototype.getAllItemsCount = function() {
 
 Exhibit.Database.prototype.containsItem = function(itemID) {
     return this._items.contains(itemID);
-};
-
-Exhibit.Database.prototype.getAllProperties = function() {
-    if (this._propertyArray == null) {
-        this._propertyArray = [];
-        for (propertyID in this._properties) {
-            this._propertyArray.push(propertyID);
-        }
-    }
-    
-    return [].concat(this._propertyArray);
 };
 
 Exhibit.Database.prototype.getNamespaces = function(idToQualifiedName, prefixToBase) {
@@ -314,10 +308,6 @@ Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseUR
             }
         }
     }
-};
-
-Exhibit.Database.prototype.getProperty = function(propertyID) {
-    return propertyID in this._properties ? this._properties[propertyID] : null;
 };
 
 Exhibit.Database.prototype._ensureTypeExists = function(typeID, baseURI) {

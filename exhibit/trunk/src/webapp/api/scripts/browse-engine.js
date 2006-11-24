@@ -55,9 +55,9 @@ Exhibit.BrowseEngine.prototype.setState = function(state) {
 };
 
 Exhibit.BrowseEngine.prototype.setFacets = function(facetEntries) {
-    var showHelp = function() {
-        SimileAjax.Debug.showHelp(
-            Exhibit.BrowseEngine.l10n.errorParsingFacetExpressionMessage(entry),
+    var showHelp = function(expr) {
+        Exhibit.showHelp(
+            Exhibit.BrowseEngine.l10n.errorParsingFacetExpressionMessage(expr),
             Exhibit.docRoot + "Exhibit/Configuring_Browse_Panel"
         );
     };
@@ -70,13 +70,17 @@ Exhibit.BrowseEngine.prototype.setFacets = function(facetEntries) {
                 var path = expression.getPath();
                 if (path.getSegmentCount() == 1) {
                     this._facetEntries.push(path.getSegment(0));
+                } else {
+                    showHelp(entry);
+                    break;
                 }
             } else {
-                showHelp();
+                showHelp(entry);
+                break;
             }
         } catch(e) {
-            SimileAjax.Debug.log(e);
-            showHelp();
+            SimileAjax.Debug.exception("BrowseEngine.setFacets failed to parse facet expressions", e);
+            showHelp(entry);
             break;
         }
     }
