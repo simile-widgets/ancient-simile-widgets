@@ -5,7 +5,7 @@
  *======================================================================
  */
 (function() {
-    if (typeof window.onload == "undefined") {
+    if (window.onload == null) {
         window.onload = function() { Exhibit.create(); };
     }
 })();
