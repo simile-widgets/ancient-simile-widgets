@@ -15,8 +15,8 @@ Exhibit.l10n = {
     showJsonValidationMessage: "We will explain the error in details after this message.",
     showJsonValidationFormMessage: "We will browse to a web service where you can upload and check your code after this message.",
     
-    badJsonMessage: function(url) {
-        return "The JSON data file\n  " + url + "\ncontains errors.";
+    badJsonMessage: function(url, e) {
+        return "The JSON data file\n  " + url + "\ncontains errors:\n\n" + e;
     },
     failedToLoadDataFileMessage: function(url) {
         return "We cannot locate the data file\n  " + url + "\nCheck that the file name is correct.";

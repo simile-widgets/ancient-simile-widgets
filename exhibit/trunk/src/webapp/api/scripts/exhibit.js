@@ -97,14 +97,14 @@ Exhibit.showHelp = function(message, url, target) {
 };
 
 Exhibit.showJavascriptExpressionValidation = function(message, expression) {
-    var target = "validation";
+    var target = "_blank";
     if (window.confirm(message + "\n\n" + Exhibit.l10n.showJavascriptValidationMessage)) {
         window.open(Exhibit.validator + "?expresson=" + encodeURIComponent(expression), target);
     }
 };
 
 Exhibit.showJsonFileValidation = function(message, url) {
-    var target = "validation";
+    var target = "_blank";
     if (url.indexOf("file:") == 0) {
         if (window.confirm(message + "\n\n" + Exhibit.l10n.showJsonValidationFormMessage)) {
             window.open(Exhibit.validator, target);
@@ -139,7 +139,7 @@ Exhibit._internalCreate = function(settings) {
 };
 
 Exhibit.docRoot = "http://simile.mit.edu/wiki/";
-Exhibit.validator = "http://simile.mit.edu/babel/validator";
+Exhibit.validator = "http://dfhuynh.csail.mit.edu:7777/validator";
 
 /*==================================================
  *  Exhibit._Impl
@@ -272,7 +272,7 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
             try {
                 o = eval("(" + xmlhttp.responseText + ")");
             } catch (e) {
-                Exhibit.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url), url);
+                Exhibit.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url, e), url);
             }
             
             if (o != null) {
