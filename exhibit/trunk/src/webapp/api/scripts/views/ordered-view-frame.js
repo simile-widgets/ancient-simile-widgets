@@ -12,6 +12,7 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     this._possibleOrders = null;
     this._initialCount = 10;
     this._showAll = false;
+    this._grouped = true;
     
     /*
      *  First, get configurations from the dom, if any
@@ -54,6 +55,11 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         if (showAll != null && showAll.length > 0) {
             this._showAll = (showAll == "true");
         }
+        
+        var grouped = Exhibit.getAttribute(domConfiguration, "grouped");
+        if (grouped != null && grouped.length > 0) {
+            this._grouped = (grouped == "true");
+        }
     }
     
     /*
@@ -72,6 +78,9 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     }
     if ("showAll" in configuration) {
         this._showAll = configuration.showAll;
+    }
+    if ("grouped" in configuration) {
+        this._grouped = configuration.grouped;
     }
     
     /*
@@ -195,6 +204,11 @@ Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
             self._openSortPopup(elmt, -1);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
+        },
+        function(elmt, evt, target) {
+            self._toggleGroup();
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
         }
     );
     this._footerDom = Exhibit.OrderedViewFrame.theme.createFooterDom(
@@ -234,6 +248,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
      *  Set the header UI
      */
     this._headerDom.setCounts(items.length, originalSize);
+    this._headerDom.setGrouped(this._grouped);
     this._footerDom.setCounts(items.length, this._initialCount, this._showAll);
     
     if (items.length > 0) {
@@ -287,7 +302,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
             }
             return result;
         }
-        var groupLevels = checkGroupingLevel(0, 0, items.length) + 1;
+        var groupLevels = this._grouped ? checkGroupingLevel(0, 0, items.length) + 1 : 0;
         
         /*
          *  Generate item views
@@ -606,4 +621,23 @@ Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
 Exhibit.OrderedViewFrame.prototype._setShowAll = function(showAll) {
     this._showAll = showAll;
     this.parentReconstruct();
+};
+
+Exhibit.OrderedViewFrame.prototype._toggleGroup = function() {
+    var oldGrouped = this._grouped;
+    var self = this;
+    SimileAjax.History.addAction({
+        perform: function() {
+            self._grouped = !oldGrouped;
+            self.parentReconstruct();
+        },
+        undo: function() {
+            self._grouped = oldGrouped;
+            self.parentReconstruct();
+        },
+        label: Exhibit.OrderedViewFrame.l10n[
+            oldGrouped ? "ungroupActionTitle" : "groupAsSortedActionTitle"],
+        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
+        lengthy: true
+    });
 };

@@ -46,6 +46,9 @@ div.exhibit-collectionView-header-sortControls {
     text-align:     center;
     margin:         1em 0;
 }
+.exhibit-collectionView-header-groupControls {
+    cursor: pointer;
+}
 
 div.exhibit-collectionView-body {
 }

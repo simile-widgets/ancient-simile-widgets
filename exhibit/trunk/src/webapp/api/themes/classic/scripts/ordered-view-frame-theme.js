@@ -9,7 +9,8 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
     exhibit, 
     headerDiv,
     onClearFilters,
-    onThenSortBy
+    onThenSortBy,
+    onGroupToggle
 ) {
     var l10n = Exhibit.OrderedViewFrame.l10n;
     var headerTemplate = {
@@ -48,13 +49,33 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                         className:  "exhibit-collectionView-header-sortControls",
                         children: l10n.createSortingControlsTemplate(
                             exhibit.makeActionLink(l10n.thenSortByLabel, onThenSortBy)
-                        )
+                        ).concat([
+                            " \u2022 ",
+                            {   tag:    "span",
+                                field:  "groupSpan",
+                                className: "exhibit-collectionView-header-groupControls",
+                                children: [
+                                    {   elmt:       Exhibit.Theme.createTranslucentImage(document, "images/option.png"),
+                                        field:      "groupOption",
+                                        style: {  display: "none" }
+                                    },
+                                    {   elmt:       Exhibit.Theme.createTranslucentImage(document, "images/option-check.png"),
+                                        field:      "groupOptionChecked",
+                                        style: {  display: "none" }
+                                    },
+                                    " ",
+                                    l10n.groupedAsSorted
+                                ]
+                            }
+                        ])
                     }
                 ]
             }
         ]
     };
     var dom = SimileAjax.DOM.createDOMFromTemplate(document, headerTemplate);
+    SimileAjax.WindowManager.registerEvent(dom.groupSpan, "click", onGroupToggle);
+    
     dom.setCounts = function(resultsCount, originalCount) {
         if (resultsCount == 0) {
             dom.noResultDiv.style.display = "block";
@@ -93,6 +114,10 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
             dom.ordersSpan.appendChild(orderDoms[i].elmt);
         }
         addDelimiter();
+    };
+    dom.setGrouped = function(grouped) {
+        dom.groupOption.style.display = grouped ? "none" : "inline";
+        dom.groupOptionChecked.style.display = grouped ? "inline" : "none";
     };
     dom.enableThenByAction = function(enabled) {
         exhibit.enableActionLink(dom.thenByLink, enabled);

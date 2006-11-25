@@ -280,7 +280,6 @@ Exhibit.BrowseEngine.prototype.applyRestrictions = function(restrictions) {
         this._listeners.fire("onApplyRestrictions", []);
     } else {
         SimileAjax.Debug.log("Exhibit.BrowseEngine.applyRestrictions is called when there is no collection");
-        return null;
     }
 }
 
@@ -346,7 +345,6 @@ Exhibit.BrowseEngine.prototype.truncate = function(index) {
         this._listeners.fire("onTruncate", []);
     } else {
         SimileAjax.Debug.log("Exhibit.BrowseEngine.truncate is called when there is no collection");
-        return null;
     }
 }
 

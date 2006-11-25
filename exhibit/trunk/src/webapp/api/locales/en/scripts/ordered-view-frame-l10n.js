@@ -33,5 +33,8 @@ Exhibit.OrderedViewFrame.l10n = {
                 field: "thenByLink"
             }
         ];
-    }
+    },
+    groupedAsSorted: "grouped as sorted",
+    groupAsSortedActionTitle: "grouped as sorted",
+    ungroupActionTitle: "ungrouped"
 };
