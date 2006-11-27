@@ -1,8 +1,0 @@
-<div>
-    <span style="color: #008" content=".label" />. 
-    <i if-exists=".venue"><span content=".venue" />,</i>
-    <span content=".year" />.
-    <a if-exists=".pdfURL" href-content=".pdfURL">[PDF <span content=".pdfKB" /> KB]</a>
-    <a if-exists=".psURL" href-content=".psURL">[PS <span content=".psKB" /> KB]</a>
-    <div style="margin: 1em; font-style: italic" content=".author" />
-</div>
