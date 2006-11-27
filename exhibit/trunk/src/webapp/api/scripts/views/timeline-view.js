@@ -12,6 +12,7 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
     this._densityFactor = 50;
     this._topBandIntervalPixels = 150;
     this._bottomBandIntervalPixels = 200;
+    this._timelineConstructor = null;
     
     var getDurations = null;
     try {
@@ -112,6 +113,14 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
             if (densityFactor != null && densityFactor.length > 0) {
                 this._densityFactor = parseFloat(densityFactor);
             }
+            
+            var timelineConstructor = Exhibit.getAttribute(domConfiguration, "timelineConstructor");
+            if (timelineConstructor != null) {
+                var f = eval(timelineConstructor);
+                if (typeof f == "function") {
+                    this._timelineConstructor = f;
+                }
+            }
         }
         if ("topBandIntervalPixels" in configuration) {
             this._topBandIntervalPixels = configuration.topBandIntervalPixels;
@@ -121,6 +130,9 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
         }
         if ("densityFactor" in configuration) {
             this._densityFactor = configuration.densityFactor;
+        }
+        if ("timelineConstructor" in configuration) {
+            this._timelineConstructor = configuration.timelineConstructor;
         }
     } catch (e) {
         SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
@@ -221,8 +233,8 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
     }
     
     var timelineDiv = this._dom.getTimelineDiv();
-    if ("constructTimeline" in this._configuration) {
-        this._dom.timeline = this._configuration.constructTimeline(timelineDiv, this._eventSource);
+    if (this._timelineConstructor != null) {
+        this._dom.timeline = this._timelineConstructor(timelineDiv, this._eventSource);
     } else {
         timelineDiv.style.height = "400px";
         

@@ -316,8 +316,13 @@ Exhibit.TabularView.prototype._getColumnLabel = function(expression) {
     var database = this._exhibit.getDatabase();
     var path = expression.getPath();
     var segment = path.getSegment(path.getSegmentCount() - 1);
-    var property = database.getProperty(segment.property);
-    return segment.forward ? property.getLabel() : property.getReverseLabel();
+    var propertyID = segment.property;
+    var property = database.getProperty(propertyID);
+    if (property != null) {
+        return segment.forward ? property.getLabel() : property.getReverseLabel();
+    } else {
+        return propertyID;
+    }
 };
 
 Exhibit.TabularView.prototype._createSortFunction = function(items, expression, ascending) {
