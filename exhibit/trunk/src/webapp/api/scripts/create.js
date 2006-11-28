@@ -6,6 +6,6 @@
  */
 (function() {
     if (window.onload == null) {
-        window.onload = function() { Exhibit.create(); };
+        window.onload = function() { window.exhibit = Exhibit.create(); };
     }
 })();

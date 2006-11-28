@@ -61,6 +61,7 @@ Exhibit.createFromFiles = function(urls, rootTypes) {
     exhibit.loadJSON(urls, function() {
         exhibit.setRootTypes(rootTypes);
     });
+    return exhibit;
 };
 
 Exhibit.createAdvanced = function(configuration, controlDiv, browseDiv, viewDiv) {

@@ -104,6 +104,12 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit, myCo
 };
 
 Exhibit.Lens._compiledTemplates = {};
+Exhibit.Lens._handlers = [
+    "onblur", "onfocus", 
+    "onkeydown", "onkeypress", "onkeyup", 
+    "onmousedown", "onmouseenter", "onmouseleave", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onclick",
+    "onresize", "onscroll"
+];
 
 Exhibit.Lens.prototype._constructFromLensTemplateURL = 
     function(itemID, div, exhibit, configuration, lensTemplateURL) {
@@ -147,7 +153,7 @@ Exhibit.Lens.prototype._constructFromLensTemplateDOM =
     if (compiledTemplate == null) {
         compiledTemplate = {
             url:        id,
-            template:   Exhibit.Lens._compileTemplate(lensTemplateNode),
+            template:   Exhibit.Lens._compileTemplate(lensTemplateNode, false),
             compiled:   true,
             jobs:       []
         };
@@ -170,7 +176,8 @@ Exhibit.Lens._startCompilingTemplate = function(lensTemplateURL, job) {
     };
     var fDone = function(xmlhttp) {
         try {
-            compiledTemplate.template = Exhibit.Lens._compileTemplate(xmlhttp.responseXML.documentElement);
+            compiledTemplate.template = Exhibit.Lens._compileTemplate(
+                xmlhttp.responseXML.documentElement, true);
             compiledTemplate.compiled = true;
             
             for (var i = 0; i < compiledTemplate.jobs.length; i++) {
@@ -192,19 +199,19 @@ Exhibit.Lens._startCompilingTemplate = function(lensTemplateURL, job) {
     return compiledTemplate;
 };
 
-Exhibit.Lens._compileTemplate = function(rootNode) {
-    return Exhibit.Lens._processTemplateNode(rootNode);
+Exhibit.Lens._compileTemplate = function(rootNode, isXML) {
+    return Exhibit.Lens._processTemplateNode(rootNode, isXML);
 };
 
-Exhibit.Lens._processTemplateNode = function(node) {
+Exhibit.Lens._processTemplateNode = function(node, isXML) {
     if (node.nodeType == 1) {
-        return Exhibit.Lens._processTemplateElement(node);
+        return Exhibit.Lens._processTemplateElement(node, isXML);
     } else {
-        return node.nodeValue.replace(/\s+/g, " ");
+        return node.nodeValue;
     }
 };
 
-Exhibit.Lens._processTemplateElement = function(elmt) {
+Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
     var templateNode = {
         tag:                elmt.tagName,
         control:            null,
@@ -213,6 +220,7 @@ Exhibit.Lens._processTemplateElement = function(elmt) {
         contentAttributes:  null,
         attributes:         [],
         styles:             [],
+        handlers:           [],
         children:           null
     };
     
@@ -250,28 +258,7 @@ Exhibit.Lens._processTemplateElement = function(elmt) {
             }
         } else {
             if (name == "style") {
-                var styles = value.split(";");
-                for (var s = 0; s < styles.length; s++) {
-                    var pair = styles[s].split(":");
-                    if (pair.length > 1) {
-                        var n = pair[0].trim();
-                        var v = pair[1].trim();
-                        if (n == "float") {
-                            n = SimileAjax.Platform.browser.isIE ? "styleFloat" : "cssFloat";
-                        } else if (n == "-moz-opacity") {
-                            n = "MozOpacity";
-                        } else {
-                            if (n.indexOf("-") > 0) {
-                                var segments = n.split("-");
-                                n = segments[0];
-                                for (var x = 1; x < segments.length; x++) {
-                                    n += segments[x].substr(0, 1).toUpperCase() + segments[x].substr(1);
-                                }
-                            }
-                        }
-                        templateNode.styles.push({ name: n, value: v });
-                    }
-                }
+                Exhibit.Lens._processStyle(templateNode, value);
             } else if (name != "id") {
                 if (name == "class") {
                     if (SimileAjax.Platform.browser.isIE) {
@@ -293,15 +280,63 @@ Exhibit.Lens._processTemplateElement = function(elmt) {
         }
     }
     
+    if (!isXML && SimileAjax.Platform.browser.isIE) {
+        /*
+         *  IE swallows style and event handler attributes of HTML elements.
+         *  So our loop above will not catch them.
+         */
+         
+        /* Need to handle this for IE
+        var style = elmt.getAttribute("style");
+        if (style != null && style.length > 0) {
+            Exhibit.Lens._processStyle(templateNode, value);
+        }
+        */
+        
+        var handlers = Exhibit.Lens._handlers;
+        for (var h = 0; h < handlers.length; h++) {
+            var handler = handlers[h];
+            var code = elmt[handler];
+            if (code != null) {
+                templateNode.handlers.push({ name: handler, code: code });
+            }
+        }
+    }
+    
     var childNode = elmt.firstChild;
     if (childNode != null) {
         templateNode.children = [];
         while (childNode != null) {
-            templateNode.children.push(Exhibit.Lens._processTemplateNode(childNode));
+            templateNode.children.push(Exhibit.Lens._processTemplateNode(childNode, isXML));
             childNode = childNode.nextSibling;
         }
     }
     return templateNode;
+};
+
+Exhibit.Lens._processStyle = function(templateNode, styleValue) {
+    var styles = styleValue.split(";");
+    for (var s = 0; s < styles.length; s++) {
+        var pair = styles[s].split(":");
+        if (pair.length > 1) {
+            var n = pair[0].trim();
+            var v = pair[1].trim();
+            if (n == "float") {
+                n = SimileAjax.Platform.browser.isIE ? "styleFloat" : "cssFloat";
+            } else if (n == "-moz-opacity") {
+                n = "MozOpacity";
+            } else {
+                if (n.indexOf("-") > 0) {
+                    var segments = n.split("-");
+                    n = segments[0];
+                    for (var x = 1; x < segments.length; x++) {
+                        n += segments[x].substr(0, 1).toUpperCase() + segments[x].substr(1);
+                    }
+                }
+            }
+            templateNode.styles.push({ name: n, value: v });
+        }
+    }
 };
 
 Exhibit.Lens._performConstructFromLensTemplateJob = function(compiledTemplate, job) {
@@ -355,6 +390,11 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 
             elmt.setAttribute(attribute.name, values.join(";"));
         }
+    }
+    var handlers = templateNode.handlers;
+    for (var h = 0; h < handlers.length; h++) {
+        var handler = handlers[h];
+        elmt[handler.name] = handler.code;
     }
     
     var children = templateNode.children;

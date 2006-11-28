@@ -96,6 +96,7 @@ div.exhibit-facet-groupBox {
     top:            0;
 	border:         2px solid #aaa;
     background:     white;
+    z-index:        100;
 }
 div.exhibit-facet-groupBox-left {
     left:           -16em;

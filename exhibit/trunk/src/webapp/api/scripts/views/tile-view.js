@@ -121,6 +121,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
         var tr = state.table.insertRow(rows.length);
         
         var tdIndex = tr.insertCell(0);
+        tdIndex.className = "exhibit-tileView-itemIndex";
         tdIndex.innerHTML = (index + 1) + ".";
         
         var tdItemLens = tr.insertCell(1);
