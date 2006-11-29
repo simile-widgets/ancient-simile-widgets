@@ -10,6 +10,7 @@
         "browse-engine-l10n.js",
         "control-panel-l10n.js",
         "browse-panel-l10n.js",
+        "lens-l10n.js",
         "list-facet-l10n.js",
         "view-panel-l10n.js",
         "ordered-view-frame-l10n.js",

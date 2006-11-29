@@ -29,3 +29,28 @@ td.exhibit-lens-property-name {
 
 td.exhibit-lens-property-values {
 }
+
+button.exhibit-lens-editButton {
+    border: 1px dashed;
+    cursor: pointer;
+    margin:     2px;
+}
+button:hover.exhibit-lens-editButton {
+    background: white;
+    border:     1px dashed blue;
+    color:      blue;
+    cursor:     pointer;
+}
+
+button.exhibit-lens-saveButton {
+    border:     1px dashed;
+    cursor:     pointer;
+    background: #8ff;
+    margin:     2px;
+}
+button:hover.exhibit-lens-saveButton {
+    background: #aff;
+    border:     1px dashed blue;
+    color:      blue;
+    cursor:     pointer;
+}

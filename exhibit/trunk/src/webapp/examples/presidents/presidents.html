@@ -37,9 +37,10 @@
                 <div id="exhibit-view-panel">
                     <div class="item" ex:role="exhibit-lens">
                         <span ex:control="copy-button" style="float: right"></span>
-                        <table cellpadding="10">
+                        <span style="float: right" ex:control="edit-button"></span>
+                        <table cellpadding="10" width="100%">
                             <tr>
-                                <td><img ex:src-content=".imageURL" /></td>
+                                <td width="1"><img ex:src-content=".imageURL" /></td>
                                 <td>
                                     <a ex:href-content=".url"><span ex:content=".label" /></a>
                                     <div>Terms: <span ex:content=".term"></span>, <span ex:content=".party"></span></div>
@@ -52,6 +53,13 @@
                         </table>
                     </div>
                     <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.TileView"
+                        ex:label="Details"
+                        ex:orders=".term"
+                        ex:possibleOrders=".religion, .party, .birth, .death, .term"
+                        ex:grouped="false"
+                        ></div>
+                    <div ex:role="exhibit-view"
                         ex:viewClass="Exhibit.TabularView"
                         ex:label="Table"
                         ex:columns=".term, .label, .imageURL, .party, .presidency.inDate, .presidency.outDate, .religion"
@@ -60,12 +68,6 @@
                         ex:sortColumn="4"
                         ex:sortAscending="true"
                         ex:rowStyler="rowStyler"
-                        ></div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.TileView"
-                        ex:label="Details"
-                        ex:orders=".term"
-                        ex:possibleOrders=".religion, .party, .birth, .death, .term"
                         ></div>
                     <div ex:role="exhibit-view"
                         ex:viewClass="Exhibit.ThumbnailView"

@@ -80,6 +80,7 @@ a.exhibit-menu-item div img {
 button.exhibit-copyButton {
     border: 1px dashed;
     cursor: pointer;
+    margin: 2px;
 }
 button:hover.exhibit-copyButton {
     background: white;
