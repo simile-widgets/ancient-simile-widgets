@@ -275,7 +275,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             tr = table.insertRow(i + 1);
             
             if (this._rowStyler != null) {
-                this._rowStyler(item.id, database, tr);
+                this._rowStyler(item.id, database, tr, i);
             }
             
             for (var c = 0; c < this._columns.length; c++) {

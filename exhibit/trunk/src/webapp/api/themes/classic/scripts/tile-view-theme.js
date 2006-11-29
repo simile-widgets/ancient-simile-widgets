@@ -18,11 +18,16 @@ Exhibit.TileView.theme.constructGroup = function(
             {   tag: "h" + (groupLevel + 1),
                 children: [ 
                     label,
-                    " (",
-                    {   tag: "span",
-                        field: "countSpan"
-                    },
-                    ")"
+                    {   tag:        "span",
+                        className:  "exhibit-collectionView-group-count",
+                        children: [
+                            " (",
+                            {   tag: "span",
+                                field: "countSpan"
+                            },
+                            ")"
+                        ]
+                    }
                 ],
                 field: "header"
             },
