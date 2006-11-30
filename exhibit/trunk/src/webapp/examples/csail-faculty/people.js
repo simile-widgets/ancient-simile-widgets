@@ -1,482 +1,638 @@
 {
-	"items" : [
+	"items" :      [
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=48",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/rivest.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=48",
 			"uri" :       "http://128.30.44.24/Ronald+Rivest",
 			"last-name" : "Rivest",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G692",
 			"phone" :     "253-5880",
 			"email" :     "rivest@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Ronald Rivest"
+			"label" :     "Ronald Rivest",
+			"group" :     "cryptography and information security group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=14",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/fano.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=14",
 			"uri" :       "http://128.30.44.24/Robert+Fano",
 			"last-name" : "Fano",
+			"position" :  "professor emeritus",
+			"floor" :     "6",
 			"office" :    "32-G616",
 			"phone" :     "253-6021",
+			"retired" :   "yes",
 			"email" :     "fano@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Robert Fano"
+			"label" :     "Robert Fano",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=806",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/indyk.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=806",
 			"uri" :       "http://128.30.44.24/Piotr+Indyk",
 			"last-name" : "Indyk",
+			"position" :  "associate professor",
+			"floor" :     "6",
 			"office" :    "32-G642",
 			"phone" :     "452-3402",
 			"email" :     "indyk@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Piotr Indyk"
+			"label" :     "Piotr Indyk",
+			"group" :     [
+				"algorithms",
+				"database group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2005",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/winston.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2005",
 			"uri" :       "http://128.30.44.24/Patrick+Winston",
 			"last-name" : "Winston",
+			"position" :  "faculty",
+			"floor" :     "2",
 			"office" :    "32-251",
 			"phone" :     "253-6754",
 			"email" :     "phw@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Patrick Winston"
+			"tower" :     "Common/other",
+			"label" :     "Patrick Winston",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=20",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/guttag.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=20",
 			"uri" :       "http://128.30.44.24/John+Guttag",
 			"last-name" : "Guttag",
+			"position" :  "faculty",
+			"floor" :     "9",
 			"office" :    "32-G966",
 			"phone" :     "253-6022",
 			"email" :     "guttag@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "John Guttag"
+			"label" :     "John Guttag",
+			"group" :     "networks and mobile systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=55",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/sussman.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=55",
 			"uri" :       "http://128.30.44.24/Gerald+Sussman",
 			"last-name" : "Sussman",
+			"position" :  "professor",
+			"floor" :     "3",
 			"office" :    "32-385",
 			"phone" :     "253-5874",
 			"email" :     "gjs@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Gerald Sussman"
+			"tower" :     "Common/other",
+			"label" :     "Gerald Sussman",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=75",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/edelman.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=75",
 			"uri" :       "http://128.30.44.24/Alan+Edelman",
 			"last-name" : "Edelman",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G606",
 			"phone" :     "253-1355",
 			"email" :     "edelman@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Alan Edelman"
+			"label" :     "Alan Edelman",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=3",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/berger.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=3",
 			"uri" :       "http://128.30.44.24/Bonnie+Berger",
 			"last-name" : "Berger",
+			"position" :  "faculty",
+			"floor" :     "5",
 			"office" :    "32-G574",
 			"phone" :     "253-1827",
 			"email" :     "bab@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Bonnie Berger"
+			"label" :     "Bonnie Berger",
+			"group" :     "computational biology group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1525",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/miller.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1525",
 			"uri" :       "http://128.30.44.24/Rob+Miller",
 			"last-name" : "Miller",
+			"position" :  "associate professor",
+			"floor" :     "7",
 			"office" :    "32-G716",
 			"phone" :     "324-6028",
 			"email" :     "rcm@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Rob Miller"
+			"label" :     "Rob Miller",
+			"group" :     "user interface design group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2641",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/roy.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2641",
 			"uri" :       "http://128.30.44.24/Nicholas+Roy",
 			"last-name" : "Roy",
+			"position" :  "faculty",
+			"floor" :     "3",
 			"office" :    "32-330",
 			"phone" :     "253-2517",
 			"email" :     "nickroy@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Nicholas Roy"
+			"tower" :     "Common/other",
+			"label" :     "Nicholas Roy",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2016",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/williams.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2016",
 			"uri" :       "http://128.30.44.24/Brian+Williams",
 			"last-name" : "Williams",
+			"position" :  "faculty",
+			"floor" :     "2",
 			"office" :    "32-276",
 			"phone" :     "253-2739",
 			"email" :     "williams@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Brian Williams"
+			"tower" :     "Common/other",
+			"label" :     "Brian Williams",
+			"group" :     "model-based embedded & robotic systems"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=883",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/stonebraker.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=883",
 			"uri" :       "http://128.30.44.24/Michael+Stonebraker",
 			"last-name" : "Stonebraker",
+			"position" :  "adjunct professor",
+			"floor" :     "9",
 			"office" :    "32-G922",
 			"phone" :     "253-3538",
 			"email" :     "stonebraker@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Michael Stonebraker"
+			"label" :     "Michael Stonebraker",
+			"group" :     "database group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2009",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/kaelbling.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2009",
 			"uri" :       "http://128.30.44.24/Leslie+Kaelbling",
 			"last-name" : "Kaelbling",
+			"position" :  "faculty",
+			"floor" :     "4",
 			"office" :    "32-G486",
 			"phone" :     "258-9695",
 			"email" :     "lpk@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Leslie Kaelbling"
+			"label" :     "Leslie Kaelbling",
+			"group" :     [
+				"learning rich, tractable models of the real world",
+				"vision"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=198",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/devadas.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=198",
 			"uri" :       "http://128.30.44.24/Srini+Devadas",
 			"last-name" : "Devadas",
+			"position" :  "professor",
+			"floor" :     "8",
 			"office" :    "32-G844",
 			"phone" :     "253-0454",
 			"email" :     "devadas@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Srini Devadas"
+			"label" :     "Srini Devadas",
+			"group" :     "computation structures group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2008",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/grimson.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2008",
 			"uri" :       "http://128.30.44.24/Eric+Grimson",
 			"last-name" : "Grimson",
+			"position" :  "professor",
+			"floor" :     "5",
 			"office" :    "32-D524",
 			"phone" :     "253-5346",
 			"email" :     "welg@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Eric Grimson"
+			"label" :     "Eric Grimson",
+			"group" :     [
+				"medical vision group",
+				"vision",
+				"visual surveillance and monitoring group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1840",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/barzilay.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1840",
 			"uri" :       "http://128.30.44.24/Regina+Barzilay",
 			"last-name" : "Barzilay",
+			"position" :  "assistant professor",
+			"floor" :     "4",
 			"office" :    "32-G468",
 			"phone" :     "258-5706",
 			"email" :     "regina@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Regina Barzilay"
+			"label" :     "Regina Barzilay",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=30",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/liskov.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=30",
 			"uri" :       "http://128.30.44.24/Barbara+Liskov",
 			"last-name" : "Liskov",
+			"position" :  "faculty",
+			"floor" :     "9",
 			"office" :    "32-G942",
 			"phone" :     "253-5886",
 			"email" :     "liskov@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Barbara Liskov"
+			"label" :     "Barbara Liskov",
+			"group" :     "programming methodology group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2010",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/lozano-perez.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2010",
 			"uri" :       "http://128.30.44.24/Tomas+Lozano-Perez",
 			"last-name" : "Lozano-Perez",
+			"position" :  "faculty",
+			"floor" :     "4",
 			"office" :    "32-G492",
 			"phone" :     "253-7889",
 			"email" :     "tlp@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Tomas Lozano-Perez"
+			"label" :     "Tomas Lozano-Perez",
+			"group" :     [
+				"medical vision group",
+				"vision",
+				"visual surveillance and monitoring group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=145",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/amarasinghe.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=145",
 			"uri" :       "http://128.30.44.24/Saman+Amarasinghe",
 			"last-name" : "Amarasinghe",
+			"position" :  "faculty",
+			"floor" :     "7",
 			"office" :    "32-G778",
 			"phone" :     "253-8879",
 			"email" :     "saman@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Saman Amarasinghe"
+			"label" :     "Saman Amarasinghe",
+			"group" :     "computer architecture group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=17",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/goldwasser.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=17",
 			"uri" :       "http://128.30.44.24/Shafi+Goldwasser",
 			"last-name" : "Goldwasser",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G682",
 			"phone" :     "253-5914",
 			"email" :     "shafi@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Shafi Goldwasser"
+			"label" :     "Shafi Goldwasser",
+			"group" :     [
+				"complexity theory group",
+				"cryptography and information security group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2003",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/horn.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2003",
 			"uri" :       "http://128.30.44.24/Berthold+Horn",
 			"last-name" : "Horn",
+			"position" :  "professor",
+			"floor" :     "4",
 			"office" :    "32-D434",
 			"phone" :     "253-5863",
 			"email" :     "bkph@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Berthold Horn"
+			"label" :     "Berthold Horn",
+			"group" :     "vision"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=479",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/weitzner.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=479",
 			"uri" :       "http://128.30.44.24/Daniel+Weitzner",
 			"last-name" : "Weitzner",
+			"position" :  "principal research scientist",
+			"floor" :     "5",
 			"office" :    "32-G516",
 			"phone" :     "253-8036",
 			"email" :     "djweitzner@w3.org",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Daniel Weitzner"
+			"label" :     "Daniel Weitzner",
+			"group" :     "decentralized information group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1175",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/popovic.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1175",
 			"uri" :       "http://128.30.44.24/Jovan+Popovic",
 			"last-name" : "Popovic",
+			"position" :  "associate professor",
+			"floor" :     "5",
 			"office" :    "32-D534",
 			"phone" :     "452-3471",
 			"email" :     "jovan@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Jovan Popovic"
+			"label" :     "Jovan Popovic",
+			"group" :     "computer graphics group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=33",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/lynch.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=33",
 			"uri" :       "http://128.30.44.24/Nancy+Lynch",
 			"last-name" : "Lynch",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G668",
 			"phone" :     "253-7225",
 			"email" :     "lynch@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Nancy Lynch"
+			"label" :     "Nancy Lynch",
+			"group" :     "theory of distributed systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1996",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/shrobe.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1996",
 			"uri" :       "http://128.30.44.24/Howard+Shrobe",
 			"last-name" : "Shrobe",
+			"position" :  "principal research scientist",
+			"floor" :     "2",
 			"office" :    "32-225",
 			"phone" :     "253-7877",
 			"email" :     "hes@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Howard Shrobe"
+			"tower" :     "Common/other",
+			"label" :     "Howard Shrobe",
+			"group" :     [
+				"clinical decision making group",
+				"design rationale group",
+				"dynamic languages group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=892",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/long.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=892",
 			"uri" :       "http://128.30.44.24/Bill+Long",
 			"last-name" : "Long",
+			"position" :  "principal research scientist",
+			"floor" :     "2",
 			"office" :    "32-256",
 			"phone" :     "253-3508",
 			"email" :     "wjl@mit.edu",
 			"type" :      "Person",
-			"label" :     "Bill Long"
+			"tower" :     "Common/other",
+			"label" :     "Bill Long",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=212",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/arvind.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=212",
 			"uri" :       "http://128.30.44.24/Arvind",
 			"last-name" : "Arvind",
+			"position" :  "faculty",
+			"floor" :     "8",
 			"office" :    "32-G866",
 			"phone" :     "253-6090",
 			"email" :     "arvind@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Arvind"
+			"label" :     "Arvind",
+			"group" :     "computation structures group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=56",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/szolovits.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=56",
 			"uri" :       "http://128.30.44.24/Peter+Szolovits",
 			"last-name" : "Szolovits",
+			"position" :  "faculty",
+			"floor" :     "2",
 			"office" :    "32-254",
 			"phone" :     "253-3476",
 			"email" :     "psz@mit.edu",
 			"type" :      "Person",
-			"label" :     "Peter Szolovits"
+			"tower" :     "Common/other",
+			"label" :     "Peter Szolovits",
+			"group" :     "clinical decision making group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2861",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/willsky.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2861",
 			"uri" :       "http://128.30.44.24/Alan+Willsky",
 			"last-name" : "Willsky",
+			"position" :  "faculty",
+			"floor" :     "5",
 			"office" :    "32-D582",
 			"phone" :     "253-2356",
 			"email" :     "willsky@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Alan Willsky"
+			"label" :     "Alan Willsky",
+			"group" :     "stochastic systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=54",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/sollins.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=54",
 			"uri" :       "http://128.30.44.24/Karen+Sollins",
 			"last-name" : "Sollins",
+			"position" :  "principal research scientist",
+			"floor" :     "8",
 			"office" :    "32-G818",
 			"phone" :     "253-6006",
 			"email" :     "sollins@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Karen Sollins"
+			"label" :     "Karen Sollins",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2000",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/collins.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2000",
 			"uri" :       "http://128.30.44.24/Michael+Collins",
 			"last-name" : "Collins",
+			"position" :  "faculty",
+			"floor" :     "4",
 			"office" :    "32-G484",
 			"phone" :     "253-0705",
 			"email" :     "mcollins@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Michael Collins"
+			"label" :     "Michael Collins",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=757",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/ernst.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=757",
 			"uri" :       "http://128.30.44.24/Michael+Ernst",
 			"last-name" : "Ernst",
+			"position" :  "associate professor",
+			"floor" :     "7",
 			"office" :    "32-G718",
 			"phone" :     "253-0945",
 			"email" :     "mernst@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Michael Ernst"
+			"label" :     "Michael Ernst",
+			"group" :     "program analysis group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2002",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/tidor.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2002",
 			"uri" :       "http://128.30.44.24/Bruce+Tidor",
 			"last-name" : "Tidor",
+			"position" :  "faculty",
+			"floor" :     "2",
 			"office" :    "32-212",
 			"phone" :     "253-7258",
 			"email" :     "tidor@mit.edu",
 			"type" :      "Person",
-			"label" :     "Bruce Tidor"
+			"tower" :     "Common/other",
+			"label" :     "Bruce Tidor",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=167",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/sudan.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=167",
 			"uri" :       "http://128.30.44.24/Madhu+Sudan",
 			"last-name" : "Sudan",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G640",
 			"phone" :     "253-9680",
 			"email" :     "madhu@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Madhu Sudan"
+			"label" :     "Madhu Sudan",
+			"group" :     [
+				"algorithms",
+				"complexity theory group",
+				"cryptography and information security group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2018",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/brooks.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2018",
 			"uri" :       "http://128.30.44.24/Rodney+Brooks",
 			"last-name" : "Brooks",
+			"position" :  "director",
+			"floor" :     "4",
 			"office" :    "32-G430",
 			"phone" :     "253-5223",
 			"email" :     "brooks@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Rodney Brooks"
+			"label" :     "Rodney Brooks",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=301",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/morris.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=301",
 			"uri" :       "http://128.30.44.24/Robert+Morris",
 			"last-name" : "Morris",
+			"position" :  "associate professor",
+			"floor" :     "9",
 			"office" :    "32-G972",
 			"phone" :     "253-5983",
 			"email" :     "rtm@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Robert Morris"
+			"label" :     "Robert Morris",
+			"group" :     "parallel & distributed operating systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=35",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/meyer.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=35",
 			"uri" :       "http://128.30.44.24/Albert+R.+Meyer",
-			"last-name" : "R. Meyer",
+			"last-name" : "Meyer",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G624",
 			"phone" :     "253-6024",
 			"email" :     "meyer@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Albert R. Meyer"
+			"label" :     "Albert R. Meyer",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=161",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/agarwal.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=161",
 			"uri" :       "http://128.30.44.24/Anant+Agarwal",
 			"last-name" : "Agarwal",
+			"position" :  "faculty",
+			"floor" :     "7",
 			"office" :    "32-G782",
 			"phone" :     "253-1448",
 			"email" :     "agarwal@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Anant Agarwal"
+			"label" :     "Anant Agarwal",
+			"group" :     "computer architecture group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=7",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/clark.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=7",
 			"uri" :       "http://128.30.44.24/David+Clark",
 			"last-name" : "Clark",
+			"position" :  "senior research scientist",
+			"floor" :     "8",
 			"office" :    "32-G816",
 			"phone" :     "253-6003",
 			"email" :     "ddc@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "David Clark"
+			"label" :     "David Clark",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=953",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/lampson.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=953",
 			"uri" :       "http://128.30.44.24/Butler+Lampson",
 			"last-name" : "Lampson",
+			"position" :  "adjunct professor",
+			"floor" :     "9",
 			"office" :    "32-G924",
 			"phone" :     "253-6004",
 			"email" :     "blampson@microsoft.com",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Butler Lampson"
+			"label" :     "Butler Lampson",
+			"group" :     "cryptography and information security group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2007",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/adelson.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2007",
 			"uri" :       "http://128.30.44.24/Ted+Adelson",
 			"last-name" : "Adelson",
+			"position" :  "professor",
+			"floor" :     "4",
 			"office" :    [
 				"32-D424",
 				"46-4115"
@@ -485,250 +641,329 @@
 			"email" :     "adelson@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Ted Adelson"
+			"label" :     "Ted Adelson",
+			"group" :     "vision"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2033",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/knight.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2033",
 			"uri" :       "http://128.30.44.24/Thomas+Knight+Jr",
 			"last-name" : "Knight",
+			"position" :  "senior research scientist",
+			"floor" :     "3",
 			"office" :    "32-312",
 			"phone" :     "253-7807",
 			"email" :     "tk@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Thomas Knight Jr"
+			"tower" :     "Common/other",
+			"label" :     "Thomas Knight Jr",
+			"group" :     [
+				"project aires",
+				"project on mathematics and computation"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2004",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/richards.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2004",
 			"uri" :       "http://128.30.44.24/Whitman+Richards",
 			"last-name" : "Richards",
+			"position" :  "faculty",
+			"floor" :     "3",
 			"office" :    "32-364",
 			"phone" :     "253-5776",
 			"email" :     "wrichards@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Whitman Richards"
+			"tower" :     "Common/other",
+			"label" :     "Whitman Richards",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1973",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/golland.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1973",
 			"uri" :       "http://128.30.44.24/Polina+Golland",
 			"last-name" : "Golland",
+			"position" :  "assistant professor",
+			"floor" :     "4",
 			"office" :    "32-D470",
 			"phone" :     "253-8005",
 			"email" :     "polina@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Polina Golland"
+			"label" :     "Polina Golland",
+			"group" :     [
+				"medical vision group",
+				"vision"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=85",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/teller.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=85",
 			"uri" :       "http://128.30.44.24/Seth+Teller",
 			"last-name" : "Teller",
+			"position" :  "faculty",
+			"floor" :     "3",
 			"office" :    "32-333",
 			"phone" :     "258-7885",
 			"email" :     "teller@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Seth Teller"
+			"tower" :     "Common/other",
+			"label" :     "Seth Teller",
+			"group" :     [
+				"computer graphics group",
+				"visual surveillance and monitoring group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=235",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/asanovic.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=235",
 			"uri" :       "http://128.30.44.24/Krste+Asanovic",
 			"last-name" : "Asanovic",
+			"position" :  "associate professor",
+			"floor" :     "7",
 			"office" :    "32-G776",
 			"phone" :     "253-8081",
 			"email" :     "krste@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Krste Asanovic"
+			"label" :     "Krste Asanovic",
+			"group" :     "computer architecture group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=88",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/rudolph.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=88",
 			"uri" :       "http://128.30.44.24/Larry+Rudolph",
 			"last-name" : "Rudolph",
+			"position" :  "principal research scientist",
+			"floor" :     "8",
 			"office" :    "32-G868",
 			"phone" :     "253-6562",
 			"email" :     "rudolph@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Larry Rudolph"
+			"label" :     "Larry Rudolph",
+			"group" :     "computation structures group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=61",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/ward.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=61",
 			"uri" :       "http://128.30.44.24/Steve+Ward",
 			"last-name" : "Ward",
+			"position" :  "faculty",
+			"floor" :     "7",
 			"office" :    "32-G786",
 			"phone" :     "253-6036",
 			"email" :     "ward@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Steve Ward"
+			"label" :     "Steve Ward",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=36",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/micali.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=36",
 			"uri" :       "http://128.30.44.24/Silvio+Micali",
 			"last-name" : "Micali",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G644",
 			"phone" :     "253-5949",
 			"email" :     "silvio@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Silvio Micali"
+			"label" :     "Silvio Micali",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2019",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/fisher.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2019",
 			"uri" :       "http://128.30.44.24/John+Fisher",
 			"last-name" : "Fisher",
+			"position" :  "principal research scientist",
+			"floor" :     "4",
 			"office" :    "32-D468",
 			"phone" :     "253-0788",
 			"email" :     "fisher@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "John Fisher"
+			"label" :     "John Fisher",
+			"group" :     [
+				"vision",
+				"vision interface group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=166",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/jackson.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=166",
 			"uri" :       "http://128.30.44.24/Daniel+Jackson",
 			"last-name" : "Jackson",
+			"position" :  "faculty",
+			"floor" :     "7",
 			"office" :    "32-G704",
 			"phone" :     "258-8471",
 			"email" :     "dnj@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Daniel Jackson"
+			"label" :     "Daniel Jackson",
+			"group" :     "software design group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=113",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/terman.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=113",
 			"uri" :       "http://128.30.44.24/Chris+Terman",
 			"last-name" : "Terman",
+			"position" :  "senior lecturer",
+			"floor" :     "7",
 			"office" :    "32-G790",
 			"phone" :     "253-6038",
 			"email" :     "cjt@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Chris Terman"
+			"label" :     "Chris Terman",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=50",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/seneff.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=50",
 			"uri" :       "http://128.30.44.24/Stephanie+Seneff",
 			"last-name" : "Seneff",
+			"position" :  "principal research scientist",
+			"floor" :     "4",
 			"office" :    "32-G438",
 			"phone" :     "253-0451",
 			"email" :     "seneff@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Stephanie Seneff"
+			"label" :     "Stephanie Seneff",
+			"group" :     "spoken language systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2227",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/madden.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2227",
 			"uri" :       "http://128.30.44.24/Sam+Madden",
 			"last-name" : "Madden",
+			"position" :  "faculty",
+			"floor" :     "9",
 			"office" :    "32-G938",
 			"phone" :     "258-6643",
 			"email" :     "madden@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Sam Madden"
+			"label" :     "Sam Madden",
+			"group" :     "database group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2619",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/rubinfeld.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2619",
 			"uri" :       "http://128.30.44.24/Ronitt+Rubinfeld",
 			"last-name" : "Rubinfeld",
+			"position" :  "professor",
+			"floor" :     "6",
 			"office" :    "32-G698",
 			"phone" :     "253-0884",
 			"email" :     "ronitt@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Ronitt Rubinfeld"
+			"label" :     "Ronitt Rubinfeld",
+			"group" :     "algorithms"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=64",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/zue.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=64",
 			"uri" :       "http://128.30.44.24/Victor+Zue",
 			"last-name" : "Zue",
+			"position" :  "co-director",
+			"floor" :     "4",
 			"office" :    "32-G470",
 			"phone" :     "253-8513",
 			"email" :     "zue@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Victor Zue"
+			"label" :     "Victor Zue",
+			"group" :     "spoken language systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=15",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/garland.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=15",
 			"uri" :       "http://128.30.44.24/Stephen+Garland",
 			"last-name" : "Garland",
+			"position" :  "principal research scientist",
+			"floor" :     "7",
 			"office" :    "32-G720",
 			"phone" :     "253-1947",
+			"retired" :   "yes",
 			"email" :     "garland@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Stephen Garland"
+			"label" :     "Stephen Garland",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=655",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/kaashoek.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=655",
 			"uri" :       "http://128.30.44.24/Frans+Kaashoek",
 			"last-name" : "Kaashoek",
+			"position" :  "faculty",
+			"floor" :     "9",
 			"office" :    "32-G992",
 			"phone" :     "253-7149",
 			"email" :     "kaashoek@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Frans Kaashoek"
+			"label" :     "Frans Kaashoek",
+			"group" :     "parallel & distributed operating systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=138",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/katabi.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=138",
 			"uri" :       "http://128.30.44.24/Dina+Katabi",
 			"last-name" : "Katabi",
+			"position" :  "assistant professor",
+			"floor" :     "9",
 			"office" :    "32-G936",
 			"phone" :     "324-6027",
 			"email" :     "dina@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Dina Katabi"
+			"label" :     "Dina Katabi",
+			"group" :     "networks and mobile systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=162",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/rinard.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=162",
 			"uri" :       "http://128.30.44.24/Martin+Rinard",
 			"last-name" : "Rinard",
+			"position" :  "faculty",
+			"floor" :     "7",
 			"office" :    "32-G744",
 			"phone" :     "258-6922",
 			"email" :     "rinard@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Martin Rinard"
+			"label" :     "Martin Rinard",
+			"group" :     "program analysis and compilation group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1183",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/demaine.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=1183",
 			"uri" :       "http://128.30.44.24/Erik+Demaine",
 			"last-name" : "Demaine",
+			"position" :  "faculty",
+			"floor" :     "6",
 			"office" :    "32-G680",
 			"phone" :     "253-6871",
 			"email" :     "edemaine@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Erik Demaine"
+			"label" :     "Erik Demaine",
+			"group" :     "algorithms"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2011",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/poggio.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2011",
 			"uri" :       "http://128.30.44.24/Tomaso+Poggio",
 			"last-name" : "Poggio",
+			"position" :  "professor",
+			"floor" :     "4",
 			"office" :    [
 				"32-D424",
 				"46-5177"
@@ -737,36 +972,50 @@
 			"email" :     "tp@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Tomaso Poggio"
+			"label" :     "Tomaso Poggio",
+			"group" :     [
+				"center for biological & computational learning",
+				"vision",
+				"visual surveillance and monitoring group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=100",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/wisdom.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=100",
 			"uri" :       "http://128.30.44.24/Jack+Wisdom",
 			"last-name" : "Wisdom",
+			"position" :  "faculty",
+			"floor" :     "3",
 			"office" :    "32-386",
 			"phone" :     "253-7730",
 			"email" :     "wisdom@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Jack Wisdom"
+			"tower" :     "Common/other",
+			"label" :     "Jack Wisdom",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=53",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/sipser.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=53",
 			"uri" :       "http://128.30.44.24/Michael+Sipser",
 			"last-name" : "Sipser",
+			"position" :  "faculty",
+			"floor" :     "5",
 			"office" :    "32-G594",
 			"phone" :     "253-7877",
 			"email" :     "sipser@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Michael Sipser"
+			"label" :     "Michael Sipser",
+			"group" :     "complexity theory group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2015",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/tenenbaum.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2015",
 			"uri" :       "http://128.30.44.24/Joshua+Tenenbaum",
 			"last-name" : "Tenenbaum",
+			"position" :  "faculty",
+			"floor" :     "4",
 			"office" :    [
 				"32-G482",
 				"46-4015"
@@ -775,326 +1024,438 @@
 			"email" :     "jbt@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Joshua Tenenbaum"
+			"label" :     "Joshua Tenenbaum",
+			"group" :     "computational cognitive science group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2014",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/massaquoi.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2014",
 			"uri" :       "http://128.30.44.24/Steve+Massaquoi",
 			"last-name" : "Massaquoi",
+			"position" :  "faculty",
+			"floor" :     "2",
 			"office" :    "32-214",
 			"phone" :     "253-7093",
 			"email" :     "sgm@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Steve Massaquoi"
+			"tower" :     "Common/other",
+			"label" :     "Steve Massaquoi",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=9",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/dennis.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=9",
 			"uri" :       "http://128.30.44.24/Jack+Dennis",
 			"last-name" : "Dennis",
+			"position" :  "professor emeritus",
+			"floor" :     "8",
 			"office" :    "32-G864",
 			"phone" :     "253-6856",
+			"retired" :   "yes",
 			"email" :     "dennis@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Jack Dennis"
+			"label" :     "Jack Dennis",
+			"group" :     "computation structures group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=38",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/moses.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=38",
 			"uri" :       "http://128.30.44.24/Joel+Moses",
 			"last-name" : "Moses",
+			"position" :  "institute professor",
+			"floor" :     "2",
 			"office" :    "32-249",
 			"phone" :     "253-8592",
 			"email" :     "moses@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Joel Moses"
+			"tower" :     "Common/other",
+			"label" :     "Joel Moses",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=16",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/glass.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=16",
 			"uri" :       "http://128.30.44.24/James+Glass",
 			"last-name" : "Glass",
+			"position" :  "principal research scientist",
+			"floor" :     "4",
 			"office" :    "32-G444",
 			"phone" :     "253-1640",
 			"email" :     "glass@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "James Glass"
+			"label" :     "James Glass",
+			"group" :     "spoken language systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=320",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/gifford.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=320",
 			"uri" :       "http://128.30.44.24/Dave+Gifford",
 			"last-name" : "Gifford",
+			"position" :  "faculty",
+			"floor" :     "5",
 			"office" :    "32-G542",
 			"phone" :     "253-6039",
 			"email" :     "gifford@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Dave Gifford"
+			"label" :     "Dave Gifford",
+			"group" :     "computational genomics group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2013",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/jaakkola.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2013",
 			"uri" :       "http://128.30.44.24/Tommi+Jaakkola",
 			"last-name" : "Jaakkola",
+			"position" :  "faculty",
+			"floor" :     "4",
 			"office" :    "32-G498",
 			"phone" :     "253-0440",
 			"email" :     "tommi@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Tommi Jaakkola"
+			"label" :     "Tommi Jaakkola",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=29",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/leiserson.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=29",
 			"uri" :       "http://128.30.44.24/Charles+Leiserson",
 			"last-name" : "Leiserson",
+			"position" :  "faculty",
+			"floor" :     "7",
 			"office" :    "32-G768",
 			"phone" :     "253-5833",
 			"email" :     "cel@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Charles Leiserson"
+			"label" :     "Charles Leiserson",
+			"group" :     [
+				"algorithms",
+				"supercomputing technologies group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2846",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/stultz.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2846",
 			"uri" :       "http://128.30.44.24/Collin+Stultz",
 			"last-name" : "Stultz",
+			"position" :  "faculty",
+			"floor" :     "3",
 			"office" :    "32-310",
 			"phone" :     "253-4961",
 			"email" :     "cmstultz@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Collin Stultz"
+			"tower" :     "Common/other",
+			"label" :     "Collin Stultz",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=900034",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/kellis.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=900034",
 			"uri" :       "http://128.30.44.24/Manolis+Kellis",
 			"last-name" : "Kellis",
+			"position" :  "assistant professor",
+			"floor" :     "5",
 			"office" :    "32-G564",
 			"phone" :     "253-2419",
 			"email" :     "manoli@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Manolis Kellis"
+			"label" :     "Manolis Kellis",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2020",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/katz.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2020",
 			"uri" :       "http://128.30.44.24/Boris+Katz",
 			"last-name" : "Katz",
+			"position" :  "principal research scientist",
+			"floor" :     "3",
 			"office" :    "32-368",
 			"phone" :     "253-6032",
 			"email" :     "boris@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Boris Katz"
+			"tower" :     "Common/other",
+			"label" :     "Boris Katz",
+			"group" :     "infolab"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2017",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/leonard.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2017",
 			"uri" :       "http://128.30.44.24/John+Leonard",
 			"last-name" : "Leonard",
+			"position" :  "faculty",
+			"floor" :     "3",
 			"office" :    "32-332",
 			"phone" :     "253-0607",
 			"email" :     "jleonard@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "John Leonard"
+			"tower" :     "Common/other",
+			"label" :     "John Leonard",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2030",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/oreilly.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2030",
 			"uri" :       "http://128.30.44.24/Una-May+O%27Reilly",
 			"last-name" : "O\'Reilly",
+			"position" :  "principal research scientist",
+			"floor" :     "3",
 			"office" :    "32-379",
 			"phone" :     "253-6437",
 			"email" :     "unamay@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Una-May O\'Reilly"
+			"tower" :     "Common/other",
+			"label" :     "Una-May O\'Reilly",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2657",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/shor.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2657",
 			"uri" :       "http://128.30.44.24/Peter+Shor",
 			"last-name" : "Shor",
+			"position" :  "faculty",
+			"floor" :     "5",
 			"office" :    "32-G574",
 			"phone" :     "253-1827",
 			"email" :     "shor@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Peter Shor"
+			"label" :     "Peter Shor",
+			"group" :     "algorithms"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2226",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/rus.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2226",
 			"uri" :       "http://128.30.44.24/Daniela+Rus",
 			"last-name" : "Rus",
+			"position" :  "professor",
+			"floor" :     "3",
 			"office" :    "32-374",
 			"phone" :     "258-7567",
 			"email" :     "rus@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Daniela Rus"
+			"tower" :     "Common/other",
+			"label" :     "Daniela Rus",
+			"group" :     "distributed robotics group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=78",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/abelson.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=78",
 			"uri" :       "http://128.30.44.24/Hal+Abelson",
 			"last-name" : "Abelson",
+			"position" :  "faculty",
+			"floor" :     "3",
 			"office" :    "32-386H",
 			"phone" :     "253-5856",
 			"email" :     "hal@mit.edu",
 			"type" :      "Person",
-			"label" :     "Hal Abelson"
+			"tower" :     "Common/other",
+			"label" :     "Hal Abelson",
+			"group" :     [
+				"decentralized information group",
+				"project on mathematics and computation"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=49",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/saltzer.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=49",
 			"uri" :       "http://128.30.44.24/Jerome+Saltzer",
 			"last-name" : "Saltzer",
+			"position" :  "professor emeritus",
+			"floor" :     "9",
 			"office" :    "32-G922",
 			"phone" :     "253-6016",
+			"retired" :   "yes",
 			"email" :     "saltzer@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Jerome Saltzer"
+			"label" :     "Jerome Saltzer",
+			"group" :     "unknown"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=74",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/goemans.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=74",
 			"uri" :       "http://128.30.44.24/Michel+Goemans",
 			"last-name" : "Goemans",
+			"position" :  "professor",
+			"floor" :     "6",
 			"office" :    "32-G638",
 			"phone" :     "253-2688",
 			"email" :     "goemans@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Michel Goemans"
+			"label" :     "Michel Goemans",
+			"group" :     "algorithms"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=421",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/durand.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=421",
 			"uri" :       "http://128.30.44.24/Fredo+Durand",
 			"last-name" : "Durand",
+			"position" :  "associate professor",
+			"floor" :     "4",
 			"office" :    "32-D426",
 			"phone" :     "253-7223",
 			"email" :     "fredo@graphics.csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Fredo Durand"
+			"label" :     "Fredo Durand",
+			"group" :     "computer graphics group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2053",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/tedrake.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2053",
 			"uri" :       "http://128.30.44.24/Russ+Tedrake",
 			"last-name" : "Tedrake",
+			"position" :  "assistant professor",
+			"floor" :     "3",
 			"office" :    "32-335",
 			"phone" :     "253-1778",
 			"email" :     "russt@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Russ Tedrake"
+			"tower" :     "Common/other",
+			"label" :     "Russ Tedrake",
+			"group" :     "robot locomotion group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=236",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/balakrishnan.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=236",
 			"uri" :       "http://128.30.44.24/Hari+Balakrishnan",
 			"last-name" : "Balakrishnan",
+			"position" :  "associate professor",
+			"floor" :     "9",
 			"office" :    "32-G940",
 			"phone" :     "253-8713",
 			"email" :     "hari@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Hari Balakrishnan"
+			"label" :     "Hari Balakrishnan",
+			"group" :     [
+				"database group",
+				"networks and mobile systems group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2012",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/darrell.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2012",
 			"uri" :       "http://128.30.44.24/Trevor+Darrell",
 			"last-name" : "Darrell",
+			"position" :  "faculty",
+			"floor" :     "5",
 			"office" :    "32-D512",
 			"phone" :     "253-8966",
 			"email" :     "trevor@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "Trevor Darrell"
+			"label" :     "Trevor Darrell",
+			"group" :     [
+				"vision",
+				"vision interface group"
+			]
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=8",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/corbato.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=8",
 			"uri" :       "http://128.30.44.24/F.+J.+Corbato",
 			"last-name" : "Corbato",
+			"position" :  "professor emeritus",
+			"floor" :     "6",
 			"office" :    "32-G616",
 			"phone" :     "253-6001",
+			"retired" :   "yes",
 			"email" :     "corbato@mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "F. J. Corbato"
+			"label" :     "F. J. Corbato",
+			"group" :     "parallel & distributed operating systems group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2006",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/davis.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2006",
 			"uri" :       "http://128.30.44.24/Randall+Davis",
 			"last-name" : "Davis",
+			"position" :  "professor",
+			"floor" :     "2",
 			"office" :    "32-237",
 			"phone" :     "253-5879",
 			"email" :     "davis@csail.mit.edu",
 			"type" :      "Person",
-			"label" :     "Randall Davis"
+			"tower" :     "Common/other",
+			"label" :     "Randall Davis",
+			"group" :     "design rationale group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=188",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/berners-lee.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=188",
 			"uri" :       "http://128.30.44.24/Tim+Berners-Lee",
 			"last-name" : "Berners-Lee",
+			"position" :  "senior research scientist",
+			"floor" :     "5",
 			"office" :    "32-G524",
 			"phone" :     "253-5702",
 			"email" :     "timbl@w3.org",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Tim Berners-Lee"
+			"label" :     "Tim Berners-Lee",
+			"group" :     "decentralized information group"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=28",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/leighton.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=28",
 			"uri" :       "http://128.30.44.24/Tom+Leighton",
 			"last-name" : "Leighton",
+			"position" :  "faculty",
+			"floor" :     "5",
 			"office" :    "32-G594",
 			"phone" :     "253-5876",
 			"email" :     "ftl@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "Tom Leighton"
+			"label" :     "Tom Leighton",
+			"group" :     "algorithms"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2001",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/freeman.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=2001",
 			"uri" :       "http://128.30.44.24/William+Freeman",
 			"last-name" : "Freeman",
+			"position" :  "faculty",
+			"floor" :     "4",
 			"office" :    "32-D476",
 			"phone" :     "253-8828",
 			"email" :     "billf@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Dreyfoos",
-			"label" :     "William Freeman"
+			"label" :     "William Freeman",
+			"group" :     "vision"
 		},
 		{
-			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=83",
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/karger.jpg",
+			"url" :       "http://www.csail.mit.edu/biographies/PI/bioprint.php?PeopleID=83",
 			"uri" :       "http://128.30.44.24/David+Karger",
 			"last-name" : "Karger",
+			"position" :  "professor",
+			"floor" :     "5",
 			"office" :    "32-G592",
 			"phone" :     "258-6167",
 			"email" :     "karger@csail.mit.edu",
 			"type" :      "Person",
 			"tower" :     "Gates",
-			"label" :     "David Karger"
+			"label" :     "David Karger",
+			"group" :     [
+				"algorithms",
+				"database group",
+				"haystack"
+			]
 		}
 	],
 	"types" : {
 		"Person" : {
-			"uri" : "http://128.30.44.24/Person"
+			"uri" : "http://128.30.44.24/Person",
+            pluralLabel: "People"
 		}
 	},
     properties: {

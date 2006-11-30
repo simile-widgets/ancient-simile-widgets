@@ -69,16 +69,25 @@
             margin:     0.5em;
             text-align: center;
         }
+        .name {
+            font-weight: bold;
+        }
+        .office {
+        }
+        .phone {
+        }
+        .email {
+        }
     </style>
 </head> 
 <body>
 <div id="content">
     <div id="title-panel">
-        <h1>CSAIL Faculty</h1>
+        <h1>CSAIL Principal Investigators</h1>
     </div>
     
     <div id="top-panels">
-        <div id="exhibit-browse-panel" ex:facets=".tower"></div>
+        <div id="exhibit-browse-panel" ex:facets=".position, .group, .tower, .floor"></div>
         <div id="exhibit-control-panel"></div>
     </div>
     <div id="exhibit-view-panel">
@@ -89,10 +98,11 @@
             ex:possibleOrders=".label, .tower, .last-name">
             <div ex:role="exhibit-lens" class="person-thumbnail">
                 <div><img ex:src-content=".photo" /></div>
-                <div><span ex:content=".label"></span></div>
-                <div>Office: <span ex:content=".office"></span></div>
-                <div>Phone: <span ex:content=".phone"></span></div>
-                <div>E-mail: <span ex:content=".email"></span></div>
+                <div class="name"><span ex:content=".label"></span></div>
+                <div class="office">Office: <span ex:content=".office"></span></div>
+                <div class="phone">Phone: <span ex:content=".phone"></span></div>
+                <div class="email"><span ex:content=".email"></span></div>
+                <div><a ex:href-content=".url" target="_blank">more...</a></div>
             </div>
         </div>
     </div>
