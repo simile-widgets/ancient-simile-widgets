@@ -100,8 +100,17 @@ SimileAjax.History.addAction = function(action) {
                     SimileAjax.History._baseIndex += diff;
                 }
                 
-                SimileAjax.History._iframe.contentWindow.location.search = 
-                    "?" + SimileAjax.History._currentIndex;
+                try {
+                    SimileAjax.History._iframe.contentWindow.location.search = 
+                        "?" + SimileAjax.History._currentIndex;
+                } catch (e) {
+                    /*
+                     *  We can't modify location.search most probably because it's a file:// url.
+                     *  We'll just going to modify the document's title.
+                     */
+                    var title = SimileAjax.History.formatHistoryEntryTitle(action.label);
+                    document.title = title;
+                }
             }
         } catch (e) {
             SimileAjax.Debug.exception("Error adding action {" + action.label + "} to history", e);
