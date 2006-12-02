@@ -1,0 +1,121 @@
+<html>
+<head>
+    <title>SIMILE | Exhibit | Logos</title>
+    <link rel='stylesheet' href='http://simile.mit.edu/styles/default.css' type='text/css' />
+    <link href="logos.js" type="text/javascript" rel="exhibit/data" />
+
+    <script src="/exhibit/api/exhibit-api.js?views=timeline"
+        type="text/javascript"></script>
+
+    <style>
+        table {
+            font-size:      100%;
+        }
+        tr {
+            vertical-align: top;
+        }
+        
+        #exhibit-view-panel h1 {
+            padding:    2em 0 1em 0;
+            margin:     0;
+            background: none;
+            border:     none;
+        }
+                
+        div.logo-thumbnail {
+            float:      left;
+            width:      10em;
+            height:     5em;
+            padding:    1em;
+            text-align: center;
+        }
+        button.exhibit-copyButton {
+            display: none;
+        }
+        div.logo-image {
+        }
+        div.color-name {
+        }
+        div.color-code {
+        }
+        div.color-textbox {
+            margin:      1em;
+        }
+        div.color-textbox input {
+            font-family: monospace;
+        }
+        .light {
+            background: black;
+            color:      white;
+        }
+        .dark {
+            background: white;
+            color:      black;
+        }
+    </style>
+    <script>
+        var thumbnailViewConfig = {
+            lensSelector : function(itemID, exhibit) {
+                var s = exhibit.getDatabase().getObject(itemID, "light-dark");
+                return document.getElementById(s == "light" ? "light-template" : "dark-template");
+            }
+        };
+    </script>
+</head> 
+<body>
+<!--#include virtual="../sidebar.html" -->
+
+<ul id="path">
+  <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+  <li><a href="/exhibit" title="Exhibit">Exhibit</a></li>
+  <li><span>Logos</span></li>
+</ul>
+<div id="body">
+    <h1>Exhibit Logos</h1>
+    <table width="100%">
+        <tr>
+            <td width="15%">
+                <div style="margin: 1em; padding-bottom: 1em; border-bottom: 1px solid #ccc;">
+                    <form id="dark-background-form">
+                        <p><b>Dark logos' background:</b></p>
+                        <input type="radio" name="dark-background" value="white" checked="true">White</input><br/>
+                        <input type="radio" name="dark-background" value="custom">Custom</input><br/>
+                        <div class="color-textbox"><input type="text" value="ffffff" /></div>
+                    </form>
+                    <form id="light-background-form">
+                        <p><b>Light logos' background:</b></p>
+                        <input type="radio" name="light-background" value="black" checked="true">Black</input><br/>
+                        <input type="radio" name="light-background" value="custom">Custom</input><br/>
+                        <div class="color-textbox"><input type="text" value="000000" /></div>
+                    </form>
+                </div>
+                <div id="exhibit-browse-panel" ex:facets=".light-dark"></div>
+            </td>
+            <td>
+                <div id="exhibit-control-panel"></div>
+                <div id="exhibit-view-panel">
+                    <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.ThumbnailView"
+                        ex:showAll="true"
+                        ex:orders=".light-dark"
+                        ex:possibleOrders=".label, .light-dark"
+                        ex:configuration="thumbnailViewConfig">
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class="logo-thumbnail light" id="light-template" style="display: none">
+        <div class="logo-image"><img ex:src-content=".url" /></div>
+        <div ex:content=".label" class="color-name"></div>
+        <div ex:content=".foreground" class="color-code"></div>
+    </div>
+    <div class="logo-thumbnail dark" id="dark-template" style="display: none">
+        <div class="logo-image"><img ex:src-content=".url" /></div>
+        <div ex:content=".label" class="color-name"></div>
+        <div ex:content=".foreground" class="color-code"></div>
+    </div>
+    
+</div>
+</body>
+</html>

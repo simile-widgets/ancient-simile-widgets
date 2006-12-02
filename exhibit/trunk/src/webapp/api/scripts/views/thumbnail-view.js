@@ -16,6 +16,9 @@ Exhibit.ThumbnailView = function(exhibit, div, configuration, domConfiguration, 
             domConfiguration, this._lensConfiguration);
     }
     if ("lensSelector" in configuration) {
+        if (!("Lens" in this._lensConfiguration)) {
+            this._lensConfiguration["Lens"] = {};
+        }
         this._lensConfiguration["Lens"].lensSelector = configuration.lensSelector;
     }
     
