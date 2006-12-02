@@ -26,9 +26,13 @@
                 "images/example-" + example + "-" + view + ".png";
         }
         function onLoad() {
-            var elmts = document.getElementsByName("example-view");
-            for (var i = 0; i < elmts.length; i++) {
-                elmts[i].onmouseover = onExampleViewMouseOver;
+            var examples = [ "cereals", "nobelists", "presidents", "publications" ];
+            for (var i = 0; i < examples.length; i++) {
+                var div = document.getElementById("example-" + examples[i] + "-views");
+                var spans = div.getElementsByTagName("span");
+                for (var j = 0; j < spans.length; j++) {
+                    spans[j].onmouseover = onExampleViewMouseOver;
+                }
             }
         }
     </script>
@@ -63,36 +67,36 @@
     <table width="700" border="0" cellpadding="20" id="examples">
         <tr align="center">
             <td>
-                <p class="example-heading"><a href="/exhibit/examples/cereals/cereal-characters.html">Breakfast Cereal Characters</a></p>
-                <p class="example-details">as 
+                <p class="example-heading"><a href="/exhibit/examples/cereals/cereal-characters.html" target="_blank">Breakfast Cereal Characters</a></p>
+                <p class="example-details" id="example-cereals-views">as 
                     <span name="example-view" class="example-view" example="cereals" view="thumbnails">thumbnails</span> and on a 
                     <span name="example-view" class="example-view" example="cereals" view="timeline">time line</span></p>
-                <p id="example-cereals-image"><a href="/exhibit/examples/cereals/cereal-characters.html"><img src="images/example-cereals-thumbnails.png" /></a></p>
+                <p id="example-cereals-image"><a href="/exhibit/examples/cereals/cereal-characters.html" target="_blank"><img src="images/example-cereals-thumbnails.png" /></a></p>
             </td>
             <td>
-                <p class="example-heading"><a href="examples/nobelists/nobelists.html">MIT-related Nobel Prize Winners</a></p>
-                <p class="example-details">as 
+                <p class="example-heading"><a href="examples/nobelists/nobelists.html" target="_blank">MIT-related Nobel Prize Winners</a></p>
+                <p class="example-details" id="example-nobelists-views">as 
                     <span name="example-view" class="example-view" example="nobelists" view="thumbnails">thumbnails</span>, in a 
                     <span name="example-view" class="example-view" example="nobelists" view="table">table</span>, and on a 
                     <span name="example-view" class="example-view" example="nobelists" view="timeline">time line</span>
                 </p>
-                <p id="example-nobelists-image"><a href="examples/nobelists/nobelists.html"><img src="images/example-nobelists-timeline.png" /></a></p>
+                <p id="example-nobelists-image"><a href="examples/nobelists/nobelists.html" target="_blank"><img src="images/example-nobelists-timeline.png" /></a></p>
             </td>
         </tr>
         <tr align="center">
             <td>
-                <p class="example-heading"><a href="examples/presidents/presidents.html">U.S. Presidents</a></p>
-                <p class="example-details">in a 
+                <p class="example-heading"><a href="examples/presidents/presidents.html" target="_blank">U.S. Presidents</a></p>
+                <p class="example-details" id="example-presidents-views">in a 
                     <span name="example-view" class="example-view" example="presidents" view="table">table</span>, on 
                     <span name="example-view" class="example-view" example="presidents" view="map">maps</span>, and 
                     <span name="example-view" class="example-view" example="presidents" view="timeline">time lines</span>
                 </p>
-                <p id="example-presidents-image"><a href="examples/presidents/presidents.html"><img src="images/example-presidents-map.png" /></a></p>
+                <p id="example-presidents-image"><a href="examples/presidents/presidents.html" target="_blank"><img src="images/example-presidents-map.png" /></a></p>
             </td>
             <td>
-                <p class="example-heading"><a href="http://haystack.csail.mit.edu/publications.html">Haystack Group's Publications</a></p>
-                <p class="example-details">in a table</p>
-                <p id="example-publications-image"><a href="http://haystack.csail.mit.edu/publications.html"><img src="images/example-publications-table.png" /></a></p>
+                <p class="example-heading"><a href="http://haystack.csail.mit.edu/publications.html" target="_blank">Haystack Group's Publications</a></p>
+                <p class="example-details" id="example-publications-views">in a table</p>
+                <p id="example-publications-image"><a href="http://haystack.csail.mit.edu/publications.html" target="_blank"><img src="images/example-publications-table.png" /></a></p>
             </td>
         </tr>
     </table>
