@@ -12,6 +12,11 @@ div.exhibit-browsePanel-notConfigureMessage {
     text-align: center;
 }
 
+div.exhibit-browsePanel-logoContainer {
+    text-align: center;
+    margin:     1em;
+}
+
 /*==================================================
  * Facet box
  *==================================================

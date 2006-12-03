@@ -73,6 +73,18 @@ Exhibit.BrowsePanel.prototype._initializeUI = function() {
     
     Exhibit.protectUI(this._div);
     SimileAjax.DOM.appendClassName(this._div, "exhibit-browsePanel");
+    
+    var logoColor = "Silver";
+    var s = Exhibit.getAttribute(document.body, "exhibitLogoColor");
+    if (s != null && s.length > 0) {
+        logoColor = s;
+    }
+    
+    this._dom = Exhibit.BrowsePanel.theme.constructBrowsePanel(
+        this._exhibit, 
+        this._div, 
+        "http://simile.mit.edu/graphics/logos/exhibit/exhibit-small-" + logoColor + ".png"
+    );
 };
 
 Exhibit.BrowsePanel.prototype._reconstruct = function() {
@@ -94,6 +106,7 @@ Exhibit.BrowsePanel.prototype._showHelp = function() {
 };
 
 Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
+    var facetContainer = this._dom.facetContainer;
     var getKey = function(f) {
         return f.property + ":" + f.forward;
     };
@@ -118,7 +131,7 @@ Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
     var newFacetInfos = [];
     var newFacetIndex = 0;
     var oldFacetIndex = 0;
-    var node = this._div.firstChild;
+    var node = facetContainer.firstChild;
     
     while (newFacetIndex < newFacets.length && oldFacetIndex < oldFacets.length) {
         var oldFacet = oldFacets[oldFacetIndex];
@@ -144,9 +157,9 @@ Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
             } else { // insert
                 var result = this._constructFacet(newFacet);
                 if (node == null) {
-                    this._div.appendChild(result[0]);
+                    facetContainer.appendChild(result[0]);
                 } else {
-                    this._div.insertBefore(result[0], node);
+                    facetContainer.insertBefore(result[0], node);
                 }
                 
                 newFacetInfos.push({ 
@@ -164,9 +177,9 @@ Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
         var newFacet = newFacets[newFacetIndex];
         var result = this._constructFacet(newFacet);
         if (node == null) {
-            this._div.appendChild(result[0]);
+            facetContainer.appendChild(result[0]);
         } else {
-            this._div.insertBefore(result[0], node);
+            facetContainer.insertBefore(result[0], node);
         }
         
         newFacetInfos.push({ 
