@@ -52,8 +52,13 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
                         ]
                     },
                     {   tag:        "div",
-                        className:  "exhibit-facet-body",
-                        field:      "valuesContainer"
+                        className:  "exhibit-facet-body-frame",
+                        children: [
+                            {   tag:        "div",
+                                className:  "exhibit-facet-body",
+                                field:      "valuesContainer"
+                            }
+                        ]
                     },
                     {   tag:        "div",
                         className:  "exhibit-facet-footer",

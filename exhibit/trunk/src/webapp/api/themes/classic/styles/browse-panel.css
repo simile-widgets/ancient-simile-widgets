@@ -23,18 +23,18 @@ div.exhibit-facet-frame {
 }
 
 div.exhibit-facet {
-	margin:     1em;
-	padding:    1px;
+    margin:     1em;
+    padding:    1px;
 }
 
 div.exhibit-facet-header {
-	padding:        2px;
+    padding:        2px;
 }
 div.exhibit-facet-header-filterControl {
     float:          right;
     width:          2em;
     display:        none;
-	background:     #FFFFE0;
+    background:     #FFFFE0;
     cursor:         pointer;
 }
 .exhibit-facet-hasSelection div.exhibit-facet-header-filterControl {
@@ -42,27 +42,30 @@ div.exhibit-facet-header-filterControl {
 }
 
 span.exhibit-facet-header-title {
-	font-weight:    bold;
+    font-weight:    bold;
 }
 span.exhibit-facet-header-detail {
-	color:          #888;
+    color:          #888;
     padding-left:   0.5em;
 }
     
-div.exhibit-facet-body {
-	height:         10em;
-	overflow:       auto;
+div.exhibit-facet-body-frame {
     border:         1px solid #ddd;
 }
 
+div.exhibit-facet-body {
+    height:         10em;
+    overflow:       auto;
+}
+
 div.exhibit-facet-resizer {
-	text-align:     center;
+    text-align:     center;
     cursor:         n-resize;
     background:     url(../images/down-arrow.png) top center no-repeat;
     height:         10px;
 }
 
 div.exhibit-facet-footer {
-	text-align: center;
+    text-align: center;
     padding:    2px;
 }
