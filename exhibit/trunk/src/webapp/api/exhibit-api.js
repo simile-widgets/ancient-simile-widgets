@@ -62,7 +62,7 @@
             for (var i = 0; i < parameters.length; i++) {
                 var p = parameters[i];
                 if (p.name == "bundle") {
-                    bundle = p.value != "false";
+                    Exhibit.bundle = p.value != "false";
                 } else if (p.name == "theme") {
                     theme = p.value;
                 } else if (p.name == "locale") {
