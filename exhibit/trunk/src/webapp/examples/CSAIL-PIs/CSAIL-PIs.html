@@ -4,7 +4,7 @@
 
     <link href="people.js" type="text/javascript" rel="exhibit/data" />
 
-    <script src="/exhibit/api/exhibit-api.js?views=timeline"
+    <script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?views=timeline"
         type="text/javascript"></script>
 
     <style>
@@ -84,6 +84,9 @@
 <div id="content">
     <div id="title-panel">
         <h1>CSAIL Principal Investigators</h1>
+        <p>The original data comes from <a href="http://www.csail.mit.edu/biographies/PI/biolist.php">this page</a>.
+            Here is the <a href="people.js" target="_blank">Exhibit JSON data file</a>.
+        </p>
     </div>
     
     <div id="top-panels">
@@ -97,7 +100,7 @@
             ex:orders=".label"
             ex:possibleOrders=".label, .tower, .last-name">
             <div ex:role="exhibit-lens" class="person-thumbnail">
-                <div><img ex:src-content=".photo" /></div>
+                <div><a ex:href-content=".url" target="_blank"><img ex:src-content=".photo" /></a></div>
                 <div class="name"><span ex:content=".label"></span></div>
                 <div class="office">Office: <span ex:content=".office"></span></div>
                 <div class="phone">Phone: <span ex:content=".phone"></span></div>
