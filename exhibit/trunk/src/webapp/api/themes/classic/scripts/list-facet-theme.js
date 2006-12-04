@@ -85,7 +85,12 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
                     },
                     {   tag: "div",
                         className: "exhibit-facet-resizer",
-                        field: "resizerDiv"
+                        field: "resizerDiv",
+                        children: [
+                            {   elmt: Exhibit.Theme.createTranslucentImage(document,
+                                    "images/down-arrow.png")
+                            }
+                        ]
                     }
                 ]
             }
