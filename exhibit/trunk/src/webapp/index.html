@@ -18,7 +18,6 @@
             cursor:         pointer;
         }
         p.example-image {
-            background: url(images/example-shadow.png) top center no-repeat;
         }
     </style>
     <script type="text/javascript">
@@ -30,6 +29,11 @@
                 .getElementsByTagName("img")[0].src =
                     "images/example-" + example + "-" + view + ".png";
         }
+        function onExampleViewClick() {
+            var example = this.getAttribute("example");
+            var href = document.getElementById("example-" + example + "-image").getElementsByTagName("a")[0].href;
+            window.open(href, "_blank");
+        }
         function onLoad() {
             var examples = [ "cereals", "nobelists", "presidents", "publications" ];
             for (var i = 0; i < examples.length; i++) {
@@ -37,6 +41,7 @@
                 var spans = div.getElementsByTagName("span");
                 for (var j = 0; j < spans.length; j++) {
                     spans[j].onmouseover = onExampleViewMouseOver;
+                    spans[j].onclick = onExampleViewClick;
                 }
             }
         }
@@ -72,7 +77,7 @@
     <p>Check out these diverse sample <em>exhibits</em>:</p>
     
     <center style="clear: both">
-        <table width="800" border="0" cellpadding="5" class="examples" style="margin-left: 50px;">
+        <table width="700" border="0" cellpadding="5" class="examples">
             <tr align="center">
                 <td width="50%">
                     <p class="example-heading"><a href="/exhibit/examples/cereals/cereal-characters.html" target="_blank">Breakfast Cereal Characters</a></p>
@@ -96,7 +101,7 @@
                 </td>
             </tr>
         </table>
-        <table width="800" border="0" cellpadding="5" class="examples" style="margin-right: 50px;">
+        <table width="700" border="0" cellpadding="5" class="examples">
             <tr align="center">
                 <td width="50%">
                     <p class="example-heading"><a href="examples/nobelists/nobelists.html" target="_blank">MIT-related Nobel Prize Winners</a></p>
