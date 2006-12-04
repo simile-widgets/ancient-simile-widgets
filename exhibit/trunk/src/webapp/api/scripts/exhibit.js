@@ -140,7 +140,7 @@ Exhibit._internalCreate = function(settings) {
 };
 
 Exhibit.docRoot = "http://simile.mit.edu/wiki/";
-Exhibit.validator = "http://dfhuynh.csail.mit.edu:7777/validator";
+Exhibit.validator = "http://simile.mit.edu/babel/validator";
 
 /*==================================================
  *  Exhibit._Impl

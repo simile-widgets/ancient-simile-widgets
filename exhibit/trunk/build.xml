@@ -8,7 +8,7 @@
     |
     +-->
 
-<project default="minify" basedir="." name="Piggy Bank">
+<project default="bundle" basedir="." name="Piggy Bank">
 
 <!-- === Initialize ================================================= -->
     
@@ -18,7 +18,7 @@
         classpath="tools/jsminTask.jar"/>
   </target>
   	
-  <target name="minify" depends="tasks">
+  <target name="bundle" depends="tasks">
     <jsmin output="src/webapp/api/bundle.js">
         <fileset dir="src/webapp/api/scripts" />
   	</jsmin>
