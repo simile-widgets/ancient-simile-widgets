@@ -109,6 +109,7 @@ if (typeof SimileAjax == "undefined") {
         var cssFiles = [
         ];
         
+        var bundle = true;
         if (typeof SimileAjax_urlPrefix == "string") {
             SimileAjax.urlPrefix = SimileAjax_urlPrefix;
         } else {
@@ -117,11 +118,21 @@ if (typeof SimileAjax == "undefined") {
                 SimileAjax.error = new Error("Failed to derive URL prefix for Simile Ajax API code files");
                 return;
             }
+            
+            var q = url.indexOf("?");
+            if (q > 0 && url.substr(q) == "?bundle=false") {
+                bundle = false;
+            }
+            
             SimileAjax.urlPrefix = url.substr(0, url.indexOf("simile-ajax-api.js"));
         }
         
-        SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
-        SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
+        if (bundle) {
+            SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix, [ "bundle.js" ]);
+        } else {
+            SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
+        }
+            SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
         
         SimileAjax.loaded = true;
     })();

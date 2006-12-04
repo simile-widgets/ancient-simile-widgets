@@ -24,6 +24,11 @@
     ];
 
     var urlPrefix = Exhibit.urlPrefix + "locales/en/";
-    SimileAjax.includeJavascriptFiles(document, urlPrefix + "scripts/", javascriptFiles);
-    SimileAjax.includeCssFiles(document, urlPrefix + "styles/", cssFiles);
+    if (Exhibit.bundle) {
+        SimileAjax.includeJavascriptFiles(document, urlPrefix, [ "bundle.js" ]);
+        SimileAjax.includeCssFiles(document, urlPrefix, [ "bundle.css" ]);
+    } else {
+        SimileAjax.includeJavascriptFiles(document, urlPrefix + "scripts/", javascriptFiles);
+        SimileAjax.includeCssFiles(document, urlPrefix + "styles/", cssFiles);
+    }
 })();

@@ -15,6 +15,7 @@
     
         window.Exhibit = {
             loaded:     false,
+            bundle:     true,
             namespace:  "http://simile.mit.edu/2006/11/exhibit#"
         };
     
@@ -60,7 +61,9 @@
         var processURLParameters = function(parameters) {
             for (var i = 0; i < parameters.length; i++) {
                 var p = parameters[i];
-                if (p.name == "theme") {
+                if (p.name == "bundle") {
+                    bundle = p.value != "false";
+                } else if (p.name == "theme") {
                     theme = p.value;
                 } else if (p.name == "locale") {
                     // ISO-639 language codes, optional ISO-3166 country codes (2 characters)
@@ -121,8 +124,13 @@
         /*
          *  Core scripts and styles
          */
-        SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "scripts/", javascriptFiles);
-        SimileAjax.includeCssFiles(document, Exhibit.urlPrefix + "styles/", cssFiles);
+        if (Exhibit.bundle) {
+            SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix, [ "bundle.js" ]);
+            SimileAjax.includeCssFiles(document, Exhibit.urlPrefix, [ "bundle.css" ]);
+        } else {
+            SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "scripts/", javascriptFiles);
+            SimileAjax.includeCssFiles(document, Exhibit.urlPrefix + "styles/", cssFiles);
+        }
         
         /*
          *  Theme and localization
