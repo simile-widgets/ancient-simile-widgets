@@ -16,7 +16,7 @@
                 var url = node.src;
                 var i = url.indexOf(substring);
                 if (i >= 0) {
-                    node.src = ""; // null it out so we won't hit it again
+                    heads[h].removeChild(node); // remove it so we won't hit it again
                     
                     var count = parseInt(url.substr(substring.length + 1));
                     SimileAjax.loadingScriptsCount -= count;
