@@ -83,7 +83,7 @@ Exhibit.BrowsePanel.prototype._initializeUI = function() {
     this._dom = Exhibit.BrowsePanel.theme.constructBrowsePanel(
         this._exhibit, 
         this._div, 
-        "http://simile.mit.edu/graphics/logos/exhibit/exhibit-small-" + logoColor + ".png"
+        "http://static.simile.mit.edu/graphics/logos/exhibit/exhibit-small-" + logoColor + ".png"
     );
 };
 

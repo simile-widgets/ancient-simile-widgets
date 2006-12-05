@@ -507,7 +507,7 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
 };
 
 Exhibit.MapView._iconData = null;
-Exhibit.MapView._markerUrlPrefix = "http://simile.mit.edu/graphics/maps/markers/";
+Exhibit.MapView._markerUrlPrefix = "http://static.simile.mit.edu/graphics/maps/markers/";
 Exhibit.MapView._defaultMarkerShape = "square";
 
 Exhibit.MapView._makeIcon = function(shape, color, label) {
