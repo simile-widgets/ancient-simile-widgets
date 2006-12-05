@@ -117,7 +117,7 @@
         if (includeTimeline) {
             SimileAjax.includeJavascriptFile(
                 document, 
-                "http://simile.mit.edu/timeline/api/timeline-api.js"
+                "http://static.simile.mit.edu/timeline/api/timeline-api.js"
             );
         }
         
