@@ -32,7 +32,7 @@
         function onExampleViewClick() {
             var example = this.getAttribute("example");
             var href = document.getElementById("example-" + example + "-image").getElementsByTagName("a")[0].href;
-            window.open(href, "_blank");
+            window.open(href);
         }
         function onLoad() {
             var examples = [ "cereals", "nobelists", "presidents", "publications" ];
@@ -40,8 +40,10 @@
                 var div = document.getElementById("example-" + examples[i] + "-views");
                 var spans = div.getElementsByTagName("span");
                 for (var j = 0; j < spans.length; j++) {
-                    spans[j].onmouseover = onExampleViewMouseOver;
-                    spans[j].onclick = onExampleViewClick;
+                    var span = spans[j];
+                    span.onmouseover = onExampleViewMouseOver;
+                    span.onclick = onExampleViewClick;
+                    span.title = "Click to see example";
                 }
             }
         }
@@ -58,21 +60,19 @@
     <img src="http://simile.mit.edu/images/exhibit.png" style="float: right; margin: 2em;" />
     
     <h1>Exhibit</h1>
-    <p>Exhibit is a <em>featherweight structured data publishing framework</em> that 
+    <p>Exhibit is a <em>lightweight structured data publishing framework</em> that 
         lets you create web pages with support for sorting, filtering, and rich 
-        visualizations by writing only HTML and perhaps some CSS and Javascript 
+        visualizations by writing only HTML and optionally some CSS and Javascript 
         code.
     </p>
     <p>It's like <a href="http://maps.google.com/">Google Maps</a> and 
         <a href="http://simile.mit.edu/timeline/">Timeline</a>, 
-        but for structured data normally published through 3-tier database-backed 
-        web sites which can only be afforded by companies and large institutions.
-        Exhibit essentially combines all those 3 tiers into 1 Javascript-based 
-        engine and makes it affordable for everyone who has a little bit of knowledge
-        of HTML and small data sets to share with the world.
+        but for structured data normally published through database-backed 
+        web sites. Exhibit essentially removes the need for a database or a 
+        server side web application. Its Javascript-based engine makes it easy for 
+        everyone who has a little bit of knowledge of HTML and small data 
+        sets to share it with the world and let people easily interact with it.
     </p>
-    
-    <h2>Sample Exhibits</h2>
     
     <p>Check out these diverse sample <em>exhibits</em>:</p>
     
@@ -80,23 +80,25 @@
         <table width="700" border="0" cellpadding="5" class="examples">
             <tr align="center">
                 <td width="50%">
-                    <p class="example-heading"><a href="/exhibit/examples/cereals/cereal-characters.html" target="_blank">Breakfast Cereal Characters</a></p>
-                    <p class="example-details" id="example-cereals-views">as 
-                        <span name="example-view" class="example-view" example="cereals" view="thumbnails">thumbnails</span> and on a 
-                        <span name="example-view" class="example-view" example="cereals" view="timeline">time line</span></p>
-                    <p id="example-cereals-image" class="example-image">
-                        <a href="/exhibit/examples/cereals/cereal-characters.html" target="_blank"><img src="images/example-cereals-thumbnails.png" /></a>
-                    </p>
-                </td>
-                <td width="50%">
-                    <p class="example-heading"><a href="examples/presidents/presidents.html" target="_blank">U.S. Presidents</a></p>
+                    <p class="example-heading"><a href="examples/presidents/presidents.html">U.S. Presidents</a></p>
                     <p class="example-details" id="example-presidents-views">in a 
                         <span name="example-view" class="example-view" example="presidents" view="table">table</span>, on 
                         <span name="example-view" class="example-view" example="presidents" view="map">maps</span> and 
                         <span name="example-view" class="example-view" example="presidents" view="timeline">time lines</span>
                     </p>
                     <p id="example-presidents-image" class="example-image">
-                        <a href="examples/presidents/presidents.html" target="_blank"><img src="images/example-presidents-map.png" /></a>
+                        <a href="examples/presidents/presidents.html"><img src="images/example-presidents-map.png" /></a>
+                    </p>
+                </td>
+                <td width="50%">
+                    <p class="example-heading"><a href="examples/nobelists/nobelists.html">MIT-related Nobel Prize Winners</a></p>
+                    <p class="example-details" id="example-nobelists-views">as 
+                        <span name="example-view" class="example-view" example="nobelists" view="thumbnails">thumbnails</span>, in a 
+                        <span name="example-view" class="example-view" example="nobelists" view="table">table</span>, on a 
+                        <span name="example-view" class="example-view" example="nobelists" view="timeline">time line</span>
+                    </p>
+                    <p id="example-nobelists-image" class="example-image">
+                        <a href="examples/nobelists/nobelists.html"><img src="images/example-nobelists-timeline.png" /></a>
                     </p>
                 </td>
             </tr>
@@ -104,21 +106,19 @@
         <table width="700" border="0" cellpadding="5" class="examples">
             <tr align="center">
                 <td width="50%">
-                    <p class="example-heading"><a href="examples/nobelists/nobelists.html" target="_blank">MIT-related Nobel Prize Winners</a></p>
-                    <p class="example-details" id="example-nobelists-views">as 
-                        <span name="example-view" class="example-view" example="nobelists" view="thumbnails">thumbnails</span>, in a 
-                        <span name="example-view" class="example-view" example="nobelists" view="table">table</span>, on a 
-                        <span name="example-view" class="example-view" example="nobelists" view="timeline">time line</span>
-                    </p>
-                    <p id="example-nobelists-image" class="example-image">
-                        <a href="examples/nobelists/nobelists.html" target="_blank"><img src="images/example-nobelists-timeline.png" /></a>
+                    <p class="example-heading"><a href="http://haystack.csail.mit.edu/publications.html">Haystack Group's Publications</a></p>
+                    <p class="example-details" id="example-publications-views">in a table</p>
+                    <p id="example-publications-image" class="example-image">
+                        <a href="http://haystack.csail.mit.edu/publications.html"><img src="images/example-publications-table.png" /></a>
                     </p>
                 </td>
                 <td width="50%">
-                    <p class="example-heading"><a href="http://haystack.csail.mit.edu/publications.html" target="_blank">Haystack Group's Publications</a></p>
-                    <p class="example-details" id="example-publications-views">in a table</p>
-                    <p id="example-publications-image" class="example-image">
-                        <a href="http://haystack.csail.mit.edu/publications.html" target="_blank"><img src="images/example-publications-table.png" /></a>
+                    <p class="example-heading"><a href="/exhibit/examples/cereals/cereal-characters.html">Breakfast Cereal Characters</a></p>
+                    <p class="example-details" id="example-cereals-views">as 
+                        <span name="example-view" class="example-view" example="cereals" view="thumbnails">thumbnails</span> and on a 
+                        <span name="example-view" class="example-view" example="cereals" view="timeline">time line</span></p>
+                    <p id="example-cereals-image" class="example-image">
+                        <a href="/exhibit/examples/cereals/cereal-characters.html"><img src="images/example-cereals-thumbnails.png" /></a>
                     </p>
                 </td>
             </tr>
@@ -130,10 +130,16 @@
     <h2>How Does Exhibit Work and Why Use It?</h2>
     
     <p>Exhibit consists of a bunch of Javascript files that you include in your web page.
-        This Javascript code reads in one or more JSON data files that you link from
+        At load time, this Javascript code reads in one or more 
+        <a href="http://en.wikipedia.org/wiki/Json">JSON</a> data files that you link from
         within your web page and constructs a database implemented in Javascript right
         inside the browser of whoever visits your web page. It then dynamically re-constructs 
-        the web page as the visitor sorts and filters through the data.
+        the web page as the visitor sorts and filters through the data. As the visitor
+        interacts with the web page, only the web <em>browser</em> is responsible for providing
+        the interaction; the web <em>server</em> is no longer needed.
+    </p>
+    <p>So, <b>where's the database</b>, again? The data is stored in JSON files, and the database
+        is implemented in Javascript and running inside the web browser.
     </p>
     </p>The advantages of Exhibit are as follows:
         <ul>
@@ -222,5 +228,7 @@
     <p>This software is partially sponsored by 
         <a href="http://mellon.org/">The Andrew W. Mellon Foundation</a>.
     </p>
+    <p>Exhibit has been inspired by many people and many projects, including Tim Berners-Lee's 
+        <a href="http://www.w3.org/2005/ajar/tab">Tabulator</a>.
 </body>
 </html>
