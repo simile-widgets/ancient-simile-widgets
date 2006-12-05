@@ -19,6 +19,11 @@
         }
         p.example-image {
         }
+        div.example-image-loader {
+            overflow:    hidden;
+            height:      1px;
+            visibility:  hidden;
+        }
     </style>
     <script type="text/javascript">
         function onExampleViewMouseOver() {
@@ -37,13 +42,21 @@
         function onLoad() {
             var examples = [ "cereals", "nobelists", "presidents", "publications" ];
             for (var i = 0; i < examples.length; i++) {
-                var div = document.getElementById("example-" + examples[i] + "-views");
+                var example = examples[i];
+                var divLoader = document.getElementById("example-" + example + "-image-loader");
+                
+                var div = document.getElementById("example-" + example + "-views");
                 var spans = div.getElementsByTagName("span");
                 for (var j = 0; j < spans.length; j++) {
                     var span = spans[j];
                     span.onmouseover = onExampleViewMouseOver;
                     span.onclick = onExampleViewClick;
                     span.title = "Click to see example";
+                    
+                    var view = span.getAttribute("view");
+                    var img = document.createElement("img");
+                    img.src = "images/example-" + example + "-" + view + ".png";
+                    divLoader.appendChild(img);
                 }
             }
         }
@@ -86,6 +99,7 @@
                         <span name="example-view" class="example-view" example="presidents" view="map">maps</span> and 
                         <span name="example-view" class="example-view" example="presidents" view="timeline">time lines</span>
                     </p>
+                    <div id="example-presidents-image-loader" class="example-image-loader"></div>
                     <p id="example-presidents-image" class="example-image">
                         <a href="examples/presidents/presidents.html"><img src="images/example-presidents-map.png" /></a>
                     </p>
@@ -97,6 +111,7 @@
                         <span name="example-view" class="example-view" example="nobelists" view="table">table</span>, on a 
                         <span name="example-view" class="example-view" example="nobelists" view="timeline">time line</span>
                     </p>
+                    <div id="example-nobelists-image-loader" class="example-image-loader"></div>
                     <p id="example-nobelists-image" class="example-image">
                         <a href="examples/nobelists/nobelists.html"><img src="images/example-nobelists-timeline.png" /></a>
                     </p>
@@ -108,6 +123,7 @@
                 <td width="50%">
                     <p class="example-heading"><a href="http://haystack.csail.mit.edu/publications.html">Haystack Group's Publications</a></p>
                     <p class="example-details" id="example-publications-views">in a table</p>
+                    <div id="example-publications-image-loader" class="example-image-loader"></div>
                     <p id="example-publications-image" class="example-image">
                         <a href="http://haystack.csail.mit.edu/publications.html"><img src="images/example-publications-table.png" /></a>
                     </p>
@@ -116,7 +132,9 @@
                     <p class="example-heading"><a href="/exhibit/examples/cereals/cereal-characters.html">Breakfast Cereal Characters</a></p>
                     <p class="example-details" id="example-cereals-views">as 
                         <span name="example-view" class="example-view" example="cereals" view="thumbnails">thumbnails</span> and on a 
-                        <span name="example-view" class="example-view" example="cereals" view="timeline">time line</span></p>
+                        <span name="example-view" class="example-view" example="cereals" view="timeline">time line</span>
+                    </p>
+                    <div id="example-cereals-image-loader" class="example-image-loader"></div>
                     <p id="example-cereals-image" class="example-image">
                         <a href="/exhibit/examples/cereals/cereal-characters.html"><img src="images/example-cereals-thumbnails.png" /></a>
                     </p>
