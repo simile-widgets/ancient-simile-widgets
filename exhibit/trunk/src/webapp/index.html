@@ -15,7 +15,6 @@
             border:         1px dotted #f88;
             background:     #fee;
             padding:        2px;
-            cursor:         pointer;
         }
         p.example-image {
         }
@@ -34,11 +33,6 @@
                 .getElementsByTagName("img")[0].src =
                     "images/example-" + example + "-" + view + ".png";
         }
-        function onExampleViewClick() {
-            var example = this.getAttribute("example");
-            var href = document.getElementById("example-" + example + "-image").getElementsByTagName("a")[0].href;
-            window.open(href);
-        }
         function onLoad() {
             var examples = [ "cereals", "nobelists", "presidents", "publications" ];
             for (var i = 0; i < examples.length; i++) {
@@ -50,8 +44,6 @@
                 for (var j = 0; j < spans.length; j++) {
                     var span = spans[j];
                     span.onmouseover = onExampleViewMouseOver;
-                    span.onclick = onExampleViewClick;
-                    span.title = "Click to see example";
                     
                     var view = span.getAttribute("view");
                     var img = document.createElement("img");
