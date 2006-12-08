@@ -29,7 +29,7 @@ Exhibit.ExhibitJsonExporter._exportOne = function(itemID, exhibit) {
     var database = exhibit.getDatabase();
     var uri = database.getObject(itemID, "uri");
     
-    s += "\t\t{\tid: \"" + itemID + "\"\n";
+    s += "\t\t{\tid: \"" + itemID + "\",\n";
     
     var allProperties = database.getAllProperties();
     
