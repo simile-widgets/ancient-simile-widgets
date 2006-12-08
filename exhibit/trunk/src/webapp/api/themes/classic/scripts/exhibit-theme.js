@@ -80,14 +80,15 @@ Exhibit.Theme = {
                 {   tag:        "p",
                     children:   [ Exhibit.l10n.copyDialogBoxPrompt ]
                 },
-                {   tag:        "textarea",
-                    field:      "textarea",
-                    rows:       "15",
-                    children:   [ string ]
+                {   tag:        "div",
+                    field:      "textAreaContainer"
                 }
             ]
         };
         var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+        dom.textAreaContainer.innerHTML = 
+            "<textarea wrap='off' rows='15'>" + string + "</textarea>";
+            
         dom.close = function() {
             document.body.removeChild(dom.elmt);
         };
@@ -96,7 +97,9 @@ Exhibit.Theme = {
             
             document.body.appendChild(dom.elmt);
             dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
-            dom.textarea.select();
+            
+            var textarea = dom.textAreaContainer.firstChild;
+            textarea.select();
             
             SimileAjax.WindowManager.registerEvent(
                 dom.closeButton, 
@@ -109,7 +112,7 @@ Exhibit.Theme = {
                 dom.layer
             );
             SimileAjax.WindowManager.registerEvent(
-                dom.textarea, 
+                textarea, 
                 "keyup", 
                 function(elmt, evt, target) {
                     if (evt.keyCode == 27) { // ESC
