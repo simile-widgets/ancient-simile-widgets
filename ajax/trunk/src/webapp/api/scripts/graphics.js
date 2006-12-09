@@ -10,20 +10,26 @@ SimileAjax.Graphics.pngIsTranslucent = (!SimileAjax.Platform.browser.isIE) || (S
  *  Opacity, translucency
  *==================================================
  */
-SimileAjax.Graphics.createTranslucentImage = function(doc, url, verticalAlign) {
-    var elmt;
-    if (SimileAjax.Graphics.pngIsTranslucent) {
-        elmt = doc.createElement("img");
-        elmt.setAttribute("src", url);
-    } else {
-        elmt = doc.createElement("img");
-        elmt.style.width = "1px";  // just so that IE will calculate the size property
-        elmt.style.height = "1px";
-        elmt.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='image')";
+SimileAjax.Graphics._createTranslucentImage1 = function(doc, url, verticalAlign) {
+    elmt = doc.createElement("img");
+    elmt.setAttribute("src", url);
+    if (verticalAlign != null) {
+        elmt.style.verticalAlign = verticalAlign;
     }
+    return elmt;
+};
+SimileAjax.Graphics._createTranslucentImage2 = function(doc, url, verticalAlign) {
+    elmt = doc.createElement("img");
+    elmt.style.width = "1px";  // just so that IE will calculate the size property
+    elmt.style.height = "1px";
+    elmt.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='image')";
     elmt.style.verticalAlign = (verticalAlign != null) ? verticalAlign : "middle";
     return elmt;
 };
+
+SimileAjax.Graphics.createTranslucentImage = SimileAjax.Graphics.pngIsTranslucent ?
+    SimileAjax.Graphics._createTranslucentImage1 :
+    SimileAjax.Graphics._createTranslucentImage2;
 
 SimileAjax.Graphics.setOpacity = function(elmt, opacity) {
     if (SimileAjax.Platform.browser.isIE) {

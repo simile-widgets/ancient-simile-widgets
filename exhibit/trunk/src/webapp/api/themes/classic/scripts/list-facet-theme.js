@@ -196,10 +196,14 @@ Exhibit.ListFacet.theme.constructFacetItem = function(
                     }
                 ]
             },
+        ]
+    };
+    if (hasChildren) {
+        template.children.push(
             {   tag:        "div",
                 className:  "exhibit-facet-value-inner",
                 field:      "innerDiv",
-                style:      { marginLeft: ((level + (hasChildren ? 1 : 0)) * 16) + "px" },
+                style:      { marginLeft: ((level + 1) * 16) + "px" },
                 children:   [ 
                     {   tag:        "div",
                         className:  "exhibit-facet-value-groupControl " +
@@ -219,38 +223,51 @@ Exhibit.ListFacet.theme.constructFacetItem = function(
                     label 
                 ]
             }
-        ]
-    };
+        );
+    } else {
+        template.children.push(
+            {   tag:        "div",
+                className:  "exhibit-facet-value-inner",
+                field:      "innerDiv",
+                style:      { marginLeft: (level * 16) + "px" },
+                children:   [ 
+                    label 
+                ]
+            }
+        );
+    }
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     dom.expanded = expanded;
-    dom.expandGroup = function() {
-        this.groupControlDiv.className = "exhibit-facet-value-groupControl exhibit-facet-value-expanded";
-        this.childrenContainer.style.display = "block";
-        this.expanded = true;
-    };
-    dom.collapseGroup = function() {
-        this.groupControlDiv.className = "exhibit-facet-value-groupControl exhibit-facet-value-collapsed";
-        this.childrenContainer.style.display = "none";
-        this.expanded = false;
-    };
-    dom.toggleGroup = function() {
-        if (this.expanded) {
-            this.collapseGroup();
-        } else {
-            this.expandGroup();
-        }
-    };
-    
+    if (hasChildren) {
+        dom.expandGroup = function() {
+            this.groupControlDiv.className = "exhibit-facet-value-groupControl exhibit-facet-value-expanded";
+            this.childrenContainer.style.display = "block";
+            this.expanded = true;
+        };
+        dom.collapseGroup = function() {
+            this.groupControlDiv.className = "exhibit-facet-value-groupControl exhibit-facet-value-collapsed";
+            this.childrenContainer.style.display = "none";
+            this.expanded = false;
+        };
+        dom.toggleGroup = function() {
+            if (this.expanded) {
+                this.collapseGroup();
+            } else {
+                this.expandGroup();
+            }
+        };
+        
+        SimileAjax.WindowManager.registerEvent(dom.groupControlDiv, "click", 
+            function(elmt, evt, target) {
+                dom.toggleGroup();
+                SimileAjax.DOM.cancelEvent(evt);
+                return false;
+            },
+            SimileAjax.WindowManager.getBaseLayer()
+        );
+    }
     SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelect, SimileAjax.WindowManager.getBaseLayer());
-    SimileAjax.WindowManager.registerEvent(dom.groupControlDiv, "click", 
-        function(elmt, evt, target) {
-            dom.toggleGroup();
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
-        SimileAjax.WindowManager.getBaseLayer()
-    );
     
     return dom;
 };

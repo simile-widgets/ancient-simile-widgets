@@ -16,7 +16,7 @@ Exhibit.ListFacet = function(exhibit, facet, div, configuration) {
     this._groupingBoxDom = null;
     
     this._constructFrame(div, facet);
-    this._constructBody(facet);
+    this.update(facet);
 };
 
 Exhibit.ListFacet.prototype.dispose = function() {
@@ -33,8 +33,12 @@ Exhibit.ListFacet.prototype.dispose = function() {
 };
 
 Exhibit.ListFacet.prototype.update = function(facet) {
+    this._dom.valuesContainer.style.display = "none";
     this._dom.valuesContainer.innerHTML = "";
+    
     this._constructBody(facet);
+    
+    this._dom.valuesContainer.style.display = "block";
 };
 
 Exhibit.ListFacet.prototype._constructFrame = function(div, facet) {

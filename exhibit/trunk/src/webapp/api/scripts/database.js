@@ -12,7 +12,6 @@ Exhibit.Database = function() {
     
     this._spo = {};
     this._ops = {};
-    this._listpso = {};
     this._items = new Exhibit.Set();
     
     /*
@@ -172,7 +171,7 @@ Exhibit.Database.prototype.loadItems = function(itemEntries, baseURI) {
         for (var i = 0; i < itemEntries.length; i++) {
             var entry = itemEntries[i];
             if (entry != null && typeof entry != "undefined") {
-                this._loadItem(itemEntries[i], indexTriple, baseURI);
+                this._loadItem(entry, indexTriple, baseURI);
             }
         }
         
@@ -298,8 +297,6 @@ Exhibit.Database.prototype._loadItem = function(itemEntry, indexFunction, baseUR
             
             var v = itemEntry[p];
             if (v instanceof Array) {
-                //Exhibit.Database._indexPutList(this._listpso, p, id, v);
-                
                 for (var j = 0; j < v.length; j++) {
                     indexFunction(id, p, v[j]);
                 }
@@ -533,14 +530,6 @@ Exhibit.Database.prototype.getSubjectsInRange = function(p, min, max, inclusive,
         }
     }
     return set;
-};
-
-Exhibit.Database.prototype.getListProperty = function(s, p) {
-    var hash = this._listpso[p];
-    if (hash) {
-        return hash[s];
-    }
-    return null;
 };
 
 Exhibit.Database.prototype.getTypeLabels = function(set) {
