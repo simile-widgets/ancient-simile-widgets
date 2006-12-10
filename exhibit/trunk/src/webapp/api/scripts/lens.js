@@ -216,15 +216,16 @@ Exhibit.Lens._processTemplateNode = function(node, isXML) {
 
 Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
     var templateNode = {
-        tag:                elmt.tagName,
-        control:            null,
-        condition:          null,
-        content:            null,
-        contentAttributes:  null,
-        attributes:         [],
-        styles:             [],
-        handlers:           [],
-        children:           null
+        tag:                    elmt.tagName,
+        control:                null,
+        condition:              null,
+        content:                null,
+        contentAttributes:      null,
+        subcontentAttributes:   null,
+        attributes:             [],
+        styles:                 [],
+        handlers:               [],
+        children:               null
     };
     
     var attributes = elmt.attributes;
@@ -257,6 +258,17 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
                         name:       name.substr(0, x),
                         expression: Exhibit.Expression.parse(value)
                     });
+                } else {
+                    x = name.indexOf("-subcontent");
+                    if (x > 0) {
+                        if (templateNode.subcontentAttributes == null) {
+                            templateNode.subcontentAttributes = [];
+                        }
+                        templateNode.subcontentAttributes.push({
+                            name:       name.substr(0, x),
+                            fragments:  Exhibit.Lens._parseSubcontentAttribute(value)
+                        });
+                    }
                 }
             }
         } else {
@@ -342,6 +354,27 @@ Exhibit.Lens._processStyle = function(templateNode, styleValue) {
     }
 };
 
+Exhibit.Lens._parseSubcontentAttribute = function(value) {
+    var fragments = [];
+    var current = 0;
+    var open;
+    while (current < value.length && (open = value.indexOf("{{", current)) >= 0) {
+        var close = value.indexOf("}}", open);
+        if (close < 0) {
+            break;
+        }
+        
+        fragments.push(value.substring(current, open));
+        fragments.push(Exhibit.Expression.parse(value.substring(open + 2, close)));
+        
+        current = close + 2;
+    }
+    if (current < value.length) {
+        fragments.push(value.substr(current));
+    }
+    return fragments;
+};
+
 Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
     Exhibit.Lens._constructFromLensTemplateNode(
         {   "value" :   job.itemID
@@ -400,6 +433,28 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             ).values.visit(function(v) { values.push(v); });
                 
             elmt.setAttribute(attribute.name, values.join(";"));
+        }
+    }
+    if (templateNode.subcontentAttributes != null) {
+        var subcontentAttributes = templateNode.subcontentAttributes;
+        for (var i = 0; i < subcontentAttributes.length; i++) {
+            var attribute = subcontentAttributes[i];
+            var fragments = attribute.fragments;
+            var results = "";
+            for (var r = 0; r < fragments.length; r++) {
+                var fragment = fragments[r];
+                if (typeof fragment == "string") {
+                    results += fragment;
+                } else {
+                    results += fragment.evaluateSingle(
+                        roots,
+                        rootValueTypes,
+                        "value",
+                        database
+                    ).value;
+                }
+            }
+            elmt.setAttribute(attribute.name, results);
         }
     }
     var handlers = templateNode.handlers;
