@@ -11,6 +11,10 @@ Exhibit.Expression.parse = function(s) {
         var dotBang = s.search(/[\.!]/);
         if (dotBang > 0) {
             expression._path.setRootName(s.substr(0, dotBang));
+            s = s.substr(dotBang);
+        } else if (dotBang < 0) {
+            expression._path.setRootName(s);
+            s = "";
         }
         
         var regex = /[\.!][^\.!]+/g;
