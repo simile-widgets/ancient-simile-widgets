@@ -91,7 +91,12 @@ Exhibit.TimelineView.theme.constructDom = function(
             },
             {   tag:        "div",
                 className:  "exhibit-timelineView-resizer",
-                field:      "resizerDiv"
+                field:      "resizerDiv",
+                children: [
+                    {   elmt: Exhibit.Theme.createTranslucentImage(document,
+                            "images/down-arrow.png")
+                    }
+                ]
             },
             {   tag:        "div",
                 className:  "exhibit-timelineView-controls",

@@ -63,7 +63,12 @@ Exhibit.MapView.theme.constructDom = function(
             },
             {   tag: "div",
                 className: "exhibit-mapView-resizer",
-                field: "resizerDiv"
+                field: "resizerDiv",
+                children: [
+                    {   elmt: Exhibit.Theme.createTranslucentImage(document,
+                            "images/down-arrow.png")
+                    }
+                ]
             },
             {   tag: "div",
                 className:  "exhibit-mapView-legend",
