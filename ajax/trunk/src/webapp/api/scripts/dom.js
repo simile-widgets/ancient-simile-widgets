@@ -101,11 +101,14 @@ SimileAjax.DOM.createDOMFromTemplate = function(doc, template) {
 
 SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, parentElmt) {
     if (templateNode == null) {
+        /*
         var node = doc.createTextNode("--null--");
         if (parentElmt != null) {
             parentElmt.appendChild(node);
         }
         return node;
+        */
+        return null;
     } else if (typeof templateNode != "object") {
         var node = doc.createTextNode(templateNode);
         if (parentElmt != null) {
