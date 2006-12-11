@@ -90,6 +90,12 @@ div.thumbnail {
     text-align: center;
 }
 
+div.map-lens {
+    width:      200px;
+    height:     200px;
+    text-align: center;
+}
+
 div.thumbnail div {
     height:     100px;
     overflow:   hidden;

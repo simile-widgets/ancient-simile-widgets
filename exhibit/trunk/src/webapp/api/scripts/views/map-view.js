@@ -9,6 +9,21 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
     this._configuration = configuration;
     this._globalConfiguration = globalConfiguration;
     
+    this._lensConfiguration = {};
+    if ("Lens" in globalConfiguration) {
+        this._lensConfiguration["Lens"] = globalConfiguration["Lens"];
+    }
+    if (domConfiguration != null) {
+        Exhibit.ViewPanel.extractItemLensDomConfiguration(
+            domConfiguration, this._lensConfiguration);
+    }
+    if ("lensSelector" in configuration) {
+        if (!("Lens" in this._lensConfiguration)) {
+            this._lensConfiguration["Lens"] = {};
+        }
+        this._lensConfiguration["Lens"].lensSelector = configuration.lensSelector;
+    }
+    
     /*
      *  Getter for lat/lng
      */
@@ -501,7 +516,7 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
         return ul;
     } else {
         var itemLensDiv = document.createElement("div");
-        var itemLens = new Exhibit.Lens(items[0], itemLensDiv, this._exhibit, this._globalConfiguration);
+        var itemLens = new Exhibit.Lens(items[0], itemLensDiv, this._exhibit, this._lensConfiguration);
         return itemLensDiv;
     }
 };

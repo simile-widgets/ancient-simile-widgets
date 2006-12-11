@@ -94,6 +94,10 @@
             margin:     0.5em;
             text-align: center;
         }
+        div.nobelist-timeline-lens {
+            padding:    1em;
+            text-align: center;
+        }
     </style>
     <script type="text/javascript">
         function deceaseRowStyler(itemID, database, tr, rowIndex) {
@@ -160,7 +164,17 @@
         <div ex:role="exhibit-view"
             ex:viewClass="Exhibit.TimelineView"
             ex:start=".nobel-year"
-            ex:marker=".discipline">
+            ex:marker=".discipline"
+            ex:bubbleWidth="150"
+            ex:bubbleHeight="150">
+            <div ex:role="exhibit-lens" class="nobelist-timeline-lens">
+                <img ex:src-content=".imageURL" />
+                <div><span ex:content=".label"></span></div>
+                <div>
+                    <span ex:content=".discipline" class="discipline"></span>, 
+                    <span ex:content=".nobel-year" class="year"></span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
