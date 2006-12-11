@@ -1,4 +1,4 @@
-/*==================================================
+    /*==================================================
  *  Exhibit.TimelineView
  *==================================================
  */
@@ -157,6 +157,12 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
         }
         if ("densityFactor" in configuration) {
             this._densityFactor = configuration.densityFactor;
+        }
+        if ("bubbleWidth" in configuration) {
+            this._bubbleWidth = configuration.bubbleWidth;
+        }
+        if ("bubbleHeight" in configuration) {
+            this._bubbleHeight = configuration.bubbleHeight;
         }
         if ("timelineConstructor" in configuration) {
             this._timelineConstructor = configuration.timelineConstructor;

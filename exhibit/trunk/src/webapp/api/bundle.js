@@ -490,6 +490,8 @@ var timelineConstructor=Exhibit.getAttribute(domConfiguration,"timelineConstruct
 if("topBandIntervalPixels"in configuration){this._topBandIntervalPixels=configuration.topBandIntervalPixels;}
 if("bottomBandIntervalPixels"in configuration){this._bottomBandIntervalPixels=configuration.bottomBandIntervalPixels;}
 if("densityFactor"in configuration){this._densityFactor=configuration.densityFactor;}
+if("bubbleWidth"in configuration){this._bubbleWidth=configuration.bubbleWidth;}
+if("bubbleHeight"in configuration){this._bubbleHeight=configuration.bubbleHeight;}
 if("timelineConstructor"in configuration){this._timelineConstructor=configuration.timelineConstructor;}}catch(e){SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view",e);}
 var getMarkerKey=null;try{var makeGetMarker=function(s){var markerExpression=Exhibit.Expression.parse(s);return function(itemID,database){var key=markerExpression.evaluateSingle({"value":itemID},{"value":"item"},"value",database).value;return key!=null?key:"";}};if(domConfiguration!=null){var marker=Exhibit.getAttribute(domConfiguration,"marker");if(marker!=null&&marker.length>0){getMarkerKey=makeGetMarker(marker);}}
 if("marker"in configuration){getMarkerKey=makeGetMarker(configuration.marker);}}catch(e){SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view",e);}
@@ -996,6 +998,8 @@ var timelineConstructor=Exhibit.getAttribute(domConfiguration,"timelineConstruct
 if("topBandIntervalPixels"in configuration){this._topBandIntervalPixels=configuration.topBandIntervalPixels;}
 if("bottomBandIntervalPixels"in configuration){this._bottomBandIntervalPixels=configuration.bottomBandIntervalPixels;}
 if("densityFactor"in configuration){this._densityFactor=configuration.densityFactor;}
+if("bubbleWidth"in configuration){this._bubbleWidth=configuration.bubbleWidth;}
+if("bubbleHeight"in configuration){this._bubbleHeight=configuration.bubbleHeight;}
 if("timelineConstructor"in configuration){this._timelineConstructor=configuration.timelineConstructor;}}catch(e){SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view",e);}
 var getMarkerKey=null;try{var makeGetMarker=function(s){var markerExpression=Exhibit.Expression.parse(s);return function(itemID,database){var key=markerExpression.evaluateSingle({"value":itemID},{"value":"item"},"value",database).value;return key!=null?key:"";}};if(domConfiguration!=null){var marker=Exhibit.getAttribute(domConfiguration,"marker");if(marker!=null&&marker.length>0){getMarkerKey=makeGetMarker(marker);}}
 if("marker"in configuration){getMarkerKey=makeGetMarker(configuration.marker);}}catch(e){SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view",e);}
@@ -1251,6 +1255,8 @@ var timelineConstructor=Exhibit.getAttribute(domConfiguration,"timelineConstruct
 if("topBandIntervalPixels"in configuration){this._topBandIntervalPixels=configuration.topBandIntervalPixels;}
 if("bottomBandIntervalPixels"in configuration){this._bottomBandIntervalPixels=configuration.bottomBandIntervalPixels;}
 if("densityFactor"in configuration){this._densityFactor=configuration.densityFactor;}
+if("bubbleWidth"in configuration){this._bubbleWidth=configuration.bubbleWidth;}
+if("bubbleHeight"in configuration){this._bubbleHeight=configuration.bubbleHeight;}
 if("timelineConstructor"in configuration){this._timelineConstructor=configuration.timelineConstructor;}}catch(e){SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view",e);}
 var getMarkerKey=null;try{var makeGetMarker=function(s){var markerExpression=Exhibit.Expression.parse(s);return function(itemID,database){var key=markerExpression.evaluateSingle({"value":itemID},{"value":"item"},"value",database).value;return key!=null?key:"";}};if(domConfiguration!=null){var marker=Exhibit.getAttribute(domConfiguration,"marker");if(marker!=null&&marker.length>0){getMarkerKey=makeGetMarker(marker);}}
 if("marker"in configuration){getMarkerKey=makeGetMarker(configuration.marker);}}catch(e){SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view",e);}
