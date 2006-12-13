@@ -125,7 +125,7 @@
             presidency: 9,
             index: 9,
             term: [ 14 ],
-            dieInOffice: 'no',
+            dieInOffice: 'yes',
             imageURL: 'http://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/William_Henry_Harrison.png/100px-William_Henry_Harrison.png',
             url: 'http://en.wikipedia.org/wiki/William_Henry_Harrison',
             party: "Whig",
