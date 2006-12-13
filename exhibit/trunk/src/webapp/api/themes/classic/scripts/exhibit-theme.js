@@ -216,7 +216,7 @@ Exhibit.Theme = {
             containerDiv.style.border = "2px solid #7777AA";
             containerDiv.style.padding = "20px";
             containerDiv.style.background = "white";
-            Timeline.Graphics.setOpacity(containerDiv, 90);
+            SimileAjax.Graphics.setOpacity(containerDiv, 90);
             
             var contentDiv = document.createElement("div");
             containerDiv.appendChild(contentDiv);
