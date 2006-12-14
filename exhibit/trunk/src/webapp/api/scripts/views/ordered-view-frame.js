@@ -259,8 +259,11 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
          */
         var orders = this._orders;
         var sortFunctions = [];
+        var originalValueMaps = [];
         for (var x = 0; x < orders.length; x++) {
-            sortFunctions.push(this._processOrder(items, orders[x], x));
+            var originalValues = {};
+            sortFunctions.push(this._processOrder(items, orders[x], x, originalValues));
+            originalValueMaps.push(originalValues);
         }
         var masterSortFunction = function(item1, item2) {
             var c = 0;
@@ -324,7 +327,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
             while (g < groupLevels) {
                 sortKeys[g] = item.sortKeys[g];
                 
-                this.onNewGroup(sortKeys[g], orders[g].keyType, g);
+                this.onNewGroup(originalValueMaps[g][sortKeys[g]], orders[g].keyType, g);
                 
                 g++;
             }
@@ -357,7 +360,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     }
 };
 
-Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index) {
+Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index, originalValues) {
     var database = this._exhibit.getDatabase();
     
     var propertyID = order.property;
@@ -380,20 +383,24 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
                 var item = items[i];
                 var valueItem = database.getObject(item.id, propertyID);
                 var value = valueItem == null ? null : database.getObject(valueItem, "label");
-                item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
+                var key = value == null ? Exhibit.l10n.missingSortKey : value;
+                item.sortKeys.push(key);
+                originalValues[key] = key;
             }
         } else if (valueType == "number") {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 var value = database.getObject(item.id, propertyID);
+                var key = Number.NEGATIVE_INFINITY;
                 if (!(typeof value == "number")) {
                     try {
-                        value = parseFloat(value);
+                        key = parseFloat(value);
                     } catch (e) {
-                        value = Number.NEGATIVE_INFINITY;
+                        value = Exhibit.l10n.notApplicableSortKey;
                     }
                 }
-                item.sortKeys.push(value);
+                item.sortKeys.push(key);
+                originalValues[key] = value;
             }
             order.keyType = "number";
             
@@ -402,16 +409,19 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 var value = database.getObject(item.id, propertyID);
+                var key = Number.NEGATIVE_INFINITY;
                 if (value != null && value instanceof Date) {
-                    value = value.getTime();
+                    key = value.getTime();
                 } else {
                     try {
-                        value = SimileAjax.DateTime.parseIso8601DateTime(value).getTime();
+                        value = value.toString();
+                        key = SimileAjax.DateTime.parseIso8601DateTime(value).getTime();
                     } catch (e) {
-                        value = Number.NEGATIVE_INFINITY;
+                        value = Exhibit.l10n.notApplicableSortKey;
                     }
                 }
-                item.sortKeys.push(value);
+                item.sortKeys.push(key);
+                originalValues[key] = value;
             }
             order.keyType = "date";
             
@@ -420,15 +430,22 @@ Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index)
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 var value = database.getObject(item.id, propertyID);
-                item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
+                var key = value == null ? Exhibit.l10n.missingSortKey : value;
+                item.sortKeys.push(key);
+                originalValues[key] = key;
             }
         }
     } else {
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
             var valueItem = database.getSubject(item.id, propertyID);
-            var value = valueItem == null ? null : database.getObject(valueItem, "label");
-            item.sortKeys.push(value == null ? Exhibit.l10n.missingSortKey : value);
+            var key = Exhibit.l10n.missingSortKey;
+            if (valueItem != null) {
+                var value = database.getObject(valueItem, "label");
+                key = value == null ? valueItem : value;
+            }
+            item.sortKeys.push(key);
+            originalValues[key] = key;
         }
     }
     

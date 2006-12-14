@@ -6,6 +6,7 @@
 Exhibit.l10n = {
     missingLabel:   "missing",
     missingSortKey: "(missing)",
+    notApplicableSortKey: "(n/a)",
     itemLinkLabel:  "link",
     
     busyIndicatorMessage:       "Working...",
