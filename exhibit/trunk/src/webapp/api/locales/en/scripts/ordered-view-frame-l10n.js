@@ -36,5 +36,9 @@ Exhibit.OrderedViewFrame.l10n = {
     },
     groupedAsSorted: "grouped as sorted",
     groupAsSortedActionTitle: "grouped as sorted",
-    ungroupActionTitle: "ungrouped"
+    ungroupActionTitle: "ungrouped",
+    
+    showDuplicates: "show duplicates",
+    showDuplicatesActionTitle: "show duplicates",
+    hideDuplicatesActionTitle: "hide duplicates"
 };

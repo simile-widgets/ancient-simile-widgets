@@ -563,6 +563,9 @@ div.exhibit-collectionView-header-sortControls {
 .exhibit-collectionView-header-groupControls {
     cursor: pointer;
 }
+.exhibit-collectionView-header-duplicateControls {
+    cursor: pointer;
+}
 
 div.exhibit-collectionView-body {
 }

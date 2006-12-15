@@ -13,6 +13,7 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     this._initialCount = 10;
     this._showAll = false;
     this._grouped = true;
+    this._showDuplicates = false;
     
     /*
      *  First, get configurations from the dom, if any
@@ -60,6 +61,11 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         if (grouped != null && grouped.length > 0) {
             this._grouped = (grouped == "true");
         }
+        
+        var showDuplicates = Exhibit.getAttribute(domConfiguration, "showDuplicates");
+        if (showDuplicates != null && showDuplicates.length > 0) {
+            this._showDuplicates = (showDuplicates == "true");
+        }
     }
     
     /*
@@ -81,6 +87,9 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     }
     if ("grouped" in configuration) {
         this._grouped = configuration.grouped;
+    }
+    if ("showDuplicates" in configuration) {
+        this._showDuplicates = configuration.showDuplicates;
     }
     
     /*
@@ -209,6 +218,11 @@ Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
             self._toggleGroup();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
+        },
+        function(elmt, evt, target) {
+            self._toggleShowDuplicates();
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
         }
     );
     this._footerDom = Exhibit.OrderedViewFrame.theme.createFooterDom(
@@ -236,104 +250,27 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
      *  Get the current collection and check if it's empty
      */
     var collection = exhibit.getBrowseEngine().getCurrentCollection();
-    var items = [];
+    var currentSet;
     var originalSize = 0;
+    var currentSize = 0;
     if (collection != null) {
-        var currentSet = collection.getCurrentSet();
-        currentSet.visit(function(itemID) { items.push({ id: itemID, sortKeys: [] }); });
         originalSize = collection.originalSize();
+        currentSet = new Exhibit.Set(collection.getCurrentSet());
+        currentSize = currentSet.size();
     }
     
     /*
      *  Set the header UI
      */
-    this._headerDom.setCounts(items.length, originalSize);
+    this._headerDom.setCounts(currentSize, originalSize);
     this._headerDom.setGrouped(this._grouped);
-    this._footerDom.setCounts(items.length, this._initialCount, this._showAll);
+    this._headerDom.setShowDuplicates(this._showDuplicates);
     
-    if (items.length > 0) {
-        this._headerDom.setTypes(database.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0]);
+    var hasSomeGrouping = false;
+    if (currentSize > 0) {
+        this._headerDom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
         
-        /*
-         *  Sort the items
-         */
-        var orders = this._orders;
-        var sortFunctions = [];
-        var originalValueMaps = [];
-        for (var x = 0; x < orders.length; x++) {
-            var originalValues = {};
-            sortFunctions.push(this._processOrder(items, orders[x], x, originalValues));
-            originalValueMaps.push(originalValues);
-        }
-        var masterSortFunction = function(item1, item2) {
-            var c = 0;
-            var i = 0;
-            while (c == 0 && i < sortFunctions.length) {
-                c = sortFunctions[i](item1, item2);
-                i++;
-            }
-            return c;
-        }
-        items.sort(masterSortFunction);
-        
-        /*
-         *  Detect how deep we need to group
-         */
-        var checkGroupingLevel = function(level, start, end) {
-            var result = -1;
-            if (level < orders.length) {
-                var sortKey = items[start].sortKeys[level];
-                var i = start + 1;
-                
-                while (i < end) {
-                    var item = items[i];
-                    var itemSortKey = item.sortKeys[level];
-                    
-                    if (itemSortKey != sortKey) {
-                        if (i - start > 1) {
-                            result = Math.max(result, Math.max(level, checkGroupingLevel(level + 1, start, i)));
-                        }
-                        sortKey = itemSortKey;
-                        start = i;
-                    }
-                    i++;
-                }
-                
-                if (i - start > 1) {
-                    result = Math.max(result, Math.max(level, checkGroupingLevel(level + 1, start, i)));
-                }
-            }
-            return result;
-        }
-        var groupLevels = this._grouped ? checkGroupingLevel(0, 0, items.length) + 1 : 0;
-        
-        /*
-         *  Generate item views
-         */
-        var sortKeys = [];
-        for (var i = 0; i < orders.length; i++) {
-            sortKeys.push(null);
-        }
-        
-        var max = this._showAll ? items.length : Math.min(items.length, this._initialCount);
-        for (var i = 0; i < max; i++) {
-            var item = items[i];
-            
-            var g = 0;
-            while (g < groupLevels && item.sortKeys[g] == sortKeys[g]) {
-                g++;
-            }
-            
-            while (g < groupLevels) {
-                sortKeys[g] = item.sortKeys[g];
-                
-                this.onNewGroup(originalValueMaps[g][sortKeys[g]], orders[g].keyType, g);
-                
-                g++;
-            }
-            
-            this.onNewItem(item.id, i);
-        }
+        hasSomeGrouping = this._internalReconstruct(currentSet);
         
         /*
          *  Build sort controls
@@ -352,104 +289,217 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
             );
             orderDoms.push(orderDom);
         };
-        for (var i = 0; i < orders.length; i++) {
-            buildOrderDom(orders[i], i);
+        for (var i = 0; i < this._orders.length; i++) {
+            buildOrderDom(this._orders[i], i);
         }
         this._headerDom.setOrders(orderDoms);
         this._headerDom.enableThenByAction(orderDoms.length < this._possibleOrders.length);
     }
+    
+    this._footerDom.setCounts(currentSize, this._initialCount, this._showAll, !hasSomeGrouping);
 };
 
-Exhibit.OrderedViewFrame.prototype._processOrder = function(items, order, index, originalValues) {
-    var database = this._exhibit.getDatabase();
+Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
+    var self = this;
+    var exhibit = this._exhibit;
+    var database = exhibit.getDatabase();
+    var orders = this._orders;
+    var itemIndex = 0;
     
-    var propertyID = order.property;
-    var multiply = order.ascending ? 1 : -1;
-    
-    var numericFunction = function(item1, item2) {
-        return multiply * (item1.sortKeys[index] - item2.sortKeys[index]);
+    var hasSomeGrouping = false;
+    var createItem = function(itemID) {
+        if (hasSomeGrouping || self._showAll || itemIndex < self._initialCount) {
+            self.onNewItem(itemID, itemIndex++);
+        }
     };
-    var textFunction = function(item1, item2) {
-        return multiply * item1.sortKeys[index].localeCompare(item2.sortKeys[index]);
+    var createGroup = function(label, valueType, index) {
+        if (hasSomeGrouping || self._showAll || itemIndex < self._initialCount) {
+            self.onNewGroup(label, valueType, index);
+        }
     };
     
-    order.keyType = "text";
-    if (order.forward) {
-        var property = database.getProperty(propertyID);
-        var valueType = property != null ? property.getValueType() : "text";
+    var processLevel = function(items, index) {
+        var order = orders[index];
+        var values = order.forward ? 
+            database.getObjectsUnion(items, order.property) : 
+            database.getSubjectsUnion(items, order.property);
+        
+        var valueType = "text";
+        if (order.forward) {
+            var property = database.getProperty(order.property);
+            valueType = property != null ? property.getValueType() : "text";
+        } else {
+            valueType = "item";
+        }
+        
+        var keys = (valueType == "item" || valueType == "text") ?
+            processNonNumericLevel(items, index, values, valueType) :
+            processNumericLevel(items, index, values, valueType);
+        
+        var grouped = false;
+        for (var k = 0; k < keys.length; k++) {
+            if (keys[k].items.size() > 1) {
+                grouped = true;
+            }
+        }
+        grouped = grouped && keys.length > 1;
+        if (grouped) {
+            hasSomeGrouping = true;
+        }
+        
+        for (var k = 0; k < keys.length; k++) {
+            var key = keys[k];
+            if (key.items.size() > 0) {
+                if (grouped && self._grouped) {
+                    createGroup(key.display, valueType, index);
+                }
+                
+                items.removeSet(key.items);
+                if (key.items.size() > 1 && index < orders.length - 1) {
+                    processLevel(key.items, index+1);
+                } else {
+                    key.items.visit(createItem);
+                }
+            }
+        }
+        
+        if (items.size() > 0) {
+            if (grouped && self._grouped) {
+                createGroup(Exhibit.l10n.missingSortKey, valueType, index);
+            }
+            
+            if (items.size() > 1 && index < orders.length - 1) {
+                processLevel(items, index+1);
+            } else {
+                items.visit(createItem);
+            }
+        }
+    };
+    
+    var processNonNumericLevel = function(items, index, values, valueType) {
+        var keys = [];
+        var compareKeys;
+        var retrieveItems;
+        var order = orders[index];
         
         if (valueType == "item") {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var valueItem = database.getObject(item.id, propertyID);
-                var value = valueItem == null ? null : database.getObject(valueItem, "label");
-                var key = value == null ? Exhibit.l10n.missingSortKey : value;
-                item.sortKeys.push(key);
-                originalValues[key] = key;
-            }
-        } else if (valueType == "number") {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var value = database.getObject(item.id, propertyID);
-                var key = Number.NEGATIVE_INFINITY;
-                if (!(typeof value == "number")) {
-                    try {
-                        key = parseFloat(value);
-                    } catch (e) {
-                        value = Exhibit.l10n.notApplicableSortKey;
-                    }
-                }
-                item.sortKeys.push(key);
-                originalValues[key] = value;
-            }
-            order.keyType = "number";
+            values.visit(function(itemID) {
+                var label = database.getObject(itemID, "label");
+                label = label != null ? label : itemID;
+                keys.push({ itemID: itemID, display: label });
+            });
             
-            return numericFunction;
-        } else if (valueType == "date") {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var value = database.getObject(item.id, propertyID);
-                var key = Number.NEGATIVE_INFINITY;
-                if (value != null && value instanceof Date) {
-                    key = value.getTime();
+            compareKeys = function(key1, key2) {
+                var c = key1.display.localeCompare(key2.display);
+                return c != 0 ? c : key1.itemID.localeCompare(key2.itemID);
+            };
+            
+            retrieveItems = order.forward ? function(key) {
+                return database.getSubjects(key.itemID, order.property, null, items);
+            } : function(key) {
+                return database.getObjects(key.itemID, order.property, null, items);
+            };
+        } else { //text
+            values.visit(function(value) {
+                keys.push({ display: value });
+            });
+            
+            compareKeys = function(key1, key2) {
+                return key1.display.localeCompare(key2.display);
+            };
+            retrieveItems = order.forward ? function(key) {
+                return database.getSubjects(key.display, order.property, null, items);
+            } : function(key) {
+                return database.getObjects(key.display, order.property, null, items);
+            };
+        }
+        
+        keys.sort(function(key1, key2) { 
+            return (order.ascending ? 1 : -1) * compareKeys(key1, key2); 
+        });
+        
+        for (var k = 0; k < keys.length; k++) {
+            var key = keys[k];
+            key.items = retrieveItems(key);
+            if (!self._showDuplicates) {
+                items.removeSet(key.items);
+            }
+        }
+        
+        return keys;
+    };
+    
+    var processNumericLevel = function(items, index, values, valueType) {
+        var keys = [];
+        var keyMap = {};
+        var order = orders[index];
+        
+        var valueParser;
+        if (valueType == "number") {
+            valueParser = function(value) {
+                if (typeof value == "number") {
+                    return value;
                 } else {
                     try {
-                        value = value.toString();
-                        key = SimileAjax.DateTime.parseIso8601DateTime(value).getTime();
+                        return parseFloat(value);
                     } catch (e) {
-                        value = Exhibit.l10n.notApplicableSortKey;
+                        return null;
                     }
                 }
-                item.sortKeys.push(key);
-                originalValues[key] = value;
+            };
+        } else { //date
+            valueParser = function(value) {
+                if (value instanceof Date) {
+                    return value.getTime();
+                } else {
+                    try {
+                        return SimileAjax.DateTime.parseIso8601DateTime(value.toString()).getTime();
+                    } catch (e) {
+                        return null;
+                    }
+                }
+            };
+        }
+        
+        values.visit(function(value) {
+            var sortkey = valueParser(value);
+            if (sortkey != null) {
+                var key = keyMap[sortkey];
+                if (!key) {
+                    key = { sortkey: sortkey, display: value, values: [], items: new Exhibit.Set() };
+                    keyMap[sortkey] = key;
+                    keys.push(key);
+                }
+                key.values.push(value);
             }
-            order.keyType = "date";
+        });
+        
+        keys.sort(function(key1, key2) { 
+            return (order.ascending ? 1 : -1) * (key1.sortkey - key2.sortkey); 
+        });
+        
+        for (var k = 0; k < keys.length; k++) {
+            var key = keys[k];
+            var values = key.values;
+            for (var v = 0; v < values.length; v++) {
+                if (order.forward) {
+                    database.getSubjects(values[v], order.property, key.items, items);
+                } else {
+                    database.getObjects(values[v], order.property, key.items, items);
+                }
+            }
             
-            return numericFunction;
-        } else {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var value = database.getObject(item.id, propertyID);
-                var key = value == null ? Exhibit.l10n.missingSortKey : value;
-                item.sortKeys.push(key);
-                originalValues[key] = key;
+            if (!self._showDuplicates) {
+                items.removeSet(key.items);
             }
         }
-    } else {
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var valueItem = database.getSubject(item.id, propertyID);
-            var key = Exhibit.l10n.missingSortKey;
-            if (valueItem != null) {
-                var value = database.getObject(valueItem, "label");
-                key = value == null ? valueItem : value;
-            }
-            item.sortKeys.push(key);
-            originalValues[key] = key;
-        }
-    }
+        
+        return keys;
+    };
     
-    return textFunction;
+    processLevel(allItems, 0);
+    
+    return hasSomeGrouping;
 };
 
 Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
@@ -655,6 +705,25 @@ Exhibit.OrderedViewFrame.prototype._toggleGroup = function() {
         },
         label: Exhibit.OrderedViewFrame.l10n[
             oldGrouped ? "ungroupActionTitle" : "groupAsSortedActionTitle"],
+        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
+        lengthy: true
+    });
+};
+
+Exhibit.OrderedViewFrame.prototype._toggleShowDuplicates = function() {
+    var oldShowDuplicates = this._showDuplicates;
+    var self = this;
+    SimileAjax.History.addAction({
+        perform: function() {
+            self._showDuplicates = !oldShowDuplicates;
+            self.parentReconstruct();
+        },
+        undo: function() {
+            self._showDuplicates = oldShowDuplicates;
+            self.parentReconstruct();
+        },
+        label: Exhibit.OrderedViewFrame.l10n[
+            oldShowDuplicates ? "hideDuplicatesActionTitle" : "showDuplicatesActionTitle"],
         uiLayer: SimileAjax.WindowManager.getBaseLayer(),
         lengthy: true
     });

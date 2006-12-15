@@ -11,6 +11,8 @@ Exhibit.Set = function(a) {
         for (var i = 0; i < a.length; i++) {
             this.add(a[i]);
         }
+    } else if (a instanceof Exhibit.Set) {
+        this.addSet(a);
     }
 }
 
@@ -36,6 +38,12 @@ Exhibit.Set.prototype.remove = function(o) {
         return true;
     }
     return false;
+}
+
+Exhibit.Set.prototype.removeSet = function(set) {
+    for (o in set._hash) {
+        this.remove(o);
+    }
 }
 
 Exhibit.Set.prototype.contains = function(o) {
