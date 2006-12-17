@@ -4,5 +4,5 @@
  */
 
 String.prototype.trim = function() {
-    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+    return this.replace(/^\s+|\s+$/, '');
 };
