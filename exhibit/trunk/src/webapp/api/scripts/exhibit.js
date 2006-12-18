@@ -319,7 +319,61 @@ Exhibit._Impl.prototype.loadDataFromDomNode = function(node) {
 };
 
 Exhibit._Impl.prototype.loadDataFromTable = function(table) {
-    window.alert("not yet implemented");
+    var textOf = function( n ) { return n.textContent || n.innerText; };
+    var i, j, k;
+
+    if( typeof table == "string" )
+	table = document.getElementById( table );
+    table.style.display = "none"; // as we are replacing it with the exhibit UI
+
+    // FIXME: it's probably a better idea to ask database.js for this list
+    var proplist = [ "uri", "valueType", // [text|number|date|boolean|item|url]
+		     "label", "reverseLabel",
+		     "pluralLabel", "reversePluralLabel",
+		     "groupingLabel", "reverseGroupingLabel" ];
+    var properties = false, fields = [], props = {}, attr;
+    var tr, trs = table.getElementsByTagName("tr");
+    var th, ths = trs[0].getElementsByTagName("th");
+    for( i = 0; th = ths[i]; i++ ) {
+	var type = textOf( th ).trim();
+	fields.push( type );
+	for( j = 0; attr = proplist[j]; j++ ) {
+	    var value = th.getAttribute("ex:" + attr);
+	    if( value ) {
+		if( !props[type] )
+		    props[type] = {};
+		props[type][attr] = value;
+		properties = props;
+	    }
+	}
+    }
+
+    var img, imgs = table.getElementsByTagName("img");
+    while( img = imgs[0] ) // replace any images with their respective URLs
+	img.parentNode.replaceChild( document.createTextNode( img.src ), img );
+
+    var items = [], td, data;
+    for( i = 1; tr = trs[i]; i++ ) {
+	var item = {};
+	var tds = tr.getElementsByTagName("td");
+	for( j = 0; td = tds[j]; j++ ) {
+	    data = textOf( td ).trim();
+	    if( data.indexOf(';') != -1 ) { // multi; value; node?
+		data = data.split(';');
+		for( k = 0; k<data.length; k++ )
+		    data[k] = data[k].trim();
+	    }
+	    item[fields[j]] = data;
+	}
+	items.push( item );
+    }
+
+    data = {};
+    if( items.length )
+	data.items = items;
+    if( properties )
+	data.properties = properties;
+    return this.loadData( data, location.href );
 };
 
 Exhibit._Impl.prototype.loadData = function(data) {
