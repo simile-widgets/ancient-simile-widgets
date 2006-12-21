@@ -6,14 +6,239 @@
 Exhibit.Expression = new Object();
 
 Exhibit.Expression.parse = function(s) {
-    var expression = new Exhibit.Expression._Impl();
+    var expressions = Exhibit.Expression.parseSeveral(s);
+    if (expressions.length > 1) {
+        throw new Error("Expected only one expression");
+    }
+    
+    return expressions[0];
+};
+
+Exhibit.Expression.parseSeveral = function(s) {
+    var tokens = Exhibit.Expression._tokenize(s);
+    
+    var x = -1;
+    var token;
+    var consumeToken = function() {
+        ++x;
+        token = x < tokens.length ? tokens[x] : null;
+    };
+    consumeToken();
+    
+    var parseFactor = function() {
+        if (token == null) {
+            throw new Error("Missing factor");
+        }
+        
+        var result = null;
+        
+        switch (token.type) {
+        case Exhibit.Expression._Token.NUMBER:
+            result = new Exhibit.Expression._Constant(token.value, "number");
+            break;
+        case Exhibit.Expression._Token.STRING:
+            result = new Exhibit.Expression._Constant(token.value, "text");
+            break;
+        case Exhibit.Expression._Token.PATH:
+            result = token.value;
+            break;
+        case Exhibit.Expression._Token.FUNCTION:
+            var name = token.value;
+            consumeToken();
+            
+            if (token.type == Exhibit.Expression._Token.DELIMITER && token.value == "(") {
+                consumeToken();
+                
+                result = new Exhibit.Expression._FunctionCall(name, parseExpressionList());
+                
+                if (token == null || token.type != Exhibit.Expression._Token.DELIMITER || token.value != ")") {
+                    throw new Error("Missing ) after function call");
+                }
+            } else {
+                throw new Error("Missing ( after function name");
+            }
+            break;
+        case Exhibit.Expression._Token.CONTROL:
+            var name = token.value;
+            consumeToken();
+            
+            if (token.type == Exhibit.Expression._Token.DELIMITER && token.value == "(") {
+                consumeToken();
+                
+                result = new Exhibit.Expression._ControlCall(name, parseExpressionList());
+                
+                if (token == null || token.type != Exhibit.Expression._Token.DELIMITER || token.value != ")") {
+                    throw new Error("Missing ) to end " + name);
+                }
+            } else {
+                throw new Error("Missing ( to start " + name);
+            }
+            break;
+        case Exhibit.Expression._Token.DELIMITER:
+            if (token.value == "(") {
+                consumeToken();
+                
+                result = parseExpression();
+                if (token == null || token.type != Exhibit.Expression._Token.DELIMITER || token.value != ")") {
+                    throw new Error("Missing )");
+                }
+                break;
+            } // else, fall through
+        default:
+            throw new Error("Unexpected token " + token);
+        }
+        
+        consumeToken();
+        return result;
+    };
+    var parseTerm = function() {
+        var term = parseFactor();
+        while (token != null && 
+            token.type == Exhibit.Expression._Token.OPERATOR && 
+            (token.value == "*" || token.value == "/")) {
+            var operator = token.value;
+            consumeToken();
+            
+            term = new Exhibit.Expression._Operator(operator, [ term, parseFactor() ]);
+        }
+        return term;
+    };
+    var parseExpression = function() {
+        var expression = parseTerm();
+        while (token != null && 
+            token.type == Exhibit.Expression._Token.OPERATOR && 
+            (token.value == "+" || token.value == "-")) {
+            var operator = token.value;
+            consumeToken();
+            
+            expression = new Exhibit.Expression._Operator(operator, [ expression, parseTerm() ]);
+        }
+        return expression;
+    };
+    var parseExpressionList = function() {
+        var expressions = [ parseExpression() ];
+        while (token != null && token.type == Exhibit.Expression._Token.DELIMITER && token.value == ",") {
+            consumeToken();
+            
+            expressions.push(parseExpression());
+        }
+        return expressions;
+    }
+    
+    var roots = parseExpressionList();
+    if (token != null) {
+        throw new Error("Extra text found at the end of the code");
+    }
+    
+    var expressions = [];
+    for (var r = 0; r < roots.length; r++) {
+        expressions.push(new Exhibit.Expression._Impl(roots[r]));
+    }
+    
+    return expressions;
+};
+
+Exhibit.Expression._delimiters = { "(":true, ")":true, ",":true };
+Exhibit.Expression._tokenizeNoStringLiterals = function(s) {
+    s = s.replace(/\s+/g, ' ').
+        replace(/\s+\./g, '.').
+        replace(/\s+\!/g, '!').
+        replace(/\s?\(\s?/g, ' ( ').
+        replace(/\s?\)\s?/g, ' ) ').
+        replace(/\s\+\s/g, ' + ').
+        replace(/\s\-\s/g, ' - ').
+        replace(/\s\*\s/g, ' * ').
+        replace(/\s\/\s/g, ' / ').
+        replace(/\s?\,\s?/g, ' , ').
+        trim();
+        
+    var tokens = s.split(" ");
+    var results = [];
+    for (var i = 0; i < tokens.length; i++) {
+        var token = tokens[i].trim();
+        if (token == "") {
+            // continue;
+        } else if (token in Exhibit.Expression._delimiters) {
+            results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.DELIMITER, token));
+        } else if (token in Exhibit.Expression._operators) {
+            results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.OPERTOR, token));
+        } else if (token in Exhibit.Functions) {
+            results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.FUNCTION, token));
+        } else if (token == "foreach") {
+            results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.CONTROL, token));
+        } else {
+            var n = parseFloat(token);
+            if (isNaN(n)) {
+                results.push(new Exhibit.Expression._Token(
+                    Exhibit.Expression._Token.PATH,
+                    Exhibit.Expression._parsePath(token)
+                ));
+            } else {
+                results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.NUMBER, n));
+            }
+        }
+    }
+    return results;
+};
+
+Exhibit.Expression._tokenize = function(s) {
+    var tokens = [];
+    
+    var findClosingDelimiter = function(d) {
+        var start = 0;
+        while (start < s.length) {
+            var closing = s.indexOf(d, start);
+            if (closing > 0) {
+                if (s.substr(closing - 1, 1) == "\\") {
+                    start = closing + 1;
+                    continue;
+                }
+            }
+            return closing;
+        }
+        return -1;
+    }
+    
+    while (s.length > 0) {
+        var delimiter = "'";
+        var opening = s.indexOf(delimiter);
+        if (opening < 0) {
+            delimiter = '"';
+            opening = s.indexOf(delimiter);
+        }
+        
+        if (opening < 0) {
+            break;
+        } else {
+            tokens = tokens.concat(Exhibit.Expression._tokenizeNoStringLiterals(s.substr(0, opening)));
+            s = s.substr(opening + 1);
+            
+            var closing = findClosingDelimiter(delimiter);
+            if (closing >= 0) {
+                tokens.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.STRING, s.substr(0, closing)));
+                s = s.substr(closing + 1);
+            } else {
+                throw new Error("String missing closing delimiter");
+            }
+        }
+    }
+    
+    if (s.length > 0) {
+        tokens = tokens.concat(Exhibit.Expression._tokenizeNoStringLiterals(s));
+    }
+    
+    return tokens;
+};
+
+Exhibit.Expression._parsePath = function(s) {
+    var path = new Exhibit.Expression.Path();
     if (s.length > 0) {
         var dotBang = s.search(/[\.!]/);
         if (dotBang > 0) {
-            expression._path.setRootName(s.substr(0, dotBang));
+            path.setRootName(s.substr(0, dotBang));
             s = s.substr(dotBang);
         } else if (dotBang < 0) {
-            expression._path.setRootName(s);
+            path.setRootName(s);
             s = "";
         }
         
@@ -33,18 +258,40 @@ Exhibit.Expression.parse = function(s) {
                 }
                 property = property.substr(0, at);
             }
-            expression._path.appendSegment(
+            path.appendSegment(
                 property,
                 dotBang == ".",
                 isList
             );
         }
     }
-    return expression;
+    return path;
 };
 
-Exhibit.Expression._Impl = function() {
-    this._path = new Exhibit.Expression.Path();
+/*==================================================
+ *  Exhibit.Expression._Token
+ *==================================================
+ */
+ 
+Exhibit.Expression._Token = function(type, value) {
+    this.type = type;
+    this.value = value;
+};
+
+Exhibit.Expression._Token.DELIMITER = 0;
+Exhibit.Expression._Token.CONTROL   = 1;
+Exhibit.Expression._Token.PATH      = 2;
+Exhibit.Expression._Token.OPERATOR  = 3;
+Exhibit.Expression._Token.FUNCTION  = 4;
+Exhibit.Expression._Token.NUMBER    = 5;
+Exhibit.Expression._Token.STRING    = 6;
+
+/*==================================================
+ *  Exhibit.Expression._Impl
+ *==================================================
+ */
+Exhibit.Expression._Impl = function(rootNode) {
+    this._rootNode = rootNode;
 };
 
 Exhibit.Expression._Impl.prototype.evaluate = function(
@@ -53,7 +300,7 @@ Exhibit.Expression._Impl.prototype.evaluate = function(
     defaultRootName, 
     database
 ) {
-    return this._path.evaluate(roots, rootValueTypes, defaultRootName, database);
+    return this._rootNode.evaluate(roots, rootValueTypes, defaultRootName, database);
 };
 
 Exhibit.Expression._Impl.prototype.evaluateSingle = function(
@@ -62,7 +309,7 @@ Exhibit.Expression._Impl.prototype.evaluateSingle = function(
     defaultRootName, 
     database
 ) {
-    return this._path.evaluateSingle(roots, rootValueTypes, defaultRootName, database);
+    return this._rootNode.evaluateSingle(roots, rootValueTypes, defaultRootName, database);
 };
 
 Exhibit.Expression._Impl.prototype.testExists = function(
@@ -71,15 +318,17 @@ Exhibit.Expression._Impl.prototype.testExists = function(
     defaultRootName, 
     database
 ) {
-    return this._path.testExists(roots, rootValueTypes, defaultRootName, database);
+    return this.isPath() ?
+        this._rootNode.testExists(roots, rootValueTypes, defaultRootName, database) :
+        false;
 };
 
 Exhibit.Expression._Impl.prototype.isPath = function() {
-    return true;
+    return this._rootNode instanceof Exhibit.Expression.Path;
 };
 
 Exhibit.Expression._Impl.prototype.getPath = function() {
-    return this._path;
+    return this.isPath() ? this._rootNode : null;
 };
 
 /*==================================================
@@ -135,15 +384,8 @@ Exhibit.Expression.Path.prototype.evaluate = function(
     for (var i = 0; i < this._segments.length; i++) {
         var segment = this._segments[i];
         if (segment.forward) {
-            /* if (i == expression.path.length - 1 && segment.isList && set.size() == 1) {
-                set.visit(function(value) {
-                    set = database.getListProperty(value, segment.property);
-                    count = set.length;
-                });
-            } else */ {
-                set = database.getObjectsUnion(set, segment.property);
-                count = set.size();
-            }
+            set = database.getObjectsUnion(set, segment.property);
+            count = set.size();
             
             var property = database.getProperty(segment.property);
             valueType = property != null ? property.getValueType() : "text";
@@ -176,14 +418,7 @@ Exhibit.Expression.Path.prototype.evaluateSingle = function(
     for (var i = 0; i < this._segments.length && value != null; i++) {
         var segment = this._segments[i];
         if (segment.forward) {
-            /* if (i == expression.path.length - 1 && segment.isList && set.size() == 1) {
-                set.visit(function(value) {
-                    set = database.getListProperty(value, segment.property);
-                    count = set.length;
-                });
-            } else */ {
-                value = database.getObject(value, segment.property);
-            }
+            value = database.getObject(value, segment.property);
             
             var property = database.getProperty(segment.property);
             valueType = property != null ? property.getValueType() : "text";
@@ -208,3 +443,223 @@ Exhibit.Expression.Path.prototype.testExists = function(
     return this.evaluateSingle(roots, rootValueTypes, defaultRootName, database).value != null;
 };
 
+/*==================================================
+ *  Exhibit.Expression._Constant
+ *==================================================
+ */
+Exhibit.Expression._Constant = function(value, valueType) {
+    this._value = value;
+    this._valueType = valueType;
+};
+
+Exhibit.Expression._Constant.prototype.evaluate = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    var set = new Exhibit.Set();
+    set.add(this._value);
+    
+    return {
+        valueType:  this._valueType,
+        values:     set,
+        count:      1
+    };
+};
+
+Exhibit.Expression._Constant.prototype.evaluateSingle = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    return {
+        valueType:  this._valueType,
+        value:      this._value
+    };
+};
+
+/*==================================================
+ *  Exhibit.Expression._Operator
+ *==================================================
+ */
+Exhibit.Expression._Operator = function(operator, args) {
+    this._operator = operator;
+    this._args = args;
+};
+
+Exhibit.Expression._Operator.prototype.evaluate = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    var set = new Exhibit.Set();
+    
+    var args = [];
+    for (var i = 0; i < this._args.length; i++) {
+        args.push(this._args[i].evaluate(roots, rootValueTypes, defaultRootName, database));
+    }
+    
+    var o = Exhibit.Expression._operators[this._operator].f;
+    args[0].values.visit(function(v1) {
+        if (!(typeof v1 == "number")) {
+            v1 = parseFloat(v1);
+        }
+    
+        args[1].values.visit(function(v2) {
+            if (!(typeof v2 == "number")) {
+                v2 = parseFloat(v2);
+            }
+            
+            set.add(o(v1, v2));
+        });
+    });
+    
+    return {
+        valueType:  "number",
+        values:     set,
+        count:      set.size()
+    };
+};
+
+Exhibit.Expression._Operator.prototype.evaluateSingle = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    var args = [];
+    for (var i = 0; i < this._args.length; i++) {
+        args.push(this._args[i].evaluateSingle(roots, rootValueTypes, defaultRootName, database));
+    }
+    
+    var v1 = args[0].value;
+    if (!(typeof v1 == "number")) {
+        v1 = parseFloat(v1);
+    }
+    
+    var v2 = args[1].value;
+    if (!(typeof v2 == "number")) {
+        v2 = parseFloat(v2);
+    }
+    
+    return Exhibit.Expression._operators[this._operator].f(v1, v2);
+};
+
+Exhibit.Expression._operators = {
+    "+" : {
+        f: function(a, b) { return a + b; }
+    },
+    "-" : {
+        f: function(a, b) { return a - b; }
+    },
+    "*" : {
+        f: function(a, b) { return a * b; }
+    },
+    "/" : {
+        f: function(a, b) { return a / b; }
+    }
+}
+
+/*==================================================
+ *  Exhibit.Expression._FunctionCall
+ *==================================================
+ */
+Exhibit.Expression._FunctionCall = function(name, args) {
+    this._name = name;
+    this._args = args;
+};
+
+Exhibit.Expression._FunctionCall.prototype.evaluate = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    var args = [];
+    for (var i = 0; i < this._args.length; i++) {
+        args.push(this._args[i].evaluate(roots, rootValueTypes, defaultRootName, database));
+    }
+    
+    return Exhibit.Functions[this._name].f(args);
+};
+
+Exhibit.Expression._FunctionCall.prototype.evaluateSingle = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    var args = [];
+    for (var i = 0; i < this._args.length; i++) {
+        args.push(this._args[i].evaluateSingle(roots, rootValueTypes, defaultRootName, database));
+    }
+    
+    return Exhibit.Functions[this._name].fSingle(args);
+};
+
+/*==================================================
+ *  Exhibit.Expression._ControlCall
+ *==================================================
+ */
+Exhibit.Expression._ControlCall = function(name, args) {
+    this._name = name;
+    this._args = args;
+};
+
+Exhibit.Expression._ControlCall.prototype.evaluate = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    var self = this;
+    if (this._name == "foreach") {
+        var collection = this._args[0].evaluate(roots, rootValueTypes, defaultRootName, database);
+        
+        var oldValue = roots["value"];
+        var oldValueType = rootValueTypes["value"];
+        rootValueTypes["value"] = collection.valueType;
+        
+        var results = new Exhibit.Set();
+        var valueType = "text";
+        
+        collection.values.visit(function(element) {
+            roots["value"] = element;
+            
+            var r = self._args[1].evaluate(roots, rootValueTypes, defaultRootName, database);
+            valueType = r.valueType;
+            results.addSet(r.values);
+        });
+        
+        roots["value"] = oldValue;
+        rootValueTypes["value"] = oldValueType;
+        
+        return {
+            valueType:  valueType,
+            values:     results,
+            count:      results.size()
+        };
+    }
+    return {
+        valueType:  "text",
+        values:     new Exhibit.Set(),
+        count:      0
+    };
+};
+
+Exhibit.Expression._ControlCall.prototype.evaluateSingle = function(
+    roots, 
+    rootValueTypes, 
+    defaultRootName, 
+    database
+) {
+    var args = [];
+    for (var i = 0; i < this._args.length; i++) {
+        args.push(this._args[i].evaluateSingle(roots, rootValueTypes, defaultRootName, database));
+    }
+    
+    return Exhibit.Functions[this._name].fSingle(args);
+};

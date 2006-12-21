@@ -52,21 +52,21 @@
                         </table>
                     </div>
                     <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.TabularView"
+                        ex:label="Table"
+                        ex:columns=".term, .label, .imageURL, .party, .presidency.inDate, .presidency.outDate, add(foreach(.presidency, date-range(.inDate, .outDate, 'day')))"
+                        ex:columnLabels="term, name, photo, party, took office, left office, days in office"
+                        ex:columnFormats="list, list, image, list, list, list, list"
+                        ex:sortColumn="4"
+                        ex:sortAscending="true"
+                        ex:rowStyler="rowStyler"
+                        ></div>
+                    <div ex:role="exhibit-view"
                         ex:viewClass="Exhibit.TileView"
                         ex:label="Details"
                         ex:orders=".term"
                         ex:possibleOrders=".religion, .party, .birth, .death, .term"
                         ex:grouped="false"
-                        ></div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.TabularView"
-                        ex:label="Table"
-                        ex:columns=".term, .label, .imageURL, .party, .presidency.inDate, .presidency.outDate, .religion"
-                        ex:columnLabels="term, name, photo, party, took office, left office, religion"
-                        ex:columnFormats="list, list, image, list, list, list, list"
-                        ex:sortColumn="4"
-                        ex:sortAscending="true"
-                        ex:rowStyler="rowStyler"
                         ></div>
                     <div ex:role="exhibit-view"
                         ex:viewClass="Exhibit.ThumbnailView"

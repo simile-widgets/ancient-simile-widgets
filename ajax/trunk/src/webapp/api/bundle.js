@@ -92,7 +92,7 @@ return'"'+x+'"';}};SimileAjax.JSON.toJSONString=function(o){if(o instanceof Obje
 
 /* string.js */
 
-String.prototype.trim=function(){return this.replace(/^\s+/,'').replace(/\s+$/,'');};
+String.prototype.trim=function(){return this.replace(/^\s+|\s+$/,'');};
 
 /* window-manager.js */
 

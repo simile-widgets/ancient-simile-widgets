@@ -24,6 +24,7 @@
             "util/set.js",
             
             "expression.js",
+            "functions.js",
             "database.js",
             "browse-engine.js",
             

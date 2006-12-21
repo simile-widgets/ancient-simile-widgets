@@ -27,10 +27,7 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
         
         var s = Exhibit.getAttribute(domConfiguration, "columns");
         if (s != null && s.length > 0) {
-            var a = s.split(",");
-            for (var i = 0; i < a.length; i++) {
-                expressions.push(a[i].trim());
-            }
+            expressions = Exhibit.Expression.parseSeveral(s);
         }
         
         s = Exhibit.getAttribute(domConfiguration, "columnLabels");
@@ -50,20 +47,17 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
         }
         
         for (var i = 0; i < expressions.length; i++) {
-            var expression = Exhibit.Expression.parse(expressions[i]);
-            if (expression.isPath()) {
-                var path = expression.getPath();
-                var format = formats[i];
-                if (format == null) {
-                    format = "list";
-                }
-                this._columns.push({
-                    expression: expression,
-                    styler:     null,
-                    label:      labels[i],
-                    format:     format
-                });
+            var expression = expressions[i];
+            var format = formats[i];
+            if (format == null) {
+                format = "list";
             }
+            this._columns.push({
+                expression: expression,
+                styler:     null,
+                label:      labels[i],
+                format:     format
+            });
         }
         
         s = Exhibit.getAttribute(domConfiguration, "sortColumn");
@@ -335,76 +329,105 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
     var textFunction = function(item1, item2) {
         return multiply * item1.sortKey.localeCompare(item2.sortKey);
     };
-
-    var path = expression.getPath();
-    var segment = path.getSegment(path.getSegmentCount() - 1);
-    var getValue = function(item) {
-        return path.evaluateSingle(
+    
+    var valueTypes = [];
+    var valueTypeMap = {};
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var r = expression.evaluate(
             { "value" : item.id }, 
             { "value" : "item" }, 
             "value",
             database
-        ).value;
-    };
-    
-    if (segment.forward) {
-        var valueType = database.getProperty(segment.property).getValueType();
-        if (valueType == "item") {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var valueItem = getValue(item);
-                var valueLabel = (valueItem == null) ? null : database.getObject(valueItem, "label");
-                item.sortKey = (valueLabel == null) ? Exhibit.l10n.missingSortKey : valueLabel;
-            }
-        } else if (valueType == "number") {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var value = getValue(item);
-                if (!(typeof value == "number")) {
-                    try {
-                        value = parseFloat(value);
-                    } catch (e) {
-                        value = Number.NEGATIVE_INFINITY;
-                    }
-                }
-                item.sortKey = value;
-            }
-            
-            return numericFunction;
-        } else if (valueType == "date") {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var value = getValue(item);
-                if (value != null && value instanceof Date) {
-                    value = value.getTime();
-                } else {
-                    try {
-                        value = SimileAjax.DateTime.parseIso8601DateTime(value).getTime();
-                    } catch (e) {
-                        value = Number.NEGATIVE_INFINITY;
-                    }
-                }
-                item.sortKey = value;
-            }
-            
-            return numericFunction;
-        } else {
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var value = getValue(item);
-                item.sortKey = (value == null) ? Exhibit.l10n.missingSortKey : value;
-            }
-        }
-    } else {
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var valueItem = getValue(item);
-            var valueLabel = valueItem == null ? null : database.getObject(valueItem, "label");
-            item.sortKey = (valueLabel == null) ? Exhibit.l10n.missingSortKey : valueLabel;
+        );
+        r.values.visit(function(value) {
+            item.sortKey = value;
+        });
+        
+        if (!(r.valueType in valueTypeMap)) {
+            valueTypeMap[r.valueType] = true;
+            valueTypes.push(r.valueType);
         }
     }
     
-    return textFunction;
+    var coercedValueType = "text"
+    if (valueTypes.length == 1) {
+        coercedValueType = valueTypes[0];
+    } else {
+        coercedValueType = "text";
+    }
+    
+    var coersion;
+    var sortingFunction;
+    if (coercedValueType == "number") {
+        sortingFunction = numericFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Number.NEGATIVE_INFINITY;
+            } else if (typeof v == "number") {
+                return v;
+            } else {
+                var n = parseFloat(v);
+                if (isNaN(n)) {
+                    return Number.NEGATIVE_INFINITY;
+                } else {
+                    return n;
+                }
+            }
+        }
+    } else if (coercedValueType == "date") {
+        sortingFunction = numericFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Number.NEGATIVE_INFINITY;
+            } else if (v instanceof Date) {
+                return v.getTime();
+            } else {
+                try {
+                    return SimileAjax.DateTime.parseIso8601DateTime(v).getTime();
+                } catch (e) {
+                    return Number.NEGATIVE_INFINITY;
+                }
+            }
+        }
+    } else if (coercedValueType == "boolean") {
+        sortingFunction = numericFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Number.NEGATIVE_INFINITY;
+            } else if (typeof v == "boolean") {
+                return v ? 1 : 0;
+            } else {
+                return v.toString().toLowerCase() == "true";
+            }
+        }
+    } else if (coercedValueType == "item") {
+        sortingFunction = textFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Exhibit.l10n.missingSortKey;
+            } else {
+                var label = database.getObject(v, "label");
+                return (label == null) ? v : label;
+            }
+        }
+    } else {
+        sortingFunction = textFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Exhibit.l10n.missingSortKey;
+            } else {
+                return v.toString();
+            }
+        }
+    }
+    
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        item.sortKey = coersion(item.sortKey);
+    }
+    
+    return sortingFunction;
 };
 
 Exhibit.TabularView.prototype._doSort = function(columnIndex) {
