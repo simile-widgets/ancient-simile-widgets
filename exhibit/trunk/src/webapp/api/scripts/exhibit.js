@@ -319,7 +319,7 @@ Exhibit._Impl.prototype.loadDataFromDomNode = function(node) {
 };
 
 Exhibit._Impl.prototype.loadDataFromTable = function(table) {
-    var textOf = function( n ) { return n.textContent || n.innerText; };
+    var textOf = function( n ) { return n.textContent || n.innerText || ""; };
     var readAttributes = function( node, attributes ) {
 	var result = {}, found = false, attr, value, i;
 	for( i = 0; attr = attributes[i]; i++ ) {
@@ -374,6 +374,8 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
 	var tds = tr.getElementsByTagName("td");
 	for( j = 0; td = tds[j]; j++ ) {
 	    data = textOf( td ).trim();
+	    if( !data )
+		continue;
 	    if( data.indexOf(';') != -1 ) { // multi; value; node?
 		data = data.split(';');
 		for( k = 0; k<data.length; k++ )
