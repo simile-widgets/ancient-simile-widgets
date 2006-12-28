@@ -550,7 +550,9 @@
             url: 'http://en.wikipedia.org/wiki/Gerald_Ford',
             party: "Republican",
             birth: '1913-07-14',
+            death: '2006-12-26',
             birthPlace: 'Omaha, Nebraska, USA',
+            deathPlace: 'Rancho Mirage, California, USA',
             religion: [ "Episcopal" ]
         },
         {   label: 'Jimmy Carter',
@@ -1117,6 +1119,9 @@
         },
         {   id: 'Ronald Reagan',
             deathLatLng: '34.101111,-118.453056' 
+        },
+        {   id: 'Gerald Ford',
+            deathLatLng: '33.739713,-116.411819'
         }
     ]
 }
