@@ -7,7 +7,8 @@ Exhibit.BrowseEngine = function(database, configuration) {
     this._database = database;
     this._listeners = new SimileAjax.ListenerQueue("onChange");
     
-    this._facetEntries = [];
+    this._facetPaths = [];
+    this._facetIDs = [];
     this._supportSliding = false;
     
     if ("BrowseEngine" in configuration) {
@@ -67,13 +68,8 @@ Exhibit.BrowseEngine.prototype.setFacets = function(facetEntries) {
         try {
             var expression = Exhibit.Expression.parse(entry);
             if (expression.isPath()) {
-                var path = expression.getPath();
-                if (path.getSegmentCount() == 1) {
-                    this._facetEntries.push(path.getSegment(0));
-                } else {
-                    showHelp(entry);
-                    break;
-                }
+                this._facetPaths.push(expression.getPath());
+                this._facetIDs.push(entry);
             } else {
                 showHelp(entry);
                 break;
@@ -150,7 +146,7 @@ Exhibit.BrowseEngine.prototype.getFacets = function() {
     return facets;
 };
 
-Exhibit.BrowseEngine.prototype.getFacet = function(property, forward) {
+Exhibit.BrowseEngine.prototype.getFacet = function(facetID) {
     var facets = [];
     
     var focusIndex = this.getFocus();
@@ -158,7 +154,7 @@ Exhibit.BrowseEngine.prototype.getFacet = function(property, forward) {
         var collection = this._collections[focusIndex];
         for (var i = 0; i < collection._restrictions.length; i++) {
             var r = collection._restrictions[i];
-            if (r.property == property && r.forward == forward) {
+            if (r.id == facetID) {
                 this._computeFacet(collection, r, facets);
                 break;
             }
@@ -167,12 +163,12 @@ Exhibit.BrowseEngine.prototype.getFacet = function(property, forward) {
     return facets.length > 0 ? facets[0] : null;
 };
 
-Exhibit.BrowseEngine.prototype.getGroups = function(property, forward) {
+Exhibit.BrowseEngine.prototype.getGroups = function(facetID) {
     var focusIndex = this.getFocus();
     var collection = this._collections[focusIndex];
     for (var i = 0; i < collection._restrictions.length; i++) {
         var restriction = collection._restrictions[i];
-        if (restriction.property == property && restriction.forward == forward) {
+        if (restriction.id == facetID) {
             return this._getGroups(collection, restriction);
         }
     }
@@ -193,13 +189,13 @@ Exhibit.BrowseEngine.prototype.setRootCollection = function(itemSet) {
     }
 };
 
-Exhibit.BrowseEngine.prototype.setValueRestriction = function(property, forward, level, value, selected) {
+Exhibit.BrowseEngine.prototype.setValueRestriction = function(facetID, level, value, selected) {
     var focusIndex = this.getFocus();
     if (focusIndex >= 0 && focusIndex < this._collections.length) {
         var collection = this._collections[focusIndex];
         for (var i = 0; i < collection._restrictions.length; i++) {
             var restriction = collection._restrictions[i];
-            if (restriction.property == property && restriction.forward == forward) {
+            if (restriction.id == facetID) {
                 restriction.setSelection(level, value, selected);
                 
                 collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
@@ -211,7 +207,7 @@ Exhibit.BrowseEngine.prototype.setValueRestriction = function(property, forward,
                 return;
             }
         }
-        SimileAjax.Debug.log("Exhibit.BrowseEngine.setValueRestriction is called with invalid property and forward");
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.setValueRestriction is called with an invalid id");
     } else {
         SimileAjax.Debug.log("Exhibit.BrowseEngine.setValueRestriction is called when there is no collection");
     }
@@ -224,6 +220,7 @@ Exhibit.BrowseEngine.prototype.focus = function(index) {
     }
 };
 
+/*
 Exhibit.BrowseEngine.prototype.slide = function(propertyID, forward) {
     var focusIndex = this.getFocus();
     if (focusIndex < this._collections.length - 1) {
@@ -249,6 +246,7 @@ Exhibit.BrowseEngine.prototype.slide = function(propertyID, forward) {
     
     this._listeners.fire("onSlide", []);
 }
+*/
 
 Exhibit.BrowseEngine.prototype.clearRestrictions = function() {
     var focusIndex = this.getFocus();
@@ -283,15 +281,15 @@ Exhibit.BrowseEngine.prototype.applyRestrictions = function(restrictions) {
     }
 }
 
-Exhibit.BrowseEngine.prototype.clearFacetRestrictions = function(property, forward) {
+Exhibit.BrowseEngine.prototype.clearFacetRestrictions = function(facetID) {
     var focusIndex = this.getFocus();
     if (focusIndex >= 0 && focusIndex < this._collections.length) {
         var collection = this._collections[focusIndex];
         for (var i = 0; i < collection._restrictions.length; i++) {
             var restriction = collection._restrictions[i];
-            if (restriction.property == property && restriction.forward == forward) {
+            if (restriction.id == facetID) {
                 var oldRestriction = restriction;
-                collection._restrictions[i] = new Exhibit.BrowseEngine._Restriction(property, forward);
+                collection._restrictions[i] = new Exhibit.BrowseEngine._Restriction(oldRestriction.path, facetID);
                 collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
 
                 this._propagateChanges(focusIndex);
@@ -300,7 +298,7 @@ Exhibit.BrowseEngine.prototype.clearFacetRestrictions = function(property, forwa
                 return oldRestriction;
             }
         }
-        SimileAjax.Debug.log("Exhibit.BrowseEngine.clearFacetRestrictions is called with invalid property and forward");
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.clearFacetRestrictions is called with an invalid id");
         return null;
     } else {
         SimileAjax.Debug.log("Exhibit.BrowseEngine.clearFacetRestrictions is called when there is no collection");
@@ -308,14 +306,14 @@ Exhibit.BrowseEngine.prototype.clearFacetRestrictions = function(property, forwa
     }
 }
 
-Exhibit.BrowseEngine.prototype.applyFacetRestrictions = function(property, forward, restrictions) {
+Exhibit.BrowseEngine.prototype.applyFacetRestrictions = function(facetID, restrictions) {
     if (restrictions != null) {
         var focusIndex = this.getFocus();
         if (focusIndex >= 0 && focusIndex < this._collections.length) {
             var collection = this._collections[focusIndex];
             for (var i = 0; i < collection._restrictions.length; i++) {
                 var restriction = collection._restrictions[i];
-                if (restriction.property == property && restriction.forward == forward) {
+                if (restriction.id == facetID) {
                     collection._restrictions[i] = restrictions;
                     collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
         
@@ -324,7 +322,7 @@ Exhibit.BrowseEngine.prototype.applyFacetRestrictions = function(property, forwa
                     return;
                 }
             }
-            SimileAjax.Debug.log("Exhibit.BrowseEngine.applyFacetRestrictions is called with invalid property and forward");
+            SimileAjax.Debug.log("Exhibit.BrowseEngine.applyFacetRestrictions is called with an invalid id");
         } else {
             SimileAjax.Debug.log("Exhibit.BrowseEngine.applyFacetRestrictions is called when there is no collection");
         }
@@ -348,13 +346,13 @@ Exhibit.BrowseEngine.prototype.truncate = function(index) {
     }
 }
 
-Exhibit.BrowseEngine.prototype.group = function(property, forward, level, groupingProperty, groupingForward) {
+Exhibit.BrowseEngine.prototype.group = function(facetID, level, groupingProperty, groupingForward) {
     var focusIndex = this.getFocus();
     if (focusIndex >= 0 && focusIndex < this._collections.length) {
         var collection = this._collections[focusIndex];
         for (var i = 0; i < collection._restrictions.length; i++) {
             var restriction = collection._restrictions[i];
-            if (restriction.property == property && restriction.forward == forward) {
+            if (restriction.id == facetID) {
                 if (this._group(collection, restriction, level, groupingProperty, groupingForward)) {
                     collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
                     this._propagateChanges(focusIndex);
@@ -365,19 +363,19 @@ Exhibit.BrowseEngine.prototype.group = function(property, forward, level, groupi
                 return;
             }
         }
-        SimileAjax.Debug.log("Exhibit.BrowseEngine.group is called with invalid property and forward");
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.group is called with an invalid id");
     } else {
         SimileAjax.Debug.log("Exhibit.BrowseEngine.group is called when there is no collection");
     }
 };
 
-Exhibit.BrowseEngine.prototype.ungroup = function(property, forward, level) {
+Exhibit.BrowseEngine.prototype.ungroup = function(facetID, level) {
     var focusIndex = this.getFocus();
     if (focusIndex >= 0 && focusIndex < this._collections.length) {
         var collection = this._collections[focusIndex];
         for (var i = 0; i < collection._restrictions.length; i++) {
             var restriction = collection._restrictions[i];
-            if (restriction.property == property && restriction.forward == forward) {
+            if (restriction.id == facetID) {
                 if (this._ungroup(collection, restriction, level)) {
                     collection._restrictedSet = this._restrict(collection._originalSet, collection._restrictions, null);
                     this._propagateChanges(focusIndex);
@@ -388,7 +386,7 @@ Exhibit.BrowseEngine.prototype.ungroup = function(property, forward, level) {
                 return;
             }
         }
-        SimileAjax.Debug.log("Exhibit.BrowseEngine.ungroup is called with invalid property and forward");
+        SimileAjax.Debug.log("Exhibit.BrowseEngine.ungroup is called with an invalid id");
     } else {
         SimileAjax.Debug.log("Exhibit.BrowseEngine.ungroup is called when there is no collection");
     }
@@ -402,59 +400,67 @@ Exhibit.BrowseEngine.prototype._addCollection = function(itemSet) {
 };
 
 Exhibit.BrowseEngine.prototype._initializeRestrictions = function(collection) {
-    for (var i = 0; i < this._facetEntries.length; i++) {
-        var facetEntry = this._facetEntries[i];
+    for (var i = 0; i < this._facetPaths.length; i++) {
         collection._restrictions.push(
-            new Exhibit.BrowseEngine._Restriction(
-                facetEntry.property, 
-                facetEntry.forward
-            )
-        );
+            new Exhibit.BrowseEngine._Restriction(this._facetPaths[i], this._facetIDs[i]));
     }
 };
 
+Exhibit.BrowseEngine.prototype._createFacetTemplate = function(r, values, valueType, slideSet) {
+    var segment = r.getPath(-1).getLastSegment();
+    var property = segment.property;
+    var forward = segment.forward;
+    
+    var propertyData = this._database.getProperty(property);
+    var facetLabel = forward ? propertyData.getPluralLabel() : propertyData.getReversePluralLabel();
+    
+    var typeLabels = this._database.getTypeLabels(values);
+    var valueLabel = typeLabels[0].length > 0 ? typeLabels[0].join(", ") : "option";
+    var pluralValueLabel = typeLabels[1].length > 0 ? typeLabels[1].join(", ") : "options";
+    
+    var itemValues = (!forward || propertyData.getValueType() == "item");
+    
+    return {
+        facetID:            r.id,
+        
+        facetLabel:         facetLabel,
+        valueLabel:         valueLabel,
+        pluralValueLabel:   pluralValueLabel,
+        
+        count:              values.size(),
+        selectedCount:      0,
+        filteredCount:      slideSet.size(),
+        groupLevelCount:    r.getLevelCount(),
+        
+        slidable:           this._supportSliding && itemValues,
+        groupable:          itemValues,
+        
+        values:             []
+    };
+};
+
 Exhibit.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
-    var propertyData = this._database.getProperty(r.property);
+    var database = this._database;
+    
     var currentSet = this._restrict(collection._originalSet, collection._restrictions, r);
     
-    var values = r.forward ? 
-        this._database.getObjectsUnion(currentSet, r.property, null, null) :
-        this._database.getSubjectsUnion(currentSet, r.property, null, null);
-        
+    var results = r.getPath().walkForward(currentSet, "item", database);
+    var values = results.values;
     if (values.size() == 0) {
         return;
     }
     
-    var slideSet = this._slideSet(collection.getCurrentSet(), r.getProperty(-1), r.getForward(-1));
+    var slideSet = r.getPath().walkForward(collection.getCurrentSet(), "item", database).values;
+    var facet = this._createFacetTemplate(r, values, results.valueType, slideSet);
     
-    var facetLabel = r.forward ? propertyData.getPluralLabel() : propertyData.getReversePluralLabel();
-    var typeLabels = this._database.getTypeLabels(values);
-    var valueLabel = typeLabels[0].length > 0 ? typeLabels[0].join(", ") : "option";
-    var pluralValueLabel = typeLabels[1].length > 0 ? typeLabels[1].join(", ") : "options";
-    var itemValues = (!r.getForward(-1) || this._database.getProperty(r.getProperty(-1)).getValueType() == "item");
-    var facet = {
-        facetLabel:         facetLabel,
-        property:           r.property,
-        forward:            r.forward,
-        count:              values.size(),
-        selectedCount:      0,
-        filteredCount:      slideSet.size(),
-        valueLabel:         valueLabel,
-        pluralValueLabel:   pluralValueLabel,
-        slidable:           this._supportSliding && itemValues,
-        groupable:          itemValues,
-        groupLevelCount:    r.getLevelCount(),
-        values:             []
-    };
-    
-    var queryEngine = this;
     var f = function(level, domainSets, valueToFacetValueMap) {
         var domainSet = domainSets[domainSets.length - 1];
-        var property = r.getProperty(level);
-        var forward = r.getForward(level);
-        var propertyData2 = queryEngine._database.getProperty(property);
+        var path = r.getPath(level);
         
-        var rangeSet = queryEngine._slideSet(domainSet, property, forward);
+        var resultStruct = path.walkForward(domainSet, "item", database);
+        var rangeSet = resultStruct.values;
+        var rangeValuesAreItems = resultStruct.valueType == "item";
+        
         var previousSelectedRangeSet = r.getValueSet(level);
         if (previousSelectedRangeSet) {
             rangeSet.addSet(previousSelectedRangeSet);
@@ -465,37 +471,27 @@ Exhibit.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
         var map = {};
         
         rangeSet.visit(function(rangeValue) {
-            if (level > -1) {
-                var domainSubset = forward ?
-                    queryEngine._database.getSubjects(rangeValue, property, null, domainSet) :
-                    queryEngine._database.getObjects(rangeValue, property, null, domainSet);
-                
-                /*
-                 *  Reverse-project all the way to get the count of the subset in the original collection
-                 */
-                var firstDomainSubset = domainSubset;
-                for (var i = level - 1; i >= -1; i--) {
-                    firstDomainSubset = r.getForward(i) ?
-                        queryEngine._database.getSubjectsUnion(firstDomainSubset, r.getProperty(i), null, domainSets[i+1]) :
-                        queryEngine._database.getObjectsUnion(firstDomainSubset, r.getProperty(i), null, domainSets[i+1]);
-                }
-                
-                var count = firstDomainSubset.size();
-            } else {
-                var count = forward ?
-                    queryEngine._database.countDistinctSubjects(rangeValue, property, domainSet) :
-                    queryEngine._database.countDistinctObjects(rangeValue, property, domainSet);
+            var domainSubset = path.evaluateBackward(rangeValue, "item", domainSet, database).values;
+            
+            /*
+             *  Reverse-project all the way to get the count 
+             *  of the subset in the original collection
+             */
+            var firstDomainSubset = domainSubset;
+            for (var i = level - 1; i >= -1; i--) {
+                firstDomainSubset = r.getPath(i).walkBackward(
+                    firstDomainSubset, "item", domainSets[i+1], database).values;
             }
             
-            var label = propertyData2.itemValues ? 
-                queryEngine._database.getObject(rangeValue, "label") : rangeValue;
-                
+            var label = rangeValuesAreItems ? database.getObject(rangeValue, "label") : rangeValue;
             var facetValue = {
-                label:      label,
                 value:      rangeValue,
-                count:      count,
+                count:      firstDomainSubset.size(),
+                label:      label != null ? label : rangeValue,
+                
                 selected:   (previousSelectedRangeSet) ? 
                                 previousSelectedRangeSet.contains(rangeValue) : false,
+                                
                 filtered:   level == -1 && slideSet.contains(rangeValue),
                 level:      level,
                 children:   []
@@ -538,9 +534,7 @@ Exhibit.BrowseEngine.prototype._restrict = function(itemSet, restrictions, excep
      *  Recursion is needed to support grouping.
      */
     var recurseGetRestrictionValues = function(restriction, level, results, intersectResultsWith) {
-        var property = restriction.getProperty(level);
-        var forward = restriction.getForward(level);
-        
+        var path = restriction.getPath(level);
         var rangeSet = new Exhibit.Set();
         
         var userSelectedSet = restriction.getValueSet(level);
@@ -553,11 +547,8 @@ Exhibit.BrowseEngine.prototype._restrict = function(itemSet, restrictions, excep
         }
         
         if (rangeSet.size() > 0) {
-            if (forward) {
-                return database.getSubjectsUnion(rangeSet, property, results, intersectResultsWith);
-            } else {
-                return database.getObjectsUnion(rangeSet, property, results, intersectResultsWith);
-            }
+            results.addSet(path.walkBackward(rangeSet, "item", intersectResultsWith, database).values);
+            return results;
         } else {
             return intersectResultsWith;
         }
@@ -565,14 +556,15 @@ Exhibit.BrowseEngine.prototype._restrict = function(itemSet, restrictions, excep
     
     for (var i = 0; i < restrictions.length; i++) {
         var restriction = restrictions[i];
-        if (restriction.isDifferentFrom(except) && restriction.hasSelection()) {
-            itemSet = recurseGetRestrictionValues(restriction, -1, null, itemSet);
+        if (restriction != except && restriction.hasSelection()) {
+            itemSet = recurseGetRestrictionValues(restriction, -1, new Exhibit.Set(), itemSet);
         }
     }
 
     return itemSet;
 };
 
+/*
 Exhibit.BrowseEngine.prototype._slideSet = function(set, property, forward) {
     return forward ?
         this._database.getObjectsUnion(set, property, null, null) :
@@ -580,21 +572,12 @@ Exhibit.BrowseEngine.prototype._slideSet = function(set, property, forward) {
 }
 
 Exhibit.BrowseEngine.prototype._slideCollection = function(collection, property, forward) {
-/*
-    var r = null;
-    for (var i = 0; i < collection._restrictions.length; i++) {
-        var restriction = collection._restrictions[i];
-        if (restriction.property == property && restriction.reverse == reverse) {
-            r = restriction;
-            break;
-        }
-    }
-    var set = this._restrict(collection._originalSet, collection._restrictions, r);
-*/
     return this._slideSet(collection._restrictedSet, property, forward);
 };
+*/
 
 Exhibit.BrowseEngine.prototype._propagateChanges = function(index) {
+    /*
     var collection = this._collections[index];
     
     var prevCollection = collection;
@@ -608,16 +591,18 @@ Exhibit.BrowseEngine.prototype._propagateChanges = function(index) {
         
         prevCollection = collection;
     }
+    */
 }
 
 Exhibit.BrowseEngine.prototype._getGroups = function(collection, restriction) {
+    var database = this._database;
     var results = [];
     
     var groupings = restriction.groupings;
-    var set = this._slideCollection(collection, restriction.property, restriction.forward);
     
-    var lastSetCanBeGroupedFurther = !restriction.forward ||
-        this._database.getProperty(restriction.property).getValueType() == "item";
+    var x = restriction.getPath().walkForward(collection._restrictedSet, "item", database);
+    var set = x.values;
+    var lastSetCanBeGroupedFurther = x.valueType == "item";
         
     for (var i = 0; i < groupings.length; i++) {
         var groupingOptions = this._getGroupingOptions(set);
@@ -629,18 +614,25 @@ Exhibit.BrowseEngine.prototype._getGroups = function(collection, restriction) {
         var groupingProperty = grouping.property;
         var groupingForward = grouping.forward;
         
-        lastSetCanBeGroupedFurther = !groupingForward ||
-            this._database.getProperty(groupingProperty).getValueType() == "item";
-        
+        lastSetCanBeGroupedFurther = false;
         for (var j = 0; j < groupingOptions.length; j++) {
             var groupingOption = groupingOptions[j];
             if (groupingOption.property == groupingProperty &&
                 groupingOption.forward == groupingForward) {
                 
-                set = this._slideSet(set, groupingProperty, groupingForward);
+                x = Exhibit.Expression.Path.create(groupingProperty, groupingForward).walkForward(
+                    set, 
+                    "item", 
+                    database
+                );
+                
+                set = x.values;
+                lastSetCanBeGroupedFurther = x.valueType == "item";
                 
                 groupingOption.selected = true;
                 result.grouped = true;
+                
+                break;
             }
         }
         
@@ -721,21 +713,13 @@ Exhibit.BrowseEngine.prototype._getGroupingOptions = function(set) {
  *  Restriction
  *==================================================
  */
-Exhibit.BrowseEngine._Restriction = function(property, forward) {
-    this.property = property;
-    this.forward = forward;
+Exhibit.BrowseEngine._Restriction = function(path, id) {
+    this.id = id;
+    this.path = path;
     this.valueSet = null;
     this.groupings = [];
     this.selectedCount = 0;
 }
-
-Exhibit.BrowseEngine._Restriction.prototype.isDifferentFrom = function(r) {
-    return r == null || r.property != this.property || r.forward != this.forward;
-};
-
-Exhibit.BrowseEngine._Restriction.prototype.isSameAs = function(r) {
-    return r != null && r.property == this.property && r.forward == this.forward;
-};
 
 Exhibit.BrowseEngine._Restriction.prototype.hasSelection = function() {
     return this.selectedCount > 0;
@@ -789,12 +773,15 @@ Exhibit.BrowseEngine._Restriction.prototype.getValueSet = function(level) {
     return level < 0 ? this.valueSet : this.groupings[level].valueSet;
 }
 
-Exhibit.BrowseEngine._Restriction.prototype.getProperty = function(level) {
-    return level < 0 ? this.property : this.groupings[level].property;
-}
-
-Exhibit.BrowseEngine._Restriction.prototype.getForward = function(level) {
-    return level < 0 ? this.forward : this.groupings[level].forward;
+Exhibit.BrowseEngine._Restriction.prototype.getPath = function(level) {
+    if (level < 0 || level == undefined) {
+        return this.path;
+    } else if (level < this.groupings.length) {
+        var grouping = this.groupings[level];
+        return Exhibit.Expression.Path.create(grouping.property, grouping.forward);
+    } else {
+        throw new Error("No such level in restriction");
+    }
 }
 
 Exhibit.BrowseEngine._Restriction.prototype.getLevelCount = function() {

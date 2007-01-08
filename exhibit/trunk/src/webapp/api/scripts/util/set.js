@@ -64,6 +64,8 @@ Exhibit.Set.prototype.toArray = function() {
 
 Exhibit.Set.prototype.visit = function(f) {
     for (o in this._hash) {
-        f(o);
+        if (f(o) == true) {
+            break;
+        }
     }
 }

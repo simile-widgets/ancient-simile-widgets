@@ -108,7 +108,7 @@ Exhibit.BrowsePanel.prototype._showHelp = function() {
 Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
     var facetContainer = this._dom.facetContainer;
     var getKey = function(f) {
-        return f.property + ":" + f.forward;
+        return f.facetID;
     };
     
     var newFacetKeys = {};
@@ -163,8 +163,7 @@ Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
                 }
                 
                 newFacetInfos.push({ 
-                    property:   newFacet.property,
-                    forward:    newFacet.forward,
+                    facetID:    newFacet.facetID,
                     facet:      result[1]
                 });
                 newFacetIndex++;
@@ -183,8 +182,7 @@ Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {
         }
         
         newFacetInfos.push({ 
-            property:   newFacet.property,
-            forward:    newFacet.forward,
+            facetID:    newFacet.facetID,
             facet:      result[1]
         });
         newFacetIndex++;

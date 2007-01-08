@@ -23,15 +23,6 @@ Exhibit.Functions["union"] = {
             
             return { valueType: valueType, values: set, count: set.size() };
         }
-    },
-    fSingle: function(args) {
-        for (var i = 1; i < args.length; i++) {
-            var arg = args[i];
-            if (arg.value != null) {
-                return arg;
-            }
-        }
-        return { valueType: "text", value: null };
     }
 };
 
@@ -52,12 +43,6 @@ Exhibit.Functions["contains"] = {
             values:     set,
             count:      set.size()
         };
-    },
-    fSingle: function(args) {
-        return {
-            valueType:  "boolean",
-            value:      args[0].value == args[1].value
-        };
     }
 };
 
@@ -70,12 +55,6 @@ Exhibit.Functions["count"] = {
             valueType:  "number",
             values:     set,
             count:      set.size()
-        };
-    },
-    fSingle: function(args) {
-        return {
-            valueType:  "number",
-            value:      args[0].value != null ? 1 : 0
         };
     }
 };
@@ -106,27 +85,6 @@ Exhibit.Functions["add"] = {
             values:     set,
             count:      set.size()
         };
-    },
-    fSingle: function(args) {
-        var total = 0;
-        for (var i = 0; i < args.length; i++) {
-            var v = args[i].value;
-            if (v != null) {
-                if (typeof v == "number") {
-                    total += v;
-                } else {
-                    var n = parseFloat(v);
-                    if (!isNaN(n)) {
-                        total += n;
-                    }
-                }
-            }
-        }
-        
-        return {
-            valueType:  "number",
-            value:      total
-        };
     }
 };
 
@@ -155,27 +113,6 @@ Exhibit.Functions["multiple"] = {
             valueType:  "number",
             values:     set,
             count:      set.size()
-        };
-    },
-    fSingle: function(args) {
-        var product = 1;
-        for (var i = 0; i < args.length; i++) {
-            var v = args[i].value;
-            if (v != null) {
-                if (typeof v == "number") {
-                    product *= v;
-                } else {
-                    var n = parseFloat(v);
-                    if (!isNaN(n)) {
-                        product *= n;
-                    }
-                }
-            }
-        }
-        
-        return {
-            valueType:  "number",
-            value:      total
         };
     }
 };
@@ -244,16 +181,6 @@ Exhibit.Functions["date-range"] = {
             valueType:  "number",
             values:     set,
             count:      set.size()
-        };
-    },
-    fSingle: function(args) {
-        return {
-            valueType:  "number",
-            value:      this._computeRange(
-                            this._parseDate(args[0].value), 
-                            this._parseDate(args[1].value),
-                            args[2].value
-                        )
         };
     }
 };
