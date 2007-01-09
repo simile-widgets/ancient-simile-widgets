@@ -245,8 +245,23 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
                 templateNode.content = Exhibit.Expression.parse(value);
             } else if (name == "if-exists") {
                 templateNode.condition = {
-                    test:       "exists",
+                    test:       "if-exists",
                     expression: Exhibit.Expression.parse(value)
+                };
+            } else if (name == "if") {
+                templateNode.condition = {
+                    test:       "if",
+                    expression: Exhibit.Expression.parse(value)
+                };
+            } else if (name == "select") {
+                templateNode.condition = {
+                    test:       "select",
+                    expression: Exhibit.Expression.parse(value)
+                };
+            } else if (name == "case") {
+                templateNode.condition = {
+                    test:   "case",
+                    value:  value
                 };
             } else {
                 var x = name.indexOf("-content");
@@ -405,8 +420,9 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
     }
     
     var database = exhibit.getDatabase();
+    var children = templateNode.children;
     if (templateNode.condition != null) {
-        if (templateNode.condition.test == "exists") {
+        if (templateNode.condition.test == "if-exists") {
             if (!templateNode.condition.expression.testExists(
                     roots,
                     rootValueTypes,
@@ -415,6 +431,47 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 )) {
                 return;
             }
+        } else if (templateNode.condition.test == "if") {
+            if (!templateNode.condition.expression.evaluate(
+                    roots,
+                    rootValueTypes,
+                    "value",
+                    database
+                ).values.contains(true)) {
+                return;
+            }
+        } else if (templateNode.condition.test == "select") {
+            var values = templateNode.condition.expression.evaluate(
+                roots,
+                rootValueTypes,
+                "value",
+                database
+            ).values;
+            
+            if (children != null) {
+                var lastChildTemplateNode = null;
+                for (var c = 0; c < children.length; c++) {
+                    var childTemplateNode = children[c];
+                    if (childTemplateNode.condition != null && 
+                        childTemplateNode.condition.test == "case") {
+                        
+                        if (values.contains(childTemplateNode.condition.value)) {
+                            Exhibit.Lens._constructFromLensTemplateNode(
+                                roots, rootValueTypes, childTemplateNode, parentElmt, exhibit, job);
+                                
+                            return;
+                        }
+                    } else if (typeof childTemplateNode != "string") {
+                        lastChildTemplateNode = childTemplateNode;
+                    }
+                }
+            }
+            
+            if (lastChildTemplateNode != null) {
+                Exhibit.Lens._constructFromLensTemplateNode(
+                    roots, rootValueTypes, lastChildTemplateNode, parentElmt, exhibit, job);
+            }
+            return;
         }
     }
     
@@ -463,7 +520,6 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
         elmt[handler.name] = handler.code;
     }
     
-    var children = templateNode.children;
     if (templateNode.control != null) {
         switch (templateNode.control) {
         case "copy-button":
@@ -599,7 +655,7 @@ Exhibit.Lens._constructEditFromLensTemplateNode = function(
     
     var database = exhibit.getDatabase();
     if (templateNode.condition != null) {
-        if (templateNode.condition.test == "exists") {
+        if (templateNode.condition.test == "if-exists") {
             if (!templateNode.condition.expression.testExists(
                     { "value" : value }, 
                     { "value" : valueType },

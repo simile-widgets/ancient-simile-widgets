@@ -103,15 +103,33 @@ Exhibit.Expression.parseSeveral = function(s) {
         }
         return term;
     };
-    var parseExpression = function() {
-        var expression = parseTerm();
+    var parseSubExpression = function() {
+        var subExpression = parseTerm();
         while (token != null && 
             token.type == Exhibit.Expression._Token.OPERATOR && 
             (token.value == "+" || token.value == "-")) {
             var operator = token.value;
             consumeToken();
             
-            expression = new Exhibit.Expression._Operator(operator, [ expression, parseTerm() ]);
+            subExpression = new Exhibit.Expression._Operator(operator, [ subExpression, parseTerm() ]);
+        }
+        return subExpression;
+    };
+    var parseExpression = function() {
+        var expression = parseSubExpression();
+        while (token != null && 
+            token.type == Exhibit.Expression._Token.OPERATOR && 
+            (token.value == "=" || 
+             token.value == "!=" || 
+             token.value == "<" || 
+             token.value == "<=" || 
+             token.value == ">" || 
+             token.value == ">="
+            )) {
+            var operator = token.value;
+            consumeToken();
+            
+            expression = new Exhibit.Expression._Operator(operator, [ expression, parseSubExpression() ]);
         }
         return expression;
     };
@@ -161,7 +179,7 @@ Exhibit.Expression._tokenizeNoStringLiterals = function(s) {
         } else if (token in Exhibit.Expression._delimiters) {
             results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.DELIMITER, token));
         } else if (token in Exhibit.Expression._operators) {
-            results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.OPERTOR, token));
+            results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.OPERATOR, token));
         } else if (token in Exhibit.Functions) {
             results.push(new Exhibit.Expression._Token(Exhibit.Expression._Token.FUNCTION, token));
         } else if (token == "foreach") {
@@ -523,23 +541,32 @@ Exhibit.Expression._Operator.prototype.evaluate = function(
         args.push(this._args[i].evaluate(roots, rootValueTypes, defaultRootName, database));
     }
     
-    var o = Exhibit.Expression._operators[this._operator].f;
-    args[0].values.visit(function(v1) {
-        if (!(typeof v1 == "number")) {
-            v1 = parseFloat(v1);
-        }
-    
-        args[1].values.visit(function(v2) {
-            if (!(typeof v2 == "number")) {
-                v2 = parseFloat(v2);
+    var operator = Exhibit.Expression._operators[this._operator];
+    var f = operator.f;
+    if (operator.argumentType == "number") {
+        args[0].values.visit(function(v1) {
+            if (!(typeof v1 == "number")) {
+                v1 = parseFloat(v1);
             }
-            
-            set.add(o(v1, v2));
+        
+            args[1].values.visit(function(v2) {
+                if (!(typeof v2 == "number")) {
+                    v2 = parseFloat(v2);
+                }
+                
+                set.add(f(v1, v2));
+            });
         });
-    });
+    } else {
+        args[0].values.visit(function(v1) {
+            args[1].values.visit(function(v2) {
+                set.add(f(v1, v2));
+            });
+        });
+    }
     
     return {
-        valueType:  "number",
+        valueType:  operator.valueType,
         values:     set,
         count:      set.size()
     };
@@ -547,16 +574,48 @@ Exhibit.Expression._Operator.prototype.evaluate = function(
 
 Exhibit.Expression._operators = {
     "+" : {
+        argumentType: "number",
+        valueType: "number",
         f: function(a, b) { return a + b; }
     },
     "-" : {
+        argumentType: "number",
+        valueType: "number",
         f: function(a, b) { return a - b; }
     },
     "*" : {
+        argumentType: "number",
+        valueType: "number",
         f: function(a, b) { return a * b; }
     },
     "/" : {
+        argumentType: "number",
+        valueType: "number",
         f: function(a, b) { return a / b; }
+    },
+    "=" : {
+        valueType: "boolean",
+        f: function(a, b) { return a == b; }
+    },
+    "<" : {
+        argumentType: "number",
+        valueType: "boolean",
+        f: function(a, b) { return a < b; }
+    },
+    ">" : {
+        argumentType: "number",
+        valueType: "boolean",
+        f: function(a, b) { return a > b; }
+    },
+    "<=" : {
+        argumentType: "number",
+        valueType: "boolean",
+        f: function(a, b) { return a <= b; }
+    },
+    ">=" : {
+        argumentType: "number",
+        valueType: "boolean",
+        f: function(a, b) { return a >= b; }
     }
 }
 

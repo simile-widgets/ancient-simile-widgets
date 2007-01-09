@@ -88,7 +88,7 @@ Exhibit.Functions["add"] = {
     }
 };
 
-Exhibit.Functions["multiple"] = {
+Exhibit.Functions["multiply"] = {
     f: function(args) {
         var product = 1;
         for (var i = 0; i < args.length; i++) {
