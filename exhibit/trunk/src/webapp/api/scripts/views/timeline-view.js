@@ -202,7 +202,36 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
     
     this._getDurations = (getDurations != null) ? getDurations : function(itemID, database) { return {}; };
     this._getMarkerKey = (getMarkerKey != null) ? getMarkerKey : function(itemID, database) { return ""; };
-        
+    
+    var getEventLabel = null;
+    var makeEventLabel = function(s) {
+        var expression = Exhibit.Expression.parse(s);
+        return function(itemID, database) {
+            var label = expression.evaluateSingle(
+                { "value" : itemID }, 
+                { "value" : "item" }, 
+                "value",
+                database
+            ).value;
+            
+            return label != null ? label : itemID;
+        }
+    };
+    try {
+        if (domConfiguration != null) {
+            var eventLabel = Exhibit.getAttribute(domConfiguration, "eventLabel");
+            if (eventLabel != null && eventLabel.length > 0) {
+                getEventLabel = makeEventLabel(eventLabel);
+            }
+        }
+        if ("eventLabel" in configuration) {
+            getEventLabel = makeEventLabel(configuration.eventLabel);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing eventLabel configuration of timeline view", e);
+    }
+    this._getEventLabel = (getEventLabel != null) ? getEventLabel : makeEventLabel(".label");
+    
     this._durationCache = new Object();
     this._markerKeyCache = new Object();
     this._markerCache = new Object();
@@ -350,7 +379,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 null,
                 null,
                 duration.end == null, // is instant?
-                database.getObject(itemID, "label"),
+                self._getEventLabel(itemID, database),
                 "no description",
                 null, // image url
                 null, // link url
