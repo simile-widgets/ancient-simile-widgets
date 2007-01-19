@@ -90,6 +90,16 @@
             }
         };
         
+        var defaultClientLocales = ("language" in navigator ? navigator.language : navigator.browserLanguage).split(";");
+        for (var l = 0; l < defaultClientLocales.length; l++) {
+            var locale = defaultClientLocales[l];
+            var segments = locale.split("-");
+            if (segments.length > 1) {
+                locales.push(segments[0]);
+            }
+            locales.push(locale);
+        }
+        
         if (typeof Exhibit_urlPrefix == "string") {
             Exhibit.urlPrefix = Exhibit_urlPrefix;
             if ("Exhibit_parameters" in window) {

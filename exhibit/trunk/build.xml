@@ -60,5 +60,14 @@
         	<include name="**/*.css" />
         </fileset>
     </concat>
+    
+    <jsmin output="src/webapp/api/locales/sp/bundle.js">
+        <fileset dir="src/webapp/api/locales/sp/scripts" />
+  	</jsmin>
+    <concat destfile="src/webapp/api/locales/sp/bundle.css">
+        <fileset dir="src/webapp/api/locales/sp/styles">
+        	<include name="**/*.css" />
+        </fileset>
+    </concat>
   </target>
 </project>
