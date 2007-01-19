@@ -92,7 +92,7 @@ Exhibit.BrowsePanel.prototype._reconstruct = function() {
     /*  Note that the order of facets never changes, although
         some might disappear and reappear at different times.
     */
-    
+    console.log(newFacets.length);
     if (newFacets.length > 0) {
         this._reconstructFacets(newFacets);
     } else {
@@ -101,8 +101,7 @@ Exhibit.BrowsePanel.prototype._reconstruct = function() {
 };
     
 Exhibit.BrowsePanel.prototype._showHelp = function() {
-    this._div.innerHTML = "";
-    Exhibit.BrowsePanel.theme.constructConfigureHelpDom(this._exhibit, this._div);
+    //Exhibit.BrowsePanel.theme.constructConfigureHelpDom(this._exhibit, this._dom.facetContainer);
 };
 
 Exhibit.BrowsePanel.prototype._reconstructFacets = function(newFacets) {

@@ -314,6 +314,58 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
     setTimeout(fNext, 0);
 };
 
+Exhibit._Impl.prototype.loadGoogleSpreadsheetsData = function(urls, fDone) {
+    var exhibit = this;
+    if (urls instanceof Array) {
+        urls = [].concat(urls);
+    } else {
+        urls = [ urls ];
+    }
+    
+    var beforeCount = exhibit.getDatabase().getAllItemsCount();
+    
+    var fDone2 = function(o) {
+        var url = urls[0];
+        try {
+            exhibit._loadGoogleSpreadsheetsData(o, url);
+        } catch (e) {
+            SimileAjax.Debug.exception("Exhibit: Error loading next Google Spreadsheets data at " + url, e);
+        }
+        
+        urls.shift();
+        fNext();
+    };
+    
+    var callbackName = "callback" + Math.floor(Math.random() * 1000);
+    window[callbackName] = fDone2;
+    
+    var fNext = function() {
+        if (urls.length > 0) {
+            SimileAjax.includeJavascriptFile(document,
+                urls[0] + "?alt=json-in-script&callback=" + callbackName);
+        } else {
+            try {
+                if (fDone != null) {
+                    fDone();
+                } else {
+                    var browseEngine = exhibit.getBrowseEngine();
+                    var database = exhibit.getDatabase();
+                    if (beforeCount == 0 && database.getAllItemsCount() > 0) {
+                        browseEngine.setRootCollection(database.getAllItems());
+                    }
+                }
+            } catch (e) {
+                SimileAjax.Debug.exception("Exhibit: Error loading next Google Spreadsheets data", e);
+            } finally {
+                exhibit._hideBusyIndicator();
+            }
+        }
+    };
+    
+    exhibit._showBusyIndicator();
+    setTimeout(fNext, 10);
+};
+
 Exhibit._Impl.prototype.loadDataFromDomNode = function(node) {
     window.alert("not yet implemented");
 };
@@ -558,6 +610,66 @@ Exhibit._Impl.prototype._loadJSON = function(o, url) {
     if ("items" in o) {
         this._database.loadItems(o.items, url);
     }
+};
+
+Exhibit._Impl.prototype._loadGoogleSpreadsheetsData = function(o, url) {
+    var items = [];
+    var properties = {};
+    var types = {};
+    var valueTypes = { "text" : true, "number" : true, "item" : true, "url" : true, "boolean" : true };
+    
+    var entries = o.feed.entry;
+    for (var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        var item = { label: entry.title.$t };
+        var fields = entry.content.$t;
+        
+        var openBrace = fields.indexOf("{");
+        while (openBrace >= 0) {
+            var closeBrace = fields.indexOf("}", openBrace+1);
+            if (closeBrace < 0) {
+                break;
+            }
+            
+            var fieldSpec = fields.substring(openBrace+1, closeBrace).trim().split(":");
+            openBrace = fields.indexOf("{", closeBrace+1);
+            
+            var fieldValues = openBrace > 0 ? fields.substring(closeBrace+1, openBrace) : fields.substr(closeBrace+1);
+            fieldValues = fieldValues.replace(/^\:\s+|,\s+$/g, "");
+            
+            var fieldName = fieldSpec[0].trim();
+            var property = properties[fieldName];
+            if (!(property)) {
+                var fieldDetails = fieldSpec.length > 1 ? fieldSpec[1].split(",") : [];
+                property = {};
+                
+                for (var d = 0; d < fieldDetails.length; d++) {
+                    var detail = fieldDetails[d].trim();
+                    var property = { single: false };
+                    if (detail in valueTypes) {
+                        property.valueType = detail;
+                    } else if (detail == "single") {
+                        property.single = true;
+                    }
+                }
+                
+                properties[fieldName] = property;
+            }
+            
+            if (!property.single) {
+                fieldValues = fieldValues.split(";");
+                for (var v = 0; v < fieldValues.length; v++) {
+                    fieldValues[v] = fieldValues[v].trim();
+                }
+            }
+            item[fieldName] = fieldValues;
+        }
+        items.push(item);
+    }
+  
+    this._database.loadTypes(types, url);
+    this._database.loadProperties(properties, url);
+    this._database.loadItems(items, url);
 };
 
 Exhibit._Impl.prototype._parseURL = function() {
