@@ -92,7 +92,7 @@ Exhibit.BrowsePanel.prototype._reconstruct = function() {
     /*  Note that the order of facets never changes, although
         some might disappear and reappear at different times.
     */
-    console.log(newFacets.length);
+    
     if (newFacets.length > 0) {
         this._reconstructFacets(newFacets);
     } else {
