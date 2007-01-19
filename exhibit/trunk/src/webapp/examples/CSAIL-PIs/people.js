@@ -152,7 +152,7 @@
 			"type" :      "Person",
 			"tower" :     "Common/other",
 			"label" :     "Nicholas Roy",
-			"group" :     "unknown"
+			"group" :     "robotics, vision, sensor networks group"
 		},
 		{
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/williams.jpg",
@@ -709,7 +709,7 @@
 			"tower" :     "Common/other",
 			"label" :     "Seth Teller",
 			"group" :     [
-				"computer graphics group",
+				"robotics, vision, sensor networks group",
 				"visual surveillance and monitoring group"
 			]
 		},
@@ -1194,7 +1194,7 @@
 			"type" :      "Person",
 			"tower" :     "Common/other",
 			"label" :     "John Leonard",
-			"group" :     "unknown"
+			"group" :     "robotics, vision, sensor networks group"
 		},
 		{
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/oreilly.jpg",
@@ -1318,7 +1318,7 @@
 			"type" :      "Person",
 			"tower" :     "Common/other",
 			"label" :     "Russ Tedrake",
-			"group" :     "robot locomotion group"
+			"group" :     [ "robot locomotion group", "robotics, vision, sensor networks group" ]
 		},
 		{
 			"photo" :     "http://www.csail.mit.edu/biographies/PI/72dpi/balakrishnan.jpg",
@@ -1463,9 +1463,6 @@
             valueType: "url"
         },
         photo: {
-            valueType: "url"
-        },
-        email: {
             valueType: "url"
         }
     }
