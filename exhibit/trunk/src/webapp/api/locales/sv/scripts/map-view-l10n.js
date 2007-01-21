@@ -5,10 +5,10 @@
  
 Exhibit.MapView.l10n = {
     viewLabel:          "Karta",
-    viewTooltip:        "Visa på karta",
+    viewTooltip:        "Visa p\xE5 karta",
     mixedLegendKey:     "Blandat",
-    colorLegendTitle:   "Färgbetydelser",
+    colorLegendTitle:   "F\xE4rgbetydelser",
     formatMappableCount: function(count) {
-        return "Bara " + count + " kunde visas på kartan.";
+        return "Bara " + count + " kunde visas p\xE5 kartan.";
     }
 };

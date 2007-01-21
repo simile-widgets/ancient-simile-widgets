@@ -5,10 +5,10 @@
 
 Exhibit.TimelineView.l10n = {
     viewLabel:              "Tidslinje",
-    viewTooltip:            "Visa på tidslinje",
-    colorLegendTitle:       "Färgbetydelser",
+    viewTooltip:            "Visa p\xE5 tidslinje",
+    colorLegendTitle:       "F\xE4rgbetydelser",
     relayoutButtonLabel:    "Rita om",
     formatMappableCount: function(count) {
-        return "Bara " + count + " kunde placeras på tidslinjen.";
+        return "Bara " + count + " kunde placeras p\xE5 tidslinjen.";
     }
 };

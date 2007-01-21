@@ -5,16 +5,16 @@
 
 Exhibit.OrderedViewFrame.l10n = {
     thenSortByLabel:    "och sedan efter...",
-    removeOrderLabel:   "Ta bort det här sorteringskriteriet",
+    removeOrderLabel:   "Ta bort det h\xE4r sorteringskriteriet",
     formatSortActionTitle: function(propertyLabel, sortLabel) {
         return "Sorterat efter " + propertyLabel + " (" + sortLabel + ")";
     },
     formatRemoveOrderActionTitle: function(propertyLabel, sortLabel) {
         return "Ta bort sorteringskriteriet " + propertyLabel + " (" + sortLabel + ")";
     },
-    resetActionTitle:   "Återställ",
+    resetActionTitle:   "Återst\xE4ll",
     formatDontShowAll: function(limitCount) {
-        return "Visa bara de första  " + limitCount + " resultaten";
+        return "Visa bara de f\xD6rsta  " + limitCount + " resultaten";
     },
     formatShowAll: function(count) {
         return "Visa samtliga " + count + " result";
@@ -40,5 +40,5 @@ Exhibit.OrderedViewFrame.l10n = {
 
     showDuplicates: "visa dubletter",
     showDuplicatesActionTitle: "visa dubletter",
-    hideDuplicatesActionTitle: "göm dubletter"
+    hideDuplicatesActionTitle: "g\xD6m dubletter"
 };

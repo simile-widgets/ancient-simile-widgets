@@ -4,11 +4,11 @@
  */
  
 Exhibit.ListFacet.l10n = {
-    clearSelectionsTooltip:     "ångra dessa val",
+    clearSelectionsTooltip:     "\xE5ngra dessa val",
     groupByLink:                "gruppera efter",
-    collapseLink:               "slå samman",
+    collapseLink:               "sl\xE5 samman",
     expandLink:                 "expandera",
-    toggleGroupTooltip:         "slå av/på grupp",
+    toggleGroupTooltip:         "sl\xE5 av/p\xE5 grupp",
     groupByLabel:               "gruppera efter",
     groupTheGroupsByLabel:      "gruppera grupperna efter"
 };

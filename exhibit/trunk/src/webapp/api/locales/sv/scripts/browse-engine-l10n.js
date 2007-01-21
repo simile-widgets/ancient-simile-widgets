@@ -5,6 +5,6 @@
  
 Exhibit.BrowseEngine.l10n = {
     errorParsingFacetExpressionMessage: function(expression) {
-        return "Uttrycket '" + expression + "' för att ange facett är ogiltigt.";
+        return "Uttrycket '" + expression + "' f\xD6r att ange facett \xE4r ogiltigt.";
     }
 };
