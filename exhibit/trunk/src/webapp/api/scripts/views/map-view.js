@@ -136,8 +136,9 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
      *  Map settings
      */
     this._mapSettings = {
-        center:         [ 20, 0 ],
-        zoom:           2,
+// set by the bounds of all plotted markers unless set up in page configuration
+//      center:         [ 20, 0 ],
+//      zoom:           2,
         size:           "small",
         scaleControl:   true,
         type:           "normal"
@@ -339,9 +340,9 @@ Exhibit.MapView.prototype._initializeUI = function() {
         this._dom.map = new GMap2(mapDiv);
         this._dom.map.enableDoubleClickZoom();
         this._dom.map.enableContinuousZoom();
-        
-        this._dom.map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
-        this._dom.map.addControl(settings.size == "small" ? 
+
+        this._dom.map.setCenter(new GLatLng(20, 0), 2);
+        this._dom.map.addControl(settings.size == "small" ?
             new GSmallMapControl() : new GLargeMapControl());
         
         if (settings.scaleControl) {
@@ -427,6 +428,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
         
         var usedKeys = {};
         var shape = Exhibit.MapView._defaultMarkerShape;
+        var bounds = new GLatLngBounds();
         var addMarkerAtLocation = function(locationData) {
             var items = locationData.items;
             
@@ -457,10 +459,11 @@ Exhibit.MapView.prototype._reconstruct = function() {
                     locationData.items.length > 50 ? "..." : locationData.items.length
                 );
             }
-            
+
             var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
             var marker = new GMarker(point, icon);
-            
+            bounds.extend(point);
+
             GEvent.addListener(marker, "click", function() { 
                 marker.openInfoWindow(self._createInfoWindow(items)); 
             });
@@ -469,7 +472,11 @@ Exhibit.MapView.prototype._reconstruct = function() {
         for (latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
         }
-        
+        if (typeof this._mapSettings.zoom == "undefined")
+            self._dom.map.setZoom(self._dom.map.getBoundsZoomLevel(bounds));
+        if (typeof this._mapSettings.center == "undefined")
+            self._dom.map.setCenter(bounds.getCenter());
+
         var legendLabels = [];
         var legendIcons = [];
         var shape = Exhibit.MapView._defaultMarkerShape;
