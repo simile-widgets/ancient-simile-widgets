@@ -141,11 +141,14 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
     /*
      *  Fix up configuration in case author makes mistakes
      */
-    if (this._columns.length == 0) {
+    var database = this._exhibit.getDatabase();
+    var propertyIDs = database.getAllProperties();
+    for (var i = 0; i < propertyIDs.length; i++) {
+        var propertyID = propertyIDs[i];
         this._columns.push(
-            {   expression: Exhibit.Expression.parse(".label"),
+            {   expression: Exhibit.Expression.parse("." + propertyID),
                 styler:     null,
-                label:      exhibit.getDatabase().getProperty("label").getLabel(),
+                label:      database.getProperty(propertyID).getLabel(),
                 format:     "list"
             }
         );
