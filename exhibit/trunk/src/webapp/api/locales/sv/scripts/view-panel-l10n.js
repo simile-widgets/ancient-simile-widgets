@@ -4,7 +4,7 @@
  */
 
 Exhibit.ViewPanel.l10n = {
-    resetFiltersLabel:  "återställ",
+    resetFiltersLabel:  "visa alla",
     createSelectViewActionTitle: function(viewLabel) {
         return "välj vyn " + viewLabel;
     },
@@ -56,11 +56,11 @@ Exhibit.ViewPanel.l10n = {
                 field:      "filteredDetailsSpan",
                 style:      { display: "none" },
                 children: [
-                    " filtrerade från ",
+                    " av ",
                     {   tag:    "span",
                         field:  "originalCountSpan"
                     },
-                    " av ursprungliga (",
+                   " totalt (",
                     {   elmt:  resetActionLink,
                         title: "Välj bort alla filter och se samtliga"
                     },
