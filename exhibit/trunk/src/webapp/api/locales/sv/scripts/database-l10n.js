@@ -26,8 +26,8 @@ Exhibit.Database.l10n = {
     uriProperty: {
         label:                  "URI",
         pluralLabel:            "URIer",
-        reverseLabel:           "URI f\xD6r",
-        reversePluralLabel:     "URIer f\xD6r",
+        reverseLabel:           "URI för",
+        reversePluralLabel:     "URIer för",
         groupingLabel:          "URIer",
         reverseGroupingLabel:   "saker med dessa URIer"
     },
@@ -37,16 +37,16 @@ Exhibit.Database.l10n = {
             descending: "z - a"
         },
         "number": {
-            ascending:  "l\xE4gst f\xD6rst",
-            descending: "h\xD6gst f\xD6rst"
+            ascending:  "lägst först",
+            descending: "högst först"
         },
         "date": {
-            ascending:  "tidigast f\xD6rst",
-            descending: "nyligast f\xD6rst"
+            ascending:  "tidigast först",
+            descending: "nyligast först"
         },
         "boolean": {
-            ascending:  "falskt f\xD6rst",
-            descending: "sant f\xD6rst"
+            ascending:  "falskt först",
+            descending: "sant först"
         },
         "item": {
             ascending:  "a - z",

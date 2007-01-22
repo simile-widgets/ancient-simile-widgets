@@ -5,5 +5,5 @@
  
 Exhibit.BrowsePanel.l10n = {
     notConfigureMessage:  "Du har inte konfigurerat 'exhibit-browse-panel'.",
-    learnHowMessage:      "Hur d\xE5?"
+    learnHowMessage:      "Hur då?"
 };

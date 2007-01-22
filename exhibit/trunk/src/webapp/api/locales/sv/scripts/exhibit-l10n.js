@@ -7,21 +7,21 @@ Exhibit.l10n = {
     missingLabel:   "saknas",
     missingSortKey: "(saknas)",
     notApplicableSortKey: "(n/a)",
-    itemLinkLabel:  "l\xE4nk",
+    itemLinkLabel:  "länk",
 
     busyIndicatorMessage:       "Arbetar...",
-    showDocumentationMessage:   "Relevant dokumentation kommer visas efter det h\xE4r meddelandet.",
-    showJavascriptValidationMessage: "Felet f\xD6rklaras mer ing\xE5ende efter det h\xE4r meddelandet.",
+    showDocumentationMessage:   "Relevant dokumentation kommer visas efter det här meddelandet.",
+    showJavascriptValidationMessage: "Felet förklaras mer ingående efter det här meddelandet.",
 
-    showJsonValidationMessage: "Felet f\xD6rklaras mer ing\xE5ende efter det h\xE4r meddelandet.",
-    showJsonValidationFormMessage: "Vi skickar dig till en webtj\xE4nst du kan ladda upp din kod till f\xD6r fels\xD6kning efter det h\xE4r meddelandet.",
+    showJsonValidationMessage: "Felet förklaras mer ingående efter det här meddelandet.",
+    showJsonValidationFormMessage: "Vi skickar dig till en webtjänst du kan ladda upp din kod till för felsökning efter det här meddelandet.",
 
     badJsonMessage: function(url, e) {
-        return "JSON-filen\n  " + url + "\ninneh\xE5ller fel:\n\n" + e;
+        return "JSON-filen\n  " + url + "\ninnehåller fel:\n\n" + e;
     },
     failedToLoadDataFileMessage: function(url) {
         return "Kunde inte hitta filen\n  " + url +
-             "\nKontrollera att filnamnet \xE4r korrekt.";
+             "\nKontrollera att filnamnet är korrekt.";
     },
 
     /*
@@ -29,14 +29,14 @@ Exhibit.l10n = {
      */
     copyButtonLabel:                "Kopiera",
     copyAllButtonLabel:             "Kopiera allt",
-    copyDialogBoxCloseButtonLabel:  "St\xE4ng",
+    copyDialogBoxCloseButtonLabel:  "Stäng",
     copyDialogBoxPrompt:
-        "Kopiera det h\xE4r till klippbordet precis som du skulle g\xD6ra f\xD6r annan text. Tryck ESC f\xD6r att st\xE4nga den h\xE4r dialogen.",
+        "Kopiera det här till klippbordet precis som du skulle göra för annan text. Tryck ESC för att stänga den här dialogen.",
 
     /*
      *  Focusdialog box
      */
-    focusDialogBoxCloseButtonLabel:  "St\xE4ng",
+    focusDialogBoxCloseButtonLabel:  "Stäng",
 
     /*
      *  Common exporters' labels
@@ -44,7 +44,7 @@ Exhibit.l10n = {
     rdfXmlExporterLabel:            "RDF/XML",
     smwExporterLabel:               "Semantisk wikitext",
     exhibitJsonExporterLabel:       "Exhibit JSON",
-    tsvExporterLabel:               "Tabseparerade v\xE4rden",
+    tsvExporterLabel:               "Tabseparerade värden",
 
     /*
      *  List composition

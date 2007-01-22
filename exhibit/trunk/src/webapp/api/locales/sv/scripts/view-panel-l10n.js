@@ -4,9 +4,9 @@
  */
 
 Exhibit.ViewPanel.l10n = {
-    resetFiltersLabel:  "\xE5terst\xE4ll",
+    resetFiltersLabel:  "återställ",
     createSelectViewActionTitle: function(viewLabel) {
-        return "v\xE4lj vyn " + viewLabel;
+        return "välj vyn " + viewLabel;
     },
     createNoResultsTemplate: function(
         countClass,
@@ -25,7 +25,7 @@ Exhibit.ViewPanel.l10n = {
             ". ",
             {   tag:        "span",
                 className:  detailsClass,
-                children:   [ "V\xE4lj bort n\xE5gra filter f\xD6r fler resultat." ]
+                children:   [ "Välj bort några filter för fler resultat." ]
             }
         ];
     },
@@ -56,13 +56,13 @@ Exhibit.ViewPanel.l10n = {
                 field:      "filteredDetailsSpan",
                 style:      { display: "none" },
                 children: [
-                    " filtrerade fr\xE5n ",
+                    " filtrerade från ",
                     {   tag:    "span",
                         field:  "originalCountSpan"
                     },
                     " av ursprungliga (",
                     {   elmt:  resetActionLink,
-                        title: "V\xE4lj bort alla filter och se samtliga"
+                        title: "Välj bort alla filter och se samtliga"
                     },
                     ")"
                 ]
@@ -70,13 +70,13 @@ Exhibit.ViewPanel.l10n = {
         ];
     },
 
-    missingViewClassMessage: "Specifikationen f\xD6r en av vyerna saknas i f\xE4ltet viewClass.",
+    missingViewClassMessage: "Specifikationen för en av vyerna saknas i fältet viewClass.",
     viewClassNotFunctionMessage: function(expr) {
-        return "V\xE4rdet '" + expr + "' du angivit f\xD6r attributet viewClass\n" +
-            "f\xD6r en av dessa vyer var inte namnet p\xE5 en javascriptfunktion.";
+        return "Värdet '" + expr + "' du angivit för attributet viewClass\n" +
+            "för en av dessa vyer var inte namnet på en javascriptfunktion.";
     },
     badViewClassMessage: function(expr) {
-        return "V\xE4rdet '" + expr + "' du angivit f\xD6r attributet viewClass\n" +
-            "f\xD6r en av dessa vyer \xE4r inte ett giltigt javascriptuttryck.";
+        return "Värdet '" + expr + "' du angivit för attributet viewClass\n" +
+            "för en av dessa vyer är inte ett giltigt javascriptuttryck.";
     }
 };
