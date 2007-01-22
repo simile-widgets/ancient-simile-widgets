@@ -314,17 +314,22 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
     setTimeout(fNext, 0);
 };
 
+// fDone callback gets passed the feed object (or array of feed objects, if
+// called with an array of urls - note that the order is not yet guaranteed
+// to be the same as that of the urls array!)
 Exhibit._Impl.prototype.loadGoogleSpreadsheetsData = function(urls, fDone) {
-    var exhibit = this;
+    var exhibit = this, feeds = [], singleFeed = false;
     if (urls instanceof Array) {
         urls = [].concat(urls);
     } else {
+        singleFeed = true;
         urls = [ urls ];
     }
     
     var beforeCount = exhibit.getDatabase().getAllItemsCount();
     
     var fDone2 = function(o) {
+        feeds.push( o );
         var url = urls[0];
         try {
             exhibit._loadGoogleSpreadsheetsData(o, url);
@@ -346,7 +351,7 @@ Exhibit._Impl.prototype.loadGoogleSpreadsheetsData = function(urls, fDone) {
         } else {
             try {
                 if (fDone != null) {
-                    fDone();
+                    fDone( singleFeed ? feeds[0] : feeds );
                 } else {
                     var browseEngine = exhibit.getBrowseEngine();
                     var database = exhibit.getDatabase();
