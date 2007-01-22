@@ -141,17 +141,21 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
     /*
      *  Fix up configuration in case author makes mistakes
      */
-    var database = this._exhibit.getDatabase();
-    var propertyIDs = database.getAllProperties();
-    for (var i = 0; i < propertyIDs.length; i++) {
-        var propertyID = propertyIDs[i];
-        this._columns.push(
-            {   expression: Exhibit.Expression.parse("." + propertyID),
-                styler:     null,
-                label:      database.getProperty(propertyID).getLabel(),
-                format:     "list"
+    if (this._columns.length == 0) {
+        var database = this._exhibit.getDatabase();
+        var propertyIDs = database.getAllProperties();
+        for (var i = 0; i < propertyIDs.length; i++) {
+            var propertyID = propertyIDs[i];
+            if (propertyID != "uri") {
+                this._columns.push(
+                    {   expression: Exhibit.Expression.parse("." + propertyID),
+                        styler:     null,
+                        label:      database.getProperty(propertyID).getLabel(),
+                        format:     "list"
+                    }
+                );
             }
-        );
+        }
     }
     this._sortColumn = Math.max(0, Math.min(this._sortColumn, this._columns.length - 1));
     
