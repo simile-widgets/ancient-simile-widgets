@@ -428,10 +428,13 @@ Exhibit.MapView.prototype._reconstruct = function() {
         
         var usedKeys = {};
         var shape = Exhibit.MapView._defaultMarkerShape;
-        var bounds = new GLatLngBounds();
+        var bounds;
         var addMarkerAtLocation = function(locationData) {
             var items = locationData.items;
-            
+            if( !bounds ) {
+                bounds = new GLatLngBounds();
+            }
+
             var markerData;
             if (locationData.markerKey == null) {
                 markerData = Exhibit.MapView._mixMarker;
@@ -472,9 +475,9 @@ Exhibit.MapView.prototype._reconstruct = function() {
         for (latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
         }
-        if (typeof this._mapSettings.zoom == "undefined")
+        if (bounds && typeof this._mapSettings.zoom == "undefined")
             self._dom.map.setZoom(self._dom.map.getBoundsZoomLevel(bounds));
-        if (typeof this._mapSettings.center == "undefined")
+        if (bounds && typeof this._mapSettings.center == "undefined")
             self._dom.map.setCenter(bounds.getCenter());
 
         var legendLabels = [];
