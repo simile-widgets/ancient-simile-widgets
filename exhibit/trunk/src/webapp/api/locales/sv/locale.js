@@ -4,20 +4,20 @@
  */
 (function() {
     var javascriptFiles = [
-        "exhibit-l10n-spanish.js",
-        "database-l10n-spanish.js",
-        "browse-engine-l10n-spanish.js",
-        "control-panel-l10n-spanish.js",
-        "browse-panel-l10n-spanish.js",
-        "lens-l10n-spanish.js",
-        "list-facet-l10n-spanish.js",
-        "view-panel-l10n-spanish.js",
-        "ordered-view-frame-l10n-spanish.js",
-        "tile-view-l10n-spanish.js",
-        "map-view-l10n-spanish.js",
-        "timeline-view-l10n-spanish.js",
-        "thumbnail-view-l10n-spanish.js",
-        "tabular-view-l10n-spanish.js"
+        "exhibit-l10n.js",
+        "database-l10n.js",
+        "browse-engine-l10n.js",
+        "control-panel-l10n.js",
+        "browse-panel-l10n.js",
+        "lens-l10n.js",
+        "list-facet-l10n.js",
+        "view-panel-l10n.js",
+        "ordered-view-frame-l10n.js",
+        "tile-view-l10n.js",
+        "map-view-l10n.js",
+        "timeline-view-l10n.js",
+        "thumbnail-view-l10n.js",
+        "tabular-view-l10n.js"
     ];
     var cssFiles = [
     ];
