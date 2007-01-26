@@ -6,6 +6,12 @@
  */
 (function() {
     if (window.onload == null) {
-        window.onload = function() { window.exhibit = Exhibit.create(); };
+        var f = function() {
+            if (document.body.onload == null || document.body.onload == f) {
+                window.exhibit = Exhibit.create();
+            }
+        };
+        
+        window.onload = f;
     }
 })();
