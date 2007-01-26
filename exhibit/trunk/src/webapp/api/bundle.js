@@ -86,7 +86,7 @@ Exhibit.ControlPanel.prototype.getState=function(){return null;};Exhibit.Control
 
 /* create.js */
 
-(function(){if(window.onload==null){var f=function(){if(document.body.onload==null||document.body.onload==f){window.exhibit=Exhibit.create();}};window.onload=f;}})();
+(function(){if(document.body==null&&window.onload==null){var f=function(){if(document.body.onload==null||document.body.onload==f){window.exhibit=Exhibit.create();}};window.onload=f;}})();
 
 /* database.js */
 
