@@ -46,14 +46,19 @@ if (typeof SimileAjax == "undefined") {
     };
     SimileAjax.includeJavascriptFile = function(doc, url) {
         if (doc.body == null) {
-            doc.write("<script src='" + url + "' type='text/javascript'></script>");
-        } else {
-            var script = doc.createElement("script");
-            script.type = "text/javascript";
-            script.language = "JavaScript";
-            script.src = url;
-            getHead(doc).appendChild(script);
+            try {
+                doc.write("<script src='" + url + "' type='text/javascript'></script>");
+                return;
+            } catch (e) {
+                // fall through
+            }
         }
+        
+        var script = doc.createElement("script");
+        script.type = "text/javascript";
+        script.language = "JavaScript";
+        script.src = url;
+        getHead(doc).appendChild(script);
     };
     SimileAjax.includeJavascriptFiles = function(doc, urlPrefix, filenames) {
         for (var i = 0; i < filenames.length; i++) {
@@ -64,14 +69,19 @@ if (typeof SimileAjax == "undefined") {
     };
     SimileAjax.includeCssFile = function(doc, url) {
         if (doc.body == null) {
-            doc.write("<link rel='stylesheet' href='" + url + "' type='text/css'/>");
-        } else {
-            var link = doc.createElement("link");
-            link.setAttribute("rel", "stylesheet");
-            link.setAttribute("type", "text/css");
-            link.setAttribute("href", url);
-            getHead(doc).appendChild(link);
+            try {
+                doc.write("<link rel='stylesheet' href='" + url + "' type='text/css'/>");
+                return;
+            } catch (e) {
+                // fall through
+            }
         }
+        
+        var link = doc.createElement("link");
+        link.setAttribute("rel", "stylesheet");
+        link.setAttribute("type", "text/css");
+        link.setAttribute("href", url);
+        getHead(doc).appendChild(link);
     };
     SimileAjax.includeCssFiles = function(doc, urlPrefix, filenames) {
         for (var i = 0; i < filenames.length; i++) {
