@@ -1,4 +1,4 @@
-/*==================================================
+Ôªø/*==================================================
  *  Exhibit.ViewPanel English localization
  *==================================================
  */
@@ -69,13 +69,13 @@ Exhibit.ViewPanel.l10n = {
         ];
     },
     
-    missingViewClassMessage: "En la especificaciÛn de una de las vistas falta el campo viewClass.",
+    missingViewClassMessage: "En la especificaci√≥n de una de las vistas falta el campo viewClass.",
     viewClassNotFunctionMessage: function(expr) {
         return " El valor del atributo viewClass '" + expr + "' espeficicado\n" +
-            "en una de las vistas no se corresponde con una funciÛn Javascript.";
+            "en una de las vistas no se corresponde con una funci√≥n Javascript.";
     },
     badViewClassMessage: function(expr) {
         return "El valor del atributo viewClass '" + expr + "' especificado\n" +
-            "en una de las vistas no es una expresiÛn Javascript v·lida.";
+            "en una de las vistas no es una expresi√≥n Javascript v√°lida.";
     }
 };

@@ -1,4 +1,4 @@
-/*==================================================
+Ôªø/*==================================================
  *  Exhibit Spanish localization
  *==================================================
  */
@@ -10,11 +10,11 @@ Exhibit.l10n = {
     itemLinkLabel:  "link",
     
     busyIndicatorMessage:       "Procesando...",
-    showDocumentationMessage:   "Te enseÒaremos la documentaciÛn asociada despuÈs de este mensaje.",
-    showJavascriptValidationMessage: "Te explicaremos los detalles del error despuÈs de este mensaje.",
+    showDocumentationMessage:   "Te ense√±aremos la documentaci√≥n asociada despu√©s de este mensaje.",
+    showJavascriptValidationMessage: "Te explicaremos los detalles del error despu√©s de este mensaje.",
     
-    showJsonValidationMessage: "Te explicaremos los detalles del error despuÈs de este mensaje.",
-    showJsonValidationFormMessage: "Te redirigiremos a un servicio web donde podr·s subir y verificar tu cÛdigo despuÈs de este mensaje.",
+    showJsonValidationMessage: "Te explicaremos los detalles del error despu√©s de este mensaje.",
+    showJsonValidationFormMessage: "Te redirigiremos a un servicio web donde podr√°s subir y verificar tu c√≥digo despu√©s de este mensaje.",
     
     badJsonMessage: function(url, e) {
         return "El fichero de datos JSON\n  " + url + "\ncontiene errores:\n\n" + e;
@@ -30,7 +30,7 @@ Exhibit.l10n = {
     copyAllButtonLabel:             "Copiar todo",
     copyDialogBoxCloseButtonLabel:  "Cerrar",
     copyDialogBoxPrompt:            
-        "Copia este cÛdigo en tu clipboard como si fuera texto. Pulsa ESC para cerrar este cuadro de di·logo.",
+        "Copia este c√≥digo en tu clipboard como si fuera texto. Pulsa ESC para cerrar este cuadro de di√°logo.",
         
     /*
      *  Focusdialog box

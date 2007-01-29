@@ -1,4 +1,4 @@
-/*==================================================
+Ôªø/*==================================================
  *  Exhibit.Database Spanish localization
  *==================================================
  */
@@ -41,8 +41,8 @@ Exhibit.Database.l10n = {
             descending: "mayor primero"
         },
         "date": {
-            ascending:  "la m·s antigua primero",
-            descending: "la m·s reciente primero"
+            ascending:  "la m√°s antigua primero",
+            descending: "la m√°s reciente primero"
         },
         "boolean": {
             ascending:  "falso primero",

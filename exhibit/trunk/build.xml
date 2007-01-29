@@ -53,7 +53,9 @@
   	
   	<!-- ========== Locales ========== -->
     <jsmin output="src/webapp/api/locales/en/bundle.js" verbose="true">
-        <fileset dir="src/webapp/api/locales/en/scripts" />
+        <fileset dir="src/webapp/api/locales/en/scripts">
+        	<include name="**/*.js" />
+        </fileset>
   	</jsmin>
     <concat destfile="src/webapp/api/locales/en/bundle.css">
         <fileset dir="src/webapp/api/locales/en/styles">
@@ -62,7 +64,9 @@
     </concat>
     
     <jsmin output="src/webapp/api/locales/sp/bundle.js" verbose="true">
-        <fileset dir="src/webapp/api/locales/sp/scripts" />
+        <fileset dir="src/webapp/api/locales/sp/scripts">
+	    	<include name="**/*.js" />
+	    </fileset>
   	</jsmin>
     <concat destfile="src/webapp/api/locales/sp/bundle.css">
         <fileset dir="src/webapp/api/locales/sp/styles">
@@ -71,7 +75,9 @@
     </concat>
     
     <jsmin output="src/webapp/api/locales/sv/bundle.js" verbose="true">
-        <fileset dir="src/webapp/api/locales/sv/scripts" />
+        <fileset dir="src/webapp/api/locales/sv/scripts">
+        	<include name="**/*.js" />
+        </fileset>
   	</jsmin>
     <concat destfile="src/webapp/api/locales/sv/bundle.css">
         <fileset dir="src/webapp/api/locales/sv/styles">

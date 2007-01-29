@@ -1,9 +1,9 @@
-/*==================================================
+ï»¿/*==================================================
  *  Exhibit.BrowsePanel Spanish localization
  *==================================================
  */
  
 Exhibit.BrowsePanel.l10n = {
-    notConfigureMessage:  "Todavía no has configurado el panel de visualización.",
-    learnHowMessage:      "¡Aprende como hacerlo aquí!"
+    notConfigureMessage:  "TodavÃ­a no has configurado el panel de visualizaciÃ³n.",
+    learnHowMessage:      "Â¡Aprende como hacerlo aquÃ­!"
 };

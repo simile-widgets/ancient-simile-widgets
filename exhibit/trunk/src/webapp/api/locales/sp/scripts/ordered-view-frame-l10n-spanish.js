@@ -1,4 +1,4 @@
-/*==================================================
+ï»¿/*==================================================
  *  Exhibit.OrderedViewFrame Spanish localization
  *==================================================
  */
@@ -10,7 +10,7 @@ Exhibit.OrderedViewFrame.l10n = {
         return "Ordenados por " + propertyLabel + " (" + sortLabel + ")";
     },
     formatRemoveOrderActionTitle: function(propertyLabel, sortLabel) {
-        return "Eliminar ordenación por " + propertyLabel + " (" + sortLabel + ")";
+        return "Eliminar ordenaciÃ³n por " + propertyLabel + " (" + sortLabel + ")";
     },
     resetActionTitle:   "Reset",
     formatDontShowAll: function(limitCount) {
@@ -34,8 +34,8 @@ Exhibit.OrderedViewFrame.l10n = {
             }
         ];
     },
-    groupedAsSorted: "agrupar según orden",
-    groupAsSortedActionTitle: "agrupar según orden",
+    groupedAsSorted: "agrupar segÃºn orden",
+    groupAsSortedActionTitle: "agrupar segÃºn orden",
     ungroupActionTitle: "sin agrupar",
     
     showDuplicates: "mostrar duplicados",
