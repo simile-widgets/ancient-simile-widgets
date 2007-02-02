@@ -292,6 +292,9 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             if (column.label == null) {
                 column.label = self._getColumnLabel(column.expression);
             }
+	    var colgroup = document.createElement("colgroup");
+	    colgroup.className = column.label;
+	    table.appendChild(colgroup);
 
             var td = document.createElement("th");
             Exhibit.TabularView.theme.createColumnHeader(
