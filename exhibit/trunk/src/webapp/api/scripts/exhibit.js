@@ -414,12 +414,18 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
     var th, ths = trs[0].getElementsByTagName("th");
     for( col = 0; th = ths[col]; col++ ) {
 	var field = textOf( th ).trim();
-	fields.push( field );
 	var attr = readAttributes( th, proplist );
+	var name = Exhibit.getAttribute( th, 'name' );
+	if( name ) {
+	    attr = attr || {};
+	    attr.label = attr.label || field;
+	    field = name;
+	}
 	if( attr ) {
 	    props[field] = attr;
 	    parsed.properties = props;
 	}
+	fields.push( field );
 	attr = readAttributes( th, columnProps ) || {};
 	if( attr.valueParser && attr.valueParser in window ) {
 	    attr.valueParser = window[attr.valueParser];
