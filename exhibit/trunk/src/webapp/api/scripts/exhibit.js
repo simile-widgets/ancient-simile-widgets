@@ -380,7 +380,7 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
     var readAttributes = function( node, attributes ) {
 	var result = {}, found = false, attr, value, i;
 	for( i = 0; attr = attributes[i]; i++ ) {
-	    value = node.getAttribute("ex:" + attr);
+	    value = Exhibit.getAttribute( node, attr );
 	    if( value ) {
 		result[attr] = value;
 		found = true;
@@ -402,7 +402,7 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
     var columnProps = [ "valueParser", "arity" ];
 
     var parsed = {}; // accumulator of all data we scrape up (for loadData)
-    var type = table.getAttribute( 'ex:type' );
+    var type = Exhibit.getAttribute( table, 'type' );
     var types = type && readAttributes( table, typelist );
     if( types ) {
 	parsed.types = {};
