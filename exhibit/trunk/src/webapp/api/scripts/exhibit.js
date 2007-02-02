@@ -399,6 +399,7 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
 		     "label", "reverseLabel",
 		     "pluralLabel", "reversePluralLabel",
 		     "groupingLabel", "reverseGroupingLabel" ];
+    var columnProps = [ "valueParser", "arity" ];
 
     var parsed = {}; // accumulator of all data we scrape up (for loadData)
     var type = table.getAttribute( 'ex:type' );
@@ -408,10 +409,10 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
 	parsed.types[type] = types;
     }
 
-    var fields = [], props = {}, i, j, k;
+    var fields = [], props = {}, columnData = [], row, col;
     var tr, trs = table.getElementsByTagName("tr");
     var th, ths = trs[0].getElementsByTagName("th");
-    for( i = 0; th = ths[i]; i++ ) {
+    for( col = 0; th = ths[col]; col++ ) {
 	var field = textOf( th ).trim();
 	fields.push( field );
 	var attr = readAttributes( th, proplist );
@@ -419,26 +420,49 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
 	    props[field] = attr;
 	    parsed.properties = props;
 	}
+	attr = readAttributes( th, columnProps ) || {};
+	if( attr.valueParser && attr.valueParser in window ) {
+	    attr.valueParser = window[attr.valueParser];
+	} else { // provide a default valueParser:
+	    if( attr.arity == "single" ) {
+		return function( text, node, rowNo, colNo ) {
+		    return text.trim();
+		};
+	    } else {
+		attr.valueParser = function( text, node, rowNo, colNo ) {
+		    if( text.indexOf(';') == -1 )
+			return text.trim();
+		    var data = text.split(';');
+		    for( var i = 0; i<data.length; i++ )
+			data[i] = data[i].trim();
+		    return data;
+		};
+	    }
+	}
+	columnData[col] = attr;
     }
+    // console.log( fields );
 
     var img, imgs = table.getElementsByTagName("img");
     while( img = imgs[0] ) // replace any images with their respective URLs
 	img.parentNode.replaceChild( document.createTextNode( img.src ), img );
 
     var items = [], td, data;
-    for( i = 1; tr = trs[i]; i++ ) {
+    for( row = 1; tr = trs[row]; row++ ) {
 	var item = {};
 	var tds = tr.getElementsByTagName("td");
-	for( j = 0; td = tds[j]; j++ ) {
-	    data = textOf( td ).trim();
-	    if( !data )
+	for( col = 0; td = tds[col]; col++ ) {
+	    data = columnData[col].valueParser( textOf( td ), td, row, col );
+	    if( data == null ) {
 		continue;
-	    if( data.indexOf(';') != -1 ) { // multi; value; node?
-		data = data.split(';');
-		for( k = 0; k<data.length; k++ )
-		    data[k] = data[k].trim();
 	    }
-	    item[fields[j]] = data;
+	    if( typeof data == 'object' && !(data instanceof Array) ) {
+		for( var property in data ) {
+		    item[property] = data[property];
+		}
+	    } else {
+		item[fields[col]] = data;
+	    }
 	}
 	items.push( item );
 	parsed.items = items;
