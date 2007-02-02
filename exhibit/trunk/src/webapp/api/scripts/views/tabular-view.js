@@ -16,7 +16,8 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
     this._sortColumn = 0;
     this._sortAscending = true;
     this._rowStyler = null;
-    
+    this._tableStyler = null;
+
     /*
      *  First, get configurations from the dom, if any
      */
@@ -83,6 +84,13 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
                 this._rowStyler = f;
             }
         }
+        s = Exhibit.getAttribute(domConfiguration, "tableStyler");
+        if (s != null) {
+            f = eval(s);
+            if (typeof f == "function") {
+                this._tableStyler = f;
+            }
+        }
     }
     
     /*
@@ -136,6 +144,9 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
     }
     if ("rowStyler" in configuration) {
         this._rowStyler = configuration.rowStyler;
+    }
+    if ("tableStyler" in configuration) {
+        this._tableStyler = configuration.tableStyler;
     }
     
     /*
@@ -239,7 +250,10 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         var table = document.createElement("table");
         table.cellPadding = 5;
         table.border = 1;
-        
+	if (this._tableStyler != null) {
+            this._tableStyler(table, database);
+        }
+
         /*
          *  Create item rows
          */
