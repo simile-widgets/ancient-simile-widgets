@@ -241,39 +241,12 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         table.border = 1;
         
         /*
-         *  Create the column headers
-         */
-        var th = table.createTHead();
-        var tr = th.insertRow(0);
-        var createColumnHeader = function(i) {
-            var column = self._columns[i];
-            if (column.label == null) {
-                column.label = self._getColumnLabel(column.expression);
-            }
-            
-            var td = document.createElement("th");
-            Exhibit.TabularView.theme.createColumnHeader(
-                exhibit, td, column.label, i == self._sortColumn, self._sortAscending,
-                function(elmt, evt, target) {
-                    self._doSort(i);
-                    SimileAjax.DOM.cancelEvent(evt);
-                    return false;
-                }
-            );
-                
-            tr.appendChild(td);
-        };
-        for (var i = 0; i < this._columns.length; i++) {
-            createColumnHeader(i);
-        }
-        
-        /*
          *  Create item rows
          */
         var max = this._showAll ? items.length : Math.min(items.length, this._initialCount);
         for (var i = 0; i < max; i++) {
             var item = items[i];
-            tr = table.insertRow(i + 1);
+            var tr = table.insertRow(i);
             
             if (this._rowStyler != null) {
                 this._rowStyler(item.id, database, tr, i);
@@ -289,7 +262,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                     "value",
                     database
                 );
-        
+
                 switch (column.format) {
                 case "image":
                     results.values.visit(function(url) {
@@ -308,7 +281,34 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                 }
             }
         }
-        
+
+        /*
+         *  Create the column headers
+         */
+        var th = table.createTHead();
+        tr = th.insertRow(0);
+        var createColumnHeader = function(i) {
+            var column = self._columns[i];
+            if (column.label == null) {
+                column.label = self._getColumnLabel(column.expression);
+            }
+
+            var td = document.createElement("th");
+            Exhibit.TabularView.theme.createColumnHeader(
+                exhibit, td, column.label, i == self._sortColumn, self._sortAscending,
+                function(elmt, evt, target) {
+                    self._doSort(i);
+                    SimileAjax.DOM.cancelEvent(evt);
+                    return false;
+                }
+            );
+
+            tr.appendChild(td);
+        };
+        for (var i = 0; i < this._columns.length; i++) {
+            createColumnHeader(i);
+        }
+
         bodyDiv.appendChild(table);
     }
 };
