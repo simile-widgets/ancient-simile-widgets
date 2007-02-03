@@ -2,7 +2,6 @@
 
 /* browse-engine-l10n.js */
 
-﻿
 Exhibit.BrowseEngine.l10n={errorParsingFacetExpressionMessage:function(expression){return"The expression '"+expression+"' used to specify a facet is not valid.";}};
 
 /* browse-panel-l10n.js */
