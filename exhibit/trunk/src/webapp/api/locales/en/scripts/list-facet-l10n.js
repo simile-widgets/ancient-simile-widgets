@@ -5,6 +5,9 @@
  
 Exhibit.ListFacet.l10n = {
     clearSelectionsTooltip:     "Clear these selections",
+    ungroupLink:                "(un-group)",
+    ungroupAllButton:           "un-group all",
+    closeButton:                "close",
     groupByLink:                "group by",
     collapseLink:               "collapse",
     expandLink:                 "expand",

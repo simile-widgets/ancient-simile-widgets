@@ -5,6 +5,9 @@
  
 Exhibit.ListFacet.l10n = {
     clearSelectionsTooltip:     "ångra dessa val",
+    ungroupLink:                "(avgruppera)",
+    ungroupAllButton:           "avgruppera alla",
+    closeButton:                "stäng",
     groupByLink:                "gruppera efter",
     collapseLink:               "slå samman",
     expandLink:                 "expandera",

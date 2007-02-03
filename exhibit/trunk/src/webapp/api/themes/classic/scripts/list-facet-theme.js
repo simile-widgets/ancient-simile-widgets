@@ -299,11 +299,11 @@ Exhibit.ListFacet.theme.constructGroupingBox = function(
                 className:  "exhibit-facet-groupBox-footer",
                 field:      "footerDiv",
                 children: [
-                    {   elmt:  exhibit.makeActionLink("un-group all", onUngroupAll),
+                    {   elmt:  exhibit.makeActionLink(Exhibit.ListFacet.l10n.ungroupAllButton, onUngroupAll),
                         field: "ungroupLink"
                     },
                     " | ",
-                    {   elmt:  exhibit.makeActionLink("close", onClose),
+                    {   elmt:  exhibit.makeActionLink(Exhibit.ListFacet.l10n.closeButton, onClose),
                         field: "closeLink"
                     }
                 ]
@@ -330,7 +330,7 @@ Exhibit.ListFacet.theme.constructGroup = function(exhibit, first, grouped, onUng
                 className:  "exhibit-facet-groupBox-groupHeader",
                 children:   [ 
                     first ? l10n.groupByLabel : l10n.groupTheGroupsByLabel,
-                    {   elmt:   exhibit.makeActionLink("(un-group)", onUngroup),
+                    {   elmt:   exhibit.makeActionLink(Exhibit.ListFacet.l10n.ungroupLink, onUngroup),
                         style:  { display: grouped ? "inline" : "none" },
                         field:  "ungroupLink"
                     }
