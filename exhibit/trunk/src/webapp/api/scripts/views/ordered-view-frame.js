@@ -296,7 +296,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
         this._headerDom.enableThenByAction(orderDoms.length < this._possibleOrders.length);
     }
     
-    this._footerDom.setCounts(currentSize, this._initialCount, this._showAll, !hasSomeGrouping);
+    this._footerDom.setCounts(currentSize, this._initialCount, this._showAll, !(hasSomeGrouping && this._grouped));
 };
 
 Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
@@ -308,12 +308,12 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
     
     var hasSomeGrouping = false;
     var createItem = function(itemID) {
-        if (hasSomeGrouping || self._showAll || itemIndex < self._initialCount) {
+        if ((hasSomeGrouping && self._grouped) || self._showAll || itemIndex < self._initialCount) {
             self.onNewItem(itemID, itemIndex++);
         }
     };
     var createGroup = function(label, valueType, index) {
-        if (hasSomeGrouping || self._showAll || itemIndex < self._initialCount) {
+        if ((hasSomeGrouping && self._grouped) || self._showAll || itemIndex < self._initialCount) {
             self.onNewGroup(label, valueType, index);
         }
     };
