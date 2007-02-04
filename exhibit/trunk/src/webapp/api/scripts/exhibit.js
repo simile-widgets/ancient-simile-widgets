@@ -470,12 +470,12 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
 		item[fields[col]] = data;
 	    }
 	}
+	if( type )
+	    item.type = type;
 	items.push( item );
 	parsed.items = items;
     }
-    // console.log( "loadDataFromTable: %s %o", type, parsed );
-
-    return this.loadData( parsed, location.href );
+    return this.loadData( parsed );
 };
 
 Exhibit._Impl.prototype.loadData = function(data) {
