@@ -19,38 +19,15 @@ Exhibit.create = function(data, rootTypes) {
         return Exhibit.createFromFiles(urls, rootTypes);
     } else {
         var exhibit = Exhibit._internalCreate({});
-        
-        var showError = function() {
-            window.alert(
-                "Exhibit.create() expects a Javascript object or \n" +
-                "the ID of a <data> or <table> element.\n\n" +
-                "We will redirect you to the relevant documentation after this message."
-            );
-            window.open("", "_blank");
-            return exhibit;
-        };
-        
-        if (typeof data == "string") {
-            var elmt = document.getElementById(data);
-            if (elmt == null) {
-                showError();
-            } else {
-                var tagName = elmt.tagName.toLowerCase();
-                
-                if (tagName == "data") {
-                    exhibit.loadDataFromDomNode(elmt);
-                } else if (tagName == "table") {
-                    exhibit.loadDataFromTable(elmt);
-                } else {
-                    showError();
-                }
-            }
-        } else if (typeof data == "object") {
-            exhibit.loadData(data);
-        } else {
-            showError();
-        }
-        
+
+	if (!(data instanceof Array)) {
+	    exhibit._dwim_create(data);
+	} else {
+	    for (var i = 0, specs; specs = data[i]; i++) {
+		exhibit._dwim_create(specs);
+	    }
+	}
+
         exhibit.setRootTypes(rootTypes);
         return exhibit;
     }
@@ -214,6 +191,37 @@ Exhibit._Impl.prototype.dispose = function() {
     SimileAjax.History.removeListener(this._historyListener);
     this._database.removeListener(this._databaseListener);
 };
+
+Exhibit._Impl.prototype._dwim_create = function(data) {
+    var showError = function() {
+	if( confirm( "Exhibit.create() expects a Javascript object, the\n" +
+            "ID of a <data> or <table> element, or an array of either.\n\n" +
+            "Do you want to see to the relevant documentation?" ) ) {
+            window.open("http://simile.mit.edu/wiki/Exhibit/Creating%2C_Importing%2C_and_Managing_Data", "_blank");
+        }
+    };
+
+    if (typeof data == "object")
+	return this.loadData(data);
+
+    if (typeof data == "string") {
+        var elmt = document.getElementById(data);
+        if (elmt == null) {
+            return showError();
+        } else {
+            var tagName = elmt.tagName.toLowerCase();
+            if (tagName == "data") {
+                this.loadDataFromDomNode(elmt);
+            } else if (tagName == "table") {
+                this.loadDataFromTable(elmt);
+            } else {
+                showError();
+            }
+        }
+    } else {
+        showError();
+    }
+}
 
 Exhibit._Impl.prototype.setRootTypes = function(rootTypes) {
     if (typeof rootTypes == "string") {
