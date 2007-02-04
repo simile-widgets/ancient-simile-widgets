@@ -2,7 +2,7 @@
  *  Exhibit.MapView
  *==================================================
  */
- 
+
 Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
     this._exhibit = exhibit;
     this._div = div;
@@ -29,17 +29,11 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
      */
     var getLatLng = null;
     try {
-        var makeGetLatLng = function(s) {
+        var makeGetLatLng = function(s, mazExpression) {
             var latlngExpression = Exhibit.Expression.parse(s);
             return function(itemID, database) {
                 var result = {};
-                var x = latlngExpression.evaluateSingle(
-                    { "value" : itemID }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                ).value;
-                
+                var x = Exhibit.MapView.evaluateSingle(latlngExpression, itemID, database);
                 if (x != null) {
                     var a = x.split(",");
                     if (a.length == 2) {
@@ -47,44 +41,52 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
                         result.lng = (typeof a[1] == "number") ? a[1] : parseFloat(a[1]);
                     }
                 }
+
+                var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
+                if (z != null) {
+                    z = parseInt(z, 10);
+                    if( typeof z == "number" )
+                        result.maxAutoZoom = z;
+                }
                 return result;
             };
         };
-        var makeGetLatLng2 = function(lat, lng) {
+        var makeGetLatLng2 = function(lat, lng, mazExpression) {
             var latExpression = Exhibit.Expression.parse(lat);
             var lngExpression = Exhibit.Expression.parse(lng);
             return function(itemID, database) {
                 var result = {};
-                var lat = latExpression.evaluateSingle(
-                    { "value" : itemID }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                ).value;
-                var lng = lngExpression.evaluateSingle(
-                    { "value" : itemID }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                ).value;
-                
+                var lat = Exhibit.MapView.evaluateSingle(latExpression, itemID, database);
+                var lng = Exhibit.MapView.evaluateSingle(lngExpression, itemID, database);
                 if (lat != null && lng != null) {
                     result.lat = (typeof lat == "number") ? lat : parseFloat(lat);
                     result.lng = (typeof lng == "number") ? lng : parseFloat(lng);
                 }
+
+                var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
+                if (z != null) {
+                    z = parseInt(z, 10);
+                    if( typeof z == "number" )
+                        result.maxAutoZoom = z;
+                }
                 return result;
             }
         };
-        
+
         if (domConfiguration != null) {
+            var maxAZ = Exhibit.getAttribute(domConfiguration, "maxAutoZoom");
+            if (maxAZ != null && maxAZ.length > 0) {
+                maxAZ = Exhibit.Expression.parse(maxAZ);
+            } else
+                maxAZ = null;
             var latlng = Exhibit.getAttribute(domConfiguration, "latlng");
             if (latlng != null && latlng.length > 0) {
-                getLatLng = makeGetLatLng(latlng);
+                getLatLng = makeGetLatLng(latlng, maxAZ);
             } else {
                 var lat = Exhibit.getAttribute(domConfiguration, "lat");
                 var lng = Exhibit.getAttribute(domConfiguration, "lng");
                 if (lat != null && lng != null && lat.length > 0 && lng.length > 0) {
-                    getLatLng = makeGetLatLng2(lat, lng);
+                    getLatLng = makeGetLatLng2(lat, lng, maxAZ);
                 }
             }
         }
@@ -107,13 +109,7 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
         var makeGetMarker = function(s) {
             var markerExpression = Exhibit.Expression.parse(s);
             return function(itemID, database) {
-                var key = markerExpression.evaluateSingle(
-                    { "value" : itemID }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                ).value;
-                
+                var key = Exhibit.MapView.evaluateSingle(markerExpression, itemID, database);
                 return key != null ? key : "";
             };
         };
@@ -139,8 +135,10 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
 // set by the bounds of all plotted markers unless set up in page configuration
 //      center:         [ 20, 0 ],
 //      zoom:           2,
+        maxAutoZoom:    18,
         size:           "small",
         scaleControl:   true,
+	overviewControl:false,
         type:           "normal"
     };
     if (domConfiguration != null) {
@@ -170,7 +168,12 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
         if (s != null && s.length > 0) {
             this._mapSettings.scaleControl = (s == "true");
         }
-        
+
+        s = Exhibit.getAttribute(domConfiguration, "overviewControl");
+        if (s != null && s.length > 0) {
+            this._mapSettings.overviewControl = (s == "true");
+        }
+
         s = Exhibit.getAttribute(domConfiguration, "type");
         if (s != null && s.length > 0) {
             this._mapSettings.type = s;
@@ -181,6 +184,9 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
     }
     if ("zoom" in configuration) {
         this._mapSettings.zoom = configuration.zoom;
+    }
+    if ("maxAutoZoom" in configuration) {
+        this._mapSettings.maxAutoZoom = configuration.maxAutoZoom;
     }
     if ("size" in configuration) {
         this._mapSettings.size = configuration.size;
@@ -241,6 +247,15 @@ Exhibit.MapView._mixMarker = {
     color:  "FFFFFF"
 };
 
+Exhibit.MapView.evaluateSingle = function(expression, itemID, database) {
+    return expression.evaluateSingle(
+        { "value" : itemID },
+        { "value" : "item" },
+          "value",
+          database
+    ).value;
+}
+
 Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProperty, outputTextArea, database, accuracy) {
     if (accuracy == undefined) {
         accuracy = 4;
@@ -249,13 +264,7 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
     var expression = Exhibit.Expression.parse(addressExpressionString);
     var jobs = [];
     set.visit(function(item) {
-        var address = expression.evaluateSingle(
-            { "value" : item }, 
-            { "value" : "item" }, 
-            "value",
-            database
-        ).value;
-        
+        var address = Exhibit.MapView.evaluateSingle(expression, item, database);
         if (address != null) {
             jobs.push({ item: item, address: address });
         }
@@ -344,7 +353,10 @@ Exhibit.MapView.prototype._initializeUI = function() {
         this._dom.map.setCenter(new GLatLng(20, 0), 2);
         this._dom.map.addControl(settings.size == "small" ?
             new GSmallMapControl() : new GLargeMapControl());
-        
+	if (settings.overviewControl) {
+	    this._dom.map.addControl(new GOverviewMapControl);
+	}
+
         if (settings.scaleControl) {
             this._dom.map.addControl(new GScaleControl());
         }
@@ -428,7 +440,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
         
         var usedKeys = {};
         var shape = Exhibit.MapView._defaultMarkerShape;
-        var bounds;
+        var bounds, maxAutoZoom = Infinity;
         var addMarkerAtLocation = function(locationData) {
             var items = locationData.items;
             if( !bounds ) {
@@ -465,6 +477,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
 
             var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
             var marker = new GMarker(point, icon);
+            if (maxAutoZoom > locationData.latlng.maxAutoZoom)
+                maxAutoZoom = locationData.latlng.maxAutoZoom;
             bounds.extend(point);
 
             GEvent.addListener(marker, "click", function() { 
@@ -475,8 +489,12 @@ Exhibit.MapView.prototype._reconstruct = function() {
         for (latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
         }
-        if (bounds && typeof this._mapSettings.zoom == "undefined")
-            self._dom.map.setZoom(self._dom.map.getBoundsZoomLevel(bounds));
+        if (bounds && typeof this._mapSettings.zoom == "undefined") {
+            var zoom = Math.max(0,self._dom.map.getBoundsZoomLevel(bounds)-1);
+            //console.log( zoom, this._mapSettings.maxAutoZoom, maxAutoZoom );
+            zoom = Math.min(zoom, maxAutoZoom, this._mapSettings.maxAutoZoom);
+            self._dom.map.setZoom(zoom);
+        }
         if (bounds && typeof this._mapSettings.center == "undefined")
             self._dom.map.setCenter(bounds.getCenter());
 
