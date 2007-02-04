@@ -461,13 +461,14 @@ Exhibit._Impl.prototype.loadDataFromTable = function(table) {
     while( img = imgs[0] ) // replace any images with their respective URLs
 	img.parentNode.replaceChild( document.createTextNode( img.src ), img );
 
-    var items = [], td, data;
+    var items = [], td, raw;
     for( row = 1; tr = trs[row]; row++ ) {
 	var item = {};
 	var tds = tr.getElementsByTagName("td");
 	for( col = 0; td = tds[col]; col++ ) {
-	    data = columnData[col].valueParser( textOf( td ), td, row, col );
-	    if( data == null ) {
+	    var raw = textOf( td );
+	    data = columnData[col].valueParser( raw, td, row, col );
+	    if( data == null || raw === "" ) {
 		continue;
 	    }
 	    if( typeof data == 'object' && !(data instanceof Array) ) {
