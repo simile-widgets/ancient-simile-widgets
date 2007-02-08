@@ -359,25 +359,29 @@ Exhibit._Impl.prototype.loadJSONP = function(urls, fConvert, fDone) {
         singleFeed = true;
         urls = [ urls ];
     }
+    if (fConvert && !(fConvert instanceof Array)) {
+	fConvert = [fConvert];
+	for (var i = 1; i < urls.length; i++) {
+	    fConvert[i] = fConvert[0];
+	}
+    }
 
     var beforeCount = exhibit.getDatabase().getAllItemsCount();
 
     var script;
     var next = Exhibit.callbacks.next || 1;
     var callbackName = "cb" + next.toString(36);
-    var jsonpURL = attachJsonpCallbackName(urls[0]) + "Exhibit.callbacks." +
-		     callbackName;
     Exhibit.callbacks.next = next + 1;
 
     Exhibit.callbacks[callbackName] = function(json) {
         var url = urls.shift();
-	delete Exhibit.callbacks[callbackName];
-	if (script)
+	if (script && script.parentNode)
 	    script.parentNode.removeChild(script);
 	if (fDone)
 	    feeds.push(copyObject(json));
 	if (fConvert)
-	    json = fConvert.call(exhibit, json, url);
+	    json = fConvert.shift().call(exhibit, json, url);
+	console.log( urls, script&&script.parentNode, fConvert );
 	converted.push(json);
         try {
             exhibit._loadJSON(json, url);
@@ -389,8 +393,11 @@ Exhibit._Impl.prototype.loadJSONP = function(urls, fConvert, fDone) {
 
     var fNext = function() {
         if (urls.length) {
-            script = SimileAjax.includeJavascriptFile(document, jsonpURL);
+	    var url = attachJsonpCallbackName(urls[0]) + "Exhibit.callbacks." +
+		     callbackName;
+            script = SimileAjax.includeJavascriptFile(document, url);
         } else {
+	    delete Exhibit.callbacks[callbackName];
             try {
                 if (fDone) {
 		    if (singleFeed)
@@ -414,6 +421,7 @@ Exhibit._Impl.prototype.loadJSONP = function(urls, fConvert, fDone) {
 
     exhibit._showBusyIndicator();
     setTimeout(fNext, 10);
+    return Exhibit.callbacks[callbackName];
 };
 
 Exhibit._Impl.prototype.loadGoogleSpreadsheetsData = function(urls, fDone) {
