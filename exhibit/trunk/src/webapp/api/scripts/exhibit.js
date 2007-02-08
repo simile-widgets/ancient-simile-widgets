@@ -381,7 +381,6 @@ Exhibit._Impl.prototype.loadJSONP = function(urls, fConvert, fDone) {
 	    feeds.push(copyObject(json));
 	if (fConvert)
 	    json = fConvert.shift().call(exhibit, json, url);
-	console.log( urls, script&&script.parentNode, fConvert );
 	converted.push(json);
         try {
             exhibit._loadJSON(json, url);
