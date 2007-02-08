@@ -322,44 +322,81 @@ Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
     setTimeout(fNext, 0);
 };
 
-// fDone callback gets passed the feed object (or array of feed objects, if
-// called with an array of urls - note that the order is not yet guaranteed
-// to be the same as that of the urls array!)
-Exhibit._Impl.prototype.loadGoogleSpreadsheetsData = function(urls, fDone) {
-    var exhibit = this, feeds = [], singleFeed = false;
+Exhibit._Impl.prototype.loadJSONP = function(urls, fConvert, fDone) {
+    function attachJsonpCallbackName( url ) {
+	if (url.indexOf("?") == -1)
+	    url += "?";
+	var lastChar = url.charAt(url.length-1);
+	if (lastChar != "=") {
+	    if (lastChar != '&' && lastChar != "?")
+		url += "&";
+	    url += 'callback=';
+	}
+	return url;
+    }
+
+    function copyObject( o ) {
+	var clone = {};
+	for (var i in o) {
+	    if (!o.hasOwnProperty(i))
+		continue;
+	    if (typeof o[i] == "object") {
+		if (o[i] instanceof Array)
+		    clone[i] = o[i].slice(0);
+		else
+		    clone[i] = arguments.callee(o[i]);
+	    } else {
+		clone[i] = o[i];
+	    }
+	}
+	return clone;
+    }
+
+    var exhibit = this, feeds = [], converted = [], singleFeed = false;
     if (urls instanceof Array) {
         urls = [].concat(urls);
     } else {
         singleFeed = true;
         urls = [ urls ];
     }
-    
+
     var beforeCount = exhibit.getDatabase().getAllItemsCount();
-    
-    var fDone2 = function(o) {
-        feeds.push( o );
-        var url = urls[0];
+
+    var script;
+    var next = Exhibit.callbacks.next || 1;
+    var callbackName = "cb" + next.toString(36);
+    var jsonpURL = attachJsonpCallbackName(urls[0]) + "Exhibit.callbacks." +
+		     callbackName;
+    Exhibit.callbacks.next = next + 1;
+
+    Exhibit.callbacks[callbackName] = function(json) {
+        var url = urls.shift();
+	delete Exhibit.callbacks[callbackName];
+	if (script)
+	    script.parentNode.removeChild(script);
+	if (fDone)
+	    feeds.push(copyObject(json));
+	if (fConvert)
+	    json = fConvert.call(exhibit, json, url);
+	converted.push(json);
         try {
-            exhibit._loadGoogleSpreadsheetsData(o, url);
+            exhibit._loadJSON(json, url);
         } catch (e) {
-            SimileAjax.Debug.exception("Exhibit: Error loading next Google Spreadsheets data at " + url, e);
+            SimileAjax.Debug.exception("Exhibit: Error loading JSONP data from " + url, e);
         }
-        
-        urls.shift();
         fNext();
     };
-    
-    var callbackName = "callback" + Math.floor(Math.random() * 1000);
-    window[callbackName] = fDone2;
-    
+
     var fNext = function() {
-        if (urls.length > 0) {
-            SimileAjax.includeJavascriptFile(document,
-                urls[0] + "?alt=json-in-script&callback=" + callbackName);
+        if (urls.length) {
+            script = SimileAjax.includeJavascriptFile(document, jsonpURL);
         } else {
             try {
-                if (fDone != null) {
-                    fDone( singleFeed ? feeds[0] : feeds );
+                if (fDone) {
+		    if (singleFeed)
+			fDone( feeds[0], converted[0] );
+		    else
+			fDone( feeds, converted );
                 } else {
                     var browseEngine = exhibit.getBrowseEngine();
                     var database = exhibit.getDatabase();
@@ -368,16 +405,25 @@ Exhibit._Impl.prototype.loadGoogleSpreadsheetsData = function(urls, fDone) {
                     }
                 }
             } catch (e) {
-                SimileAjax.Debug.exception("Exhibit: Error loading next Google Spreadsheets data", e);
+                SimileAjax.Debug.exception("Exhibit: Error loading JSONP data", e);
             } finally {
                 exhibit._hideBusyIndicator();
             }
         }
     };
-    
+
     exhibit._showBusyIndicator();
     setTimeout(fNext, 10);
 };
+
+Exhibit._Impl.prototype.loadGoogleSpreadsheetsData = function(urls, fDone) {
+    if (typeof urls == "string")
+	urls = [urls];
+    for (var i = 0, url; url = urls[i]; i++) {
+	urls[i] += "?alt=json-in-script";
+    }
+    this.loadJSONP(urls, this._googleSpreadsheetsConverter, fDone);
+}
 
 Exhibit._Impl.prototype.loadDataFromDomNode = function(node) {
     window.alert("not yet implemented");
@@ -656,13 +702,13 @@ Exhibit._Impl.prototype._loadJSON = function(o, url) {
     }
 };
 
-Exhibit._Impl.prototype._loadGoogleSpreadsheetsData = function(o, url) {
+Exhibit._Impl.prototype._googleSpreadsheetsConverter = function(json, url) {
     var items = [];
     var properties = {};
     var types = {};
     var valueTypes = { "text" : true, "number" : true, "item" : true, "url" : true, "boolean" : true };
     
-    var entries = o.feed.entry;
+    var entries = json.feed.entry;
     for (var i = 0; i < entries.length; i++) {
         var entry = entries[i];
         var item = { label: entry.title.$t };
@@ -711,9 +757,7 @@ Exhibit._Impl.prototype._loadGoogleSpreadsheetsData = function(o, url) {
         items.push(item);
     }
   
-    this._database.loadTypes(types, url);
-    this._database.loadProperties(properties, url);
-    this._database.loadItems(items, url);
+    return { types:types, properties:properties, items:items };
 };
 
 Exhibit._Impl.prototype._parseURL = function() {

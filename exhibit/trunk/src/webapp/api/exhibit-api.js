@@ -16,7 +16,8 @@
         window.Exhibit = {
             loaded:     false,
             bundle:     true,
-            namespace:  "http://simile.mit.edu/2006/11/exhibit#"
+            namespace:  "http://simile.mit.edu/2006/11/exhibit#",
+	    callbacks:	{}
         };
     
         var javascriptFiles = [
