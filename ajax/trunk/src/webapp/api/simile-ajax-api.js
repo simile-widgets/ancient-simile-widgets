@@ -58,7 +58,7 @@ if (typeof SimileAjax == "undefined") {
         script.type = "text/javascript";
         script.language = "JavaScript";
         script.src = url;
-        getHead(doc).appendChild(script);
+        return getHead(doc).appendChild(script);
     };
     SimileAjax.includeJavascriptFiles = function(doc, urlPrefix, filenames) {
         for (var i = 0; i < filenames.length; i++) {
