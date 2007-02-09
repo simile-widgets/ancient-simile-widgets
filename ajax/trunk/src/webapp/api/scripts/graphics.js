@@ -65,6 +65,22 @@ SimileAjax.Graphics._bubblePointOffset = 6;
 SimileAjax.Graphics._halfArrowWidth = 18;
 
 SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWidth, contentHeight) {
+    function getWindowDims() {
+        if (typeof window.innerHeight == 'number') {
+	    return { w:window.innerWidth, h:window.innerHeight }; // Non-IE
+	} else if (document.documentElement && document.documentElement.clientHeight) {
+	    return { // IE6+, in "standards compliant mode"
+		w:document.documentElement.clientWidth,
+		h:document.documentElement.clientHeight
+	    };
+	} else if (document.body && document.body.clientHeight) {
+	    return { // IE 4 compatible
+		w:document.body.clientWidth,
+		h:document.body.clientHeight
+	    };
+	}
+    }
+
     var close = function() { 
         if (!bubble._closed) {
             bubble._doc.body.removeChild(bubble._div);
@@ -81,10 +97,13 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
         close:     function() { SimileAjax.WindowManager.popLayer(layer); }
     };
     
-    var docWidth = doc.body.offsetWidth;
-    var docHeight = doc.body.offsetHeight;
-    
+    var dims = getWindowDims();
+    var docWidth = dims.w;
+    var docHeight = dims.h;
+
     var margins = SimileAjax.Graphics._bubbleMargins;
+    contentWidth = parseInt(contentWidth, 10); // harden against bad input bugs
+    contentHeight = parseInt(contentHeight, 10); // getting numbers-as-strings
     var bubbleWidth = margins.left + contentWidth + margins.right;
     var bubbleHeight = margins.top + contentHeight + margins.bottom;
     
