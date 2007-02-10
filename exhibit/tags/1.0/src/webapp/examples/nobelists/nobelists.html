@@ -1,0 +1,168 @@
+<html>
+<head>
+    <title>MIT Nobel Prize Winners</title>
+
+    <link href="nobelists.js" type="text/javascript" rel="exhibit/data" />
+
+    <script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?views=timeline"
+        type="text/javascript"></script>
+
+    <style>
+        body {
+            font-family:    Tahoma, Arial, sans serif;
+            font-size:      8pt;
+            margin:         0;
+            padding:        0;
+            background:     #BCB79E;
+        }
+        table {
+            font-size:      100%;
+        }
+        tr {
+            vertical-align: top;
+        }
+        #content {
+            background:     white;
+            width:          80em;
+        }
+        #title-panel {
+            padding:        0.25in 0.5in;
+        }
+        #top-panels {
+            padding:        0.5em 0.5in;
+            border-top:     1px solid #BCB79E;
+            border-bottom:  1px solid #BCB79E;
+            background:     #FBF4D3;
+        }
+        #exhibit-control-panel {
+            clear:          both;
+        }
+        #exhibit-browse-panel {
+        }
+        #exhibit-view-panel {
+            padding:        1em 0.5in;
+        }
+        
+        div.exhibit-browsePanel-logoContainer {
+            display: none;
+        }
+        div.exhibit-facet-frame {
+            width: 16em;
+            float: left;
+        }
+        div.exhibit-facet-body {
+            border: 1px solid #BCB79E;
+        }
+        td.exhibit-tileView-itemIndex {
+            display: none;
+        }
+        span.exhibit-collectionView-group-count {
+            color:       #ccc;
+            font-weight: normal;
+        }
+        div.exhibit-facet-value-selected {
+            background:  none;
+            font-weight: bold;
+        }
+        
+        table.nobelist {
+            border:     1px solid #ddd;
+            padding:    0.5em;
+        }
+        div.name {
+            font-weight: bold;
+            font-size:   120%;
+        }
+        .discipline {
+        }
+        .year {
+            font-style:  italic;
+        }
+        .relationship {
+            color:  #888;
+        }
+        .co-winners {
+        }
+        
+        div.nobelist-thumbnail {
+            float:      left;
+            width:      13em;
+            height:     10em;
+            border:     1px solid #BCB79E;
+            background: #F0FFF0;
+            padding:    1em;
+            margin:     0.5em;
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        function deceaseRowStyler(itemID, database, tr, rowIndex) {
+            var deceased = database.getObject(itemID, "deceased");
+            if (deceased == "yes") {
+                tr.style.backgroundColor = "#f88";
+            }
+        }
+    </script>
+</head> 
+<body>
+<div id="content">
+    <div id="title-panel">
+        <h1>63 MIT-related Nobel Prize Winners</h1>
+        <p>The information within this page has been retrieved from
+            <a href="http://web.mit.edu/newsoffice/special/nobels.html" target="_blank">this MIT official source</a>
+            while the thumbnails are included from <a href="http://nobelprize.org/" target="_blank">Nobelprize.org</a>.
+            Here is the <a href="nobelists.js" target="_blank">Exhibit JSON data file</a>.
+        </p>
+    </div>
+    
+    <div id="top-panels">
+        <div id="exhibit-browse-panel" ex:facets=".discipline, .relationship, .shared, .deceased"></div>
+        <div id="exhibit-control-panel"></div>
+    </div>
+    <div id="exhibit-view-panel">
+        <table ex:role="exhibit-lens" class="nobelist">
+            <tr>
+                <td><img ex:src-content=".imageURL" /></td>
+                <td>
+                    <div ex:content=".label" class="name"></div>
+                    <div>
+                        <span ex:content=".discipline" class="discipline"></span>, 
+                        <span ex:content=".nobel-year" class="year"></span>
+                    </div>
+                    <div ex:if-exists=".co-winner" class="co-winners">Co-winners: 
+                        <span ex:content=".co-winner"></span>
+                    </div>
+                    <div ex:content=".relationship-detail" class="relationship"></div>
+                </td>
+            </tr>
+        </table>
+        <div ex:role="exhibit-view"
+            ex:viewClass="Exhibit.ThumbnailView"
+            ex:showAll="true"
+            ex:orders=".discipline"
+            ex:possibleOrders=".label, .last-name, .discipline, .relationship, .shared, .deceased, .nobel-year">
+            <div ex:role="exhibit-lens" class="nobelist-thumbnail">
+                <img ex:src-content=".imageURL" />
+                <div><span ex:content=".label"></span></div>
+                <div>
+                    <span ex:content=".discipline" class="discipline"></span>, 
+                    <span ex:content=".nobel-year" class="year"></span>
+                </div>
+            </div>
+        </div>
+        <div ex:role="exhibit-view"
+            ex:label="Details"
+            ex:viewClass="Exhibit.TileView"
+            ex:showAll="true"
+            ex:orders=".discipline, .nobel-year"
+            ex:possibleOrders=".label, .last-name, .discipline, .relationship, .shared, .deceased, .nobel-year">
+        </div>
+        <div ex:role="exhibit-view"
+            ex:viewClass="Exhibit.TimelineView"
+            ex:start=".nobel-year"
+            ex:marker=".discipline">
+        </div>
+    </div>
+</div>
+</body>
+</html>
