@@ -482,7 +482,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
             bounds.extend(point);
 
             GEvent.addListener(marker, "click", function() { 
-                marker.openInfoWindow(self._createInfoWindow(items)); 
+		self._dom.map.openInfoWindow(marker.getPoint(),
+					     self._createInfoWindow(items));
             });
             self._dom.map.addOverlay(marker);
         }
