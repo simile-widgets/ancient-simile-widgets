@@ -1,0 +1,64 @@
+<!--+
+    |
+    |           +===========================+
+    |           |    Exhibit Build System   |
+    |           +===========================+
+    |
+    | This is just for bundling and minifying javascript and CSS files.
+    |
+    +-->
+
+<project default="bundle" basedir="." name="Exhibit">
+
+<!-- === Initialize ================================================= -->
+    
+  <target name="tasks">
+    <taskdef name="jsmin"
+        classname="edu.mit.simile.jsminTask.JSMinTask"
+        classpath="tools/jsminTask.jar"/>
+  </target>
+  	
+  <target name="bundle" depends="tasks">
+    <jsmin output="src/webapp/api/bundle.js">
+        <fileset dir="src/webapp/api/scripts">
+        	<include name="**/*.js" />
+        </fileset>
+  	</jsmin>
+    <concat destfile="src/webapp/api/bundle.css">
+        <fileset dir="src/webapp/api/styles">
+        	<include name="**/*.css" />
+        </fileset>
+    </concat>
+  	
+    <jsmin output="src/ajax/api/bundle.js">
+        <fileset dir="src/ajax/api/scripts">
+        	<include name="platform.js" />
+        </fileset>
+        <fileset dir="src/ajax/api/scripts">
+        	<include name="**/*.js" />
+        	<exclude name="signal.js" />
+        	<exclude name="platform.js" />
+        </fileset>
+  	</jsmin>
+  	
+  	<!-- ========== Themes ========== -->
+    <jsmin output="src/webapp/api/themes/classic/bundle.js">
+        <fileset dir="src/webapp/api/themes/classic/scripts" />
+  	</jsmin>
+    <concat destfile="src/webapp/api/themes/classic/bundle.css">
+        <fileset dir="src/webapp/api/themes/classic/styles">
+        	<include name="**/*.css" />
+        </fileset>
+    </concat>
+  	
+  	<!-- ========== Locales ========== -->
+    <jsmin output="src/webapp/api/locales/en/bundle.js">
+        <fileset dir="src/webapp/api/locales/en/scripts" />
+  	</jsmin>
+    <concat destfile="src/webapp/api/locales/en/bundle.css">
+        <fileset dir="src/webapp/api/locales/en/styles">
+        	<include name="**/*.css" />
+        </fileset>
+    </concat>
+  </target>
+</project>
