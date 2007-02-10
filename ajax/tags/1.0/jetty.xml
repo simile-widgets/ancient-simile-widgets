@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<!-- =============================================================== -->
+<!-- Configure the Jetty Server                                      -->
+<!-- =============================================================== -->
+<Configure id="Server" class="org.mortbay.jetty.Server">
+
+    <!-- =========================================================== -->
+    <!-- Server Thread Pool                                          -->
+    <!-- =========================================================== -->
+    <Set name="ThreadPool">
+      <New class="org.mortbay.thread.BoundedThreadPool">
+        <Set name="minThreads">25</Set>
+        <Set name="maxThreads">250</Set>
+      </New>
+    </Set>
+
+    <!-- =========================================================== -->
+    <!-- Set connectors                                              -->
+    <!-- =========================================================== -->
+    <!-- One of each type!                                           -->
+    <!-- =========================================================== -->
+    <Set name="connectors">
+      <Array type="org.mortbay.jetty.Connector">
+
+        <!-- NIO causes files to be locked on Windows. So we use BIO instead.
+        <Item>
+          <New class="org.mortbay.jetty.nio.SelectChannelConnector">
+            <Set name="port">8080</Set>
+            <Set name="maxIdleTime">30000</Set>
+            <Set name="Acceptors">2</Set>
+          </New>
+        </Item>
+        -->
+
+        <Item>
+          <New class="org.mortbay.jetty.bio.SocketConnector">
+            <Set name="port">8181</Set>
+            <Set name="maxIdleTime">50000</Set>
+          </New>
+        </Item>
+      </Array>
+    </Set>
+
+    <!-- =========================================================== -->
+    <!-- Set handler Collection Structure                            --> 
+    <!-- =========================================================== -->
+    <Set name="handler">
+      <New id="handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+        <Set name="handlers">
+         <Array type="org.mortbay.jetty.Handler">
+           <Item>
+             <New id="contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"/>
+           </Item>
+           <Item>
+             <New id="defaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
+           </Item>
+           <Item>
+             <New id="requestLog" class="org.mortbay.jetty.handler.RequestLogHandler"/>
+           </Item>
+         </Array>
+        </Set>
+      </New>
+    </Set>
+    
+    <!-- ======================================================= -->
+    <!-- Configure specific contexts                             -->
+    <!-- ======================================================= -->
+    <Ref id="contexts">
+     <Set name="handlers">
+      <Array type="org.mortbay.jetty.Handler">
+        <!-- ======================================================= -->
+        <!-- Configure a context directly - no XML parser required   -->
+        <!-- ======================================================= -->
+        <Item>
+          <New id="aContext"  class="org.mortbay.jetty.handler.ContextHandler">
+            <Set name="contextPath">/</Set>
+            <Set name="resourceBase">./src/webapp/</Set>
+            <Set name="handler">
+              <New id="javadocServletHandler" class="org.mortbay.jetty.servlet.ServletHandler">
+                <Set name="servlets">
+                    <Array type="org.mortbay.jetty.servlet.ServletHolder">
+                        <Item>
+                           <New class="org.mortbay.jetty.servlet.ServletHolder">
+                               <Set name="name">Default</Set>
+                               <Set name="className">org.mortbay.jetty.servlet.DefaultServlet</Set>
+                           </New>
+                        </Item>
+                     </Array>
+                 </Set>
+
+                <Set name="servletMappings">
+                    <Array type="org.mortbay.jetty.servlet.ServletMapping">
+                        <Item>
+                           <New class="org.mortbay.jetty.servlet.ServletMapping">
+                             <Set name="pathSpec">/</Set>
+                             <Set name="servletName">Default</Set>
+                           </New>
+                        </Item>
+                    </Array>
+                </Set>
+              </New>
+            </Set>
+          </New>
+        </Item>
+
+      </Array>
+     </Set>
+    </Ref>
+
+    <!-- =========================================================== -->
+    <!-- Configure Request Log                                       -->
+    <!-- =========================================================== -->
+    <Ref id="requestLog">
+      <Set name="requestLog">
+        <New id="requestLogImpl" class="org.mortbay.jetty.NCSARequestLog">
+          <Arg><SystemProperty name="jetty.home" default="."/>/logs/yyyy_mm_dd.request.log</Arg>
+          <Set name="retainDays">90</Set>
+          <Set name="append">true</Set>
+          <Set name="extended">false</Set>
+          <Set name="LogTimeZone">GMT-0500</Set>
+        </New>
+      </Set>
+    </Ref>
+
+    <!-- =========================================================== -->
+    <!-- extra options                                               -->
+    <!-- =========================================================== -->
+    <Set name="stopAtShutdown">true</Set>
+    <!-- ensure/prevent Server: header being sent to browsers        -->
+    <Set name="sendServerVersion">true</Set>
+
+</Configure>
+
+
+
+
+
+
+
+
+
