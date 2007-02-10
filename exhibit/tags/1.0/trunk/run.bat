@@ -1,1 +1,0 @@
-java -jar lib/start.jar jetty.xml
