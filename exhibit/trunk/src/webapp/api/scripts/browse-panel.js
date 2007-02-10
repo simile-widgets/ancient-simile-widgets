@@ -99,7 +99,50 @@ Exhibit.BrowsePanel.prototype._reconstruct = function() {
         this._showHelp();
     }
 };
-    
+
+Exhibit.BrowsePanel.prototype.getFacet = function(id, pos) {
+    for (var i = 0, facet; facet = this._facetInfos[i]; i++)
+	if (facet.facetID == id)
+	    return pos ? { pos:i, facet:facet.facet } : facet.facet;
+};
+
+Exhibit.BrowsePanel.prototype.hideFacet = function(id) {
+    var old = this.getFacet( id, 1 );
+    if (!old)
+	return false;
+    this._facetInfos.splice( old.pos, 1 );
+    old.facet.dispose();
+    return true;
+};
+
+Exhibit.BrowsePanel.prototype.facetVisible = function(id) {
+    return !!this.getFacet(id);
+};
+
+Exhibit.BrowsePanel.prototype.toggleFacet = function(id) {
+    var wasShown = this.facetVisible(id);
+    if (wasShown)
+	this.hideFacet(id);
+    else
+	this.showFacet(id);
+    return wasShown;
+};
+
+Exhibit.BrowsePanel.prototype.showFacet = function(id) {
+    var shown = {}, facetInfo, i, wasShown;
+    for (i = 0; facetInfo = this._facetInfos[i]; i++)
+	shown[facetInfo.facetID] = true;
+    wasShown = shown[id];
+    shown[id] = true;
+    var allFacets = this._browseEngine.getFacets();
+    var newFacets = [];
+    for (i = 0; facetInfo = allFacets[i]; i++)
+	if (shown[facetInfo.facetID])
+	    newFacets.push(facetInfo);
+    this._reconstructFacets(newFacets);
+    return wasShown;
+};
+
 Exhibit.BrowsePanel.prototype._showHelp = function() {
     //Exhibit.BrowsePanel.theme.constructConfigureHelpDom(this._exhibit, this._dom.facetContainer);
 };
