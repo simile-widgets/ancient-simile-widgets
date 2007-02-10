@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>SIMILE | Exhibit | Presidents</title>
+    
+    <link href="schema.js" type="application/json" rel="exhibit/data" />
+    <link href="presidents.js" type="application/json" rel="exhibit/data" />
+    
+    <!-- key for the simile web site -->
+    <script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQ_WLz7LpUMtzN755Z1xScTjdiF-xRJO2-n-QiclGr93ekHLb-pnN0tgQ" type="text/javascript"></script>
+
+    <!-- key for 127.0.0.1 -->
+    <!--script src="/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAAusru4d5JfzaqJCJYkYlYlRTRYMMr9E_iYboHSHMQOKiCoeYD4BQxBAJZ1DpPNP7kGNCoqGJ8woY3HA&bundle=false" type="text/javascript"></script-->
+
+    <script type="text/javascript">
+        var rowStyler = function(item, database, tr) {
+            var party = database.getObject(item, "party");
+            var color = "white";
+            switch (party) {
+            case "Federalist":              color = "#E7E7AD"; break;
+            case "Democratic-Republican":   color = "#FFDFAD"; break;
+            case "Democratic":              color = "#DEEFFF"; break;
+            case "Whig":                    color = "#FFFFCE"; break;
+            case "Republican":              color = "#FFE3E7"; break;
+            }
+            tr.style.background = color;
+        };
+    </script>
+    <link rel='stylesheet' href='styles.css' type='text/css' />
+</head>
+
+<body onload="Exhibit.create(null, 'President');" ex:exhibitLogoColor="DeepSkyBlue">
+    <table id="frame">
+        <tr>
+            <td id="content">
+                <h1>US Presidents</h1>
+                <p>Here is the <a href="presidents.js" target="_blank">Exhibit JSON data file</a>.
+                <div id="exhibit-control-panel"></div>
+                <div id="exhibit-view-panel">
+                    <div class="item" ex:role="exhibit-lens">
+                        <table cellpadding="10" width="100%">
+                            <tr>
+                                <td width="1"><img ex:src-content=".imageURL" /></td>
+                                <td>
+                                    <a ex:href-content=".url"><span ex:content=".label" /></a>
+                                    <div>Terms: <span ex:content=".term"></span>, <span ex:content=".party"></span></div>
+                                    <div>Religions: <span ex:content=".religion"></span></div>
+                                    <div>Birth: <span ex:content=".birth"></span>, <span ex:content=".birthPlace"></span></div>
+                                    <div ex:if-exists=".death">Death: <span ex:content=".death"></span>, <span ex:content=".deathPlace"></span></div>
+                                    <div ex:control="item-link"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.TabularView"
+                        ex:label="Table"
+                        ex:columns=".term, .label, .imageURL, .party, .presidency.inDate, .presidency.outDate, add(foreach(.presidency, date-range(.inDate, .outDate, 'day')))"
+                        ex:columnLabels="term, name, photo, party, took office, left office, days in office"
+                        ex:columnFormats="list, list, image, list, list, list, list"
+                        ex:sortColumn="4"
+                        ex:sortAscending="true"
+                        ex:rowStyler="rowStyler"
+                        ></div>
+                    <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.TileView"
+                        ex:label="Details"
+                        ex:orders=".term"
+                        ex:possibleOrders=".religion, .party, .birth, .death, .term"
+                        ex:grouped="false"
+                        ></div>
+                    <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.ThumbnailView"
+                        ex:label="Photos"
+                        ex:orders=".party, .term"
+                        ex:possibleOrders=".religion, .party, .birth, .death, .term">
+                        <div ex:role="exhibit-lens" ex:templateFile="president-thumbnail.xml"></div>
+                    </div>
+                    <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.MapView"
+                        ex:label="Birth Places"
+                        ex:latlng=".birthLatLng"
+                        ex:marker=".party"
+                        ex:center="38.479394673276445, -95.361328125"
+                        ex:zoom="4"
+                        >
+                        <div class="map-lens" ex:role="exhibit-lens">
+                            <div><img ex:src-content=".imageURL" /></div>
+                            <span ex:content=".label"></span><br/>
+                            <span ex:content=".birthPlace"></span>, <span ex:content=".birth"></span>
+                        </div>
+                    </div>
+                    <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.MapView"
+                        ex:label="Death Places"
+                        ex:latlng=".deathLatLng"
+                        ex:marker=".party"
+                        ex:center="38.479394673276445, -95.361328125"
+                        ex:zoom="4"
+                        >
+                        <div class="map-lens" ex:role="exhibit-lens">
+                            <div><img ex:src-content=".imageURL" /></div>
+                            <span ex:content=".label"></span><br/>
+                            <span ex:content=".deathPlace"></span>, <span ex:content=".death"></span>
+                        </div>
+                    </div>
+                    <div ex:role="exhibit-view"
+                        ex:viewClass="Exhibit.TimelineView"
+                        ex:label="Terms"
+                        ex:proxy=".presidency"
+                        ex:start=".inDate"
+                        ex:end=".outDate"
+                        ex:marker=".party"
+                        ex:bubbleWidth="320"
+                        ex:bubbleHeight="200"
+                        ></div>
+                </div>
+            </td>
+            <td id="sidebar">
+                <div id="exhibit-browse-panel" ex:facets=".religion, .party, .dieInOffice"></div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
