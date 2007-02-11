@@ -267,7 +267,7 @@ Exhibit.Database._Impl.prototype.getProperty = function(propertyID) {
 Exhibit.Database._Impl.prototype.getAllProperties = function() {
     if (this._propertyArray == null) {
         this._propertyArray = [];
-        for (propertyID in this._properties) {
+        for (var propertyID in this._properties) {
             this._propertyArray.push(propertyID);
         }
     }
@@ -292,7 +292,7 @@ Exhibit.Database._Impl.prototype.containsItem = function(itemID) {
 
 Exhibit.Database._Impl.prototype.getNamespaces = function(idToQualifiedName, prefixToBase) {
     var bases = {};
-    for (propertyID in this._properties) {
+    for (var propertyID in this._properties) {
         var property = this._properties[propertyID];
         var uri = property.getURI();
         
@@ -325,13 +325,13 @@ Exhibit.Database._Impl.prototype.getNamespaces = function(idToQualifiedName, pre
     var letters = "abcdefghijklmnopqrstuvwxyz";
     var i = 0;
     
-    for (base in bases) {
+    for (var base in bases) {
         var prefix = letters.substr(i++,1);
         prefixToBase[prefix] = base;
         baseToPrefix[base] = prefix;
     }
     
-    for (propertyID in idToQualifiedName) {
+    for (var propertyID in idToQualifiedName) {
         var qname = idToQualifiedName[propertyID];
         qname.prefix = baseToPrefix[qname.base];
     }
@@ -364,7 +364,7 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
         this._ensureTypeExists(type, baseURI);
     }
     
-    for (p in itemEntry) {
+    for (var p in itemEntry) {
         if (p != "uri" && p != "label" && p != "id" && p != "type") {
             this._ensurePropertyExists(p, baseURI)._onNewData();
             
