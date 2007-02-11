@@ -522,6 +522,17 @@ Exhibit.Database._Impl.prototype._countDistinct = function(index, x, y, filter) 
     return this._indexCountDistinct(index, x, y, filter);
 };
 
+Exhibit.Database._Impl.prototype._getProperties = function(index, x) {
+    var hash = index[x];
+    var properties = []
+    if (hash) {
+        for (var p in hash) {
+            properties.push(p);
+        }
+    }
+    return properties;
+};
+
 Exhibit.Database._Impl.prototype.getObjects = function(s, p, set, filter) {
     return this._get(this._spo, s, p, set, filter);
 };
@@ -574,6 +585,14 @@ Exhibit.Database._Impl.prototype.getSubject = function(o, p) {
         }
     }
     return null;
+};
+
+Exhibit.Database._Impl.prototype.getForwardProperties = function(s) {
+    return this._getProperties(this._spo, s);
+};
+
+Exhibit.Database._Impl.prototype.getBackwardProperties = function(o) {
+    return this._getProperties(this._ops, o);
 };
 
 Exhibit.Database._Impl.prototype.getSubjectsInRange = function(p, min, max, inclusive, set, filter) {
