@@ -26,7 +26,9 @@
                 } catch (e) {
                     // silent
                 }
-                window.database = Exhibit.Database.createAndLoad(fDone);
+                
+                window.database = Exhibit.Database.create();
+                window.database.loadDataLinks(fDone);
             }
         };
         

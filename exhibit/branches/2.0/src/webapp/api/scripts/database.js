@@ -10,26 +10,6 @@ Exhibit.Database.create = function() {
     return new Exhibit.Database._Impl();
 };
 
-Exhibit.Database.createAndLoad = function(fDone) {
-    var database = Exhibit.Database.create();
-    
-    var links = [];
-    var heads = document.documentElement.getElementsByTagName("head");
-    for (var h = 0; h < heads.length; h++) {
-        var linkElmts = heads[h].getElementsByTagName("link");
-        for (var l = 0; l < linkElmts.length; l++) {
-            var link = linkElmts[l];
-            if (link.rel == "exhibit/data") {
-                links.push(link);
-            }
-        }
-    }
-    
-    database._loadLinks(links, fDone);
-    
-    return database;
-};
-
 /*==================================================
  *  Exhibit.Database._Impl
  *==================================================
@@ -101,6 +81,22 @@ Exhibit.Database._Impl.prototype.addListener = function(listener) {
 
 Exhibit.Database._Impl.prototype.removeListener = function(listener) {
     this._listeners.remove(listener);
+};
+
+Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
+    var links = [];
+    var heads = document.documentElement.getElementsByTagName("head");
+    for (var h = 0; h < heads.length; h++) {
+        var linkElmts = heads[h].getElementsByTagName("link");
+        for (var l = 0; l < linkElmts.length; l++) {
+            var link = linkElmts[l];
+            if (link.rel == "exhibit/data") {
+                links.push(link);
+            }
+        }
+    }
+    
+    this._loadLinks(links, fDone);
 };
 
 Exhibit.Database._Impl.prototype._loadLinks = function(links, fDone) {
