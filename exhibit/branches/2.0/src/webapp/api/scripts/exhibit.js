@@ -143,10 +143,10 @@ Exhibit.getURLWithoutQueryAndHash = function() {
         
         var hash = url.indexOf("#");
         var question = url.indexOf("?");
-        if (hash >= 0) {
-            url = url.substr(0, hash);
-        } else if (question >= 0) {
+        if (question >= 0) {
             url = url.substr(0, question);
+        } else if (hash >= 0) {
+            url = url.substr(0, hash);
         }
         
         Exhibit._urlWithoutQueryAndHash = url;
