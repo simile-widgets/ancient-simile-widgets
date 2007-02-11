@@ -8,16 +8,25 @@ Exhibit.JSONPImporter = {
 };
 Exhibit.importers["application/jsonp"] = Exhibit.JSONPImporter;
 
-Exhibit.JSONPImporter.load = function(link, database, cont) {
-    var url = Exhibit.resolveURL(link.href);
-    var converter = Exhibit.getAttribute(link, 'converter');
-    var fConvert = null;
-    try {
-        fConvert = eval(converter);
-    } catch (e) {
-        // silent
+// cont gets called with the original feed (so you can pick up details from the
+// feed from user code that were of interest to you but not the exhibit itself,
+// for instance). load returns the callback that the JSONP payload should call,
+// so that even partial static JSONP implementations (with a constantly named
+// callback) can assign that variable with the return value, and things will
+// work out, as much as they can (i e concurrent requests can get mixed up).
+Exhibit.JSONPImporter.load = function(link, database, cont, fConvert) {
+    var url = link;
+    if (typeof link != "string") {
+        url = Exhibit.resolveURL(link.href);
+        fConvert = Exhibit.getAttribute(link, 'converter');
+        try {
+            fConvert = eval(fConvert);
+        } catch (e) {
+            fConvert = null;
+            // silent
+        }
     }
-    
+
     var next = Exhibit.JSONPImporter._callbacks.next || 1;
     Exhibit.JSONPImporter._callbacks.next = next + 1;
     
@@ -33,30 +42,28 @@ Exhibit.JSONPImporter.load = function(link, database, cont) {
             
         callbackURL += 'callback=';
     }
-    
+
     callbackURL += "Exhibit.JSONPImporter._callbacks." + callbackName;
-    
+
     Exhibit.JSONPImporter._callbacks[callbackName] = function(json) {
         try {
             Exhibit.hideBusyIndicator();
-            
-    	    delete Exhibit.JSONPImporter._callbacks[callbackName];
-        	if (script && script.parentNode) {
-        	    script.parentNode.removeChild(script);
+
+            delete Exhibit.JSONPImporter._callbacks[callbackName];
+            if (script && script.parentNode) {
+                script.parentNode.removeChild(script);
             }
             
-        	if (fConvert) {
-        	    json = fConvert.call(json, url);
-            }
-            
-            database.loadData(o, Exhibit.getBaseURL(url));
+            database.loadData(fConvert ? fConvert(json, url) : json,
+                              Exhibit.getBaseURL(url));
         } finally {
-            if (cont) cont();
+            if (cont) cont(json);
         }
     };
     
     var script = SimileAjax.includeJavascriptFile(document, callbackURL);
     Exhibit.showBusyIndicator();
+    return Exhibit.JSONPImporter._callbacks[callbackName];
 };
 
 Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
