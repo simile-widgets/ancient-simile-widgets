@@ -66,6 +66,68 @@ SimileAjax.DOM.getEventRelativeCoordinates = function(evt, elmt) {
     }
 };
 
+SimileAjax.DOM.getEventPageCoordinates = function(evt) {
+    if (SimileAjax.Platform.browser.isIE) {
+        return {
+            x: evt.clientX + document.body.scrollLeft,
+            y: evt.clientY + document.body.scrollTop
+        };
+    } else {
+        return {
+            x: evt.pageX,
+            y: evt.pageY
+        };
+    }
+};
+
+SimileAjax.DOM.hittest = function(x, y, except) {
+    return SimileAjax.DOM._hittest(document.body, x, y, except);
+};
+
+SimileAjax.DOM._hittest = function(elmt, x, y, except) {
+    var childNodes = elmt.childNodes;
+    for (var i = 0; i < childNodes.length; i++) {
+        var childNode = childNodes[i];
+        if (childNode == except) {
+            continue;
+        }
+        
+        if (childNode.offsetWidth == 0 && childNode.offsetHeight == 0) {
+            /*
+             *  Sometimes SPAN elements have zero width and height but
+             *  they have children like DIVs that cover non-zero areas.
+             */
+            var hitNode = SimileAjax.DOM._hittest(childNode, x, y, except);
+            if (hitNode != childNode) {
+                return hitNode;
+            }
+        } else {
+            var top = 0;
+            var left = 0;
+            
+            var node = childNode;
+            while (node) {
+                top += node.offsetTop;
+                left += node.offsetLeft;
+                node = node.offsetParent;
+            }
+            
+            if (left <= x && top <= y && (x - left) < childNode.offsetWidth && (y - top) < childNode.offsetHeight) {
+                return SimileAjax.DOM._hittest(childNode, x, y, except);
+            } else if (childNode.nodeType == 1 && childNode.tagName == "TR") {
+                /*
+                 *  Table row might have cells that span several rows.
+                 */
+                var childNode2 = SimileAjax.DOM._hittest(childNode, x, y, except);
+                if (childNode2 != childNode) {
+                    return childNode2;
+                }
+            }
+        }
+    }
+    return elmt;
+};
+
 SimileAjax.DOM.cancelEvent = function(evt) {
     evt.returnValue = false;
     evt.cancelBubble = true;

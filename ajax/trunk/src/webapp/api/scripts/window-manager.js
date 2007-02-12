@@ -10,8 +10,13 @@
 SimileAjax.WindowManager = {
     _initialized:       false,
     _listeners:         [],
-    _draggedElement:    null,
-    _lastCoords:        null,
+    
+    _draggedElement:            null,
+    _draggedElementCallback:    null,
+    _lastCoords:                null,
+    _ghostCoords:               null,
+    _dragging:                  false,
+    
     _layers:            []
 };
 
@@ -151,47 +156,117 @@ SimileAjax.WindowManager._onBodyClick = function(elmt, evt, target) {
 };
 
 SimileAjax.WindowManager._handleMouseDown = function(elmt, evt, callback) {
-    try {
-        SimileAjax.WindowManager._draggedElement = elmt;
-        SimileAjax.WindowManager._draggedElementCallback = callback;
-        SimileAjax.WindowManager._lastCoords = { x: evt.clientX, y: evt.clientY };
+    SimileAjax.WindowManager._draggedElement = elmt;
+    SimileAjax.WindowManager._draggedElementCallback = callback;
+    SimileAjax.WindowManager._lastCoords = { x: evt.clientX, y: evt.clientY };
         
-        SimileAjax.WindowManager._draggedElementCallback.onDragStart();
-    } catch (e) {
-        SimileAjax.Debug.exception("WindowManager: Error handling mouse down", e);
-        SimileAjax.WindowManager._cancelDragging();
-    }
+    SimileAjax.DOM.cancelEvent(evt);
+    return false;
 };
 
 SimileAjax.WindowManager._onBodyMouseMove = function(elmt, evt, target) {
     if (SimileAjax.WindowManager._draggedElement != null) {
-        try {
-            var lastCoords = SimileAjax.WindowManager._lastCoords;
-            var diffX = evt.clientX - lastCoords.x;
-            var diffY = evt.clientY - lastCoords.y;
-            
-            SimileAjax.WindowManager._lastCoords = { x: evt.clientX, y: evt.clientY };
-            
-            SimileAjax.WindowManager._draggedElementCallback.onDragBy(diffX, diffY);
-        } catch (e) {
-            SimileAjax.Debug.exception("WindowManager: Error handling mouse move", e);
-            SimileAjax.WindowManager._cancelDragging();
+        var callback = SimileAjax.WindowManager._draggedElementCallback;
+        
+        var lastCoords = SimileAjax.WindowManager._lastCoords;
+        var diffX = evt.clientX - lastCoords.x;
+        var diffY = evt.clientY - lastCoords.y;
+        
+        if (!SimileAjax.WindowManager._dragging) {
+            if (diffX > 2 || diffY > 2) {
+                try {
+                    if ("onDragStart" in callback) {
+                        callback.onDragStart();
+                    }
+                    
+                    if ("ghost" in callback && callback.ghost) {
+                        var draggedElmt = SimileAjax.WindowManager._draggedElement;
+                        
+                        SimileAjax.WindowManager._ghostCoords = SimileAjax.DOM.getPageCoordinates(draggedElmt);
+                        SimileAjax.WindowManager._ghostCoords.left += diffX;
+                        SimileAjax.WindowManager._ghostCoords.top += diffY;
+                        
+                        var ghostElmt = draggedElmt.cloneNode(true);
+                        ghostElmt.style.position = "absolute";
+                        ghostElmt.style.left = SimileAjax.WindowManager._ghostCoords.left + "px";
+                        ghostElmt.style.top = SimileAjax.WindowManager._ghostCoords.top + "px";
+                        ghostElmt.style.MozOpacity = 0.5;
+                        ghostElmt.style.zIndex = 1000;
+                        
+                        document.body.appendChild(ghostElmt);
+                        callback._ghostElmt = ghostElmt;
+                    }
+                    
+                    SimileAjax.WindowManager._dragging = true;
+                    SimileAjax.WindowManager._lastCoords = { x: evt.clientX, y: evt.clientY };
+                } catch (e) {
+                    SimileAjax.Debug.exception("WindowManager: Error handling mouse down", e);
+                    SimileAjax.WindowManager._cancelDragging();
+                }
+            }
+        } else {
+            try {
+                SimileAjax.WindowManager._lastCoords = { x: evt.clientX, y: evt.clientY };
+                
+                if ("onDragBy" in callback) {
+                    callback.onDragBy(diffX, diffY);
+                }
+                
+                if ("_ghostElmt" in callback) {
+                    var ghostElmt = callback._ghostElmt;
+                    
+                    SimileAjax.WindowManager._ghostCoords.left += diffX;
+                    SimileAjax.WindowManager._ghostCoords.top += diffY;
+                    
+                    ghostElmt.style.left = SimileAjax.WindowManager._ghostCoords.left + "px";
+                    ghostElmt.style.top = SimileAjax.WindowManager._ghostCoords.top + "px";
+                }
+            } catch (e) {
+                SimileAjax.Debug.exception("WindowManager: Error handling mouse move", e);
+                SimileAjax.WindowManager._cancelDragging();
+            }
         }
+        
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
     }
 };
 
 SimileAjax.WindowManager._onBodyMouseUp = function(elmt, evt, target) {
     if (SimileAjax.WindowManager._draggedElement != null) {
         try {
-            SimileAjax.WindowManager._draggedElementCallback.onDragEnd();
+            if (SimileAjax.WindowManager._dragging) {
+                var callback = SimileAjax.WindowManager._draggedElementCallback;
+                if ("onDragEnd" in callback) {
+                    callback.onDragEnd();
+                }
+                if ("onDrop" in callback) {
+                    var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
+                    var target = SimileAjax.DOM.hittest(coords.x, coords.y, SimileAjax.WindowManager._ghostElmt);
+                    callback.onDrop(target);
+                }
+            }
         } finally {
             SimileAjax.WindowManager._cancelDragging();
         }
+        
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
     }
 };
 
 SimileAjax.WindowManager._cancelDragging = function() {
+    var callback = SimileAjax.WindowManager._draggedElementCallback;
+    if ("_ghostElmt" in callback) {
+        var ghostElmt = callback._ghostElmt;
+        document.body.removeChild(ghostElmt);
+        
+        delete callback._ghostElmt;
+    }
+    
     SimileAjax.WindowManager._draggedElement = null;
     SimileAjax.WindowManager._draggedElementCallback = null;
     SimileAjax.WindowManager._lastCoords = null;
+    SimileAjax.WindowManager._ghostCoords = null;
+    SimileAjax.WindowManager._dragging = false;
 };
