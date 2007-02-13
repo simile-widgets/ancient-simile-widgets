@@ -173,7 +173,7 @@ SimileAjax.WindowManager._onBodyMouseMove = function(elmt, evt, target) {
         var diffY = evt.clientY - lastCoords.y;
         
         if (!SimileAjax.WindowManager._dragging) {
-            if (diffX > 2 || diffY > 2) {
+            if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
                 try {
                     if ("onDragStart" in callback) {
                         callback.onDragStart();
@@ -190,8 +190,8 @@ SimileAjax.WindowManager._onBodyMouseMove = function(elmt, evt, target) {
                         ghostElmt.style.position = "absolute";
                         ghostElmt.style.left = SimileAjax.WindowManager._ghostCoords.left + "px";
                         ghostElmt.style.top = SimileAjax.WindowManager._ghostCoords.top + "px";
-                        ghostElmt.style.MozOpacity = 0.5;
                         ghostElmt.style.zIndex = 1000;
+                        SimileAjax.Graphics.setOpacity(ghostElmt, 50);
                         
                         document.body.appendChild(ghostElmt);
                         callback._ghostElmt = ghostElmt;
