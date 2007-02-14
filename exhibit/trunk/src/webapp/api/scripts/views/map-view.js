@@ -133,13 +133,13 @@ Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, global
      */
     this._mapSettings = {
 // set by the bounds of all plotted markers unless set up in page configuration
-//      center:         [ 20, 0 ],
-//      zoom:           2,
-        maxAutoZoom:    18,
-        size:           "small",
-        scaleControl:   true,
-	overviewControl:false,
-        type:           "normal"
+//      center:             [ 20, 0 ],
+//      zoom:               2,
+        maxAutoZoom:        18,
+        size:               "small",
+        scaleControl:       true,
+        overviewControl:    false,
+        type:               "normal"
     };
     if (domConfiguration != null) {
         var s = Exhibit.getAttribute(domConfiguration, "center");
@@ -350,12 +350,18 @@ Exhibit.MapView.prototype._initializeUI = function() {
         this._dom.map.enableDoubleClickZoom();
         this._dom.map.enableContinuousZoom();
 
-        this._dom.map.setCenter(new GLatLng(20, 0), 2);
+        var center = ("center" in settings) ?
+            new GLatLng(settings.center[0], settings.center[1]) :
+            new GLatLng(20, 0);
+        var zoom = ("zoom" in settings) ? settings.zoom : 2;
+        this._dom.map.setCenter(center, zoom);
+        
         this._dom.map.addControl(settings.size == "small" ?
             new GSmallMapControl() : new GLargeMapControl());
-	if (settings.overviewControl) {
-	    this._dom.map.addControl(new GOverviewMapControl);
-	}
+            
+        if (settings.overviewControl) {
+            this._dom.map.addControl(new GOverviewMapControl);
+        }
 
         if (settings.scaleControl) {
             this._dom.map.addControl(new GScaleControl());

@@ -29,7 +29,7 @@ Exhibit.Lens.l10n={editButtonLabel:"Edit",saveButtonLabel:"Save"};
 
 /* list-facet-l10n.js */
 
-Exhibit.ListFacet.l10n={clearSelectionsTooltip:"Clear these selections",groupByLink:"group by",collapseLink:"collapse",expandLink:"expand",toggleGroupTooltip:"Toggle group",groupByLabel:"Group by",groupTheGroupsByLabel:"Group the groups by"};
+Exhibit.ListFacet.l10n={clearSelectionsTooltip:"Clear these selections",ungroupLink:"(un-group)",ungroupAllButton:"un-group all",closeButton:"close",groupByLink:"group by",collapseLink:"collapse",expandLink:"expand",toggleGroupTooltip:"Toggle group",groupByLabel:"Group by",groupTheGroupsByLabel:"Group the groups by"};
 
 /* map-view-l10n.js */
 

@@ -31,7 +31,7 @@ Exhibit.Lens.l10n={editButtonLabel:"Redigera",saveButtonLabel:"Spara"};
 
 /* list-facet-l10n.js */
 
-Exhibit.ListFacet.l10n={clearSelectionsTooltip:"ångra dessa val",groupByLink:"gruppera efter",collapseLink:"slå samman",expandLink:"expandera",toggleGroupTooltip:"slå av/på grupp",groupByLabel:"gruppera efter",groupTheGroupsByLabel:"gruppera grupperna efter"};
+Exhibit.ListFacet.l10n={clearSelectionsTooltip:"ångra dessa val",ungroupLink:"(avgruppera)",ungroupAllButton:"avgruppera alla",closeButton:"stäng",groupByLink:"gruppera efter",collapseLink:"slå samman",expandLink:"expandera",toggleGroupTooltip:"slå av/på grupp",groupByLabel:"gruppera efter",groupTheGroupsByLabel:"gruppera grupperna efter"};
 
 /* map-view-l10n.js */
 
