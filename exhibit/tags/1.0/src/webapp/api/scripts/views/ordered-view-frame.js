@@ -342,7 +342,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
                 grouped = true;
             }
         }
-        grouped = grouped && keys.length > 1;
+        //grouped = grouped && keys.length > 1;
         if (grouped) {
             hasSomeGrouping = true;
         }
