@@ -168,6 +168,10 @@ Exhibit.Database._Impl.prototype.loadTypes = function(typeEntries, baseURI) {
                 type._pluralLabel = ("pluralLabel" in typeEntry) ? 
                     typeEntry.pluralLabel : 
                     type._label;
+                    
+                if ("origin" in typeEntry) {
+                    type._origin = typeEntry.origin;
+                }
             }
         }
         
@@ -210,6 +214,10 @@ Exhibit.Database._Impl.prototype.loadProperties = function(propertyEntries, base
             
             property._groupingLabel = ("groupingLabel" in propertyEntry) ? propertyEntry.groupingLabel : property._label;
             property._reverseGroupingLabel = ("reverseGroupingLabel" in propertyEntry) ? propertyEntry.reverseGroupingLabel : property._reverseLabel;
+            
+            if ("origin" in propertyEntry) {
+                property._origin = propertyEntry.origin;
+            }
         }
         this._propertyArray = null;
         
@@ -650,7 +658,8 @@ Exhibit.Database._Type.prototype = {
     getURI:         function() { return this._uri; },
     getLabel:       function() { return this._label; },
     getPluralLabel: function() { return this._pluralLabel; },
-    getSuperTypeID: function() { return this._superTypeID; }
+    getSuperTypeID: function() { return this._superTypeID; },
+    getOrigin:      function() { return this._origin; }
 };
 
 /*==================================================
@@ -673,7 +682,8 @@ Exhibit.Database._Property.prototype = {
     getReverseLabel:        function() { return this._reverseLabel; },
     getReversePluralLabel:  function() { return this._reversePluralLabel; },
     getGroupingLabel:       function() { return this._groupingLabel; },
-    getGroupingPluralLabel: function() { return this._groupingPluralLabel; }
+    getGroupingPluralLabel: function() { return this._groupingPluralLabel; },
+    getOrigin:              function() { return this._origin; }
 };
 
 Exhibit.Database._Property.prototype._onNewData = function() {
