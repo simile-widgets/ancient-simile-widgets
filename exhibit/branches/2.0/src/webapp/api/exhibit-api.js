@@ -173,8 +173,9 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
+        //var url = "/ajax/api/simile-ajax-api.js";
         //var url = "http://static.simile.mit.edu/ajax/api/simile-ajax-api.js";
-        var url = "/ajax/api/simile-ajax-api.js";
+        var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {
             var script = document.createElement("script");
             script.type = "text/javascript";
