@@ -19,12 +19,20 @@ Exhibit.JSONPImporter.load = function(link, database, cont, fConvert) {
     if (typeof link != "string") {
         url = Exhibit.resolveURL(link.href);
         fConvert = Exhibit.getAttribute(link, 'converter');
-        try {
-            fConvert = eval(fConvert);
-        } catch (e) {
-            fConvert = null;
-            // silent
-        }
+    }
+    if (typeof fConvert == "string") {
+	var name = fConvert;
+	name = name.charAt(0).toLowerCase() + name.substring(1) + 'Converter';
+	if (name in Exhibit.JSONPImporter) {
+	    fConvert = Exhibit.JSONPImporter[name];
+	} else {
+	    try {
+		fConvert = eval(fConvert);
+	    } catch (e) {
+		fConvert = null;
+		// silent
+	    }
+	}
     }
 
     var next = Exhibit.JSONPImporter._callbacks.next || 1;
@@ -64,6 +72,15 @@ Exhibit.JSONPImporter.load = function(link, database, cont, fConvert) {
     var script = SimileAjax.includeJavascriptFile(document, callbackURL);
     Exhibit.showBusyIndicator();
     return Exhibit.JSONPImporter._callbacks[callbackName];
+};
+
+Exhibit.JSONPImporter.deliciousConverter = function(json, url) {
+    var items = [];
+    for (var i = 0, item; item = json[i]; i++) {
+	item = { url:item.u, label:item.n, description:item.d, tags:item.t };
+	items.push(item);
+    }
+    return { items:items, properties:{ url:{ valueType:"url" } } };
 };
 
 Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
@@ -123,4 +140,3 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
   
     return { types:types, properties:properties, items:items };
 };
-
