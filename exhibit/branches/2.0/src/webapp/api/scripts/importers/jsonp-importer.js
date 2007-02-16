@@ -77,7 +77,7 @@ Exhibit.JSONPImporter.load = function(link, database, cont, fConvert) {
 Exhibit.JSONPImporter.deliciousConverter = function(json, url) {
     var items = [];
     for (var i = 0, item; item = json[i]; i++) {
-	item = { url:item.u, label:item.n, description:item.d, tags:item.t };
+	item = { label:item.u, note:item.n, description:item.d, tags:item.t };
 	items.push(item);
     }
     return { items:items, properties:{ url:{ valueType:"url" } } };
