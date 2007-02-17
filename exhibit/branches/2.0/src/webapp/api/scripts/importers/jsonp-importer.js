@@ -61,7 +61,7 @@ Exhibit.JSONPImporter.load = function(link, database, cont, fConvert) {
             if (script && script.parentNode) {
                 script.parentNode.removeChild(script);
             }
-            
+
             database.loadData(fConvert ? fConvert(json, url) : json,
                               Exhibit.getBaseURL(url));
         } finally {
@@ -74,12 +74,47 @@ Exhibit.JSONPImporter.load = function(link, database, cont, fConvert) {
     return Exhibit.JSONPImporter._callbacks[callbackName];
 };
 
-Exhibit.JSONPImporter.deliciousConverter = function(json, url) {
-    var items = [];
-    for (var i = 0, item; item = json[i]; i++) {
-	item = { label:item.u, note:item.n, description:item.d, tags:item.t };
+// Does 90% of the feed conversion for 90% of all (well designed) JSONP feeds.
+// Pass the raw json object, an optional index to drill into to get at the
+// array of items ("feed.entry", in the case of Google Spreadsheets -- pass
+// null, if the array is already the top container, as in a Del.icio.us feed),
+// an object mapping the wanted item property name to the properties to pick
+// them up from, and an optional similar mapping with conversion callbacks to
+// perform on the data value before storing it in the item property. These
+// callback functions are invoked with the value, the object it was picked up
+// from, its index in the items array, the items array and the feed as a whole
+// (for the cases where you need to look up properties from the surroundings).
+// Returning the undefined value your converter means the property is not set.
+Exhibit.JSONPImporter.transformJSON = function(json, index, mapping, converters) {
+    var objects = json, items = [];
+    if (index) {
+	index = index.split(".");
+	while (index.length) {
+	    objects = objects[index.shift()];
+	}
+    }
+    for (var i = 0, object; object = objects[i]; i++) {
+	var item = {};
+	for (var name in mapping) {
+	    var index = mapping[name];
+	    if (!mapping.hasOwnProperty(name) || // gracefully handle poisoned
+		!object.hasOwnProperty(index)) continue; // Object.prototype
+	    var property = object[index];
+	    if (converters && converters.hasOwnProperty(name)) {
+		property = converters[name](property, object, i, objects, json);
+	    }
+	    if (typeof property != "undefined") {
+		item[name] = property;
+	    }
+	}
 	items.push(item);
     }
+    return items;
+};
+
+Exhibit.JSONPImporter.deliciousConverter = function(json, url) {
+    var items = Exhibit.JSONPImporter.transformJSON(json, null,
+	{ label:"u", note:"n", description:"d", tags:"t" });
     return { items:items, properties:{ url:{ valueType:"url" } } };
 };
 
