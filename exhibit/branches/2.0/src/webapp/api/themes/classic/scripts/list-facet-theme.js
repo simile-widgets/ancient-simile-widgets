@@ -152,7 +152,9 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
             },
             onDragBy: function(diffX, diffY) {
                 this._height += diffY;
-                dom.valuesContainer.style.height = Math.max(50, this._height) + "px";
+		var h = Math.max(50, this._height) + "px";
+                dom.valuesContainer.style.height = h;
+                dom.valuesContainer.style.maxHeight = h;
             },
             onDragEnd: function() {
             }
