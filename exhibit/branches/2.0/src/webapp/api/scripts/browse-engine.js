@@ -469,6 +469,16 @@ Exhibit.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
         
         var results = [];
         var map = {};
+        var facetSortFunc = function(a, b) {
+            return a.label.localeCompare(b.label);
+        };
+        if (resultStruct.valueType == "number") {
+            facetSortFunc = function(a, b) {
+                a = parseFloat(a.value);
+                b = parseFloat(b.value);
+                return a < b ? -1 : a > b ? 1 : 0;
+            }
+        }
         
         rangeSet.visit(function(rangeValue) {
             var domainSubset = path.evaluateBackward(rangeValue, "item", domainSet, database).values;
@@ -503,9 +513,7 @@ Exhibit.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
                     facetValue.children.push(childFacetValue);
                 });
                 
-                facetValue.children.sort(function(a, b) {
-                    return a.label.localeCompare(b.label);
-                });
+                facetValue.children.sort(facetSortFunc);
             }
             
             results.push(facetValue);
@@ -516,9 +524,7 @@ Exhibit.BrowseEngine.prototype._computeFacet = function(collection, r, facets) {
             domainSets.push(rangeSet);
             return arguments.callee(level + 1, domainSets, map);
         } else {
-            results.sort(function(a, b) {
-                return a.label.localeCompare(b.label);
-            });
+            results.sort(facetSortFunc);
             return results;
         }
     };
