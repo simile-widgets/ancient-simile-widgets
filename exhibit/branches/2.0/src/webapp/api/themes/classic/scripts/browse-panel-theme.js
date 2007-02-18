@@ -7,6 +7,11 @@ Exhibit.BrowsePanel.theme = new Object();
 
 Exhibit.BrowsePanel.theme.constructBrowsePanel = function(exhibit, div, logoURL) {
     var l10n = Exhibit.BrowsePanel.l10n;
+    var logo = SimileAjax.Graphics.createTranslucentImage(document, logoURL);
+    var id = "exhibit-logo-image";
+    if (!document.getElementById(id)) {
+        logo.id = id;
+    }
     var template = {
         elmt: div,
         children: [
@@ -21,7 +26,7 @@ Exhibit.BrowsePanel.theme.constructBrowsePanel = function(exhibit, div, logoURL)
                         target:     "_blank",
                         title:      "http://simile.mit.edu/exhibit/",
                         children:   [
-                            { elmt: SimileAjax.Graphics.createTranslucentImage(document, logoURL) }
+                            { elmt: logo }
                         ]
                     }
                 ]
