@@ -14,13 +14,19 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
     onGroup, 
     onCollapseAll, 
     onExpandAll, 
-    onClearAllSelections
+    onClearAllSelections,
+    classNames
 ) {
     var l10n = Exhibit.ListFacet.l10n;
-    
+
+    var className = "exhibit-facet-frame";
+    if (classNames && classNames.frame) {
+        className += " " + classNames.frame;
+    }
+
     var template = {
         elmt:       div,
-        className:  "exhibit-facet-frame",
+        className:  className,
         style:      { height: "1px" },
         children: [
             {   tag:        "div",

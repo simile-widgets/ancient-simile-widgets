@@ -73,7 +73,8 @@ Exhibit.ListFacet.prototype._constructFrame = function(div, facet) {
         onGroup, 
         onCollapseAll, 
         onExpandAll, 
-        onClearSelections
+        onClearSelections,
+        { frame:facet.facetID.substring(1) }
     );
     this._dom.open();
 };
