@@ -64,7 +64,7 @@ Exhibit.Theme = {
     },
     createCopyButton: function(all) {
         var button = document.createElement("button");
-        button.className = "exhibit-copyButton";
+        button.className = "exhibit-copyButton screen";
         button.innerHTML = all ? Exhibit.l10n.copyAllButtonLabel : Exhibit.l10n.copyButtonLabel;
         return button;
     },

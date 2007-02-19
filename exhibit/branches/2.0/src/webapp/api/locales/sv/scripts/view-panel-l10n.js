@@ -60,11 +60,17 @@ Exhibit.ViewPanel.l10n = {
                     {   tag:    "span",
                         field:  "originalCountSpan"
                     },
-                   " totalt (",
-                    {   elmt:  resetActionLink,
-                        title: "Välj bort alla filter och se samtliga"
-                    },
-                    ")"
+                    " totalt",
+                    {   tag:        "span",
+                        className:  "screen",
+                        children: [
+                            " (",
+                            {   elmt:  resetActionLink,
+                                title: "Välj bort alla filter och se samtliga"
+                            },
+                            ")"
+                        ]
+                    }
                 ]
             }
         ];

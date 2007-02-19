@@ -27,10 +27,15 @@ Exhibit.OrderedViewFrame.l10n = {
             {   tag:    "span",
                 field:  "ordersSpan"
             },
-            "; ",
-            {   elmt:  thenSortByActionLink,
-                title: "sortera ytterligare",
-                field: "thenByLink"
+            {   tag:        "span",
+                className:  "screen",
+                children: [
+                    "; ",
+                    {   elmt:  thenSortByActionLink,
+                        title: "sortera ytterligare",
+                        field: "thenByLink"
+                    }
+                ]
             }
         ];
     },

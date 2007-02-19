@@ -45,7 +45,7 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit, myCo
                 title:      label,
                 children:   [ 
                     {   elmt:       exhibit.makeCopyButton(itemID),
-                        className:  "exhibit-copyButton exhibit-lens-copyButton"
+                        className:  "exhibit-copyButton exhibit-lens-copyButton screen"
                     },
                     label + " (",
                     {   tag:        "a",

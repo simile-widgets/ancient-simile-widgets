@@ -169,7 +169,7 @@ Exhibit.OrderedViewFrame.theme.createFooterDom = function(
     var l10n = Exhibit.OrderedViewFrame.l10n;
     var footerTemplate = {
         elmt:       footerDiv,
-        className:  "exhibit-collectionView-footer",
+        className:  "exhibit-collectionView-footer screen",
         children:   []
     };
     
