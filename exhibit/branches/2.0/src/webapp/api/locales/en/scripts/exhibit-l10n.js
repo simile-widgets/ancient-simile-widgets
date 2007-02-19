@@ -44,6 +44,7 @@ Exhibit.l10n = {
     smwExporterLabel:               "Semantic wikitext",
     exhibitJsonExporterLabel:       "Exhibit JSON",
     tsvExporterLabel:               "Tab Separated Values",
+    htmlExporterLabel:              "Generated HTML of this view",
     
     /*
      *  List composition

@@ -188,6 +188,10 @@ Exhibit.ViewPanel.prototype.getState = function() {
 Exhibit.ViewPanel.prototype.setState = function(state) {
 };
 
+Exhibit.ViewPanel.prototype.getGeneratedViewHTML = function() {
+    return this._dom.getViewContainer().innerHTML;
+};
+
 Exhibit.ViewPanel.prototype._initializeUI = function() {
     var div = document.createElement("div");
     if (this._div.firstChild != null) {
