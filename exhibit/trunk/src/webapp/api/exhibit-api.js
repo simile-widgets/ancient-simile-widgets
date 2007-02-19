@@ -47,6 +47,7 @@
             "exporters/semantic-wikitext-exporter.js",
             "exporters/exhibit-json-exporter.js",
             "exporters/tsv-exporter.js",
+            "exporters/html-exporter.js",
             "exporters/bibtex-exporter.js"
         ];
         var cssFiles = [
