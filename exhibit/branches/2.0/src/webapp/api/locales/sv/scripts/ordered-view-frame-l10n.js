@@ -17,7 +17,7 @@ Exhibit.OrderedViewFrame.l10n = {
         return "Visa bara de första  " + limitCount + " resultaten";
     },
     formatShowAll: function(count) {
-        return "Visa samtliga " + count + " result";
+        return "Visa samtliga " + count + " resultat";
     },
     createSortingControlsTemplate: function(
         thenSortByActionLink
