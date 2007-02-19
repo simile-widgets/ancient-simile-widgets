@@ -1,4 +1,4 @@
-/*==================================================
+﻿/*==================================================
  *  Exhibit Swedish localization
  *==================================================
  */
@@ -7,21 +7,21 @@ Exhibit.l10n = {
     missingLabel:   "saknas",
     missingSortKey: "(saknas)",
     notApplicableSortKey: "(n/a)",
-    itemLinkLabel:  "länk",
+    itemLinkLabel:  "lÃ¤nk",
 
     busyIndicatorMessage:       "Arbetar...",
-    showDocumentationMessage:   "Relevant dokumentation kommer visas efter det här meddelandet.",
-    showJavascriptValidationMessage: "Felet förklaras mer ingående efter det här meddelandet.",
+    showDocumentationMessage:   "Relevant dokumentation kommer visas efter det hÃ¤r meddelandet.",
+    showJavascriptValidationMessage: "Felet fÃ¶rklaras mer ingÃ¥ende efter det hÃ¤r meddelandet.",
 
-    showJsonValidationMessage: "Felet förklaras mer ingående efter det här meddelandet.",
-    showJsonValidationFormMessage: "Vi skickar dig till en webtjänst du kan ladda upp din kod till för felsökning efter det här meddelandet.",
+    showJsonValidationMessage: "Felet fÃ¶rklaras mer ingÃ¥ende efter det hÃ¤r meddelandet.",
+    showJsonValidationFormMessage: "Vi skickar dig till en webtjÃ¤nst du kan ladda upp din kod till fÃ¶r felsÃ¶kning efter det hÃ¤r meddelandet.",
 
     badJsonMessage: function(url, e) {
-        return "JSON-filen\n  " + url + "\ninnehåller fel:\n\n" + e;
+        return "JSON-filen\n  " + url + "\ninnehÃ¥ller fel:\n\n" + e;
     },
     failedToLoadDataFileMessage: function(url) {
         return "Kunde inte hitta filen\n  " + url +
-             "\nKontrollera att filnamnet är korrekt.";
+             "\nKontrollera att filnamnet Ã¤r korrekt.";
     },
 
     /*
@@ -29,14 +29,14 @@ Exhibit.l10n = {
      */
     copyButtonLabel:                "Kopiera",
     copyAllButtonLabel:             "Kopiera allt",
-    copyDialogBoxCloseButtonLabel:  "Stäng",
+    copyDialogBoxCloseButtonLabel:  "StÃ¤ng",
     copyDialogBoxPrompt:
-        "Kopiera det här till klippbordet precis som du skulle göra för annan text. Tryck ESC för att stänga den här dialogen.",
+        "Kopiera det hÃ¤r till klippbordet precis som du skulle gÃ¶ra fÃ¶r annan text. Tryck ESC fÃ¶r att stÃ¤nga den hÃ¤r dialogen.",
 
     /*
      *  Focusdialog box
      */
-    focusDialogBoxCloseButtonLabel:  "Stäng",
+    focusDialogBoxCloseButtonLabel:  "StÃ¤ng",
 
     /*
      *  Common exporters' labels
@@ -44,7 +44,8 @@ Exhibit.l10n = {
     rdfXmlExporterLabel:            "RDF/XML",
     smwExporterLabel:               "Semantisk wikitext",
     exhibitJsonExporterLabel:       "Exhibit JSON",
-    tsvExporterLabel:               "Tabseparerade värden",
+    tsvExporterLabel:               "Tabseparerade vÃ¤rden",
+    htmlExporterLabel:              "Generated HTML of this view",
 
     /*
      *  List composition
