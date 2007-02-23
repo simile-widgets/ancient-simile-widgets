@@ -39,6 +39,10 @@ Exhibit.MapView.l10n={viewLabel:"Map",viewTooltip:"View items on a map",mixedLeg
 
 Exhibit.OrderedViewFrame.l10n={thenSortByLabel:"then by...",removeOrderLabel:"Remove this order",formatSortActionTitle:function(propertyLabel,sortLabel){return"Sorted by "+propertyLabel+" ("+sortLabel+")";},formatRemoveOrderActionTitle:function(propertyLabel,sortLabel){return"Removed order by "+propertyLabel+" ("+sortLabel+")";},resetActionTitle:"Reset",formatDontShowAll:function(limitCount){return"Show only the first "+limitCount+" results";},formatShowAll:function(count){return"Show all "+count+" results";},createSortingControlsTemplate:function(thenSortByActionLink){return["sorted by: ",{tag:"span",field:"ordersSpan"},"; ",{elmt:thenSortByActionLink,title:"Further sort the items",field:"thenByLink"}];},groupedAsSorted:"grouped as sorted",groupAsSortedActionTitle:"grouped as sorted",ungroupActionTitle:"ungrouped",showDuplicates:"show duplicates",showDuplicatesActionTitle:"show duplicates",hideDuplicatesActionTitle:"hide duplicates"};
 
+/* scatter-plot-view-l10n.js */
+
+Exhibit.ScatterPlotView.l10n={viewLabel:"Scatter Plot",viewTooltip:"View items on a scatter plot",mixedLegendKey:"Mixed",colorLegendTitle:"Color Legend",formatMappableCount:function(count){return"Only "+count+" can be plotted.";}};
+
 /* tabular-view-l10n.js */
 
 Exhibit.TabularView.l10n={viewLabel:"Table",viewTooltip:"View items in a table",resetActionTitle:"Reset",columnHeaderSortTooltip:"Click to sort by this column",columnHeaderReSortTooltip:"Click to sort in the reverse order",makeSortActionTitle:function(label,ascending){return(ascending?"sorted ascending by ":"sorted descending by ")+label;}};

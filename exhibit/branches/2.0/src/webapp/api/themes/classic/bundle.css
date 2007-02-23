@@ -434,6 +434,105 @@ div.exhibit-mapView-legendBlock-title {
 div.exhibit-mapView-legendBlock-entry {
     margin: 2px 0;
 }
+div.exhibit-scatterPlotView-plotContainer {
+    position: relative;
+}
+div.exhibit-scatterPlotView-xAxis {
+    position:   absolute; 
+    height:     2em;
+    bottom:     0px;
+    left:       5em;
+    right:      0px;
+}
+div.exhibit-scatterPlotView-xAxisLabel {
+    font-family:    sans-serif;
+    font-size:      80%;
+    padding:        2px;
+    position:       absolute;
+    width:          5em;
+    color:          #888;
+}
+div.exhibit-scatterPlotView-xAxisName {
+    position:       absolute;
+    top:            1em;
+    height:         1em;
+    left:           0px;
+    right:          0px;
+    text-align:     right;
+    font-weight:    bold;
+}
+
+div.exhibit-scatterPlotView-yAxis {
+    position:   absolute; 
+    left:       0px;
+    width:      5em;
+    top:        0px;
+    bottom:     2em;
+}
+div.exhibit-scatterPlotView-yAxisLabel {
+    font-family:    sans-serif;
+    font-size:      80%;
+    padding:        2px;
+    position:       absolute;
+    width:          5em;
+    color:          #888;
+    text-align:     right;
+}
+div.exhibit-scatterPlotView-yAxisName {
+    position:       absolute;
+    top:            0;
+    height:         1em;
+    left:           0px;
+    width:          5em;
+    font-weight:    bold;
+    text-align:     right;
+}
+div.exhibit-scatterPlotView-gridLine {
+    position:   absolute; 
+    background: white;
+}
+div.exhibit-scatterPlotView-canvasFrame {
+    position:       absolute;
+    left:           5em;
+    right:          0px;
+    top:            1em;
+    bottom:         2em;
+}
+div.exhibit-scatterPlotView-canvas {
+    position:   relative; 
+    background: #ddd;
+}
+div.exhibit-scatterPlotView-point {
+    position:   absolute;
+    cursor:     pointer;
+}
+
+div.exhibit-scatterPlotView-resizer {
+    text-align:     center;
+    cursor:         n-resize;
+    height:         10px;
+}
+div.exhibit-scatterPlotView-mappableDetails {
+    padding:        1em;
+    text-align:     center;
+}
+div.exhibit-scatterPlotView-legend {
+    margin-top:     1em;
+}
+div.exhibit-scatterPlotView-legendBlock {
+    line-height:    120%;
+}
+div.exhibit-scatterPlotView-legendBlock-title {
+    font-weight:    bold;
+}
+div.exhibit-scatterPlotView-legendBlock-entry {
+    margin: 2px 0;
+}
+span.exhibit-scatterPlotView-legendBlock-colorBlob {
+    border:     1px solid #888;
+    padding:    0px 5px;
+    margin:     0px 5px;
+}
 table.exhibit-tabularView-body {
     width: 100%;
 }

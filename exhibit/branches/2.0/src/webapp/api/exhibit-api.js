@@ -41,6 +41,7 @@
             "views/timeline-view.js",
             "views/thumbnail-view.js",
             "views/tabular-view.js",
+            "views/scatter-plot-view.js",
             "lens.js",
             
             "importers/exhibit-json-importer.js",
