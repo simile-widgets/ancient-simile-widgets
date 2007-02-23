@@ -15,7 +15,7 @@ Exhibit.HtmlTableImporter.load = function(link, database, cont) {
 
         Exhibit.HtmlTableImporter.loadTable(table, database);
     } catch( e ) {
-	console.log( e );
+	window.console && console.log && console.log( e );
     } finally {
         if (cont) {
             cont();
