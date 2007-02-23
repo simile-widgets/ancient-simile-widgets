@@ -250,6 +250,7 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
         }
     );
     
+    this._dom.plotContainer.style.height = "400px";
     this._reconstruct();
 };
 
@@ -366,8 +367,6 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         /*
          *  Construct plot's frame
          */
-        this._dom.plotContainer.style.height = "400px";
-        
         var canvasFrame = document.createElement("div");
         canvasFrame.className = SimileAjax.Platform.browser.isIE ?
             "exhibit-scatterPlotView-canvasFrame-ie" :
