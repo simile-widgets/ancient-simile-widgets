@@ -369,7 +369,9 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         this._dom.plotContainer.style.height = "400px";
         
         var canvasFrame = document.createElement("div");
-        canvasFrame.className = "exhibit-scatterPlotView-canvasFrame";
+        canvasFrame.className = SimileAjax.Platform.browser.isIE ?
+            "exhibit-scatterPlotView-canvasFrame-ie" :
+            "exhibit-scatterPlotView-canvasFrame";
         this._dom.plotContainer.appendChild(canvasFrame);
         
         var canvasDiv = document.createElement("div");
@@ -386,7 +388,9 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         xAxisDiv.appendChild(xAxisDivInner);
         
         var yAxisDiv = document.createElement("div");
-        yAxisDiv.className = "exhibit-scatterPlotView-yAxis";
+        yAxisDiv.className = SimileAjax.Platform.browser.isIE ?
+            "exhibit-scatterPlotView-yAxis-ie" :
+            "exhibit-scatterPlotView-yAxis";
         this._dom.plotContainer.appendChild(yAxisDiv);
         
         var yAxisDivInner = document.createElement("div");
@@ -422,7 +426,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             div.style.width = "1px";
             div.style.left = left + "px";
             div.style.top = "0px";
-            div.style.bottom = "0px";
+            div.style.height = "100%";
             canvasDiv.appendChild(div);
             
             var labelDiv = document.createElement("div");
@@ -444,7 +448,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             div.style.height = "1px";
             div.style.bottom = bottom + "px";
             div.style.left = "0px";
-            div.style.right = "0px";
+            div.style.width = "100%";
             canvasDiv.appendChild(div);
             
             var labelDiv = document.createElement("div");
