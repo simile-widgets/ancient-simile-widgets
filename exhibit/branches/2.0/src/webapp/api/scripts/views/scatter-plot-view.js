@@ -45,7 +45,7 @@ Exhibit.ScatterPlotView = function(exhibit, div, configuration, domConfiguration
                 return result;
             };
         };
-        var makeGetXY2 = function(y, x) {
+        var makeGetXY2 = function(x, y) {
             var xExpression = Exhibit.Expression.parse(x);
             var yExpression = Exhibit.Expression.parse(y);
             return function(itemID, database) {
