@@ -11,11 +11,13 @@ Exhibit.importers["application/jsonp"] = Exhibit.JSONPImporter;
 // cont gets called with the original feed (so you can pick up details from the
 // feed from user code that were of interest to you but not the exhibit itself,
 // for instance). load returns the callback that the JSONP payload should call,
-// so that even partial static JSONP implementations (with a constantly named
-// callback) can assign that variable with the return value, and things will
+// so that even partial static JSONP implementations (with a fixed callback
+// name) can assign that variable with the return value, and things will
 // work out, as much as they can (i e concurrent requests can get mixed up).
-Exhibit.JSONPImporter.load = function(link, database, cont, fConvert) {
-    var url = link, staticJSONPCallback;
+Exhibit.JSONPImporter.load = function(
+    link, database, cont, fConvert, staticJSONPCallback
+) {
+    var url = link;
     if (typeof link != "string") {
         url = Exhibit.resolveURL(link.href);
         fConvert = Exhibit.getAttribute(link, 'converter');

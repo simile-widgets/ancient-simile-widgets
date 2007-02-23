@@ -3,10 +3,13 @@
  *  http://simile.mit.edu/wiki/Exhibit/API/Exhibit
  *======================================================================
  */
-Exhibit.create = function(rootTypes) {
+Exhibit.create = function(rootTypes, data) {
     var exhibit = Exhibit._internalCreate({});
     exhibit.setRootTypes(rootTypes);
-    
+    if (typeof data != "undefined") {
+        exhibit._dwim_create(data);
+    }
+
     return exhibit;
 };
 
@@ -274,15 +277,27 @@ Exhibit._Impl.prototype.dispose = function() {
 
 Exhibit._Impl.prototype._dwim_create = function(data) {
     var showError = function() {
-	if( confirm( "Exhibit.create() expects a Javascript object, the\n" +
-            "ID of a <data> or <table> element, or an array of either.\n\n" +
-            "Do you want to see to the relevant documentation?" ) ) {
+        if( confirm( "Exhibit.create() wants a rootTypes argument (a type\n" +
+                     "name or array of type names), and (optionally) a\n" +
+                     "Javascript object, the ID of a <data> or <table>\n" +
+                     "element, or an array of either.\n\n" +
+                     "Do you want to see to the relevant documentation?" ) ) {
             window.open("http://simile.mit.edu/wiki/Exhibit/Creating%2C_Importing%2C_and_Managing_Data", "_blank");
         }
     };
 
-    if (typeof data == "object")
-        return this.loadData(data);
+    if (typeof data == "object") {
+        if (data.hasOwnProperty("items") ||
+            data.hasOwnProperty("types") ||
+            data.hasOwnProperty("properties"))
+            return this._database.loadData(data);
+        if (data.hasOwnProperty("jsonp_url"))
+            return Exhibit.JSONPImporter.load(data.jsonp_url,
+					      this._database,
+					      data.continuation,
+					      data.ondataload,
+					      data.callback);
+    }
 
     if (typeof data == "string") {
         var elmt = document.getElementById(data);
@@ -293,7 +308,7 @@ Exhibit._Impl.prototype._dwim_create = function(data) {
             if (tagName == "data") {
                 this.loadDataFromDomNode(elmt);
             } else if (tagName == "table") {
-                this.loadDataFromTable(elmt);
+                Exhibit.HtmlTableImporter.loadTable(elmt, this._database);
             } else {
                 showError();
             }
@@ -304,15 +319,15 @@ Exhibit._Impl.prototype._dwim_create = function(data) {
 }
 
 Exhibit._Impl.prototype.setRootTypes = function(rootTypes) {
+    var items, database = this.getDatabase();
     if (typeof rootTypes == "string") {
-        this.getBrowseEngine().setRootCollection(this.getDatabase().getSubjects(rootTypes, "type"));
+        items = database.getSubjects(rootTypes, "type");
     } else if (rootTypes instanceof Array) {
-        this.getBrowseEngine().setRootCollection(
-            this.getDatabase().getSubjectsUnion(new Exhibit.Set(rootTypes), "type")
-        );
+        items = database.getSubjectsUnion(new Exhibit.Set(rootTypes), "type");
     } else {
-        this.getBrowseEngine().setRootCollection(this.getDatabase().getAllItems());
+        items = database.getAllItems();
     }
+    this.getBrowseEngine().setRootCollection(items);
 };
 
 Exhibit._Impl.prototype.getPermanentLink = function() {
@@ -341,7 +356,7 @@ Exhibit._Impl.prototype.getItemLink = function(itemID) {
 };
 
 Exhibit._Impl.prototype.loadData = function(data) {
-    this._loadJSON(data, Exhibit.getURLWithoutQueryAndHash());
+    this._database.loadData(data, Exhibit.getURLWithoutQueryAndHash());
 };
 
 Exhibit._Impl.prototype.makeActionLink = function(text, handler, layer) {
