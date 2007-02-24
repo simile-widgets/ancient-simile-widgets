@@ -290,7 +290,7 @@ Exhibit._Impl.prototype._dwim_create = function(data) {
         if (data.hasOwnProperty("items") ||
             data.hasOwnProperty("types") ||
             data.hasOwnProperty("properties"))
-            return this._database.loadData(data);
+            return this.loadData(data);
         if (data.hasOwnProperty("jsonp_url"))
             return Exhibit.JSONPImporter.load(data.jsonp_url,
 					      this._database,
