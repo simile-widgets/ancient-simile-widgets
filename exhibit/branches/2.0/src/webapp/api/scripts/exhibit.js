@@ -5,10 +5,10 @@
  */
 Exhibit.create = function(rootTypes, data) {
     var exhibit = Exhibit._internalCreate({});
-    exhibit.setRootTypes(rootTypes);
     if (typeof data != "undefined") {
         exhibit._dwim_create(data);
     }
+    exhibit.setRootTypes(rootTypes);
 
     return exhibit;
 };
