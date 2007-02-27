@@ -321,6 +321,15 @@ Exhibit.Expression._Impl.prototype.evaluate = function(
     return this._rootNode.evaluate(roots, rootValueTypes, defaultRootName, database);
 };
 
+Exhibit.Expression._Impl.prototype.evaluateOnItem = function(itemID, database) {
+    return this.evaluate(
+        { "value" : itemID }, 
+        { "value" : "item" }, 
+        "value",
+        database
+    );
+};
+
 Exhibit.Expression._Impl.prototype.evaluateSingle = function(
     roots, 
     rootValueTypes, 
@@ -332,6 +341,15 @@ Exhibit.Expression._Impl.prototype.evaluateSingle = function(
     results.values.visit(function(v) { result.value = v; return true; });
     
     return result;
+};
+
+Exhibit.Expression._Impl.prototype.evaluateSingleOnItem = function(itemID, database) {
+    return this.evaluateSingle(
+        { "value" : itemID }, 
+        { "value" : "item" }, 
+        "value",
+        database
+    );
 };
 
 Exhibit.Expression._Impl.prototype.testExists = function(

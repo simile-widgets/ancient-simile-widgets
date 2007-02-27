@@ -1,17 +1,5 @@
 
 
-/* browse-engine-l10n.js */
-
-Exhibit.BrowseEngine.l10n={errorParsingFacetExpressionMessage:function(expression){return"The expression '"+expression+"' used to specify a facet is not valid.";}};
-
-/* browse-panel-l10n.js */
-
-Exhibit.BrowsePanel.l10n={notConfigureMessage:"You have not configured the Browse Panel.",learnHowMessage:"Learn How!"};
-
-/* control-panel-l10n.js */
-
-Exhibit.ControlPanel.l10n={badExporterExpressionMessage:function(expr){return"The expression '"+expr+"' in the ex:exporters attribute value\n"+"of <div id=\"exhibit-control-panel\"> does not evaluate to a Javascript object.";}};
-
 /* database-l10n.js */
 
 Exhibit.Database.l10n={itemType:{label:"Item",pluralLabel:"Items"},labelProperty:{label:"label",pluralLabel:"labels",reverseLabel:"label of",reversePluralLabel:"labels of",groupingLabel:"labels",reverseGroupingLabel:"things being labelled"},typeProperty:{label:"type",pluralLabel:"types",reverseLabel:"type of",reversePluralLabel:"types of",groupingLabel:"types",reverseGroupingLabel:"things of these types"},uriProperty:{label:"URI",pluralLabel:"URIs",reverseLabel:"URI of",reversePluralLabel:"URIs of",groupingLabel:"URIs",reverseGroupingLabel:"things named by these URIs"},sortLabels:{"text":{ascending:"a - z",descending:"z - a"},"number":{ascending:"smallest first",descending:"largest first"},"date":{ascending:"earliest first",descending:"latest first"},"boolean":{ascending:"false first",descending:"true first"},"item":{ascending:"a - z",descending:"z - a"}}};

@@ -19,7 +19,7 @@ Exhibit.JSONPImporter.load = function(
 ) {
     var url = link;
     if (typeof link != "string") {
-        url = Exhibit.resolveURL(link.href);
+        url = Exhibit.Persistence.resolveURL(link.href);
         fConvert = Exhibit.getAttribute(link, 'converter');
         staticJSONPCallback = Exhibit.getAttribute(link, 'jsonp-callback');
     }
@@ -59,7 +59,7 @@ Exhibit.JSONPImporter.load = function(
 
     Exhibit.JSONPImporter._callbacks[callbackName] = function(json) {
         try {
-            Exhibit.hideBusyIndicator();
+            Exhibit.UI.hideBusyIndicator();
 
             delete Exhibit.JSONPImporter._callbacks[callbackName];
             if (script && script.parentNode) {
@@ -67,7 +67,7 @@ Exhibit.JSONPImporter.load = function(
             }
 
             database.loadData(fConvert ? fConvert(json, url) : json,
-                              Exhibit.getBaseURL(url));
+                              Exhibit.Persistence.getBaseURL(url));
         } finally {
             if (cont) cont(json);
         }
@@ -77,7 +77,7 @@ Exhibit.JSONPImporter.load = function(
     }
 
     var script = SimileAjax.includeJavascriptFile(document, callbackURL);
-    Exhibit.showBusyIndicator();
+    Exhibit.UI.showBusyIndicator();
     return Exhibit.JSONPImporter._callbacks[callbackName];
 };
 

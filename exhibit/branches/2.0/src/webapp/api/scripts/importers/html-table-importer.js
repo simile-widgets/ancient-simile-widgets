@@ -124,5 +124,5 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
         parsed.items = items;
     }
 
-    database.loadData( parsed, Exhibit.resolveURL(location.href) );
+    database.loadData( parsed, Exhibit.Persistence.resolveURL(location.href) );
 };

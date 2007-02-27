@@ -1,39 +1,78 @@
 /*==================================================
+ *  Exhibit.LensRegistry
+ *==================================================
+ */
+ 
+Exhibit.LensRegistry = function(parentRegistry) {
+    this._parentRegistry = parentRegistry;
+    this._defaultLens = null;
+    this._typeToLens = {};
+    this._lensSelectors = [];
+};
+
+Exhibit.LensRegistry.prototype.registerDefaultLens = function(elmtOrURL) {
+    this._defaultLens = elmtOrURL;
+};
+
+Exhibit.LensRegistry.prototype.registerLensForType = function(elmtOrURL, type) {
+    this._typeToLens[type] = elmtOrURL;
+};
+
+Exhibit.LensRegistry.prototype.addLensSelector = function(lensSelector) {
+    this._lensSelectors.unshift(lensSelector);
+};
+
+Exhibit.LensRegistry.prototype.getLens = function(itemID, database) {
+    for (var i = 0; i < this._lensSelectors.length; i++) {
+        var lens = this._lensSelectors[i](itemID, database);
+        if (lens != null) {
+            return lens;
+        }
+    }
+    
+    var type = database.getObject(itemID, "type");
+    if (type in this._typeToLens) {
+        return this._typeToLens[type];
+    }
+    if (this._defaultLens != null) {
+        return this._defaultLens;
+    }
+    if (this._parentRegistry) {
+        return this._parentRegistry.getLens(itemID, database);
+    }
+    return null;
+};
+
+Exhibit.LensRegistry.prototype.createLens = function(itemID, div, exhibit) {
+    var lens = new Exhibit.Lens();
+    
+    var lensTemplate = this.getLens(itemID, exhibit.getDatabase());
+    if (lensTemplate == null) {
+        lens._constructDefaultUI(itemID, div, exhibit);
+    } else if (typeof lensTemplate == "string") {
+        lens._constructFromLensTemplateURL(itemID, div, exhibit, lensTemplate);
+    } else {
+        lens._constructFromLensTemplateDOM(itemID, div, exhibit, lensTemplate);
+    }
+    return lens;
+};
+ 
+/*==================================================
  *  Exhibit.Lens
  *  http://simile.mit.edu/wiki/Exhibit/API/Lens
  *==================================================
  */
- 
-Exhibit.Lens = function(itemID, div, exhibit, configuration) {
-    var myConfig = ("Lens" in configuration) ? configuration["Lens"] : {};
-    
-    var lensTemplate = null;
-    var lensSelector = myConfig["lensSelector"];
-    if (lensSelector != null) {
-        lensTemplate = lensSelector.call(null, itemID, exhibit);
-    }
-    if (lensTemplate == null) {
-        this._constructDefaultUI(itemID, div, exhibit, myConfig);
-    } else if (typeof lensTemplate == "string") {
-        this._constructFromLensTemplateURL(itemID, div, exhibit, configuration, lensTemplate);
-    } else {
-        this._constructFromLensTemplateDOM(itemID, div, exhibit, configuration, lensTemplate);
-    }
+Exhibit.Lens = function() {
 };
 
 Exhibit.Lens._commonProperties = null;
-Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit, myConfig) {
+Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit) {
     var database = exhibit.getDatabase();
     
-    var properties = null;
-    if ("properties" in myConfig) {
-        properties = myConfig.properties;
-    } else {
-        if (Exhibit.Lens._commonProperties == null) {
-            Exhibit.Lens._commonProperties = database.getAllProperties();
-        }
-        properties = Exhibit.Lens._commonProperties;
+    if (Exhibit.Lens._commonProperties == null) {
+        Exhibit.Lens._commonProperties = database.getAllProperties();
     }
+    var properties = Exhibit.Lens._commonProperties;
     
     var label = database.getObject(itemID, "label");
     var template = {
@@ -44,12 +83,12 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit, myCo
                 className:  "exhibit-lens-title",
                 title:      label,
                 children:   [ 
-                    {   elmt:       exhibit.makeCopyButton(itemID),
+                    {   elmt:       Exhibit.UI.makeCopyButton(itemID),
                         className:  "exhibit-copyButton exhibit-lens-copyButton screen"
                     },
                     label + " (",
                     {   tag:        "a",
-                        href:       exhibit.getItemLink(itemID),
+                        href:       Exhibit.Persistence.getItemLink(itemID),
                         target:     "_blank",
                         children:   [ Exhibit.l10n.itemLinkLabel ]
                     },
@@ -90,14 +129,14 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit, myCo
                 if (m > 0) {
                     tdValues.appendChild(document.createTextNode(", "));
                 }
-                tdValues.appendChild(exhibit.makeItemSpan(pair.values[m]));
+                tdValues.appendChild(Exhibit.UI.makeItemSpan(pair.values[m], null, null, exhibit.getLensRegistry(), exhibit));
             }
         } else {
             for (var m = 0; m < pair.values.length; m++) {
                 if (m > 0) {
                     tdValues.appendChild(document.createTextNode(", "));
                 }
-                tdValues.appendChild(exhibit.makeValueSpan(pair.values[m], pair.valueType));
+                tdValues.appendChild(Exhibit.UI.makeValueSpan(pair.values[m], pair.valueType));
             }
         }
     }
@@ -112,14 +151,13 @@ Exhibit.Lens._handlers = [
 ];
 
 Exhibit.Lens.prototype._constructFromLensTemplateURL = 
-    function(itemID, div, exhibit, configuration, lensTemplateURL) {
+    function(itemID, div, exhibit, lensTemplateURL) {
     
     var job = {
         lens:           this,
         itemID:         itemID,
         div:            div,
-        exhibit:        exhibit,
-        configuration:  configuration
+        exhibit:        exhibit
     };
     
     var compiledTemplate = Exhibit.Lens._compiledTemplates[lensTemplateURL];
@@ -134,19 +172,18 @@ Exhibit.Lens.prototype._constructFromLensTemplateURL =
 };
 
 Exhibit.Lens.prototype._constructFromLensTemplateDOM = 
-    function(itemID, div, exhibit, configuration, lensTemplateNode) {
+    function(itemID, div, exhibit, lensTemplateNode) {
     
     var job = {
         lens:           this,
         itemID:         itemID,
         div:            div,
-        exhibit:        exhibit,
-        configuration:  configuration
+        exhibit:        exhibit
     };
     
     var id = lensTemplateNode.id;
     if (id == null || id.length == 0) {
-        id = "exhibitlensTemplate" + Math.floor(Math.random() * 10000);
+        id = "exhibitLensTemplate" + Math.floor(Math.random() * 10000);
         lensTemplateNode.id = id;
     }
     
@@ -523,24 +560,12 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
     if (templateNode.control != null) {
         switch (templateNode.control) {
         case "copy-button":
-            elmt.appendChild(exhibit.makeCopyButton(roots["value"]));
-            break;
-        case "edit-button":
-            var button = Exhibit.Lens.theme.createEditButton();
-            var handler = function(elmt, evt, target) {
-                Exhibit.Lens._showEditForm(job);
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            }
-            SimileAjax.WindowManager.registerEvent(
-                button, "click", handler, SimileAjax.WindowManager.getHighestLayer());
-                
-            elmt.appendChild(button);
+            elmt.appendChild(Exhibit.UI.makeCopyButton(roots["value"]));
             break;
         case "item-link":
             var a = document.createElement("a");
             a.innerHTML = Exhibit.l10n.itemLinkLabel;
-            a.href = exhibit.getItemLink(roots["value"]);
+            a.href = Exhibit.Persistence.getItemLink(roots["value"]);
             a.target = "_blank";
             elmt.appendChild(a);
         }
@@ -610,11 +635,11 @@ Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(exhibit.makeItemSpan(value));
+            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, exhibit.getLensRegistry(), exhibit));
         } :
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(exhibit.makeValueSpan(value, valueType));
+            parentElmt.appendChild(Exhibit.UI.makeValueSpan(value, valueType));
         };
         
     if (values instanceof Array) {
@@ -628,177 +653,3 @@ Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt
     }
     addDelimiter();
 };
-
-
-Exhibit.Lens._showEditForm = function(job) {
-    job.div.innerHTML = "";
-    
-    Exhibit.Lens._constructEditFromLensTemplateNode(
-        job.itemID, "item", job.template.template, job.div, job.exhibit, job);
-        
-    var node = job.div.firstChild;
-    var tagName = node.tagName;
-    if (tagName == "span") {
-        node.style.display = "inline";
-    } else {
-        node.style.display = "block";
-    }
-};
-
-Exhibit.Lens._constructEditFromLensTemplateNode = function(
-    value, valueType, templateNode, parentElmt, exhibit, job
-) {
-    if (typeof templateNode == "string") {
-        parentElmt.appendChild(document.createTextNode(templateNode));
-        return;
-    }
-    
-    var database = exhibit.getDatabase();
-    if (templateNode.condition != null) {
-        if (templateNode.condition.test == "if-exists") {
-            if (!templateNode.condition.expression.testExists(
-                    { "value" : value }, 
-                    { "value" : valueType },
-                    "value",
-                    database
-                )) {
-                return;
-            }
-        }
-    }
-    
-    var elmt = Exhibit.Lens._constructEditElmtWithAttributes(value, valueType, templateNode, parentElmt, database);
-    if (templateNode.contentAttributes != null) {
-        var contentAttributes = templateNode.contentAttributes;
-        for (var i = 0; i < contentAttributes.length; i++) {
-            var attribute = contentAttributes[i];
-            var values = [];
-            
-            attribute.expression.evaluate(
-                { "value" : value }, 
-                { "value" : valueType }, 
-                "value",
-                database
-            ).values.visit(function(v) { values.push(v); });
-                
-            elmt.setAttribute(attribute.name, values.join(";"));
-        }
-    }
-    var handlers = templateNode.handlers;
-    for (var h = 0; h < handlers.length; h++) {
-        var handler = handlers[h];
-        elmt[handler.name] = handler.code;
-    }
-    
-    var children = templateNode.children;
-    if (templateNode.control != null) {
-        switch (templateNode.control) {
-        case "copy-button":
-            elmt.appendChild(exhibit.makeCopyButton(value));
-            break;
-        case "edit-button":
-            var button = Exhibit.Lens.theme.createSaveButton();
-            var handler = function(elmt, evt, target) {
-                Exhibit.Lens._saveEdit(job);
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            }
-            SimileAjax.WindowManager.registerEvent(
-                button, "click", handler, SimileAjax.WindowManager.getHighestLayer());
-                
-            elmt.appendChild(button);
-            break;
-        case "item-link":
-            var a = document.createElement("a");
-            a.innerHTML = Exhibit.l10n.itemLinkLabel;
-            a.href = exhibit.getItemLink(value);
-            a.target = "_blank";
-            elmt.appendChild(a);
-        }
-    } else if (templateNode.content != null) {
-        var results = templateNode.content.evaluate(
-            { "value" : value }, 
-            { "value" : valueType }, 
-            "value",
-            database
-        );
-        if (children != null) {
-            var processOneValue = function(childValue) {
-                for (var i = 0; i < children.length; i++) {
-                    Exhibit.Lens._constructEditFromLensTemplateNode(
-                        childValue, results.valueType, children[i], elmt, exhibit, job);
-                }
-            };
-            if (results.values instanceof Array) {
-                for (var i = 0; i < results.values.length; i++) {
-                    processOneValue(results.values[i]);
-                }
-            } else {
-                results.values.visit(processOneValue);
-            }
-        } else {
-            Exhibit.Lens._constructEditDefaultValueList(results.values, results.valueType, elmt, exhibit);
-        }
-    } else if (children != null) {
-        for (var i = 0; i < children.length; i++) {
-            Exhibit.Lens._constructEditFromLensTemplateNode(value, valueType, children[i], elmt, exhibit, job);
-        }
-    }
-};
-
-Exhibit.Lens._constructEditElmtWithAttributes = function(value, valueType, templateNode, parentElmt, database) {
-    var elmt;
-    switch (templateNode.tag) {
-    case "tr":
-        elmt = parentElmt.insertRow(parentElmt.rows.length);
-        break;
-    case "td":
-        elmt = parentElmt.insertCell(parentElmt.cells.length);
-        break;
-    default:
-        elmt = document.createElement(templateNode.tag);
-        parentElmt.appendChild(elmt);
-    }
-    
-    var attributes = templateNode.attributes;
-    for (var i = 0; i < attributes.length; i++) {
-        var attribute = attributes[i];
-        elmt.setAttribute(attribute.name, attribute.value);
-    }
-    var styles = templateNode.styles;
-    for (var i = 0; i < styles.length; i++) {
-        var style = styles[i];
-        elmt.style[style.name] = style.value;
-    }
-    return elmt;
-};
-
-Exhibit.Lens._constructEditDefaultValueList = function(values, valueType, parentElmt, exhibit) {
-    var processOneValue = (valueType == "item") ?
-        function(value) {
-            addDelimiter();
-            var text = document.createElement("input");
-            text.type = "text";
-            text.value = value;
-            parentElmt.appendChild(text);
-        } :
-        function(value) {
-            addDelimiter();
-            var text = document.createElement("input");
-            text.type = "text";
-            text.value = value;
-            parentElmt.appendChild(text);
-        };
-        
-    if (values instanceof Array) {
-        var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.length);
-        for (var i = 0; i < values.length; i++) {
-            processOneValue(values[i]);
-        }
-    } else {
-        var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.size());
-        values.visit(processOneValue);
-    }
-    addDelimiter();
-};
-

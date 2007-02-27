@@ -6,9 +6,6 @@
     var javascriptFiles = [
         "exhibit-l10n-spanish.js",
         "database-l10n-spanish.js",
-        "browse-engine-l10n-spanish.js",
-        "control-panel-l10n-spanish.js",
-        "browse-panel-l10n-spanish.js",
         "lens-l10n-spanish.js",
         "list-facet-l10n-spanish.js",
         "view-panel-l10n-spanish.js",

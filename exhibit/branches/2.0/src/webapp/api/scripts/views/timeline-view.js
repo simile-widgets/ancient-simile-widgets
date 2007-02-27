@@ -1,29 +1,14 @@
-    /*==================================================
+/*==================================================
  *  Exhibit.TimelineView
  *==================================================
  */
  
-Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
+Exhibit.TimelineView = function(collection, containerElmt, lensRegistry, exhibit) {
+    this._collection = collection;
+    this._div = containerElmt;
+    this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
-    this._div = div;
-    this._configuration = configuration;
-    this._globalConfiguration = globalConfiguration;
-    
-    this._lensConfiguration = {};
-    if ("Lens" in globalConfiguration) {
-        this._lensConfiguration["Lens"] = globalConfiguration["Lens"];
-    }
-    if (domConfiguration != null) {
-        Exhibit.ViewPanel.extractItemLensDomConfiguration(
-            domConfiguration, this._lensConfiguration);
-    }
-    if ("lensSelector" in configuration) {
-        if (!("Lens" in this._lensConfiguration)) {
-            this._lensConfiguration["Lens"] = {};
-        }
-        this._lensConfiguration["Lens"].lensSelector = configuration.lensSelector;
-    }
-    
+
     this._densityFactor = 50;
     this._topBandIntervalPixels = 150;
     this._bottomBandIntervalPixels = 200;
@@ -31,206 +16,9 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
     this._bubbleHeight = 300;
     this._timelineConstructor = null;
     
-    var getDurations = null;
-    try {
-        var getStart = null;
-        var getEnd = null;
-        
-        var makeAccessor = function(expression) {
-            var expr = Exhibit.Expression.parse(expression);
-            return function(itemID, database) {
-                var v = expr.evaluateSingle(
-                    { "value" : itemID }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                ).value;
-                if (v == null) {
-                    return v;
-                } else if (v instanceof Date) {
-                    return v;
-                } else {
-                    return SimileAjax.DateTime.parseIso8601DateTime(v);
-                }
-            };
-        };
-        
-        if (domConfiguration != null) {
-            var start = Exhibit.getAttribute(domConfiguration, "start");
-            if (start != null && start.length > 0) {
-                getStart = makeAccessor(start);
-            }
-        }
-        if ("start" in configuration) {
-            getStart = makeAccessor(configuration.start);
-        } 
-        getStart = getStart != null ? getStart : function(itemID, database) { return null; }
-        
-        if (domConfiguration != null) {
-            var end = Exhibit.getAttribute(domConfiguration, "end");
-            if (end != null && end.length > 0) {
-                getEnd = makeAccessor(end);
-            }
-        }
-        if ("end" in configuration) {
-            getEnd = makeAccessor(configuration.end);
-        }
-        getEnd = getEnd != null ? getEnd : function(itemID, database) { return null; }
-        
-        var getStartEnd = function(itemID, database) {
-            return {
-                start:  getStart(itemID, database),
-                end:    getEnd(itemID, database)
-            };
-        }
-        
-        var makeGetDurations = function(s) {
-            var expr = Exhibit.Expression.parse(s);
-            return function(itemID, database) {
-                var pairs = [];
-                expr.evaluate(
-                    { "value" : itemID }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                ).values.visit(function(v) {
-                    var startEnd = getStartEnd(v, database);
-                    if (startEnd.start != null) {
-                        pairs.push(startEnd);
-                    }
-                });
-                return pairs;
-            };
-        };
-        
-        if (domConfiguration != null) {
-            var proxy = Exhibit.getAttribute(domConfiguration, "proxy");
-            if (proxy != null && proxy.length > 0) {
-                getDurations = makeGetDurations(proxy);
-            }
-        }
-        if ("proxy" in configuration) {
-            getDurations = makeGetDurations(configuration.proxy);
-        }
-        getDurations = getDurations != null ? getDurations : getStartEnd;
-        
-        
-        if (domConfiguration != null) {
-            var topBandIntervalPixels = Exhibit.getAttribute(domConfiguration, "topBandIntervalPixels");
-            if (topBandIntervalPixels != null && topBandIntervalPixels.length > 0) {
-                this._topBandIntervalPixels = parseInt(topBandIntervalPixels);
-            }
-            
-            var bottomBandIntervalPixels = Exhibit.getAttribute(domConfiguration, "bottomBandIntervalPixels");
-            if (bottomBandIntervalPixels != null && bottomBandIntervalPixels.length > 0) {
-                this._bottomBandIntervalPixels = parseInt(bottomBandIntervalPixels);
-            }
-            
-            var densityFactor = Exhibit.getAttribute(domConfiguration, "densityFactor");
-            if (densityFactor != null && densityFactor.length > 0) {
-                this._densityFactor = parseFloat(densityFactor);
-            }
-            
-            var bubbleWidth = Exhibit.getAttribute(domConfiguration, "bubbleWidth");
-            if (bubbleWidth != null && bubbleWidth.length > 0) {
-                this._bubbleWidth = parseInt(bubbleWidth);
-            }
-            
-            var bubbleHeight = Exhibit.getAttribute(domConfiguration, "bubbleHeight");
-            if (bubbleHeight != null && bubbleHeight.length > 0) {
-                this._bubbleHeight = parseInt(bubbleHeight);
-            }
-            
-            var timelineConstructor = Exhibit.getAttribute(domConfiguration, "timelineConstructor");
-            if (timelineConstructor != null) {
-                var f = eval(timelineConstructor);
-                if (typeof f == "function") {
-                    this._timelineConstructor = f;
-                }
-            }
-        }
-        if ("topBandIntervalPixels" in configuration) {
-            this._topBandIntervalPixels = configuration.topBandIntervalPixels;
-        }
-        if ("bottomBandIntervalPixels" in configuration) {
-            this._bottomBandIntervalPixels = configuration.bottomBandIntervalPixels;
-        }
-        if ("densityFactor" in configuration) {
-            this._densityFactor = configuration.densityFactor;
-        }
-        if ("bubbleWidth" in configuration) {
-            this._bubbleWidth = configuration.bubbleWidth;
-        }
-        if ("bubbleHeight" in configuration) {
-            this._bubbleHeight = configuration.bubbleHeight;
-        }
-        if ("timelineConstructor" in configuration) {
-            this._timelineConstructor = configuration.timelineConstructor;
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
-    }
-    
-    var getMarkerKey = null;
-    try {
-        var makeGetMarker = function(s) {
-            var markerExpression = Exhibit.Expression.parse(s);
-            return function(itemID, database) {
-                var key = markerExpression.evaluateSingle(
-                    { "value" : itemID }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                ).value;
-                
-                return key != null ? key : "";
-            }
-        };
-        
-        if (domConfiguration != null) {
-            var marker = Exhibit.getAttribute(domConfiguration, "marker");
-            if (marker != null && marker.length > 0) {
-                getMarkerKey = makeGetMarker(marker);
-            }
-        }
-        if ("marker" in configuration) {
-            getMarkerKey = makeGetMarker(configuration.marker);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view", e);
-    }
-    
-    this._getDurations = (getDurations != null) ? getDurations : function(itemID, database) { return {}; };
-    this._getMarkerKey = (getMarkerKey != null) ? getMarkerKey : function(itemID, database) { return ""; };
-    
-    var getEventLabel = null;
-    var makeEventLabel = function(s) {
-        var expression = Exhibit.Expression.parse(s);
-        return function(itemID, database) {
-            var label = expression.evaluateSingle(
-                { "value" : itemID }, 
-                { "value" : "item" }, 
-                "value",
-                database
-            ).value;
-            
-            return label != null ? label : itemID;
-        }
-    };
-    try {
-        if (domConfiguration != null) {
-            var eventLabel = Exhibit.getAttribute(domConfiguration, "eventLabel");
-            if (eventLabel != null && eventLabel.length > 0) {
-                getEventLabel = makeEventLabel(eventLabel);
-            }
-        }
-        if ("eventLabel" in configuration) {
-            getEventLabel = makeEventLabel(configuration.eventLabel);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing eventLabel configuration of timeline view", e);
-    }
-    this._getEventLabel = (getEventLabel != null) ? getEventLabel : makeEventLabel(".label");
+    this._getDurations = function(itemID, database) { return {}; };
+    this._getMarkerKey = function(itemID, database) { return ""; };
+    this._getEventLabel = function(itemID, database) { return database.getObject(itemID, "label"); };
     
     this._durationCache = new Object();
     this._markerKeyCache = new Object();
@@ -238,26 +26,283 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
     this._maxMarker = 0;
     
     this._largestSize = 0;
-    this._initializeUI();
     
     var view = this;
     this._listener = { 
-        onChange: function(handlerName) { 
-            if (handlerName != "onGroup" && handlerName != "onUngroup") {
-                view._reconstruct(); 
-            }
-        } 
+        onItemsChanged: function() {
+            view._reconstruct(); 
+        }
     };
-    this._exhibit.getBrowseEngine().addListener(this._listener);
+    collection.addListener(this._listener);
+};
+
+Exhibit.TimelineView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
+    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+    var view = new Exhibit.TimelineView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    Exhibit.TimelineView._configure(view, configuration);
+    
+    view._initializeUI();
+    return view;
+};
+
+Exhibit.TimelineView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+    var configuration = Exhibit.getConfigurationFromDOM(configElmt);
+    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
+    var view = new Exhibit.TimelineView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    /*
+     *  Start/end retriever
+     */
+    try {
+        var getStart = null;
+        var getEnd = function() { return null; };
+        
+        var start = Exhibit.getAttribute(configElmt, "start");
+        if (start != null && start.length > 0) {
+            getStart = Exhibit.TimelineView._makeAccessor(start);
+        }
+        
+        var end = Exhibit.getAttribute(configElmt, "end");
+        if (end != null && end.length > 0) {
+            getEnd = Exhibit.TimelineView._makeAccessor(end);
+        }
+        
+        if (start != null) {
+            var getStartEnd = function(itemID, database) {
+                return {
+                    start:  getStart(itemID, database),
+                    end:    getEnd(itemID, database)
+                };
+            }
+        
+            var proxy = Exhibit.getAttribute(configElmt, "proxy");
+            if (proxy != null && proxy.length > 0) {
+                view._getDurations = Exhibit.TimelineView._makeGetDurations(proxy, getStartEnd);
+            } else {
+                view._getDurations = getStartEnd;
+            }
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
+    }
+    
+    /*
+     *  Marker retriever
+     */
+    try {
+        var marker = Exhibit.getAttribute(configElmt, "marker");
+        if (marker != null && marker.length > 0) {
+            view._getMarkerKey = Exhibit.TimelineView._makeGetMarker(marker);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view", e);
+    }
+    
+    /*
+     *  Label retriever
+     */
+    try {
+        var eventLabel = Exhibit.getAttribute(configElmt, "eventLabel");
+        if (eventLabel != null && eventLabel.length > 0) {
+            view._getEventLabel = Exhibit.TimelineView._makeEventLabel(eventLabel);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing eventLabel configuration of timeline view", e);
+    }
+    
+    /*
+     *  Other settings
+     */
+    try {
+        var topBandIntervalPixels = Exhibit.getAttribute(configElmt, "topBandIntervalPixels");
+        if (topBandIntervalPixels != null && topBandIntervalPixels.length > 0) {
+            view._topBandIntervalPixels = parseInt(topBandIntervalPixels);
+        }
+        
+        var bottomBandIntervalPixels = Exhibit.getAttribute(configElmt, "bottomBandIntervalPixels");
+        if (bottomBandIntervalPixels != null && bottomBandIntervalPixels.length > 0) {
+            view._bottomBandIntervalPixels = parseInt(bottomBandIntervalPixels);
+        }
+        
+        var densityFactor = Exhibit.getAttribute(configElmt, "densityFactor");
+        if (densityFactor != null && densityFactor.length > 0) {
+            view._densityFactor = parseFloat(densityFactor);
+        }
+        
+        var bubbleWidth = Exhibit.getAttribute(configElmt, "bubbleWidth");
+        if (bubbleWidth != null && bubbleWidth.length > 0) {
+            view._bubbleWidth = parseInt(bubbleWidth);
+        }
+        
+        var bubbleHeight = Exhibit.getAttribute(configElmt, "bubbleHeight");
+        if (bubbleHeight != null && bubbleHeight.length > 0) {
+            view._bubbleHeight = parseInt(bubbleHeight);
+        }
+        
+        var timelineConstructor = Exhibit.getAttribute(configElmt, "timelineConstructor");
+        if (timelineConstructor != null) {
+            var f = eval(timelineConstructor);
+            if (typeof f == "function") {
+                view._timelineConstructor = f;
+            }
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
+    }
+    
+    view._initializeUI();
+    return view;
+};
+
+Exhibit.TimelineView._configure = function(view, configuration) {
+    /*
+     *  Start/end retriever
+     */
+    try {
+        var getStart = null;
+        var getEnd = function() { return null; };
+        
+        if ("start" in configuration) {
+            getStart = Exhibit.TimelineView._makeAccessor(configuration.start);
+        }
+        
+        if ("end" in configuration) {
+            getEnd = Exhibit.TimelineView._makeAccessor(configuration.end);
+        }
+        
+        if (start != null) {
+            var getStartEnd = function(itemID, database) {
+                return {
+                    start:  getStart(itemID, database),
+                    end:    getEnd(itemID, database)
+                };
+            }
+        
+            if ("proxy" in configuration) {
+                view._getDurations = Exhibit.TimelineView._makeGetDurations(configuration.proxy, getStartEnd);
+            } else {
+                view._getDurations = getStartEnd;
+            }
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
+    }
+    
+    /*
+     *  Marker retriever
+     */
+    try {
+        if ("marker" in configuration) {
+            view._getMarkerKey = Exhibit.TimelineView._makeGetMarker(configuration.marker);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view", e);
+    }
+    
+    /*
+     *  Label retriever
+     */
+    try {
+        if ("eventLabel" in configuration) {
+            view._getEventLabel = Exhibit.TimelineView._makeEventLabel(configuration.eventLabel);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing eventLabel configuration of timeline view", e);
+    }
+    
+    /*
+     *  Other settings
+     */
+    try {
+        if ("topBandIntervalPixels" in configuration) {
+            view._topBandIntervalPixels = configuration.topBandIntervalPixels;
+        }
+        if ("bottomBandIntervalPixels" in configuration) {
+            view._bottomBandIntervalPixels = configuration.bottomBandIntervalPixels;
+        }
+        if ("densityFactor" in configuration) {
+            view._densityFactor = configuration.densityFactor;
+        }
+        if ("bubbleWidth" in configuration) {
+            view._bubbleWidth = configuration.bubbleWidth;
+        }
+        if ("bubbleHeight" in configuration) {
+            view._bubbleHeight = configuration.bubbleHeight;
+        }
+        if ("timelineConstructor" in configuration) {
+            view._timelineConstructor = configuration.timelineConstructor;
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
+    }
+};
+
+Exhibit.TimelineView._makeAccessor = function(expression) {
+    var expr = Exhibit.Expression.parse(expression);
+    return function(itemID, database) {
+        var v = expr.evaluateSingleOnItem(itemID, database).value;
+        if (v == null) {
+            return v;
+        } else if (v instanceof Date) {
+            return v;
+        } else {
+            return SimileAjax.DateTime.parseIso8601DateTime(v);
+        }
+    };
+};
+
+Exhibit.TimelineView._makeGetDurations = function(s, getStartEnd) {
+    var expr = Exhibit.Expression.parse(s);
+    return function(itemID, database) {
+        var pairs = [];
+        expr.evaluateOnItem(itemID, database).values.visit(function(v) {
+            var startEnd = getStartEnd(v, database);
+            if (startEnd.start != null) {
+                pairs.push(startEnd);
+            }
+        });
+        return pairs;
+    };
+};
+
+Exhibit.TimelineView._makeGetMarker = function(s) {
+    var markerExpression = Exhibit.Expression.parse(s);
+    return function(itemID, database) {
+        var key = markerExpression.evaluateSingleOnItem(itemID, database).value;
+        return key != null ? key : "";
+    };
+};
+
+Exhibit.TimelineView._makeGetEventLabel = function(s) {
+    var expression = Exhibit.Expression.parse(s);
+    return function(itemID, database) {
+        var label = expression.evaluateSingleOnItem(itemID, database).value;
+        return label != null ? label : itemID;
+    }
 };
 
 Exhibit.TimelineView.prototype.dispose = function() {
-    this._exhibit.getBrowseEngine().removeListener(this._listener);
+    this._collection.removeListener(this._listener);
     
     this._dom.timeline = null;
     this._dom = null;
     this._div.innerHTML = "";
+    
     this._div = null;
+    this._collection = null;
     this._exhibit = null;
 };
 
@@ -269,7 +314,7 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {
-            self._exhibit.getViewPanel().resetBrowseQuery();
+            Exhibit.ViewPanel.resetCollection(self._collection);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         },
@@ -353,16 +398,9 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     /*
      *  Get the current collection and check if it's empty
      */
-    var collection = exhibit.getBrowseEngine().getCurrentCollection();
-    var originalSize = 0;
-    var currentSize = 0;
+    var originalSize = this._collection.countAllItems();
+    var currentSize = this._collection.countRestrictedItems();
     var plottableSize = 0;
-    if (collection != null) {
-        originalSize = collection.originalSize();
-        
-        var currentSet = collection.getCurrentSet();
-        currentSize = currentSet.size();
-    }
     
     var usedKeys = {};
         
@@ -370,6 +408,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     this._eventSource.clear();
     
     if (currentSize > 0) {
+        var currentSet = this._collection.getRestrictedItems();
         var events = [];
         
         var addEvent = function(itemID, duration, markerData) {
@@ -477,5 +516,5 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
 };
 
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {
-    new Exhibit.Lens(evt._itemID, elmt, this._exhibit, this._lensConfiguration);
+    this._lensRegistry.createLens(evt._itemID, elmt, this._exhibit);
 };

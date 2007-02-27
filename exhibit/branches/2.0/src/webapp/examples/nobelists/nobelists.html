@@ -5,7 +5,7 @@
     <link href="nobelists.js" type="application/json" rel="exhibit/data" />
 
     <!--script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?views=timeline" type="text/javascript"></script-->
-    <script src="/exhibit/api/exhibit-api.js?views=timeline" type="text/javascript"></script>
+    <script src="../../api/exhibit-api.js?views=timeline" type="text/javascript"></script>
 
     <style>
         body {
@@ -34,18 +34,7 @@
             border-bottom:  1px solid #BCB79E;
             background:     #FBF4D3;
         }
-        #exhibit-control-panel {
-            clear:          both;
-        }
-        #exhibit-browse-panel {
-        }
-        #exhibit-view-panel {
-            padding:        1em 0.5in;
-        }
         
-        div.exhibit-browsePanel-logoContainer {
-            display: none;
-        }
         div.exhibit-facet-frame {
             width: 16em;
             float: left;
@@ -120,10 +109,15 @@
     </div>
     
     <div id="top-panels">
-        <div id="exhibit-browse-panel" ex:facets=".discipline, .relationship, .shared, .deceased"></div>
-        <div id="exhibit-control-panel"></div>
+        <div>
+            <div ex:role="exhibit-facet" ex:expression=".discipline" ex:facetLabel="Discipline"></div>
+            <div ex:role="exhibit-facet" ex:expression=".relationship" ex:facetLabel="Relationship"></div>
+            <div ex:role="exhibit-facet" ex:expression=".shared" ex:facetLabel="Shared?"></div>
+            <div ex:role="exhibit-facet" ex:expression=".deceased" ex:facetLabel="Deceased?"></div>
+        </div>
+        <div style="clear: both; text-align: center;" ex:role="exhibit-logo"></div>
     </div>
-    <div id="exhibit-view-panel">
+    <div ex:role="exhibit-viewPanel" style="padding: 1em 0.5in;">
         <table ex:role="exhibit-lens" class="nobelist" style="display: none;">
             <tr>
                 <td><img ex:src-content=".imageURL" /></td>

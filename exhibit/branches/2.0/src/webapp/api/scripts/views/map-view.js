@@ -3,224 +3,247 @@
  *==================================================
  */
 
-Exhibit.MapView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
+Exhibit.MapView = function(collection, containerElmt, lensRegistry, exhibit) {
+    this._collection = collection;
+    this._div = containerElmt;
+    this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
-    this._div = div;
-    this._configuration = configuration;
-    this._globalConfiguration = globalConfiguration;
-    
-    this._lensConfiguration = {};
-    if ("Lens" in globalConfiguration) {
-        this._lensConfiguration["Lens"] = globalConfiguration["Lens"];
-    }
-    if (domConfiguration != null) {
-        Exhibit.ViewPanel.extractItemLensDomConfiguration(
-            domConfiguration, this._lensConfiguration);
-    }
-    if ("lensSelector" in configuration) {
-        if (!("Lens" in this._lensConfiguration)) {
-            this._lensConfiguration["Lens"] = {};
-        }
-        this._lensConfiguration["Lens"].lensSelector = configuration.lensSelector;
-    }
-    
-    /*
-     *  Getter for lat/lng
-     */
-    var getLatLng = null;
-    try {
-        var makeGetLatLng = function(s, mazExpression) {
-            var latlngExpression = Exhibit.Expression.parse(s);
-            return function(itemID, database) {
-                var result = {};
-                var x = Exhibit.MapView.evaluateSingle(latlngExpression, itemID, database);
-                if (x != null) {
-                    var a = x.split(",");
-                    if (a.length == 2) {
-                        result.lat = (typeof a[0] == "number") ? a[0] : parseFloat(a[0]);
-                        result.lng = (typeof a[1] == "number") ? a[1] : parseFloat(a[1]);
-                    }
-                }
 
-                var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
-                if (z != null) {
-                    z = parseInt(z, 10);
-                    if( typeof z == "number" )
-                        result.maxAutoZoom = z;
-                }
-                return result;
-            };
-        };
-        var makeGetLatLng2 = function(lat, lng, mazExpression) {
-            var latExpression = Exhibit.Expression.parse(lat);
-            var lngExpression = Exhibit.Expression.parse(lng);
-            return function(itemID, database) {
-                var result = {};
-                var lat = Exhibit.MapView.evaluateSingle(latExpression, itemID, database);
-                var lng = Exhibit.MapView.evaluateSingle(lngExpression, itemID, database);
-                if (lat != null && lng != null) {
-                    result.lat = (typeof lat == "number") ? lat : parseFloat(lat);
-                    result.lng = (typeof lng == "number") ? lng : parseFloat(lng);
-                }
-
-                var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
-                if (z != null) {
-                    z = parseInt(z, 10);
-                    if( typeof z == "number" )
-                        result.maxAutoZoom = z;
-                }
-                return result;
-            }
-        };
-
-        if (domConfiguration != null) {
-            var maxAZ = Exhibit.getAttribute(domConfiguration, "maxAutoZoom");
-            if (maxAZ != null && maxAZ.length > 0) {
-                maxAZ = Exhibit.Expression.parse(maxAZ);
-            } else
-                maxAZ = null;
-            var latlng = Exhibit.getAttribute(domConfiguration, "latlng");
-            if (latlng != null && latlng.length > 0) {
-                getLatLng = makeGetLatLng(latlng, maxAZ);
-            } else {
-                var lat = Exhibit.getAttribute(domConfiguration, "lat");
-                var lng = Exhibit.getAttribute(domConfiguration, "lng");
-                if (lat != null && lng != null && lat.length > 0 && lng.length > 0) {
-                    getLatLng = makeGetLatLng2(lat, lng, maxAZ);
-                }
-            }
-        }
-        
-        if ("latlng" in configuration) {
-            getLatLng = makeGetLatLng(configuration.latlng);
-        } else if ("lat" in configuration && "lng" in configuration) {
-            getLatLng = makeGetLatLng2(configuration.lat, configuration.lng);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
-    }
-    this._getLatLng = (getLatLng != null) ? getLatLng : function(itemID, database) { return {}; };
-    
-    /*
-     *  Getter for marker key
-     */
-    var getMarkerKey = null;
-    try {
-        var makeGetMarker = function(s) {
-            var markerExpression = Exhibit.Expression.parse(s);
-            return function(itemID, database) {
-                var key = Exhibit.MapView.evaluateSingle(markerExpression, itemID, database);
-                return key != null ? key : "";
-            };
-        };
-        
-        if (domConfiguration != null) {
-            var marker = Exhibit.getAttribute(domConfiguration, "marker");
-            if (marker != null && marker.length > 0) {
-                getMarkerKey = makeGetMarker(marker);
-            }
-        }
-        if ("marker" in configuration) {
-            getMarkerKey = makeGetMarker(configuration.marker);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("MapView: Error processing marker configuration of map view", e);
-    }
-    this._getMarkerKey = (getMarkerKey != null) ? getMarkerKey : function(itemID, database) { return ""; };
-    
-    /*
-     *  Map settings
-     */
     this._mapSettings = {
-// set by the bounds of all plotted markers unless set up in page configuration
-//      center:         [ 20, 0 ],
-//      zoom:           2,
-        maxAutoZoom:    18,
-        size:           "small",
-        scaleControl:   true,
-	overviewControl:false,
-        type:           "normal"
+        maxAutoZoom:        18,
+        size:               "small",
+        scaleControl:       true,
+        overviewControl:    false,
+        type:               "normal"
     };
-    if (domConfiguration != null) {
-        var s = Exhibit.getAttribute(domConfiguration, "center");
-        if (s != null && s.length > 0) {
-            var a = s.split(",");
-            if (a.length == 2) {
-                a[0] = parseFloat(a[0]);
-                a[1] = parseFloat(a[1]);
-                if (typeof a[0] == "number" && typeof a[1] == "number") {
-                    this._mapSettings.center = a;
-                }
-            }
-        }
-        
-        s = Exhibit.getAttribute(domConfiguration, "zoom");
-        if (s != null && s.length > 0) {
-            this._mapSettings.zoom = parseInt(s);
-        }
-        
-        s = Exhibit.getAttribute(domConfiguration, "size");
-        if (s != null && s.length > 0) {
-            this._mapSettings.size = s;
-        }
-        
-        s = Exhibit.getAttribute(domConfiguration, "scaleControl");
-        if (s != null && s.length > 0) {
-            this._mapSettings.scaleControl = (s == "true");
-        }
-
-        s = Exhibit.getAttribute(domConfiguration, "overviewControl");
-        if (s != null && s.length > 0) {
-            this._mapSettings.overviewControl = (s == "true");
-        }
-
-        s = Exhibit.getAttribute(domConfiguration, "type");
-        if (s != null && s.length > 0) {
-            this._mapSettings.type = s;
-        }
-    }
-    if ("center" in configuration) {
-        this._mapSettings.center = this._configuration.center;
-    }
-    if ("zoom" in configuration) {
-        this._mapSettings.zoom = configuration.zoom;
-    }
-    if ("maxAutoZoom" in configuration) {
-        this._mapSettings.maxAutoZoom = configuration.maxAutoZoom;
-    }
-    if ("size" in configuration) {
-        this._mapSettings.size = configuration.size;
-    }
-    if ("scaleControl" in configuration) {
-        this._mapSettings.scaleControl = configuration.scaleControl;
-    }
-    if ("type" in configuration) {
-        this._mapSettings.type = configuration.type;
-    }
     
-    /*
-     *  Internal stuff such as caches
-     */
     this._latlngCache = new Object();
     this._markerKeyCache = new Object();
     this._markerCache = new Object();
     this._maxMarker = 0;
     
-    /*
-     *  Initialize UI and register event listeners
-     */
-    this._initializeUI();
+    this._getLatLng = function(itemID, database) { return {}; };
+    this._getMarkerKey = function(itemID, database) { return ""; };
+    this._constructMap = null;
     
     var view = this;
     this._listener = { 
-        onChange: function(handlerName) { 
-            if (handlerName != "onGroup" && handlerName != "onUngroup") {
-                view._reconstruct(); 
-            }
-        } 
+        onItemsChanged: function() {
+            view._reconstruct(); 
+        }
     };
-    this._exhibit.getBrowseEngine().addListener(this._listener);
+    collection.addListener(this._listener);
 };
+
+Exhibit.MapView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
+    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+    var view = new Exhibit.MapView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    Exhibit.MapView._configure(view, configuration);
+    
+    view._initializeUI();
+    return view;
+};
+
+Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+    var configuration = Exhibit.getConfigurationFromDOM(configElmt);
+    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
+    var view = new Exhibit.MapView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    /*
+     *  Lat/lng retriever
+     */
+    try {
+        var maxAZ = Exhibit.getAttribute(configElmt, "maxAutoZoom");
+        if (maxAZ != null && maxAZ.length > 0) {
+            maxAZ = Exhibit.Expression.parse(maxAZ);
+        } else {
+            maxAZ = null;
+        }
+        
+        var latlng = Exhibit.getAttribute(configElmt, "latlng");
+        if (latlng != null && latlng.length > 0) {
+            view._getLatLng = Exhibit.MapView._makeGetLatLng(latlng, maxAZ);
+        } else {
+            var lat = Exhibit.getAttribute(configElmt, "lat");
+            var lng = Exhibit.getAttribute(configElmt, "lng");
+            if (lat != null && lng != null && lat.length > 0 && lng.length > 0) {
+                view._getLatLng = Exhibit.MapView._makeGetLatLng2(lat, lng, maxAZ);
+            }
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
+    }
+    
+    /*  
+     *  Marker key retriever
+     */
+    try {
+        var marker = Exhibit.getAttribute(configElmt, "marker");
+        if (marker != null && marker.length > 0) {
+            view._getMarkerKey = Exhibit.MapView._makeGetMarker(marker);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("MapView: Error processing marker configuration of map view", e);
+    }
+    
+    /*
+     *  Other settings
+     */
+    var s = Exhibit.getAttribute(configElmt, "center");
+    if (s != null && s.length > 0) {
+        var a = s.split(",");
+        if (a.length == 2) {
+            a[0] = parseFloat(a[0]);
+            a[1] = parseFloat(a[1]);
+            if (typeof a[0] == "number" && typeof a[1] == "number") {
+                view._mapSettings.center = a;
+            }
+        }
+    }
+    
+    s = Exhibit.getAttribute(configElmt, "zoom");
+    if (s != null && s.length > 0) {
+        view._mapSettings.zoom = parseInt(s);
+    }
+    
+    s = Exhibit.getAttribute(configElmt, "size");
+    if (s != null && s.length > 0) {
+        view._mapSettings.size = s;
+    }
+    
+    s = Exhibit.getAttribute(configElmt, "scaleControl");
+    if (s != null && s.length > 0) {
+        view._mapSettings.scaleControl = (s == "true");
+    }
+
+    s = Exhibit.getAttribute(configElmt, "overviewControl");
+    if (s != null && s.length > 0) {
+        view._mapSettings.overviewControl = (s == "true");
+    }
+
+    s = Exhibit.getAttribute(configElmt, "type");
+    if (s != null && s.length > 0) {
+        view._mapSettings.type = s;
+    }
+    
+    view._initializeUI();
+    return view;
+};
+
+Exhibit.MapView._configure = function(view, configuration) {
+    /*
+     *  Lat/lng retriever
+     */
+    try {
+        if ("latlng" in configuration) {
+            view._getLatLng = Exhibit.MapView._makeGetLatLng(configuration.latlng);
+        } else if ("lat" in configuration && "lng" in configuration) {
+            view._getLatLng = Exhibit.MapView._makeGetLatLng2(configuration.lat, configuration.lng);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
+    }
+    
+    /*  
+     *  Marker key retriever
+     */
+    try {
+        if ("marker" in configuration) {
+            view._getMarkerKey = Exhibit.MapView._makeGetMarker(configuration.marker);
+        }
+    } catch (e) {
+        SimileAjax.Debug.exception("MapView: Error processing marker configuration of map view", e);
+    }
+    
+    /*
+     *  Other settings
+     */
+    if ("center" in configuration) {
+        view._mapSettings.center = configuration.center;
+    }
+    if ("zoom" in configuration) {
+        view._mapSettings.zoom = configuration.zoom;
+    }
+    if ("maxAutoZoom" in configuration) {
+        view._mapSettings.maxAutoZoom = configuration.maxAutoZoom;
+    }
+    if ("size" in configuration) {
+        view._mapSettings.size = configuration.size;
+    }
+    if ("scaleControl" in configuration) {
+        view._mapSettings.scaleControl = configuration.scaleControl;
+    }
+    if ("type" in configuration) {
+        view._mapSettings.type = configuration.type;
+    }
+};
+
+Exhibit.MapView._makeGetLatLng = function(s, mazExpression) {
+    var latlngExpression = Exhibit.Expression.parse(s);
+    return function(itemID, database) {
+        var result = {};
+        var x = Exhibit.MapView.evaluateSingle(latlngExpression, itemID, database);
+        if (x != null) {
+            var a = x.split(",");
+            if (a.length == 2) {
+                result.lat = (typeof a[0] == "number") ? a[0] : parseFloat(a[0]);
+                result.lng = (typeof a[1] == "number") ? a[1] : parseFloat(a[1]);
+            }
+        }
+
+        var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
+        if (z != null) {
+            z = parseInt(z, 10);
+            if( typeof z == "number" )
+                result.maxAutoZoom = z;
+        }
+        return result;
+    };
+};
+
+Exhibit.MapView._makeGetLatLng2 = function(lat, lng, mazExpression) {
+    var latExpression = Exhibit.Expression.parse(lat);
+    var lngExpression = Exhibit.Expression.parse(lng);
+    return function(itemID, database) {
+        var result = {};
+        var lat = Exhibit.MapView.evaluateSingle(latExpression, itemID, database);
+        var lng = Exhibit.MapView.evaluateSingle(lngExpression, itemID, database);
+        if (lat != null && lng != null) {
+            result.lat = (typeof lat == "number") ? lat : parseFloat(lat);
+            result.lng = (typeof lng == "number") ? lng : parseFloat(lng);
+        }
+
+        var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
+        if (z != null) {
+            z = parseInt(z, 10);
+            if( typeof z == "number" )
+                result.maxAutoZoom = z;
+        }
+        return result;
+    }
+};
+
+Exhibit.MapView._makeGetMarker = function(s) {
+    var markerExpression = Exhibit.Expression.parse(s);
+    return function(itemID, database) {
+        var key = Exhibit.MapView.evaluateSingle(markerExpression, itemID, database);
+        return key != null ? key : "";
+    };
+};
+
 
 Exhibit.MapView._markers = [
     {   color:  "FF9000"
@@ -312,13 +335,14 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
 };
 
 Exhibit.MapView.prototype.dispose = function() {
-    this._exhibit.getBrowseEngine().removeListener(this._listener);
+    this._collection.removeListener(this._listener);
     
     this._div.innerHTML = "";
     
     this._dom.map = null;
     this._dom = null;
     this._div = null;
+    this._collection = null;
     this._exhibit = null;
     
     GUnload();
@@ -332,7 +356,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {
-            self._exhibit.getViewPanel().resetBrowseQuery();
+            Exhibit.ViewPanel.resetCollection(self._collection);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         }
@@ -341,8 +365,8 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var mapDiv = this._dom.getMapDiv();
     mapDiv.style.height = "400px";
     
-    if ("constructMap" in this._configuration) {
-        this._dom.map = this._configuration.constructMap(mapDiv);
+    if (this._constructMap != null) {
+        this._dom.map = this._constructMap(mapDiv);
     } else {
         var settings = this._mapSettings;
         
@@ -385,20 +409,14 @@ Exhibit.MapView.prototype._reconstruct = function() {
     /*
      *  Get the current collection and check if it's empty
      */
-    var collection = exhibit.getBrowseEngine().getCurrentCollection();
-    var originalSize = 0;
-    var currentSize = 0;
+    var originalSize = this._collection.countAllItems();
+    var currentSize = this._collection.countRestrictedItems();
     var mappableSize = 0;
-    if (collection != null) {
-        originalSize = collection.originalSize();
-        
-        var currentSet = collection.getCurrentSet();
-        currentSize = currentSet.size();
-    }
     
     this._dom.map.clearOverlays();
     this._dom.clearLegend();
     if (currentSize > 0) {
+        var currentSet = this._collection.getRestrictedItems();
         var locationToData = {};
         
         currentSet.visit(function(itemID) {
@@ -539,13 +557,13 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
         var ul = document.createElement("ul");
         for (var i = 0; i < items.length; i++) {
             var li = document.createElement("li");
-            li.appendChild(this._exhibit.makeItemSpan(items[i]));
+            li.appendChild(Exhibit.UI.makeItemSpan(items[i], null, null, this._lensRegistry, this._exhibit));
             ul.appendChild(li);
         }
         return ul;
     } else {
         var itemLensDiv = document.createElement("div");
-        var itemLens = new Exhibit.Lens(items[0], itemLensDiv, this._exhibit, this._lensConfiguration);
+        var itemLens = this._lensRegistry.createLens(items[0], itemLensDiv, this._exhibit);
         return itemLensDiv;
     }
 };

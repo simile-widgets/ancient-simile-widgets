@@ -31,7 +31,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                 field:  "resultsDiv",
                 style:  { display: "none" },
                 children: [
-                    {   elmt:   exhibit.makeCopyButton(null),
+                    {   elmt:   Exhibit.UI.makeCopyButton(null),
                         style:  { "float": "right" }
                     },
                     {   tag:    "div",
@@ -39,7 +39,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                             "exhibit-collectionView-header-count",
                             "exhibit-collectionView-header-types",
                             "exhibit-collectionView-header-details",
-                            exhibit.makeActionLink(
+                            Exhibit.UI.makeActionLink(
                                 Exhibit.ViewPanel.l10n.resetFiltersLabel, 
                                 onClearFilters
                             )
@@ -49,7 +49,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                         field:      "sortControlsDiv",
                         className:  "exhibit-collectionView-header-sortControls",
                         children: l10n.createSortingControlsTemplate(
-                            exhibit.makeActionLink(l10n.thenSortByLabel, onThenSortBy)
+                            Exhibit.UI.makeActionLink(l10n.thenSortByLabel, onThenSortBy)
                         ).concat([
                             " \u2022 ",
                             {   tag:    "span",
@@ -143,7 +143,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
         dom.duplicateOptionChecked.style.display = show ? "inline" : "none";
     };
     dom.enableThenByAction = function(enabled) {
-        exhibit.enableActionLink(dom.thenByLink, enabled);
+        Exhibit.UI.enableActionLink(dom.thenByLink, enabled);
     };
     
     return dom;
@@ -154,7 +154,7 @@ Exhibit.OrderedViewFrame.theme.createOrderDom = function(
     label,
     onPopup
 ) {
-    var a = exhibit.makeActionLink(label, onPopup);
+    var a = Exhibit.UI.makeActionLink(label, onPopup);
     //a.appendChild(Exhibit.Theme.createTranslucentImage(document, "images/down-arrow.png"));
     
     return { elmt: a };
@@ -179,11 +179,11 @@ Exhibit.OrderedViewFrame.theme.createFooterDom = function(
         if (canToggle && count > limitCount) {
             if (showAll) {
                 dom.elmt.appendChild(
-                    exhibit.makeActionLink(
+                    Exhibit.UI.makeActionLink(
                         l10n.formatDontShowAll(limitCount), onDontShowAll));
             } else {
                 dom.elmt.appendChild(
-                    exhibit.makeActionLink(
+                    Exhibit.UI.makeActionLink(
                         l10n.formatShowAll(count), onShowAll));
             }
         }

@@ -3,48 +3,57 @@
  *==================================================
  */
  
-Exhibit.ThumbnailView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
+Exhibit.ThumbnailView = function(collection, containerElmt, lensRegistry, exhibit) {
+    this._collection = collection;
+    this._div = containerElmt;
+    this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
-    this._div = div;
-    this._configuration = configuration;
-    this._domConfiguration = domConfiguration;
-    this._globalConfiguration = globalConfiguration;
-    this._lensConfiguration = {};
-    
-    if (domConfiguration != null) {
-        Exhibit.ViewPanel.extractItemLensDomConfiguration(
-            domConfiguration, this._lensConfiguration);
-    }
-    if ("lensSelector" in configuration) {
-        if (!("Lens" in this._lensConfiguration)) {
-            this._lensConfiguration["Lens"] = {};
-        }
-        this._lensConfiguration["Lens"].lensSelector = configuration.lensSelector;
-    }
-    
-    this._initializeUI();
     
     var view = this;
     this._listener = { 
-        onChange: function(handlerName) { 
-            if (handlerName != "onGroup" && handlerName != "onUngroup") {
-                view._reconstruct(); 
-            }
+        onItemsChanged: function() {
+            view._reconstruct(); 
         } 
     };
-    this._exhibit.getBrowseEngine().addListener(this._listener);
+    collection.addListener(this._listener);
+    
+    this._orderedViewFrame = new Exhibit.OrderedViewFrame(this._collection, this._exhibit);
+    this._orderedViewFrame.parentReconstruct = function() {
+        view._reconstruct();
+    }
+};
+
+Exhibit.ThumbnailView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
+    // TODO
+};
+
+Exhibit.ThumbnailView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+    var configuration = Exhibit.getConfigurationFromDOM(configElmt);
+    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
+    var view = new Exhibit.ThumbnailView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    view._orderedViewFrame.configureFromDOM(configElmt);
+    view._initializeUI();
+    return view;
 };
 
 Exhibit.ThumbnailView.prototype.dispose = function() {
-    this._exhibit.getBrowseEngine().removeListener(this._listener);
-    
+    this._collection.removeListener(this._listener);
     this._div.innerHTML = "";
     
     this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
-    
     this._dom = null;
+    
+    this._collection = null;
     this._div = null;
+    this._lensRegistry = null;
     this._exhibit = null;
 };
 
@@ -66,14 +75,11 @@ Exhibit.ThumbnailView.prototype._initializeUI = function() {
         ]
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
-    this._orderedViewFrame = new Exhibit.OrderedViewFrame(
-        this._exhibit, this._dom.headerDiv, this._dom.footerDiv, this._configuration, this._domConfiguration);
-        
-    var self = this;
-    this._orderedViewFrame.parentReconstruct = function() {
-        self._reconstruct();
-    }
     
+    this._orderedViewFrame._divHeader = this._dom.headerDiv;
+    this._orderedViewFrame._divFooter = this._dom.footerDiv;
+    this._orderedViewFrame.initializeUI();
+        
     this._reconstruct();
 };
 
@@ -134,7 +140,7 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
             "exhibit-thumbnailView-itemContainer-IE" :
             "exhibit-thumbnailView-itemContainer";
         
-        var itemLens = new Exhibit.Lens(itemID, itemLensDiv, view._exhibit, view._lensConfiguration);
+        var itemLens = view._lensRegistry.createLens(itemID, itemLensDiv, view._exhibit);
         state.itemContainer.appendChild(itemLensDiv);
     };
                 

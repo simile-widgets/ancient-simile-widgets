@@ -14,19 +14,12 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
     onGroup, 
     onCollapseAll, 
     onExpandAll, 
-    onClearAllSelections,
-    classNames
+    onClearAllSelections
 ) {
     var l10n = Exhibit.ListFacet.l10n;
-
-    var className = "exhibit-facet-frame";
-    if (classNames && classNames.frame) {
-        className += " " + classNames.frame;
-    }
-
     var template = {
         elmt:       div,
-        className:  className,
+        className:  "exhibit-facet-frame",
         style:      { height: "1px" },
         children: [
             {   tag:        "div",
@@ -70,7 +63,7 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
                         className:  "exhibit-facet-footer",
                         style:      { display: groupable ? "block" : "none" },
                         children: [
-                            {   elmt:  exhibit.makeActionLink(l10n.groupByLink, onGroup),
+                            {   elmt:  Exhibit.UI.makeActionLink(l10n.groupByLink, onGroup),
                                 field: "groupLink"
                             },
                             {   tag:    "span",
@@ -78,11 +71,11 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
                                 style:  { display: grouped ? "inline" : "none" },
                                 children: [
                                     " | ",
-                                    {   elmt:  exhibit.makeActionLink(l10n.collapseLink, onCollapseAll),
+                                    {   elmt:  Exhibit.UI.makeActionLink(l10n.collapseLink, onCollapseAll),
                                         field: "collapseLink"
                                     },
                                     " | ",
-                                    {   elmt:  exhibit.makeActionLink(l10n.expandLink, onExpandAll),
+                                    {   elmt:  Exhibit.UI.makeActionLink(l10n.expandLink, onExpandAll),
                                         field: "expandLink"
                                     }
                                 ]
@@ -307,11 +300,11 @@ Exhibit.ListFacet.theme.constructGroupingBox = function(
                 className:  "exhibit-facet-groupBox-footer",
                 field:      "footerDiv",
                 children: [
-                    {   elmt:  exhibit.makeActionLink(Exhibit.ListFacet.l10n.ungroupAllButton, onUngroupAll),
+                    {   elmt:  Exhibit.UI.makeActionLink(Exhibit.ListFacet.l10n.ungroupAllButton, onUngroupAll),
                         field: "ungroupLink"
                     },
                     " | ",
-                    {   elmt:  exhibit.makeActionLink(Exhibit.ListFacet.l10n.closeButton, onClose),
+                    {   elmt:  Exhibit.UI.makeActionLink(Exhibit.ListFacet.l10n.closeButton, onClose),
                         field: "closeLink"
                     }
                 ]
@@ -338,7 +331,7 @@ Exhibit.ListFacet.theme.constructGroup = function(exhibit, first, grouped, onUng
                 className:  "exhibit-facet-groupBox-groupHeader",
                 children:   [ 
                     first ? l10n.groupByLabel : l10n.groupTheGroupsByLabel,
-                    {   elmt:   exhibit.makeActionLink(Exhibit.ListFacet.l10n.ungroupLink, onUngroup),
+                    {   elmt:   Exhibit.UI.makeActionLink(Exhibit.ListFacet.l10n.ungroupLink, onUngroup),
                         style:  { display: grouped ? "inline" : "none" },
                         field:  "ungroupLink"
                     }

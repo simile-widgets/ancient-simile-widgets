@@ -58,7 +58,7 @@ Exhibit.TimelineView.theme.constructDom = function(
                         field:  "resultsDiv",
                         style:  { display: "none" },
                         children: [
-                            {   elmt:   exhibit.makeCopyButton(null),
+                            {   elmt:   Exhibit.UI.makeCopyButton(null),
                                 style:  { "float": "right" }
                             },
                             {   tag:    "div",
@@ -66,7 +66,7 @@ Exhibit.TimelineView.theme.constructDom = function(
                                     "exhibit-collectionView-header-count",
                                     "exhibit-collectionView-header-types",
                                     "exhibit-collectionView-header-details",
-                                    exhibit.makeActionLink(
+                                    Exhibit.UI.makeActionLink(
                                         Exhibit.ViewPanel.l10n.resetFiltersLabel, 
                                         onClearFilters
                                     )

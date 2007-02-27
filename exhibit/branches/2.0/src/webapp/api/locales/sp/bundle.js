@@ -1,20 +1,5 @@
 
 
-/* browse-engine-l10n-spanish.js */
-
-﻿
-Exhibit.BrowseEngine.l10n={errorParsingFacetExpressionMessage:function(expression){return"La expresión '"+expression+"' empleada para especificar la vista no es válida.";}};
-
-/* browse-panel-l10n-spanish.js */
-
-﻿
-Exhibit.BrowsePanel.l10n={notConfigureMessage:"Todavía no has configurado el panel de visualización.",learnHowMessage:"¡Aprende como hacerlo aquí!"};
-
-/* control-panel-l10n-spanish.js */
-
-﻿
-Exhibit.ControlPanel.l10n={badExporterExpressionMessage:function(expr){return"La expresión'"+expr+"' en el valor del atributo ex:exporters \n"+"correspondiente a: <div id=\"exhibit-control-panel\"> no se corresponde con un objeto Javascript.";}};
-
 /* database-l10n-spanish.js */
 
 ﻿

@@ -11,6 +11,7 @@
             if (document.body.onload == null || document.body.onload == f) {
                 var fDone = function() {
                     window.exhibit = Exhibit.create();
+                    window.exhibit.configureFromDOM();
                 };
                 
                 try {

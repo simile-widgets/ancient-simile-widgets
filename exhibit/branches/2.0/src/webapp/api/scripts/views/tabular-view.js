@@ -3,11 +3,11 @@
  *==================================================
  */
 
-Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, globalConfiguration) {
+Exhibit.TabularView = function(collection, containerElmt, lensRegistry, exhibit) {
+    this._collection = collection;
+    this._div = containerElmt;
+    this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
-    this._div = div;
-    this._configuration = configuration;
-    this._globalConfiguration = globalConfiguration;
     
     this._initialCount = 10;
     this._showAll = true;
@@ -18,20 +18,54 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
     this._rowStyler = null;
     this._tableStyler = null;
 
-    /*
-     *  First, get configurations from the dom, if any
-     */
-    if (domConfiguration != null) {
+    var view = this;
+    this._listener = { 
+        onItemsChanged: function() {
+            view._reconstruct(); 
+        }
+    };
+    collection.addListener(this._listener);
+};
+
+Exhibit.TabularView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
+    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+    var view = new Exhibit.TabularView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    Exhibit.TabularView._configure(view, configuration);
+    
+    view._internalValidate();
+    view._initializeUI();
+    return view;
+};
+
+Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+    var configuration = Exhibit.getConfigurationFromDOM(configElmt);
+    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
+    var view = new Exhibit.TabularView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    try {
         var expressions = [];
         var labels = [];
         var formats = [];
         
-        var s = Exhibit.getAttribute(domConfiguration, "columns");
+        var s = Exhibit.getAttribute(configElmt, "columns");
         if (s != null && s.length > 0) {
             expressions = Exhibit.Expression.parseSeveral(s);
         }
         
-        s = Exhibit.getAttribute(domConfiguration, "columnLabels");
+        s = Exhibit.getAttribute(configElmt, "columnLabels");
         if (s != null && s.length > 0) {
             var a = s.split(",");
             for (var i = 0; i < a.length; i++) {
@@ -39,7 +73,7 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
             }
         }
         
-        s = Exhibit.getAttribute(domConfiguration, "columnFormats");
+        s = Exhibit.getAttribute(configElmt, "columnFormats");
         if (s != null && s.length > 0) {
             var a = s.split(",");
             for (var i = 0; i < a.length; i++) {
@@ -53,105 +87,108 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
             if (format == null) {
                 format = "list";
             }
-            this._columns.push({
+            view._columns.push({
                 expression: expression,
                 styler:     null,
                 label:      labels[i],
                 format:     format
             });
         }
+    } catch (e) {
+        SimileAjax.Debug.exception("TabularView: Error processing configuration of tabular view", e);
+    }
+    
+    var s = Exhibit.getAttribute(configElmt, "sortColumn");
+    if (s != null) {
+        view._sortColumn = parseInt(s);
+    }
+    s = Exhibit.getAttribute(configElmt, "sortAscending");
+    if (s != null) {
+        view._sortAscending = (s == "true");
+    }
+    s = Exhibit.getAttribute(configElmt, "initialCount");
+    if (s != null) {
+        view._initialCount = parseInt(s);
+    }
+    s = Exhibit.getAttribute(configElmt, "showAll");
+    if (s != null) {
+        view._showAll = (s == "true");
+    }
+    s = Exhibit.getAttribute(configElmt, "rowStyler");
+    if (s != null) {
+        var f = eval(s);
+        if (typeof f == "function") {
+            view._rowStyler = f;
+        }
+    }
+    s = Exhibit.getAttribute(configElmt, "tableStyler");
+    if (s != null) {
+        f = eval(s);
+        if (typeof f == "function") {
+            view._tableStyler = f;
+        }
+    }
         
-        s = Exhibit.getAttribute(domConfiguration, "sortColumn");
-        if (s != null) {
-            this._sortColumn = parseInt(s);
+    view._internalValidate();
+    view._initializeUI();
+    return view;
+};
+
+Exhibit.TabularView._configure = function(view, configuration) {
+    var columns = configuration.columns;
+    for (var i = 0; i < columns.length; i++) {
+        var column = columns[i];
+        var expr;
+        var styler = null;
+        var label = null;
+        var format = null;
+        
+        if (typeof column == "string") {
+            expr = column;
+        } else {
+            expr = column.expression;
+            styler = column.styler;
+            label = column.label;
+            format = column.format;
         }
-        s = Exhibit.getAttribute(domConfiguration, "sortAscending");
-        if (s != null) {
-            this._sortAscending = (s == "true");
-        }
-        s = Exhibit.getAttribute(domConfiguration, "initialCount");
-        if (s != null) {
-            this._initialCount = parseInt(s);
-        }
-        s = Exhibit.getAttribute(domConfiguration, "showAll");
-        if (s != null) {
-            this._showAll = (s == "true");
-        }
-        s = Exhibit.getAttribute(domConfiguration, "rowStyler");
-        if (s != null) {
-            var f = eval(s);
-            if (typeof f == "function") {
-                this._rowStyler = f;
+        
+        var expression = Exhibit.Expression.parse(expr);
+        if (expression.isPath()) {
+            var path = expression.getPath();
+            if (format == null) {
+                format = "list";
             }
-        }
-        s = Exhibit.getAttribute(domConfiguration, "tableStyler");
-        if (s != null) {
-            f = eval(s);
-            if (typeof f == "function") {
-                this._tableStyler = f;
-            }
+            view._columns.push({
+                expression: expression,
+                styler:     styler,
+                label:      label,
+                format:     format
+            });
         }
     }
     
-    /*
-     *  Then override them from the configuration object
-     */
-    if ("columns" in configuration) {
-        var columns = configuration.columns;
-        for (var i = 0; i < columns.length; i++) {
-            var column = columns[i];
-            var expr;
-            var styler = null;
-            var label = null;
-            var format = null;
-            
-            if (typeof column == "string") {
-                expr = column;
-            } else {
-                expr = column.expression;
-                styler = column.styler;
-                label = column.label;
-                format = column.format;
-            }
-            
-            var expression = Exhibit.Expression.parse(expr);
-            if (expression.isPath()) {
-                var path = expression.getPath();
-                if (format == null) {
-                    format = "list";
-                }
-                this._columns.push({
-                    expression: expression,
-                    styler:     styler,
-                    label:      label,
-                    format:     format
-                });
-            }
-        }
-    }
     if ("sortColumn" in configuration) {
-        this._sortColumn = configuration.sortColumn;
+        view._sortColumn = configuration.sortColumn;
     }
     if ("sortAscending" in configuration) {
-        this._sortAscending = (configuration.sortAscending);
+        view._sortAscending = (configuration.sortAscending);
     }
     
     if ("initialCount" in configuration) {
-        this._initialCount = configuration.initialCount;
+        view._initialCount = configuration.initialCount;
     }
     if ("showAll" in configuration) {
-        this._showAll = configuration.showAll;
+        view._showAll = configuration.showAll;
     }
     if ("rowStyler" in configuration) {
-        this._rowStyler = configuration.rowStyler;
+        view._rowStyler = configuration.rowStyler;
     }
     if ("tableStyler" in configuration) {
-        this._tableStyler = configuration.tableStyler;
+        view._tableStyler = configuration.tableStyler;
     }
-    
-    /*
-     *  Fix up configuration in case author makes mistakes
-     */
+};
+
+Exhibit.TabularView.prototype._internalValidate = function() {
     if (this._columns.length == 0) {
         var database = this._exhibit.getDatabase();
         var propertyIDs = database.getAllProperties();
@@ -169,30 +206,16 @@ Exhibit.TabularView = function(exhibit, div, configuration, domConfiguration, gl
         }
     }
     this._sortColumn = Math.max(0, Math.min(this._sortColumn, this._columns.length - 1));
-    
-    /*
-     *  Initialize UI and hook up event listeners
-     */
-    this._initializeUI();
-    
-    var view = this;
-    this._listener = { 
-        onChange: function(handlerName) { 
-            if (handlerName != "onGroup" && handlerName != "onUngroup") {
-                view._reconstruct(); 
-            }
-        } 
-    };
-    this._exhibit.getBrowseEngine().addListener(this._listener);
 };
 
 Exhibit.TabularView.prototype.dispose = function() {
-    this._exhibit.getBrowseEngine().removeListener(this._listener);
+    this._collection.removeListener(this._listener);
     
     this._div.innerHTML = "";
     
     this._dom = null;
     this._div = null;
+    this._collection = null;
     this._exhibit = null;
 };
 
@@ -204,7 +227,7 @@ Exhibit.TabularView.prototype._initializeUI = function() {
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {
-            self._exhibit.getViewPanel().resetBrowseQuery();
+            Exhibit.ViewPanel.resetCollection(self._collection);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         }
@@ -224,13 +247,11 @@ Exhibit.TabularView.prototype._reconstruct = function() {
     /*
      *  Get the current collection and check if it's empty
      */
-    var collection = exhibit.getBrowseEngine().getCurrentCollection();
     var items = [];
-    var originalSize = 0;
-    if (collection != null) {
-        var currentSet = collection.getCurrentSet();
+    var originalSize = this._collection.countAllItems();
+    if (originalSize > 0) {
+        var currentSet = this._collection.getRestrictedItems();
         currentSet.visit(function(itemID) { items.push({ id: itemID, sortKey: "" }); });
-        originalSize = collection.originalSize();
     }
     
     /*
@@ -479,14 +500,15 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
 };
 
 Exhibit.TabularView._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
+    var view = this;
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(exhibit.makeItemSpan(value));
+            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, view._lensRegistry, view._exhibit));
         } :
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(exhibit.makeValueSpan(value, valueType));
+            parentElmt.appendChild(Exhibit.UI.makeValueSpan(value, valueType));
         };
         
     var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.size());

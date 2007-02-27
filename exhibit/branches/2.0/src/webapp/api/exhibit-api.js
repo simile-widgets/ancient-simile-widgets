@@ -22,27 +22,30 @@
     
         var javascriptFiles = [
             "exhibit.js",
-            "util/set.js",
+            "ui.js",
+            "persistence.js",
             
+            "util/set.js",
+            "database.js",
             "expression.js",
             "functions.js",
-            "database.js",
-            "browse-engine.js",
+            "collection.js",
             
-            "control-panel.js",
+            "component.js",
+            "lens.js",
             
-            "browse-panel.js",
             "facets/list-facet.js",
             
             "view-panel.js",
+            "logo.js",
+            
             "views/ordered-view-frame.js",
             "views/tile-view.js",
+            "views/thumbnail-view.js",
             "views/map-view.js",
             "views/timeline-view.js",
-            "views/thumbnail-view.js",
             "views/tabular-view.js",
             "views/scatter-plot-view.js",
-            "lens.js",
             
             "importers/exhibit-json-importer.js",
             "importers/html-table-importer.js",

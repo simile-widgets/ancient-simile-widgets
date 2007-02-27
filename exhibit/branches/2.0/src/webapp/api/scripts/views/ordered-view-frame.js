@@ -3,10 +3,9 @@
  *==================================================
  */
  
-Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration, domConfiguration) {
+Exhibit.OrderedViewFrame = function(collection, exhibit) {
+    this._collection = collection;
     this._exhibit = exhibit;
-    this._divHeader = divHeader;
-    this._divFooter = divFooter;
     
     this._orders = null;
     this._possibleOrders = null;
@@ -14,60 +13,9 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
     this._showAll = false;
     this._grouped = true;
     this._showDuplicates = false;
+};
     
-    /*
-     *  First, get configurations from the dom, if any
-     */
-    if (domConfiguration != null) {
-        var orders = Exhibit.getAttribute(domConfiguration, "orders");
-        if (orders != null && orders.length > 0) {
-            this._orders = [];
-            this._configureOrders(orders.split(","));
-        }
-        
-        var directions = Exhibit.getAttribute(domConfiguration, "directions");
-        if (directions != null && directions.length > 0) {
-            directions = directions.split(",");
-            for (var i = 0; i < directions.length && i < this._orders.length; i++) {
-                this._orders[i].ascending = (directions[i].trim().toLowerCase() != "descending");
-            }
-        }
-        
-        var possibleOrders = Exhibit.getAttribute(domConfiguration, "possibleOrders");
-        if (possibleOrders != null && possibleOrders.length > 0) {
-            this._possibleOrders = [];
-            this._configurePossibleOrders(possibleOrders.split(","));
-        }
-        
-        var possibleDirections = Exhibit.getAttribute(domConfiguration, "possibleDirections");
-        if (possibleDirections != null && possibleDirections.length > 0) {
-            possibleDirections = possibleDirections.split(",");
-            for (var i = 0; i < possibleDirections.length && i < this._possibleOrders.length; i++) {
-                this._possibleOrders.ascending = (possibleDirections[i].trim().toLowerCase() != "descending");
-            }
-        }
-        
-        var initialCount = Exhibit.getAttribute(domConfiguration, "initialCount");
-        if (initialCount != null && initialCount.length > 0) {
-            this._initialCount = parseInt(initialCount);
-        }
-        
-        var showAll = Exhibit.getAttribute(domConfiguration, "showAll");
-        if (showAll != null && showAll.length > 0) {
-            this._showAll = (showAll == "true");
-        }
-        
-        var grouped = Exhibit.getAttribute(domConfiguration, "grouped");
-        if (grouped != null && grouped.length > 0) {
-            this._grouped = (grouped == "true");
-        }
-        
-        var showDuplicates = Exhibit.getAttribute(domConfiguration, "showDuplicates");
-        if (showDuplicates != null && showDuplicates.length > 0) {
-            this._showDuplicates = (showDuplicates == "true");
-        }
-    }
-    
+Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
     /*
      *  Then override them from the configuration object
      */
@@ -92,9 +40,62 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
         this._showDuplicates = configuration.showDuplicates;
     }
     
-    /*
-     *  Fix up configuration in case author makes mistakes
-     */
+    this._internalValidate();
+};
+
+Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration) {
+    var orders = Exhibit.getAttribute(domConfiguration, "orders");
+    if (orders != null && orders.length > 0) {
+        this._orders = [];
+        this._configureOrders(orders.split(","));
+    }
+    
+    var directions = Exhibit.getAttribute(domConfiguration, "directions");
+    if (directions != null && directions.length > 0) {
+        directions = directions.split(",");
+        for (var i = 0; i < directions.length && i < this._orders.length; i++) {
+            this._orders[i].ascending = (directions[i].trim().toLowerCase() != "descending");
+        }
+    }
+    
+    var possibleOrders = Exhibit.getAttribute(domConfiguration, "possibleOrders");
+    if (possibleOrders != null && possibleOrders.length > 0) {
+        this._possibleOrders = [];
+        this._configurePossibleOrders(possibleOrders.split(","));
+    }
+    
+    var possibleDirections = Exhibit.getAttribute(domConfiguration, "possibleDirections");
+    if (possibleDirections != null && possibleDirections.length > 0) {
+        possibleDirections = possibleDirections.split(",");
+        for (var i = 0; i < possibleDirections.length && i < this._possibleOrders.length; i++) {
+            this._possibleOrders.ascending = (possibleDirections[i].trim().toLowerCase() != "descending");
+        }
+    }
+    
+    var initialCount = Exhibit.getAttribute(domConfiguration, "initialCount");
+    if (initialCount != null && initialCount.length > 0) {
+        this._initialCount = parseInt(initialCount);
+    }
+    
+    var showAll = Exhibit.getAttribute(domConfiguration, "showAll");
+    if (showAll != null && showAll.length > 0) {
+        this._showAll = (showAll == "true");
+    }
+    
+    var grouped = Exhibit.getAttribute(domConfiguration, "grouped");
+    if (grouped != null && grouped.length > 0) {
+        this._grouped = (grouped == "true");
+    }
+    
+    var showDuplicates = Exhibit.getAttribute(domConfiguration, "showDuplicates");
+    if (showDuplicates != null && showDuplicates.length > 0) {
+        this._showDuplicates = (showDuplicates == "true");
+    }
+    
+    this._internalValidate();
+}
+
+Exhibit.OrderedViewFrame.prototype._internalValidate = function() {
     if (this._possibleOrders == null) {
         this._possibleOrders = [
             {   property:   "label",
@@ -108,11 +109,6 @@ Exhibit.OrderedViewFrame = function(exhibit, divHeader, divFooter, configuration
             this._possibleOrders[0]
         ];
     }
-    
-    /*
-     *  Initialize the UI
-     */
-    this._initializeUI();
 };
 
 Exhibit.OrderedViewFrame.prototype.dispose = function() {
@@ -196,7 +192,7 @@ Exhibit.OrderedViewFrame.prototype._configurePossibleOrders = function(possibleO
     }
 };
 
-Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
+Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
     this._divHeader.innerHTML = "";
     this._divFooter.innerHTML = "";
     
@@ -205,7 +201,7 @@ Exhibit.OrderedViewFrame.prototype._initializeUI = function() {
         this._exhibit, 
         this._divHeader, 
         function(elmt, evt, target) {
-            self._exhibit.getViewPanel().resetBrowseQuery();
+            Exhibit.ViewPanel.resetCollection(self._collection);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         },
@@ -249,15 +245,8 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     /*
      *  Get the current collection and check if it's empty
      */
-    var collection = exhibit.getBrowseEngine().getCurrentCollection();
-    var currentSet;
-    var originalSize = 0;
-    var currentSize = 0;
-    if (collection != null) {
-        originalSize = collection.originalSize();
-        currentSet = new Exhibit.Set(collection.getCurrentSet());
-        currentSize = currentSet.size();
-    }
+    var originalSize = this._collection.countAllItems();
+    var currentSize = this._collection.countRestrictedItems();
     
     /*
      *  Set the header UI
@@ -268,6 +257,8 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     
     var hasSomeGrouping = false;
     if (currentSize > 0) {
+        var currentSet = this._collection.getRestrictedItems();
+        
         this._headerDom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
         
         hasSomeGrouping = this._internalReconstruct(currentSet);

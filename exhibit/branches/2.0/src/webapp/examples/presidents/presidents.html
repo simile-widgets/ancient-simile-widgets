@@ -9,7 +9,7 @@
     <!--script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQ_WLz7LpUMtzN755Z1xScTjdiF-xRJO2-n-QiclGr93ekHLb-pnN0tgQ" type="text/javascript"></script-->
 
     <!-- key for 127.0.0.1 -->
-    <script src="/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAAusru4d5JfzaqJCJYkYlYlRTRYMMr9E_iYboHSHMQOKiCoeYD4BQxBAJZ1DpPNP7kGNCoqGJ8woY3HA" type="text/javascript"></script>
+    <script src="../../api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAAusru4d5JfzaqJCJYkYlYlRTRYMMr9E_iYboHSHMQOKiCoeYD4BQxBAJZ1DpPNP7kGNCoqGJ8woY3HA" type="text/javascript"></script>
 
     <script type="text/javascript">
         var rowStyler = function(item, database, tr) {
@@ -28,14 +28,16 @@
     <link rel='stylesheet' href='styles.css' type='text/css' />
 </head>
 
-<body ex:exhibitLogoColor="DeepSkyBlue" ex:ondataload="window.exhibit = Exhibit.create('President');">
+<body>
+    <div ex:role="exhibit-collection" ex:itemTypes="President"></div>
+    
     <table id="frame">
         <tr>
             <td id="content">
                 <h1>US Presidents</h1>
                 <p>Here is the <a href="presidents.js" target="_blank">Exhibit JSON data file</a>.
-                <div id="exhibit-control-panel"></div>
-                <div id="exhibit-view-panel">
+                
+                <div id="exhibit-view-panel" ex:role="exhibit-viewPanel">
                     <div class="item" ex:role="exhibit-lens" style="display: none;">
                         <table cellpadding="10" width="100%">
                             <tr>
@@ -71,7 +73,7 @@
                     <div ex:role="exhibit-view"
                         ex:viewClass="Exhibit.ThumbnailView"
                         ex:label="Photos"
-                        ex:orders=".party, .term"
+                        ex:orders=".party"
                         ex:possibleOrders=".religion, .party, .birth, .death, .term">
                         <div ex:role="exhibit-lens" ex:templateFile="president-thumbnail.xml"></div>
                     </div>
@@ -116,7 +118,12 @@
                 </div>
             </td>
             <td id="sidebar">
-                <div id="exhibit-browse-panel" ex:facets=".religion, .party, .dieInOffice"></div>
+                <div id="exhibit-browse-panel">
+                    <div ex:role="exhibit-facet" ex:expression=".religion" ex:facetLabel="Religions"></div>
+                    <div ex:role="exhibit-facet" ex:expression=".party" ex:facetLabel="Political Parties"></div>
+                    <div ex:role="exhibit-facet" ex:expression=".dieInOffice" ex:facetLabel="Died In Office"></div>
+                    <center ex:role="exhibit-logo" ex:color="DeepSkyBlue"></center>
+                </div>
             </td>
         </tr>
     </table>
