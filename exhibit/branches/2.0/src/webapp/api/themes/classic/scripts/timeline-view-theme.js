@@ -33,6 +33,7 @@ Exhibit.TimelineView.theme.markers = [
 ];
 
 Exhibit.TimelineView.theme.constructDom = function(
+    collection,
     exhibit,
     div,
     onClearFilters,
@@ -58,7 +59,7 @@ Exhibit.TimelineView.theme.constructDom = function(
                         field:  "resultsDiv",
                         style:  { display: "none" },
                         children: [
-                            {   elmt:   Exhibit.UI.makeCopyButton(null),
+                            {   elmt:   Exhibit.ViewPanel.makeCopyAllButton(collection, exhibit.getDatabase()),
                                 style:  { "float": "right" }
                             },
                             {   tag:    "div",

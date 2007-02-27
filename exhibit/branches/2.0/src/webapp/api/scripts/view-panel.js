@@ -155,10 +155,6 @@ Exhibit.ViewPanel.prototype._internalValidate = function() {
         Math.max(0, Math.min(this._viewIndex, this._viewConstructors.length - 1));
 };
 
-Exhibit.ViewPanel.prototype.getGeneratedViewHTML = function() {
-    return this._dom.getViewContainer().innerHTML;
-};
-
 Exhibit.ViewPanel.prototype._initializeUI = function() {
     var div = document.createElement("div");
     if (this._div.firstChild != null) {
@@ -287,5 +283,53 @@ Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, dat
         }
     }
     return pairs;
+};
+
+Exhibit.ViewPanel.makeCopyAllButton = function(collection, database, generatedContentElmtRetriever, layer) {
+    var button = Exhibit.Theme.createCopyButton(true);
+    var handler = function(elmt, evt, target) {
+        Exhibit.ViewPanel._showCopyMenu(elmt, collection, database, generatedContentElmtRetriever);
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    }
+    SimileAjax.WindowManager.registerEvent(
+        button, "click", handler, layer != null ? layer : SimileAjax.WindowManager.getHighestLayer());
+        
+    return button;
+};
+
+Exhibit.ViewPanel._showCopyMenu = function(elmt, collection, database, generatedContentElmtRetriever) {
+    var popupDom = Exhibit.Theme.createPopupMenuDom(elmt);
+    
+    var makeMenuItem = function(exporter) {
+        popupDom.appendMenuItem(
+            exporter.getLabel(),
+            null,
+            function() {
+                var text = exporter.exportMany(collection.getRestrictedItems(), database);
+                Exhibit.Theme.createCopyDialogBox(text).open();
+            }
+        );
+    }
+    
+    var exporters = Exhibit.getExporters();
+    for (var i = 0; i < exporters.length; i++) {
+        makeMenuItem(exporters[i]);
+    }
+    
+    if (generatedContentElmtRetriever != null) {
+        popupDom.appendMenuItem(
+            Exhibit.l10n.htmlExporterLabel,
+            null,
+            function() {
+                Exhibit.Theme.createCopyDialogBox(
+                    generatedContentElmtRetriever().innerHTML
+                        //.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\&/g, "&amp;")
+                ).open();
+            }
+        );
+    }
+    
+    popupDom.open();
 };
 

@@ -195,10 +195,10 @@ Exhibit.UI.showItemInPopup = function(itemID, elmt, lensRegistry, exhibit) {
     bubble.content.appendChild(itemLensDiv);
 };
 
-Exhibit.UI.makeCopyButton = function(itemID, layer) {
-    var button = Exhibit.Theme.createCopyButton(itemID == null);
+Exhibit.UI.makeCopyButton = function(itemID, database, layer) {
+    var button = Exhibit.Theme.createCopyButton(false);
     var handler = function(elmt, evt, target) {
-        Exhibit.UI._showCopyMenu(elmt, itemID);
+        Exhibit.UI._showCopyMenu(elmt, itemID, database);
         SimileAjax.DOM.cancelEvent(evt);
         return false;
     }
@@ -208,29 +208,25 @@ Exhibit.UI.makeCopyButton = function(itemID, layer) {
     return button;
 };
 
-Exhibit.UI._showCopyMenu = function(elmt, itemID) {
+Exhibit.UI._showCopyMenu = function(elmt, itemID, database) {
     var popupDom = Exhibit.Theme.createPopupMenuDom(elmt);
-    /*
+    
     var makeMenuItem = function(exporter) {
         popupDom.appendMenuItem(
             exporter.getLabel(),
             null,
             function() {
-                var text = (itemID) ?
-                    exporter.exportOne(itemID, exhibit) :
-                    exporter.exportMany(
-                        exhibit.getBrowseEngine().getCurrentCollection().getCurrentSet(), exhibit);
-                        
+                var text = exporter.exportOne(itemID, database);
                 Exhibit.Theme.createCopyDialogBox(text).open();
             }
         );
     }
     
-    var exporters = exhibit.getExporters();
+    var exporters = Exhibit.getExporters();
     for (var i = 0; i < exporters.length; i++) {
         makeMenuItem(exporters[i]);
     }
-    */
+    
     popupDom.open();
 };
 

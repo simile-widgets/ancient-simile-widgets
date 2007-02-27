@@ -198,6 +198,7 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
     
     var self = this;
     this._headerDom = Exhibit.OrderedViewFrame.theme.createHeaderDom(
+        this._collection,
         this._exhibit, 
         this._divHeader, 
         function(elmt, evt, target) {
@@ -219,7 +220,8 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
             self._toggleShowDuplicates();
             SimileAjax.DOM.cancelEvent(evt);
             return false;
-        }
+        },
+        this._generatedContentElmtRetriever // HACK
     );
     this._footerDom = Exhibit.OrderedViewFrame.theme.createFooterDom(
         this._exhibit, 

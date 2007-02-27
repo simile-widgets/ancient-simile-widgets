@@ -6,12 +6,14 @@
 Exhibit.OrderedViewFrame.theme = new Object();
 
 Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
+    collection,
     exhibit, 
     headerDiv,
     onClearFilters,
     onThenSortBy,
     onGroupToggle,
-    onShowDuplicatesToggle
+    onShowDuplicatesToggle,
+    generatedContentElmtRetriever
 ) {
     var l10n = Exhibit.OrderedViewFrame.l10n;
     var headerTemplate = {
@@ -31,7 +33,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                 field:  "resultsDiv",
                 style:  { display: "none" },
                 children: [
-                    {   elmt:   Exhibit.UI.makeCopyButton(null),
+                    {   elmt:   Exhibit.ViewPanel.makeCopyAllButton(collection, exhibit.getDatabase(), generatedContentElmtRetriever),
                         style:  { "float": "right" }
                     },
                     {   tag:    "div",

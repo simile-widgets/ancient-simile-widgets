@@ -15,22 +15,21 @@ Exhibit.BibtexExporter = {
     }
 };
 
-Exhibit.BibtexExporter.exportOne = function(itemID, exhibit) {
+Exhibit.BibtexExporter.exportOne = function(itemID, database) {
     return Exhibit.BibtexExporter._wrap(
-        Exhibit.BibtexExporter._exportOne(itemID, exhibit));
+        Exhibit.BibtexExporter._exportOne(itemID, database));
 };
 
-Exhibit.BibtexExporter.exportMany = function(set, exhibit) {
+Exhibit.BibtexExporter.exportMany = function(set, database) {
     var s = "";
     set.visit(function(itemID) {
-        s += Exhibit.BibtexExporter._exportOne(itemID, exhibit) + "\n";
+        s += Exhibit.BibtexExporter._exportOne(itemID, database) + "\n";
     });
     return Exhibit.BibtexExporter._wrap(s);
 };
 
-Exhibit.BibtexExporter._exportOne = function(itemID, exhibit) {
+Exhibit.BibtexExporter._exportOne = function(itemID, database) {
     var s = "";
-    var database = exhibit.getDatabase();
     var type = database.getObject(itemID, "pub-type");
     var key = database.getObject(itemID, "key");
     s += "@" + type + "{" + (key != null ? key : itemID) + "\n";
@@ -55,7 +54,7 @@ Exhibit.BibtexExporter._exportOne = function(itemID, exhibit) {
                 if (valueType == "url") {
                     strings = [];
                     values.visit(function(value) {
-                        strings.push(exhibit.resolveURL(value));
+                        strings.push(Exhibit.Persistence.resolveURL(value));
                     });
                 } else {
                     strings = values.toArray();
@@ -65,7 +64,7 @@ Exhibit.BibtexExporter._exportOne = function(itemID, exhibit) {
             s += strings.join(" and ") + "\",\n";
         }
     }
-    s += "\torigin = \"" + exhibit.getItemLink(itemID) + "\"\n";
+    s += "\torigin = \"" + Exhibit.Persistence.getItemLink(itemID) + "\"\n";
     s += "}\n";
     
     return s;

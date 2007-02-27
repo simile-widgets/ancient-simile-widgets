@@ -6,6 +6,7 @@
 Exhibit.TabularView.theme = new Object();
 
 Exhibit.TabularView.theme.createDom = function(
+    collection,
     exhibit, 
     div,
     onClearFilters
@@ -28,7 +29,7 @@ Exhibit.TabularView.theme.createDom = function(
                 field:  "resultsDiv",
                 style:  { display: "none" },
                 children: [
-                    {   elmt:   Exhibit.UI.makeCopyButton(null),
+                    {   elmt:   Exhibit.ViewPanel.makeCopyAllButton(collection, exhibit.getDatabase()),
                         style:  { "float": "right" }
                     },
                     {   tag:    "div",

@@ -9,15 +9,15 @@ Exhibit.RdfXmlExporter = {
     }
 };
 
-Exhibit.RdfXmlExporter.exportOne = function(itemID, exhibit) {
+Exhibit.RdfXmlExporter.exportOne = function(itemID, database) {
     var propertyIDToQualifiedName = {};
     var prefixToBase = {};
-    exhibit.getDatabase().getNamespaces(propertyIDToQualifiedName, prefixToBase);
+    database.getNamespaces(propertyIDToQualifiedName, prefixToBase);
     
     return Exhibit.RdfXmlExporter._wrapRdf(
         Exhibit.RdfXmlExporter._exportOne(
             itemID, 
-            exhibit,
+            database,
             propertyIDToQualifiedName, 
             prefixToBase
         ),
@@ -25,17 +25,17 @@ Exhibit.RdfXmlExporter.exportOne = function(itemID, exhibit) {
     );
 };
 
-Exhibit.RdfXmlExporter.exportMany = function(set, exhibit) {
+Exhibit.RdfXmlExporter.exportMany = function(set, database) {
     var s = "";
     
     var propertyIDToQualifiedName = {};
     var prefixToBase = {};
-    exhibit.getDatabase().getNamespaces(propertyIDToQualifiedName, prefixToBase);
+    database.getNamespaces(propertyIDToQualifiedName, prefixToBase);
     
     set.visit(function(itemID) {
         s += Exhibit.RdfXmlExporter._exportOne(
             itemID, 
-            exhibit,
+            database,
             propertyIDToQualifiedName, 
             prefixToBase
         ) + "\n";
@@ -43,9 +43,8 @@ Exhibit.RdfXmlExporter.exportMany = function(set, exhibit) {
     return Exhibit.RdfXmlExporter._wrapRdf(s, prefixToBase);
 };
 
-Exhibit.RdfXmlExporter._exportOne = function(itemID, exhibit, propertyIDToQualifiedName, prefixToBase) {
+Exhibit.RdfXmlExporter._exportOne = function(itemID, database, propertyIDToQualifiedName, prefixToBase) {
     var s = "";
-    var database = exhibit.getDatabase();
     var uri = database.getObject(itemID, "uri");
     s += "<rdf:Description rdf:about='" + uri + "'>\n"
     
@@ -71,7 +70,7 @@ Exhibit.RdfXmlExporter._exportOne = function(itemID, exhibit, propertyIDToQualif
         } else if (propertyID != "uri") {
             if (valueType == "url") {
                 values.visit(function(value) {
-                    s += "\t<" + propertyString + ">" + exhibit.resolveURL(value) + "</" + propertyString + ">\n";
+                    s += "\t<" + propertyString + ">" + Exhibit.Persistence.resolveURL(value) + "</" + propertyString + ">\n";
                 });
             } else {
                 values.visit(function(value) {
@@ -80,7 +79,7 @@ Exhibit.RdfXmlExporter._exportOne = function(itemID, exhibit, propertyIDToQualif
             }
         }
     }
-    s += "\t<exhibit:origin>" + exhibit.getItemLink(itemID) + "</exhibit:origin>\n";
+    s += "\t<exhibit:origin>" + Exhibit.Persistence.getItemLink(itemID) + "</exhibit:origin>\n";
     
     s += "</rdf:Description>";
     return s;

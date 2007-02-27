@@ -30,6 +30,27 @@ Exhibit.getConfigurationFromDOM = function(elmt) {
     return {};
 };
 
+Exhibit.getExporters = function() {
+    Exhibit._initializeExporters();
+    return [].concat(Exhibit._exporters);
+};
+
+Exhibit.addExporters = function(exporter) {
+    Exhibit._initializeExporters();
+    Exhibit._exporters.push(exporter);
+};
+
+Exhibit._initializeExporters = function() {
+    if (!("_exporters" in Exhibit)) {
+        Exhibit._exporters = [
+            Exhibit.RdfXmlExporter,
+            Exhibit.SemanticWikitextExporter,
+            Exhibit.TSVExporter,
+            Exhibit.ExhibitJsonExporter
+        ];
+    }
+};
+
 /*==================================================
  *  Exhibit._Impl
  *==================================================

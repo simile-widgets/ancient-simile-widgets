@@ -6,6 +6,7 @@
 Exhibit.MapView.theme = new Object();
 
 Exhibit.MapView.theme.constructDom = function(
+    collection,
     exhibit,
     div,
     onClearFilters
@@ -30,7 +31,7 @@ Exhibit.MapView.theme.constructDom = function(
                         field:  "resultsDiv",
                         style:  { display: "none" },
                         children: [
-                            {   elmt:   Exhibit.UI.makeCopyButton(null),
+                            {   elmt:   Exhibit.ViewPanel.makeCopyAllButton(collection, exhibit.getDatabase()),
                                 style:  { "float": "right" }
                             },
                             {   tag:    "div",

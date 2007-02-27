@@ -9,22 +9,21 @@ Exhibit.TSVExporter = {
     }
 };
 
-Exhibit.TSVExporter.exportOne = function(itemID, exhibit) {
+Exhibit.TSVExporter.exportOne = function(itemID, database) {
     return Exhibit.TSVExporter._wrap(
-        Exhibit.TSVExporter._exportOne(itemID, exhibit), exhibit);
+        Exhibit.TSVExporter._exportOne(itemID, database), database);
 };
 
-Exhibit.TSVExporter.exportMany = function(set, exhibit) {
+Exhibit.TSVExporter.exportMany = function(set, database) {
     var s = "";
     set.visit(function(itemID) {
-        s += Exhibit.TSVExporter._exportOne(itemID, exhibit) + "\n";
+        s += Exhibit.TSVExporter._exportOne(itemID, database) + "\n";
     });
-    return Exhibit.TSVExporter._wrap(s, exhibit);
+    return Exhibit.TSVExporter._wrap(s, database);
 };
 
-Exhibit.TSVExporter._exportOne = function(itemID, exhibit) {
+Exhibit.TSVExporter._exportOne = function(itemID, database) {
     var s = "";
-    var database = exhibit.getDatabase();
     
     var allProperties = database.getAllProperties();
     for (var i = 0; i < allProperties.length; i++) {
@@ -39,9 +38,8 @@ Exhibit.TSVExporter._exportOne = function(itemID, exhibit) {
     return s;
 };
 
-Exhibit.TSVExporter._wrap = function(s, exhibit) {
+Exhibit.TSVExporter._wrap = function(s, database) {
     var header = "";
-    var database = exhibit.getDatabase();
     
     var allProperties = database.getAllProperties();
     for (var i = 0; i < allProperties.length; i++) {

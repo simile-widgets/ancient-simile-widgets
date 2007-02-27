@@ -224,6 +224,7 @@ Exhibit.TabularView.prototype._initializeUI = function() {
     
     this._div.innerHTML = "";
     this._dom = Exhibit.TabularView.theme.createDom(
+        this._collection,
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {

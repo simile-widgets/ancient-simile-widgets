@@ -9,22 +9,21 @@ Exhibit.SemanticWikitextExporter = {
     }
 };
 
-Exhibit.SemanticWikitextExporter.exportOne = function(itemID, exhibit) {
+Exhibit.SemanticWikitextExporter.exportOne = function(itemID, database) {
     return Exhibit.SemanticWikitextExporter._wrap(
-        Exhibit.SemanticWikitextExporter._exportOne(itemID, exhibit));
+        Exhibit.SemanticWikitextExporter._exportOne(itemID, database));
 };
 
-Exhibit.SemanticWikitextExporter.exportMany = function(set, exhibit) {
+Exhibit.SemanticWikitextExporter.exportMany = function(set, database) {
     var s = "";
     set.visit(function(itemID) {
-        s += Exhibit.SemanticWikitextExporter._exportOne(itemID, exhibit) + "\n";
+        s += Exhibit.SemanticWikitextExporter._exportOne(itemID, database) + "\n";
     });
     return Exhibit.SemanticWikitextExporter._wrap(s);
 };
 
-Exhibit.SemanticWikitextExporter._exportOne = function(itemID, exhibit) {
+Exhibit.SemanticWikitextExporter._exportOne = function(itemID, database) {
     var s = "";
-    var database = exhibit.getDatabase();
     var uri = database.getObject(itemID, "uri");
     s += uri + "\n"
     
@@ -42,7 +41,7 @@ Exhibit.SemanticWikitextExporter._exportOne = function(itemID, exhibit) {
         } else {
             if (valueType == "url") {
                 values.visit(function(value) {
-                    s += "[[" + propertyID + ":=" + exhibit.resolveURL(value) + "]]\n";
+                    s += "[[" + propertyID + ":=" + Exhibit.Persistence.resolveURL(value) + "]]\n";
                 });
             } else {
                 values.visit(function(value) {
@@ -51,7 +50,7 @@ Exhibit.SemanticWikitextExporter._exportOne = function(itemID, exhibit) {
             }
         }
     }
-    s += "[[origin:=" + exhibit.getItemLink(itemID) + "]]\n";
+    s += "[[origin:=" + Exhibit.Persistence.getItemLink(itemID) + "]]\n";
     
     s += "\n";
     return s;

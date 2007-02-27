@@ -76,8 +76,12 @@ Exhibit.ThumbnailView.prototype._initializeUI = function() {
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
     
+    var self = this;
     this._orderedViewFrame._divHeader = this._dom.headerDiv;
     this._orderedViewFrame._divFooter = this._dom.footerDiv;
+    this._orderedViewFrame._generatedContentElmtRetriever = function() {
+        return self._dom.bodyDiv;
+    };
     this._orderedViewFrame.initializeUI();
         
     this._reconstruct();

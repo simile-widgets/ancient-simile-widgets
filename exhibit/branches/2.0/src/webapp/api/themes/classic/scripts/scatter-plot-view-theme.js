@@ -6,6 +6,7 @@
 Exhibit.ScatterPlotView.theme = new Object();
 
 Exhibit.ScatterPlotView.theme.constructDom = function(
+    collection,
     exhibit,
     div,
     onClearFilters
@@ -30,7 +31,7 @@ Exhibit.ScatterPlotView.theme.constructDom = function(
                         field:  "resultsDiv",
                         style:  { display: "none" },
                         children: [
-                            {   elmt:   Exhibit.UI.makeCopyButton(null),
+                            {   elmt:   Exhibit.ViewPanel.makeCopyAllButton(collection, exhibit.getDatabase()),
                                 style:  { "float": "right" }
                             },
                             {   tag:    "div",

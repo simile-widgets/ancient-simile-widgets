@@ -311,6 +311,7 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
     
     this._div.innerHTML = "";
     this._dom = Exhibit.TimelineView.theme.constructDom(
+        this._collection,
         this._exhibit, 
         this._div, 
         function(elmt, evt, target) {

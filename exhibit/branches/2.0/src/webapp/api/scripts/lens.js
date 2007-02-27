@@ -83,7 +83,7 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit) {
                 className:  "exhibit-lens-title",
                 title:      label,
                 children:   [ 
-                    {   elmt:       Exhibit.UI.makeCopyButton(itemID),
+                    {   elmt:       Exhibit.UI.makeCopyButton(itemID, database),
                         className:  "exhibit-copyButton exhibit-lens-copyButton screen"
                     },
                     label + " (",
@@ -560,7 +560,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
     if (templateNode.control != null) {
         switch (templateNode.control) {
         case "copy-button":
-            elmt.appendChild(Exhibit.UI.makeCopyButton(roots["value"]));
+            elmt.appendChild(Exhibit.UI.makeCopyButton(roots["value"], database));
             break;
         case "item-link":
             var a = document.createElement("a");

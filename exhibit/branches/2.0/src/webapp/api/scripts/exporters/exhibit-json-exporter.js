@@ -9,24 +9,23 @@ Exhibit.ExhibitJsonExporter = {
     }
 };
 
-Exhibit.ExhibitJsonExporter.exportOne = function(itemID, exhibit) {
+Exhibit.ExhibitJsonExporter.exportOne = function(itemID, database) {
     return Exhibit.ExhibitJsonExporter._wrap(
-        Exhibit.ExhibitJsonExporter._exportOne(itemID, exhibit) + "\n");
+        Exhibit.ExhibitJsonExporter._exportOne(itemID, database) + "\n");
 };
 
-Exhibit.ExhibitJsonExporter.exportMany = function(set, exhibit) {
+Exhibit.ExhibitJsonExporter.exportMany = function(set, database) {
     var s = "";
     var size = set.size();
     var count = 0;
     set.visit(function(itemID) {
-        s += Exhibit.ExhibitJsonExporter._exportOne(itemID, exhibit) + ((count++ < size - 1) ? ",\n" : "\n");
+        s += Exhibit.ExhibitJsonExporter._exportOne(itemID, database) + ((count++ < size - 1) ? ",\n" : "\n");
     });
     return Exhibit.ExhibitJsonExporter._wrap(s);
 };
 
-Exhibit.ExhibitJsonExporter._exportOne = function(itemID, exhibit) {
+Exhibit.ExhibitJsonExporter._exportOne = function(itemID, database) {
     var s = "";
-    var database = exhibit.getDatabase();
     var uri = database.getObject(itemID, "uri");
     
     s += "\t\t{\tid: \"" + itemID + "\",\n";
@@ -44,7 +43,7 @@ Exhibit.ExhibitJsonExporter._exportOne = function(itemID, exhibit) {
             if (valueType == "url") {
                 array = [];
                 values.visit(function(value) {
-                    array.push(exhibit.resolveURL(value));
+                    array.push(Exhibit.Persistence.resolveURL(value));
                 });
             } else {
                 array = values.toArray();
@@ -63,7 +62,7 @@ Exhibit.ExhibitJsonExporter._exportOne = function(itemID, exhibit) {
             s += ",\n";
         }
     }
-    s += "\t\t\torigin: \"" + exhibit.getItemLink(itemID) + "\"\n";
+    s += "\t\t\torigin: \"" + Exhibit.Persistence.getItemLink(itemID) + "\"\n";
     s += "\t\t}";
     
     return s;
