@@ -28,6 +28,10 @@ Exhibit.ListFacet.l10n={clearSelectionsTooltip:"Eliminar estas selecciones",grou
 ﻿
 Exhibit.MapView.l10n={viewLabel:"Mapa",viewTooltip:"Visualizar elementos en un mapa",mixedLegendKey:"Combinado",colorLegendTitle:"Color leyenda",formatMappableCount:function(count){return"Solamente "+count+" pueden ser representados en el mapa.";}};
 
+/* numeric-range-facet-l10n.js */
+
+Exhibit.NumericRangeFacet.l10n={clearSelectionsTooltip:"Clear these selections"};
+
 /* ordered-view-frame-l10n-spanish.js */
 
 ﻿

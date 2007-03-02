@@ -25,6 +25,10 @@ Exhibit.ListFacet.l10n={clearSelectionsTooltip:"ångra dessa val",ungroupLink:"(
 
 Exhibit.MapView.l10n={viewLabel:"Karta",viewTooltip:"Visa på karta",mixedLegendKey:"Blandat",colorLegendTitle:"Färgbetydelser",formatMappableCount:function(count){return"Bara "+count+" kunde visas på kartan.";}};
 
+/* numeric-range-facet-l10n.js */
+
+Exhibit.NumericRangeFacet.l10n={clearSelectionsTooltip:"Clear these selections"};
+
 /* ordered-view-frame-l10n.js */
 
 Exhibit.OrderedViewFrame.l10n={thenSortByLabel:"och sedan efter...",removeOrderLabel:"Ta bort det här sorteringskriteriet",formatSortActionTitle:function(propertyLabel,sortLabel){return"Sorterat efter "+propertyLabel+" ("+sortLabel+")";},formatRemoveOrderActionTitle:function(propertyLabel,sortLabel){return"Ta bort sorteringskriteriet "+propertyLabel+" ("+sortLabel+")";},resetActionTitle:"Återställ",formatDontShowAll:function(limitCount){return"Visa bara de första  "+limitCount+" resultaten";},formatShowAll:function(count){return"Visa samtliga "+count+" resultat";},createSortingControlsTemplate:function(thenSortByActionLink){return["sorterat efter: ",{tag:"span",field:"ordersSpan"},{tag:"span",className:"screen",children:["; ",{elmt:thenSortByActionLink,title:"sortera ytterligare",field:"thenByLink"}]}];},groupedAsSorted:"gruppera som de sorterats",groupAsSortedActionTitle:"grupperade som de sorterats",ungroupActionTitle:"ogrupperade",showDuplicates:"visa dubletter",showDuplicatesActionTitle:"visa dubletter",hideDuplicatesActionTitle:"göm dubletter"};

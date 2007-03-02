@@ -19,62 +19,6 @@ div.exhibit-browsePanel-logoContainer {
 }
 
 /*==================================================
- * Facet box
- *==================================================
- */
-div.exhibit-facet-frame {
-    position:   relative;
-    overflow:   hidden;
-    opacity:    0;
-}
-
-div.exhibit-facet {
-    margin:     1em;
-    padding:    1px;
-}
-
-div.exhibit-facet-header {
-    padding:        2px;
-}
-div.exhibit-facet-header-filterControl {
-    float:          right;
-    width:          2em;
-    display:        none;
-    background:     #FFFFE0;
-    cursor:         pointer;
-}
-.exhibit-facet-hasSelection div.exhibit-facet-header-filterControl {
-    display:        block;
-}
-
-span.exhibit-facet-header-title {
-    font-weight:    bold;
-}
-span.exhibit-facet-header-detail {
-    color:          #888;
-    padding-left:   0.5em;
-}
-    
-div.exhibit-facet-body-frame {
-    border:         1px solid #ddd;
-}
-
-div.exhibit-facet-body {
-    height:         10em;
-    overflow:       auto;
-}
-
-div.exhibit-facet-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
-}
-
-div.exhibit-facet-footer {
-    text-align: center;
-    padding:    2px;
-}
-/*==================================================
  * Exhibit common styles
  *==================================================
  */
@@ -223,6 +167,116 @@ div.exhibit-focusDialog-controls {
 .exhibit-busyIndicator-content img {
     vertical-align: middle;
 }
+/*==================================================
+ * Facet box
+ *==================================================
+ */
+div.exhibit-facet-frame {
+    position:   relative;
+    overflow:   hidden;
+    opacity:    0;
+}
+
+div.exhibit-facet {
+    margin:     1em;
+    padding:    1px;
+}
+
+div.exhibit-facet-header {
+    padding:        2px;
+}
+div.exhibit-facet-header-filterControl {
+    float:          right;
+    width:          2em;
+    display:        none;
+    background:     #FFFFE0;
+    cursor:         pointer;
+}
+.exhibit-facet-hasSelection div.exhibit-facet-header-filterControl {
+    display:        block;
+}
+
+span.exhibit-facet-header-title {
+    font-weight:    bold;
+}
+span.exhibit-facet-header-detail {
+    color:          #888;
+    padding-left:   0.5em;
+}
+    
+div.exhibit-facet-body-frame {
+    border:         1px solid #ddd;
+}
+
+div.exhibit-facet-body {
+    height:         10em;
+    overflow:       auto;
+}
+
+div.exhibit-facet-resizer {
+    text-align:     center;
+    cursor:         n-resize;
+    height:         10px;
+}
+
+div.exhibit-facet-footer {
+    text-align: center;
+    padding:    2px;
+}
+
+/*==================================================
+ * Facet value
+ *==================================================
+ */
+
+div.exhibit-facet-value {
+    cursor:         pointer;
+    position:       relative;
+    margin-left:    3em;
+    padding:        2px 0px;
+}
+div.exhibit-facet-value-selected {
+	background:     #FFFFE0;
+}
+
+div.exhibit-facet-value-count {
+    position:       absolute;
+    left:           -3em;
+    width:          3em;
+    text-align:     right;
+    color:          #aaa;
+}
+
+div.exhibit-facet-value-inner {
+    position:       relative;
+}
+
+img.exhibit-facet-blackCheck {
+    display:        none;
+}
+img.exhibit-facet-grayCheck {
+    display:        inline;
+}
+img.exhibit-facet-noCheck {
+    display:        none;
+}
+
+.exhibit-facet-hasSelection img.exhibit-facet-grayCheck {
+    display:        none;
+}
+.exhibit-facet-hasSelection img.exhibit-facet-noCheck {
+    display:        inline;
+}
+
+.exhibit-facet-value-selected img.exhibit-facet-grayCheck {
+    display:        none;
+}
+.exhibit-facet-value-selected img.exhibit-facet-noCheck {
+    display:        none;
+}
+.exhibit-facet-value-selected img.exhibit-facet-blackCheck {
+    display:        inline;
+}
 div.exhibit-lens {
     border:         1px solid #aaa;
     margin-bottom:  1em;
@@ -259,27 +313,6 @@ td.exhibit-lens-property-values {
  * List facet value
  *==================================================
  */
-div.exhibit-facet-value {
-    cursor:         pointer;
-    position:       relative;
-    margin-left:    3em;
-    padding:        2px 0px;
-}
-div.exhibit-facet-value-selected {
-	background:     #FFFFE0;
-}
-
-div.exhibit-facet-value-count {
-    position:       absolute;
-    left:           -3em;
-    width:          3em;
-    text-align:     right;
-    color:          #aaa;
-}
-
-div.exhibit-facet-value-inner {
-    position:       relative;
-}
 .exhibit-facet-value-hasChildren div.exhibit-facet-value-inner {
     font-style:     italic;
 }
@@ -309,33 +342,6 @@ img.exhibit-facet-value-collapseControl {
     display:        inline;
 }
 .exhibit-facet-value-expanded img.exhibit-facet-value-collapseControl {
-    display:        inline;
-}
-
-img.exhibit-facet-blackCheck {
-    display:        none;
-}
-img.exhibit-facet-grayCheck {
-    display:        inline;
-}
-img.exhibit-facet-noCheck {
-    display:        none;
-}
-
-.exhibit-facet-hasSelection img.exhibit-facet-grayCheck {
-    display:        none;
-}
-.exhibit-facet-hasSelection img.exhibit-facet-noCheck {
-    display:        inline;
-}
-
-.exhibit-facet-value-selected img.exhibit-facet-grayCheck {
-    display:        none;
-}
-.exhibit-facet-value-selected img.exhibit-facet-noCheck {
-    display:        none;
-}
-.exhibit-facet-value-selected img.exhibit-facet-blackCheck {
     display:        inline;
 }
 
@@ -410,6 +416,10 @@ div.exhibit-mapView-legendBlock-title {
 div.exhibit-mapView-legendBlock-entry {
     margin: 2px 0;
 }
+/*==================================================
+ * Numeric range facet value
+ *==================================================
+ */
 div.exhibit-scatterPlotView-plotContainer {
     position: relative;
 }
