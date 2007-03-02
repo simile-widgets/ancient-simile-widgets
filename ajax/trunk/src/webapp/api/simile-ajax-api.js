@@ -44,17 +44,24 @@ if (typeof SimileAjax == "undefined") {
         }
         return null;
     };
-    SimileAjax.includeJavascriptFile = function(doc, url) {
+    SimileAjax.includeJavascriptFile = function(doc, url, onerror) {
+        onerror = onerror || "";
         if (doc.body == null) {
             try {
-                doc.write("<script src='" + url + "' type='text/javascript'></script>");
+                var q = "'" + onerror.replace( /'/g, '&apos' ) + "'"; // "
+                doc.write("<script src='" + url + "' onerror="+ q +
+                          " type='text/javascript'>"+ onerror + "</script>");
                 return;
             } catch (e) {
                 // fall through
             }
         }
-        
+
         var script = doc.createElement("script");
+        if (onerror) {
+            script.innerHTML = onerror;
+            script.setAttribute('onerror', onerror);
+        }
         script.type = "text/javascript";
         script.language = "JavaScript";
         script.src = url;
