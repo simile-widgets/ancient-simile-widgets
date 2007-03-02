@@ -35,6 +35,7 @@
             "lens.js",
             
             "facets/list-facet.js",
+            "facets/numeric-range-facet.js",
             
             "view-panel.js",
             "logo.js",

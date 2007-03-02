@@ -14,13 +14,16 @@
         "timeline-view-theme.js",
         "tabular-view-theme.js",
         "scatter-plot-view-theme.js",
-        "list-facet-theme.js"
+        "list-facet-theme.js",
+        "numeric-range-facet-theme.js"
     ];
     var cssFiles = [
         "exhibit.css",
         
         "browse-panel.css",
+        "facet.css",
         "list-facet.css",
+        "numeric-range-facet.css",
         
         "view-panel.css",
         "tile-view.css",

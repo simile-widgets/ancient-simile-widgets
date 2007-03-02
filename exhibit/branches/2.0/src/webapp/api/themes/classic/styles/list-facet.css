@@ -2,27 +2,6 @@
  * List facet value
  *==================================================
  */
-div.exhibit-facet-value {
-    cursor:         pointer;
-    position:       relative;
-    margin-left:    3em;
-    padding:        2px 0px;
-}
-div.exhibit-facet-value-selected {
-	background:     #FFFFE0;
-}
-
-div.exhibit-facet-value-count {
-    position:       absolute;
-    left:           -3em;
-    width:          3em;
-    text-align:     right;
-    color:          #aaa;
-}
-
-div.exhibit-facet-value-inner {
-    position:       relative;
-}
 .exhibit-facet-value-hasChildren div.exhibit-facet-value-inner {
     font-style:     italic;
 }
@@ -52,33 +31,6 @@ img.exhibit-facet-value-collapseControl {
     display:        inline;
 }
 .exhibit-facet-value-expanded img.exhibit-facet-value-collapseControl {
-    display:        inline;
-}
-
-img.exhibit-facet-blackCheck {
-    display:        none;
-}
-img.exhibit-facet-grayCheck {
-    display:        inline;
-}
-img.exhibit-facet-noCheck {
-    display:        none;
-}
-
-.exhibit-facet-hasSelection img.exhibit-facet-grayCheck {
-    display:        none;
-}
-.exhibit-facet-hasSelection img.exhibit-facet-noCheck {
-    display:        inline;
-}
-
-.exhibit-facet-value-selected img.exhibit-facet-grayCheck {
-    display:        none;
-}
-.exhibit-facet-value-selected img.exhibit-facet-noCheck {
-    display:        none;
-}
-.exhibit-facet-value-selected img.exhibit-facet-blackCheck {
     display:        inline;
 }
 

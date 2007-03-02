@@ -779,7 +779,6 @@ Exhibit.Database._RangeIndex.prototype.getRange = function(visitor, min, max, in
     var l = pairs.length;
     
     inclusive = (inclusive);
-    
     while (startIndex < l) {
         var pair = pairs[startIndex++];
         var value = pair.value;
@@ -819,7 +818,7 @@ Exhibit.Database._RangeIndex.prototype._indexOf = function(v) {
     var to = pairs.length;
     while (from + 1 < to) {
         var middle = (from + to) >> 1;
-        var v2 = pairs[middle];
+        var v2 = pairs[middle].value;
         if (v2 >= v) {
             to = middle;
         } else {

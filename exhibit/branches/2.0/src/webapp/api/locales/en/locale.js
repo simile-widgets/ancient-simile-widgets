@@ -16,7 +16,8 @@
         "timeline-view-l10n.js",
         "tabular-view-l10n.js",
         "scatter-plot-view-l10n.js",
-        "list-facet-l10n.js"
+        "list-facet-l10n.js",
+        "numeric-range-facet-l10n.js"
     ];
     var cssFiles = [
     ];

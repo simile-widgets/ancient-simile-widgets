@@ -503,6 +503,42 @@ Exhibit.Expression.Path.prototype._walkBackward = function(set, valueType, filte
     };
 };
 
+Exhibit.Expression.Path.prototype.rangeBackward = function(
+    from,
+    to,
+    filter,
+    database
+) {
+    var set = new Exhibit.Set();
+    var valueType = "item";
+    if (this._segments.length > 0) {
+        var segment = this._segments[0];
+        if (segment.forward) {
+            database.getSubjectsInRange(segment.property, from, to, false, set, this._segments.length == 1 ? filter : null);
+        } else {
+            throw new Error("Last path of segment must be forward");
+        }
+                
+        for (var i = this._segments.length - 1; i > 0; i--) {
+            segment = this._segments[i];
+            if (segment.forward) {
+                set = database.getSubjectsUnion(set, segment.property, null, i == 0 ? filter : null);
+                valueType = "item";
+            } else {
+                set = database.getObjectsUnion(set, segment.property, i == 0 ? filter : null);
+                
+                var property = database.getProperty(segment.property);
+                valueType = property != null ? property.getValueType() : "text";
+            }
+        }
+    }
+    return {
+        valueType:  valueType,
+        values:     set,
+        count:      set.size()
+    };
+};
+
 Exhibit.Expression.Path.prototype.testExists = function(
     roots, 
     rootValueTypes, 
