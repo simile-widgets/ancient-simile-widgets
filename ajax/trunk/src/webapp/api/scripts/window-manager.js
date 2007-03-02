@@ -11,11 +11,12 @@ SimileAjax.WindowManager = {
     _initialized:       false,
     _listeners:         [],
     
-    _draggedElement:            null,
-    _draggedElementCallback:    null,
-    _lastCoords:                null,
-    _ghostCoords:               null,
-    _dragging:                  false,
+    _draggedElement:                null,
+    _draggedElementCallback:        null,
+    _dropTargetHighlightElement:    null,
+    _lastCoords:                    null,
+    _ghostCoords:                   null,
+    _dragging:                      false,
     
     _layers:            []
 };
@@ -220,6 +221,53 @@ SimileAjax.WindowManager._onBodyMouseMove = function(elmt, evt, target) {
                     
                     ghostElmt.style.left = SimileAjax.WindowManager._ghostCoords.left + "px";
                     ghostElmt.style.top = SimileAjax.WindowManager._ghostCoords.top + "px";
+                    
+                    if ("droppable" in callback && callback.droppable) {
+                        var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
+                        var target = SimileAjax.DOM.hittest(
+                            coords.x, coords.y, 
+                            [   SimileAjax.WindowManager._ghostElmt, 
+                                SimileAjax.WindowManager._dropTargetHighlightElement 
+                            ]
+                        );
+                        target = SimileAjax.WindowManager._findDropTarget(target);
+                        
+                        if (target != SimileAjax.WindowManager._potentialDropTarget) {
+                            if (SimileAjax.WindowManager._dropTargetHighlightElement != null) {
+                                document.body.removeChild(SimileAjax.WindowManager._dropTargetHighlightElement);
+                                
+                                SimileAjax.WindowManager._dropTargetHighlightElement = null;
+                                SimileAjax.WindowManager._potentialDropTarget = null;
+                            }
+
+                            var droppable = false;
+                            if (target != null) {
+                                if ((!("canDropOn" in callback) || callback.canDropOn(target)) &&
+                                    (!("canDrop" in target) || target.canDrop(SimileAjax.WindowManager._draggedElement))) {
+                                    
+                                    droppable = true;
+                                }
+                            }
+                            
+                            if (droppable) {
+                                var border = 4;
+                                var targetCoords = SimileAjax.DOM.getPageCoordinates(target);
+                                var highlight = document.createElement("div");
+                                highlight.style.border = border + "px solid yellow";
+                                highlight.style.backgroundColor = "yellow";
+                                highlight.style.position = "absolute";
+                                highlight.style.left = targetCoords.left + "px";
+                                highlight.style.top = targetCoords.top + "px";
+                                highlight.style.width = (target.offsetWidth - border * 2) + "px";
+                                highlight.style.height = (target.offsetHeight - border * 2) + "px";
+                                SimileAjax.Graphics.setOpacity(highlight, 30);
+                                document.body.appendChild(highlight);
+                                
+                                SimileAjax.WindowManager._potentialDropTarget = target;
+                                SimileAjax.WindowManager._dropTargetHighlightElement = highlight;
+                            }
+                        }
+                    }
                 }
             } catch (e) {
                 SimileAjax.Debug.exception("WindowManager: Error handling mouse move", e);
@@ -240,10 +288,26 @@ SimileAjax.WindowManager._onBodyMouseUp = function(elmt, evt, target) {
                 if ("onDragEnd" in callback) {
                     callback.onDragEnd();
                 }
-                if ("onDrop" in callback) {
-                    var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
-                    var target = SimileAjax.DOM.hittest(coords.x, coords.y, SimileAjax.WindowManager._ghostElmt);
-                    callback.onDrop(target);
+                if ("droppable" in callback && callback.droppable) {
+                    var dropped = false;
+                    
+                    var target = SimileAjax.WindowManager._potentialDropTarget;
+                    if (target != null) {
+                        if ((!("canDropOn" in callback) || callback.canDropOn(target)) &&
+                            (!("canDrop" in target) || target.canDrop(SimileAjax.WindowManager._draggedElement))) {
+                            
+                            if ("onDropOn" in callback) {
+                                callback.onDropOn(target);
+                            }
+                            target.ondrop(SimileAjax.WindowManager._draggedElement);
+                            
+                            dropped = true;
+                        }
+                    }
+                    
+                    if (!dropped) {
+                        // TODO: do holywood explosion here
+                    }
                 }
             }
         } finally {
@@ -263,10 +327,26 @@ SimileAjax.WindowManager._cancelDragging = function() {
         
         delete callback._ghostElmt;
     }
+    if (SimileAjax.WindowManager._dropTargetHighlightElement != null) {
+        document.body.removeChild(SimileAjax.WindowManager._dropTargetHighlightElement);
+        SimileAjax.WindowManager._dropTargetHighlightElement = null;
+    }
     
     SimileAjax.WindowManager._draggedElement = null;
     SimileAjax.WindowManager._draggedElementCallback = null;
+    SimileAjax.WindowManager._potentialDropTarget = null;
+    SimileAjax.WindowManager._dropTargetHighlightElement = null;
     SimileAjax.WindowManager._lastCoords = null;
     SimileAjax.WindowManager._ghostCoords = null;
     SimileAjax.WindowManager._dragging = false;
+};
+
+SimileAjax.WindowManager._findDropTarget = function(elmt) {
+    while (elmt != null) {
+        if ("ondrop" in elmt) {
+            break;
+        }
+        elmt = elmt.parentNode;
+    }
+    return elmt;
 };

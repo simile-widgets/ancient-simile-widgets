@@ -116,6 +116,11 @@ Exhibit.Collection.prototype.removeFacet = function(facet) {
     for (var i = 0; i < this._facets.length; i++) {
         if (facet == this._facets[i]) {
             this._facets.splice(i, 1);
+            if (facet.hasRestrictions()) {
+                this._computeRestrictedItems();
+                this._updateFacets(null);
+            }
+            break;
         }
     }
 };

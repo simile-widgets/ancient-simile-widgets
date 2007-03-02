@@ -46,6 +46,15 @@ Exhibit.Set.prototype.removeSet = function(set) {
     }
 }
 
+Exhibit.Set.prototype.retainSet = function(set) {
+    for (o in this._hash) {
+        if (!set.contains(o)) {
+            delete this._hash[o];
+            this._count--;
+        }
+    }
+}
+
 Exhibit.Set.prototype.contains = function(o) {
     return (o in this._hash);
 }

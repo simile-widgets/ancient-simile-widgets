@@ -86,10 +86,12 @@ SimileAjax.DOM.hittest = function(x, y, except) {
 
 SimileAjax.DOM._hittest = function(elmt, x, y, except) {
     var childNodes = elmt.childNodes;
-    for (var i = 0; i < childNodes.length; i++) {
+    outer: for (var i = 0; i < childNodes.length; i++) {
         var childNode = childNodes[i];
-        if (childNode == except) {
-            continue;
+        for (var j = 0; j < except.length; j++) {
+            if (childNode == except[j]) {
+                continue outer;
+            }
         }
         
         if (childNode.offsetWidth == 0 && childNode.offsetHeight == 0) {
