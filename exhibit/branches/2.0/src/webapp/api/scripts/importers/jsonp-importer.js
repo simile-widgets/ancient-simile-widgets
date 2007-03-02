@@ -56,16 +56,27 @@ Exhibit.JSONPImporter.load = function(
 
     var callbackFull = "Exhibit.JSONPImporter._callbacks." + callbackName;
     callbackURL += callbackFull;
-
-    Exhibit.JSONPImporter._callbacks[callbackName] = function(json) {
+    var cleanup = function( failedURL ) {
         try {
             Exhibit.UI.hideBusyIndicator();
 
+            delete Exhibit.JSONPImporter._callbacks[callbackName+"_fail"];
             delete Exhibit.JSONPImporter._callbacks[callbackName];
             if (script && script.parentNode) {
                 script.parentNode.removeChild(script);
             }
+        } finally {
+            if (failedURL) {
+                prompt("Failed to load javascript file:", failedURL);
+                cont && cont(undefined); // got no json! signal with undefined
+            }
+        }
+    };
 
+    Exhibit.JSONPImporter._callbacks[callbackName+"_fail"] = cleanup;
+    Exhibit.JSONPImporter._callbacks[callbackName] = function(json) {
+        try {
+            cleanup(null);
             database.loadData(fConvert ? fConvert(json, url) : json,
                               Exhibit.Persistence.getBaseURL(url));
         } finally {
@@ -76,7 +87,8 @@ Exhibit.JSONPImporter.load = function(
         eval(staticJSONPCallback + "=" + callbackFull);
     }
 
-    var script = SimileAjax.includeJavascriptFile(document, callbackURL);
+    var fail = callbackFull + "_fail('"+ callbackURL +"');";
+    var script = SimileAjax.includeJavascriptFile(document, callbackURL, fail);
     Exhibit.UI.showBusyIndicator();
     return Exhibit.JSONPImporter._callbacks[callbackName];
 };
