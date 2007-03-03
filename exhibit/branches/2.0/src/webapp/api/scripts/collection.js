@@ -107,6 +107,7 @@ Exhibit.Collection.prototype.addFacet = function(facet) {
     if (facet.hasRestrictions()) {
         this._computeRestrictedItems();
         this._updateFacets(null);
+        this._listeners.fire("onItemsChanged", []);
     } else {
         facet.update(this.getRestrictedItems());
     }
@@ -119,6 +120,7 @@ Exhibit.Collection.prototype.removeFacet = function(facet) {
             if (facet.hasRestrictions()) {
                 this._computeRestrictedItems();
                 this._updateFacets(null);
+                this._listeners.fire("onItemsChanged", []);
             }
             break;
         }
