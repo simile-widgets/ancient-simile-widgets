@@ -489,7 +489,7 @@ Exhibit.Expression.Path.prototype._walkBackward = function(set, valueType, filte
             set = database.getSubjectsUnion(set, segment.property, null, i == 0 ? filter : null);
             valueType = "item";
         } else {
-            set = database.getObjectsUnion(set, segment.property, i == 0 ? filter : null);
+            set = database.getObjectsUnion(set, segment.property, null, i == 0 ? filter : null);
             
             var property = database.getProperty(segment.property);
             valueType = property != null ? property.getValueType() : "text";

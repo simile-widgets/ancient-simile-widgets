@@ -185,7 +185,7 @@ Exhibit._Impl.prototype.configure=function(configuration) {
                 if (id == null || id.length == 0) {
                     id = "component" + Math.floor(Math.random() * 1000000);
                 }
-                this.setCollection(id, component);
+                this.setComponent(id, component);
             }
         }
     }
@@ -231,7 +231,7 @@ Exhibit._Impl.prototype.configureFromDOM = function() {
             if (id == null || id.length == 0) {
                 id = "component" + Math.floor(Math.random() * 1000000);
             }
-            this.setCollection(id, component);
+            this.setComponent(id, component);
         }
     }
 };
