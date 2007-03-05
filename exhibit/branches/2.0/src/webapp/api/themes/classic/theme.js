@@ -14,6 +14,7 @@
         "timeline-view-theme.js",
         "tabular-view-theme.js",
         "scatter-plot-view-theme.js",
+        "pivot-table-view-theme.js",
         "list-facet-theme.js",
         "numeric-range-facet-theme.js"
     ];
@@ -32,6 +33,7 @@
         "thumbnail-view.css",
         "tabular-view.css",
         "scatter-plot-view.css",
+        "pivot-table-view.css",
         "lens.css"
     ];
 

@@ -109,7 +109,7 @@ Exhibit.Component.registerLensFromDOM = function(elmt, lensRegistry) {
     }
     
     if (template != null) {
-        if (itemTypes == null) {
+        if (itemTypes == null || itemTypes.length == 0) {
             lensRegistry.registerDefaultLens(template);
         } else {
             itemTypes = itemTypes.split(",");

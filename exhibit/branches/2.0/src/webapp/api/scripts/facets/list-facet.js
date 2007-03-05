@@ -58,6 +58,17 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, exhibit) {
         if (facetLabel != null && facetLabel.length > 0) {
             facet._facetLabel = facetLabel;
         }
+        
+        var selection = Exhibit.getAttribute(configElmt, "selection");
+        if (selection != null && selection.length > 0) {
+            facet.valueSet = new Exhibit.Set();
+            
+            var a = selection.split(";");
+            for (var i = 0; i < a.length; i++) {
+                facet.valueSet.add(a[i].trim());
+                facet.selectedCount++;
+            }
+        }
     } catch (e) {
         SimileAjax.Debug.exception("ListFacet: Error processing configuration of list facet", e);
     }
@@ -77,6 +88,15 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
     }
     if ("facetLabel" in configuration) {
         facet._facetLabel = configuration.facetLabel;
+    }
+    if ("selection" in configuration) {
+        facet.valueSet = new Exhibit.Set();
+        
+        var selection = configuration.selection;
+        for (var i = 0; i < selection.length; i++) {
+            facet.valueSet.add(selection[i]);
+            facet.selectedCount++;
+        }
     }
 }
 

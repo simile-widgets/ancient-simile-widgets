@@ -16,11 +16,12 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
     onExpandAll, 
     onClearAllSelections
 ) {
+    div.style.display = "none";
+    
     var l10n = Exhibit.ListFacet.l10n;
     var template = {
         elmt:       div,
         className:  "exhibit-facet-frame",
-        style:      { height: "1px" },
         children: [
             {   tag:        "div",
                 className:  "exhibit-facet",
@@ -117,6 +118,7 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
                 var height = facetDiv.offsetHeight;
                 div.style.height = Math.floor(height * current / 100) + "px";
                 div.style.opacity = Math.round(current / 10) / 10;
+                div.style.display = "block";
             }
         };
         SimileAjax.Graphics.createAnimation(f, 0, 100, 300).run();

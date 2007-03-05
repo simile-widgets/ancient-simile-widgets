@@ -47,6 +47,7 @@
             "views/timeline-view.js",
             "views/tabular-view.js",
             "views/scatter-plot-view.js",
+            "views/pivot-table-view.js",
             
             "importers/exhibit-json-importer.js",
             "importers/html-table-importer.js",

@@ -427,7 +427,12 @@ Exhibit.Expression.Path.prototype.evaluate = function(
     var rootName = this._rootName != null ? this._rootName : defaultRootName;
     
     var set = new Exhibit.Set();
-    set.add(roots[rootName]);
+    var root = roots[rootName];
+    if (root instanceof Exhibit.Set) {
+        set.addSet(root);
+    } else {
+        set.add(root);
+    }
     
     return this._walkForward(set, rootValueTypes[rootName], database);
 };
