@@ -44,31 +44,29 @@ Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
 };
 
 Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration) {
-    var orders = Exhibit.getAttribute(domConfiguration, "orders");
+    var orders = Exhibit.getAttribute(domConfiguration, "orders", ",");
     if (orders != null && orders.length > 0) {
         this._orders = [];
-        this._configureOrders(orders.split(","));
+        this._configureOrders(orders);
     }
     
-    var directions = Exhibit.getAttribute(domConfiguration, "directions");
+    var directions = Exhibit.getAttribute(domConfiguration, "directions", ",");
     if (directions != null && directions.length > 0) {
-        directions = directions.split(",");
         for (var i = 0; i < directions.length && i < this._orders.length; i++) {
-            this._orders[i].ascending = (directions[i].trim().toLowerCase() != "descending");
+            this._orders[i].ascending = (directions[i].toLowerCase() != "descending");
         }
     }
     
-    var possibleOrders = Exhibit.getAttribute(domConfiguration, "possibleOrders");
+    var possibleOrders = Exhibit.getAttribute(domConfiguration, "possibleOrders", ",");
     if (possibleOrders != null && possibleOrders.length > 0) {
         this._possibleOrders = [];
-        this._configurePossibleOrders(possibleOrders.split(","));
+        this._configurePossibleOrders(possibleOrders);
     }
     
-    var possibleDirections = Exhibit.getAttribute(domConfiguration, "possibleDirections");
+    var possibleDirections = Exhibit.getAttribute(domConfiguration, "possibleDirections", ",");
     if (possibleDirections != null && possibleDirections.length > 0) {
-        possibleDirections = possibleDirections.split(",");
         for (var i = 0; i < possibleDirections.length && i < this._possibleOrders.length; i++) {
-            this._possibleOrders.ascending = (possibleDirections[i].trim().toLowerCase() != "descending");
+            this._possibleOrders.ascending = (possibleDirections[i].toLowerCase() != "descending");
         }
     }
     

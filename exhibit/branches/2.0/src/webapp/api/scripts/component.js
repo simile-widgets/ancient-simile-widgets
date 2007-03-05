@@ -92,7 +92,7 @@ Exhibit.Component.registerLens = function(configuration, lensRegistry) {
 };
 
 Exhibit.Component.registerLensFromDOM = function(elmt, lensRegistry) {
-    var itemTypes = Exhibit.getAttribute(elmt, "itemTypes");
+    var itemTypes = Exhibit.getAttribute(elmt, "itemTypes", ",");
     var template = null;
     
     var url = Exhibit.getAttribute(elmt, "templateFile");
@@ -112,9 +112,8 @@ Exhibit.Component.registerLensFromDOM = function(elmt, lensRegistry) {
         if (itemTypes == null || itemTypes.length == 0) {
             lensRegistry.registerDefaultLens(template);
         } else {
-            itemTypes = itemTypes.split(",");
             for (var i = 0; i < itemTypes.length; i++) {
-                lensRegistry.registerLensForType(template, itemTypes[i].trim());
+                lensRegistry.registerLensForType(template, itemTypes[i]);
             }
         }
     }

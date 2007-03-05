@@ -102,18 +102,15 @@ Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, lensRegistry
     /*
      *  Other settings
      */
-    var s = Exhibit.getAttribute(configElmt, "center");
-    if (s != null && s.length > 0) {
-        var a = s.split(",");
-        if (a.length == 2) {
-            a[0] = parseFloat(a[0]);
-            a[1] = parseFloat(a[1]);
-            if (typeof a[0] == "number" && typeof a[1] == "number") {
-                view._mapSettings.center = a;
-            }
+    var s = Exhibit.getAttribute(configElmt, "center", ",");
+    if (s.length == 2) {
+        s[0] = parseFloat(s[0]);
+        s[1] = parseFloat(s[1]);
+        if (typeof s[0] == "number" && typeof s[1] == "number") {
+            view._mapSettings.center = s;
         }
     }
-    
+
     s = Exhibit.getAttribute(configElmt, "zoom");
     if (s != null && s.length > 0) {
         view._mapSettings.zoom = parseInt(s);

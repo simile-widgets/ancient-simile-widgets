@@ -59,13 +59,12 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, exhibit) {
             facet._facetLabel = facetLabel;
         }
         
-        var selection = Exhibit.getAttribute(configElmt, "selection");
+        var selection = Exhibit.getAttribute(configElmt, "selection", ";");
         if (selection != null && selection.length > 0) {
             facet.valueSet = new Exhibit.Set();
             
-            var a = selection.split(";");
-            for (var i = 0; i < a.length; i++) {
-                facet.valueSet.add(a[i].trim());
+            for (var i = 0, s; s = selection[i]; i++) {
+                facet.valueSet.add(s);
                 facet.selectedCount++;
             }
         }

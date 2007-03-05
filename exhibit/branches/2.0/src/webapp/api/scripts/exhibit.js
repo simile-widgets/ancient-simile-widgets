@@ -8,10 +8,20 @@ Exhibit.create = function(database) {
     return new Exhibit._Impl(database);
 };
 
-Exhibit.getAttribute = function(elmt, name) {
+Exhibit.getAttribute = function(elmt, name, splitOn) {
     try {
         var value = elmt.getAttribute(name);
-        return (value != null) ? value : elmt.getAttribute("ex:" + name);
+        if (value == null) {
+            value = elmt.getAttribute("ex:" + name);
+        }
+        if (splitOn == null) {
+            return value;
+        }
+        var values = value.split(splitOn);
+        for (var i = 0; value = values[i]; i++) {
+            values[i] = value.trim();
+        }
+        return values;
     } catch(e) { 
         return null;
     }

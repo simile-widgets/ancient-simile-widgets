@@ -57,28 +57,12 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, lensRegi
     
     try {
         var expressions = [];
-        var labels = [];
-        var formats = [];
+        var labels = Exhibit.getAttribute(configElmt, "columnLabels", ",") || [];
+        var formats = Exhibit.getAttribute(configElmt, "columnFormats", ",") || [];
         
         var s = Exhibit.getAttribute(configElmt, "columns");
         if (s != null && s.length > 0) {
             expressions = Exhibit.Expression.parseSeveral(s);
-        }
-        
-        s = Exhibit.getAttribute(configElmt, "columnLabels");
-        if (s != null && s.length > 0) {
-            var a = s.split(",");
-            for (var i = 0; i < a.length; i++) {
-                labels.push(a[i].trim());
-            }
-        }
-        
-        s = Exhibit.getAttribute(configElmt, "columnFormats");
-        if (s != null && s.length > 0) {
-            var a = s.split(",");
-            for (var i = 0; i < a.length; i++) {
-                formats.push(a[i].trim());
-            }
         }
         
         for (var i = 0; i < expressions.length; i++) {

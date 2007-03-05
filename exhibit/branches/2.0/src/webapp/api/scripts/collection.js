@@ -42,13 +42,8 @@ Exhibit.Collection.getCollectionFromDOM = function(elmt, configuration, exhibit)
 Exhibit.Collection.createFromDOM = function(elmt, database) {
     var collection = new Exhibit.Collection(database);
     
-    var itemTypes = Exhibit.getAttribute(elmt, "itemTypes");
+    var itemTypes = Exhibit.getAttribute(elmt, "itemTypes", ",");
     if (itemTypes != null && itemTypes.length > 0) {
-        itemTypes = itemTypes.split(",");
-        for (var i = 0; i < itemTypes.length; i++) {
-            itemTypes[i] = itemTypes[i].trim();
-        }
-        
         collection._itemTypes = itemTypes;
         collection._update = Exhibit.Collection._typeBasedCollection_update;
     } else {
