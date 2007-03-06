@@ -74,6 +74,11 @@ a.exhibit-menu-item div img {
     margin-right:       2px;
 }
 
+div.exhibit-menu-section {
+    padding:            2px;
+    font-weight:        bold;
+}
+
 /*
  *  Copy Button and Dialog Box
  */

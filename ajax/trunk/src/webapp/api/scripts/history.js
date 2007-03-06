@@ -190,3 +190,21 @@ SimileAjax.History._handleIFrameOnLoad = function() {
         // silent
     }
 };
+
+SimileAjax.History.getNextUndoAction = function() {
+    try {
+        var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex - 1;
+        return SimileAjax.History._actions[index];
+    } catch (e) {
+        return null;
+    }
+};
+
+SimileAjax.History.getNextRedoAction = function() {
+    try {
+        var index = SimileAjax.History._currentIndex - SimileAjax.History._baseIndex;
+        return SimileAjax.History._actions[index];
+    } catch (e) {
+        return null;
+    }
+};
