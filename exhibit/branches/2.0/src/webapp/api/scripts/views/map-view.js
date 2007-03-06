@@ -103,7 +103,7 @@ Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, lensRegistry
      *  Other settings
      */
     var s = Exhibit.getAttribute(configElmt, "center", ",");
-    if (s.length == 2) {
+    if (s != null && s.length == 2) {
         s[0] = parseFloat(s[0]);
         s[1] = parseFloat(s[1]);
         if (typeof s[0] == "number" && typeof s[1] == "number") {
