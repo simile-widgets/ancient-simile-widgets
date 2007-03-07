@@ -80,7 +80,7 @@ Exhibit._Impl = function(database) {
     this._focusID = null;
     this._databaseListener = {
         onAfterLoadingItems : function() {
-            self._tryToFocusOnItem();
+            //self._tryToFocusOnItem(); // FIXME: Not implemented.
         }
     };
     this._database.addListener(this._databaseListener);
