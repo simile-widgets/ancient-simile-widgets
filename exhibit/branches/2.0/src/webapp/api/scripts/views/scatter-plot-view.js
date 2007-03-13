@@ -484,7 +484,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
 
             var colorData;
             if (xyData.colorKey == null) {
-                colorData = Exhibit.ScatterPlotView._mixColor;
+                colorData = Exhibit.ScatterPlotView._mixMarker;
             } else {
                 usedKeys[xyData.colorKey] = true;
                 if (xyData.colorKey in self._colorKeyCache) {
