@@ -195,7 +195,7 @@ Exhibit.ListFacet.theme.constructFacetItem = function(
                         className:  "exhibit-facet-blackCheck"
                     }
                 ]
-            },
+            }
         ]
     };
     if (hasChildren) {
