@@ -84,6 +84,7 @@ Exhibit.JSONPImporter.load = function(
         }
     };
     if (staticJSONPCallback) { // fallback for partial JSONP support feeds
+        callbackURL = url; // url callback parameter not supported; do not pass
         eval(staticJSONPCallback + "=" + callbackFull);
     }
 
