@@ -124,7 +124,11 @@ Exhibit.Expression.parseSeveral = function(s) {
              token.value == "<" || 
              token.value == "<=" || 
              token.value == ">" || 
-             token.value == ">="
+             token.value == ">=" ||
+             token.value == "+" ||
+             token.value == "-" ||
+             token.value == "*" ||
+             token.value == "/"
             )) {
             var operator = token.value;
             consumeToken();
@@ -159,8 +163,6 @@ Exhibit.Expression.parseSeveral = function(s) {
 Exhibit.Expression._delimiters = { "(":true, ")":true, ",":true };
 Exhibit.Expression._tokenizeNoStringLiterals = function(s) {
     s = s.replace(/\s+/g, ' ').
-        replace(/\s+\./g, '.').
-        replace(/\s+\!/g, '!').
         replace(/\s?\(\s?/g, ' ( ').
         replace(/\s?\)\s?/g, ' ) ').
         replace(/\s\+\s/g, ' + ').
