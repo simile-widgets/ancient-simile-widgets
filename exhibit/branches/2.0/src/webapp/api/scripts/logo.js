@@ -39,7 +39,10 @@ Exhibit.Logo.prototype.dispose = function() {
 Exhibit.Logo.prototype._initializeUI = function() {
     var logoURL = "http://static.simile.mit.edu/graphics/logos/exhibit/exhibit-small-" + this._color + ".png";
     var img = SimileAjax.Graphics.createTranslucentImage(document, logoURL);
-    
+    var id = "exhibit-logo-image";
+    if (!document.getElementById(id)) {
+        img.id = id;
+    }
     var a = document.createElement("a");
     a.href = "http://simile.mit.edu/exhibit/";
     a.title = "http://simile.mit.edu/exhibit/";
