@@ -9,12 +9,18 @@ Exhibit.NumericRangeFacet.theme.constructFacetFrame = function(
     exhibit,
     div,
     facetLabel,
-    onClearAllSelections
+    onClearAllSelections,
+    classNames
 ) {
+    var className = "exhibit-facet-frame";
+    if (classNames && classNames.frame) {
+        className += " " + classNames.frame;
+    }
+   
     var l10n = Exhibit.NumericRangeFacet.l10n;
     var template = {
         elmt:       div,
-        className:  "exhibit-facet-frame",
+        className:  className,
         style:      { height: "1px" },
         children: [
             {   tag:        "div",

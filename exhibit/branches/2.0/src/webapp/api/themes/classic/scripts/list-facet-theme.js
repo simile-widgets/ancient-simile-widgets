@@ -14,14 +14,20 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
     onGroup, 
     onCollapseAll, 
     onExpandAll, 
-    onClearAllSelections
+    onClearAllSelections,
+    classNames
 ) {
     div.style.display = "none";
-    
+
+    var className = "exhibit-facet-frame";
+    if (classNames && classNames.frame) {
+        className += " " + classNames.frame;
+    }
+   
     var l10n = Exhibit.ListFacet.l10n;
     var template = {
         elmt:       div,
-        className:  "exhibit-facet-frame",
+        className:  className,
         children: [
             {   tag:        "div",
                 className:  "exhibit-facet",

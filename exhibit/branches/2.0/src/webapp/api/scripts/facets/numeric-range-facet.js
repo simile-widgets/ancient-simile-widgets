@@ -232,7 +232,8 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
         this._exhibit,
         this._div,
         this._facetLabel,
-        onClearSelections
+        onClearSelections,
+        { frame:facet._facetLabel }
     );
     this._dom.open();
 };

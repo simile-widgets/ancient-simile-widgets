@@ -404,7 +404,8 @@ Exhibit.ListFacet.prototype._initializeUI = function() {
         onGroup, 
         onCollapseAll, 
         onExpandAll, 
-        onClearSelections
+        onClearSelections,
+        { frame:facet._facetLabel }
     );
     this._dom.open();
 };
