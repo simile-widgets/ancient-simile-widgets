@@ -9,7 +9,8 @@ Exhibit.ScatterPlotView.theme.constructDom = function(
     collection,
     exhibit,
     div,
-    onClearFilters
+    onClearFilters,
+    onResized
 ) {
     var l10n = Exhibit.ScatterPlotView.l10n;
     var template = {
@@ -127,7 +128,7 @@ Exhibit.ScatterPlotView.theme.constructDom = function(
                 dom.plotContainer.style.height = Math.max(50, this._height) + "px";
             },
             onDragEnd: function() {
-                //dom.map.checkResize();
+                onResized();
             }
         }
     );

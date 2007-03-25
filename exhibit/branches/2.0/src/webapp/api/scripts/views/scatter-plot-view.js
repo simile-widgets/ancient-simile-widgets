@@ -266,6 +266,9 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
             Exhibit.ViewPanel.resetCollection(self._collection);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
+        },
+        function() {
+            return self._reconstruct();
         }
     );
     
