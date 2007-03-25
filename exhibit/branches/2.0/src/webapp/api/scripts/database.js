@@ -810,7 +810,7 @@ Exhibit.Database._RangeIndex.prototype.countRange = function(min, max, inclusive
 
 Exhibit.Database._RangeIndex.prototype._indexOf = function(v) {
     var pairs = this._pairs;
-    if (pairs.length == 0 || pairs[0] == v) {
+    if (pairs.length == 0 || pairs[0].value >= v) {
         return 0;
     }
     
