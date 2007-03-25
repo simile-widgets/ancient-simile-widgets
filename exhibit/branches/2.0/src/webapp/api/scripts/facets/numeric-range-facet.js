@@ -134,15 +134,19 @@ Exhibit.NumericRangeFacet.prototype.setRange = function(from, to, selected) {
 }
 
 Exhibit.NumericRangeFacet.prototype.restrict = function(items) {
-    var path = this._path;
-    var database = this._exhibit.getDatabase();
-    
-    var set = new Exhibit.Set();
-    for (var i = 0; i < this._ranges.length; i++) {
-        var range = this._ranges[i];
-        set.addSet(path.rangeBackward(range.from, range.to, items, database).values);
+    if (this._ranges.length == 0) {
+        return items;
+    } else {
+        var path = this._path;
+        var database = this._exhibit.getDatabase();
+        
+        var set = new Exhibit.Set();
+        for (var i = 0; i < this._ranges.length; i++) {
+            var range = this._ranges[i];
+            set.addSet(path.rangeBackward(range.from, range.to, items, database).values);
+        }
+        return set;
     }
-    return set;
 };
 
 Exhibit.NumericRangeFacet.prototype.update = function(items) {
