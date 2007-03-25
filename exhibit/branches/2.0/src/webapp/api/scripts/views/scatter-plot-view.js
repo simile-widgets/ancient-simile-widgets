@@ -502,10 +502,12 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             var marker = Exhibit.ScatterPlotView._makePoint(colorData.color);
             var x = xyData.xy.x;
             var y = xyData.xy.y;
+            var tooltip = "(" + x + "," + y + ")";
             var left = Math.floor((x - xAxisMin) * xScale);
             var bottom = Math.floor((y - yAxisMin) * yScale);
             marker.style.left = left + "px";
             marker.style.bottom = bottom + "px";
+            marker.title = tooltip;
             SimileAjax.WindowManager.registerEvent(marker, "click", function(elmt, evt, target) {
                 self._openPopup(marker, items);
                 SimileAjax.DOM.cancelEvent(evt);
