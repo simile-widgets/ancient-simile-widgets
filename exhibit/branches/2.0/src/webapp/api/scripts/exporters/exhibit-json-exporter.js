@@ -25,10 +25,26 @@ Exhibit.ExhibitJsonExporter.exportMany = function(set, database) {
 };
 
 Exhibit.ExhibitJsonExporter._exportOne = function(itemID, database) {
+    function quote(s) {
+        if (/[\\\x00-\x1F\x22]/.test(s)) {
+            return '"' + s.replace(/([\\\x00-\x1f\x22])/g, function(a, b) {
+                var c = { '\b':'\\b', '\t':'\\t', '\n':'\\n', '\f':'\\f',
+                          '\r':'\\r',  '"':'\\"', '\\':'\\\\' }[b];
+                if (c) {
+                    return c;
+                }
+                c = b.charCodeAt();
+                return '\\x' +
+                    Math.floor(c / 16).toString(16) +
+                    (c % 16).toString(16);
+            }) + '"';
+        }
+        return '"' + s + '"';
+    }
     var s = "";
     var uri = database.getObject(itemID, "uri");
     
-    s += "\t\t{\tid: \"" + itemID + "\",\n";
+    s += "  {\"id\":" + quote(itemID) + ",\n";
     
     var allProperties = database.getAllProperties();
     
@@ -49,29 +65,29 @@ Exhibit.ExhibitJsonExporter._exportOne = function(itemID, database) {
                 array = values.toArray();
             }
             
-            s += "\t\t\t" + propertyID + ":\t";
+            s += "   " + quote(propertyID) + ":";
             if (array.length == 1) {
-                s += "\"" + array[0] + "\"";
+                s += quote(array[0]);
             } else {
-                s += "[ ";
+                s += "[";
                 for (var j = 0; j < array.length; j++) {
-                    s += (j > 0 ? ", " : "") + "\"" + array[j] + "\"";
+                    s += (j > 0 ? "," : "") + quote(array[j]);
                 }
-                s += " ]";
+                s += "]";
             }
             s += ",\n";
         }
     }
-    s += "\t\t\torigin: \"" + Exhibit.Persistence.getItemLink(itemID) + "\"\n";
-    s += "\t\t}";
+    s += "   \"origin\":"+ quote(Exhibit.Persistence.getItemLink(itemID)) +"\n";
+    s += "  }";
     
     return s;
 };
 
 Exhibit.ExhibitJsonExporter._wrap = function(s) {
     return "{\n" +
-        "\titems: [\n" +
+        " \"items\":[\n" +
             s +
-        "\t]\n" +
+        " ]\n" +
     "}";
 }
