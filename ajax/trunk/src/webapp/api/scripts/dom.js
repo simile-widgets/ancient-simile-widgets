@@ -206,7 +206,7 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
             }
         }
         
-        for (attribute in templateNode) {
+        for (var attribute in templateNode) {
             var value = templateNode[attribute];
             
             if (attribute == "field") {
