@@ -682,6 +682,12 @@ Exhibit.Database._Impl.prototype.getTypeLabels = function(set) {
     return [ labels, pluralLabels ];
 };
 
+Exhibit.Database._Impl.prototype.addStatement = function(s, p, o) {
+    var indexPut = Exhibit.Database._indexPut;
+    indexPut(this._spo, s, p, o);
+    indexPut(this._ops, o, p, s);
+};
+
 Exhibit.Database._Impl.prototype.removeStatement = function(s, p, o) {
     var indexRemove = Exhibit.Database._indexRemove;
     var removedObject = indexRemove(this._spo, s, p, o);
