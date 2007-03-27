@@ -456,6 +456,43 @@ Exhibit.Database._indexPutList = function(index, x, y, list) {
     }
 };
 
+Exhibit.Database._indexRemove = function(index, x, y, z) {
+    var hash = index[x];
+    if (!hash) {
+        return false;
+    }
+    
+    var array = hash[y];
+    if (!array) {
+        return false;
+    }
+    
+    for (var i = 0; i < array.length; i++) {
+        if (z == array[i]) {
+            array.splice(i, 1);
+            if (array.length == 0) {
+                delete hash[y];
+            }
+            return true;
+        }
+    }
+};
+
+Exhibit.Database._indexRemoveList = function(index, x, y) {
+    var hash = index[x];
+    if (!hash) {
+        return null;
+    }
+    
+    var array = hash[y];
+    if (!array) {
+        return null;
+    }
+    
+    delete hash[y];
+    return array;
+};
+
 Exhibit.Database._Impl.prototype._indexFillSet = function(index, x, y, set, filter) {
     var hash = index[x];
     if (hash) {
@@ -643,6 +680,41 @@ Exhibit.Database._Impl.prototype.getTypeLabels = function(set) {
     });
     
     return [ labels, pluralLabels ];
+};
+
+Exhibit.Database._Impl.prototype.removeStatement = function(s, p, o) {
+    var indexRemove = Exhibit.Database._indexRemove;
+    var removedObject = indexRemove(this._spo, s, p, o);
+    var removedSubject = indexRemove(this._ops, o, p, s);
+    return removedObject || removedSubject;
+};
+
+Exhibit.Database._Impl.prototype.removeObjects = function(s, p) {
+    var indexRemove = Exhibit.Database._indexRemove;
+    var indexRemoveList = Exhibit.Database._indexRemoveList;
+    var objects = indexRemoveList(this._spo, s, p);
+    if (objects == null) {
+        return false;
+    } else {
+        for (var i = 0; i < objects.length; i++) {
+            indexRemove(this._ops, objects[i], p, s);
+        }
+        return true;
+    }
+};
+
+Exhibit.Database._Impl.prototype.removeSubjects = function(o, p) {
+    var indexRemove = Exhibit.Database._indexRemove;
+    var indexRemoveList = Exhibit.Database._indexRemoveList;
+    var subjects = indexRemoveList(this._ops, o, p);
+    if (subjects == null) {
+        return false;
+    } else {
+        for (var i = 0; i < subjects.length; i++) {
+            indexRemove(this._spo, subjects[i], p, o);
+        }
+        return true;
+    }
 };
 
 /*==================================================
