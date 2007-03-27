@@ -90,7 +90,7 @@ Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
         var linkElmts = heads[h].getElementsByTagName("link");
         for (var l = 0; l < linkElmts.length; l++) {
             var link = linkElmts[l];
-            if (link.rel.match(/\bexhibit\/data\b/) {
+            if (link.rel.match(/\bexhibit\/data\b/)) {
                 links.push(link);
             }
         }
