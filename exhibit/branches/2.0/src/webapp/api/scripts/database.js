@@ -90,7 +90,7 @@ Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
         var linkElmts = heads[h].getElementsByTagName("link");
         for (var l = 0; l < linkElmts.length; l++) {
             var link = linkElmts[l];
-            if (link.rel == "exhibit/data") {
+            if (link.rel.match(/\bexhibit\/data\b/) {
                 links.push(link);
             }
         }
@@ -204,7 +204,7 @@ Exhibit.Database._Impl.prototype.loadProperties = function(propertyEntries, base
             
             property._uri = ("uri" in propertyEntry) ? propertyEntry.uri : (baseURI + "property#" + encodeURIComponent(propertyID));
             property._valueType = ("valueType" in propertyEntry) ? propertyEntry.valueType : "text";
-                // text, number, date, boolean, item, url
+                // text, html, number, date, boolean, item, url
             
             property._label = ("label" in propertyEntry) ? propertyEntry.label : propertyID;
             property._pluralLabel = ("pluralLabel" in propertyEntry) ? propertyEntry.pluralLabel : property._label;
