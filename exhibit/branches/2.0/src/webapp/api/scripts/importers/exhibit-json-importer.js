@@ -8,7 +8,8 @@ Exhibit.ExhibitJSONImporter = {
 Exhibit.importers["application/json"] = Exhibit.ExhibitJSONImporter;
 
 Exhibit.ExhibitJSONImporter.load = function(link, database, cont) {
-    var url = Exhibit.Persistence.resolveURL(link.href);
+    var url = typeof link == "string" ? link : link.href;
+    url = Exhibit.Persistence.resolveURL(url);
 
     var fError = function(statusText, status, xmlhttp) {
         Exhibit.UI.hideBusyIndicator();
