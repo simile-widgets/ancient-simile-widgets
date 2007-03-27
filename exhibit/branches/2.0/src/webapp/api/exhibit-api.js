@@ -26,6 +26,7 @@
             "persistence.js",
             
             "util/set.js",
+            "util/util.js",
             "database.js",
             "expression.js",
             "functions.js",

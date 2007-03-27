@@ -19,6 +19,10 @@ Exhibit.ScatterPlotView = function(collection, containerElmt, lensRegistry, exhi
         xLabel:   "x",
         yLabel:   "y"
     };
+    
+    // Function maps that allow for other axis scales (logarithmic, etc.), defaults to identity/linear
+    this._axisFuncs = { x: function (x) { return x; }, y: function (y) { return y; } };
+    this._axisInverseFuncs = { x: function (x) { return x; }, y: function (y) { return y; } };
 
     this._xyCache = new Object();
     this._colorKeyCache = new Object();
@@ -60,6 +64,18 @@ Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, lens
         exhibit
     );
     
+    // Configure the axes functions (linear, log, etc)
+    s = Exhibit.getAttribute(configElmt, "xAxisType");
+    if (s != null && s.length > 0) {
+        view._axisFuncs.x = Exhibit.ScatterPlotView._getAxisFunc(s);
+        view._axisInverseFuncs.x = Exhibit.ScatterPlotView._getAxisInverseFunc(s);
+    }
+    s = Exhibit.getAttribute(configElmt, "yAxisType");
+    if (s != null && s.length > 0) {
+        view._axisFuncs.y = Exhibit.ScatterPlotView._getAxisFunc(s);
+        view._axisInverseFuncs.y = Exhibit.ScatterPlotView._getAxisInverseFunc(s);
+    }   
+    
     /*
      *  Getter for x/y
      */
@@ -71,7 +87,7 @@ Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, lens
             var x = Exhibit.getAttribute(configElmt, "x");
             var y = Exhibit.getAttribute(configElmt, "y");
             if (x != null && y != null && x.length > 0 && y.length > 0) {
-                view._getXY = Exhibit.ScatterPlotView._makeGetXY2(x, y);
+                view._getXY = Exhibit.ScatterPlotView._makeGetXY2(x, y, view._axisFuncs);
             }
         }
     } catch (e) {
@@ -108,13 +124,11 @@ Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, lens
     s = Exhibit.getAttribute(configElmt, "yAxisMax");
     if (s != null && s.length > 0) {
         view._plotSettings.yAxisMax = parseFloat(s);
-    }
-    
+    } 
     s = Exhibit.getAttribute(configElmt, "xLabel");
     if (s != null && s.length > 0) {
         view._plotSettings.xLabel = s;
     }
-    
     s = Exhibit.getAttribute(configElmt, "yLabel");
     if (s != null && s.length > 0) {
         view._plotSettings.yLabel = s;
@@ -125,6 +139,17 @@ Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, lens
 };
 
 Exhibit.ScatterPlotView._configure = function(view, configuration) {
+
+    // Configure the axes functions (linear, log, etc)
+    if ("xAxisType" in configuration) {
+        view._axisFuncs.x = Exhibit.ScatterPlotView._getAxisFunc(configuration.xAxisType);
+        view._axisInverseFuncs.x = Exhibit.ScatterPlotView._getAxisInverseFunc(configuration.xAxisType);
+    }
+    if ("yAxisType" in configuration) {
+        view._axisFuncs.y = Exhibit.ScatterPlotView._getAxisFunc(configuration.yAxisType);
+        view._axisInverseFuncs.y = Exhibit.ScatterPlotView._getAxisInverseFunc(configuration.yAxisType);
+    }
+    
     /*
      *  Getter for x/y
      */
@@ -132,7 +157,7 @@ Exhibit.ScatterPlotView._configure = function(view, configuration) {
         if ("xy" in configuration) {
             view._getXY = Exhibit.ScatterPlotView._makeGetXY(configuration.xy);
         } else if ("x" in configuration && "y" in configuration) {
-            view._getXY = Exhibit.ScatterPlotView._makeGetXY2(configuration.x, configuration.y);
+            view._getXY = Exhibit.ScatterPlotView._makeGetXY2(configuration.x, configuration.y, view._axisFuncs);
         }
     } catch (e) {
         SimileAjax.Debug.exception("ScatterPlotView: Error processing x/y configuration", e);
@@ -172,6 +197,27 @@ Exhibit.ScatterPlotView._configure = function(view, configuration) {
     }
 };
 
+// Convenience function that maps strings to respective functions
+Exhibit.ScatterPlotView._getAxisFunc = function(s) {
+    var stringToFunc = {
+        linear: function (x) { return x; },
+        log: function (x) { return (Math.log(x) / Math.log(10.0)); }
+    };
+    var func = stringToFunc[s];
+    return func != null ? func : function (x) { return x; };
+}
+
+// Convenience function that maps strings to respective functions
+Exhibit.ScatterPlotView._getAxisInverseFunc = function(s) {
+    var stringToFunc = {
+        linear: function (x) { return x; },
+        log: function (x) { return Math.pow(10, x); }
+    };
+    var func = stringToFunc[s];
+    return func != null ? func : function (x) { return x; };
+}
+
+// This hasn't been modified to support non-linear scales yet
 Exhibit.ScatterPlotView._makeGetXY = function(s) {
     var xyExpression = Exhibit.Expression.parse(s);
     return function(itemID, database) {
@@ -189,16 +235,23 @@ Exhibit.ScatterPlotView._makeGetXY = function(s) {
     };
 };
 
-Exhibit.ScatterPlotView._makeGetXY2 = function(x, y) {
+Exhibit.ScatterPlotView._makeGetXY2 = function(x, y, funcs) {
     var xExpression = Exhibit.Expression.parse(x);
     var yExpression = Exhibit.Expression.parse(y);
+    // Default values for funcs hash, i.e. the identity functions
+    var funcs = augment({ x: function (x) { return x; },
+                          y: function (y) { return y; } }, funcs);
     return function(itemID, database) {
         var result = {};
         var x = Exhibit.ScatterPlotView.evaluateSingle(xExpression, itemID, database);
         var y = Exhibit.ScatterPlotView.evaluateSingle(yExpression, itemID, database);
         if (x != null && y != null) {
-            result.x = (typeof x == "number") ? x : parseFloat(x);
-            result.y = (typeof y == "number") ? y : parseFloat(y);
+            // We store the actual x,y values as x0 and y0
+            result.x0 = (typeof x == "number") ? x : parseFloat(x);
+            result.y0 = (typeof y == "number") ? y : parseFloat(y);
+            // Then scale them with whatever method is specified
+            result.x = funcs["x"](result.x0);
+            result.y = funcs["y"](result.y0);
         }
 
         return result;
@@ -422,17 +475,19 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         /*
          *  Construct plot's grid lines and axis labels
          */
-        var makeMakeLabel = function(interval) {
+        var makeMakeLabel = function(axis, interval) {
+            // Intelligently deal with non-linear scales
+            var f = self._axisInverseFuncs[axis];
             if (interval >= 1000000) {
-                return function (n) { return Math.floor(n / 1000000) + "M"; };
+                return function (n) { return Math.floor(f(n) / 1000000) + "M"; };
             } else if (interval >= 1000) {
-                return function (n) { return Math.floor(n / 1000) + "K"; };
+                return function (n) { return Math.floor(f(n) / 1000) + "K"; };
             } else {
-                return function (n) { return n; };
+                return function (n) { return f(n); };
             }
         };
-        var makeLabelX = makeMakeLabel(xInterval);
-        var makeLabelY = makeMakeLabel(yInterval);
+        var makeLabelX = makeMakeLabel("x", xInterval);
+        var makeLabelY = makeMakeLabel("y", yInterval);
         
         for (var x = xAxisMin + xInterval; x < xAxisMax; x += xInterval) {
             var left = Math.floor((x - xAxisMin) * xScale);
@@ -502,7 +557,9 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             var marker = Exhibit.ScatterPlotView._makePoint(colorData.color);
             var x = xyData.xy.x;
             var y = xyData.xy.y;
-            var tooltip = "(" + x + "," + y + ")";
+            var x0 = xyData.xy.x0; // x0 and y0 are the actual data values, i.e. not scaled
+            var y0 = xyData.xy.y0;
+            var tooltip = xyData.items + " = (" + x0 + "," + y0 + ")";
             var left = Math.floor((x - xAxisMin) * xScale);
             var bottom = Math.floor((y - yAxisMin) * yScale);
             marker.style.left = left + "px";
