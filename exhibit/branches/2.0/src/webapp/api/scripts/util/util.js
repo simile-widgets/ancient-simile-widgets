@@ -2,6 +2,7 @@
  *  Exhibit Utility Functions
  *==================================================
  */
+ Exhibit.Util = new Object();
 
 /*
  * Augment an object by replacing its key:value pairs with those
@@ -13,7 +14,7 @@
  * 
  * This mutates and returns the object passed as oSelf. The other objects are not changed.
  */
-function augment(oSelf, oOther) {
+Exhibit.Util.augment = function (oSelf, oOther) {
     if (oSelf == null) {
         oSelf = {};
     }
@@ -21,7 +22,9 @@ function augment(oSelf, oOther) {
         var o = arguments[i];
         if (typeof(o) != 'undefined' && o != null) {
             for (var j in o) {
-                oSelf[j] = o[j];
+                if (o.hasOwnProperty(j)) {
+                    oSelf[j] = o[j];
+                }
             }
         }
     }

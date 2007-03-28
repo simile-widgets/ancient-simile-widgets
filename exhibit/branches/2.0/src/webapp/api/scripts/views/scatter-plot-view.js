@@ -239,8 +239,8 @@ Exhibit.ScatterPlotView._makeGetXY2 = function(x, y, funcs) {
     var xExpression = Exhibit.Expression.parse(x);
     var yExpression = Exhibit.Expression.parse(y);
     // Default values for funcs hash, i.e. the identity functions
-    var funcs = augment({ x: function (x) { return x; },
-                          y: function (y) { return y; } }, funcs);
+    var funcs = Exhibit.Util.augment({ x: function (x) { return x; },
+                                       y: function (y) { return y; } }, funcs);
     return function(itemID, database) {
         var result = {};
         var x = Exhibit.ScatterPlotView.evaluateSingle(xExpression, itemID, database);
