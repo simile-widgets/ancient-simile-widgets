@@ -38,7 +38,9 @@ SimileAjax.DOM=new Object();SimileAjax.DOM.registerEventWithObject=function(elmt
 return handler(elmt,evt,target);}
 return true;}
 if(SimileAjax.Platform.browser.isIE){elmt.attachEvent("on"+eventName,handler2);}else{elmt.addEventListener(eventName,handler2,false);}};SimileAjax.DOM.getPageCoordinates=function(elmt){var left=0;var top=0;if(elmt.nodeType!=1){elmt=elmt.parentNode;}
-while(elmt!=null){left+=elmt.offsetLeft;top+=elmt.offsetTop;elmt=elmt.offsetParent;}
+var elmt2=elmt;while(elmt2!=null){left+=elmt2.offsetLeft;top+=elmt2.offsetTop;elmt2=elmt2.offsetParent;}
+var body=document.body;while(elmt!=body){if("scrollLeft"in elmt){left-=elmt.scrollLeft;top-=elmt.scrollTop;}
+elmt=elmt.parentNode;}
 return{left:left,top:top};};SimileAjax.DOM.getEventRelativeCoordinates=function(evt,elmt){if(SimileAjax.Platform.browser.isIE){return{x:evt.offsetX,y:evt.offsetY};}else{var coords=SimileAjax.DOM.getPageCoordinates(elmt);return{x:evt.pageX-coords.left,y:evt.pageY-coords.top};}};SimileAjax.DOM.getEventPageCoordinates=function(evt){if(SimileAjax.Platform.browser.isIE){return{x:evt.clientX+document.body.scrollLeft,y:evt.clientY+document.body.scrollTop};}else{return{x:evt.pageX,y:evt.pageY};}};SimileAjax.DOM.hittest=function(x,y,except){return SimileAjax.DOM._hittest(document.body,x,y,except);};SimileAjax.DOM._hittest=function(elmt,x,y,except){var childNodes=elmt.childNodes;outer:for(var i=0;i<childNodes.length;i++){var childNode=childNodes[i];for(var j=0;j<except.length;j++){if(childNode==except[j]){continue outer;}}
 if(childNode.offsetWidth==0&&childNode.offsetHeight==0){var hitNode=SimileAjax.DOM._hittest(childNode,x,y,except);if(hitNode!=childNode){return hitNode;}}else{var top=0;var left=0;var node=childNode;while(node){top+=node.offsetTop;left+=node.offsetLeft;node=node.offsetParent;}
 if(left<=x&&top<=y&&(x-left)<childNode.offsetWidth&&(y-top)<childNode.offsetHeight){return SimileAjax.DOM._hittest(childNode,x,y,except);}else if(childNode.nodeType==1&&childNode.tagName=="TR"){var childNode2=SimileAjax.DOM._hittest(childNode,x,y,except);if(childNode2!=childNode){return childNode2;}}}}

@@ -42,12 +42,22 @@ SimileAjax.DOM.getPageCoordinates = function(elmt) {
         elmt = elmt.parentNode;
     }
     
-    while (elmt != null) {
-        left += elmt.offsetLeft;
-        top += elmt.offsetTop;
-        
-        elmt = elmt.offsetParent;
+    var elmt2 = elmt;
+    while (elmt2 != null) {
+        left += elmt2.offsetLeft;
+        top += elmt2.offsetTop;
+        elmt2 = elmt2.offsetParent;
     }
+    
+    var body = document.body;
+    while (elmt != body) {
+        if ("scrollLeft" in elmt) {
+            left -= elmt.scrollLeft;
+            top -= elmt.scrollTop;
+        }
+        elmt = elmt.parentNode;
+    }
+    
     return { left: left, top: top };
 };
 
