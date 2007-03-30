@@ -31,6 +31,15 @@ Exhibit.SettingsUtilities._internalCollectSettings = function(f, specs, settings
     for (var field in specs) {
         var spec = specs[field];
         
+        var name = field;
+        if ("name" in spec) {
+            name = spec.name;
+        }
+        
+        if (!(name in settings)) {
+            settings[name] = "defaultValue" in spec ? spec.defaultValue : null;
+        }
+        
         var value = f(field);
         if (value == null) {
             continue;
@@ -38,11 +47,6 @@ Exhibit.SettingsUtilities._internalCollectSettings = function(f, specs, settings
         value = value.trim();
         if (value.length == 0) {
             continue;
-        }
-        
-        var name = field;
-        if ("name" in spec) {
-            name = spec.name;
         }
         
         var type = "text";
@@ -297,7 +301,7 @@ Exhibit.SettingsUtilities._createElementalAccessor = function(f, spec) {
         
         return function(itemID, database, visitor) {
             expression.evaluateOnItem(itemID, database).values.visit(
-                function(v) { parser(v, visitor); }
+                function(v) { return parser(v, visitor); }
             );
         };
     } catch (e) {
@@ -319,37 +323,41 @@ Exhibit.SettingsUtilities._typeToParser = function(type) {
 }
 
 Exhibit.SettingsUtilities._textParser = function(v, f) {
-    f(v);
+    return f(v);
 };
 
 Exhibit.SettingsUtilities._floatParser = function(v, f) {
     var n = parseFloat(v);
     if (!isNaN(n)) {
-        f(n);
+        return f(n);
     }
+    return false;
 };
 
 Exhibit.SettingsUtilities._intParser = function(v, f) {
     var n = parseInt(v);
     if (!isNaN(n)) {
-        f(n);
+        return f(n);
     }
+    return false;
 };
 
 Exhibit.SettingsUtilities._dateParser = function(v, f) {
     var d = SimileAjax.DateTime.parseIso8601DateTime(v);
     if (d != null) {
-        f(d);
+        return f(d);
     }
+    return false;
 };
 
 Exhibit.SettingsUtilities._booleanParser = function(v, f) {
     v = v.toString().toLowerCase();
     if (v == "true") {
-        f(true);
+        return f(true);
     } else if (v == "false") {
-        f(false);
+        return f(false);
     }
+    return false;
 };
 
 Exhibit.SettingsUtilities._evaluateBindings = function(value, database, visitor, bindings) {

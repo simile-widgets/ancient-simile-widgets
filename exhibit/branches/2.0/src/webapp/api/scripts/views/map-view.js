@@ -9,22 +9,13 @@ Exhibit.MapView = function(collection, containerElmt, lensRegistry, exhibit) {
     this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
 
-    this._settings = {
-        center:             [20,0],
-        zoom:               2,
-        size:               "small",
-        scaleControl:       true,
-        overviewControl:    false,
-        type:               "normal",
-        bubbleTip:          "top",
-        mapConstructor:     null
+    this._settings = {};
+    this._accessors = {
+        getProxy: function(itemID, database, visitor) { visitor(itemID); }
     };
-    this._accessors = {};
     
-    this._latlngCache = new Object();
-    this._markerKeyCache = new Object();
-    this._markerCache = new Object();
-    this._maxMarker = 0;
+    this._colorMap = {};
+    this._maxColorIndex = 0;
     
     var view = this;
     this._listener = { 
@@ -36,17 +27,20 @@ Exhibit.MapView = function(collection, containerElmt, lensRegistry, exhibit) {
 };
 
 Exhibit.MapView._settingSpecs = {
-    "center":           { type: "float", dimensions: 2 },
-    "zoom":             { type: "float" },
-    "size":             { type: "text" },
-    "scaleControl":     { type: "boolean" },
-    "overviewControl":  { type: "boolean" },
-    "type":             { type: "enum", choices: [ "normal", "satellite", "hybrid" ] },
-    "bubbleTip":        { type: "enum", choices: [ "top", "bottom" ] },
-    "mapConstructor":   { type: "function" }
+    "center":           { type: "float",    defaultValue: [20,0],   dimensions: 2 },
+    "zoom":             { type: "float",    defaultValue: 2         },
+    "size":             { type: "text",     defaultValue: "small"   },
+    "scaleControl":     { type: "boolean",  defaultValue: true      },
+    "overviewControl":  { type: "boolean",  defaultValue: false     },
+    "type":             { type: "enum",     defaultValue: "normal", choices: [ "normal", "satellite", "hybrid" ] },
+    "bubbleTip":        { type: "enum",     defaultValue: "top",    choices: [ "top", "bottom" ] },
+    "mapConstructor":   { type: "function", defaultValue: null      }
 };
 
 Exhibit.MapView._accessorSpecs = [
+    {   accessorName:   "getProxy",
+        attributeName:  "proxy"
+    },
     {   accessorName: "getLatlng",
         alternatives: [
             {   bindings: [
@@ -123,9 +117,16 @@ Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, lensRegistry
 Exhibit.MapView._configure = function(view, configuration) {
     Exhibit.SettingsUtilities.createAccessors(configuration, Exhibit.MapView._accessorSpecs, view._accessors);
     Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.MapView._settingSpecs, view._settings);
+    
+    var accessors = view._accessors;
+    view._getLatlng = function(itemID, database, visitor) {
+        accessors.getProxy(itemID, database, function(proxy) {
+            accessors.getLatlng(proxy, database, visitor);
+        });
+    };
 };
 
-Exhibit.MapView._markers = [
+Exhibit.MapView._colors = [
     {   color:  "FF9000"
     },
     {   color:  "5D7CBA"
@@ -299,37 +300,30 @@ Exhibit.MapView.prototype._reconstruct = function() {
         var locationToData = {};
         
         currentSet.visit(function(itemID) {
-            var latlng = null;
-            if (itemID in self._latlngCache) {
-                latlng = self._latlngCache[itemID];
-            } else {
-                accessors.getLatlng(itemID, database, function(v) { latlng = v; });
-                self._latlngCache[itemID] = latlng;
-            }
+            var latlngs = [];
+            self._getLatlng(itemID, database, function(v) { latlngs.push(v); });
             
-            if (latlng != null && "lat" in latlng && "lng" in latlng) {
-                var markerKey;
-                if (itemID in self._markerKeyCache) {
-                    markerKey = self._markerKeyCache[itemID];
-                } else {
-                    accessors.getColor(itemID, database, function(v) { markerKey = v; });
-                    self._markerKeyCache[itemID] = markerKey;
-                }
+            if (latlngs.length > 0) {
+                var colorKey = null;
+                accessors.getColor(itemID, database, function(v) { colorKey = v; });
                 
-                var latlngKey = latlng.lat + "," + latlng.lng;
-                var locationData = locationToData[latlngKey];
-                if (!(locationData)) {
-                    locationData = {
-                        latlng:     latlng,
-                        items:      [],
-                        markerKey:  markerKey
-                    };
-                    locationToData[latlngKey] = locationData;
-                } else if (locationData.markerKey != markerKey) {
-                    locationData.markerKey = null;
+                for (var n = 0; n < latlngs.length; n++) {
+                    var latlng = latlngs[n];
+                    var latlngKey = latlng.lat + "," + latlng.lng;
+                    if (latlngKey in locationToData) {
+                        var locationData = locationToData[latlngKey];
+                        locationData.items.push(itemID);
+                        if (locationData.colorKey != colorKey) {
+                            locationData.colorKey = null;
+                        }
+                    } else {
+                        locationToData[latlngKey] = {
+                            latlng:     latlng,
+                            items:      [ itemID ],
+                            colorKey:  colorKey
+                        };
+                    }
                 }
-                
-                locationData.items.push(itemID);
                 
                 mappableSize++;
             }
@@ -344,30 +338,30 @@ Exhibit.MapView.prototype._reconstruct = function() {
                 bounds = new GLatLngBounds();
             }
 
-            var markerData;
-            if (locationData.markerKey == null) {
-                markerData = Exhibit.MapView._mixMarker;
+            var colorData;
+            if (locationData.colorKey == null) {
+                colorData = Exhibit.MapView._mixMarker;
             } else {
-                usedKeys[locationData.markerKey] = true;
-                if (locationData.markerKey in self._markerCache) {
-                    markerData = self._markerCache[locationData.markerKey];
+                usedKeys[locationData.colorKey] = true;
+                if (locationData.colorKey in self._colorMap) {
+                    colorData = self._colorMap[locationData.colorKey];
                 } else {
-                    markerData = Exhibit.MapView._markers[self._maxMarker];
-                    self._markerCache[locationData.markerKey] = markerData;
-                    self._maxMarker = (self._maxMarker + 1) % Exhibit.MapView._markers.length;
+                    colorData = Exhibit.MapView._colors[self._maxColorIndex];
+                    self._colorMap[locationData.colorKey] = colorData;
+                    self._maxColorIndex = (self._maxColorIndex + 1) % Exhibit.MapView._colors.length;
                 }
             }
             
             var icon;
             if (items.length == 1) {
-                if (!("icon" in markerData)) {
-                    markerData.icon = Exhibit.MapView._makeIcon(shape, markerData.color, "space", settings.bubbleTip);
+                if (!("icon" in colorData)) {
+                    colorData.icon = Exhibit.MapView._makeIcon(shape, colorData.color, "space", settings.bubbleTip);
                 }
-                icon = markerData.icon;
+                icon = colorData.icon;
             } else {
                 icon = Exhibit.MapView._makeIcon(
                     shape, 
-                    markerData.color, 
+                    colorData.color, 
                     locationData.items.length > 50 ? "..." : locationData.items.length
                 );
             }
@@ -379,14 +373,14 @@ Exhibit.MapView.prototype._reconstruct = function() {
             bounds.extend(point);
 
             GEvent.addListener(marker, "click", function() { 
-		self._dom.map.openInfoWindow(marker.getPoint(),
-					     self._createInfoWindow(items));
+        		self._dom.map.openInfoWindow(marker.getPoint(), self._createInfoWindow(items));
             });
             self._dom.map.addOverlay(marker);
         }
         for (latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
         }
+        
         if (bounds && typeof settings.zoom == "undefined") {
             var zoom = Math.max(0,self._dom.map.getBoundsZoomLevel(bounds)-1);
             //console.log( zoom, settings.maxAutoZoom, maxAutoZoom );
@@ -399,14 +393,14 @@ Exhibit.MapView.prototype._reconstruct = function() {
         var legendLabels = [];
         var legendIcons = [];
         var shape = Exhibit.MapView._defaultMarkerShape;
-        for (markerKey in this._markerCache) {
-            if (markerKey in usedKeys) {
-                var markerData = this._markerCache[markerKey];
-                legendLabels.push(markerKey);
+        for (colorKey in this._colorMap) {
+            if (colorKey in usedKeys) {
+                var colorData = this._colorMap[colorKey];
+                legendLabels.push(colorKey);
                 legendIcons.push(Exhibit.MapView._markerUrlPrefix + 
                     [   shape,
-                        markerData.color,
-                        [ "m", shape, markerData.color, "legend.png" ].join("-")
+                        colorData.color,
+                        [ "m", shape, colorData.color, "legend.png" ].join("-")
                     ].join("/")
                 );
             }

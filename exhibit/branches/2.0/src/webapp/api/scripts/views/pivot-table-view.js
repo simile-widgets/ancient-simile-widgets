@@ -12,8 +12,7 @@ Exhibit.PivotTableView = function(collection, containerElmt, lensRegistry, exhib
     this._columnPath = null;
     this._cellExpression = null;
     
-    this._settings = {
-    };
+    this._settings = {};
 
     var view = this;
     this._listener = { 

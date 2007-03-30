@@ -8,23 +8,16 @@ Exhibit.ScatterPlotView = function(collection, containerElmt, lensRegistry, exhi
     this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
 
-    this._getXY = function(itemID, database) { return {}; };
-    this._getColorKey = function(itemID, database) { return ""; };
-    
-    this._plotSettings = {
-        xAxisMin: Number.POSITIVE_INFINITY,
-        xAxisMax: Number.NEGATIVE_INFINITY,
-        yAxisMin: Number.POSITIVE_INFINITY,
-        yAxisMax: Number.NEGATIVE_INFINITY,
-        xLabel:   "x",
-        yLabel:   "y"
+    this._settings = {};
+    this._accessors = {
+        getPointLabel:  function(itemID, database, visitor) { visitor(database.getObject(itemID, "label")); },
+        getProxy:       function(itemID, database, visitor) { visitor(itemID); }
     };
     
     // Function maps that allow for other axis scales (logarithmic, etc.), defaults to identity/linear
     this._axisFuncs = { x: function (x) { return x; }, y: function (y) { return y; } };
     this._axisInverseFuncs = { x: function (x) { return x; }, y: function (y) { return y; } };
 
-    this._xyCache = new Object();
     this._colorKeyCache = new Object();
     this._maxColor = 0;
     
@@ -36,6 +29,55 @@ Exhibit.ScatterPlotView = function(collection, containerElmt, lensRegistry, exhi
     };
     collection.addListener(this._listener);
 };
+
+Exhibit.ScatterPlotView._settingSpecs = {
+    "plotHeight":   { type: "int",   defaultValue: 400 },
+    "bubbleWidth":  { type: "int",   defaultValue: 400 },
+    "bubbleHeight": { type: "int",   defaultValue: 300 },
+    "xAxisMin":     { type: "float", defaultValue: Number.POSITIVE_INFINITY },
+    "xAxisMax":     { type: "float", defaultValue: Number.NEGATIVE_INFINITY },
+    "xAxisType":    { type: "enum",  defaultValue: "linear", choices: [ "linear", "log" ] },
+    "yAxisMin":     { type: "float", defaultValue: Number.POSITIVE_INFINITY },
+    "yAxisMax":     { type: "float", defaultValue: Number.NEGATIVE_INFINITY },
+    "yAxisType":    { type: "enum",  defaultValue: "linear", choices: [ "linear", "log" ] },
+    "xLabel":       { type: "text",  defaultValue: "x" },
+    "yLabel":       { type: "text",  defaultValue: "y" }
+};
+
+Exhibit.ScatterPlotView._accessorSpecs = [
+    {   accessorName:   "getProxy",
+        attributeName:  "proxy"
+    },
+    {   accessorName:   "getPointLabel",
+        attributeName:  "pointLabel"
+    },
+    {   accessorName: "getXY",
+        alternatives: [
+            {   bindings: [
+                    {   attributeName:  "xy",
+                        types:          [ "float", "float" ],
+                        bindingNames:   [ "x", "y" ]
+                    }
+                ]
+            },
+            {   bindings: [
+                    {   attributeName:  "x",
+                        type:           "float",
+                        bindingName:    "x"
+                    },
+                    {   attributeName:  "y",
+                        type:           "float",
+                        bindingName:    "y"
+                    }
+                ]
+            }
+        ]
+    },
+    {   accessorName:   "getColor",
+        attributeName:  "color",
+        type:           "text"
+    }
+];
 
 Exhibit.ScatterPlotView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
     var collection = Exhibit.Collection.getCollection(configuration, exhibit);
@@ -64,233 +106,61 @@ Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, lens
         exhibit
     );
     
-    // Configure the axes functions (linear, log, etc)
-    s = Exhibit.getAttribute(configElmt, "xAxisType");
-    if (s != null && s.length > 0) {
-        view._axisFuncs.x = Exhibit.ScatterPlotView._getAxisFunc(s);
-        view._axisInverseFuncs.x = Exhibit.ScatterPlotView._getAxisInverseFunc(s);
-    }
-    s = Exhibit.getAttribute(configElmt, "yAxisType");
-    if (s != null && s.length > 0) {
-        view._axisFuncs.y = Exhibit.ScatterPlotView._getAxisFunc(s);
-        view._axisInverseFuncs.y = Exhibit.ScatterPlotView._getAxisInverseFunc(s);
-    }   
+    Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt, Exhibit.ScatterPlotView._accessorSpecs, view._accessors);
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.ScatterPlotView._settingSpecs, view._settings);
+    Exhibit.ScatterPlotView._configure(view, configuration);
     
-    /*
-     *  Getter for x/y
-     */
-    try {
-        var xy = Exhibit.getAttribute(configElmt, "xy");
-        if (xy != null && xy.length > 0) {
-            view._getXY = Exhibit.ScatterPlotView._makeGetXY(xy);
-        } else {
-            var x = Exhibit.getAttribute(configElmt, "x");
-            var y = Exhibit.getAttribute(configElmt, "y");
-            if (x != null && y != null && x.length > 0 && y.length > 0) {
-                view._getXY = Exhibit.ScatterPlotView._makeGetXY2(x, y, view._axisFuncs);
-            }
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("ScatterPlotView: Error processing x/y configuration", e);
-    }
-    
-    /*
-     *  Getter for color key
-     */
-    try {
-        var color = Exhibit.getAttribute(configElmt, "color");
-        if (color != null && color.length > 0) {
-            view._getColorKey = Exhibit.ScatterPlotView._makeGetColor(color);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("ScatterPlotView: Error processing color configuration", e);
-    }
-    
-    /*
-     *  Other settings
-     */
-    var s = Exhibit.getAttribute(configElmt, "xAxisMin");
-    if (s != null && s.length > 0) {
-        view._plotSettings.xAxisMin = parseFloat(s);
-    }
-    s = Exhibit.getAttribute(configElmt, "xAxisMax");
-    if (s != null && s.length > 0) {
-        view._plotSettings.xAxisMax = parseFloat(s);
-    }
-    s = Exhibit.getAttribute(configElmt, "yAxisMin");
-    if (s != null && s.length > 0) {
-        view._plotSettings.yAxisMin = parseFloat(s);
-    }
-    s = Exhibit.getAttribute(configElmt, "yAxisMax");
-    if (s != null && s.length > 0) {
-        view._plotSettings.yAxisMax = parseFloat(s);
-    } 
-    s = Exhibit.getAttribute(configElmt, "xLabel");
-    if (s != null && s.length > 0) {
-        view._plotSettings.xLabel = s;
-    }
-    s = Exhibit.getAttribute(configElmt, "yLabel");
-    if (s != null && s.length > 0) {
-        view._plotSettings.yLabel = s;
-    }
-
     view._initializeUI();
     return view;
 };
 
 Exhibit.ScatterPlotView._configure = function(view, configuration) {
+    Exhibit.SettingsUtilities.createAccessors(configuration, Exhibit.ScatterPlotView._accessorSpecs, view._accessors);
+    Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.ScatterPlotView._settingSpecs, view._settings);
 
-    // Configure the axes functions (linear, log, etc)
-    if ("xAxisType" in configuration) {
-        view._axisFuncs.x = Exhibit.ScatterPlotView._getAxisFunc(configuration.xAxisType);
-        view._axisInverseFuncs.x = Exhibit.ScatterPlotView._getAxisInverseFunc(configuration.xAxisType);
-    }
-    if ("yAxisType" in configuration) {
-        view._axisFuncs.y = Exhibit.ScatterPlotView._getAxisFunc(configuration.yAxisType);
-        view._axisInverseFuncs.y = Exhibit.ScatterPlotView._getAxisInverseFunc(configuration.yAxisType);
-    }
+    view._axisFuncs.x = Exhibit.ScatterPlotView._getAxisFunc(view._settings.xAxisType);
+    view._axisInverseFuncs.x = Exhibit.ScatterPlotView._getAxisInverseFunc(view._settings.xAxisType);
     
-    /*
-     *  Getter for x/y
-     */
-    try {
-        if ("xy" in configuration) {
-            view._getXY = Exhibit.ScatterPlotView._makeGetXY(configuration.xy);
-        } else if ("x" in configuration && "y" in configuration) {
-            view._getXY = Exhibit.ScatterPlotView._makeGetXY2(configuration.x, configuration.y, view._axisFuncs);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("ScatterPlotView: Error processing x/y configuration", e);
-    }
+    view._axisFuncs.y = Exhibit.ScatterPlotView._getAxisFunc(view._settings.yAxisType);
+    view._axisInverseFuncs.y = Exhibit.ScatterPlotView._getAxisInverseFunc(view._settings.yAxisType);
     
-    /*
-     *  Getter for color key
-     */
-    try {
-        if ("color" in configuration) {
-            view._getColorKey = Exhibit.ScatterPlotView._makeGetColor(configuration.color);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("ScatterPlotView: Error processing color configuration", e);
-    }
-
-    /*
-     *  Other settings
-     */
-    if ("xAxisMin" in configuration) {
-        view._plotSettings.xAxisMin = configuration.xAxisMin;
-    }
-    if ("xAxisMax" in configuration) {
-        view._plotSettings.xAxisMax = configuration.xAxisMax;
-    }
-    if ("yAxisMin" in configuration) {
-        view._plotSettings.yAxisMin = configuration.yAxisMin;
-    }
-    if ("yAxisMax" in configuration) {
-        view._plotSettings.yAxisMax = configuration.yAxisMax;
-    }
-    if ("xLabel" in configuration) {
-        view._plotSettings.xLabel = configuration.xLabel;
-    }
-    if ("yLabel" in configuration) {
-        view._plotSettings.yLabel = configuration.yLabel;
-    }
+    var accessors = view._accessors;
+    view._getXY = function(itemID, database, visitor) {
+        accessors.getProxy(itemID, database, function(proxy) {
+            accessors.getXY(proxy, database, visitor);
+        });
+    };
 };
 
 // Convenience function that maps strings to respective functions
 Exhibit.ScatterPlotView._getAxisFunc = function(s) {
-    var stringToFunc = {
-        linear: function (x) { return x; },
-        log: function (x) { return (Math.log(x) / Math.log(10.0)); }
-    };
-    var func = stringToFunc[s];
-    return func != null ? func : function (x) { return x; };
+    if (s == "log") {
+        return function (x) { return (Math.log(x) / Math.log(10.0)); };
+    } else {
+        return function (x) { return x; };
+    }
 }
 
 // Convenience function that maps strings to respective functions
 Exhibit.ScatterPlotView._getAxisInverseFunc = function(s) {
-    var stringToFunc = {
-        linear: function (x) { return x; },
-        log: function (x) { return Math.pow(10, x); }
+    if (s == "log") {
+        return function (x) { return Math.pow(10, x); };
+    } else {
+        return function (x) { return x; };
     };
-    var func = stringToFunc[s];
-    return func != null ? func : function (x) { return x; };
 }
 
-// This hasn't been modified to support non-linear scales yet
-Exhibit.ScatterPlotView._makeGetXY = function(s) {
-    var xyExpression = Exhibit.Expression.parse(s);
-    return function(itemID, database) {
-        var result = {};
-        var x = Exhibit.ScatterPlotView.evaluateSingle(xyExpression, itemID, database);
-        if (x != null) {
-            var a = x.split(",");
-            if (a.length == 2) {
-                result.lat = (typeof a[0] == "number") ? a[0] : parseFloat(a[0]);
-                result.lng = (typeof a[1] == "number") ? a[1] : parseFloat(a[1]);
-            }
-        }
-
-        return result;
-    };
-};
-
-Exhibit.ScatterPlotView._makeGetXY2 = function(x, y, funcs) {
-    var xExpression = Exhibit.Expression.parse(x);
-    var yExpression = Exhibit.Expression.parse(y);
-    // Default values for funcs hash, i.e. the identity functions
-    var funcs = Exhibit.Util.augment({ x: function (x) { return x; },
-                                       y: function (y) { return y; } }, funcs);
-    return function(itemID, database) {
-        var result = {};
-        var x = Exhibit.ScatterPlotView.evaluateSingle(xExpression, itemID, database);
-        var y = Exhibit.ScatterPlotView.evaluateSingle(yExpression, itemID, database);
-        if (x != null && y != null) {
-            // We store the actual x,y values as x0 and y0
-            result.x0 = (typeof x == "number") ? x : parseFloat(x);
-            result.y0 = (typeof y == "number") ? y : parseFloat(y);
-            // Then scale them with whatever method is specified
-            result.x = funcs["x"](result.x0);
-            result.y = funcs["y"](result.y0);
-        }
-
-        return result;
-    }
-};
-
-Exhibit.ScatterPlotView._makeGetColor = function(s) {
-    var colorExpression = Exhibit.Expression.parse(s);
-    return function(itemID, database) {
-        var key = Exhibit.ScatterPlotView.evaluateSingle(colorExpression, itemID, database);
-        return key != null ? key : "";
-    };
-};
-
-
 Exhibit.ScatterPlotView._colors = [
-    {   color:  "FF9000"
-    },
-    {   color:  "5D7CBA"
-    },
-    {   color:  "A97838"
-    },
-    {   color:  "8B9BBA"
-    },
-    {   color:  "FFC77F"
-    },
-    {   color:  "003EBA"
-    },
-    {   color:  "29447B"
-    },
-    {   color:  "543C1C"
-    }
+    "FF9000",
+    "5D7CBA",
+    "A97838",
+    "8B9BBA",
+    "FFC77F",
+    "003EBA",
+    "29447B",
+    "543C1C"
 ];
-Exhibit.ScatterPlotView._wildcardMarker = {
-    color:  "888888"
-};
-Exhibit.ScatterPlotView._mixMarker = {
-    color:  "FFFFFF"
-};
+Exhibit.ScatterPlotView._mixColor = "FFFFFF";
 
 Exhibit.ScatterPlotView.evaluateSingle = function(expression, itemID, database) {
     return expression.evaluateSingleOnItem(itemID, database).value;
@@ -325,7 +195,7 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
         }
     );
     
-    this._dom.plotContainer.style.height = "400px";
+    this._dom.plotContainer.style.height = this._settings.plotHeight + "px";
     this._reconstruct();
 };
 
@@ -333,8 +203,15 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
     var self = this;
     var exhibit = this._exhibit;
     var database = exhibit.getDatabase();
+    var settings = this._settings;
+    var accessors = this._accessors;
     
     this._dom.plotContainer.innerHTML = "";
+    
+    var scaleX = self._axisFuncs.x;
+    var scaleY = self._axisFuncs.y;
+    var unscaleX = self._axisInverseFuncs.x;
+    var unscaleY = self._axisInverseFuncs.y;
     
     /*
      *  Get the current collection and check if it's empty
@@ -348,52 +225,53 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         var currentSet = this._collection.getRestrictedItems();
         
         var xyToData = {};
-        var xAxisMin = this._plotSettings.xAxisMin;
-        var xAxisMax = this._plotSettings.xAxisMax;
-        var yAxisMin = this._plotSettings.yAxisMin;
-        var yAxisMax = this._plotSettings.yAxisMax;
+        var xAxisMin = settings.xAxisMin;
+        var xAxisMax = settings.xAxisMax;
+        var yAxisMin = settings.yAxisMin;
+        var yAxisMax = settings.yAxisMax;
         
         /*
          *  Iterate through all items, collecting min and max on both axes
          */
         currentSet.visit(function(itemID) {
-            var xy;
-            if (itemID in self._xyCache) {
-                xy = self._xyCache[itemID];
-            } else {
-                xy = self._getXY(itemID, database);
-                self._xyCache[itemID] = xy;
-            }
+            var xys = [];
+            self._getXY(itemID, database, function(xy) { if ("x" in xy && "y" in xy) xys.push(xy); });
             
-            if ("x" in xy && "y" in xy) {
-                var colorKey;
-                if (itemID in self._colorKeyCache) {
-                    colorKey = self._colorKeyCache[itemID];
-                } else {
-                    colorKey = self._getColorKey(itemID, database);
-                    self._colorKeyCache[itemID] = colorKey;
+            if (xys.length > 0) {
+                var colorKey = "";
+                accessors.getColor(itemID, database, function(v) { colorKey = v; });
+                
+                for (var i = 0; i < xys.length; i++) {
+                    var xy = xys[i];
+                    var xyKey = xy.x + "," + xy.y;
+                    if (xyKey in xyToData) {
+                        var xyData = xyToData[xyKey];
+                        xyData.items.push(itemID);
+                        if (xyData.colorKey != colorKey) {
+                            xyData.colorKey = null;
+                        }
+                    } else {
+                        try {
+                            xy.scaledX = scaleX(xy.x);
+                            xy.scaledY = scaleY(xy.y);
+                        } catch (e) {
+                            continue; // ignore the point since we can't scale it, e.g., log(0)
+                        }
+                        
+                        xyToData[xyKey] = {
+                            xy:         xy,
+                            items:      [ itemID ],
+                            colorKey:  colorKey
+                        };
+                        
+                        xAxisMin = Math.min(xAxisMin, xy.scaledX);
+                        xAxisMax = Math.max(xAxisMax, xy.scaledX);
+                        yAxisMin = Math.min(yAxisMin, xy.scaledY);
+                        yAxisMax = Math.max(yAxisMax, xy.scaledY);
+                    }
+                    
+                    mappableSize++;
                 }
-                
-                var xyKey = xy.x + "," + xy.y;
-                var xyData = xyToData[xyKey];
-                if (!(xyData)) {
-                    xyData = {
-                        xy:         xy,
-                        items:      [],
-                        colorKey:  colorKey
-                    };
-                    xyToData[xyKey] = xyData;
-                } else if (xyData.colorKey != colorKey) {
-                    xyData.colorKey = null;
-                }
-                
-                xyData.items.push(itemID);
-                
-                mappableSize++;
-                xAxisMin = Math.min(xAxisMin, xy.x);
-                xAxisMax = Math.max(xAxisMax, xy.x);
-                yAxisMin = Math.min(yAxisMin, xy.y);
-                yAxisMax = Math.max(yAxisMax, xy.y);
             }
         });
         
@@ -429,10 +307,10 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         yAxisMin = Math.floor(yAxisMin / yInterval) * yInterval;
         yAxisMax = Math.ceil(yAxisMax / yInterval) * yInterval;
         
-        this._plotSettings.xAxisMin = xAxisMin;
-        this._plotSettings.xAxisMax = xAxisMax;
-        this._plotSettings.yAxisMin = yAxisMin;
-        this._plotSettings.yAxisMax = yAxisMax;
+        settings.xAxisMin = xAxisMin;
+        settings.xAxisMax = xAxisMax;
+        settings.yAxisMin = yAxisMin;
+        settings.yAxisMax = yAxisMax;
         
         /*
          *  Construct plot's frame
@@ -475,19 +353,18 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         /*
          *  Construct plot's grid lines and axis labels
          */
-        var makeMakeLabel = function(axis, interval) {
+        var makeMakeLabel = function(interval, unscale) {
             // Intelligently deal with non-linear scales
-            var f = self._axisInverseFuncs[axis];
             if (interval >= 1000000) {
-                return function (n) { return Math.floor(f(n) / 1000000) + "M"; };
+                return function (n) { return Math.floor(unscale(n) / 1000000) + "M"; };
             } else if (interval >= 1000) {
-                return function (n) { return Math.floor(f(n) / 1000) + "K"; };
+                return function (n) { return Math.floor(unscale(n) / 1000) + "K"; };
             } else {
-                return function (n) { return f(n); };
+                return function (n) { return unscale(n); };
             }
         };
-        var makeLabelX = makeMakeLabel("x", xInterval);
-        var makeLabelY = makeMakeLabel("y", yInterval);
+        var makeLabelX = makeMakeLabel(xInterval, unscaleX);
+        var makeLabelY = makeMakeLabel(yInterval, unscaleY);
         
         for (var x = xAxisMin + xInterval; x < xAxisMax; x += xInterval) {
             var left = Math.floor((x - xAxisMin) * xScale);
@@ -508,7 +385,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         }
         var xNameDiv = document.createElement("div");
         xNameDiv.className = "exhibit-scatterPlotView-xAxisName";
-        xNameDiv.innerHTML = this._plotSettings.xLabel;
+        xNameDiv.innerHTML = settings.xLabel;
         xAxisDivInner.appendChild(xNameDiv);
             
         for (var y = yAxisMin + yInterval; y < yAxisMax; y += yInterval) {
@@ -530,7 +407,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         }
         var yNameDiv = document.createElement("div");
         yNameDiv.className = "exhibit-scatterPlotView-yAxisName";
-        yNameDiv.innerHTML = this._plotSettings.yLabel;
+        yNameDiv.innerHTML = settings.yLabel;
         yAxisDivInner.appendChild(yNameDiv);
         
         /*
@@ -539,32 +416,29 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         var usedKeys = {};
         var addPointAtLocation = function(xyData) {
             var items = xyData.items;
-
-            var colorData;
+            
+            var color;
             if (xyData.colorKey == null) {
-                colorData = Exhibit.ScatterPlotView._mixMarker;
+                color = Exhibit.ScatterPlotView._mixColor;
             } else {
                 usedKeys[xyData.colorKey] = true;
                 if (xyData.colorKey in self._colorKeyCache) {
-                    colorData = self._colorKeyCache[xyData.colorKey];
+                    color = self._colorKeyCache[xyData.colorKey];
                 } else {
-                    colorData = Exhibit.ScatterPlotView._colors[self._maxColor];
-                    self._colorKeyCache[xyData.colorKey] = colorData;
+                    color = Exhibit.ScatterPlotView._colors[self._maxColor];
+                    self._colorKeyCache[xyData.colorKey] = color;
                     self._maxColor = (self._maxColor + 1) % Exhibit.ScatterPlotView._colors.length;
                 }
             }
             
-            var marker = Exhibit.ScatterPlotView._makePoint(colorData.color);
-            var x = xyData.xy.x;
-            var y = xyData.xy.y;
-            var x0 = xyData.xy.x0; // x0 and y0 are the actual data values, i.e. not scaled
-            var y0 = xyData.xy.y0;
-            var tooltip = xyData.items + " = (" + x0 + "," + y0 + ")";
-            var left = Math.floor((x - xAxisMin) * xScale);
-            var bottom = Math.floor((y - yAxisMin) * yScale);
-            marker.style.left = left + "px";
-            marker.style.bottom = bottom + "px";
-            marker.title = tooltip;
+            var xy = xyData.xy;
+            var marker = Exhibit.ScatterPlotView._makePoint(color);
+            marker.style.left =   Math.floor((xy.scaledX - xAxisMin) * xScale) + "px";
+            marker.style.bottom = Math.floor((xy.scaledY - yAxisMin) * yScale) + "px";
+            marker.title = xyData.items + ": " + 
+                settings.xLabel + " = " + xy.x + ", " +
+                settings.yLabel + " = " + xy.y;
+            
             SimileAjax.WindowManager.registerEvent(marker, "click", function(elmt, evt, target) {
                 self._openPopup(marker, items);
                 SimileAjax.DOM.cancelEvent(evt);
@@ -585,9 +459,9 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         var legendColors = [];
         for (colorKey in this._colorKeyCache) {
             if (colorKey in usedKeys) {
-                var colorData = this._colorKeyCache[colorKey];
+                var color = this._colorKeyCache[colorKey];
                 legendLabels.push(colorKey);
-                legendColors.push("#" + colorData.color);
+                legendColors.push("#" + color);
             }
         }
         legendLabels.push(Exhibit.ScatterPlotView.l10n.mixedLegendKey);
@@ -611,8 +485,8 @@ Exhibit.ScatterPlotView.prototype._openPopup = function(elmt, items) {
         document, 
         coords.left + Math.round(elmt.offsetWidth / 2), 
         coords.top + Math.round(elmt.offsetHeight / 2), 
-        400, // px
-        300  // px
+        this._settings.bubbleWidth, // px
+        this._settings.bubbleHeight // px
     );
     
     if (items.length > 1) {

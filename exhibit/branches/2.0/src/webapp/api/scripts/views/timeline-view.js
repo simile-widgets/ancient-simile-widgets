@@ -8,22 +8,15 @@ Exhibit.TimelineView = function(collection, containerElmt, lensRegistry, exhibit
     this._div = containerElmt;
     this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
+    
+    this._settings = {};
+    this._accessors = {
+        getEventLabel:  function(itemID, database, visitor) { visitor(database.getObject(itemID, "label")); },
+        getProxy:       function(itemID, database, visitor) { visitor(itemID); }
+    };
 
-    this._densityFactor = 50;
-    this._topBandIntervalPixels = 150;
-    this._bottomBandIntervalPixels = 200;
-    this._bubbleWidth = 400;
-    this._bubbleHeight = 300;
-    this._timelineConstructor = null;
-    
-    this._getDurations = function(itemID, database) { return {}; };
-    this._getMarkerKey = function(itemID, database) { return ""; };
-    this._getEventLabel = function(itemID, database) { return database.getObject(itemID, "label"); };
-    
-    this._durationCache = new Object();
-    this._markerKeyCache = new Object();
-    this._markerCache = new Object();
-    this._maxMarker = 0;
+    this._colorMap = new Object();
+    this._maxColorIndex = 0;
     
     this._largestSize = 0;
     
@@ -35,6 +28,49 @@ Exhibit.TimelineView = function(collection, containerElmt, lensRegistry, exhibit
     };
     collection.addListener(this._listener);
 };
+
+Exhibit.TimelineView._intervalChoices = [
+    "millisecond", "second", "minute", "hour", "day", "week", "month", "year", "decade", "century", "millennium"
+];
+
+Exhibit.TimelineView._settingSpecs = {
+    "topBandHeight":           { type: "int",        defaultValue: 75 },
+    "topBandUnit":             { type: "enum",       defaultValue: null, choices: Exhibit.TimelineView._intervalChoices },
+    "topBandPixelsPerUnit":    { type: "int",        defaultValue: 200 },
+    "bottomBandHeight":        { type: "int",        defaultValue: 25 },
+    "bottomBandUnit":          { type: "enum",       defaultValue: null, choices: Exhibit.TimelineView._intervalChoices },
+    "bottomBandPixelsPerUnit": { type: "int",        defaultValue: 200 },
+    "timelineHeight":          { type: "int",        defaultValue: 400 },
+    "bubbleWidth":             { type: "int",        defaultValue: 400 },
+    "bubbleHeight":            { type: "int",        defaultValue: 300 },
+    "timelineConstructor":     { type: "function",   defaultValue: null }
+};
+
+Exhibit.TimelineView._accessorSpecs = [
+    {   accessorName:   "getProxy",
+        attributeName:  "proxy"
+    },
+    {   accessorName: "getDuration",
+        bindings: [
+            {   attributeName:  "start",
+                type:           "date",
+                bindingName:    "start"
+            },
+            {   attributeName:  "end",
+                type:           "date",
+                bindingName:    "end"
+            }
+        ]
+    },
+    {   accessorName:   "getColor",
+        attributeName:  "marker",
+        type:           "text"
+    },
+    {   accessorName:   "getEventLabel",
+        attributeName:  "eventLabel",
+        type:           "text"
+    }
+];
 
 Exhibit.TimelineView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
     var collection = Exhibit.Collection.getCollection(configuration, exhibit);
@@ -63,235 +99,24 @@ Exhibit.TimelineView.createFromDOM = function(configElmt, containerElmt, lensReg
         exhibit
     );
     
-    /*
-     *  Start/end retriever
-     */
-    try {
-        var getStart = null;
-        var getEnd = function() { return null; };
-        
-        var start = Exhibit.getAttribute(configElmt, "start");
-        if (start != null && start.length > 0) {
-            getStart = Exhibit.TimelineView._makeAccessor(start);
-        }
-        
-        var end = Exhibit.getAttribute(configElmt, "end");
-        if (end != null && end.length > 0) {
-            getEnd = Exhibit.TimelineView._makeAccessor(end);
-        }
-        
-        if (start != null) {
-            var getStartEnd = function(itemID, database) {
-                return {
-                    start:  getStart(itemID, database),
-                    end:    getEnd(itemID, database)
-                };
-            }
-        
-            var proxy = Exhibit.getAttribute(configElmt, "proxy");
-            if (proxy != null && proxy.length > 0) {
-                view._getDurations = Exhibit.TimelineView._makeGetDurations(proxy, getStartEnd);
-            } else {
-                view._getDurations = getStartEnd;
-            }
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
-    }
-    
-    /*
-     *  Marker retriever
-     */
-    try {
-        var marker = Exhibit.getAttribute(configElmt, "marker");
-        if (marker != null && marker.length > 0) {
-            view._getMarkerKey = Exhibit.TimelineView._makeGetMarker(marker);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view", e);
-    }
-    
-    /*
-     *  Label retriever
-     */
-    try {
-        var eventLabel = Exhibit.getAttribute(configElmt, "eventLabel");
-        if (eventLabel != null && eventLabel.length > 0) {
-            view._getEventLabel = Exhibit.TimelineView._makeEventLabel(eventLabel);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing eventLabel configuration of timeline view", e);
-    }
-    
-    /*
-     *  Other settings
-     */
-    try {
-        var topBandIntervalPixels = Exhibit.getAttribute(configElmt, "topBandIntervalPixels");
-        if (topBandIntervalPixels != null && topBandIntervalPixels.length > 0) {
-            view._topBandIntervalPixels = parseInt(topBandIntervalPixels);
-        }
-        
-        var bottomBandIntervalPixels = Exhibit.getAttribute(configElmt, "bottomBandIntervalPixels");
-        if (bottomBandIntervalPixels != null && bottomBandIntervalPixels.length > 0) {
-            view._bottomBandIntervalPixels = parseInt(bottomBandIntervalPixels);
-        }
-        
-        var densityFactor = Exhibit.getAttribute(configElmt, "densityFactor");
-        if (densityFactor != null && densityFactor.length > 0) {
-            view._densityFactor = parseFloat(densityFactor);
-        }
-        
-        var bubbleWidth = Exhibit.getAttribute(configElmt, "bubbleWidth");
-        if (bubbleWidth != null && bubbleWidth.length > 0) {
-            view._bubbleWidth = parseInt(bubbleWidth);
-        }
-        
-        var bubbleHeight = Exhibit.getAttribute(configElmt, "bubbleHeight");
-        if (bubbleHeight != null && bubbleHeight.length > 0) {
-            view._bubbleHeight = parseInt(bubbleHeight);
-        }
-        
-        var timelineConstructor = Exhibit.getAttribute(configElmt, "timelineConstructor");
-        if (timelineConstructor != null) {
-            var f = eval(timelineConstructor);
-            if (typeof f == "function") {
-                view._timelineConstructor = f;
-            }
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
-    }
+    Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt, Exhibit.TimelineView._accessorSpecs, view._accessors);
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.TimelineView._settingSpecs, view._settings);
+    Exhibit.TimelineView._configure(view, configuration);
     
     view._initializeUI();
     return view;
 };
 
 Exhibit.TimelineView._configure = function(view, configuration) {
-    /*
-     *  Start/end retriever
-     */
-    try {
-        var getStart = null;
-        var getEnd = function() { return null; };
-        
-        if ("start" in configuration) {
-            getStart = Exhibit.TimelineView._makeAccessor(configuration.start);
-        }
-        
-        if ("end" in configuration) {
-            getEnd = Exhibit.TimelineView._makeAccessor(configuration.end);
-        }
-        
-        if (start != null) {
-            var getStartEnd = function(itemID, database) {
-                return {
-                    start:  getStart(itemID, database),
-                    end:    getEnd(itemID, database)
-                };
-            }
-        
-            if ("proxy" in configuration) {
-                view._getDurations = Exhibit.TimelineView._makeGetDurations(configuration.proxy, getStartEnd);
-            } else {
-                view._getDurations = getStartEnd;
-            }
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
-    }
+    Exhibit.SettingsUtilities.createAccessors(configuration, Exhibit.TimelineView._accessorSpecs, view._accessors);
+    Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.TimelineView._settingSpecs, view._settings);
     
-    /*
-     *  Marker retriever
-     */
-    try {
-        if ("marker" in configuration) {
-            view._getMarkerKey = Exhibit.TimelineView._makeGetMarker(configuration.marker);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing marker configuration of timeline view", e);
-    }
-    
-    /*
-     *  Label retriever
-     */
-    try {
-        if ("eventLabel" in configuration) {
-            view._getEventLabel = Exhibit.TimelineView._makeEventLabel(configuration.eventLabel);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing eventLabel configuration of timeline view", e);
-    }
-    
-    /*
-     *  Other settings
-     */
-    try {
-        if ("topBandIntervalPixels" in configuration) {
-            view._topBandIntervalPixels = configuration.topBandIntervalPixels;
-        }
-        if ("bottomBandIntervalPixels" in configuration) {
-            view._bottomBandIntervalPixels = configuration.bottomBandIntervalPixels;
-        }
-        if ("densityFactor" in configuration) {
-            view._densityFactor = configuration.densityFactor;
-        }
-        if ("bubbleWidth" in configuration) {
-            view._bubbleWidth = configuration.bubbleWidth;
-        }
-        if ("bubbleHeight" in configuration) {
-            view._bubbleHeight = configuration.bubbleHeight;
-        }
-        if ("timelineConstructor" in configuration) {
-            view._timelineConstructor = configuration.timelineConstructor;
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("TimelineView: Error processing configuration of timeline view", e);
-    }
-};
-
-Exhibit.TimelineView._makeAccessor = function(expression) {
-    var expr = Exhibit.Expression.parse(expression);
-    return function(itemID, database) {
-        var v = expr.evaluateSingleOnItem(itemID, database).value;
-        if (v == null) {
-            return v;
-        } else if (v instanceof Date) {
-            return v;
-        } else {
-            return SimileAjax.DateTime.parseIso8601DateTime(v);
-        }
-    };
-};
-
-Exhibit.TimelineView._makeGetDurations = function(s, getStartEnd) {
-    var expr = Exhibit.Expression.parse(s);
-    return function(itemID, database) {
-        var pairs = [];
-        expr.evaluateOnItem(itemID, database).values.visit(function(v) {
-            var startEnd = getStartEnd(v, database);
-            if (startEnd.start != null) {
-                pairs.push(startEnd);
-            }
+    var accessors = view._accessors;
+    view._getDuration = function(itemID, database, visitor) {
+        accessors.getProxy(itemID, database, function(proxy) {
+            accessors.getDuration(proxy, database, visitor);
         });
-        return pairs;
     };
-};
-
-Exhibit.TimelineView._makeGetMarker = function(s) {
-    var markerExpression = Exhibit.Expression.parse(s);
-    return function(itemID, database) {
-        var key = markerExpression.evaluateSingleOnItem(itemID, database).value;
-        return key != null ? key : "";
-    };
-};
-
-Exhibit.TimelineView._makeGetEventLabel = function(s) {
-    var expression = Exhibit.Expression.parse(s);
-    return function(itemID, database) {
-        var label = expression.evaluateSingleOnItem(itemID, database).value;
-        return label != null ? label : itemID;
-    }
 };
 
 Exhibit.TimelineView.prototype.dispose = function() {
@@ -332,6 +157,8 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
 };
 
 Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
+    var settings = this._settings;
+    
     if (this._dom.timeline != null) {
         this._dom.timeline.dispose();
     }
@@ -341,40 +168,80 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
     }
     
     var timelineDiv = this._dom.getTimelineDiv();
-    if (this._timelineConstructor != null) {
-        this._dom.timeline = this._timelineConstructor(timelineDiv, this._eventSource);
+    if (settings.timelineConstructor != null) {
+        this._dom.timeline = settings.timelineConstructor(timelineDiv, this._eventSource);
     } else {
         timelineDiv.style.height = "400px";
         
-        var earliest = this._eventSource.getEarliestDate();
-        var latest = this._eventSource.getLatestDate();
-        var duration = latest.getTime() - earliest.getTime();
+        var theme = Timeline.ClassicTheme.create();
+        theme.event.bubble.width = settings.bubbleWidth;
+        theme.event.bubble.height = settings.bubbleHeight;
         
-        var intervalUnit = Timeline.DateTime.MILLENNIUM;
-        while (intervalUnit > 0) {
-            var intervalLength = Timeline.DateTime.gregorianUnitLengths[intervalUnit];
-            if (duration / intervalLength > this._densityFactor) {
-                break;
+        var topIntervalUnit, bottomIntervalUnit;
+        if (settings.topBandUnit != null || settings.bottomBandUnit != null) {
+            if (Exhibit.TimelineView._intervalLabelMap == null) {
+                Exhibit.TimelineView._intervalLabelMap = {
+                    "millisecond":      Timeline.DateTime.MILLISECOND,
+                    "second":           Timeline.DateTime.SECOND,
+                    "minute":           Timeline.DateTime.MINUTE,
+                    "hour":             Timeline.DateTime.HOUR,
+                    "day":              Timeline.DateTime.DAY,
+                    "week":             Timeline.DateTime.WEEK,
+                    "month":            Timeline.DateTime.MONTH,
+                    "year":             Timeline.DateTime.YEAR,
+                    "decade":           Timeline.DateTime.DECADE,
+                    "century":          Timeline.DateTime.CENTURY,
+                    "millennium":       Timeline.DateTime.MILLENNIUM
+                };
             }
-            intervalUnit--;
+            
+            if (settings.topBandUnit == null) {
+                bottomIntervalUnit = Exhibit.TimelineView._intervalLabelMap[settings.bottomBandUnit];
+                topIntervalUnit = bottomIntervalUnit - 1;
+            } else if (settings.bottomBandUnit == null) {
+                topIntervalUnit = Exhibit.TimelineView._intervalLabelMap[settings.topBandUnit];
+                bottomIntervalUnit = topIntervalUnit + 1;
+            } else {
+                topIntervalUnit = Exhibit.TimelineView._intervalLabelMap[settings.topBandUnit];
+                bottomIntervalUnit = Exhibit.TimelineView._intervalLabelMap[settings.bottomBandUnit];
+            }
+        } else { // figure this out dynamically
+            var earliest = this._eventSource.getEarliestDate();
+            var latest = this._eventSource.getLatestDate();
+            
+            var totalDuration = latest.getTime() - earliest.getTime();
+            var totalEventCount = this._eventSource.getCount();
+            if (totalDuration > 0 && totalEventCount > 1) {
+                var totalDensity = totalEventCount / totalDuration;
+                
+                var topIntervalUnit = Timeline.DateTime.MILLENNIUM;
+                while (topIntervalUnit > 0) {
+                    var intervalDuration = Timeline.DateTime.gregorianUnitLengths[topIntervalUnit];
+                    var eventsPerPixel = totalDensity * intervalDuration / settings.topBandPixelsPerUnit;
+                    if (eventsPerPixel < 0.01) {
+                        break;
+                    }
+                    topIntervalUnit--;
+                }
+            } else {
+                topIntervalUnit = Timeline.DateTime.YEAR;
+            }
+            bottomIntervalUnit = topIntervalUnit + 1;
         }
         
-        var theme = Timeline.ClassicTheme.create();
-        theme.event.bubble.width = this._bubbleWidth;
-        theme.event.bubble.height = this._bubbleHeight;
         var bandInfos = [
             Timeline.createBandInfo({
-                width:          "75%", 
-                intervalUnit:   intervalUnit, 
-                intervalPixels: this._topBandIntervalPixels,
+                width:          settings.topBandHeight + "%", 
+                intervalUnit:   topIntervalUnit, 
+                intervalPixels: settings.topBandPixelsPerUnit,
                 eventSource:    this._eventSource,
                 //date:           earliest,
                 theme:          theme
             }),
             Timeline.createBandInfo({
-                width:          "25%", 
-                intervalUnit:   intervalUnit + 1, 
-                intervalPixels: this._bottomBandIntervalPixels,
+                width:          settings.bottomBandHeight + "%", 
+                intervalUnit:   bottomIntervalUnit, 
+                intervalPixels: settings.bottomBandPixelsPerUnit,
                 eventSource:    this._eventSource,
                 //date:           earliest,
                 showEventText:  false, 
@@ -395,6 +262,8 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     var self = this;
     var exhibit = this._exhibit;
     var database = exhibit.getDatabase();
+    var settings = this._settings;
+    var accessors = this._accessors;
     
     /*
      *  Get the current collection and check if it's empty
@@ -412,20 +281,23 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         var currentSet = this._collection.getRestrictedItems();
         var events = [];
         
-        var addEvent = function(itemID, duration, markerData) {
+        var addEvent = function(itemID, duration, colorData) {
+            var label;
+            accessors.getEventLabel(itemID, database, function(v) { label = v; return true; });
+            
             var evt = new Timeline.DefaultEventSource.Event(
                 duration.start,
                 duration.end,
                 null,
                 null,
                 duration.end == null, // is instant?
-                self._getEventLabel(itemID, database),
-                "no description",
-                null, // image url
-                null, // link url
-                null, // icon url
-                "#" + markerData.color,
-                "#" + (duration.end == null ? markerData.color : markerData.textColor)
+                label,
+                "",     // description
+                null,   // image url
+                null,   // link url
+                null,   // icon url
+                "#" + colorData.color,
+                "#" + (duration.end == null ? colorData.color : colorData.textColor)
             );
             evt._itemID = itemID;
             evt.getProperty = function(name) {
@@ -439,41 +311,28 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         };
         
         currentSet.visit(function(itemID) {
-            var durations;
-            if (itemID in self._durationCache) {
-                durations = self._durationCache[itemID];
-            } else {
-                durations = self._getDurations(itemID, database);
-                self._durationCache[itemID] = durations;
-            }
+            var durations = [];
+            self._getDuration(itemID, database, function(duration) { durations.push(duration); });
             
-            if ((durations instanceof Array && durations.length > 0) ||
-                (durations.start != null)) {
+            if (durations.length > 0) {
                 plottableSize++;
                 
-                var markerKey;
-                if (itemID in self._markerKeyCache) {
-                    markerKey = self._markerKeyCache[itemID];
+                var colorKey = null;
+                accessors.getColor(itemID, database, function(v) { colorKey = v; });
+            
+                usedKeys[colorKey] = true;
+                
+                var colorData;
+                if (colorKey in self._colorMap) {
+                    colorData = self._colorMap[colorKey];
                 } else {
-                    markerKey = self._getMarkerKey(itemID, database);
-                    self._markerKeyCache[itemID] = markerKey;
+                    colorData = Exhibit.TimelineView.theme.markers[self._maxColorIndex];
+                    self._colorMap[colorKey] = colorData;
+                    self._maxColorIndex = (self._maxColorIndex + 1) % Exhibit.TimelineView.theme.markers.length;
                 }
                 
-                usedKeys[markerKey] = true;
-                if (markerKey in self._markerCache) {
-                    markerData = self._markerCache[markerKey];
-                } else {
-                    markerData = Exhibit.TimelineView.theme.markers[self._maxMarker];
-                    self._markerCache[markerKey] = markerData;
-                    self._maxMarker = (self._maxMarker + 1) % Exhibit.TimelineView.theme.markers.length;
-                }
-                
-                if (durations instanceof Array) {
-                    for (var i = 0; i < durations.length; i++) {
-                        addEvent(itemID, durations[i], markerData);
-                    }
-                } else {
-                    addEvent(itemID, durations, markerData);
+                for (var i = 0; i < durations.length; i++) {
+                    addEvent(itemID, durations[i], colorData);
                 }
             }
         });
@@ -487,11 +346,11 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         
         var legendLabels = [];
         var legendColors = [];
-        for (markerKey in this._markerCache) {
-            if (markerKey in usedKeys) {
-                var markerData = this._markerCache[markerKey];
-                legendLabels.push(markerKey);
-                legendColors.push("#" + markerData.color);
+        for (colorKey in this._colorMap) {
+            if (colorKey in usedKeys) {
+                var colorData = this._colorMap[colorKey];
+                legendLabels.push(colorKey);
+                legendColors.push("#" + colorData.color);
             }
         }
         

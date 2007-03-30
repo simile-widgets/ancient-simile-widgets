@@ -9,16 +9,17 @@ Exhibit.OrderedViewFrame = function(collection, exhibit) {
     
     this._orders = null;
     this._possibleOrders = null;
-    this._initialCount = 10;
-    this._showAll = false;
-    this._grouped = true;
-    this._showDuplicates = false;
+    this._settings = {};
+};
+
+Exhibit.OrderedViewFrame._settingSpecs = {
+    "showAll":              { type: "boolean", defaultValue: false },
+    "grouped":              { type: "boolean", defaultValue: true },
+    "showDuplicates":       { type: "boolean", defaultValue: false },
+    "initialCount":         { type: "int",     defaultValue: 10 },
 };
     
 Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
-    /*
-     *  Then override them from the configuration object
-     */
     if ("orders" in configuration) {
         this._orders = [];
         this._configureOrders(configuration.orders);
@@ -27,18 +28,9 @@ Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
         this._possibleOrders = [];
         this._configurePossibleOrders(configuration.possibleOrders);
     }
-    if ("initialCount" in configuration) {
-        this._initialCount = configuration.initialCount;
-    }
-    if ("showAll" in configuration) {
-        this._showAll = configuration.showAll;
-    }
-    if ("grouped" in configuration) {
-        this._grouped = configuration.grouped;
-    }
-    if ("showDuplicates" in configuration) {
-        this._showDuplicates = configuration.showDuplicates;
-    }
+    
+    Exhibit.SettingsUtilities.collectSettings(
+        configuration, Exhibit.OrderedViewFrame._settingSpecs, this._settings);
     
     this._internalValidate();
 };
@@ -70,26 +62,9 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
         }
     }
     
-    var initialCount = Exhibit.getAttribute(domConfiguration, "initialCount");
-    if (initialCount != null && initialCount.length > 0) {
-        this._initialCount = parseInt(initialCount);
-    }
-    
-    var showAll = Exhibit.getAttribute(domConfiguration, "showAll");
-    if (showAll != null && showAll.length > 0) {
-        this._showAll = (showAll == "true");
-    }
-    
-    var grouped = Exhibit.getAttribute(domConfiguration, "grouped");
-    if (grouped != null && grouped.length > 0) {
-        this._grouped = (grouped == "true");
-    }
-    
-    var showDuplicates = Exhibit.getAttribute(domConfiguration, "showDuplicates");
-    if (showDuplicates != null && showDuplicates.length > 0) {
-        this._showDuplicates = (showDuplicates == "true");
-    }
-    
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(
+        domConfiguration, Exhibit.OrderedViewFrame._settingSpecs, this._settings);
+
     this._internalValidate();
 }
 
@@ -252,8 +227,8 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
      *  Set the header UI
      */
     this._headerDom.setCounts(currentSize, originalSize);
-    this._headerDom.setGrouped(this._grouped);
-    this._headerDom.setShowDuplicates(this._showDuplicates);
+    this._headerDom.setGrouped(this._settings.grouped);
+    this._headerDom.setShowDuplicates(this._settings.showDuplicates);
     
     var hasSomeGrouping = false;
     if (currentSize > 0) {
@@ -293,18 +268,19 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
 Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
     var self = this;
     var exhibit = this._exhibit;
+    var settings = this._settings;
     var database = exhibit.getDatabase();
     var orders = this._orders;
     var itemIndex = 0;
     
     var hasSomeGrouping = false;
     var createItem = function(itemID) {
-        if ((hasSomeGrouping && self._grouped) || self._showAll || itemIndex < self._initialCount) {
+        if ((hasSomeGrouping && settings.grouped) || settings.showAll || itemIndex < settings.initialCount) {
             self.onNewItem(itemID, itemIndex++);
         }
     };
     var createGroup = function(label, valueType, index) {
-        if ((hasSomeGrouping && self._grouped) || self._showAll || itemIndex < self._initialCount) {
+        if ((hasSomeGrouping && settings.grouped) || settings.showAll || itemIndex < settings.initialCount) {
             self.onNewGroup(label, valueType, index);
         }
     };
@@ -341,7 +317,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
         for (var k = 0; k < keys.length; k++) {
             var key = keys[k];
             if (key.items.size() > 0) {
-                if (grouped && self._grouped) {
+                if (grouped && settings.grouped) {
                     createGroup(key.display, valueType, index);
                 }
                 
@@ -355,7 +331,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
         }
         
         if (items.size() > 0) {
-            if (grouped && self._grouped) {
+            if (grouped && settings.grouped) {
                 createGroup(Exhibit.l10n.missingSortKey, valueType, index);
             }
             
@@ -412,7 +388,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
         for (var k = 0; k < keys.length; k++) {
             var key = keys[k];
             key.items = retrieveItems(key);
-            if (!self._showDuplicates) {
+            if (!settings.showDuplicates) {
                 items.removeSet(key.items);
             }
         }
@@ -480,7 +456,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
                 }
             }
             
-            if (!self._showDuplicates) {
+            if (!settings.showDuplicates) {
                 items.removeSet(key.items);
             }
         }
@@ -683,15 +659,16 @@ Exhibit.OrderedViewFrame.prototype._setShowAll = function(showAll) {
 };
 
 Exhibit.OrderedViewFrame.prototype._toggleGroup = function() {
-    var oldGrouped = this._grouped;
+    var settings = this._settings;
+    var oldGrouped = settings.grouped;
     var self = this;
     SimileAjax.History.addAction({
         perform: function() {
-            self._grouped = !oldGrouped;
+            settings.grouped = !oldGrouped;
             self.parentReconstruct();
         },
         undo: function() {
-            self._grouped = oldGrouped;
+            settings.grouped = oldGrouped;
             self.parentReconstruct();
         },
         label: Exhibit.OrderedViewFrame.l10n[
@@ -702,15 +679,16 @@ Exhibit.OrderedViewFrame.prototype._toggleGroup = function() {
 };
 
 Exhibit.OrderedViewFrame.prototype._toggleShowDuplicates = function() {
-    var oldShowDuplicates = this._showDuplicates;
+    var settings = this._settings;
+    var oldShowDuplicates = settings.showDuplicates;
     var self = this;
     SimileAjax.History.addAction({
         perform: function() {
-            self._showDuplicates = !oldShowDuplicates;
+            settings.showDuplicates = !oldShowDuplicates;
             self.parentReconstruct();
         },
         undo: function() {
-            self._showDuplicates = oldShowDuplicates;
+            settings.showDuplicates = oldShowDuplicates;
             self.parentReconstruct();
         },
         label: Exhibit.OrderedViewFrame.l10n[
