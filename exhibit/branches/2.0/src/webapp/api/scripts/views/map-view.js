@@ -9,22 +9,22 @@ Exhibit.MapView = function(collection, containerElmt, lensRegistry, exhibit) {
     this._lensRegistry = lensRegistry;
     this._exhibit = exhibit;
 
-    this._mapSettings = {
-        maxAutoZoom:        18,
+    this._settings = {
+        center:             [20,0],
+        zoom:               2,
         size:               "small",
         scaleControl:       true,
         overviewControl:    false,
-        type:               "normal"
+        type:               "normal",
+        bubbleTip:          "top",
+        mapConstructor:     null
     };
+    this._accessors = {};
     
     this._latlngCache = new Object();
     this._markerKeyCache = new Object();
     this._markerCache = new Object();
     this._maxMarker = 0;
-    
-    this._getLatLng = function(itemID, database) { return {}; };
-    this._getMarkerKey = function(itemID, database) { return ""; };
-    this._constructMap = null;
     
     var view = this;
     this._listener = { 
@@ -34,6 +34,56 @@ Exhibit.MapView = function(collection, containerElmt, lensRegistry, exhibit) {
     };
     collection.addListener(this._listener);
 };
+
+Exhibit.MapView._settingSpecs = {
+    "center":           { type: "float", dimensions: 2 },
+    "zoom":             { type: "float" },
+    "size":             { type: "text" },
+    "scaleControl":     { type: "boolean" },
+    "overviewControl":  { type: "boolean" },
+    "type":             { type: "enum", choices: [ "normal", "satellite", "hybrid" ] },
+    "bubbleTip":        { type: "enum", choices: [ "top", "bottom" ] },
+    "mapConstructor":   { type: "function" }
+};
+
+Exhibit.MapView._accessorSpecs = [
+    {   accessorName: "getLatlng",
+        alternatives: [
+            {   bindings: [
+                    {   attributeName:  "latlng",
+                        types:          [ "float", "float" ],
+                        bindingNames:   [ "lat", "lng" ]
+                    },
+                    {   attributeName:  "maxAutoZoom",
+                        type:           "float",
+                        bindingName:    "maxAutoZoom",
+                        optional:       true
+                    }
+                ]
+            },
+            {   bindings: [
+                    {   attributeName:  "lat",
+                        type:           "float",
+                        bindingName:    "lat"
+                    },
+                    {   attributeName:  "lng",
+                        type:           "float",
+                        bindingName:    "lng"
+                    },
+                    {   attributeName:  "maxAutoZoom",
+                        type:           "float",
+                        bindingName:    "maxAutoZoom",
+                        optional:       true
+                    }
+                ]
+            }
+        ]
+    },
+    {   accessorName:   "getColor",
+        attributeName:  "marker",
+        type:           "text"
+    }
+];
 
 Exhibit.MapView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
     var collection = Exhibit.Collection.getCollection(configuration, exhibit);
@@ -62,185 +112,18 @@ Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, lensRegistry
         exhibit
     );
     
-    /*
-     *  Lat/lng retriever
-     */
-    try {
-        var maxAZ = Exhibit.getAttribute(configElmt, "maxAutoZoom");
-        if (maxAZ != null && maxAZ.length > 0) {
-            maxAZ = Exhibit.Expression.parse(maxAZ);
-        } else {
-            maxAZ = null;
-        }
-        
-        var latlng = Exhibit.getAttribute(configElmt, "latlng");
-        if (latlng != null && latlng.length > 0) {
-            view._getLatLng = Exhibit.MapView._makeGetLatLng(latlng, maxAZ);
-        } else {
-            var lat = Exhibit.getAttribute(configElmt, "lat");
-            var lng = Exhibit.getAttribute(configElmt, "lng");
-            if (lat != null && lng != null && lat.length > 0 && lng.length > 0) {
-                view._getLatLng = Exhibit.MapView._makeGetLatLng2(lat, lng, maxAZ);
-            }
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
-    }
-    
-    /*  
-     *  Marker key retriever
-     */
-    try {
-        var marker = Exhibit.getAttribute(configElmt, "marker");
-        if (marker != null && marker.length > 0) {
-            view._getMarkerKey = Exhibit.MapView._makeGetMarker(marker);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("MapView: Error processing marker configuration of map view", e);
-    }
-    
-    /*
-     *  Other settings
-     */
-    var s = Exhibit.getAttribute(configElmt, "center", ",");
-    if (s != null && s.length == 2) {
-        s[0] = parseFloat(s[0]);
-        s[1] = parseFloat(s[1]);
-        if (typeof s[0] == "number" && typeof s[1] == "number") {
-            view._mapSettings.center = s;
-        }
-    }
-
-    s = Exhibit.getAttribute(configElmt, "zoom");
-    if (s != null && s.length > 0) {
-        view._mapSettings.zoom = parseInt(s);
-    }
-    
-    s = Exhibit.getAttribute(configElmt, "size");
-    if (s != null && s.length > 0) {
-        view._mapSettings.size = s;
-    }
-    
-    s = Exhibit.getAttribute(configElmt, "scaleControl");
-    if (s != null && s.length > 0) {
-        view._mapSettings.scaleControl = (s == "true");
-    }
-
-    s = Exhibit.getAttribute(configElmt, "overviewControl");
-    if (s != null && s.length > 0) {
-        view._mapSettings.overviewControl = (s == "true");
-    }
-
-    s = Exhibit.getAttribute(configElmt, "type");
-    if (s != null && s.length > 0) {
-        view._mapSettings.type = s;
-    }
+    Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt, Exhibit.MapView._accessorSpecs, view._accessors);
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.MapView._settingSpecs, view._settings);
+    Exhibit.MapView._configure(view, configuration);
     
     view._initializeUI();
     return view;
 };
 
 Exhibit.MapView._configure = function(view, configuration) {
-    /*
-     *  Lat/lng retriever
-     */
-    try {
-        if ("latlng" in configuration) {
-            view._getLatLng = Exhibit.MapView._makeGetLatLng(configuration.latlng);
-        } else if ("lat" in configuration && "lng" in configuration) {
-            view._getLatLng = Exhibit.MapView._makeGetLatLng2(configuration.lat, configuration.lng);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("MapView: Error processing lat/lng configuration of map view", e);
-    }
-    
-    /*  
-     *  Marker key retriever
-     */
-    try {
-        if ("marker" in configuration) {
-            view._getMarkerKey = Exhibit.MapView._makeGetMarker(configuration.marker);
-        }
-    } catch (e) {
-        SimileAjax.Debug.exception("MapView: Error processing marker configuration of map view", e);
-    }
-    
-    /*
-     *  Other settings
-     */
-    if ("center" in configuration) {
-        view._mapSettings.center = configuration.center;
-    }
-    if ("zoom" in configuration) {
-        view._mapSettings.zoom = configuration.zoom;
-    }
-    if ("maxAutoZoom" in configuration) {
-        view._mapSettings.maxAutoZoom = configuration.maxAutoZoom;
-    }
-    if ("size" in configuration) {
-        view._mapSettings.size = configuration.size;
-    }
-    if ("scaleControl" in configuration) {
-        view._mapSettings.scaleControl = configuration.scaleControl;
-    }
-    if ("type" in configuration) {
-        view._mapSettings.type = configuration.type;
-    }
+    Exhibit.SettingsUtilities.createAccessors(configuration, Exhibit.MapView._accessorSpecs, view._accessors);
+    Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.MapView._settingSpecs, view._settings);
 };
-
-Exhibit.MapView._makeGetLatLng = function(s, mazExpression) {
-    var latlngExpression = Exhibit.Expression.parse(s);
-    return function(itemID, database) {
-        var result = {};
-        var x = Exhibit.MapView.evaluateSingle(latlngExpression, itemID, database);
-        if (x != null) {
-            var a = x.split(",");
-            if (a.length == 2) {
-                result.lat = (typeof a[0] == "number") ? a[0] : parseFloat(a[0]);
-                result.lng = (typeof a[1] == "number") ? a[1] : parseFloat(a[1]);
-            }
-        }
-
-        var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
-        if (z != null) {
-            z = parseInt(z, 10);
-            if( typeof z == "number" )
-                result.maxAutoZoom = z;
-        }
-        return result;
-    };
-};
-
-Exhibit.MapView._makeGetLatLng2 = function(lat, lng, mazExpression) {
-    var latExpression = Exhibit.Expression.parse(lat);
-    var lngExpression = Exhibit.Expression.parse(lng);
-    return function(itemID, database) {
-        var result = {};
-        var lat = Exhibit.MapView.evaluateSingle(latExpression, itemID, database);
-        var lng = Exhibit.MapView.evaluateSingle(lngExpression, itemID, database);
-        if (lat != null && lng != null) {
-            result.lat = (typeof lat == "number") ? lat : parseFloat(lat);
-            result.lng = (typeof lng == "number") ? lng : parseFloat(lng);
-        }
-
-        var z = mazExpression && Exhibit.MapView.evaluateSingle(mazExpression, itemID, database);
-        if (z != null) {
-            z = parseInt(z, 10);
-            if( typeof z == "number" )
-                result.maxAutoZoom = z;
-        }
-        return result;
-    }
-};
-
-Exhibit.MapView._makeGetMarker = function(s) {
-    var markerExpression = Exhibit.Expression.parse(s);
-    return function(itemID, database) {
-        var key = Exhibit.MapView.evaluateSingle(markerExpression, itemID, database);
-        return key != null ? key : "";
-    };
-};
-
 
 Exhibit.MapView._markers = [
     {   color:  "FF9000"
@@ -267,15 +150,6 @@ Exhibit.MapView._mixMarker = {
     color:  "FFFFFF"
 };
 
-Exhibit.MapView.evaluateSingle = function(expression, itemID, database) {
-    return expression.evaluateSingle(
-        { "value" : itemID },
-        { "value" : "item" },
-          "value",
-          database
-    ).value;
-}
-
 Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProperty, outputTextArea, database, accuracy) {
     if (accuracy == undefined) {
         accuracy = 4;
@@ -284,7 +158,12 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
     var expression = Exhibit.Expression.parse(addressExpressionString);
     var jobs = [];
     set.visit(function(item) {
-        var address = Exhibit.MapView.evaluateSingle(expression, item, database);
+        var address = expression.evaluateSingle(
+            { "value" : item },
+            { "value" : "item" },
+            "value",
+            database
+        ).value
         if (address != null) {
             jobs.push({ item: item, address: address });
         }
@@ -363,27 +242,27 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var mapDiv = this._dom.getMapDiv();
     mapDiv.style.height = "400px";
     
-    if (this._constructMap != null) {
-        this._dom.map = this._constructMap(mapDiv);
+    var settings = this._settings;
+    if (settings._mapConstructor != null) {
+        this._dom.map = settings._mapConstructor(mapDiv);
     } else {
-        var settings = this._mapSettings;
-        
         this._dom.map = new GMap2(mapDiv);
         this._dom.map.enableDoubleClickZoom();
         this._dom.map.enableContinuousZoom();
 
-        this._dom.map.setCenter(new GLatLng(20, 0), 2);
+        this._dom.map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
         this._dom.map.addControl(settings.size == "small" ?
             new GSmallMapControl() : new GLargeMapControl());
-	if (settings.overviewControl) {
-	    this._dom.map.addControl(new GOverviewMapControl);
-	}
-
+            
+    	if (settings.overviewControl) {
+    	    this._dom.map.addControl(new GOverviewMapControl);
+    	}
+        
         if (settings.scaleControl) {
             this._dom.map.addControl(new GScaleControl());
         }
-        this._dom.map.addControl(new GMapTypeControl());
         
+        this._dom.map.addControl(new GMapTypeControl());
         switch (settings.type) {
         case "normal":
             this._dom.map.setMapType(G_NORMAL_MAP);
@@ -403,6 +282,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
     var self = this;
     var exhibit = this._exhibit;
     var database = exhibit.getDatabase();
+    var settings = this._settings;
+    var accessors = this._accessors;
     
     /*
      *  Get the current collection and check if it's empty
@@ -418,20 +299,20 @@ Exhibit.MapView.prototype._reconstruct = function() {
         var locationToData = {};
         
         currentSet.visit(function(itemID) {
-            var latlng;
+            var latlng = null;
             if (itemID in self._latlngCache) {
                 latlng = self._latlngCache[itemID];
             } else {
-                latlng = self._getLatLng(itemID, database);
+                accessors.getLatlng(itemID, database, function(v) { latlng = v; });
                 self._latlngCache[itemID] = latlng;
             }
             
-            if ("lat" in latlng && "lng" in latlng) {
+            if (latlng != null && "lat" in latlng && "lng" in latlng) {
                 var markerKey;
                 if (itemID in self._markerKeyCache) {
                     markerKey = self._markerKeyCache[itemID];
                 } else {
-                    markerKey = self._getMarkerKey(itemID, database);
+                    accessors.getColor(itemID, database, function(v) { markerKey = v; });
                     self._markerKeyCache[itemID] = markerKey;
                 }
                 
@@ -480,7 +361,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var icon;
             if (items.length == 1) {
                 if (!("icon" in markerData)) {
-                    markerData.icon = Exhibit.MapView._makeIcon(shape, markerData.color, "space");
+                    markerData.icon = Exhibit.MapView._makeIcon(shape, markerData.color, "space", settings.bubbleTip);
                 }
                 icon = markerData.icon;
             } else {
@@ -506,13 +387,13 @@ Exhibit.MapView.prototype._reconstruct = function() {
         for (latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
         }
-        if (bounds && typeof this._mapSettings.zoom == "undefined") {
+        if (bounds && typeof settings.zoom == "undefined") {
             var zoom = Math.max(0,self._dom.map.getBoundsZoomLevel(bounds)-1);
-            //console.log( zoom, this._mapSettings.maxAutoZoom, maxAutoZoom );
-            zoom = Math.min(zoom, maxAutoZoom, this._mapSettings.maxAutoZoom);
+            //console.log( zoom, settings.maxAutoZoom, maxAutoZoom );
+            zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);
             self._dom.map.setZoom(zoom);
         }
-        if (bounds && typeof this._mapSettings.center == "undefined")
+        if (bounds && typeof settings.center == "undefined")
             self._dom.map.setCenter(bounds.getCenter());
 
         var legendLabels = [];
@@ -570,17 +451,18 @@ Exhibit.MapView._iconData = null;
 Exhibit.MapView._markerUrlPrefix = "http://static.simile.mit.edu/graphics/maps/markers/";
 Exhibit.MapView._defaultMarkerShape = "square";
 
-Exhibit.MapView._makeIcon = function(shape, color, label) {
+Exhibit.MapView._makeIcon = function(shape, color, label, bubbleTip) {
     /*
      *  Some static initialization is delayed until here.
      */
     if (Exhibit.MapView._iconData == null) {
         Exhibit.MapView._iconData = {
-            iconSize:           new GSize(40, 35),
-            iconAnchor:         new GPoint(20, 35),
-            shadowSize:         new GSize(55, 40),
-            infoWindowAnchor:   new GPoint(19, 1),
-            imageMap:           [ 6,0, 6,22, 15,22, 20,34, 25,25, 34,22, 34,0 ]
+            iconSize:               new GSize(40, 35),
+            iconAnchor:             new GPoint(20, 35),
+            shadowSize:             new GSize(55, 40),
+            infoWindowAnchorBottom: new GPoint(19, 1),
+            infoWindowAnchorTop:    new GPoint(19, 34),
+            imageMap:               [ 6,0, 6,22, 15,22, 20,34, 25,25, 34,22, 34,0 ]
         };
     }
     
@@ -596,7 +478,7 @@ Exhibit.MapView._makeIcon = function(shape, color, label) {
     icon.iconAnchor = data.iconAnchor;
     icon.imageMap = data.imageMap;
     icon.shadowSize = data.shadowSize;
-    icon.infoWindowAnchor = data.infoWindowAnchor;
+    icon.infoWindowAnchor = bubbleTip == "bottom" ? data.infoWindowAnchorBottom : data.infoWindowAnchorTop;
     
     return icon;
 };
