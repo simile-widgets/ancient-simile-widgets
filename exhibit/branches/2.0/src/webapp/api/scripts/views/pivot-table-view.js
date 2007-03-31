@@ -89,9 +89,11 @@ Exhibit.PivotTableView._parsePath = function(s) {
 
 Exhibit.PivotTableView.prototype.dispose = function() {
     this._collection.removeListener(this._listener);
+    this._collectionSummaryWidget.dispose();
     
     this._div.innerHTML = "";
     
+    this._collectionSummaryWidget = null;
     this._dom = null;
     this._div = null;
     this._collection = null;
@@ -102,15 +104,12 @@ Exhibit.PivotTableView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.PivotTableView.theme.constructDom(
-        this._collection,
-        this._exhibit, 
-        this._div, 
-        function(elmt, evt, target) {
-            Exhibit.ViewPanel.resetCollection(self._collection);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        }
+    this._dom = Exhibit.PivotTableView.theme.constructDom(this._exhibit, this._div);
+    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
+        { collectionID: this._collection.getID() }, 
+        this._dom.collectionSummaryDiv, 
+        this._lensRegistry,
+        this._exhibit
     );
     
     this._reconstruct();
@@ -119,17 +118,13 @@ Exhibit.PivotTableView.prototype._initializeUI = function() {
 Exhibit.PivotTableView.prototype._reconstruct = function() {
     this._dom.tableContainer.innerHTML = "";
     
-    var originalSize = this._collection.countAllItems();
     var currentSize = this._collection.countRestrictedItems();
-    
     if (currentSize > 0) {
         var currentSet = this._collection.getRestrictedItems();
         if (this._columnPath != null && this._rowPath != null && this._cellExpression != null) {
             this._makeTable(currentSet);
         }
-        this._dom.setTypes(this._exhibit.getDatabase().getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
     }
-    this._dom.setCounts(currentSize, originalSize);
 };
 
 Exhibit.PivotTableView.prototype._makeTable = function(items) {

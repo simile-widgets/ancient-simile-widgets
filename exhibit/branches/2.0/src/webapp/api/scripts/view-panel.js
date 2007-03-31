@@ -225,21 +225,6 @@ Exhibit.ViewPanel.prototype._selectView = function(newIndex) {
     });
 };
 
-Exhibit.ViewPanel.resetCollection = function(collection) {
-    var state = {};
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = collection.clearAllRestrictions();
-        },
-        undo: function() {
-            collection.applyRestrictions(state.restrictions);
-        },
-        label:      Exhibit.OrderedViewFrame.l10n.resetActionTitle,
-        uiLayer:    SimileAjax.WindowManager.getBaseLayer(),
-        lengthy:    true
-    });
-};
-
 Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, database) {
     var pairs = [];
     var enterPair = function(propertyID, forward) {

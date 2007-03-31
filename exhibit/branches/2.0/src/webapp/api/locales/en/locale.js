@@ -8,6 +8,9 @@
         "exhibit-l10n.js",
         "database-l10n.js",
         "lens-l10n.js",
+        
+        "collection-summary-widget-l10n.js",
+        
         "view-panel-l10n.js",
         "ordered-view-frame-l10n.js",
         "tile-view-l10n.js",
@@ -17,6 +20,7 @@
         "tabular-view-l10n.js",
         "scatter-plot-view-l10n.js",
         "pivot-table-view-l10n.js",
+        
         "list-facet-l10n.js",
         "numeric-range-facet-l10n.js"
     ];

@@ -121,11 +121,13 @@ Exhibit.TimelineView._configure = function(view, configuration) {
 
 Exhibit.TimelineView.prototype.dispose = function() {
     this._collection.removeListener(this._listener);
+    this._collectionSummaryWidget.dispose();
     
-    this._dom.timeline = null;
-    this._dom = null;
     this._div.innerHTML = "";
     
+    this._collectionSummaryWidget = null;
+    this._dom.timeline = null;
+    this._dom = null;
     this._div = null;
     this._collection = null;
     this._exhibit = null;
@@ -136,14 +138,8 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
     
     this._div.innerHTML = "";
     this._dom = Exhibit.TimelineView.theme.constructDom(
-        this._collection,
         this._exhibit, 
         this._div, 
-        function(elmt, evt, target) {
-            Exhibit.ViewPanel.resetCollection(self._collection);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
         function(elmt, evt, target) {
             self._largestSize = 0;
             self._reconstruct();
@@ -151,8 +147,14 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
             return false;
         }
     );
-    this._eventSource = new Timeline.DefaultEventSource();
+    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
+        { collectionID: this._collection.getID() }, 
+        this._dom.collectionSummaryDiv, 
+        this._lensRegistry,
+        this._exhibit
+    );
     
+    this._eventSource = new Timeline.DefaultEventSource();
     this._reconstruct();
 };
 
@@ -268,7 +270,6 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     /*
      *  Get the current collection and check if it's empty
      */
-    var originalSize = this._collection.countAllItems();
     var currentSize = this._collection.countRestrictedItems();
     var plottableSize = 0;
     
@@ -361,8 +362,6 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             legendLabels
         ));
         
-        this._dom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
-        
         var band = this._dom.timeline.getBand(0);
         var centerDate = band.getCenterVisibleDate();
         if (centerDate < this._eventSource.getEarliestDate()) {
@@ -372,7 +371,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         }
     }
     
-    this._dom.setCounts(currentSize, plottableSize, originalSize);
+    this._dom.setPlottableCounts(currentSize, plottableSize);
 };
 
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {

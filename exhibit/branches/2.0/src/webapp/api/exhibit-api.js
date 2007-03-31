@@ -43,6 +43,8 @@
             "view-panel.js",
             "logo.js",
             
+            "widgets/collection-summary-widget.js",
+            
             "views/ordered-view-frame.js",
             "views/tile-view.js",
             "views/thumbnail-view.js",
@@ -182,7 +184,7 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "/ajax/api/simile-ajax-api.js";
+        //var url = "/ajax/api/simile-ajax-api.js?bundle=false";
         //var url = "http://static.simile.mit.edu/ajax/api/simile-ajax-api.js";
         var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {

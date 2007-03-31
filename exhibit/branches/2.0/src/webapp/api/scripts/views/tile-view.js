@@ -24,7 +24,19 @@ Exhibit.TileView = function(collection, containerElmt, lensRegistry, exhibit) {
 };
 
 Exhibit.TileView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    // TODO
+    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+    var view = new Exhibit.TileView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    view._orderedViewFrame.configure(configuration);
+    
+    view._initializeUI();
+    return view;
 };
 
 Exhibit.TileView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
@@ -39,6 +51,8 @@ Exhibit.TileView.createFromDOM = function(configElmt, containerElmt, lensRegistr
     );
     
     view._orderedViewFrame.configureFromDOM(configElmt);
+    view._orderedViewFrame.configure(configuration);
+    
     view._initializeUI();
     return view;
 };

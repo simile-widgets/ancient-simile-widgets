@@ -27,6 +27,9 @@
         "numeric-range-facet.css",
         
         "view-panel.css",
+        
+        "collection-summary-widget.css",
+        
         "tile-view.css",
         "map-view.css",
         "timeline-view.css",

@@ -51,6 +51,8 @@ if(elmt==null){elmt=tag=="input"?SimileAjax.DOM.createInputElement(templateNode.
 for(var attribute in templateNode){var value=templateNode[attribute];if(attribute=="field"){result[value]=elmt;}else if(attribute=="className"){elmt.className=value;}else if(attribute=="id"){elmt.id=value;}else if(attribute=="title"){elmt.title=value;}else if(attribute=="type"&&elmt.tagName=="input"){}else if(attribute=="style"){for(n in value){var v=value[n];if(n=="float"){n=SimileAjax.Platform.browser.isIE?"styleFloat":"cssFloat";}
 elmt.style[n]=v;}}else if(attribute=="children"){for(var i=0;i<value.length;i++){SimileAjax.DOM._createDOMFromTemplate(doc,value[i],result,elmt);}}else if(attribute!="tag"&&attribute!="elmt"){elmt.setAttribute(attribute,value);}}
 return elmt;}}
+SimileAjax.DOM.createDOMFromString=function(doc,root,s,fieldElmts){var elmt=typeof root=="string"?doc.createElement(root):root;elmt.innerHTML=s;var dom={elmt:elmt};SimileAjax.DOM._processDOMConstructedFromString(dom,elmt,fieldElmts!=null?fieldElmts:{});return dom;};SimileAjax.DOM._processDOMConstructedFromString=function(dom,elmt,fieldElmts){var field=Exhibit.getAttribute(elmt,"field");if(field!=null&&field.length>0){if(field in fieldElmts){var parentElmt=elmt.parentNode;parentElmt.insertBefore(fieldElmts[field],elmt);parentElmt.removeChild(elmt);dom[field]=fieldElmts[field];}else{dom[field]=elmt;}}else if(elmt.hasChildNodes()){var node=elmt.firstChild;while(node!=null){var node2=node.nextSibling;if(node.nodeType==1){SimileAjax.DOM._processDOMConstructedFromString(dom,node,fieldElmts);}
+node=node2;}}};
 
 /* graphics.js */
 
@@ -98,7 +100,10 @@ return'"'+x+'"';}};SimileAjax.JSON.toJSONString=function(o){if(o instanceof Obje
 
 /* string.js */
 
-String.prototype.trim=function(){return this.replace(/^\s+|\s+$/,'');};
+String.prototype.trim=function(){return this.replace(/^\s+|\s+$/,'');};String.substitute=function(s,objects){var result="";var start=0;while(start<s.length-1){var percent=s.indexOf("%",start);if(percent<0||percent==s.length-1){break;}else if(percent>start&&s.charAt(percent-1)=="\\"){result+=s.substring(start,percent-1)+"%";start=percent+1;}else{var n=parseInt(s.charAt(percent+1));if(isNaN(n)||n>=objects.length){result+=s.substring(start,percent+2);}else{result+=s.substring(start,percent)+objects[n].toString();}
+start=percent+2;}}
+if(start<s.length){result+=s.substring(start);}
+return result;};
 
 /* window-manager.js */
 

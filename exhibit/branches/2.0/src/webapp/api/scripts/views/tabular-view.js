@@ -194,9 +194,11 @@ Exhibit.TabularView.prototype._internalValidate = function() {
 
 Exhibit.TabularView.prototype.dispose = function() {
     this._collection.removeListener(this._listener);
+    this._collectionSummaryWidget.dispose();
     
     this._div.innerHTML = "";
     
+    this._collectionSummaryWidget = null;
     this._dom = null;
     this._div = null;
     this._collection = null;
@@ -207,15 +209,12 @@ Exhibit.TabularView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.TabularView.theme.createDom(
-        this._collection,
-        this._exhibit, 
-        this._div, 
-        function(elmt, evt, target) {
-            Exhibit.ViewPanel.resetCollection(self._collection);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        }
+    this._dom = Exhibit.TabularView.theme.createDom(this._exhibit, this._div);
+    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
+        { collectionID: this._collection.getID() }, 
+        this._dom.collectionSummaryDiv, 
+        this._lensRegistry,
+        this._exhibit
     );
     
     this._reconstruct();
@@ -242,11 +241,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
     /*
      *  Set the header UI
      */
-    this._dom.setCounts(items.length, originalSize);
-    
     if (items.length > 0) {
-        this._dom.setTypes(database.getTypeLabels(currentSet)[items.length > 1 ? 1 : 0]);
-        
         /*
          *  Sort the items
          */
@@ -256,7 +251,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         var table = document.createElement("table");
         table.cellPadding = 5;
         table.border = 1;
-	if (this._tableStyler != null) {
+        if (this._tableStyler != null) {
             this._tableStyler(table, database);
         }
 

@@ -2,7 +2,8 @@
  *  Collection
  *======================================================================
  */
-Exhibit.Collection = function(database) {
+Exhibit.Collection = function(id, database) {
+    this._id = id;
     this._database = database;
     
     this._listeners = new SimileAjax.ListenerQueue();
@@ -39,8 +40,23 @@ Exhibit.Collection.getCollectionFromDOM = function(elmt, configuration, exhibit)
     }
 };
 
-Exhibit.Collection.createFromDOM = function(elmt, database) {
-    var collection = new Exhibit.Collection(database);
+Exhibit.Collection.create = function(id, configuration, database) {
+    var collection = new Exhibit.Collection(id, database);
+    
+    if ("itemTypes" in configuration) {
+        collection._itemTypes = configuration.itemTypes;
+        collection._update = Exhibit.Collection._typeBasedCollection_update;
+    } else {
+        collection._update = Exhibit.Collection._allItemsCollection_update;
+    }
+    
+    collection._update();
+    
+    return collection;
+};
+
+Exhibit.Collection.createFromDOM = function(id, elmt, database) {
+    var collection = new Exhibit.Collection(id, database);
     
     var itemTypes = Exhibit.getAttribute(elmt, "itemTypes", ",");
     if (itemTypes != null && itemTypes.length > 0) {
@@ -55,8 +71,8 @@ Exhibit.Collection.createFromDOM = function(elmt, database) {
     return collection;
 };
 
-Exhibit.Collection.createAllItemsCollection = function(database) {
-    var collection = new Exhibit.Collection(database);
+Exhibit.Collection.createAllItemsCollection = function(id, database) {
+    var collection = new Exhibit.Collection(id, database);
     
     collection._update = Exhibit.Collection._allItemsCollection_update;
     collection._update();
@@ -81,6 +97,10 @@ Exhibit.Collection._typeBasedCollection_update = function() {
     
     this._items = newItems;
     this._onRootItemsChanged();
+};
+
+Exhibit.Collection.prototype.getID = function() {
+    return this._id;
 };
 
 Exhibit.Collection.prototype.dispose = function() {

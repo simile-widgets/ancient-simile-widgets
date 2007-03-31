@@ -5,13 +5,7 @@
  
 Exhibit.ScatterPlotView.theme = new Object();
 
-Exhibit.ScatterPlotView.theme.constructDom = function(
-    collection,
-    exhibit,
-    div,
-    onClearFilters,
-    onResized
-) {
+Exhibit.ScatterPlotView.theme.constructDom = function(exhibit, div, onResized) {
     var l10n = Exhibit.ScatterPlotView.l10n;
     var template = {
         elmt:       div,
@@ -20,37 +14,11 @@ Exhibit.ScatterPlotView.theme.constructDom = function(
                 className:  "exhibit-collectionView-header",
                 children: [
                     {   tag:    "div",
-                        field:  "noResultDiv",
-                        style:  { display: "none" },
-                        children: Exhibit.ViewPanel.l10n.createNoResultsTemplate(
-                            "exhibit-collectionView-header-count",
-                            "exhibit-collectionView-header-types",
-                            "exhibit-collectionView-header-details"
-                        )
+                        field:  "collectionSummaryDiv"
                     },
-                    {   tag:    "div",
-                        field:  "resultsDiv",
-                        style:  { display: "none" },
-                        children: [
-                            {   elmt:   Exhibit.ViewPanel.makeCopyAllButton(collection, exhibit.getDatabase()),
-                                style:  { "float": "right" }
-                            },
-                            {   tag:    "div",
-                                children: Exhibit.ViewPanel.l10n.createResultsSummaryTemplate(
-                                    "exhibit-collectionView-header-count",
-                                    "exhibit-collectionView-header-types",
-                                    "exhibit-collectionView-header-details",
-                                    Exhibit.UI.makeActionLink(
-                                        Exhibit.ViewPanel.l10n.resetFiltersLabel, 
-                                        onClearFilters
-                                    )
-                                )
-                            },
-                            {   tag:        "div",
-                                className:  "exhibit-scatterPlotView-mappableDetails",
-                                field:      "mappableDiv"
-                            }
-                        ]
+                    {   tag:        "div",
+                        className:  "exhibit-scatterPlotView-mappableDetails",
+                        field:      "plottableDiv"
                     }
                 ]
             },
@@ -75,39 +43,13 @@ Exhibit.ScatterPlotView.theme.constructDom = function(
     };
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
-    dom.setCounts = function(resultsCount, mappableCount, originalCount) {
-        if (resultsCount == 0) {
-            dom.noResultDiv.style.display = "block";
-            dom.resultsDiv.style.display = "none";
+    dom.setPlottableCounts = function(resultsCount, plottableCount) {
+        if (plottableCount != resultsCount) {
+            dom.plottableDiv.style.display = "block";
+            dom.plottableDiv.innerHTML = l10n.formatMappableCount(plottableCount);
         } else {
-            dom.noResultDiv.style.display = "none";
-            dom.resultsDiv.style.display = "block";
+            dom.plottableDiv.style.display = "none";
         }
-        
-        if (originalCount != resultsCount) {
-            dom.noFilterDetailsSpan.style.display = "none";
-            dom.filteredDetailsSpan.style.display = "inline";
-        } else {
-            dom.noFilterDetailsSpan.style.display = "inline";
-            dom.filteredDetailsSpan.style.display = "none";
-        }
-        
-        if (mappableCount != resultsCount) {
-            dom.mappableDiv.style.display = "block";
-            dom.mappableDiv.innerHTML = l10n.formatMappableCount(mappableCount);
-        } else {
-            dom.mappableDiv.style.display = "none";
-        }
-        
-        dom.itemCountSpan.innerHTML = resultsCount;
-        dom.originalCountSpan.innerHTML = originalCount;
-    };
-    dom.setTypes = function(typeLabels) {
-        var typeLabel = (typeLabels.length > 0 && typeLabels.length <= 3) ?
-            Exhibit.l10n.composeListString(typeLabels) :
-            Exhibit.Database.l10n.itemType.pluralLabel;
-            
-        dom.typesSpan.innerHTML = typeLabel;
     };
     dom.clearLegend = function() {
         dom.legendDiv.innerHTML = "<table cellspacing='10'><tr valign='top'></tr></table>";

@@ -24,8 +24,19 @@ Exhibit.ThumbnailView = function(collection, containerElmt, lensRegistry, exhibi
 };
 
 Exhibit.ThumbnailView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    // TODO
-};
+    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+    var view = new Exhibit.ThumbnailView(
+        collection, 
+        containerElmt != null ? containerElmt : configElmt, 
+        lensRegistry2, 
+        exhibit
+    );
+    
+    view._orderedViewFrame.configure(configuration);
+    
+    view._initializeUI();
+    return view;};
 
 Exhibit.ThumbnailView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);

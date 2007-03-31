@@ -16,7 +16,7 @@ Exhibit.OrderedViewFrame._settingSpecs = {
     "showAll":              { type: "boolean", defaultValue: false },
     "grouped":              { type: "boolean", defaultValue: true },
     "showDuplicates":       { type: "boolean", defaultValue: false },
-    "initialCount":         { type: "int",     defaultValue: 10 },
+    "initialCount":         { type: "int",     defaultValue: 10 }
 };
     
 Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
@@ -85,14 +85,17 @@ Exhibit.OrderedViewFrame.prototype._internalValidate = function() {
 };
 
 Exhibit.OrderedViewFrame.prototype.dispose = function() {
+    this._collectionSummaryWidget.dispose();
+    this._divHeader.innerHTML = "";
+    this._divFooter.innerHTML = "";
+    
+    this._collectionSummaryWidget = null;
     this._headerDom = null;
     this._footerDom = null;
     
-    this._divHeader.innerHTML = "";
-    this._divFooter.innerHTML = "";
     this._divHeader = null;
     this._divFooter = null;
-    
+    this._collection = null;
     this._exhibit = null;
 };
 
@@ -210,6 +213,13 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
             return false;
         }
     );
+    
+    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
+        { collectionID: this._collection.getID() }, 
+        this._headerDom.collectionSummaryDiv, 
+        this._exhibit.getLensRegistry(),
+        this._exhibit
+    );
 };
 
 Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
@@ -226,15 +236,12 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     /*
      *  Set the header UI
      */
-    this._headerDom.setCounts(currentSize, originalSize);
     this._headerDom.setGrouped(this._settings.grouped);
     this._headerDom.setShowDuplicates(this._settings.showDuplicates);
     
     var hasSomeGrouping = false;
     if (currentSize > 0) {
         var currentSet = this._collection.getRestrictedItems();
-        
-        this._headerDom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
         
         hasSomeGrouping = this._internalReconstruct(currentSet);
         

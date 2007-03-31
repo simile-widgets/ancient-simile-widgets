@@ -19,6 +19,18 @@ div.exhibit-browsePanel-logoContainer {
 }
 
 /*==================================================
+ * Collection Summary Widget styles
+ *==================================================
+ */
+div.exhibit-collectionSummaryWidget {
+}
+span.exhibit-collectionSummaryWidget-count {
+    font-size:      200%;
+}
+span.exhibit-collectionSummaryWidget-types {
+    padding-left:   0.5em;
+}
+/*==================================================
  * Exhibit common styles
  *==================================================
  */

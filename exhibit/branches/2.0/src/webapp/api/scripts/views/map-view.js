@@ -213,9 +213,11 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
 
 Exhibit.MapView.prototype.dispose = function() {
     this._collection.removeListener(this._listener);
+    this._collectionSummaryWidget.dispose();
     
     this._div.innerHTML = "";
     
+    this._collectionSummaryWidget = null;
     this._dom.map = null;
     this._dom = null;
     this._div = null;
@@ -229,15 +231,12 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.MapView.theme.constructDom(
-        this._collection,
-        this._exhibit, 
-        this._div, 
-        function(elmt, evt, target) {
-            Exhibit.ViewPanel.resetCollection(self._collection);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        }
+    this._dom = Exhibit.MapView.theme.constructDom(this._exhibit, this._div);
+    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
+        { collectionID: this._collection.getID() }, 
+        this._dom.collectionSummaryDiv, 
+        this._lensRegistry,
+        this._exhibit
     );
     
     var mapDiv = this._dom.getMapDiv();
@@ -301,7 +300,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
         
         currentSet.visit(function(itemID) {
             var latlngs = [];
-            self._getLatlng(itemID, database, function(v) { latlngs.push(v); });
+            self._getLatlng(itemID, database, function(v) { if ("lat" in v && "lng" in v) latlngs.push(v); });
             
             if (latlngs.length > 0) {
                 var colorKey = null;
@@ -419,10 +418,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
             legendIcons,
             legendLabels
         ));
-        
-        this._dom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
     }
-    this._dom.setCounts(currentSize, mappableSize, originalSize);
+    this._dom.setMappableCounts(currentSize, mappableSize);
 };
 
 Exhibit.MapView.prototype._createInfoWindow = function(items) {

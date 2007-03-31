@@ -168,9 +168,11 @@ Exhibit.ScatterPlotView.evaluateSingle = function(expression, itemID, database) 
 
 Exhibit.ScatterPlotView.prototype.dispose = function() {
     this._collection.removeListener(this._listener);
+    this._collectionSummaryWidget.dispose();
     
     this._div.innerHTML = "";
     
+    this._collectionSummaryWidget = null;
     this._dom = null;
     this._div = null;
     this._collection = null;
@@ -182,17 +184,15 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ScatterPlotView.theme.constructDom(
-        this._collection,
         this._exhibit, 
         this._div, 
-        function(elmt, evt, target) {
-            Exhibit.ViewPanel.resetCollection(self._collection);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
-        function() {
-            return self._reconstruct();
-        }
+        function() { return self._reconstruct(); }
+    );
+    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
+        { collectionID: this._collection.getID() }, 
+        this._dom.collectionSummaryDiv, 
+        this._lensRegistry,
+        this._exhibit
     );
     
     this._dom.plotContainer.style.height = this._settings.plotHeight + "px";
@@ -213,10 +213,6 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
     var unscaleX = self._axisInverseFuncs.x;
     var unscaleY = self._axisInverseFuncs.y;
     
-    /*
-     *  Get the current collection and check if it's empty
-     */
-    var originalSize = this._collection.countAllItems();
     var currentSize = this._collection.countRestrictedItems();
     var mappableSize = 0;
     
@@ -254,6 +250,9 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
                         try {
                             xy.scaledX = scaleX(xy.x);
                             xy.scaledY = scaleY(xy.y);
+                            if (!isFinite(xy.scaledX) || !isFinite(xy.scaledY)) {
+                                continue;
+                            }
                         } catch (e) {
                             continue; // ignore the point since we can't scale it, e.g., log(0)
                         }
@@ -473,10 +472,8 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             legendColors,
             legendLabels
         ));
-        
-        this._dom.setTypes(database.getTypeLabels(currentSet)[currentSize > 1 ? 1 : 0]);
     }
-    this._dom.setCounts(currentSize, mappableSize, originalSize);
+    this._dom.setPlottableCounts(currentSize, mappableSize);
 };
 
 Exhibit.ScatterPlotView.prototype._openPopup = function(elmt, items) {

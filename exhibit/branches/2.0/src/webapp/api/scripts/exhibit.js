@@ -134,7 +134,7 @@ Exhibit._Impl.prototype.getLensRegistry = function() {
 Exhibit._Impl.prototype.getCollection = function(id) {
     var collection = this._collectionMap[id];
     if (collection == null && id == "default") {
-        collection = Exhibit.Collection.createAllItemsCollection(this._database);
+        collection = Exhibit.Collection.createAllItemsCollection(id, this._database);
         this.setDefaultCollection(collection);
     }
     return collection;
@@ -183,7 +183,7 @@ Exhibit._Impl.prototype.configure=function(configuration) {
             if (id == null || id.length == 0) {
                 id="default";
             }
-            this.setCollection(id, Exhibit.Collection.create(config,this.getDatabase()));
+            this.setCollection(id, Exhibit.Collection.create(id, config, this.getDatabase()));
         }
     }
     if ("components" in configuration) {
@@ -230,7 +230,7 @@ Exhibit._Impl.prototype.configureFromDOM = function() {
         if (id==null || id.length == 0) {
             id = "default";
         }
-        this.setCollection(id, Exhibit.Collection.createFromDOM(elmt,this.getDatabase()));
+        this.setCollection(id, Exhibit.Collection.createFromDOM(id, elmt, this.getDatabase()));
     }
     
     for (var i = 0; i < componentElmts.length; i++) {

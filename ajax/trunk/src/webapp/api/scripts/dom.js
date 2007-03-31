@@ -249,3 +249,37 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
         return elmt;
     }
 }
+
+SimileAjax.DOM.createDOMFromString = function(doc, root, s, fieldElmts) {
+    var elmt = typeof root == "string" ? doc.createElement(root) : root;
+    elmt.innerHTML = s;
+    
+    var dom = { elmt: elmt };
+    SimileAjax.DOM._processDOMConstructedFromString(dom, elmt, fieldElmts != null ? fieldElmts : {} );
+    
+    return dom;
+};
+
+SimileAjax.DOM._processDOMConstructedFromString = function(dom, elmt, fieldElmts) {
+    var field = Exhibit.getAttribute(elmt, "field");
+    if (field != null && field.length > 0) {
+        if (field in fieldElmts) {
+            var parentElmt = elmt.parentNode;
+            parentElmt.insertBefore(fieldElmts[field], elmt);
+            parentElmt.removeChild(elmt);
+            
+            dom[field] = fieldElmts[field];
+        } else {
+            dom[field] = elmt;
+        }
+    } else if (elmt.hasChildNodes()) {
+        var node = elmt.firstChild;
+        while (node != null) {
+            var node2 = node.nextSibling;
+            if (node.nodeType == 1) {
+                SimileAjax.DOM._processDOMConstructedFromString(dom, node, fieldElmts);
+            }
+            node = node2;
+        }
+    }
+};
