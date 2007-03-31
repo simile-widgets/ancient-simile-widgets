@@ -28,6 +28,7 @@
             "util/set.js",
             "util/util.js",
             "util/settings.js",
+            "util/views.js",
             
             "database.js",
             "expression.js",

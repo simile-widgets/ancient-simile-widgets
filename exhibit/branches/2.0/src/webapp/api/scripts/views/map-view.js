@@ -423,19 +423,12 @@ Exhibit.MapView.prototype._reconstruct = function() {
 };
 
 Exhibit.MapView.prototype._createInfoWindow = function(items) {
-    if (items.length > 1) {
-        var ul = document.createElement("ul");
-        for (var i = 0; i < items.length; i++) {
-            var li = document.createElement("li");
-            li.appendChild(Exhibit.UI.makeItemSpan(items[i], null, null, this._lensRegistry, this._exhibit));
-            ul.appendChild(li);
-        }
-        return ul;
-    } else {
-        var itemLensDiv = document.createElement("div");
-        var itemLens = this._lensRegistry.createLens(items[0], itemLensDiv, this._exhibit);
-        return itemLensDiv;
-    }
+    return Exhibit.ViewUtilities.fillBubbleWithItems(
+        div, 
+        items, 
+        this._lensRegistry,
+        this._exhibit
+    );
 };
 
 Exhibit.MapView._iconData = null;

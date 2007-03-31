@@ -349,6 +349,8 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         var xScale = canvasWidth / (xAxisMax - xAxisMin);
         var yScale = canvasHeight / (yAxisMax - yAxisMin);
         
+        canvasDiv.style.display = "none";
+        
         /*
          *  Construct plot's grid lines and axis labels
          */
@@ -431,12 +433,14 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             }
             
             var xy = xyData.xy;
-            var marker = Exhibit.ScatterPlotView._makePoint(color);
-            marker.style.left =   Math.floor((xy.scaledX - xAxisMin) * xScale) + "px";
-            marker.style.bottom = Math.floor((xy.scaledY - yAxisMin) * yScale) + "px";
-            marker.title = xyData.items + ": " + 
-                settings.xLabel + " = " + xy.x + ", " +
-                settings.yLabel + " = " + xy.y;
+            var marker = Exhibit.ScatterPlotView._makePoint(
+                color,
+                Math.floor((xy.scaledX - xAxisMin) * xScale),
+                Math.floor((xy.scaledY - yAxisMin) * yScale),
+                xyData.items + ": " + 
+                    settings.xLabel + " = " + xy.x + ", " +
+                    settings.yLabel + " = " + xy.y
+            );
             
             SimileAjax.WindowManager.registerEvent(marker, "click", function(elmt, evt, target) {
                 self._openPopup(marker, items);
@@ -450,7 +454,8 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         for (xyKey in xyToData) {
             addPointAtLocation(xyToData[xyKey]);
         }
-
+        canvasDiv.style.display = "block";
+        
         /*
          *  Draw the legends
          */
@@ -477,35 +482,20 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
 };
 
 Exhibit.ScatterPlotView.prototype._openPopup = function(elmt, items) {
-    var coords = SimileAjax.DOM.getPageCoordinates(elmt);
-    var bubble = SimileAjax.Graphics.createBubbleForPoint(
-        document, 
-        coords.left + Math.round(elmt.offsetWidth / 2), 
-        coords.top + Math.round(elmt.offsetHeight / 2), 
+    Exhibit.ViewUtilities.openBubbleForItems(
+        elmt, 
+        items, 
         this._settings.bubbleWidth, // px
-        this._settings.bubbleHeight // px
+        this._settings.bubbleHeight, // px
+        this._lensRegistry,
+        this._exhibit
     );
-    
-    if (items.length > 1) {
-        var ul = document.createElement("ul");
-        for (var i = 0; i < items.length; i++) {
-            var li = document.createElement("li");
-            li.appendChild(Exhibit.UI.makeItemSpan(items[i], null, null, this._lensRegistry, this._exhibit));
-            ul.appendChild(li);
-        }
-        bubble.content.appendChild(ul);
-    } else {
-        var itemLensDiv = document.createElement("div");
-        var itemLens = this._lensRegistry.createLens(items[0], itemLensDiv, this._exhibit);
-        bubble.content.appendChild(itemLensDiv);
-    }
 };
 
-Exhibit.ScatterPlotView._makePoint = function(color) {
-    var div = document.createElement("div");
-    div.className = "exhibit-scatterPlotView-point";
-    div.style.backgroundColor = "#" + color;
-    div.style.width = "6px";
-    div.style.height = "6px";
-    return div;
+Exhibit.ScatterPlotView._makePoint = function(color, left, bottom, tooltip) {
+    var outer = document.createElement("div");
+    outer.innerHTML = "<div class='exhibit-scatterPlotView-point' style='background: #" + color + 
+        "; width: 6px; height: 6px; left: " + left + "px; bottom: " + bottom + "px;' title='" + tooltip + "'></div>";
+        
+    return outer.firstChild;
 };
