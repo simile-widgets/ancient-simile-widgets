@@ -265,7 +265,7 @@ Exhibit.PivotTableView.prototype._openPopup = function(elmt, items) {
         var ul = document.createElement("ul");
         for (var i = 0; i < items.length; i++) {
             var li = document.createElement("li");
-            li.appendChild(Exhibit.UI.makeItemSpan(items[i], null, null, this._uiContext));
+            li.appendChild(Exhibit.UI.makeItemSpan(items[i], null, this._uiContext));
             ul.appendChild(li);
         }
         bubble.content.appendChild(ul);

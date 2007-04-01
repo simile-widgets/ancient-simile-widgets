@@ -27,7 +27,7 @@ Exhibit.ViewUtilities.fillBubbleWithItems = function(bubbleElmt, arrayOfItemIDs,
         var ul = document.createElement("ul");
         for (var i = 0; i < arrayOfItemIDs.length; i++) {
             var li = document.createElement("li");
-            li.appendChild(Exhibit.UI.makeItemSpan(arrayOfItemIDs[i], null, null, uiContext));
+            li.appendChild(Exhibit.UI.makeItemSpan(arrayOfItemIDs[i], null, uiContext));
             ul.appendChild(li);
         }
         bubbleElmt.appendChild(ul);

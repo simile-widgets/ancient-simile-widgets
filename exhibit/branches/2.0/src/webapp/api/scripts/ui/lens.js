@@ -129,7 +129,7 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, uiContext) {
                 if (m > 0) {
                     tdValues.appendChild(document.createTextNode(", "));
                 }
-                tdValues.appendChild(Exhibit.UI.makeItemSpan(pair.values[m], null, null, uiContext));
+                tdValues.appendChild(Exhibit.UI.makeItemSpan(pair.values[m], null, uiContext));
             }
         } else {
             for (var m = 0; m < pair.values.length; m++) {
@@ -635,7 +635,7 @@ Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, uiContext));
+            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, uiContext));
         } :
         function(value) {
             addDelimiter();

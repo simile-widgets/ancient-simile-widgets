@@ -324,7 +324,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 }
             }
         });
-        console.log("here " + plottableSize + " " + this._largestSize);
+        
         if (plottableSize > this._largestSize) {
             this._largestSize = plottableSize;
             this._reconstructTimeline(events);

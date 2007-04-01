@@ -473,7 +473,7 @@ Exhibit.TabularView._constructDefaultValueList = function(values, valueType, par
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, view._uiContext));
+            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, view._uiContext));
         } :
         function(value) {
             addDelimiter();

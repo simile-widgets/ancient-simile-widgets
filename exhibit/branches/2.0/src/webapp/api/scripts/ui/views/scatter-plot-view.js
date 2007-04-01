@@ -429,11 +429,8 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
                     settings.yLabel + " = " + xy.y
             );
             
-            SimileAjax.WindowManager.registerEvent(marker, "click", function(elmt, evt, target) {
-                self._openPopup(marker, items);
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            });
+            SimileAjax.WindowManager.registerEvent(marker, "click", 
+                function(elmt, evt, target) { self._openPopup(marker, items); });
 
             canvasDiv.appendChild(marker);
         }

@@ -189,17 +189,10 @@ Exhibit.ListFacet.prototype._notifyCollection = function() {
 
 Exhibit.ListFacet.prototype._initializeUI = function() {
     var self = this;
-
-    var onClearSelections = function(elmt, evt, target) {
-        self._clearSelections();
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
-    };
-    
     this._dom = Exhibit.FacetUtilities.constructFacetFrame(
         this._div,
         this._settings.facetLabel,
-        onClearSelections
+        function(elmt, evt, target) { self._clearSelections(); }
     );
 };
 

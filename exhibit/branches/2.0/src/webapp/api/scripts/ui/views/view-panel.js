@@ -266,11 +266,8 @@ Exhibit.ViewPanel.makeCopyAllButton = function(collection, database, generatedCo
     var button = Exhibit.Theme.createCopyButton(true);
     var handler = function(elmt, evt, target) {
         Exhibit.ViewPanel._showCopyMenu(elmt, collection, database, generatedContentElmtRetriever);
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
     }
-    SimileAjax.WindowManager.registerEvent(
-        button, "click", handler, layer != null ? layer : SimileAjax.WindowManager.getHighestLayer());
+    SimileAjax.WindowManager.registerEvent(button, "click", handler);
         
     return button;
 };

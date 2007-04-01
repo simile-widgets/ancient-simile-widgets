@@ -349,7 +349,7 @@ Exhibit.SettingsUtilities._dateParser = function(v, f) {
         var d = new Date(0);
         d.setUTCFullYear(v);
         return f(d);
-    } else {console.log(v);
+    } else {
         var d = SimileAjax.DateTime.parseIso8601DateTime(v.toString());
         if (d != null) {
             return f(d);

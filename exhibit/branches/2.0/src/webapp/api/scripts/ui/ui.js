@@ -228,30 +228,8 @@ Exhibit.UI.makeActionLink = function(text, handler, layer) {
     a.innerHTML = text;
     
     var handler2 = function(elmt, evt, target) {
-        if ("true" == elmt.getAttribute("disabled")) {
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        } else {
-            return handler(elmt, evt, target);
-        }
-    }
-    SimileAjax.WindowManager.registerEvent(a, "click", handler2, layer);
-    
-    return a;
-};
-
-Exhibit.UI.makeActionLinkWithObject = function(text, obj, handlerName, layer) {
-    var a = document.createElement("a");
-    a.href = "javascript:";
-    a.className = "exhibit-action";
-    a.innerHTML = text;
-    
-    var handler2 = function(elmt, evt, target) {
-        if ("true" == elmt.getAttribute("disabled")) {
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        } else {
-            return obj[handlerName].call(obj, elmt, evt, target);
+        if ("true" != elmt.getAttribute("disabled")) {
+            handler(elmt, evt, target);
         }
     }
     SimileAjax.WindowManager.registerEvent(a, "click", handler2, layer);
@@ -264,23 +242,19 @@ Exhibit.UI.enableActionLink = function(a, enabled) {
     a.className = enabled ? "exhibit-action" : "exhibit-action-disabled";
 };
 
-Exhibit.UI.makeItemSpan = function(itemID, label, layer, uiContext) {
+Exhibit.UI.makeItemSpan = function(itemID, label, uiContext, layer) {
     if (label == null) {
         label = database.getObject(itemID, "label");
-    }
-    if (label == null) {
-        label = itemID;
+        if (label == null) {
+            label = itemID;
+        }
     }
     
-    var a = document.createElement("a");
-    a.href = Exhibit.Persistence.getItemLink(itemID);
-    a.className = "exhibit-item";
-    a.innerHTML = label;
-    
+    var a = SimileAjax.DOM.createElementFromString(document,
+        "<a href=\"" + Exhibit.Persistence.getItemLink(itemID) + "\" class='exhibit-item'>" + label + "</a>");
+        
     var handler = function(elmt, evt, target) {
         Exhibit.UI.showItemInPopup(itemID, elmt, uiContext);
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
     }
     SimileAjax.WindowManager.registerEvent(a, "click", handler, layer);
     
@@ -291,15 +265,12 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
     var span = document.createElement("span");
     span.className = "exhibit-value";
     if (valueType == "url") {
-        var a = document.createElement("a");
-        a.target = "_blank";
-        a.href = label;
-        if (label.length > 50) {
-            a.innerHTML = label.substr(0, 20) + " ... " + label.substr(label.length - 20);
-        } else {
-            a.innerHTML = label;
-        }
-        span.appendChild(a);
+        span.innerHTML = 
+            "<a href=\"" + label + "\" target='_blank'>" +
+                (label.length > 50 ? 
+                    label.substr(0, 20) + " ... " + label.substr(label.length - 20) :
+                    label) +
+            "</a>";
     } else {
         span.innerHTML = label;
     }
@@ -325,11 +296,8 @@ Exhibit.UI.makeCopyButton = function(itemID, database, layer) {
     var button = Exhibit.Theme.createCopyButton(false);
     var handler = function(elmt, evt, target) {
         Exhibit.UI._showCopyMenu(elmt, itemID, database);
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
     }
-    SimileAjax.WindowManager.registerEvent(
-        button, "click", handler, layer != null ? layer : SimileAjax.WindowManager.getHighestLayer());
+    SimileAjax.WindowManager.registerEvent(button, "click", handler);
         
     return button;
 };

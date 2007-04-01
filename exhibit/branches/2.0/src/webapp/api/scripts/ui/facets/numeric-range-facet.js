@@ -218,18 +218,11 @@ Exhibit.NumericRangeFacet.prototype._notifyCollection = function() {
 };
 
 Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
-    var facet = this;
-
-    var onClearSelections = function(elmt, evt, target) {
-        facet._clearSelections();
-        SimileAjax.DOM.cancelEvent(evt);
-        return false;
-    };
-    
+    var self = this;
     this._dom = Exhibit.FacetUtilities.constructFacetFrame(
         this._div,
         this._settings.facetLabel,
-        onClearSelections
+        function(elmt, evt, target) { self._clearSelections(); }
     );
 };
 
