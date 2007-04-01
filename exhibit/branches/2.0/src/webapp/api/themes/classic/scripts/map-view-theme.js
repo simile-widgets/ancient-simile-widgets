@@ -35,9 +35,7 @@ Exhibit.MapView.theme.constructDom = function(div) {
                 className: "exhibit-mapView-resizer",
                 field: "resizerDiv",
                 children: [
-                    {   elmt: Exhibit.Theme.createTranslucentImage(document,
-                            "images/down-arrow.png")
-                    }
+                    {   elmt: Exhibit.Theme.createTranslucentImage("images/down-arrow.png") }
                 ]
             },
             {   tag: "div",
@@ -47,7 +45,7 @@ Exhibit.MapView.theme.constructDom = function(div) {
         ]
     };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     dom.setMappableCounts = function(resultsCount, mappableCount) {
         if (mappableCount != resultsCount) {
             dom.mappableDiv.style.display = "block";
@@ -102,11 +100,11 @@ Exhibit.MapView.theme.constructLegendBlockDom = function(
         ]
     };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     for (var i = 0; i < icons.length; i++) {
         var div = document.createElement("div");
         div.className = "exhibit-mapView-legendBlock-entry";
-        div.appendChild(SimileAjax.Graphics.createTranslucentImage(document, icons[i]));
+        div.appendChild(SimileAjax.Graphics.createTranslucentImage(icons[i]));
         div.appendChild(document.createTextNode(" " + labels[i]));
         dom.elmt.appendChild(div);
     }

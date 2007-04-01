@@ -80,7 +80,7 @@ Exhibit.ThumbnailView.prototype._initializeUI = function() {
             }
         ]
     };
-    this._dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    this._dom = SimileAjax.DOM.createDOMFromTemplate(template);
     
     var self = this;
     this._orderedViewFrame._divHeader = this._dom.headerDiv;

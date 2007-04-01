@@ -217,7 +217,7 @@ Exhibit.UIContext.registerLensesFromDOM = function(parentNode, lensRegistry) {
                 SimileAjax.Debug.log("lensSelector expression " + lensSelectorString + " is not a function");
             }
         } catch (e) {
-            SimileAjax.Debug.exception("Bad lensSelector expression: " + lensSelectorString, e);
+            SimileAjax.Debug.exception(e, "Bad lensSelector expression: " + lensSelectorString);
         }
     }
 };

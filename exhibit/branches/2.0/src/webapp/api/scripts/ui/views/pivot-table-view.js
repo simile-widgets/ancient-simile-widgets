@@ -65,7 +65,7 @@ Exhibit.PivotTableView._parseExpression = function(s) {
     try {
         return Exhibit.Expression.parse(s);
     } catch (e) {
-        SimileAjax.Debug.exception("Error parsing expression " + s, e);
+        SimileAjax.Debug.exception(e, "Error parsing expression " + s);
     }
     return null;
 };
@@ -79,7 +79,7 @@ Exhibit.PivotTableView._parsePath = function(s) {
             SimileAjax.Debug.log("Expecting a path but got a full expression: " + s);
         }
     } catch (e) {
-        SimileAjax.Debug.exception("Error parsing expression " + s, e);
+        SimileAjax.Debug.exception(e, "Error parsing expression " + s);
     }
     return null;
 };
@@ -254,7 +254,6 @@ Exhibit.PivotTableView._sortValues = function(values, valueType, database) {
 Exhibit.PivotTableView.prototype._openPopup = function(elmt, items) {
     var coords = SimileAjax.DOM.getPageCoordinates(elmt);
     var bubble = SimileAjax.Graphics.createBubbleForPoint(
-        document, 
         coords.left + Math.round(elmt.offsetWidth / 2), 
         coords.top + Math.round(elmt.offsetHeight / 2), 
         400, // px

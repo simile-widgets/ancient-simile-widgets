@@ -30,9 +30,7 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResized) {
                 className: "exhibit-scatterPlotView-resizer",
                 field: "resizerDiv",
                 children: [
-                    {   elmt: Exhibit.Theme.createTranslucentImage(document,
-                            "images/down-arrow.png")
-                    }
+                    {   elmt: Exhibit.Theme.createTranslucentImage("images/down-arrow.png") }
                 ]
             },
             {   tag: "div",
@@ -42,7 +40,7 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResized) {
         ]
     };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     dom.setPlottableCounts = function(resultsCount, plottableCount) {
         if (plottableCount != resultsCount) {
             dom.plottableDiv.style.display = "block";
@@ -94,7 +92,7 @@ Exhibit.ScatterPlotView.theme.constructLegendBlockDom = function(
         ]
     };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     for (var i = 0; i < colors.length; i++) {
         var div = document.createElement("div");
         div.className = "exhibit-scatterPlotView-legendBlock-entry";

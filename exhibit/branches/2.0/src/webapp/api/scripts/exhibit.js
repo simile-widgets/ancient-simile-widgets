@@ -116,14 +116,14 @@ Exhibit._Impl.prototype.dispose = function() {
         try{
             this._componentMap[id].dispose();
         }catch(e) {
-            SimileAjax.Debug.exception("Failed to dispose component", e);
+            SimileAjax.Debug.exception(e, "Failed to dispose component");
         }
     }
     for (var id in this._collectionMap) {
         try{
             this._collectionMap[id].dispose();
         } catch(e) {
-            SimileAjax.Debug.exception("Failed to dispose collection", e);
+            SimileAjax.Debug.exception(e, "Failed to dispose collection");
         }
     }
     

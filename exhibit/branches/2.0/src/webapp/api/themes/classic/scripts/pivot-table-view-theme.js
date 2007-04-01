@@ -21,5 +21,5 @@ Exhibit.PivotTableView.theme.constructDom = function(div) {
         ]
     };
     
-    return SimileAjax.DOM.createDOMFromTemplate(document, template);
+    return SimileAjax.DOM.createDOMFromTemplate(template);
 };

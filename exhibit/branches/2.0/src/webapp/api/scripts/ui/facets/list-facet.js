@@ -57,7 +57,7 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
             }
         }
     } catch (e) {
-        SimileAjax.Debug.exception("ListFacet: Error processing configuration of list facet", e);
+        SimileAjax.Debug.exception(e, "ListFacet: Error processing configuration of list facet");
     }
     
     facet._initializeUI();

@@ -51,7 +51,7 @@ Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, ui
             }
         }
     } catch (e) {
-        SimileAjax.Debug.exception("NumericRangeFacet: Error processing configuration of numeric range facet", e);
+        SimileAjax.Debug.exception(e, "NumericRangeFacet: Error processing configuration of numeric range facet");
     }
     
     facet._initializeUI();

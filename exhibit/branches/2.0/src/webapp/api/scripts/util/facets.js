@@ -9,7 +9,6 @@ Exhibit.FacetUtilities = new Object();
 Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAllSelections) {
     div.className = "exhibit-facet";
     var dom = SimileAjax.DOM.createDOMFromString(
-        document,
         div,
         "<div class='exhibit-facet-header'>" +
             "<div class='exhibit-facet-header-filterControl' id='clearSelectionsDiv' title='" + Exhibit.FacetUtilities.l10n.clearSelectionsTooltip + "'>" +
@@ -24,8 +23,8 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
         "<div class='exhibit-facet-resizer' id='resizerDiv'>" +
             "<img id='resizerImage' />" +
         "</div>",
-        {   checkImage:     Exhibit.Theme.createTranslucentImage(document, "images/black-check-no-border.png"),
-            resizerImage:   Exhibit.Theme.createTranslucentImage(document, "images/down-arrow.png")
+        {   checkImage:     Exhibit.Theme.createTranslucentImage("images/black-check-no-border.png"),
+            resizerImage:   Exhibit.Theme.createTranslucentImage("images/down-arrow.png")
         }
     );
     
@@ -66,7 +65,6 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     }
     
     var elmt = SimileAjax.DOM.createElementFromString(
-        document,
         "<div class='exhibit-facet-value' title='" + label + "'>" +
             "<div class='exhibit-facet-value-count'>" +
                 count +

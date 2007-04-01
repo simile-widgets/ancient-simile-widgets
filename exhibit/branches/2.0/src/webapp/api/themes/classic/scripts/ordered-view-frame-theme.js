@@ -32,11 +32,11 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                         field:  "groupSpan",
                         className: "exhibit-collectionView-header-groupControls",
                         children: [
-                            {   elmt:       Exhibit.Theme.createTranslucentImage(document, "images/option.png"),
+                            {   elmt:       Exhibit.Theme.createTranslucentImage("images/option.png"),
                                 field:      "groupOption",
                                 style: {  display: "none" }
                             },
-                            {   elmt:       Exhibit.Theme.createTranslucentImage(document, "images/option-check.png"),
+                            {   elmt:       Exhibit.Theme.createTranslucentImage("images/option-check.png"),
                                 field:      "groupOptionChecked",
                                 style: {  display: "none" }
                             },
@@ -49,11 +49,11 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
                         field:  "duplicateSpan",
                         className: "exhibit-collectionView-header-duplicateControls",
                         children: [
-                            {   elmt:       Exhibit.Theme.createTranslucentImage(document, "images/option.png"),
+                            {   elmt:       Exhibit.Theme.createTranslucentImage("images/option.png"),
                                 field:      "duplicateOption",
                                 style: {  display: "none" }
                             },
-                            {   elmt:       Exhibit.Theme.createTranslucentImage(document, "images/option-check.png"),
+                            {   elmt:       Exhibit.Theme.createTranslucentImage("images/option-check.png"),
                                 field:      "duplicateOptionChecked",
                                 style: {  display: "none" }
                             },
@@ -65,7 +65,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
             }
         ]
     };
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, headerTemplate);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(headerTemplate);
     SimileAjax.WindowManager.registerEvent(dom.groupSpan, "click", onGroupToggle);
     SimileAjax.WindowManager.registerEvent(dom.duplicateSpan, "click", onShowDuplicatesToggle);
     
@@ -96,7 +96,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
 
 Exhibit.OrderedViewFrame.theme.createOrderDom = function(label, onPopup) {
     var a = Exhibit.UI.makeActionLink(label, onPopup);
-    //a.appendChild(Exhibit.Theme.createTranslucentImage(document, "images/down-arrow.png"));
+    //a.appendChild(Exhibit.Theme.createTranslucentImage("images/down-arrow.png"));
     
     return { elmt: a };
 }
@@ -114,7 +114,7 @@ Exhibit.OrderedViewFrame.theme.createFooterDom = function(
         children:   []
     };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, footerTemplate);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(footerTemplate);
     dom.setCounts = function(count, limitCount, showAll, canToggle) {
         dom.elmt.innerHTML = "";
         if (canToggle && count > limitCount) {

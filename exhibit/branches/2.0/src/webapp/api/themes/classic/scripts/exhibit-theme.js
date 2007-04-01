@@ -5,10 +5,8 @@
  
 Exhibit.Theme = {
     urlPrefix:  Exhibit.urlPrefix + "themes/classic/",
-    createTranslucentImage: function(doc, url) {
-        return SimileAjax.Graphics.createTranslucentImage(
-            doc, Exhibit.Theme.urlPrefix + url
-        );
+    createTranslucentImage: function(url) {
+        return SimileAjax.Graphics.createTranslucentImage(Exhibit.Theme.urlPrefix + url);
     },
     
     createPopupMenuDom: function(element) {
@@ -48,7 +46,7 @@ Exhibit.Theme = {
                 var div = document.createElement("div");
                 a.appendChild(div);
         
-                div.appendChild(SimileAjax.Graphics.createTranslucentImage(document, 
+                div.appendChild(SimileAjax.Graphics.createTranslucentImage(
                     icon != null ? icon : (Exhibit.Theme.urlPrefix + "images/blank-16x16.png")));
                     
                 div.appendChild(document.createTextNode(label));
@@ -85,7 +83,7 @@ Exhibit.Theme = {
                 }
             ]
         };
-        var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+        var dom = SimileAjax.DOM.createDOMFromTemplate(template);
         dom.textAreaContainer.innerHTML = 
             "<textarea wrap='off' rows='15'>" + string + "</textarea>";
             
@@ -148,7 +146,7 @@ Exhibit.Theme = {
                 }
             ]
         };
-        var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+        var dom = SimileAjax.DOM.createDOMFromTemplate(template);
         dom.close = function() {
             document.body.removeChild(dom.elmt);
         };

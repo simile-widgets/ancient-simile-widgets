@@ -62,9 +62,7 @@ Exhibit.TimelineView.theme.constructDom = function(div, onRelayout) {
                 className:  "exhibit-timelineView-resizer",
                 field:      "resizerDiv",
                 children: [
-                    {   elmt: Exhibit.Theme.createTranslucentImage(document,
-                            "images/down-arrow.png")
-                    }
+                    {   elmt: Exhibit.Theme.createTranslucentImage("images/down-arrow.png") }
                 ]
             },
             {   tag:        "div",
@@ -83,7 +81,7 @@ Exhibit.TimelineView.theme.constructDom = function(div, onRelayout) {
         ]
     };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     SimileAjax.WindowManager.registerEvent(dom.relayoutButton, "click", onRelayout);
 
     dom.setPlottableCounts = function(resultsCount, plottableCount, originalCount) {
@@ -140,7 +138,7 @@ Exhibit.TimelineView.theme.constructLegendBlockDom = function(
         ]
     };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     for (var i = 0; i < colors.length; i++) {
         var div = document.createElement("div");
         div.className = "exhibit-timelineView-legendBlock-entry";

@@ -33,7 +33,7 @@ Exhibit.TileView.theme.constructGroup = function(groupLevel, label) {
             }
         ]
     };
-    return SimileAjax.DOM.createDOMFromTemplate(document, template);
+    return SimileAjax.DOM.createDOMFromTemplate(template);
 };
 
 Exhibit.TileView.theme.constructTable = function() {

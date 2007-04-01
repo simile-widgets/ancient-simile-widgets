@@ -106,7 +106,7 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, uiContext) {
             }
         ]
     };
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     
     var pairs = Exhibit.ViewPanel.getPropertyValuesPairs(
         itemID, properties, database);
@@ -225,12 +225,12 @@ Exhibit.Lens._startCompilingTemplate = function(lensTemplateURL, job) {
                     job.template = compiledTemplate;
                     Exhibit.Lens._performConstructFromLensTemplateJob(job);
                 } catch (e) {
-                    SimileAjax.Debug.exception("Lens: Error constructing lens template in job queue", e);
+                    SimileAjax.Debug.exception(e, "Lens: Error constructing lens template in job queue");
                 }
             }
             compiledTemplate.jobs = null;
         } catch (e) {
-            SimileAjax.Debug.exception("Lens: Error compiling lens template and processing template job queue", e);
+            SimileAjax.Debug.exception(e, "Lens: Error compiling lens template and processing template job queue");
         }
     };
     

@@ -19,7 +19,7 @@ Exhibit.TabularView.theme.createDom = function(div) {
             }
         ]
     };
-    return SimileAjax.DOM.createDOMFromTemplate(document, headerTemplate);
+    return SimileAjax.DOM.createDOMFromTemplate(headerTemplate);
 };
 
 Exhibit.TabularView.theme.createColumnHeader = function(
@@ -41,12 +41,12 @@ Exhibit.TabularView.theme.createColumnHeader = function(
     };
     if (sort) {
         template.children.push({
-            elmt: Exhibit.Theme.createTranslucentImage(document, 
+            elmt: Exhibit.Theme.createTranslucentImage(
                 sortAscending ? "images/up-arrow.png" : "images/down-arrow.png")
         });
     }
     SimileAjax.WindowManager.registerEvent(th, "click", sortFunction, null);
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     return dom;
 };

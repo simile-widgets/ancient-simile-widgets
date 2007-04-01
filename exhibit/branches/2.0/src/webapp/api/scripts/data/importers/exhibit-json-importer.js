@@ -31,7 +31,7 @@ Exhibit.ExhibitJSONImporter.load = function(link, database, cont) {
                 database.loadData(o, Exhibit.Persistence.getBaseURL(url));
             }
         } catch (e) {
-            SimileAjax.Debug.exception("Error loading Exhibit JSON data from " + url, e);
+            SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
         } finally {
             if (cont) cont();
         }

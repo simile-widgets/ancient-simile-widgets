@@ -26,7 +26,7 @@ Exhibit.ViewPanel.theme.constructDom = function(
             }
         ]
     };
-    var dom = SimileAjax.DOM.createDOMFromTemplate(document, template);
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     dom.getViewContainer = function() {
         return dom.viewContainerDiv;
     };

@@ -51,13 +51,15 @@ Exhibit.CollectionSummaryWidget.prototype._initializeUI = function() {
         return false;
     }
 
-    this._allResultsDom = SimileAjax.DOM.createDOMFromString(document, "span", 
+    this._allResultsDom = SimileAjax.DOM.createDOMFromString(
+        "span", 
         String.substitute(
             l10n.allResultsTemplate,
             [ "exhibit-collectionSummaryWidget-count", "exhibit-collectionSummaryWidget-types" ]
         )
     );
-    this._filteredResultsDom = SimileAjax.DOM.createDOMFromString(document, "span", 
+    this._filteredResultsDom = SimileAjax.DOM.createDOMFromString(
+        "span", 
         String.substitute(
             l10n.filteredResultsTemplate,
             [ "exhibit-collectionSummaryWidget-count", "exhibit-collectionSummaryWidget-types" ]

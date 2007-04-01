@@ -36,7 +36,7 @@ Exhibit.ThumbnailView.theme.constructGroup = function(
             }
         ]
     };
-    return SimileAjax.DOM.createDOMFromTemplate(document, template);
+    return SimileAjax.DOM.createDOMFromTemplate(template);
 };
 
 Exhibit.ThumbnailView.theme.constructItemContainer = function() {

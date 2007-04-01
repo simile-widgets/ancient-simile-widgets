@@ -250,7 +250,7 @@ Exhibit.UI.makeItemSpan = function(itemID, label, uiContext, layer) {
         }
     }
     
-    var a = SimileAjax.DOM.createElementFromString(document,
+    var a = SimileAjax.DOM.createElementFromString(
         "<a href=\"" + Exhibit.Persistence.getItemLink(itemID) + "\" class='exhibit-item'>" + label + "</a>");
         
     var handler = function(elmt, evt, target) {
@@ -280,7 +280,6 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
 Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext) {
     var coords = SimileAjax.DOM.getPageCoordinates(elmt);
     var bubble = SimileAjax.Graphics.createBubbleForPoint(
-        document, 
         coords.left + Math.round(elmt.offsetWidth / 2), 
         coords.top + Math.round(elmt.offsetHeight / 2), 
         uiContext.getSetting("bubbleWidth"),

@@ -68,7 +68,7 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContex
             });
         }
     } catch (e) {
-        SimileAjax.Debug.exception("TabularView: Error processing configuration of tabular view", e);
+        SimileAjax.Debug.exception(e, "TabularView: Error processing configuration of tabular view");
     }
     
     var s = Exhibit.getAttribute(configElmt, "sortColumn");

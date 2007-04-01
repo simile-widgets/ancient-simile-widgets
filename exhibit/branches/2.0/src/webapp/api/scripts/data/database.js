@@ -177,7 +177,7 @@ Exhibit.Database._Impl.prototype.loadTypes = function(typeEntries, baseURI) {
         
         this._listeners.fire("onAfterLoadingTypes", []);
     } catch(e) {
-        SimileAjax.Debug.exception("Database.loadTypes failed", e);
+        SimileAjax.Debug.exception(e, "Database.loadTypes failed");
     }
 };
 
@@ -223,7 +223,7 @@ Exhibit.Database._Impl.prototype.loadProperties = function(propertyEntries, base
         
         this._listeners.fire("onAfterLoadingProperties", []);
     } catch(e) {
-        SimileAjax.Debug.exception("Database.loadProperties failed", e);
+        SimileAjax.Debug.exception(e, "Database.loadProperties failed");
     }
 };
 
@@ -256,7 +256,7 @@ Exhibit.Database._Impl.prototype.loadItems = function(itemEntries, baseURI) {
         
         this._listeners.fire("onAfterLoadingItems", []);
     } catch(e) {
-        SimileAjax.Debug.exception("Database.loadItems failed", e);
+        SimileAjax.Debug.exception(e, "Database.loadItems failed");
     }
 };
 
