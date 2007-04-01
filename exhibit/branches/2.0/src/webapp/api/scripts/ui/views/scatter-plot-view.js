@@ -204,7 +204,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
     var currentSize = collection.countRestrictedItems();
     var mappableSize = 0;
     
-    this._dom.clearLegend();
+    this._dom.legendWidget.clear();
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
         
@@ -402,7 +402,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         /*
          *  Plot the points
          */
-        var usedKeys = {};
+        var legendWidget = this._dom.legendWidget;
         var addPointAtLocation = function(xyData) {
             var items = xyData.items;
             
@@ -410,7 +410,6 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             if (xyData.colorKey == null) {
                 color = Exhibit.ScatterPlotView._mixColor;
             } else {
-                usedKeys[xyData.colorKey] = true;
                 if (xyData.colorKey in self._colorKeyCache) {
                     color = self._colorKeyCache[xyData.colorKey];
                 } else {
@@ -419,6 +418,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
                     self._maxColor = (self._maxColor + 1) % Exhibit.ScatterPlotView._colors.length;
                 }
             }
+            legendWidget.addEntry(xyData.colorKey, color, xyData.colorKey);
             
             var xy = xyData.xy;
             var marker = Exhibit.ScatterPlotView._makePoint(
@@ -440,27 +440,6 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             addPointAtLocation(xyToData[xyKey]);
         }
         canvasDiv.style.display = "block";
-        
-        /*
-         *  Draw the legends
-         */
-        var legendLabels = [];
-        var legendColors = [];
-        for (colorKey in this._colorKeyCache) {
-            if (colorKey in usedKeys) {
-                var color = this._colorKeyCache[colorKey];
-                legendLabels.push(colorKey);
-                legendColors.push("#" + color);
-            }
-        }
-        legendLabels.push(Exhibit.ScatterPlotView.l10n.mixedLegendKey);
-        legendColors.push("white");
-        
-        this._dom.addLegendBlock(Exhibit.ScatterPlotView.theme.constructLegendBlockDom(
-            Exhibit.ScatterPlotView.l10n.colorLegendTitle,
-            legendColors,
-            legendLabels
-        ));
     }
     this._dom.setPlottableCounts(currentSize, mappableSize);
 };

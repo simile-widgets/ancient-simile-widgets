@@ -7,14 +7,3 @@ div.exhibit-mapView-mappableDetails {
     padding:        1em;
     text-align:     center;
 }
-div.exhibit-mapView-legend {
-    margin-top:     1em;
-}
-div.exhibit-mapView-legendBlock {
-}
-div.exhibit-mapView-legendBlock-title {
-    font-weight:    bold;
-}
-div.exhibit-mapView-legendBlock-entry {
-    margin: 2px 0;
-}

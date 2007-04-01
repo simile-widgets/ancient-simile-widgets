@@ -246,6 +246,20 @@ div.exhibit-facet-value-count {
 div.exhibit-facet-value-inner {
     position:       relative;
 }
+div.exhibit-legendWidget {
+    margin:         1em 0;
+    text-align:     center;
+    line-height:    2em;
+}
+div.exhibit-legendWidget-entry {
+}
+span.exhibit-legendWidget-entry-title {
+    font-weight: bold;
+}
+span.exhibit-legendWidget-entry-swatch {
+    border:     1px solid #888;
+    padding:    0px 3px;
+}
 div.exhibit-lens {
     border:         1px solid #aaa;
     margin-bottom:  1em;
@@ -286,17 +300,6 @@ div.exhibit-mapView-map {
 div.exhibit-mapView-mappableDetails {
     padding:        1em;
     text-align:     center;
-}
-div.exhibit-mapView-legend {
-    margin-top:     1em;
-}
-div.exhibit-mapView-legendBlock {
-}
-div.exhibit-mapView-legendBlock-title {
-    font-weight:    bold;
-}
-div.exhibit-mapView-legendBlock-entry {
-    margin: 2px 0;
 }
 div.exhibit-pivotTableView-tableContainer {
 }
@@ -413,23 +416,6 @@ div.exhibit-scatterPlotView-mappableDetails {
     padding:        1em;
     text-align:     center;
 }
-div.exhibit-scatterPlotView-legend {
-    margin-top:     1em;
-}
-div.exhibit-scatterPlotView-legendBlock {
-    line-height:    120%;
-}
-div.exhibit-scatterPlotView-legendBlock-title {
-    font-weight:    bold;
-}
-div.exhibit-scatterPlotView-legendBlock-entry {
-    margin: 2px 0;
-}
-span.exhibit-scatterPlotView-legendBlock-colorBlob {
-    border:     1px solid #888;
-    padding:    0px 5px;
-    margin:     0px 5px;
-}
 table.exhibit-tabularView-body {
     width: 100%;
 }
@@ -484,21 +470,6 @@ div.exhibit-timelineView-timeline {
 div.exhibit-timelineView-plottableDetails {
     padding:        1em;
     text-align:     center;
-}
-div.exhibit-timelineView-legend {
-    margin-top:     1em;
-}
-div.exhibit-timelineView-legendBlock {
-}
-div.exhibit-timelineView-legendBlock-title {
-    font-weight:    bold;
-}
-div.exhibit-timelineView-legendBlock-entry {
-    margin: 5px 0;
-}
-span.exhibit-timelineView-legendBlock-swatch {
-    border:     1px solid #888;
-    padding:    0px 3px;
 }
 /*==================================================
  * View Panel styles

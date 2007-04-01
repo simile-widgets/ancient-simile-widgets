@@ -54,20 +54,26 @@ Exhibit.TimelineView.theme.constructDom = function(div, uiContext) {
                 field:      "timelineContainer"
             },
             {   tag:        "div",
-                className:  "exhibit-timelineView-legend",
                 field:      "legendDiv"
             }
         ]
     };
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    var resizableDivWidget = Exhibit.ResizableDivWidget.create(
+    
+    dom.resizableDivWidget = Exhibit.ResizableDivWidget.create(
         { onResize: function() {dom.timeline.layout();} }, 
         dom.timelineContainer, 
         uiContext
     );
-    dom.timelineDiv = resizableDivWidget.getContentDiv();
+    dom.timelineDiv = dom.resizableDivWidget.getContentDiv();
     dom.timelineDiv.className = "exhibit-timelineView-timeline";
+    
+    dom.legendWidget = Exhibit.LegendWidget.create(
+        {}, 
+        dom.legendDiv, 
+        uiContext
+    );
     
     dom.setPlottableCounts = function(resultsCount, plottableCount, originalCount) {
         if (plottableCount != resultsCount) {
@@ -80,49 +86,6 @@ Exhibit.TimelineView.theme.constructDom = function(div, uiContext) {
     dom.getTimelineDiv = function() {
         return dom.timelineDiv;
     };
-    dom.clearLegend = function() {
-        dom.legendDiv.innerHTML = "<table cellspacing='10'><tr valign='top'></tr></table>";
-    };
-    dom.addLegendBlock = function(blockDom) {
-        var tr = dom.legendDiv.firstChild.rows[0];
-        var td = tr.insertCell(tr.cells.length);
-        td.appendChild(blockDom.elmt);
-    };
 
     return dom;
 };
-
-Exhibit.TimelineView.theme.constructLegendBlockDom = function(
-    title,
-    colors,
-    labels
-) {
-    var l10n = Exhibit.TimelineView.l10n;
-    var template = {
-        tag:        "div",
-        className:  "exhibit-timelineView-legendBlock",
-        children: [
-            {   tag:        "div",
-                className:  "exhibit-timelineView-legendBlock-title",
-                children:   [ title ]
-            }
-        ]
-    };
-    
-    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    for (var i = 0; i < colors.length; i++) {
-        var div = document.createElement("div");
-        div.className = "exhibit-timelineView-legendBlock-entry";
-        div.style.color = colors[i];
-        
-        var span = document.createElement("span");
-        span.className = "exhibit-timelineView-legendBlock-swatch";
-        span.style.background = colors[i];
-        span.innerHTML = "&nbsp;";
-        
-        div.appendChild(span);
-        div.appendChild(document.createTextNode(" " + labels[i]));
-        dom.elmt.appendChild(div);
-    }
-    return dom;
-}

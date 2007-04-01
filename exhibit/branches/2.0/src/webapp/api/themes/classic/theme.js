@@ -26,6 +26,7 @@
         
         "collection-summary-widget.css",
         "resizable-div-widget.css",
+        "legend-widget.css",
         
         "tile-view.css",
         "map-view.css",

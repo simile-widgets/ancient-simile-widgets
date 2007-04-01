@@ -252,13 +252,12 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     var currentSize = collection.countRestrictedItems();
     var plottableSize = 0;
     
-    var usedKeys = {};
-        
-    this._dom.clearLegend();
+    this._dom.legendWidget.clear();
     this._eventSource.clear();
     
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
+        var legendWidget = this._dom.legendWidget;
         var events = [];
         
         var addEvent = function(itemID, duration, colorData) {
@@ -299,8 +298,6 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 
                 var colorKey = null;
                 accessors.getColor(itemID, database, function(v) { colorKey = v; });
-            
-                usedKeys[colorKey] = true;
                 
                 var colorData;
                 if (colorKey in self._colorMap) {
@@ -310,6 +307,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                     self._colorMap[colorKey] = colorData;
                     self._maxColorIndex = (self._maxColorIndex + 1) % Exhibit.TimelineView.theme.markers.length;
                 }
+                legendWidget.addEntry(colorKey, colorData.color, colorKey);
                 
                 for (var i = 0; i < durations.length; i++) {
                     addEvent(itemID, durations[i], colorData);
@@ -323,22 +321,6 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         } else {
             this._eventSource.addMany(events);
         }
-        
-        var legendLabels = [];
-        var legendColors = [];
-        for (colorKey in this._colorMap) {
-            if (colorKey in usedKeys) {
-                var colorData = this._colorMap[colorKey];
-                legendLabels.push(colorKey);
-                legendColors.push("#" + colorData.color);
-            }
-        }
-        
-        this._dom.addLegendBlock(Exhibit.TimelineView.theme.constructLegendBlockDom(
-            Exhibit.TimelineView.l10n.colorLegendTitle,
-            legendColors,
-            legendLabels
-        ));
         
         var band = this._dom.timeline.getBand(0);
         var centerDate = band.getCenterVisibleDate();

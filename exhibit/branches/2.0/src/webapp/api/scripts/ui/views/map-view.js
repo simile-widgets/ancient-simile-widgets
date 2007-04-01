@@ -281,7 +281,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
     var mappableSize = 0;
     
     this._dom.map.clearOverlays();
-    this._dom.clearLegend();
+    this._dom.legendWidget.clear();
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
         var locationToData = {};
@@ -316,7 +316,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
             }
         });
         
-        var usedKeys = {};
+        var legendWidget = this._dom.legendWidget;
         var shape = Exhibit.MapView._defaultMarkerShape;
         var bounds, maxAutoZoom = Infinity;
         var addMarkerAtLocation = function(locationData) {
@@ -328,8 +328,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var colorData;
             if (locationData.colorKey == null) {
                 colorData = Exhibit.MapView._mixMarker;
+                legendWidget.addEntry("Mixed", colorData.color, "Mixed");
             } else {
-                usedKeys[locationData.colorKey] = true;
                 if (locationData.colorKey in self._colorMap) {
                     colorData = self._colorMap[locationData.colorKey];
                 } else {
@@ -337,6 +337,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
                     self._colorMap[locationData.colorKey] = colorData;
                     self._maxColorIndex = (self._maxColorIndex + 1) % Exhibit.MapView._colors.length;
                 }
+                legendWidget.addEntry(locationData.colorKey, colorData.color, locationData.colorKey);
             }
             
             var icon;
@@ -377,34 +378,6 @@ Exhibit.MapView.prototype._reconstruct = function() {
         if (bounds && typeof settings.center == "undefined")
             self._dom.map.setCenter(bounds.getCenter());
 
-        var legendLabels = [];
-        var legendIcons = [];
-        var shape = Exhibit.MapView._defaultMarkerShape;
-        for (colorKey in this._colorMap) {
-            if (colorKey in usedKeys) {
-                var colorData = this._colorMap[colorKey];
-                legendLabels.push(colorKey);
-                legendIcons.push(Exhibit.MapView._markerUrlPrefix + 
-                    [   shape,
-                        colorData.color,
-                        [ "m", shape, colorData.color, "legend.png" ].join("-")
-                    ].join("/")
-                );
-            }
-        }
-        legendLabels.push(Exhibit.MapView.l10n.mixedLegendKey);
-        legendIcons.push(Exhibit.MapView._markerUrlPrefix + 
-            [   shape,
-                "FFFFFF",
-                [ "m", shape, "FFFFFF", "legend.png" ].join("-")
-            ].join("/")
-        );
-        
-        this._dom.addLegendBlock(Exhibit.MapView.theme.constructLegendBlockDom(
-            Exhibit.MapView.l10n.colorLegendTitle,
-            legendIcons,
-            legendLabels
-        ));
     }
     this._dom.setMappableCounts(currentSize, mappableSize);
 };

@@ -26,20 +26,26 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResize, uiContext) 
                 field:      "plotOuterContainer"
             },
             {   tag: "div",
-                className:  "exhibit-scatterPlotView-legend",
                 field: "legendDiv"
             }
         ]
     };
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    var resizableDivWidget = Exhibit.ResizableDivWidget.create(
+    
+    dom.resizableDivWidget = Exhibit.ResizableDivWidget.create(
         { onResize: onResize }, 
         dom.plotOuterContainer, 
         uiContext
     );
-    dom.plotContainer = resizableDivWidget.getContentDiv();
+    dom.plotContainer = dom.resizableDivWidget.getContentDiv();
     dom.plotContainer.className = "exhibit-scatterPlotView-plotContainer";
+    
+    dom.legendWidget = Exhibit.LegendWidget.create(
+        {}, 
+        dom.legendDiv, 
+        uiContext
+    );
     
     dom.setPlottableCounts = function(resultsCount, plottableCount) {
         if (plottableCount != resultsCount) {
@@ -48,14 +54,6 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResize, uiContext) 
         } else {
             dom.plottableDiv.style.display = "none";
         }
-    };
-    dom.clearLegend = function() {
-        dom.legendDiv.innerHTML = "<table cellspacing='10'><tr valign='top'></tr></table>";
-    };
-    dom.addLegendBlock = function(blockDom) {
-        var tr = dom.legendDiv.firstChild.rows[0];
-        var td = tr.insertCell(tr.cells.length);
-        td.appendChild(blockDom.elmt);
     };
     return dom;
 };
