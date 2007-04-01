@@ -52,9 +52,9 @@ for(var attribute in templateNode){var value=templateNode[attribute];if(attribut
 elmt.style[n]=v;}}else if(attribute=="children"){for(var i=0;i<value.length;i++){SimileAjax.DOM._createDOMFromTemplate(doc,value[i],result,elmt);}}else if(attribute!="tag"&&attribute!="elmt"){elmt.setAttribute(attribute,value);}}
 return elmt;}}
 SimileAjax.DOM._cachedParent=null;SimileAjax.DOM.createElementFromString=function(doc,s){if(SimileAjax.DOM._cachedParent==null){SimileAjax.DOM._cachedParent=doc.createElement("div");}
-SimileAjax.DOM._cachedParent.innerHTML=s;return SimileAjax.DOM._cachedParent.firstChild;};SimileAjax.DOM.createDOMFromString=function(doc,root,s,fieldElmts){var elmt=typeof root=="string"?doc.createElement(root):root;elmt.innerHTML=s;var dom={elmt:elmt};SimileAjax.DOM._processDOMConstructedFromString(dom,elmt,fieldElmts!=null?fieldElmts:{});return dom;};SimileAjax.DOM._processDOMConstructedFromString=function(dom,elmt,fieldElmts){var id=elmt.id;if(id!=null&&id.length>0){elmt.id="";if(id in fieldElmts){var parentElmt=elmt.parentNode;parentElmt.insertBefore(fieldElmts[id],elmt);parentElmt.removeChild(elmt);dom[id]=fieldElmts[id];return;}else{dom[id]=elmt;}}
-if(elmt.hasChildNodes()){var node=elmt.firstChild;while(node!=null){var node2=node.nextSibling;if(node.nodeType==1){SimileAjax.DOM._processDOMConstructedFromString(dom,node,fieldElmts);}
-node=node2;}}};
+SimileAjax.DOM._cachedParent.innerHTML=s;return SimileAjax.DOM._cachedParent.firstChild;};SimileAjax.DOM.createDOMFromString=function(doc,root,s,fieldElmts){var elmt=typeof root=="string"?doc.createElement(root):root;elmt.innerHTML=s;var dom={elmt:elmt};SimileAjax.DOM._processDOMChildrenConstructedFromString(dom,elmt,fieldElmts!=null?fieldElmts:{});return dom;};SimileAjax.DOM._processDOMConstructedFromString=function(dom,elmt,fieldElmts){var id=elmt.id;if(id!=null&&id.length>0){elmt.id="";if(id in fieldElmts){var parentElmt=elmt.parentNode;parentElmt.insertBefore(fieldElmts[id],elmt);parentElmt.removeChild(elmt);dom[id]=fieldElmts[id];return;}else{dom[id]=elmt;}}
+if(elmt.hasChildNodes()){SimileAjax.DOM._processDOMChildrenConstructedFromString(dom,elmt,fieldElmts);}};SimileAjax.DOM._processDOMChildrenConstructedFromString=function(dom,elmt,fieldElmts){var node=elmt.firstChild;while(node!=null){var node2=node.nextSibling;if(node.nodeType==1){SimileAjax.DOM._processDOMConstructedFromString(dom,node,fieldElmts);}
+node=node2;}};
 
 /* graphics.js */
 

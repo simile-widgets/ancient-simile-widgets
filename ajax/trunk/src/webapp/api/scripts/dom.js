@@ -264,7 +264,7 @@ SimileAjax.DOM.createDOMFromString = function(doc, root, s, fieldElmts) {
     elmt.innerHTML = s;
     
     var dom = { elmt: elmt };
-    SimileAjax.DOM._processDOMConstructedFromString(dom, elmt, fieldElmts != null ? fieldElmts : {} );
+    SimileAjax.DOM._processDOMChildrenConstructedFromString(dom, elmt, fieldElmts != null ? fieldElmts : {} );
     
     return dom;
 };
@@ -286,13 +286,17 @@ SimileAjax.DOM._processDOMConstructedFromString = function(dom, elmt, fieldElmts
     }
     
     if (elmt.hasChildNodes()) {
-        var node = elmt.firstChild;
-        while (node != null) {
-            var node2 = node.nextSibling;
-            if (node.nodeType == 1) {
-                SimileAjax.DOM._processDOMConstructedFromString(dom, node, fieldElmts);
-            }
-            node = node2;
+        SimileAjax.DOM._processDOMChildrenConstructedFromString(dom, elmt, fieldElmts);
+    }
+};
+
+SimileAjax.DOM._processDOMChildrenConstructedFromString = function(dom, elmt, fieldElmts) {
+    var node = elmt.firstChild;
+    while (node != null) {
+        var node2 = node.nextSibling;
+        if (node.nodeType == 1) {
+            SimileAjax.DOM._processDOMConstructedFromString(dom, node, fieldElmts);
         }
+        node = node2;
     }
 };
