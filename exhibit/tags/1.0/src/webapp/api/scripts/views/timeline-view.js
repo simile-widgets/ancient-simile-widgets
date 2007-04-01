@@ -49,6 +49,11 @@ Exhibit.TimelineView = function(exhibit, div, configuration, domConfiguration, g
                     return v;
                 } else if (v instanceof Date) {
                     return v;
+                } else if (typeof v == "number") {
+                    var d = new Date();
+                    d.setTime(0);
+                    d.setUTCFullYear(v);
+                    return d;
                 } else {
                     return SimileAjax.DateTime.parseIso8601DateTime(v);
                 }

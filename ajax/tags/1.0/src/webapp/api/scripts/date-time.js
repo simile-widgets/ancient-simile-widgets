@@ -5,10 +5,12 @@
 
 SimileAjax.DateTime = new Object();
 
-SimileAjax.DateTime._dateRegexp = new RegExp(
-    "^([0-9]{4})((-?([0-9]{2})(-?([0-9]{2}))?)|" +
-    "(-?([0-9]{3}))|(-?W([0-9]{2})(-?([1-7]))?))?$"
-);
+SimileAjax.DateTime._iso8601DateRegExp = "^(-?)([0-9]{4})(" + [
+        "(-?([0-9]{2})(-?([0-9]{2}))?)", // -month-dayOfMonth
+        "(-?([0-9]{3}))",                // -dayOfYear
+        "(-?W([0-9]{2})(-?([1-7]))?)"    // -Wweek-dayOfWeek
+    ].join("|") + ")?$";
+    
 SimileAjax.DateTime._timezoneRegexp = new RegExp(
     "Z|(([-+])([0-9]{2})(:?([0-9]{2}))?)$"
 );
@@ -22,17 +24,19 @@ SimileAjax.DateTime.setIso8601Date = function(dateObject, string) {
      *  http://dojotoolkit.org/.
      */
      
-    var d = string.match(SimileAjax.DateTime._dateRegexp);
+    var regexp = Timeline.DateTime._iso8601DateRegExp;
+    var d = string.match(new RegExp(regexp));
     if(!d) {
         throw new Error("Invalid date string: " + string);
     }
     
-    var year = d[1];
-    var month = d[4];
-    var date = d[6];
-    var dayofyear = d[8];
-    var week = d[10];
-    var dayofweek = (d[12]) ? d[12] : 1;
+    var sign = (d[1] == "-") ? -1 : 1; // BC or AD
+    var year = sign * d[2];
+    var month = d[5];
+    var date = d[7];
+    var dayofyear = d[9];
+    var week = d[11];
+    var dayofweek = (d[13]) ? d[13] : 1;
 
     dateObject.setUTCFullYear(year);
     if (dayofyear) { 
