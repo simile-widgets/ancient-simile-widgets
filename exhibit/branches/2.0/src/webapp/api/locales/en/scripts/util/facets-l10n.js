@@ -1,8 +1,8 @@
 /*==================================================
- *  Exhibit.NumericRangeFacet English localization
+ *  Exhibit.FacetUtilities English localization
  *==================================================
  */
  
-Exhibit.NumericRangeFacet.l10n = {
+Exhibit.FacetUtilities.l10n = {
     clearSelectionsTooltip:     "Clear these selections"
 };

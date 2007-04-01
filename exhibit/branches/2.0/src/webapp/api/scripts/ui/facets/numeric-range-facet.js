@@ -8,11 +8,15 @@ Exhibit.NumericRangeFacet = function(containerElmt, uiContext) {
     this._uiContext = uiContext;
     
     this._path = null;
-    this._facetLabel = null;
-    this._interval = 10;
+    this._settings = {};
     
     this._dom = null;
     this._ranges = [];
+};
+
+Exhibit.NumericRangeFacet._settingSpecs = {
+    "facetLabel":       { type: "text" },
+    "interval":         { type: "float", defaultValue: 10 }
 };
 
 Exhibit.NumericRangeFacet.create = function(configuration, containerElmt, uiContext) {
@@ -36,6 +40,8 @@ Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, ui
         Exhibit.UIContext.create(configuration, uiContext)
     );
     
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.NumericRangeFacet._settingSpecs, facet._settings);
+    
     try {
         var expressionString = Exhibit.getAttribute(configElmt, "expression");
         if (expressionString != null && expressionString.length > 0) {
@@ -43,16 +49,6 @@ Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, ui
             if (expression.isPath()) {
                 facet._path = expression.getPath();
             }
-        }
-        
-        var facetLabel = Exhibit.getAttribute(configElmt, "facetLabel");
-        if (facetLabel != null && facetLabel.length > 0) {
-            facet._facetLabel = facetLabel;
-        }
-        
-        var interval = Exhibit.getAttribute(configElmt, "interval");
-        if (interval != null && interval.length > 0) {
-            facet._interval = parseFloat(interval);
         }
     } catch (e) {
         SimileAjax.Debug.exception("NumericRangeFacet: Error processing configuration of numeric range facet", e);
@@ -65,26 +61,25 @@ Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, ui
 };
 
 Exhibit.NumericRangeFacet._configure = function(facet, configuration) {
+    Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.NumericRangeFacet._settingSpecs, facet._settings);
+    
     if ("expression" in configuration) {
         var expression = Exhibit.Expression.parse(configuration.expression);
         if (expression.isPath()) {
             facet._path = expression.getPath();
         }
     }
-    if ("facetLabel" in configuration) {
-        facet._facetLabel = configuration.facetLabel;
-    }
-    if ("interval" in configuration) {
-        facet._interval = configuration.interval;
-    }
 }
 
 Exhibit.NumericRangeFacet.prototype.dispose = function() {
-    this._dom.close();
-    this._dom = null;
+    this._div.innerHTML = "";
     
     this._div = null;
     this._uiContext = null;
+    
+    this._path = null;
+    this._settings = null;
+    this._dom = null;
 };
 
 Exhibit.NumericRangeFacet.prototype.hasRestrictions = function() {
@@ -152,6 +147,7 @@ Exhibit.NumericRangeFacet.prototype.update = function(items) {
 };
 
 Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
+    var self = this;
     var database = this._uiContext.getDatabase();
     
     var propertyID = this._path.getLastSegment().property;
@@ -163,14 +159,14 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
     var rangeIndex = property.getRangeIndex();
     var min = rangeIndex.getMin();
     var max = rangeIndex.getMax();
-    min = Math.floor(min / this._interval) * this._interval;
-    max = Math.ceil(max / this._interval) * this._interval;
+    min = Math.floor(min / this._settings.interval) * this._settings.interval;
+    max = Math.ceil(max / this._settings.interval) * this._settings.interval;
     
     var ranges = [];
-    for (var x = min; x < max; x += this._interval) {
+    for (var x = min; x < max; x += this._settings.interval) {
         var range = { 
             from:       x, 
-            to:         x + this._interval, 
+            to:         x + this._settings.interval, 
             selected:   false
         };
         range.items = this._path.rangeBackward(range.from, range.to, items, database).values
@@ -179,6 +175,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
             var range2 = this._ranges[i];
             if (range2.from == range.from && range2.to == range.to) {
                 range.selected = true;
+                facetHasSelection = true;
                 break;
             }
         }
@@ -186,29 +183,33 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
         ranges.push(range);
     }
     
-    var self = this;
+    var facetHasSelection = this._ranges.length > 0;
     var containerDiv = this._dom.valuesContainer;
-    var makeFacetValue = function(from, to, count, selected) {
-        var onSelect = function(elmt, evt, target) {
-            self._toggleRange(from, to, selected);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
+    containerDiv.style.display = "none";
+        var makeFacetValue = function(from, to, count, selected) {
+            var onSelect = function(elmt, evt, target) {
+                self._toggleRange(from, to, selected);
+                SimileAjax.DOM.cancelEvent(evt);
+                return false;
+            };
+            var elmt = Exhibit.FacetUtilities.constructFacetItem(
+                from + " - " + to, 
+                count, 
+                selected, 
+                facetHasSelection,
+                onSelect
+            );
+            containerDiv.appendChild(elmt);
         };
-        var valueDom = Exhibit.NumericRangeFacet.theme.constructFacetItem(
-            from + " - " + to, 
-            count, 
-            selected, 
-            onSelect
-        );
-        containerDiv.appendChild(valueDom.elmt);
-    };
-    
-    for (var i = 0; i < ranges.length; i++) {
-        var range = ranges[i];
-        if (range.selected || range.items.size() > 0) {
-            makeFacetValue(range.from, range.to, range.items.size(), range.selected);
+        
+        for (var i = 0; i < ranges.length; i++) {
+            var range = ranges[i];
+            if (range.selected || range.items.size() > 0) {
+                makeFacetValue(range.from, range.to, range.items.size(), range.selected);
+            }
         }
-    }
+    containerDiv.style.display = "block";
+    
     this._dom.setSelectionCount(this._ranges.length);
 }
 
@@ -225,13 +226,11 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
         return false;
     };
     
-    this._dom = Exhibit.NumericRangeFacet.theme.constructFacetFrame(
+    this._dom = Exhibit.FacetUtilities.constructFacetFrame(
         this._div,
-        this._facetLabel,
-        onClearSelections,
-        { frame:facet._facetLabel }
+        this._settings.facetLabel,
+        onClearSelections
     );
-    this._dom.open();
 };
 
 Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, selected) {
@@ -245,8 +244,8 @@ Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, selected) 
             self.setRange(from, to, selected);
         },
         label: selected ?
-            ("Remove range " + range + " from " + this._facetLabel) :
-            ("Add range " + range + " to " + this._facetLabel),
+            ("Remove range " + range + " from " + this._settings.facetLabel) :
+            ("Add range " + range + " to " + this._settings.facetLabel),
         uiLayer: SimileAjax.WindowManager.getBaseLayer(),
         lengthy: true
     });

@@ -1,8 +1,7 @@
 /*==================================================
  *  Exhibit.ViewUtilities
  *
- *  Utilities for various parts of Exhibit to 
- *  collect their settings.
+ *  Utilities for views' code.
  *==================================================
  */
 Exhibit.ViewUtilities = new Object();

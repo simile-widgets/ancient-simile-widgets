@@ -28,6 +28,7 @@
             "util/util.js",
             "util/settings.js",
             "util/views.js",
+            "util/facets.js",
             
             "data/database.js",
             "data/expression.js",
@@ -184,9 +185,9 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
+        var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
         //var url = "http://static.simile.mit.edu/ajax/api/simile-ajax-api.js";
-        var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
+        //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {
             var script = document.createElement("script");
             script.type = "text/javascript";

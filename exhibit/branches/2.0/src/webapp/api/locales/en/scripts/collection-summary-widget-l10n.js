@@ -9,12 +9,12 @@ Exhibit.CollectionSummaryWidget.l10n = {
     resetActionTitle:       "Reset all filters",
     
     allResultsTemplate:
-        "<span class='%0' ex:field='currentCountSpan'>0</span> <span class='%1' ex:field='typesSpan'>results</span> total.",
+        "<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> total.",
         
     noResultsTemplate:
-        "<span class='%0'>0</span> <span class='%1' ex:field='typesSpan'>results</span>. (<span ex:field='resetActionLink'></span>)",
+        "<span class='%0'>0</span> <span class='%1' id='typesSpan'>results</span>. (<span id='resetActionLink'></span>)",
         
     filteredResultsTemplate:
-        "<span class='%0' ex:field='currentCountSpan'>0</span> <span class='%1' ex:field='typesSpan'>results</span> " +
-        "filtered from <span ex:field='originalCountSpan'>0</span> originally. (<span ex:field='resetActionLink'></span>)"
+        "<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> " +
+        "filtered from <span id='originalCountSpan'>0</span> originally. (<span id='resetActionLink'></span>)"
 };

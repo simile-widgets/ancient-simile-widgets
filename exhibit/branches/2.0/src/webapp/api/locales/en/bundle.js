@@ -2,7 +2,7 @@
 
 /* collection-summary-widget-l10n.js */
 
-Exhibit.CollectionSummaryWidget.l10n={resetFiltersLabel:"Reset All Filters",resetFiltersTooltip:"Clear all filters and see the original items",resetActionTitle:"Reset all filters",allResultsTemplate:"<span class='%0' ex:field='currentCountSpan'>0</span> <span class='%1' ex:field='typesSpan'>results</span> total.",noResultsTemplate:"<span class='%0'>0</span> <span class='%1' ex:field='typesSpan'>results</span>. (<span ex:field='resetActionLink'></span>)",filteredResultsTemplate:"<span class='%0' ex:field='currentCountSpan'>0</span> <span class='%1' ex:field='typesSpan'>results</span> "+"filtered from <span ex:field='originalCountSpan'>0</span> originally. (<span ex:field='resetActionLink'></span>)"};
+Exhibit.CollectionSummaryWidget.l10n={resetFiltersLabel:"Reset All Filters",resetFiltersTooltip:"Clear all filters and see the original items",resetActionTitle:"Reset all filters",allResultsTemplate:"<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> total.",noResultsTemplate:"<span class='%0'>0</span> <span class='%1' id='typesSpan'>results</span>. (<span id='resetActionLink'></span>)",filteredResultsTemplate:"<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> "+"filtered from <span id='originalCountSpan'>0</span> originally. (<span id='resetActionLink'></span>)"};
 
 /* database-l10n.js */
 
@@ -19,17 +19,9 @@ f.index++;};f.index=0;return f;}};
 
 Exhibit.Lens.l10n={editButtonLabel:"Edit",saveButtonLabel:"Save"};
 
-/* list-facet-l10n.js */
-
-Exhibit.ListFacet.l10n={clearSelectionsTooltip:"Clear these selections",ungroupLink:"(un-group)",ungroupAllButton:"un-group all",closeButton:"close",groupByLink:"group by",collapseLink:"collapse",expandLink:"expand",toggleGroupTooltip:"Toggle group",groupByLabel:"Group by",groupTheGroupsByLabel:"Group the groups by"};
-
 /* map-view-l10n.js */
 
 Exhibit.MapView.l10n={viewLabel:"Map",viewTooltip:"View items on a map",mixedLegendKey:"Mixed",colorLegendTitle:"Color Legend",formatMappableCount:function(count){return"Only "+count+" can be plotted on map.";}};
-
-/* numeric-range-facet-l10n.js */
-
-Exhibit.NumericRangeFacet.l10n={clearSelectionsTooltip:"Clear these selections"};
 
 /* ordered-view-frame-l10n.js */
 
@@ -63,6 +55,10 @@ Exhibit.TimelineView.l10n={viewLabel:"Timeline",viewTooltip:"View items on a tim
 
 if(!("l10n"in Exhibit.UIContext)){Exhibit.UIContext.l10n={};}
 Exhibit.UIContext.l10n["eng"]={initialSettings:{"bubbleWidth":400,"bubbleHeight":300}};
+
+/* facets-l10n.js */
+
+Exhibit.FacetUtilities.l10n={clearSelectionsTooltip:"Clear these selections"};
 
 /* view-panel-l10n.js */
 

@@ -23,8 +23,7 @@
         "scatter-plot-view-l10n.js",
         "pivot-table-view-l10n.js",
         
-        "list-facet-l10n.js",
-        "numeric-range-facet-l10n.js"
+        "util/facets-l10n.js"
     ];
     var cssFiles = [
     ];

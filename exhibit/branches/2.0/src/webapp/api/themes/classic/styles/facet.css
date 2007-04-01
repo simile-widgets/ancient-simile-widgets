@@ -2,15 +2,8 @@
  * Facet box
  *==================================================
  */
-div.exhibit-facet-frame {
-    position:   relative;
-    overflow:   hidden;
-    opacity:    0;
-}
-
 div.exhibit-facet {
-    margin:     1em;
-    padding:    1px;
+    position:   relative;
 }
 
 div.exhibit-facet-header {
@@ -22,9 +15,6 @@ div.exhibit-facet-header-filterControl {
     display:        none;
     background:     #FFFFE0;
     cursor:         pointer;
-}
-.exhibit-facet-hasSelection div.exhibit-facet-header-filterControl {
-    display:        block;
 }
 
 span.exhibit-facet-header-title {
@@ -48,11 +38,6 @@ div.exhibit-facet-resizer {
     text-align:     center;
     cursor:         n-resize;
     height:         10px;
-}
-
-div.exhibit-facet-footer {
-    text-align: center;
-    padding:    2px;
 }
 
 /*==================================================
@@ -80,31 +65,4 @@ div.exhibit-facet-value-count {
 
 div.exhibit-facet-value-inner {
     position:       relative;
-}
-
-img.exhibit-facet-blackCheck {
-    display:        none;
-}
-img.exhibit-facet-grayCheck {
-    display:        inline;
-}
-img.exhibit-facet-noCheck {
-    display:        none;
-}
-
-.exhibit-facet-hasSelection img.exhibit-facet-grayCheck {
-    display:        none;
-}
-.exhibit-facet-hasSelection img.exhibit-facet-noCheck {
-    display:        inline;
-}
-
-.exhibit-facet-value-selected img.exhibit-facet-grayCheck {
-    display:        none;
-}
-.exhibit-facet-value-selected img.exhibit-facet-noCheck {
-    display:        none;
-}
-.exhibit-facet-value-selected img.exhibit-facet-blackCheck {
-    display:        inline;
 }
