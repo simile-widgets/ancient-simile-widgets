@@ -68,7 +68,8 @@ SimileAjax.WindowManager.registerEventWithObject = function(elmt, eventName, obj
         function(elmt2, evt, target) {
             return obj[handlerName].call(obj, elmt2, evt, target);
         },
-        layer
+        layer,
+        cancelEvent
     );
 };
 
@@ -80,11 +81,14 @@ SimileAjax.WindowManager.registerEvent = function(elmt, eventName, handler, laye
     var handler2 = function(elmt, evt, target) {
         if (SimileAjax.WindowManager._canProcessEventAtLayer(layer)) {
             SimileAjax.WindowManager._popToLayer(layer.index);
-            return handler(elmt, evt, target);
-        } else {
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
+            try {
+                handler(elmt, evt, target);
+            } catch (e) {
+                SimileAjax.Debug.exception(e);
+            }
         }
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
     }
     
     SimileAjax.DOM.registerEvent(elmt, eventName, handler2);
