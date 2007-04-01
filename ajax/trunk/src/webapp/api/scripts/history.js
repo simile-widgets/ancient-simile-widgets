@@ -113,7 +113,7 @@ SimileAjax.History.addAction = function(action) {
                 }
             }
         } catch (e) {
-            SimileAjax.Debug.exception("Error adding action {" + action.label + "} to history", e);
+            SimileAjax.Debug.exception(e, "Error adding action {" + action.label + "} to history");
         }
     }, 0);
 };
@@ -160,7 +160,7 @@ SimileAjax.History._handleIFrameOnLoad = function() {
                     try {
                         action.undo();
                     } catch (e) {
-                        SimileAjax.Debug.exception("History: Failed to undo action {" + action.label + "}");
+                        SimileAjax.Debug.exception(e, "History: Failed to undo action {" + action.label + "}");
                     }
                 }
                 
@@ -178,7 +178,7 @@ SimileAjax.History._handleIFrameOnLoad = function() {
                     try {
                         action.perform();
                     } catch (e) {
-                        SimileAjax.Debug.exception("History: Failed to redo action {" + action.label + "}");
+                        SimileAjax.Debug.exception(e, "History: Failed to redo action {" + action.label + "}");
                     }
                     
                     SimileAjax.History._currentIndex++;
