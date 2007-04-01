@@ -250,6 +250,15 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
     }
 }
 
+SimileAjax.DOM._cachedParent = null;
+SimileAjax.DOM.createElementFromString = function(doc, s) {
+    if (SimileAjax.DOM._cachedParent == null) {
+        SimileAjax.DOM._cachedParent = doc.createElement("div");
+    }
+    SimileAjax.DOM._cachedParent.innerHTML = s;
+    return SimileAjax.DOM._cachedParent.firstChild;
+};
+
 SimileAjax.DOM.createDOMFromString = function(doc, root, s, fieldElmts) {
     var elmt = typeof root == "string" ? doc.createElement(root) : root;
     elmt.innerHTML = s;
@@ -261,18 +270,22 @@ SimileAjax.DOM.createDOMFromString = function(doc, root, s, fieldElmts) {
 };
 
 SimileAjax.DOM._processDOMConstructedFromString = function(dom, elmt, fieldElmts) {
-    var field = Exhibit.getAttribute(elmt, "field");
-    if (field != null && field.length > 0) {
-        if (field in fieldElmts) {
+    var id = elmt.id;
+    if (id != null && id.length > 0) {
+        elmt.id = "";
+        if (id in fieldElmts) {
             var parentElmt = elmt.parentNode;
-            parentElmt.insertBefore(fieldElmts[field], elmt);
+            parentElmt.insertBefore(fieldElmts[id], elmt);
             parentElmt.removeChild(elmt);
             
-            dom[field] = fieldElmts[field];
+            dom[id] = fieldElmts[id];
+            return;
         } else {
-            dom[field] = elmt;
+            dom[id] = elmt;
         }
-    } else if (elmt.hasChildNodes()) {
+    }
+    
+    if (elmt.hasChildNodes()) {
         var node = elmt.firstChild;
         while (node != null) {
             var node2 = node.nextSibling;

@@ -31,6 +31,24 @@ SimileAjax.Graphics.createTranslucentImage = SimileAjax.Graphics.pngIsTranslucen
     SimileAjax.Graphics._createTranslucentImage1 :
     SimileAjax.Graphics._createTranslucentImage2;
 
+SimileAjax.Graphics._createTranslucentImageHTML1 = function(url, verticalAlign) {
+    return "<img src=\"" + url + "\"" +
+        (verticalAlign != null ? " style=\"vertical-align: " + verticalAlign + ";\"" : "") +
+        " />";
+};
+SimileAjax.Graphics._createTranslucentImageHTML2 = function(url, verticalAlign) {
+    var style = 
+        "width: 1px; height: 1px; " +
+        "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='image');" +
+        (verticalAlign != null ? " vertical-align: " + verticalAlign + ";" : "");
+        
+    return "<img src='" + url + "' style=\"" + style + "\" />";
+};
+
+SimileAjax.Graphics.createTranslucentImageHTML = SimileAjax.Graphics.pngIsTranslucent ?
+    SimileAjax.Graphics._createTranslucentImageHTML1 :
+    SimileAjax.Graphics._createTranslucentImageHTML2;
+
 SimileAjax.Graphics.setOpacity = function(elmt, opacity) {
     if (SimileAjax.Platform.browser.isIE) {
         elmt.style.filter = "progid:DXImageTransform.Microsoft.Alpha(Style=0,Opacity=" + opacity + ")";
