@@ -59,7 +59,7 @@ Exhibit.LegendWidget.prototype.addEntry = function(key, value, label) {
     );
     dom.elmt.className = "exhibit-legendWidget-entry";
         
-    this._labelStyler(dom.label);
+    this._labelStyler(dom.label, value);
     this._div.appendChild(dom.elmt);
 };
 
@@ -72,5 +72,5 @@ Exhibit.LegendWidget._defaultColorMarkerGenerator = function(value) {
 };
 
 Exhibit.LegendWidget._defaultColorLabelStyler = function(elmt, value) {
-    elmt.style.color = "#" + value;
+    //elmt.style.color = "#" + value;
 };

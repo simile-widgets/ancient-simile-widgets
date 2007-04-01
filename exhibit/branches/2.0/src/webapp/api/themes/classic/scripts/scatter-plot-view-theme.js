@@ -57,38 +57,3 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResize, uiContext) 
     };
     return dom;
 };
-
-Exhibit.ScatterPlotView.theme.constructLegendBlockDom = function(
-    title,
-    colors,
-    labels
-) {
-    var l10n = Exhibit.ScatterPlotView.l10n;
-    var template = {
-        tag:        "div",
-        className:  "exhibit-scatterPlotView-legendBlock",
-        children: [
-            {   tag:        "div",
-                className:  "exhibit-scatterPlotView-legendBlock-title",
-                children:   [ title ]
-            }
-        ]
-    };
-    
-    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    for (var i = 0; i < colors.length; i++) {
-        var div = document.createElement("div");
-        div.className = "exhibit-scatterPlotView-legendBlock-entry";
-        
-        var span = document.createElement("span");
-        span.className = "exhibit-scatterPlotView-legendBlock-colorBlob";
-        span.style.backgroundColor = colors[i];
-        span.innerHTML = "&nbsp;";
-        
-        div.appendChild(span);
-        div.appendChild(document.createTextNode(" " + labels[i]));
-        
-        dom.elmt.appendChild(div);
-    }
-    return dom;
-}
