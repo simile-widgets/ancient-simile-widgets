@@ -10,16 +10,16 @@ SimileAjax.Graphics.pngIsTranslucent = (!SimileAjax.Platform.browser.isIE) || (S
  *  Opacity, translucency
  *==================================================
  */
-SimileAjax.Graphics._createTranslucentImage1 = function(doc, url, verticalAlign) {
-    elmt = doc.createElement("img");
+SimileAjax.Graphics._createTranslucentImage1 = function(url, verticalAlign) {
+    elmt = document.createElement("img");
     elmt.setAttribute("src", url);
     if (verticalAlign != null) {
         elmt.style.verticalAlign = verticalAlign;
     }
     return elmt;
 };
-SimileAjax.Graphics._createTranslucentImage2 = function(doc, url, verticalAlign) {
-    elmt = doc.createElement("img");
+SimileAjax.Graphics._createTranslucentImage2 = function(url, verticalAlign) {
+    elmt = document.createElement("img");
     elmt.style.width = "1px";  // just so that IE will calculate the size property
     elmt.style.height = "1px";
     elmt.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='image')";
@@ -82,26 +82,26 @@ SimileAjax.Graphics._bubblePadding = 15;
 SimileAjax.Graphics._bubblePointOffset = 6;
 SimileAjax.Graphics._halfArrowWidth = 18;
 
-SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWidth, contentHeight) {
+SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, contentHeight) {
     function getWindowDims() {
         if (typeof window.innerHeight == 'number') {
-	    return { w:window.innerWidth, h:window.innerHeight }; // Non-IE
-	} else if (document.documentElement && document.documentElement.clientHeight) {
-	    return { // IE6+, in "standards compliant mode"
-		w:document.documentElement.clientWidth,
-		h:document.documentElement.clientHeight
-	    };
-	} else if (document.body && document.body.clientHeight) {
-	    return { // IE 4 compatible
-		w:document.body.clientWidth,
-		h:document.body.clientHeight
-	    };
-	}
+            return { w:window.innerWidth, h:window.innerHeight }; // Non-IE
+    	} else if (document.documentElement && document.documentElement.clientHeight) {
+    	    return { // IE6+, in "standards compliant mode"
+        		w:document.documentElement.clientWidth,
+        		h:document.documentElement.clientHeight
+    	    };
+    	} else if (document.body && document.body.clientHeight) {
+    	    return { // IE 4 compatible
+        		w:document.body.clientWidth,
+        		h:document.body.clientHeight
+    	    };
+    	}
     }
 
     var close = function() { 
         if (!bubble._closed) {
-            bubble._doc.body.removeChild(bubble._div);
+            document.body.removeChild(bubble._div);
             bubble._doc = null;
             bubble._div = null;
             bubble._content = null;
@@ -111,7 +111,6 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
     var layer = SimileAjax.WindowManager.pushLayer(close, true);
     var bubble = {
         _closed:   false,
-        _doc:      doc,
         close:     function() { SimileAjax.WindowManager.popLayer(layer); }
     };
     
@@ -138,21 +137,21 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
             elmt.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='crop')";
         }
     }
-    var div = doc.createElement("div");
+    var div = document.createElement("div");
     div.style.width = bubbleWidth + "px";
     div.style.height = bubbleHeight + "px";
     div.style.position = "absolute";
     div.style.zIndex = 1000;
     bubble._div = div;
     
-    var divInner = doc.createElement("div");
+    var divInner = document.createElement("div");
     divInner.style.width = "100%";
     divInner.style.height = "100%";
     divInner.style.position = "relative";
     div.appendChild(divInner);
     
     var createImg = function(url, left, top, width, height) {
-        var divImg = doc.createElement("div");
+        var divImg = document.createElement("div");
         divImg.style.left = left + "px";
         divImg.style.top = top + "px";
         setImg(divImg, url, width, height);
@@ -170,7 +169,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
     createImg(urlPrefix + "images/bubble-bottom.png", margins.left, margins.top + contentHeight, contentWidth, margins.bottom);
     createImg(urlPrefix + "images/bubble-bottom-right.png", margins.left + contentWidth, margins.top + contentHeight, margins.right, margins.bottom);
     
-    var divClose = doc.createElement("div");
+    var divClose = document.createElement("div");
     divClose.style.left = (bubbleWidth - margins.right + SimileAjax.Graphics._bubblePadding - 16 - 2) + "px";
     divClose.style.top = (margins.top - SimileAjax.Graphics._bubblePadding + 1) + "px";
     divClose.style.cursor = "pointer";
@@ -178,7 +177,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
     SimileAjax.WindowManager.registerEventWithObject(divClose, "click", bubble, "close");
     divInner.appendChild(divClose);
         
-    var divContent = doc.createElement("div");
+    var divContent = document.createElement("div");
     divContent.style.position = "absolute";
     divContent.style.left = margins.left + "px";
     divContent.style.top = margins.top + "px";
@@ -199,7 +198,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
                 Math.min(left, docWidth + (margins.right - SimileAjax.Graphics._bubblePadding) - bubbleWidth);
                 
             if (pageY - SimileAjax.Graphics._bubblePointOffset - bubbleHeight > 0) { // top
-                var divImg = doc.createElement("div");
+                var divImg = document.createElement("div");
                 
                 divImg.style.left = (pageX - SimileAjax.Graphics._halfArrowWidth - left) + "px";
                 divImg.style.top = (margins.top + contentHeight) + "px";
@@ -212,7 +211,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
                 
                 return;
             } else if (pageY + SimileAjax.Graphics._bubblePointOffset + bubbleHeight < docHeight) { // bottom
-                var divImg = doc.createElement("div");
+                var divImg = document.createElement("div");
                 
                 divImg.style.left = (pageX - SimileAjax.Graphics._halfArrowWidth - left) + "px";
                 divImg.style.top = "0px";
@@ -233,7 +232,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
             Math.min(top, docHeight + (margins.bottom - SimileAjax.Graphics._bubblePadding) - bubbleHeight);
                 
         if (pageX - SimileAjax.Graphics._bubblePointOffset - bubbleWidth > 0) { // left
-            var divImg = doc.createElement("div");
+            var divImg = document.createElement("div");
             
             divImg.style.left = (margins.left + contentWidth) + "px";
             divImg.style.top = (pageY - SimileAjax.Graphics._halfArrowWidth - top) + "px";
@@ -244,7 +243,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
                 SimileAjax.Graphics._arrowOffsets.right) + "px";
             div.style.top = top + "px";
         } else { // right
-            var divImg = doc.createElement("div");
+            var divImg = document.createElement("div");
             
             divImg.style.left = "0px";
             divImg.style.top = (pageY - SimileAjax.Graphics._halfArrowWidth - top) + "px";
@@ -257,7 +256,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(doc, pageX, pageY, contentWi
         }
     })();
     
-    doc.body.appendChild(div);
+    document.body.appendChild(div);
     
     return bubble;
 };

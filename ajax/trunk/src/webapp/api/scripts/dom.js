@@ -166,14 +166,14 @@ SimileAjax.DOM.createInputElement = function(type) {
     return div.firstChild;
 };
 
-SimileAjax.DOM.createDOMFromTemplate = function(doc, template) {
+SimileAjax.DOM.createDOMFromTemplate = function(template) {
     var result = {};
-    result.elmt = SimileAjax.DOM._createDOMFromTemplate(doc, template, result, null);
+    result.elmt = SimileAjax.DOM._createDOMFromTemplate(template, result, null);
     
     return result;
 };
 
-SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, parentElmt) {
+SimileAjax.DOM._createDOMFromTemplate = function(templateNode, result, parentElmt) {
     if (templateNode == null) {
         /*
         var node = doc.createTextNode("--null--");
@@ -184,7 +184,7 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
         */
         return null;
     } else if (typeof templateNode != "object") {
-        var node = doc.createTextNode(templateNode);
+        var node = document.createTextNode(templateNode);
         if (parentElmt != null) {
             parentElmt.appendChild(node);
         }
@@ -203,7 +203,7 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
             if (elmt == null) {
                 elmt = tag == "input" ?
                     SimileAjax.DOM.createInputElement(templateNode.type) :
-                    doc.createElement(tag);
+                    document.createElement(tag);
                     
                 if (parentElmt != null) {
                     parentElmt.appendChild(elmt);
@@ -240,7 +240,7 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
                 }
             } else if (attribute == "children") {
                 for (var i = 0; i < value.length; i++) {
-                    SimileAjax.DOM._createDOMFromTemplate(doc, value[i], result, elmt);
+                    SimileAjax.DOM._createDOMFromTemplate(value[i], result, elmt);
                 }
             } else if (attribute != "tag" && attribute != "elmt") {
                 elmt.setAttribute(attribute, value);
@@ -251,16 +251,16 @@ SimileAjax.DOM._createDOMFromTemplate = function(doc, templateNode, result, pare
 }
 
 SimileAjax.DOM._cachedParent = null;
-SimileAjax.DOM.createElementFromString = function(doc, s) {
+SimileAjax.DOM.createElementFromString = function(s) {
     if (SimileAjax.DOM._cachedParent == null) {
-        SimileAjax.DOM._cachedParent = doc.createElement("div");
+        SimileAjax.DOM._cachedParent = document.createElement("div");
     }
     SimileAjax.DOM._cachedParent.innerHTML = s;
     return SimileAjax.DOM._cachedParent.firstChild;
 };
 
-SimileAjax.DOM.createDOMFromString = function(doc, root, s, fieldElmts) {
-    var elmt = typeof root == "string" ? doc.createElement(root) : root;
+SimileAjax.DOM.createDOMFromString = function(root, s, fieldElmts) {
+    var elmt = typeof root == "string" ? document.createElement(root) : root;
     elmt.innerHTML = s;
     
     var dom = { elmt: elmt };

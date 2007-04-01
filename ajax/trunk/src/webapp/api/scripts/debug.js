@@ -41,27 +41,31 @@ SimileAjax.Debug.warn = function(msg) {
     f(msg);
 };
 
-SimileAjax.Debug.exception = function(msg, e) {
+SimileAjax.Debug.exception = function(e, msg) {
     var f;
     if ("console" in window && "error" in window.console) { // FireBug installed
-        f = function(msg2, e2) {
-            console.error(msg2 + " %o", e2);
+        f = function(e2, msg2) {
+            if (msg2 != null) {
+                console.error(msg2 + " %o", e2);
+            } else {
+                console.error(e2);
+            }
         }
     } else {
         f = SimileAjax.Platform.browser.isIE ?
-            function(msg2, e2) {
+            function(e2, msg2) {
                 if (!SimileAjax.Debug.silent) {
                     alert("Caught exception: " + msg2 + "\n\nDetails: " + e2.description);
                 }
             } :
-            function(msg2, e2) {
+            function(e2, msg2) {
                 if (!SimileAjax.Debug.silent) {
                     alert("Caught exception: " + msg2 + "\n\nDetails: " + e2);
                 }
             };
     }
     SimileAjax.Debug.exception = f;
-    f(msg, e);
+    f(e, msg);
 };
 
 SimileAjax.Debug.objectToString = function(o) {

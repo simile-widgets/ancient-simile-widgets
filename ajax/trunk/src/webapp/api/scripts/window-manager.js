@@ -68,8 +68,7 @@ SimileAjax.WindowManager.registerEventWithObject = function(elmt, eventName, obj
         function(elmt2, evt, target) {
             return obj[handlerName].call(obj, elmt2, evt, target);
         },
-        layer,
-        cancelEvent
+        layer
     );
 };
 
