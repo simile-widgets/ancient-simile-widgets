@@ -7,6 +7,14 @@ String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/, '');
 };
 
+String.prototype.startsWith = function(prefix) {
+    return this.length >= prefix.length && this.substr(0, prefix.length) == prefix;
+};
+
+String.prototype.endsWith = function(suffix) {
+    return this.length >= suffix.length && this.substr(this.length - suffix.length) == suffix;
+};
+
 String.substitute = function(s, objects) {
     var result = "";
     var start = 0;
