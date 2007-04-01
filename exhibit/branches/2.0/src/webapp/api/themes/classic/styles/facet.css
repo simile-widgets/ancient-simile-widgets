@@ -26,18 +26,12 @@ span.exhibit-facet-header-detail {
 }
     
 div.exhibit-facet-body-frame {
-    border:         1px solid #ddd;
 }
 
 div.exhibit-facet-body {
+    border:         1px solid #ddd;
     height:         10em;
     overflow:       auto;
-}
-
-div.exhibit-facet-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
 }
 
 /*==================================================

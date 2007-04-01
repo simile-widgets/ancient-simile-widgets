@@ -220,7 +220,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.MapView.theme.constructDom(this._div);
+    this._dom = Exhibit.MapView.theme.constructDom(this._div, this._uiContext);
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
         {}, 
         this._dom.collectionSummaryDiv, 

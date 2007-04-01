@@ -6,7 +6,7 @@
  */
 Exhibit.FacetUtilities = new Object();
 
-Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAllSelections) {
+Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAllSelections, uiContext) {
     div.className = "exhibit-facet";
     var dom = SimileAjax.DOM.createDOMFromString(
         div,
@@ -17,37 +17,19 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
             "</div>" +
             "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
         "</div>" +
-        "<div class='exhibit-facet-body-frame'>" +
-            "<div class='exhibit-facet-body' id='valuesContainer'></div>" +
-        "</div>" +
-        "<div class='exhibit-facet-resizer' id='resizerDiv'>" +
-            "<img id='resizerImage' />" +
-        "</div>",
-        {   checkImage:     Exhibit.Theme.createTranslucentImage("images/black-check-no-border.png"),
-            resizerImage:   Exhibit.Theme.createTranslucentImage("images/down-arrow.png")
-        }
+        "<div class='exhibit-facet-body-frame' id='frameDiv'></div>",
+        { checkImage: Exhibit.Theme.createTranslucentImage("images/black-check-no-border.png") }
     );
+    var resizableDivWidget = Exhibit.ResizableDivWidget.create({}, dom.frameDiv, uiContext);
+    
+    dom.valuesContainer = resizableDivWidget.getContentDiv();
+    dom.valuesContainer.className = "exhibit-facet-body";
     
     dom.setSelectionCount = function(count) {
         this.filterCountSpan.innerHTML = count;
         this.clearSelectionsDiv.style.display = count > 0 ? "block" : "none";
     };
     SimileAjax.WindowManager.registerEvent(dom.clearSelectionsDiv, "click", onClearAllSelections);
-    SimileAjax.WindowManager.registerForDragging(
-        dom.resizerDiv,
-        {   onDragStart: function() {
-                this._height = dom.valuesContainer.offsetHeight;
-            },
-            onDragBy: function(diffX, diffY) {
-                this._height += diffY;
-                var h = Math.max(50, this._height) + "px";
-                dom.valuesContainer.style.height = h;
-                dom.valuesContainer.style.maxHeight = h;
-            },
-            onDragEnd: function() {
-            }
-        }
-    );
     
     return dom;
 };
@@ -57,7 +39,8 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     count, 
     selected, 
     facetHasSelection,
-    onSelect
+    onSelect,
+    uiContext
 ) {
     var classes = [ "exhibit-facet-value" ];
     if (selected) {

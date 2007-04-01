@@ -126,15 +126,7 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.TimelineView.theme.constructDom(
-        this._div, 
-        function(elmt, evt, target) {
-            self._largestSize = 0;
-            self._reconstruct();
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        }
-    );
+    this._dom = Exhibit.TimelineView.theme.constructDom(this._div, this._uiContext);
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
         {}, 
         this._dom.collectionSummaryDiv, 

@@ -5,7 +5,7 @@
  
 Exhibit.ScatterPlotView.theme = new Object();
 
-Exhibit.ScatterPlotView.theme.constructDom = function(div, onResized) {
+Exhibit.ScatterPlotView.theme.constructDom = function(div, onResize, uiContext) {
     var l10n = Exhibit.ScatterPlotView.l10n;
     var template = {
         elmt:       div,
@@ -23,15 +23,7 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResized) {
                 ]
             },
             {   tag:        "div",
-                field:      "plotContainer",
-                className:  "exhibit-scatterPlotView-plotContainer"
-            },
-            {   tag: "div",
-                className: "exhibit-scatterPlotView-resizer",
-                field: "resizerDiv",
-                children: [
-                    {   elmt: Exhibit.Theme.createTranslucentImage("images/down-arrow.png") }
-                ]
+                field:      "plotOuterContainer"
             },
             {   tag: "div",
                 className:  "exhibit-scatterPlotView-legend",
@@ -41,6 +33,14 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResized) {
     };
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(template);
+    var resizableDivWidget = Exhibit.ResizableDivWidget.create(
+        { onResize: onResize }, 
+        dom.plotOuterContainer, 
+        uiContext
+    );
+    dom.plotContainer = resizableDivWidget.getContentDiv();
+    dom.plotContainer.className = "exhibit-scatterPlotView-plotContainer";
+    
     dom.setPlottableCounts = function(resultsCount, plottableCount) {
         if (plottableCount != resultsCount) {
             dom.plottableDiv.style.display = "block";
@@ -57,21 +57,6 @@ Exhibit.ScatterPlotView.theme.constructDom = function(div, onResized) {
         var td = tr.insertCell(tr.cells.length);
         td.appendChild(blockDom.elmt);
     };
-    
-    SimileAjax.WindowManager.registerForDragging(
-        dom.resizerDiv,
-        {   onDragStart: function() {
-                this._height = dom.plotContainer.offsetHeight;
-            },
-            onDragBy: function(diffX, diffY) {
-                this._height += diffY;
-                dom.plotContainer.style.height = Math.max(50, this._height) + "px";
-            },
-            onDragEnd: function() {
-                onResized();
-            }
-        }
-    );
     return dom;
 };
 

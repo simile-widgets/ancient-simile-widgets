@@ -197,7 +197,8 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
                 count, 
                 selected, 
                 facetHasSelection,
-                onSelect
+                onSelect,
+                self._uiContext
             );
             containerDiv.appendChild(elmt);
         };
@@ -222,7 +223,8 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
     this._dom = Exhibit.FacetUtilities.constructFacetFrame(
         this._div,
         this._settings.facetLabel,
-        function(elmt, evt, target) { self._clearSelections(); }
+        function(elmt, evt, target) { self._clearSelections(); },
+        this._uiContext
     );
 };
 

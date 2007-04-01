@@ -5,7 +5,7 @@
  
 Exhibit.MapView.theme = new Object();
 
-Exhibit.MapView.theme.constructDom = function(div) {
+Exhibit.MapView.theme.constructDom = function(div, uiContext) {
     var l10n = Exhibit.MapView.l10n;
     var template = {
         elmt:       div,
@@ -24,19 +24,7 @@ Exhibit.MapView.theme.constructDom = function(div) {
             },
             {   tag:        "div",
                 className:  "exhibit-mapView-mapContainer",
-                children: [
-                    {   tag:        "div",
-                        className:  "exhibit-mapView-map",
-                        field:      "mapDiv"
-                    }
-                ]
-            },
-            {   tag: "div",
-                className: "exhibit-mapView-resizer",
-                field: "resizerDiv",
-                children: [
-                    {   elmt: Exhibit.Theme.createTranslucentImage("images/down-arrow.png") }
-                ]
+                field:      "mapContainer"
             },
             {   tag: "div",
                 className:  "exhibit-mapView-legend",
@@ -46,6 +34,14 @@ Exhibit.MapView.theme.constructDom = function(div) {
     };
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(template);
+    var resizableDivWidget = Exhibit.ResizableDivWidget.create(
+        { onResize: function() {dom.map.checkResize();} }, 
+        dom.mapContainer, 
+        uiContext
+    );
+    dom.mapDiv = resizableDivWidget.getContentDiv();
+    dom.mapDiv.className = "exhibit-mapView-map"
+    
     dom.setMappableCounts = function(resultsCount, mappableCount) {
         if (mappableCount != resultsCount) {
             dom.mappableDiv.style.display = "block";
@@ -65,21 +61,7 @@ Exhibit.MapView.theme.constructDom = function(div) {
         var td = tr.insertCell(tr.cells.length);
         td.appendChild(blockDom.elmt);
     };
-    
-    SimileAjax.WindowManager.registerForDragging(
-        dom.resizerDiv,
-        {   onDragStart: function() {
-                this._height = dom.mapDiv.offsetHeight;
-            },
-            onDragBy: function(diffX, diffY) {
-                this._height += diffY;
-                dom.mapDiv.style.height = Math.max(50, this._height) + "px";
-            },
-            onDragEnd: function() {
-                dom.map.checkResize();
-            }
-        }
-    );
+
     return dom;
 };
 

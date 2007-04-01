@@ -25,6 +25,7 @@
         "view-panel.css",
         
         "collection-summary-widget.css",
+        "resizable-div-widget.css",
         
         "tile-view.css",
         "map-view.css",

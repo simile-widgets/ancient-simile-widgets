@@ -212,18 +212,12 @@ span.exhibit-facet-header-detail {
 }
     
 div.exhibit-facet-body-frame {
-    border:         1px solid #ddd;
 }
 
 div.exhibit-facet-body {
+    border:         1px solid #ddd;
     height:         10em;
     overflow:       auto;
-}
-
-div.exhibit-facet-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
 }
 
 /*==================================================
@@ -285,14 +279,9 @@ td.exhibit-lens-property-values {
 }
 
 div.exhibit-mapView-mapContainer {
-    border: 1px solid #738699
 }
 div.exhibit-mapView-map {
-}
-div.exhibit-mapView-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
+    border: 1px solid #738699;
 }
 div.exhibit-mapView-mappableDetails {
     padding:        1em;
@@ -320,6 +309,16 @@ div.exhibit-pivotTableView-resizer {
 div.exhibit-pivotTableView-mappableDetails {
     padding:        1em;
     text-align:     center;
+}
+/*==================================================
+ * Resizable Div Widget styles
+ *==================================================
+ */
+div.exhibit-resizableDivWidget-resizer {
+    text-align:     center;
+    cursor:         s-resize;
+    height:         15px;
+    clear:          both;
 }
 div.exhibit-scatterPlotView-plotContainer {
     position: relative;
@@ -410,11 +409,6 @@ div.exhibit-scatterPlotView-point {
     overflow:   hidden;
 }
 
-div.exhibit-scatterPlotView-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
-}
 div.exhibit-scatterPlotView-mappableDetails {
     padding:        1em;
     text-align:     center;
@@ -481,23 +475,15 @@ div.exhibit-thumbnailView-itemContainer-IE {
 
 td.exhibit-tileView-itemIndex {
 }div.exhibit-timelineView-timelineContainer {
-    border: 1px solid #738699
 }
 div.exhibit-timelineView-timeline {
-    font-family: Trebuchet MS, Helvetica, sans serif;
-    font-size:   10pt;
-}
-div.exhibit-timelineView-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
+    border:         1px solid #738699;
+    font-family:    Trebuchet MS, Helvetica, sans serif;
+    font-size:      10pt;
 }
 div.exhibit-timelineView-plottableDetails {
     padding:        1em;
     text-align:     center;
-}
-div.exhibit-timelineView-controls {
-    text-align:     right;
 }
 div.exhibit-timelineView-legend {
     margin-top:     1em;

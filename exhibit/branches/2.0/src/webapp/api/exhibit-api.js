@@ -54,6 +54,7 @@
             
             "ui/widgets/logo.js",
             "ui/widgets/collection-summary-widget.js",
+            "ui/widgets/resizable-div-widget.js",
             
             "ui/views/view-panel.js",
             "ui/views/ordered-view-frame.js",

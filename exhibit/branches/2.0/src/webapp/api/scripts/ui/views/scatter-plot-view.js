@@ -174,7 +174,8 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
     this._div.innerHTML = "";
     this._dom = Exhibit.ScatterPlotView.theme.constructDom(
         this._div, 
-        function() { return self._reconstruct(); }
+        function() { return self._reconstruct(); },
+        this._uiContext
     );
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
         {}, 

@@ -1,12 +1,7 @@
 div.exhibit-mapView-mapContainer {
-    border: 1px solid #738699
 }
 div.exhibit-mapView-map {
-}
-div.exhibit-mapView-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
+    border: 1px solid #738699;
 }
 div.exhibit-mapView-mappableDetails {
     padding:        1em;

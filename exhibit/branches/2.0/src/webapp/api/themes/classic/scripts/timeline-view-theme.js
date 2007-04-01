@@ -32,7 +32,7 @@ Exhibit.TimelineView.theme.markers = [
     }
 ];
 
-Exhibit.TimelineView.theme.constructDom = function(div, onRelayout) {
+Exhibit.TimelineView.theme.constructDom = function(div, uiContext) {
     var l10n = Exhibit.TimelineView.l10n;
     var template = {
         elmt:       div,
@@ -51,28 +51,7 @@ Exhibit.TimelineView.theme.constructDom = function(div, onRelayout) {
             },
             {   tag:        "div",
                 className:  "exhibit-timelineView-timelineContainer",
-                children: [
-                    {   tag:        "div",
-                        className:  "exhibit-timelineView-timeline",
-                        field:      "timelineDiv"
-                    }
-                ]
-            },
-            {   tag:        "div",
-                className:  "exhibit-timelineView-resizer",
-                field:      "resizerDiv",
-                children: [
-                    {   elmt: Exhibit.Theme.createTranslucentImage("images/down-arrow.png") }
-                ]
-            },
-            {   tag:        "div",
-                className:  "exhibit-timelineView-controls",
-                children: [
-                    {   tag:    "button",
-                        field:  "relayoutButton",
-                        children: [ l10n.relayoutButtonLabel ]
-                    }
-                ]
+                field:      "timelineContainer"
             },
             {   tag:        "div",
                 className:  "exhibit-timelineView-legend",
@@ -82,8 +61,14 @@ Exhibit.TimelineView.theme.constructDom = function(div, onRelayout) {
     };
     
     var dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    SimileAjax.WindowManager.registerEvent(dom.relayoutButton, "click", onRelayout);
-
+    var resizableDivWidget = Exhibit.ResizableDivWidget.create(
+        { onResize: function() {dom.timeline.layout();} }, 
+        dom.timelineContainer, 
+        uiContext
+    );
+    dom.timelineDiv = resizableDivWidget.getContentDiv();
+    dom.timelineDiv.className = "exhibit-timelineView-timeline";
+    
     dom.setPlottableCounts = function(resultsCount, plottableCount, originalCount) {
         if (plottableCount != resultsCount) {
             dom.plottableDiv.style.display = "block";
@@ -103,21 +88,7 @@ Exhibit.TimelineView.theme.constructDom = function(div, onRelayout) {
         var td = tr.insertCell(tr.cells.length);
         td.appendChild(blockDom.elmt);
     };
-    
-    SimileAjax.WindowManager.registerForDragging(
-        dom.resizerDiv,
-        {   onDragStart: function() {
-                this._height = dom.timelineDiv.offsetHeight;
-            },
-            onDragBy: function(diffX, diffY) {
-                this._height += diffY;
-                dom.timelineDiv.style.height = Math.max(50, this._height) + "px";
-            },
-            onDragEnd: function() {
-                dom.timeline.layout();
-            }
-        }
-    );
+
     return dom;
 };
 

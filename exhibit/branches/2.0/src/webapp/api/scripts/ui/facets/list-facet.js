@@ -192,7 +192,8 @@ Exhibit.ListFacet.prototype._initializeUI = function() {
     this._dom = Exhibit.FacetUtilities.constructFacetFrame(
         this._div,
         this._settings.facetLabel,
-        function(elmt, evt, target) { self._clearSelections(); }
+        function(elmt, evt, target) { self._clearSelections(); },
+        this._uiContext
     );
 };
 
@@ -213,7 +214,8 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
                 entry.count, 
                 entry.selected, 
                 facetHasSelection,
-                onSelect
+                onSelect,
+                self._uiContext
             );
             containerDiv.appendChild(elmt);
         };

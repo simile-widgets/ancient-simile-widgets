@@ -49,7 +49,7 @@ Exhibit.TileView.l10n={viewLabel:"Tiles",viewTooltip:"View items as tiles in a l
 
 /* timeline-view-l10n.js */
 
-Exhibit.TimelineView.l10n={viewLabel:"Timeline",viewTooltip:"View items on a timeline",colorLegendTitle:"Color Legend",relayoutButtonLabel:"Re-Layout",formatMappableCount:function(count){return"Only "+count+" can be plotted on the timeline.";}};
+Exhibit.TimelineView.l10n={viewLabel:"Timeline",viewTooltip:"View items on a timeline",colorLegendTitle:"Color Legend",formatMappableCount:function(count){return"Only "+count+" can be plotted on the timeline.";}};
 
 /* ui-context-l10n.js */
 

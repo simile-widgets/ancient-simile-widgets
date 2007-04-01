@@ -1,21 +1,13 @@
 div.exhibit-timelineView-timelineContainer {
-    border: 1px solid #738699
 }
 div.exhibit-timelineView-timeline {
-    font-family: Trebuchet MS, Helvetica, sans serif;
-    font-size:   10pt;
-}
-div.exhibit-timelineView-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
+    border:         1px solid #738699;
+    font-family:    Trebuchet MS, Helvetica, sans serif;
+    font-size:      10pt;
 }
 div.exhibit-timelineView-plottableDetails {
     padding:        1em;
     text-align:     center;
-}
-div.exhibit-timelineView-controls {
-    text-align:     right;
 }
 div.exhibit-timelineView-legend {
     margin-top:     1em;

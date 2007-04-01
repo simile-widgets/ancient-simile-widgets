@@ -87,11 +87,6 @@ div.exhibit-scatterPlotView-point {
     overflow:   hidden;
 }
 
-div.exhibit-scatterPlotView-resizer {
-    text-align:     center;
-    cursor:         n-resize;
-    height:         10px;
-}
 div.exhibit-scatterPlotView-mappableDetails {
     padding:        1em;
     text-align:     center;
