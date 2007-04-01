@@ -118,6 +118,16 @@ SimileAjax.History.addAction = function(action) {
     }, 0);
 };
 
+SimileAjax.History.addLengthyAction = function(perform, undo, label) {
+    SimileAjax.History.addAction({
+        perform:    perform,
+        undo:       undo,
+        label:      label,
+        uiLayer:    SimileAjax.WindowManager.getBaseLayer(),
+        lengthy:    true
+    });
+};
+
 SimileAjax.History._handleIFrameOnLoad = function() {
     /*
      *  This function is invoked when the user herself
