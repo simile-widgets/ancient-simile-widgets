@@ -36,8 +36,8 @@ Exhibit.SettingsUtilities._internalCollectSettings = function(f, specs, settings
             name = spec.name;
         }
         
-        if (!(name in settings)) {
-            settings[name] = "defaultValue" in spec ? spec.defaultValue : null;
+        if (!(name in settings) && "defaultValue" in spec) {
+            settings[name] = spec.defaultValue;
         }
         
         var value = f(field);

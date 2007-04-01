@@ -3,10 +3,9 @@
  *==================================================
  */
 
-Exhibit.NumericRangeFacet = function(collection, containerElmt, exhibit) {
-    this._collection = collection;
+Exhibit.NumericRangeFacet = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
     
     this._path = null;
     this._facetLabel = null;
@@ -16,29 +15,25 @@ Exhibit.NumericRangeFacet = function(collection, containerElmt, exhibit) {
     this._ranges = [];
 };
 
-Exhibit.NumericRangeFacet.create = function(configuration, containerElmt, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+Exhibit.NumericRangeFacet.create = function(configuration, containerElmt, uiContext) {
     var facet = new Exhibit.NumericRangeFacet(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
     
     Exhibit.NumericRangeFacet._configure(facet, configuration);
     
     facet._initializeUI();
-    collection.addFacet(facet);
+    uiContext.getCollection().addFacet(facet);
     
     return facet;
 };
 
-Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, exhibit) {
+Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
     var facet = new Exhibit.NumericRangeFacet(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        exhibit
+        Exhibit.UIContext.create(configuration, uiContext)
     );
     
     try {
@@ -64,7 +59,7 @@ Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, ex
     }
     
     facet._initializeUI();
-    collection.addFacet(facet);
+    uiContext.getCollection().addFacet(facet);
     
     return facet;
 };
@@ -88,9 +83,8 @@ Exhibit.NumericRangeFacet.prototype.dispose = function() {
     this._dom.close();
     this._dom = null;
     
-    this._collection = null;
     this._div = null;
-    this._exhibit = null;
+    this._uiContext = null;
 };
 
 Exhibit.NumericRangeFacet.prototype.hasRestrictions = function() {
@@ -138,7 +132,7 @@ Exhibit.NumericRangeFacet.prototype.restrict = function(items) {
         return items;
     } else {
         var path = this._path;
-        var database = this._exhibit.getDatabase();
+        var database = this._uiContext.getDatabase();
         
         var set = new Exhibit.Set();
         for (var i = 0; i < this._ranges.length; i++) {
@@ -158,7 +152,7 @@ Exhibit.NumericRangeFacet.prototype.update = function(items) {
 };
 
 Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
-    var database = this._exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     
     var propertyID = this._path.getLastSegment().property;
     var property = database.getProperty(propertyID);
@@ -201,7 +195,6 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
             return false;
         };
         var valueDom = Exhibit.NumericRangeFacet.theme.constructFacetItem(
-            self._exhibit,
             from + " - " + to, 
             count, 
             selected, 
@@ -220,7 +213,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
 }
 
 Exhibit.NumericRangeFacet.prototype._notifyCollection = function() {
-    this._collection.onFacetUpdated(this);
+    this._uiContext.getCollection().onFacetUpdated(this);
 };
 
 Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
@@ -233,7 +226,6 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
     };
     
     this._dom = Exhibit.NumericRangeFacet.theme.constructFacetFrame(
-        this._exhibit,
         this._div,
         this._facetLabel,
         onClearSelections,

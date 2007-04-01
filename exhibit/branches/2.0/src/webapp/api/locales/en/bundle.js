@@ -59,6 +59,11 @@ Exhibit.TileView.l10n={viewLabel:"Tiles",viewTooltip:"View items as tiles in a l
 
 Exhibit.TimelineView.l10n={viewLabel:"Timeline",viewTooltip:"View items on a timeline",colorLegendTitle:"Color Legend",relayoutButtonLabel:"Re-Layout",formatMappableCount:function(count){return"Only "+count+" can be plotted on the timeline.";}};
 
+/* ui-context-l10n.js */
+
+if(!("l10n"in Exhibit.UIContext)){Exhibit.UIContext.l10n={};}
+Exhibit.UIContext.l10n["eng"]={initialSettings:{"bubbleWidth":400,"bubbleHeight":300}};
+
 /* view-panel-l10n.js */
 
 Exhibit.ViewPanel.l10n={createSelectViewActionTitle:function(viewLabel){return"select "+viewLabel+" view";},missingViewClassMessage:"The specification for one of the views is missing the viewClass field.",viewClassNotFunctionMessage:function(expr){return"The viewClass attribute value '"+expr+"' you have specified\n"+"for one of the views does not evaluate to a Javascript function.";},badViewClassMessage:function(expr){return"The viewClass attribute value '"+expr+"' you have specified\n"+"for one of the views is not a valid Javascript expression.";}};

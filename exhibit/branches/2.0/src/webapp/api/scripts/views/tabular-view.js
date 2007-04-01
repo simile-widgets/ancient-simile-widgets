@@ -3,11 +3,9 @@
  *==================================================
  */
 
-Exhibit.TabularView = function(collection, containerElmt, lensRegistry, exhibit) {
-    this._collection = collection;
+Exhibit.TabularView = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._lensRegistry = lensRegistry;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
     
     this._initialCount = 10;
     this._showAll = true;
@@ -24,19 +22,14 @@ Exhibit.TabularView = function(collection, containerElmt, lensRegistry, exhibit)
             view._reconstruct(); 
         }
     };
-    collection.addListener(this._listener);
+    uiContext.getCollection().addListener(this._listener);
 };
 
-Exhibit.TabularView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+Exhibit.TabularView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.TabularView(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
-    
     Exhibit.TabularView._configure(view, configuration);
     
     view._internalValidate();
@@ -44,15 +37,11 @@ Exhibit.TabularView.create = function(configuration, containerElmt, lensRegistry
     return view;
 };
 
-Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
     var view = new Exhibit.TabularView(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
     
     try {
@@ -113,41 +102,44 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, lensRegi
         }
     }
         
+    Exhibit.TabularView._configure(view, configuration);
     view._internalValidate();
     view._initializeUI();
     return view;
 };
 
 Exhibit.TabularView._configure = function(view, configuration) {
-    var columns = configuration.columns;
-    for (var i = 0; i < columns.length; i++) {
-        var column = columns[i];
-        var expr;
-        var styler = null;
-        var label = null;
-        var format = null;
-        
-        if (typeof column == "string") {
-            expr = column;
-        } else {
-            expr = column.expression;
-            styler = column.styler;
-            label = column.label;
-            format = column.format;
-        }
-        
-        var expression = Exhibit.Expression.parse(expr);
-        if (expression.isPath()) {
-            var path = expression.getPath();
-            if (format == null) {
-                format = "list";
+    if ("columns" in configuration) {
+        var columns = configuration.columns;
+        for (var i = 0; i < columns.length; i++) {
+            var column = columns[i];
+            var expr;
+            var styler = null;
+            var label = null;
+            var format = null;
+            
+            if (typeof column == "string") {
+                expr = column;
+            } else {
+                expr = column.expression;
+                styler = column.styler;
+                label = column.label;
+                format = column.format;
             }
-            view._columns.push({
-                expression: expression,
-                styler:     styler,
-                label:      label,
-                format:     format
-            });
+            
+            var expression = Exhibit.Expression.parse(expr);
+            if (expression.isPath()) {
+                var path = expression.getPath();
+                if (format == null) {
+                    format = "list";
+                }
+                view._columns.push({
+                    expression: expression,
+                    styler:     styler,
+                    label:      label,
+                    format:     format
+                });
+            }
         }
     }
     
@@ -174,7 +166,7 @@ Exhibit.TabularView._configure = function(view, configuration) {
 
 Exhibit.TabularView.prototype._internalValidate = function() {
     if (this._columns.length == 0) {
-        var database = this._exhibit.getDatabase();
+        var database = this._uiContext.getDatabase();
         var propertyIDs = database.getAllProperties();
         for (var i = 0; i < propertyIDs.length; i++) {
             var propertyID = propertyIDs[i];
@@ -193,28 +185,27 @@ Exhibit.TabularView.prototype._internalValidate = function() {
 };
 
 Exhibit.TabularView.prototype.dispose = function() {
-    this._collection.removeListener(this._listener);
+    this._uiContext.getCollection().removeListener(this._listener);
     this._collectionSummaryWidget.dispose();
+    this._uiContext.dispose();
     
     this._div.innerHTML = "";
     
     this._collectionSummaryWidget = null;
+    this._uiContext = null;
     this._dom = null;
     this._div = null;
-    this._collection = null;
-    this._exhibit = null;
 };
 
 Exhibit.TabularView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.TabularView.theme.createDom(this._exhibit, this._div);
+    this._dom = Exhibit.TabularView.theme.createDom(this._div);
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        { collectionID: this._collection.getID() }, 
+        {}, 
         this._dom.collectionSummaryDiv, 
-        this._lensRegistry,
-        this._exhibit
+        this._uiContext
     );
     
     this._reconstruct();
@@ -222,8 +213,8 @@ Exhibit.TabularView.prototype._initializeUI = function() {
 
 Exhibit.TabularView.prototype._reconstruct = function() {
     var self = this;
-    var exhibit = this._exhibit;
-    var database = exhibit.getDatabase();
+    var collection = this._uiContext.getCollection();
+    var database = this._uiContext.getDatabase();
     
     var bodyDiv = this._dom.bodyDiv;
     bodyDiv.innerHTML = "";
@@ -232,9 +223,9 @@ Exhibit.TabularView.prototype._reconstruct = function() {
      *  Get the current collection and check if it's empty
      */
     var items = [];
-    var originalSize = this._collection.countAllItems();
+    var originalSize = collection.countAllItems();
     if (originalSize > 0) {
-        var currentSet = this._collection.getRestrictedItems();
+        var currentSet = collection.getRestrictedItems();
         currentSet.visit(function(itemID) { items.push({ id: itemID, sortKey: "" }); });
     }
     
@@ -332,7 +323,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
 };
 
 Exhibit.TabularView.prototype._getColumnLabel = function(expression) {
-    var database = this._exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     var path = expression.getPath();
     var segment = path.getSegment(path.getSegmentCount() - 1);
     var propertyID = segment.property;
@@ -345,7 +336,7 @@ Exhibit.TabularView.prototype._getColumnLabel = function(expression) {
 };
 
 Exhibit.TabularView.prototype._createSortFunction = function(items, expression, ascending) {
-    var database = this._exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     var multiply = ascending ? 1 : -1;
     
     var numericFunction = function(item1, item2) {
@@ -484,7 +475,7 @@ Exhibit.TabularView._constructDefaultValueList = function(values, valueType, par
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, view._lensRegistry, view._exhibit));
+            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, view._uiContext));
         } :
         function(value) {
             addDelimiter();

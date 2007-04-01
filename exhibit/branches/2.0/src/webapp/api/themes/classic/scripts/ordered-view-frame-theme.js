@@ -6,7 +6,6 @@
 Exhibit.OrderedViewFrame.theme = new Object();
 
 Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
-    collection,
     exhibit, 
     headerDiv,
     onThenSortBy,
@@ -95,11 +94,7 @@ Exhibit.OrderedViewFrame.theme.createHeaderDom = function(
     return dom;
 };
 
-Exhibit.OrderedViewFrame.theme.createOrderDom = function(
-    exhibit, 
-    label,
-    onPopup
-) {
+Exhibit.OrderedViewFrame.theme.createOrderDom = function(label, onPopup) {
     var a = Exhibit.UI.makeActionLink(label, onPopup);
     //a.appendChild(Exhibit.Theme.createTranslucentImage(document, "images/down-arrow.png"));
     

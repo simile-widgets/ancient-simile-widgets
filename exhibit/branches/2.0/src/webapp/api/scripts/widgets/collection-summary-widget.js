@@ -2,34 +2,29 @@
  *  Exhibit.CollectionSummaryWidget
  *==================================================
  */
-Exhibit.CollectionSummaryWidget = function(collection, containerElmt, exhibit) {
-    this._collection = collection;
+Exhibit.CollectionSummaryWidget = function(containerElmt, uiContext) {
+    this._exhibit = uiContext.getExhibit();
+    this._collection = uiContext.getCollection();
     this._div = containerElmt;
-    this._exhibit = exhibit;
     
     var widget = this;
     this._listener = { onItemsChanged: function() { widget._reconstruct(); } };
     this._collection.addListener(this._listener);
 };
 
-Exhibit.CollectionSummaryWidget.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+Exhibit.CollectionSummaryWidget.create = function(configuration, containerElmt, uiContext) {
     var widget = new Exhibit.CollectionSummaryWidget(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
     widget._initializeUI();
     return widget;
 };
 
-Exhibit.CollectionSummaryWidget.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
-    var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
+Exhibit.CollectionSummaryWidget.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var widget = new Exhibit.CollectionSummaryWidget(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        exhibit
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
     widget._initializeUI();
     return widget;

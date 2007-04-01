@@ -3,11 +3,9 @@
  *==================================================
  */
  
-Exhibit.TimelineView = function(collection, containerElmt, lensRegistry, exhibit) {
-    this._collection = collection;
+Exhibit.TimelineView = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._lensRegistry = lensRegistry;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
     
     this._settings = {};
     this._accessors = {
@@ -26,7 +24,7 @@ Exhibit.TimelineView = function(collection, containerElmt, lensRegistry, exhibit
             view._reconstruct(); 
         }
     };
-    collection.addListener(this._listener);
+    uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.TimelineView._intervalChoices = [
@@ -41,8 +39,6 @@ Exhibit.TimelineView._settingSpecs = {
     "bottomBandUnit":          { type: "enum",       defaultValue: null, choices: Exhibit.TimelineView._intervalChoices },
     "bottomBandPixelsPerUnit": { type: "int",        defaultValue: 200 },
     "timelineHeight":          { type: "int",        defaultValue: 400 },
-    "bubbleWidth":             { type: "int",        defaultValue: 400 },
-    "bubbleHeight":            { type: "int",        defaultValue: 300 },
     "timelineConstructor":     { type: "function",   defaultValue: null }
 };
 
@@ -72,31 +68,22 @@ Exhibit.TimelineView._accessorSpecs = [
     }
 ];
 
-Exhibit.TimelineView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+Exhibit.TimelineView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.TimelineView(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
-    
     Exhibit.TimelineView._configure(view, configuration);
     
     view._initializeUI();
     return view;
 };
 
-Exhibit.TimelineView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+Exhibit.TimelineView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
     var view = new Exhibit.TimelineView(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
     
     Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt, Exhibit.TimelineView._accessorSpecs, view._accessors);
@@ -120,17 +107,18 @@ Exhibit.TimelineView._configure = function(view, configuration) {
 };
 
 Exhibit.TimelineView.prototype.dispose = function() {
-    this._collection.removeListener(this._listener);
+    this._uiContext.getCollection().removeListener(this._listener);
     this._collectionSummaryWidget.dispose();
+    this._uiContext.dispose();
     
     this._div.innerHTML = "";
     
     this._collectionSummaryWidget = null;
+    this._uiContext = null;
+    
     this._dom.timeline = null;
     this._dom = null;
     this._div = null;
-    this._collection = null;
-    this._exhibit = null;
 };
 
 Exhibit.TimelineView.prototype._initializeUI = function() {
@@ -138,7 +126,6 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
     
     this._div.innerHTML = "";
     this._dom = Exhibit.TimelineView.theme.constructDom(
-        this._exhibit, 
         this._div, 
         function(elmt, evt, target) {
             self._largestSize = 0;
@@ -148,10 +135,9 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
         }
     );
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        { collectionID: this._collection.getID() }, 
+        {}, 
         this._dom.collectionSummaryDiv, 
-        this._lensRegistry,
-        this._exhibit
+        this._uiContext
     );
     
     this._eventSource = new Timeline.DefaultEventSource();
@@ -176,8 +162,8 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
         timelineDiv.style.height = "400px";
         
         var theme = Timeline.ClassicTheme.create();
-        theme.event.bubble.width = settings.bubbleWidth;
-        theme.event.bubble.height = settings.bubbleHeight;
+        theme.event.bubble.width = this._uiContext.getSetting("bubbleWidth");
+        theme.event.bubble.height = this._uiContext.getSetting("bubbleHeight");
         
         var topIntervalUnit, bottomIntervalUnit;
         if (settings.topBandUnit != null || settings.bottomBandUnit != null) {
@@ -262,15 +248,15 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
 
 Exhibit.TimelineView.prototype._reconstruct = function() {
     var self = this;
-    var exhibit = this._exhibit;
-    var database = exhibit.getDatabase();
+    var collection = this._uiContext.getCollection();
+    var database = this._uiContext.getDatabase();
     var settings = this._settings;
     var accessors = this._accessors;
     
     /*
      *  Get the current collection and check if it's empty
      */
-    var currentSize = this._collection.countRestrictedItems();
+    var currentSize = collection.countRestrictedItems();
     var plottableSize = 0;
     
     var usedKeys = {};
@@ -279,7 +265,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     this._eventSource.clear();
     
     if (currentSize > 0) {
-        var currentSet = this._collection.getRestrictedItems();
+        var currentSet = collection.getRestrictedItems();
         var events = [];
         
         var addEvent = function(itemID, duration, colorData) {
@@ -356,7 +342,6 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         }
         
         this._dom.addLegendBlock(Exhibit.TimelineView.theme.constructLegendBlockDom(
-            this._exhibit,
             Exhibit.TimelineView.l10n.colorLegendTitle,
             legendColors,
             legendLabels
@@ -375,5 +360,5 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
 };
 
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {
-    this._lensRegistry.createLens(evt._itemID, elmt, this._exhibit);
+    this._uiContext.getLensRegistry().createLens(evt._itemID, elmt, this._uiContext);
 };

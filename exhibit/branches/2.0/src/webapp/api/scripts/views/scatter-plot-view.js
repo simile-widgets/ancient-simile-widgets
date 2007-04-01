@@ -2,11 +2,9 @@
  *  Exhibit.ScatterPlotView
  *==================================================
  */
-Exhibit.ScatterPlotView = function(collection, containerElmt, lensRegistry, exhibit) {
-    this._collection = collection;
+Exhibit.ScatterPlotView = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._lensRegistry = lensRegistry;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
 
     this._settings = {};
     this._accessors = {
@@ -27,7 +25,7 @@ Exhibit.ScatterPlotView = function(collection, containerElmt, lensRegistry, exhi
             view._reconstruct(); 
         }
     };
-    collection.addListener(this._listener);
+    uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.ScatterPlotView._settingSpecs = {
@@ -79,33 +77,24 @@ Exhibit.ScatterPlotView._accessorSpecs = [
     }
 ];
 
-Exhibit.ScatterPlotView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+Exhibit.ScatterPlotView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.ScatterPlotView(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
-    
     Exhibit.ScatterPlotView._configure(view, configuration);
     
     view._initializeUI();
     return view;
 };
 
-Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
     var view = new Exhibit.ScatterPlotView(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
-    
+
     Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt, Exhibit.ScatterPlotView._accessorSpecs, view._accessors);
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.ScatterPlotView._settingSpecs, view._settings);
     Exhibit.ScatterPlotView._configure(view, configuration);
@@ -167,16 +156,16 @@ Exhibit.ScatterPlotView.evaluateSingle = function(expression, itemID, database) 
 }
 
 Exhibit.ScatterPlotView.prototype.dispose = function() {
-    this._collection.removeListener(this._listener);
+    this._uiContext.getCollection().removeListener(this._listener);
     this._collectionSummaryWidget.dispose();
+    this._uiContext.dispose();
     
     this._div.innerHTML = "";
     
     this._collectionSummaryWidget = null;
+    this._uiContext = null;
     this._dom = null;
     this._div = null;
-    this._collection = null;
-    this._exhibit = null;
 };
 
 Exhibit.ScatterPlotView.prototype._initializeUI = function() {
@@ -184,15 +173,13 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ScatterPlotView.theme.constructDom(
-        this._exhibit, 
         this._div, 
         function() { return self._reconstruct(); }
     );
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        { collectionID: this._collection.getID() }, 
+        {}, 
         this._dom.collectionSummaryDiv, 
-        this._lensRegistry,
-        this._exhibit
+        this._uiContext
     );
     
     this._dom.plotContainer.style.height = this._settings.plotHeight + "px";
@@ -201,8 +188,8 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
 
 Exhibit.ScatterPlotView.prototype._reconstruct = function() {
     var self = this;
-    var exhibit = this._exhibit;
-    var database = exhibit.getDatabase();
+    var collection = this._uiContext.getCollection();
+    var database = this._uiContext.getDatabase();
     var settings = this._settings;
     var accessors = this._accessors;
     
@@ -213,12 +200,12 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
     var unscaleX = self._axisInverseFuncs.x;
     var unscaleY = self._axisInverseFuncs.y;
     
-    var currentSize = this._collection.countRestrictedItems();
+    var currentSize = collection.countRestrictedItems();
     var mappableSize = 0;
     
     this._dom.clearLegend();
     if (currentSize > 0) {
-        var currentSet = this._collection.getRestrictedItems();
+        var currentSet = collection.getRestrictedItems();
         
         var xyToData = {};
         var xAxisMin = settings.xAxisMin;
@@ -472,7 +459,6 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         legendColors.push("white");
         
         this._dom.addLegendBlock(Exhibit.ScatterPlotView.theme.constructLegendBlockDom(
-            this._exhibit,
             Exhibit.ScatterPlotView.l10n.colorLegendTitle,
             legendColors,
             legendLabels
@@ -485,10 +471,7 @@ Exhibit.ScatterPlotView.prototype._openPopup = function(elmt, items) {
     Exhibit.ViewUtilities.openBubbleForItems(
         elmt, 
         items, 
-        this._settings.bubbleWidth, // px
-        this._settings.bubbleHeight, // px
-        this._lensRegistry,
-        this._exhibit
+        this._uiContext
     );
 };
 

@@ -6,7 +6,6 @@
 Exhibit.ThumbnailView.theme = new Object();
 
 Exhibit.ThumbnailView.theme.constructGroup = function(
-    exhibit,
     groupLevel,
     label
 ) {
@@ -40,7 +39,7 @@ Exhibit.ThumbnailView.theme.constructGroup = function(
     return SimileAjax.DOM.createDOMFromTemplate(document, template);
 };
 
-Exhibit.ThumbnailView.theme.constructItemContainer = function(exhibit) {
+Exhibit.ThumbnailView.theme.constructItemContainer = function() {
     var div = document.createElement("div");
     div.className = "exhibit-thumbnailView-body";
     return div;

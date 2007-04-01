@@ -3,51 +3,35 @@
  *==================================================
  */
 
-Exhibit.TileView = function(collection, containerElmt, lensRegistry, exhibit) {
-    this._collection = collection;
+Exhibit.TileView = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._lensRegistry = lensRegistry;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
     
     var view = this;
-    this._listener = { 
-        onItemsChanged: function() {
-            view._reconstruct(); 
-        } 
-    };
-    collection.addListener(this._listener);
     
-    this._orderedViewFrame = new Exhibit.OrderedViewFrame(this._collection, this._exhibit);
-    this._orderedViewFrame.parentReconstruct = function() {
-        view._reconstruct();
-    }
+    this._listener = { onItemsChanged: function() { view._reconstruct(); } };
+    uiContext.getCollection().addListener(this._listener);
+    
+    this._orderedViewFrame = new Exhibit.OrderedViewFrame(uiContext);
+    this._orderedViewFrame.parentReconstruct = function() { view._reconstruct(); }
 };
 
-Exhibit.TileView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+Exhibit.TileView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.TileView(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
-    
     view._orderedViewFrame.configure(configuration);
     
     view._initializeUI();
     return view;
 };
 
-Exhibit.TileView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+Exhibit.TileView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
     var view = new Exhibit.TileView(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
     
     view._orderedViewFrame.configureFromDOM(configElmt);
@@ -58,17 +42,16 @@ Exhibit.TileView.createFromDOM = function(configElmt, containerElmt, lensRegistr
 };
 
 Exhibit.TileView.prototype.dispose = function() {
-    this._collection.removeListener(this._listener);
+    this._uiContext.getCollection().removeListener(this._listener);
+    
     this._div.innerHTML = "";
     
     this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
     this._dom = null;
     
-    this._collection = null;
     this._div = null;
-    this._lensRegistry = null;
-    this._exhibit = null;
+    this._uiContext = null;
 };
 
 Exhibit.TileView.prototype._initializeUI = function() {
@@ -128,11 +111,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
     this._orderedViewFrame.onNewGroup = function(groupSortKey, keyType, groupLevel) {
         closeGroups(groupLevel);
         
-        var groupDom = Exhibit.TileView.theme.constructGroup(
-            view._exhibit,
-            groupLevel,
-            groupSortKey
-        );
+        var groupDom = Exhibit.TileView.theme.constructGroup(groupLevel, groupSortKey);
         
         state.div.appendChild(groupDom.elmt);
         state.div = groupDom.contentDiv;
@@ -145,7 +124,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
         //if (index > 10) return;
         
         if (state.table == null) {
-            state.table = Exhibit.TileView.theme.constructTable(view._exhibit);
+            state.table = Exhibit.TileView.theme.constructTable();
             state.div.appendChild(state.table);
         }
         
@@ -163,7 +142,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
         var tdItemLens = tr.insertCell(1);
         
         var itemLensDiv = document.createElement("div");
-        var itemLens = view._lensRegistry.createLens(itemID, itemLensDiv, view._exhibit);
+        var itemLens = view._uiContext.getLensRegistry().createLens(itemID, itemLensDiv, view._uiContext);
         tdItemLens.appendChild(itemLensDiv);
     };
                 

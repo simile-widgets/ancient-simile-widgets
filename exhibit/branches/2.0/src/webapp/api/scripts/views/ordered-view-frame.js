@@ -3,9 +3,8 @@
  *==================================================
  */
  
-Exhibit.OrderedViewFrame = function(collection, exhibit) {
-    this._collection = collection;
-    this._exhibit = exhibit;
+Exhibit.OrderedViewFrame = function(uiContext) {
+    this._uiContext = uiContext;
     
     this._orders = null;
     this._possibleOrders = null;
@@ -95,8 +94,7 @@ Exhibit.OrderedViewFrame.prototype.dispose = function() {
     
     this._divHeader = null;
     this._divFooter = null;
-    this._collection = null;
-    this._exhibit = null;
+    this._uiContext = null;
 };
 
 Exhibit.OrderedViewFrame.prototype._configureOrders = function(orders) {
@@ -174,8 +172,7 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
     
     var self = this;
     this._headerDom = Exhibit.OrderedViewFrame.theme.createHeaderDom(
-        this._collection,
-        this._exhibit, 
+        this._uiContext.getExhibit(), 
         this._divHeader, 
         function(elmt, evt, target) {
             Exhibit.ViewPanel.resetCollection(self._collection);
@@ -200,7 +197,7 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
         this._generatedContentElmtRetriever // HACK
     );
     this._footerDom = Exhibit.OrderedViewFrame.theme.createFooterDom(
-        this._exhibit, 
+        this._uiContext.getExhibit(), 
         this._divFooter, 
         function(elmt, evt, target) {
             self._setShowAll(true);
@@ -215,23 +212,22 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
     );
     
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        { collectionID: this._collection.getID() }, 
+        {},
         this._headerDom.collectionSummaryDiv, 
-        this._exhibit.getLensRegistry(),
-        this._exhibit
+        this._uiContext
     );
 };
 
 Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     var self = this;
-    var exhibit = this._exhibit;
-    var database = exhibit.getDatabase();
+    var collection = this._uiContext.getCollection();
+    var database = this._uiContext.getDatabase();
     
     /*
      *  Get the current collection and check if it's empty
      */
-    var originalSize = this._collection.countAllItems();
-    var currentSize = this._collection.countRestrictedItems();
+    var originalSize = collection.countAllItems();
+    var currentSize = collection.countRestrictedItems();
     
     /*
      *  Set the header UI
@@ -241,7 +237,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     
     var hasSomeGrouping = false;
     if (currentSize > 0) {
-        var currentSet = this._collection.getRestrictedItems();
+        var currentSet = collection.getRestrictedItems();
         
         hasSomeGrouping = this._internalReconstruct(currentSet);
         
@@ -252,7 +248,6 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
         var buildOrderDom = function(order, index) {
             var property = database.getProperty(order.property);
             var orderDom = Exhibit.OrderedViewFrame.theme.createOrderDom(
-                exhibit,
                 (order.forward) ? property.getPluralLabel() : property.getReversePluralLabel(),
                 function(elmt, evt, target) {
                     self._openSortPopup(elmt, index);
@@ -274,9 +269,8 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
 
 Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
     var self = this;
-    var exhibit = this._exhibit;
     var settings = this._settings;
-    var database = exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     var orders = this._orders;
     var itemIndex = 0;
     
@@ -478,7 +472,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
 
 Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
     var self = this;
-    var database = this._exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     
     var popupDom = Exhibit.Theme.createPopupMenuDom(elmt);
     
@@ -607,7 +601,7 @@ Exhibit.OrderedViewFrame.prototype._reSort = function(index, propertyID, forward
         newOrders = newOrders.concat(oldOrders.slice(index+1));
     }
     
-    var property = this._exhibit.getDatabase().getProperty(propertyID);
+    var property = this._uiContext.getDatabase().getProperty(propertyID);
     var propertyLabel = forward ? property.getPluralLabel() : property.getReversePluralLabel();
     var valueType = forward ? property.getValueType() : "item";
     var sortLabels = Exhibit.Database.l10n.sortLabels[valueType];
@@ -636,7 +630,7 @@ Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
     var newOrders = this._orders.slice(0, index).concat(this._orders.slice(index + 1));
     
     var order = oldOrders[index];
-    var property = this._exhibit.getDatabase().getProperty(order.property);
+    var property = this._uiContext.getDatabase().getProperty(order.property);
     var propertyLabel = order.forward ? property.getPluralLabel() : property.getReversePluralLabel();
     var valueType = order.forward ? property.getValueType() : "item";
     var sortLabels = Exhibit.Database.l10n.sortLabels[valueType];

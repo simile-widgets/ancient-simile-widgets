@@ -3,10 +3,9 @@
  *  http://simile.mit.edu/wiki/Exhibit/API/ViewPanel
  *======================================================================
  */
-Exhibit.ViewPanel = function(div, exhibit) {
-    this._exhibit = exhibit;
+Exhibit.ViewPanel = function(div, uiContext) {
+    this._uiContext = uiContext;
     this._div = div;
-    this._lensRegistry = new Exhibit.LensRegistry(exhibit.getLensRegistry());
     
     this._viewConstructors = [];
     this._viewConfigs = [];
@@ -18,8 +17,8 @@ Exhibit.ViewPanel = function(div, exhibit) {
     this._view = null;
 }
 
-Exhibit.ViewPanel.create = function(configuration, div, exhibit) {
-    var viewPanel = new Exhibit.ViewPanel(div, exhibit);
+Exhibit.ViewPanel.create = function(configuration, div, uiContext) {
+    var viewPanel = new Exhibit.ViewPanel(div, uiContext);
     
     if ("views" in configuration) {
         for (var i = 0; i < configuration.views.length; i++) {
@@ -69,8 +68,8 @@ Exhibit.ViewPanel.create = function(configuration, div, exhibit) {
     return viewPanel;
 };
 
-Exhibit.ViewPanel.createFromDOM = function(div, exhibit) {
-    var viewPanel = new Exhibit.ViewPanel(div, exhibit);
+Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
+    var viewPanel = new Exhibit.ViewPanel(div, uiContext);
     
     var node = div.firstChild;
     while (node != null) {
@@ -118,7 +117,7 @@ Exhibit.ViewPanel.createFromDOM = function(div, exhibit) {
         }
         node = node.nextSibling;
     }
-    Exhibit.Component.registerLensesFromDOM(div, viewPanel._lensRegistry);
+    Exhibit.UIContext.registerLensesFromDOM(div, viewPanel._uiContext.getLensRegistry());
     
     var initialView = Exhibit.getAttribute(div, "initialView");
     if (initialView != null) {
@@ -140,6 +139,12 @@ Exhibit.ViewPanel.prototype.dispose = function() {
         this._view.dispose();
         this._view = null;
     }
+    
+    this._div.innerHTML = "";
+    
+    this._uiContext.dispose();
+    this._uiContext = null;
+    this._div = null;
 };
 
 Exhibit.ViewPanel.prototype._internalValidate = function() {
@@ -165,7 +170,6 @@ Exhibit.ViewPanel.prototype._initializeUI = function() {
     
     var self = this;
     this._dom = Exhibit.ViewPanel.theme.constructDom(
-        this._exhibit,
         this._div.firstChild,
         this._viewLabels,
         this._viewTooltips,
@@ -193,15 +197,13 @@ Exhibit.ViewPanel.prototype._createView = function() {
         this._view = this._viewConstructors[index].createFromDOM(
             this._viewDomConfigs[index],
             viewContainer, 
-            this._lensRegistry, 
-            this._exhibit
+            this._uiContext
         );
     } else {
         this._view = this._viewConstructors[index].create(
             this._viewConfigs[index],
             viewContainer, 
-            this._lensRegistry, 
-            this._exhibit
+            this._uiContext
         );
     }
     this._dom.setViewIndex(index);

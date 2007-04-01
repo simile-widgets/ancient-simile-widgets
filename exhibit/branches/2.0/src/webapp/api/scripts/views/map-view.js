@@ -3,11 +3,9 @@
  *==================================================
  */
 
-Exhibit.MapView = function(collection, containerElmt, lensRegistry, exhibit) {
-    this._collection = collection;
+Exhibit.MapView = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._lensRegistry = lensRegistry;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
 
     this._settings = {};
     this._accessors = {
@@ -23,7 +21,7 @@ Exhibit.MapView = function(collection, containerElmt, lensRegistry, exhibit) {
             view._reconstruct(); 
         }
     };
-    collection.addListener(this._listener);
+    uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.MapView._settingSpecs = {
@@ -79,31 +77,22 @@ Exhibit.MapView._accessorSpecs = [
     }
 ];
 
-Exhibit.MapView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+Exhibit.MapView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.MapView(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
-    
     Exhibit.MapView._configure(view, configuration);
     
     view._initializeUI();
     return view;
 };
 
-Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
     var view = new Exhibit.MapView(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
     
     Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt, Exhibit.MapView._accessorSpecs, view._accessors);
@@ -212,17 +201,17 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
 };
 
 Exhibit.MapView.prototype.dispose = function() {
-    this._collection.removeListener(this._listener);
+    this._uiContext.getCollection().removeListener(this._listener);
     this._collectionSummaryWidget.dispose();
+    this._uiContext.dispose();
     
     this._div.innerHTML = "";
     
     this._collectionSummaryWidget = null;
+    this._uiContext = null;
     this._dom.map = null;
     this._dom = null;
     this._div = null;
-    this._collection = null;
-    this._exhibit = null;
     
     GUnload();
 };
@@ -231,12 +220,11 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.MapView.theme.constructDom(this._exhibit, this._div);
+    this._dom = Exhibit.MapView.theme.constructDom(this._div);
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        { collectionID: this._collection.getID() }, 
+        {}, 
         this._dom.collectionSummaryDiv, 
-        this._lensRegistry,
-        this._exhibit
+        this._uiContext
     );
     
     var mapDiv = this._dom.getMapDiv();
@@ -280,22 +268,22 @@ Exhibit.MapView.prototype._initializeUI = function() {
 
 Exhibit.MapView.prototype._reconstruct = function() {
     var self = this;
-    var exhibit = this._exhibit;
-    var database = exhibit.getDatabase();
+    var collection = this._uiContext.getCollection();
+    var database = this._uiContext.getDatabase();
     var settings = this._settings;
     var accessors = this._accessors;
     
     /*
      *  Get the current collection and check if it's empty
      */
-    var originalSize = this._collection.countAllItems();
-    var currentSize = this._collection.countRestrictedItems();
+    var originalSize = collection.countAllItems();
+    var currentSize = collection.countRestrictedItems();
     var mappableSize = 0;
     
     this._dom.map.clearOverlays();
     this._dom.clearLegend();
     if (currentSize > 0) {
-        var currentSet = this._collection.getRestrictedItems();
+        var currentSet = collection.getRestrictedItems();
         var locationToData = {};
         
         currentSet.visit(function(itemID) {
@@ -413,7 +401,6 @@ Exhibit.MapView.prototype._reconstruct = function() {
         );
         
         this._dom.addLegendBlock(Exhibit.MapView.theme.constructLegendBlockDom(
-            this._exhibit,
             Exhibit.MapView.l10n.colorLegendTitle,
             legendIcons,
             legendLabels
@@ -424,10 +411,9 @@ Exhibit.MapView.prototype._reconstruct = function() {
 
 Exhibit.MapView.prototype._createInfoWindow = function(items) {
     return Exhibit.ViewUtilities.fillBubbleWithItems(
-        div, 
+        null, 
         items, 
-        this._lensRegistry,
-        this._exhibit
+        this._uiContext
     );
 };
 

@@ -5,7 +5,7 @@
  
 Exhibit.PivotTableView.theme = new Object();
 
-Exhibit.PivotTableView.theme.constructDom = function(exhibit, div) {
+Exhibit.PivotTableView.theme.constructDom = function(div) {
     var l10n = Exhibit.PivotTableView.l10n;
     var template = {
         elmt: div,

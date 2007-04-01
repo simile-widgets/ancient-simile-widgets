@@ -72,9 +72,9 @@ Exhibit._Impl = function(database) {
             window.database :
             Exhibit.Database.create());
             
+    this._uiContext = Exhibit.UIContext.createRootContext({}, this);
     this._collectionMap = {};
     this._componentMap= {};
-    this._lensRegistry = new Exhibit.LensRegistry();
     
     var self = this;
     this._focusID = null;
@@ -101,7 +101,7 @@ Exhibit._Impl = function(database) {
     }
 };
 
-Exhibit._Impl.prototype.dispose=function() {
+Exhibit._Impl.prototype.dispose = function() {
     SimileAjax.History.removeListener(this._historyListener);
     this._database.removeListener(this._databaseListener);
     
@@ -120,15 +120,20 @@ Exhibit._Impl.prototype.dispose=function() {
         }
     }
     
-    this._database=null;
+    this._uiContext.dispose();
+    
+    this._componentMap = null;
+    this._collectionMap = null;
+    this._uiContext = null;
+    this._database = null;
 };
 
 Exhibit._Impl.prototype.getDatabase = function() {
     return this._database;
 };
 
-Exhibit._Impl.prototype.getLensRegistry = function() {
-    return this._lensRegistry;
+Exhibit._Impl.prototype.getUIContext = function() {
+    return this._uiContext;
 };
 
 Exhibit._Impl.prototype.getCollection = function(id) {
@@ -175,13 +180,13 @@ Exhibit._Impl.prototype.setComponent = function(id, c) {
     this._componentMap[id] = c;
 };
 
-Exhibit._Impl.prototype.configure=function(configuration) {
+Exhibit._Impl.prototype.configure = function(configuration) {
     if ("collections" in configuration) {
         for (var i = 0; i < configuration.collections.length; i++) {
             var config = configuration.collections[i];
             var id = config.id;
             if (id == null || id.length == 0) {
-                id="default";
+                id = "default";
             }
             this.setCollection(id, Exhibit.Collection.create(id, config, this.getDatabase()));
         }
@@ -189,7 +194,7 @@ Exhibit._Impl.prototype.configure=function(configuration) {
     if ("components" in configuration) {
         for (var i = 0; i < configuration.components.length; i++) {
             var config = configuration.components[i];
-            var component = Exhibit.Component.create(config, this);
+            var component = Exhibit.Component.create(config, this._uiContext);
             if (component != null) {
                 var id = elmt.id;
                 if (id == null || id.length == 0) {
@@ -235,7 +240,7 @@ Exhibit._Impl.prototype.configureFromDOM = function() {
     
     for (var i = 0; i < componentElmts.length; i++) {
         var elmt = componentElmts[i];
-        var component = Exhibit.Component.createFromDOM(elmt, this);
+        var component = Exhibit.Component.createFromDOM(elmt, this._uiContext);
         if (component != null) {
             var id = elmt.id;
             if (id == null || id.length == 0) {

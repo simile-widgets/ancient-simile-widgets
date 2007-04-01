@@ -32,7 +32,7 @@ Exhibit.TimelineView.theme.markers = [
     }
 ];
 
-Exhibit.TimelineView.theme.constructDom = function(exhibit, div, onRelayout) {
+Exhibit.TimelineView.theme.constructDom = function(div, onRelayout) {
     var l10n = Exhibit.TimelineView.l10n;
     var template = {
         elmt:       div,
@@ -124,7 +124,6 @@ Exhibit.TimelineView.theme.constructDom = function(exhibit, div, onRelayout) {
 };
 
 Exhibit.TimelineView.theme.constructLegendBlockDom = function(
-    exhibit,
     title,
     colors,
     labels

@@ -138,7 +138,7 @@ Exhibit.UI.enableActionLink = function(a, enabled) {
     a.className = enabled ? "exhibit-action" : "exhibit-action-disabled";
 };
 
-Exhibit.UI.makeItemSpan = function(itemID, label, layer, lensRegistry, exhibit) {
+Exhibit.UI.makeItemSpan = function(itemID, label, layer, uiContext) {
     if (label == null) {
         label = database.getObject(itemID, "label");
     }
@@ -152,7 +152,7 @@ Exhibit.UI.makeItemSpan = function(itemID, label, layer, lensRegistry, exhibit) 
     a.innerHTML = label;
     
     var handler = function(elmt, evt, target) {
-        Exhibit.UI.showItemInPopup(itemID, elmt, lensRegistry, exhibit);
+        Exhibit.UI.showItemInPopup(itemID, elmt, uiContext);
         SimileAjax.DOM.cancelEvent(evt);
         return false;
     }
@@ -180,18 +180,18 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
     return span;
 };
 
-Exhibit.UI.showItemInPopup = function(itemID, elmt, lensRegistry, exhibit) {
+Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext) {
     var coords = SimileAjax.DOM.getPageCoordinates(elmt);
     var bubble = SimileAjax.Graphics.createBubbleForPoint(
         document, 
         coords.left + Math.round(elmt.offsetWidth / 2), 
         coords.top + Math.round(elmt.offsetHeight / 2), 
-        400, // px
-        300  // px
+        uiContext.getSetting("bubbleWidth"),
+        uiContext.getSetting("bubbleHeight")
     );
     
     var itemLensDiv = document.createElement("div");
-    var itemLens = lensRegistry.createLens(itemID, itemLensDiv, exhibit);
+    var itemLens = uiContext.getLensRegistry().createLens(itemID, itemLensDiv, uiContext);
     bubble.content.appendChild(itemLensDiv);
 };
 

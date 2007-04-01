@@ -5,7 +5,7 @@
  
 Exhibit.MapView.theme = new Object();
 
-Exhibit.MapView.theme.constructDom = function(exhibit, div) {
+Exhibit.MapView.theme.constructDom = function(div) {
     var l10n = Exhibit.MapView.l10n;
     var template = {
         elmt:       div,
@@ -86,7 +86,6 @@ Exhibit.MapView.theme.constructDom = function(exhibit, div) {
 };
 
 Exhibit.MapView.theme.constructLegendBlockDom = function(
-    exhibit,
     title,
     icons,
     labels

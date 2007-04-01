@@ -5,11 +5,7 @@
  
 Exhibit.TileView.theme = new Object();
 
-Exhibit.TileView.theme.constructGroup = function(
-    exhibit,
-    groupLevel,
-    label
-) {
+Exhibit.TileView.theme.constructGroup = function(groupLevel, label) {
     var l10n = Exhibit.TileView.l10n;
     var template = {
         tag: "div",
@@ -40,7 +36,7 @@ Exhibit.TileView.theme.constructGroup = function(
     return SimileAjax.DOM.createDOMFromTemplate(document, template);
 };
 
-Exhibit.TileView.theme.constructTable = function(exhibit) {
+Exhibit.TileView.theme.constructTable = function() {
     var table = document.createElement("table");
     table.className = "exhibit-tileView-body";
     return table;

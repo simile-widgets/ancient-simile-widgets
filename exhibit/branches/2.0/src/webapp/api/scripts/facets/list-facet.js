@@ -3,10 +3,9 @@
  *==================================================
  */
 
-Exhibit.ListFacet = function(collection, containerElmt, exhibit) {
-    this._collection = collection;
+Exhibit.ListFacet = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
     
     this.path = null;
     this._facetLabel = null;
@@ -20,29 +19,25 @@ Exhibit.ListFacet = function(collection, containerElmt, exhibit) {
     this.selectedCount = 0;
 };
 
-Exhibit.ListFacet.create = function(configuration, containerElmt, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
+Exhibit.ListFacet.create = function(configuration, containerElmt, uiContext) {
     var facet = new Exhibit.ListFacet(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
     
     Exhibit.ListFacet._configure(facet, configuration);
     
     facet._initializeUI();
-    collection.addFacet(facet);
+    uiContext.getCollection().addFacet(facet);
     
     return facet;
 };
 
-Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, exhibit) {
+Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
     var facet = new Exhibit.ListFacet(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        exhibit
+        Exhibit.UIContext.create(configuration, uiContext)
     );
     
     try {
@@ -73,7 +68,7 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, exhibit) {
     }
     
     facet._initializeUI();
-    collection.addFacet(facet);
+    uiContext.getCollection().addFacet(facet);
     
     return facet;
 };
@@ -109,9 +104,8 @@ Exhibit.ListFacet.prototype.dispose = function() {
     this._dom = null;
     this._topValueDoms = null;
     
-    this._collection = null;
     this._div = null;
-    this._exhibit = null;
+    this._uiContext = null;
 };
 
 Exhibit.ListFacet.prototype.hasRestrictions = function() {
@@ -244,7 +238,7 @@ Exhibit.ListFacet.prototype.update = function(items) {
 };
 
 Exhibit.ListFacet.prototype._computeFacet = function(currentSet) {
-    var database = this._exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     
     var results = this.getPath().walkForward(currentSet, "item", database);
     var values = results.values;
@@ -338,7 +332,7 @@ Exhibit.ListFacet.prototype._computeFacet = function(currentSet) {
 }
 
 Exhibit.ListFacet.prototype._createFacetTemplate = function(values, valueType, slideSet) {
-    var database = this._exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     var segment = this.getPath(-1).getLastSegment();
     var property = segment.property;
     var forward = segment.forward;
@@ -368,7 +362,7 @@ Exhibit.ListFacet.prototype._createFacetTemplate = function(values, valueType, s
 };
 
 Exhibit.ListFacet.prototype._notifyCollection = function() {
-    this._collection.onFacetUpdated(this);
+    this._uiContext.getCollection().onFacetUpdated(this);
 };
 
 Exhibit.ListFacet.prototype._initializeUI = function() {
@@ -396,7 +390,6 @@ Exhibit.ListFacet.prototype._initializeUI = function() {
     };
     
     this._dom = Exhibit.ListFacet.theme.constructFacetFrame(
-        this._exhibit,
         this._div,
         this._facetLabel,
         this._groupable,
@@ -424,7 +417,6 @@ Exhibit.ListFacet.prototype._constructBody = function(facetData) {
             return false;
         };
         var valueDom = Exhibit.ListFacet.theme.constructFacetItem(
-            listFacet._exhibit,
             value.label, 
             value.count, 
             level,
@@ -442,8 +434,7 @@ Exhibit.ListFacet.prototype._constructBody = function(facetData) {
             listFacet._topValueDoms.push(valueDom);
         }
         if (value.children.length > 0) {
-            var childrenContainer = Exhibit.ListFacet.theme.constructFacetChildrenContainer(
-                listFacet._exhibit, expanded);
+            var childrenContainer = Exhibit.ListFacet.theme.constructFacetChildrenContainer(expanded);
             
             constructValues(value.children, childrenContainer, level + 1);
             containerDiv.appendChild(childrenContainer);
@@ -544,7 +535,6 @@ Exhibit.ListFacet.prototype._openGroupingUI = function() {
     var coords = SimileAjax.DOM.getPageCoordinates(this._dom.elmt);
     var listFacet = this;
     this._groupingBoxDom = Exhibit.ListFacet.theme.constructGroupingBox(
-        this._exhibit,
         coords.left > (document.body.scrollWidth / 2),
         function(elmt, evt, target) {
             listFacet._ungroupAll();
@@ -574,7 +564,6 @@ Exhibit.ListFacet.prototype._reconstructGroupingBox = function() {
     
     var makeGroup = function(group, level) {
         var groupDom = Exhibit.ListFacet.theme.constructGroup(
-            listFacet._exhibit,
             level == 0,
             group.grouped,
             function(elmt, evt, target) {
@@ -588,7 +577,6 @@ Exhibit.ListFacet.prototype._reconstructGroupingBox = function() {
         
         var makeGroupOption = function(groupingOption) {
             var optionDom = Exhibit.ListFacet.theme.constructGroupingOption(
-                listFacet._exhibit,
                 groupingOption.label,
                 groupingOption.selected,
                 function(elmt, evt, target) { 

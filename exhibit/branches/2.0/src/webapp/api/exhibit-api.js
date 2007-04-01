@@ -35,6 +35,7 @@
             "functions.js",
             "collection.js",
             
+            "ui-context.js",
             "component.js",
             "lens.js",
             

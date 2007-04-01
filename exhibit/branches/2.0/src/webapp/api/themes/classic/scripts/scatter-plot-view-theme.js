@@ -5,7 +5,7 @@
  
 Exhibit.ScatterPlotView.theme = new Object();
 
-Exhibit.ScatterPlotView.theme.constructDom = function(exhibit, div, onResized) {
+Exhibit.ScatterPlotView.theme.constructDom = function(div, onResized) {
     var l10n = Exhibit.ScatterPlotView.l10n;
     var template = {
         elmt:       div,
@@ -78,7 +78,6 @@ Exhibit.ScatterPlotView.theme.constructDom = function(exhibit, div, onResized) {
 };
 
 Exhibit.ScatterPlotView.theme.constructLegendBlockDom = function(
-    exhibit,
     title,
     colors,
     labels

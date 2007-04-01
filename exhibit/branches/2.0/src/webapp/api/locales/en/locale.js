@@ -7,6 +7,8 @@
     var javascriptFiles = [
         "exhibit-l10n.js",
         "database-l10n.js",
+        "ui-context-l10n.js",
+        
         "lens-l10n.js",
         
         "collection-summary-widget-l10n.js",

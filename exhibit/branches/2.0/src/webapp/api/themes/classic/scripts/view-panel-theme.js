@@ -6,7 +6,6 @@
 Exhibit.ViewPanel.theme = new Object();
 
 Exhibit.ViewPanel.theme.constructDom = function(
-    exhibit,
     div,
     viewLabels,
     viewTooltips,

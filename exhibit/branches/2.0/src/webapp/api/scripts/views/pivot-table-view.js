@@ -2,11 +2,9 @@
  *  Exhibit.PivotTableView
  *==================================================
  */
-Exhibit.PivotTableView = function(collection, containerElmt, lensRegistry, exhibit) {
-    this._collection = collection;
+Exhibit.PivotTableView = function(containerElmt, uiContext) {
     this._div = containerElmt;
-    this._lensRegistry = lensRegistry;
-    this._exhibit = exhibit;
+    this._uiContext = uiContext;
 
     this._rowPath = null;
     this._columnPath = null;
@@ -20,17 +18,13 @@ Exhibit.PivotTableView = function(collection, containerElmt, lensRegistry, exhib
             view._reconstruct(); 
         }
     };
-    collection.addListener(this._listener);
+    uiContext.getCollection().addListener(this._listener);
 };
 
-Exhibit.PivotTableView.create = function(configuration, containerElmt, lensRegistry, exhibit) {
-    var collection = Exhibit.Collection.getCollection(configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistry(configuration, lensRegistry);
+Exhibit.PivotTableView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.PivotTableView(
-        collection, 
-        containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        containerElmt,
+        Exhibit.UIContext.create(configuration, uiContext)
     );
     
     Exhibit.PivotTableView._configure(view, configuration);
@@ -39,29 +33,32 @@ Exhibit.PivotTableView.create = function(configuration, containerElmt, lensRegis
     return view;
 };
 
-Exhibit.PivotTableView.createFromDOM = function(configElmt, containerElmt, lensRegistry, exhibit) {
+Exhibit.PivotTableView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var collection = Exhibit.Collection.getCollectionFromDOM(configElmt, configuration, exhibit);
-    var lensRegistry2 = Exhibit.Component.createLensRegistryFromDOM(configElmt, configuration, lensRegistry);
     var view = new Exhibit.PivotTableView(
-        collection, 
         containerElmt != null ? containerElmt : configElmt, 
-        lensRegistry2, 
-        exhibit
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
     
     view._columnPath = Exhibit.PivotTableView._parsePath(Exhibit.getAttribute(configElmt, "column"));
     view._rowPath = Exhibit.PivotTableView._parsePath(Exhibit.getAttribute(configElmt, "row"));
     view._cellExpression = Exhibit.PivotTableView._parseExpression(Exhibit.getAttribute(configElmt, "cell"));
+    Exhibit.PivotTableView._configure(view, configuration);
     
     view._initializeUI();
     return view;
 };
 
 Exhibit.PivotTableView._configure = function(view, configuration) {
-    view._columnPath = Exhibit.PivotTableView._parsePath(configuration.column);
-    view._rowPath = Exhibit.PivotTableView._parsePath(configuration.row);
-    view._cellExpression = Exhibit.PivotTableView._parseExpression(configuration.cell);
+    if ("column" in configuration) {
+        view._columnPath = Exhibit.PivotTableView._parsePath(configuration.column);
+    }
+    if ("row" in configuration) {
+        view._rowPath = Exhibit.PivotTableView._parsePath(configuration.row);
+    }
+    if ("cell" in configuration) {
+        view._cellExpression = Exhibit.PivotTableView._parseExpression(configuration.cell);
+    }
 };
 
 Exhibit.PivotTableView._parseExpression = function(s) {
@@ -88,28 +85,27 @@ Exhibit.PivotTableView._parsePath = function(s) {
 };
 
 Exhibit.PivotTableView.prototype.dispose = function() {
-    this._collection.removeListener(this._listener);
+    this._uiContext.getCollection().removeListener(this._listener);
     this._collectionSummaryWidget.dispose();
+    this._uiContext.dispose();
     
     this._div.innerHTML = "";
     
     this._collectionSummaryWidget = null;
+    this._uiContext = null;
     this._dom = null;
     this._div = null;
-    this._collection = null;
-    this._exhibit = null;
 };
 
 Exhibit.PivotTableView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.PivotTableView.theme.constructDom(this._exhibit, this._div);
+    this._dom = Exhibit.PivotTableView.theme.constructDom(this._div);
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        { collectionID: this._collection.getID() }, 
+        {}, 
         this._dom.collectionSummaryDiv, 
-        this._lensRegistry,
-        this._exhibit
+        this._uiContext
     );
     
     this._reconstruct();
@@ -118,9 +114,9 @@ Exhibit.PivotTableView.prototype._initializeUI = function() {
 Exhibit.PivotTableView.prototype._reconstruct = function() {
     this._dom.tableContainer.innerHTML = "";
     
-    var currentSize = this._collection.countRestrictedItems();
+    var currentSize = this._uiContext.getCollection().countRestrictedItems();
     if (currentSize > 0) {
-        var currentSet = this._collection.getRestrictedItems();
+        var currentSet = this._uiContext.getCollection().getRestrictedItems();
         if (this._columnPath != null && this._rowPath != null && this._cellExpression != null) {
             this._makeTable(currentSet);
         }
@@ -129,8 +125,7 @@ Exhibit.PivotTableView.prototype._reconstruct = function() {
 
 Exhibit.PivotTableView.prototype._makeTable = function(items) {
     var self = this;
-    var exhibit = this._exhibit;
-    var database = exhibit.getDatabase();
+    var database = this._uiContext.getDatabase();
     
     var rowResults = this._rowPath.walkForward(items, "item", database);
     var columnResults = this._columnPath.walkForward(items, "item", database);
@@ -270,13 +265,13 @@ Exhibit.PivotTableView.prototype._openPopup = function(elmt, items) {
         var ul = document.createElement("ul");
         for (var i = 0; i < items.length; i++) {
             var li = document.createElement("li");
-            li.appendChild(Exhibit.UI.makeItemSpan(items[i], null, null, this._lensRegistry, this._exhibit));
+            li.appendChild(Exhibit.UI.makeItemSpan(items[i], null, null, this._uiContext));
             ul.appendChild(li);
         }
         bubble.content.appendChild(ul);
     } else {
         var itemLensDiv = document.createElement("div");
-        var itemLens = this._lensRegistry.createLens(items[0], itemLensDiv, this._exhibit);
+        var itemLens = this._uiContext.getLensRegistry().createLens(items[0], itemLensDiv, this._uiContext);
         bubble.content.appendChild(itemLensDiv);
     }
 };

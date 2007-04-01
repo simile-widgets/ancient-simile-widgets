@@ -5,7 +5,7 @@
  
 Exhibit.TabularView.theme = new Object();
 
-Exhibit.TabularView.theme.createDom = function(exhibit, div) {
+Exhibit.TabularView.theme.createDom = function(div) {
     var l10n = Exhibit.TabularView.l10n;
     var headerTemplate = {
         elmt:       div,

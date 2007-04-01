@@ -43,16 +43,16 @@ Exhibit.LensRegistry.prototype.getLens = function(itemID, database) {
     return null;
 };
 
-Exhibit.LensRegistry.prototype.createLens = function(itemID, div, exhibit) {
+Exhibit.LensRegistry.prototype.createLens = function(itemID, div, uiContext) {
     var lens = new Exhibit.Lens();
     
-    var lensTemplate = this.getLens(itemID, exhibit.getDatabase());
+    var lensTemplate = this.getLens(itemID, uiContext.getDatabase());
     if (lensTemplate == null) {
-        lens._constructDefaultUI(itemID, div, exhibit);
+        lens._constructDefaultUI(itemID, div, uiContext);
     } else if (typeof lensTemplate == "string") {
-        lens._constructFromLensTemplateURL(itemID, div, exhibit, lensTemplate);
+        lens._constructFromLensTemplateURL(itemID, div, uiContext, lensTemplate);
     } else {
-        lens._constructFromLensTemplateDOM(itemID, div, exhibit, lensTemplate);
+        lens._constructFromLensTemplateDOM(itemID, div, uiContext, lensTemplate);
     }
     return lens;
 };
@@ -66,8 +66,8 @@ Exhibit.Lens = function() {
 };
 
 Exhibit.Lens._commonProperties = null;
-Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit) {
-    var database = exhibit.getDatabase();
+Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, uiContext) {
+    var database = uiContext.getDatabase();
     
     if (Exhibit.Lens._commonProperties == null) {
         Exhibit.Lens._commonProperties = database.getAllProperties();
@@ -129,7 +129,7 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, exhibit) {
                 if (m > 0) {
                     tdValues.appendChild(document.createTextNode(", "));
                 }
-                tdValues.appendChild(Exhibit.UI.makeItemSpan(pair.values[m], null, null, exhibit.getLensRegistry(), exhibit));
+                tdValues.appendChild(Exhibit.UI.makeItemSpan(pair.values[m], null, null, uiContext));
             }
         } else {
             for (var m = 0; m < pair.values.length; m++) {
@@ -151,13 +151,13 @@ Exhibit.Lens._handlers = [
 ];
 
 Exhibit.Lens.prototype._constructFromLensTemplateURL = 
-    function(itemID, div, exhibit, lensTemplateURL) {
+    function(itemID, div, uiContext, lensTemplateURL) {
     
     var job = {
         lens:           this,
         itemID:         itemID,
         div:            div,
-        exhibit:        exhibit
+        uiContext:      uiContext
     };
     
     var compiledTemplate = Exhibit.Lens._compiledTemplates[lensTemplateURL];
@@ -172,13 +172,13 @@ Exhibit.Lens.prototype._constructFromLensTemplateURL =
 };
 
 Exhibit.Lens.prototype._constructFromLensTemplateDOM = 
-    function(itemID, div, exhibit, lensTemplateNode) {
+    function(itemID, div, uiContext, lensTemplateNode) {
     
     var job = {
         lens:           this,
         itemID:         itemID,
         div:            div,
-        exhibit:        exhibit
+        uiContext:      uiContext
     };
     
     var id = lensTemplateNode.id;
@@ -435,7 +435,7 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
         },
         job.template.template, 
         job.div, 
-        job.exhibit, 
+        job.uiContext, 
         job
     );
         
@@ -449,14 +449,14 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
 };
 
 Exhibit.Lens._constructFromLensTemplateNode = function(
-    roots, rootValueTypes, templateNode, parentElmt, exhibit, job
+    roots, rootValueTypes, templateNode, parentElmt, uiContext, job
 ) {
     if (typeof templateNode == "string") {
         parentElmt.appendChild(document.createTextNode(templateNode));
         return;
     }
     
-    var database = exhibit.getDatabase();
+    var database = uiContext.getDatabase();
     var children = templateNode.children;
     if (templateNode.condition != null) {
         if (templateNode.condition.test == "if-exists") {
@@ -494,7 +494,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                         
                         if (values.contains(childTemplateNode.condition.value)) {
                             Exhibit.Lens._constructFromLensTemplateNode(
-                                roots, rootValueTypes, childTemplateNode, parentElmt, exhibit, job);
+                                roots, rootValueTypes, childTemplateNode, parentElmt, uiContext, job);
                                 
                             return;
                         }
@@ -506,7 +506,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             
             if (lastChildTemplateNode != null) {
                 Exhibit.Lens._constructFromLensTemplateNode(
-                    roots, rootValueTypes, lastChildTemplateNode, parentElmt, exhibit, job);
+                    roots, rootValueTypes, lastChildTemplateNode, parentElmt, uiContext, job);
             }
             return;
         }
@@ -584,7 +584,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 var roots2 = { "value" : childValue, "index" : index++ };
                 for (var i = 0; i < children.length; i++) {
                     Exhibit.Lens._constructFromLensTemplateNode(
-                        roots2, rootValueTypes2, children[i], elmt, exhibit, job);
+                        roots2, rootValueTypes2, children[i], elmt, uiContext, job);
                 }
             };
             if (results.values instanceof Array) {
@@ -595,11 +595,11 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 results.values.visit(processOneValue);
             }
         } else {
-            Exhibit.Lens._constructDefaultValueList(results.values, results.valueType, elmt, exhibit);
+            Exhibit.Lens._constructDefaultValueList(results.values, results.valueType, elmt, uiContext);
         }
     } else if (children != null) {
         for (var i = 0; i < children.length; i++) {
-            Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt, exhibit, job);
+            Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt, uiContext, job);
         }
     }
 };
@@ -631,11 +631,11 @@ Exhibit.Lens._constructElmtWithAttributes = function(templateNode, parentElmt, d
     return elmt;
 };
 
-Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
+Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt, uiContext) {
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, exhibit.getLensRegistry(), exhibit));
+            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, null, uiContext));
         } :
         function(value) {
             addDelimiter();

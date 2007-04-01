@@ -6,7 +6,6 @@
 Exhibit.NumericRangeFacet.theme = new Object();
 
 Exhibit.NumericRangeFacet.theme.constructFacetFrame = function(
-    exhibit,
     div,
     facetLabel,
     onClearAllSelections,
@@ -133,7 +132,6 @@ Exhibit.NumericRangeFacet.theme.constructFacetFrame = function(
 };
 
 Exhibit.NumericRangeFacet.theme.constructFacetItem = function(
-    exhibit,
     label, 
     count, 
     selected, 

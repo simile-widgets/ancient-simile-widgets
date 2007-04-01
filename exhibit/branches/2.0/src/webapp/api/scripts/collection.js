@@ -22,24 +22,6 @@ Exhibit.Collection = function(id, database) {
     database.addListener(this._listener);
 };
 
-Exhibit.Collection.getCollection = function(configuration, exhibit) {
-    var id = configuration["collectionID"];
-    if (id == null) {
-        return exhibit.getDefaultCollection();
-    } else {
-        return exhibit.getCollection(id);
-    }
-};
-
-Exhibit.Collection.getCollectionFromDOM = function(elmt, configuration, exhibit) {
-    var id = Exhibit.getAttribute(elmt, "collectionID");
-    if (id == null) {
-        return Exhibit.Collection.getCollection(configuration, exhibit);
-    } else {
-        return exhibit.getCollection(id);
-    }
-};
-
 Exhibit.Collection.create = function(id, configuration, database) {
     var collection = new Exhibit.Collection(id, database);
     

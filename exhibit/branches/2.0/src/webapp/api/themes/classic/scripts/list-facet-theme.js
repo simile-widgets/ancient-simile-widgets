@@ -6,7 +6,6 @@
 Exhibit.ListFacet.theme = new Object();
 
 Exhibit.ListFacet.theme.constructFacetFrame = function(
-    exhibit,
     div,
     facetLabel,
     groupable,
@@ -166,7 +165,6 @@ Exhibit.ListFacet.theme.constructFacetFrame = function(
 };
 
 Exhibit.ListFacet.theme.constructFacetItem = function(
-    exhibit,
     label, 
     count, 
     level, 
@@ -281,7 +279,7 @@ Exhibit.ListFacet.theme.constructFacetItem = function(
     return dom;
 };
 
-Exhibit.ListFacet.theme.constructFacetChildrenContainer = function(exhibit, expanded) {
+Exhibit.ListFacet.theme.constructFacetChildrenContainer = function(expanded) {
     var elmt = document.createElement("div");
     elmt.className = "exhibit-facet-value-children";
     if (!expanded) {
@@ -291,7 +289,6 @@ Exhibit.ListFacet.theme.constructFacetChildrenContainer = function(exhibit, expa
 };
 
 Exhibit.ListFacet.theme.constructGroupingBox = function(
-    exhibit,
     alignLeft,
     onUngroupAll,
     onClose
@@ -329,7 +326,7 @@ Exhibit.ListFacet.theme.constructGroupingBox = function(
     return dom;
 };
 
-Exhibit.ListFacet.theme.constructGroup = function(exhibit, first, grouped, onUngroup) {
+Exhibit.ListFacet.theme.constructGroup = function(first, grouped, onUngroup) {
     var l10n = Exhibit.ListFacet.l10n;
     var template = {
         tag:        "div",
@@ -358,7 +355,7 @@ Exhibit.ListFacet.theme.constructGroup = function(exhibit, first, grouped, onUng
     return dom;
 };
 
-Exhibit.ListFacet.theme.constructGroupingOption = function(exhibit, label, selected, onSelect) {
+Exhibit.ListFacet.theme.constructGroupingOption = function(label, selected, onSelect) {
     var template = {
         tag:        "div",
         className:  "exhibit-facet-groupBox-groupOption",
