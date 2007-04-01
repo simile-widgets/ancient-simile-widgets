@@ -24,16 +24,9 @@ Exhibit.ViewPanel.create = function(configuration, div, uiContext) {
         for (var i = 0; i < configuration.views.length; i++) {
             var viewConfig = configuration.views[i];
             
-            var viewClass = null;
+            var viewClass = ("viewClass" in view) ? view.viewClass : Exhibit.TileView;
+            
             var label = null;
-            var tooltip = null;
-            
-            if ("viewClass" in view) {
-                viewClass = view.viewClass;
-            } else {
-                viewClass = Exhibit.TileView;
-            }
-            
             if ("label" in viewConfig) {
                 label = viewConfig.label;
             } else if ("l10n" in viewClass && "viewLabel" in viewClass.l10n) {
@@ -42,6 +35,7 @@ Exhibit.ViewPanel.create = function(configuration, div, uiContext) {
                 label = "" + viewClass;
             }
             
+            var tooltip = null;
             if ("tooltip" in viewConfig) {
                 tooltip = viewConfig.tooltip;
             } else if ("l10n" in viewClass && "viewTooltip" in viewClass.l10n) {
@@ -76,18 +70,16 @@ Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
         if (node.nodeType == 1) {
             node.style.display = "none";
             
-            var role = Exhibit.getAttribute(node, "role");
-            if (role == "exhibit-view") {
+            var role = Exhibit.getRoleAttribute(node);
+            if (role == "view") {
                 var viewClass = Exhibit.TileView;
                 
                 var viewClassString = Exhibit.getAttribute(node, "viewClass");
-                try {
-                    viewClass = eval(viewClassString);
-                } catch (e) {
-                    Exhibit.showJavascriptExpressionValidation(
-                        Exhibit.ViewPanel.l10n.badViewClassMessage(viewClassString),
-                        viewClassString
-                    );
+                if (viewClassString != null && viewClassString.length > 0) {
+                    viewClass = Exhibit.UI.viewClassNameToViewClass(viewClassString);
+                    if (viewClass == null) {
+                        SimileAjax.Debug.warn("Unknown viewClass " + viewClassString);
+                    }
                 }
                 
                 var label = Exhibit.getAttribute(node, "label");

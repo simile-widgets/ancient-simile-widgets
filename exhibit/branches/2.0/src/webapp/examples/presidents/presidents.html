@@ -29,7 +29,7 @@
 </head>
 
 <body>
-    <div ex:role="exhibit-collection" ex:itemTypes="President"></div>
+    <div ex:role="collection" ex:itemTypes="President"></div>
     
     <table id="frame">
         <tr>
@@ -37,8 +37,8 @@
                 <h1>US Presidents</h1>
                 <p>Here is the <a href="presidents.js" target="_blank">Exhibit JSON data file</a>.
                 
-                <div id="exhibit-view-panel" ex:role="exhibit-viewPanel">
-                    <div class="item" ex:role="exhibit-lens" style="display: none;">
+                <div id="exhibit-view-panel" ex:role="viewPanel">
+                    <div class="item" ex:role="lens" style="display: none;">
                         <table cellpadding="10" width="100%">
                             <tr>
                                 <td width="1"><img ex:src-content=".imageURL" /></td>
@@ -53,8 +53,8 @@
                             </tr>
                         </table>
                     </div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.TabularView"
+                    <div ex:role="view"
+                        ex:viewClass="Tabular"
                         ex:label="Table"
                         ex:columns=".term, .label, .imageURL, .party, .presidency.inDate, .presidency.outDate, add(foreach(.presidency, date-range(.inDate, .outDate, 'day')))"
                         ex:columnLabels="term, name, photo, party, took office, left office, days in office"
@@ -63,50 +63,54 @@
                         ex:sortAscending="true"
                         ex:rowStyler="rowStyler"
                         ></div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.TileView"
+                    <div ex:role="view"
+                        ex:viewClass="Tile"
                         ex:label="Details"
                         ex:orders=".term"
                         ex:possibleOrders=".religion, .party, .birth, .death, .term"
                         ex:grouped="false"
                         ></div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.ThumbnailView"
+                    <div ex:role="view"
+                        ex:viewClass="Thumbnail"
                         ex:label="Photos"
                         ex:orders=".party"
                         ex:possibleOrders=".religion, .party, .birth, .death, .term">
                         <div ex:role="exhibit-lens" ex:templateFile="president-thumbnail.xml"></div>
                     </div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.MapView"
+                    <div ex:role="view"
+                        ex:viewClass="Map"
                         ex:label="Birth Places"
                         ex:latlng=".birthLatLng"
                         ex:marker=".party"
                         ex:center="38.479394673276445, -95.361328125"
                         ex:zoom="4"
+                        ex:bubbleWidth="200"
+                        ex:bubbleHeight="200"
                         >
-                        <div class="map-lens" ex:role="exhibit-lens" style="display: none;">
+                        <div class="map-lens" ex:role="lens" style="display: none;">
                             <div><img ex:src-content=".imageURL" /></div>
                             <span ex:content=".label"></span><br/>
                             <span ex:content=".birthPlace"></span>, <span ex:content=".birth"></span>
                         </div>
                     </div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.MapView"
+                    <div ex:role="view"
+                        ex:viewClass="Map"
                         ex:label="Death Places"
                         ex:latlng=".deathLatLng"
                         ex:marker=".party"
                         ex:center="38.479394673276445, -95.361328125"
                         ex:zoom="4"
+                        ex:bubbleWidth="200"
+                        ex:bubbleHeight="200"
                         >
-                        <div class="map-lens" ex:role="exhibit-lens" style="display: none;">
+                        <div class="map-lens" ex:role="lens" style="display: none;">
                             <div><img ex:src-content=".imageURL" /></div>
                             <span ex:content=".label"></span><br/>
                             <span ex:content=".deathPlace"></span>, <span ex:content=".death"></span>
                         </div>
                     </div>
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.TimelineView"
+                    <div ex:role="view"
+                        ex:viewClass="Timeline"
                         ex:label="Terms"
                         ex:proxy=".presidency"
                         ex:start=".inDate"
@@ -120,10 +124,10 @@
             </td>
             <td id="sidebar">
                 <div id="exhibit-browse-panel">
-                    <div ex:role="exhibit-facet" ex:expression=".religion" ex:facetLabel="Religions"></div>
-                    <div ex:role="exhibit-facet" ex:expression=".party" ex:facetLabel="Political Parties"></div>
-                    <div ex:role="exhibit-facet" ex:expression=".dieInOffice" ex:facetLabel="Died In Office"></div>
-                    <center ex:role="exhibit-logo" ex:color="DeepSkyBlue"></center>
+                    <div ex:role="facet" ex:expression=".religion" ex:facetLabel="Religions"></div>
+                    <div ex:role="facet" ex:expression=".party" ex:facetLabel="Political Parties"></div>
+                    <div ex:role="facet" ex:expression=".dieInOffice" ex:facetLabel="Died In Office"></div>
+                    <center ex:role="logo" ex:color="DeepSkyBlue"></center>
                 </div>
             </td>
         </tr>

@@ -46,14 +46,15 @@
             
             "ui/ui.js",
             "ui/ui-context.js",
-            "ui/component.js",
             "ui/lens.js",
-            "ui/view-panel.js",
-            "ui/logo.js",
+            
             "ui/facets/list-facet.js",
             "ui/facets/numeric-range-facet.js",
+            
+            "ui/widgets/logo.js",
             "ui/widgets/collection-summary-widget.js",
             
+            "ui/views/view-panel.js",
             "ui/views/ordered-view-frame.js",
             "ui/views/tile-view.js",
             "ui/views/thumbnail-view.js",
@@ -183,7 +184,7 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "/ajax/api/simile-ajax-api.js?bundle=false";
+        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
         //var url = "http://static.simile.mit.edu/ajax/api/simile-ajax-api.js";
         var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {

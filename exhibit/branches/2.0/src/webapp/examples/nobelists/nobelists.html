@@ -110,15 +110,15 @@
     
     <div id="top-panels">
         <div>
-            <div ex:role="exhibit-facet" ex:expression=".discipline" ex:facetLabel="Discipline"></div>
-            <div ex:role="exhibit-facet" ex:expression=".relationship" ex:facetLabel="Relationship"></div>
-            <div ex:role="exhibit-facet" ex:expression=".shared" ex:facetLabel="Shared?"></div>
-            <div ex:role="exhibit-facet" ex:expression=".deceased" ex:facetLabel="Deceased?"></div>
+            <div ex:role="facet" ex:expression=".discipline" ex:facetLabel="Discipline"></div>
+            <div ex:role="facet" ex:expression=".relationship" ex:facetLabel="Relationship"></div>
+            <div ex:role="facet" ex:expression=".shared" ex:facetLabel="Shared?"></div>
+            <div ex:role="facet" ex:expression=".deceased" ex:facetLabel="Deceased?"></div>
         </div>
         <div style="clear: both; text-align: center;" ex:role="exhibit-logo"></div>
     </div>
-    <div ex:role="exhibit-viewPanel" style="padding: 1em 0.5in;">
-        <table ex:role="exhibit-lens" class="nobelist" style="display: none;">
+    <div ex:role="viewPanel" style="padding: 1em 0.5in;">
+        <table ex:role="lens" class="nobelist" style="display: none;">
             <tr>
                 <td><img ex:src-content=".imageURL" /></td>
                 <td>
@@ -134,8 +134,8 @@
                 </td>
             </tr>
         </table>
-        <div ex:role="exhibit-view"
-            ex:viewClass="Exhibit.ThumbnailView"
+        <div ex:role="view"
+            ex:viewClass="Thumbnail"
             ex:showAll="true"
             ex:orders=".discipline"
             ex:possibleOrders=".label, .last-name, .discipline, .relationship, .shared, .deceased, .nobel-year">
@@ -148,20 +148,20 @@
                 </div>
             </div>
         </div>
-        <div ex:role="exhibit-view"
+        <div ex:role="view"
             ex:label="Details"
-            ex:viewClass="Exhibit.TileView"
+            ex:viewClass="Tile"
             ex:showAll="true"
             ex:orders=".discipline, .nobel-year"
             ex:possibleOrders=".label, .last-name, .discipline, .relationship, .shared, .deceased, .nobel-year">
         </div>
-        <div ex:role="exhibit-view"
-            ex:viewClass="Exhibit.TimelineView"
+        <div ex:role="view"
+            ex:viewClass="Timeline"
             ex:start=".nobel-year"
             ex:marker=".discipline"
             ex:bubbleWidth="150"
             ex:bubbleHeight="150">
-            <div ex:role="exhibit-lens" class="nobelist-timeline-lens" style="display: none;">
+            <div ex:role="lens" class="nobelist-timeline-lens" style="display: none;">
                 <img ex:src-content=".imageURL" />
                 <div><span ex:content=".label"></span></div>
                 <div>

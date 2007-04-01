@@ -29,15 +29,15 @@
         <table cellpadding="0" cellspacing="0" border="0" id="exhibit" width="100%">
             <tr valign="top">
                 <td width="25%">
-                    <div ex:role="exhibit-facet" ex:expression=".brand" ex:facetLabel="Brands"></div>
-                    <div ex:role="exhibit-facet" ex:expression=".decade" ex:facetLabel="Decades"></div>
-                    <div ex:role="exhibit-facet" ex:expression=".country" ex:facetLabel="Countries"></div>
-                    <div ex:role="exhibit-facet" ex:expression=".form" ex:facetLabel="Forms"></div>
-                    <center ex:role="exhibit-logo"></center>
+                    <div ex:role="facet" ex:expression=".brand" ex:facetLabel="Brands"></div>
+                    <div ex:role="facet" ex:expression=".decade" ex:facetLabel="Decades"></div>
+                    <div ex:role="facet" ex:expression=".country" ex:facetLabel="Countries"></div>
+                    <div ex:role="facet" ex:expression=".form" ex:facetLabel="Forms"></div>
+                    <center ex:role="logo"></center>
                 </td>
                 <td>
-                    <div ex:role="exhibit-viewPanel">
-                        <div ex:role="exhibit-lens" class="item" style="display: none;">
+                    <div ex:role="viewPanel">
+                        <div ex:role="lens" class="item" style="display: none;">
                             <table cellspacing="5">
                                 <tr>
                                     <td style="position: relative"><div class="itemThumbnail-blocker"></div><img ex:src-content=".image" /></td>
@@ -50,12 +50,12 @@
                                 </tr>
                             </table>
                         </div>
-                        <div role="exhibit-view" 
-                            ex:viewClass="Exhibit.ThumbnailView"
+                        <div role="view" 
+                            ex:viewClass="Thumbnail"
                             ex:showAll="true"
                             ex:possibleOrders=".brand, .decade, .form, .country">
                             
-                            <table ex:role="exhibit-lens" class="itemThumbnail" style="display: none;">
+                            <table ex:role="lens" class="itemThumbnail" style="display: none;">
                                 <tr>
                                     <td valign="bottom" class="itemThumbnail-thumbnailContainer">
                                         <div style="position: relative"><div class="itemThumbnail-blocker"></div><img ex:src-content=".thumbnail" /></div>
@@ -66,15 +66,16 @@
                                 </tr>
                             </table>
                         </div>
-                        <div ex:role="exhibit-view" 
-                            ex:viewClass="Exhibit.TimelineView"
+                        <div ex:role="view" 
+                            ex:viewClass="Timeline"
                             ex:start=".decade"
                             ex:marker=".brand"
-                            ex:topBandIntervalPixels="250"
-                            ex:bottomBandIntervalPixels="400"
+                            ex:topBandUnit="year"
+                            ex:topBandPixelsPerUnit="100"
+                            ex:bottomBandUnit="decade"
+                            ex:bottomBandPixelsPerUnit="50"
                             ex:bubbleWidth="400"
-                            ex:bubbleHeight="250"
-                            ex:densityFactor="1">
+                            ex:bubbleHeight="250">
                         </div>
                     </div>
                 </td>

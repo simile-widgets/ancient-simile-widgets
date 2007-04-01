@@ -86,16 +86,16 @@
     <table width="100%">
         <tr>
             <td id="left-column" width="20%">
-                <div ex:role="exhibit-facet" ex:expression=".group" ex:facetLabel="Group" id="group-facet"></div>
+                <div ex:role="facet" ex:expression=".group" ex:facetLabel="Group" id="group-facet"></div>
             </td>
             <td id="middle-column">
-                <div ex:role="exhibit-viewPanel" style="padding: 1em 0.5in;">
-                    <div ex:role="exhibit-view"
-                        ex:viewClass="Exhibit.ThumbnailView"
+                <div ex:role="viewPanel" style="padding: 1em 0.5in;">
+                    <div ex:role="view"
+                        ex:viewClass="Thumbnail"
                         ex:showAll="true"
                         ex:orders=".label"
                         ex:possibleOrders=".label, .tower, .last-name, .group, .floor">
-                        <div ex:role="exhibit-lens" class="person-thumbnail" style="display: none;">
+                        <div ex:role="lens" class="person-thumbnail" style="display: none;">
                             <div><a ex:href-content=".url" target="_blank"><img ex:src-content=".photo" /></a></div>
                             <div class="name"><span ex:content=".label"></span></div>
                             <div class="office">Office: <span ex:content=".office"></span></div>
@@ -107,10 +107,10 @@
                 </div>
             </td>
             <td id="right-column" width="15%">
-                <div ex:role="exhibit-facet" ex:expression=".position" ex:facetLabel="Positions" id="position-facet"></div>
-                <div ex:role="exhibit-facet" ex:expression=".tower" ex:facetLabel="Stata Towers" id="tower-facet"></div>
-                <div ex:role="exhibit-facet" ex:expression=".floor" ex:facetLabel="Office Floors" id="floor-facet"></div>
-                <center ex:role="exhibit-logo"></center>
+                <div ex:role="facet" ex:expression=".position" ex:facetLabel="Positions" id="position-facet"></div>
+                <div ex:role="facet" ex:expression=".tower" ex:facetLabel="Stata Towers" id="tower-facet"></div>
+                <div ex:role="facet" ex:expression=".floor" ex:facetLabel="Office Floors" id="floor-facet"></div>
+                <center ex:role="logo"></center>
             </td>
         </tr>
     </table>

@@ -343,9 +343,17 @@ Exhibit.SettingsUtilities._intParser = function(v, f) {
 };
 
 Exhibit.SettingsUtilities._dateParser = function(v, f) {
-    var d = SimileAjax.DateTime.parseIso8601DateTime(v);
-    if (d != null) {
+    if (v instanceof Date) {
+        return f(v);
+    } else if (typeof v == "number") {
+        var d = new Date(0);
+        d.setUTCFullYear(v);
         return f(d);
+    } else {console.log(v);
+        var d = SimileAjax.DateTime.parseIso8601DateTime(v.toString());
+        if (d != null) {
+            return f(d);
+        }
     }
     return false;
 };

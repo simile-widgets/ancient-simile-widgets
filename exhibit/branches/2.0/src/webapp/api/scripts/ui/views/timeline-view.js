@@ -33,10 +33,10 @@ Exhibit.TimelineView._intervalChoices = [
 
 Exhibit.TimelineView._settingSpecs = {
     "topBandHeight":           { type: "int",        defaultValue: 75 },
-    "topBandUnit":             { type: "enum",       defaultValue: null, choices: Exhibit.TimelineView._intervalChoices },
+    "topBandUnit":             { type: "enum",       choices: Exhibit.TimelineView._intervalChoices },
     "topBandPixelsPerUnit":    { type: "int",        defaultValue: 200 },
     "bottomBandHeight":        { type: "int",        defaultValue: 25 },
-    "bottomBandUnit":          { type: "enum",       defaultValue: null, choices: Exhibit.TimelineView._intervalChoices },
+    "bottomBandUnit":          { type: "enum",       choices: Exhibit.TimelineView._intervalChoices },
     "bottomBandPixelsPerUnit": { type: "int",        defaultValue: 200 },
     "timelineHeight":          { type: "int",        defaultValue: 400 },
     "timelineConstructor":     { type: "function",   defaultValue: null }
@@ -54,7 +54,8 @@ Exhibit.TimelineView._accessorSpecs = [
             },
             {   attributeName:  "end",
                 type:           "date",
-                bindingName:    "end"
+                bindingName:    "end",
+                optional:       true
             }
         ]
     },
@@ -323,7 +324,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 }
             }
         });
-        
+        console.log("here " + plottableSize + " " + this._largestSize);
         if (plottableSize > this._largestSize) {
             this._largestSize = plottableSize;
             this._reconstructTimeline(events);

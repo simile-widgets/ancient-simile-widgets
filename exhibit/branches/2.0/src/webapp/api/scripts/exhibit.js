@@ -27,6 +27,13 @@ Exhibit.getAttribute = function(elmt, name, splitOn) {
     }
 };
 
+Exhibit.getRoleAttribute = function(elmt) {
+    var role = Exhibit.getAttribute(elmt, "role");
+    role = role != null ? role : "";
+    role = role.startsWith("exhibit-") ? role.substr("exhibit-".length) : role;
+    return role;
+};
+
 Exhibit.getConfigurationFromDOM = function(elmt) {
     var c = Exhibit.getAttribute(elmt, "configuration");
     if (c != null && c.length > 0) {
@@ -194,7 +201,7 @@ Exhibit._Impl.prototype.configure = function(configuration) {
     if ("components" in configuration) {
         for (var i = 0; i < configuration.components.length; i++) {
             var config = configuration.components[i];
-            var component = Exhibit.Component.create(config, this._uiContext);
+            var component = Exhibit.UI.create(config, this._uiContext);
             if (component != null) {
                 var id = elmt.id;
                 if (id == null || id.length == 0) {
@@ -210,9 +217,9 @@ Exhibit._Impl.prototype.configureFromDOM = function() {
     var collectionElmts = [];
     var componentElmts = [];
     var f = function(elmt) {
-        var role = Exhibit.getAttribute(elmt, "role");
-        if (role != null && role.length > 0) {
-            if (role == "exhibit-collection") {
+        var role = Exhibit.getRoleAttribute(elmt);
+        if (role.length > 0) {
+            if (role == "collection") {
                 collectionElmts.push(elmt);
             } else {
                 componentElmts.push(elmt);
@@ -240,7 +247,7 @@ Exhibit._Impl.prototype.configureFromDOM = function() {
     
     for (var i = 0; i < componentElmts.length; i++) {
         var elmt = componentElmts[i];
-        var component = Exhibit.Component.createFromDOM(elmt, this._uiContext);
+        var component = Exhibit.UI.createFromDOM(elmt, this._uiContext);
         if (component != null) {
             var id = elmt.id;
             if (id == null || id.length == 0) {

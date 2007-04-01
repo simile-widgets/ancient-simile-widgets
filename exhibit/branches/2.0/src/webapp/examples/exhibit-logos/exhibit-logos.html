@@ -77,7 +77,7 @@
 <body>
 <ul id="path">
   <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
-  <li><a href="/exhibit" title="Exhibit">Exhibit</a></li>
+  <li><a href="http://simile.mit.edu/exhibit" title="Exhibit">Exhibit</a></li>
   <li><span>Logos</span></li>
 </ul>
 <div id="body">
@@ -101,11 +101,11 @@
                             onkeyup="document.getElementsByName('light-background')[1].checked = true; setColor('light', 'custom');" /></div>
                     </form>
                 </div>
-                <div ex:role="exhibit-facet" ex:expression=".light-dark" ex:facetLabel="Light/Dark Logos"></div>
+                <div ex:role="facet" ex:expression=".light-dark" ex:facetLabel="Light/Dark Logos"></div>
             </td>
             <td id="exhibit-view-panel">
-                <div ex:role="exhibit-view"
-                    ex:viewClass="Exhibit.ThumbnailView"
+                <div ex:role="view"
+                    ex:viewClass="Thumbnail"
                     ex:showAll="true"
                     ex:orders=".light-dark"
                     ex:possibleOrders=".label, .light-dark"

@@ -195,8 +195,8 @@ Exhibit.UIContext.registerLensesFromDOM = function(parentNode, lensRegistry) {
     var node = parentNode.firstChild;
     while (node != null) {
         if (node.nodeType == 1) {
-            var role = Exhibit.getAttribute(node, "role");
-            if (role == "exhibit-lens") {
+            var role = Exhibit.getRoleAttribute(node);
+            if (role == "lens") {
                 Exhibit.UIContext.registerLensFromDOM(node, lensRegistry);
             }
         }

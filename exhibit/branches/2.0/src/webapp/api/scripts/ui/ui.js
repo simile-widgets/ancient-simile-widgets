@@ -4,9 +4,135 @@
  */
 Exhibit.UI = new Object();
 
-/*======================================================================
+/*----------------------------------------------------------------------
+ *  Component instantiation functions
+ *----------------------------------------------------------------------
+ */
+Exhibit.UI.create = function(configuration, elmt, uiContext) {
+    if ("role" in configuration) {
+        var role = configuration.role;
+        if (role != null && role.startsWith("exhibit-")) {
+            role = role.substr("exhibit-".length);
+        }
+        
+        switch (role) {
+        case "lens":
+            Exhibit.UIContext.registerLens(configuration, uiContext.getLensRegistry());
+            return null;
+        case "view":
+            return Exhibit.UI.createView(configuration, elmt, uiContext);
+        case "facet":
+            return Exhibit.UI.createFacet(configuration, elmt, uiContext);
+        case "viewPanel":
+            return Exhibit.ViewPanel.create(configuration, elmt, uiContext);
+        case "logo":
+            return Exhibit.Logo.create(configuration, elmt, uiContext);
+        case "hiddenContent":
+            elmt.style.display = "none";
+            return null;
+        }
+    }
+    return null;
+};
+
+Exhibit.UI.createFromDOM = function(elmt, uiContext) {
+    var role = Exhibit.getRoleAttribute(elmt);
+    switch (role) {
+    case "lens":
+        Exhibit.UIContext.registerLensFromDOM(elmt, uiContext.getLensRegistry());
+        return null;
+    case "view":
+        return Exhibit.UI.createViewFromDOM(elmt, null, uiContext);
+    case "facet":
+        return Exhibit.UI.createFacetFromDOM(elmt, null, uiContext);
+    case "viewPanel":
+        return Exhibit.ViewPanel.createFromDOM(elmt, uiContext);
+    case "logo":
+        return Exhibit.Logo.createFromDOM(elmt, uiContext);
+    case "hiddenContent":
+        elmt.style.display = "none";
+        return null;
+    }
+    return null;
+};
+
+Exhibit.UI.createView = function(configuration, elmt, uiContext) {
+    var viewClass = "viewClass" in configuration ? configuration.viewClass : Exhibit.TileView;
+    return viewClass.create(configuration, elmt, uiContext);
+};
+
+Exhibit.UI.createViewFromDOM = function(elmt, container, uiContext) {
+    var viewClassString = Exhibit.getAttribute(elmt, "viewClass");
+    var viewClass = Exhibit.TileView;
+    
+    if (viewClassString != null && viewClassString.length > 0) {
+        viewClass = Exhibit.UI.viewClassNameToViewClass(viewClassString);
+        if (viewClass == null) {
+            SimileAjax.Debug.warn("Unknown viewClass " + viewClassString);
+        }
+    }
+    return viewClass.createFromDOM(elmt, container, uiContext);
+};
+
+Exhibit.UI.viewClassNameToViewClass = function(name) {
+    return Exhibit.UI._stringToObject(name, "View");
+};
+
+Exhibit.UI.createFacet = function(configuration, elmt, uiContext) {
+    var facetClass = "facetClass" in configuration ? configuration.facetClass : Exhibit.ListFacet;
+    return facetClass.create(configuration, elmt, container, uiContext);
+};
+
+Exhibit.UI.createFacetFromDOM = function(elmt, container, uiContext) {
+    var facetClassString = Exhibit.getAttribute(elmt, "facetClass");
+    var facetClass = Exhibit.ListFacet;
+    if (facetClassString != null && facetClassString.length > 0) {
+        facetClass = Exhibit.UI._stringToObject(facetClassString, "Facet");
+        if (facetClass == null) {
+            SimileAjax.Debug.warn("Unknown facetClass " + facetClassString);
+        }
+    }
+    
+    return facetClass.createFromDOM(elmt, container, uiContext);
+};
+
+Exhibit.UI._stringToObject = function(name, suffix) {
+    if (!name.startsWith("Exhibit.")) {
+        if (!name.endsWith(suffix)) {
+            try {
+                return eval("Exhibit." + name + suffix);
+            } catch (e) {
+                // ignore
+            }
+        }
+        
+        try {
+            return eval("Exhibit." + name);
+        } catch (e) {
+            // ignore
+        }
+    }
+    
+    if (!name.endsWith(suffix)) {
+        try {
+            return eval(name + suffix);
+        } catch (e) {
+            // ignore
+        }
+    }
+    
+    try {
+        return eval(name);
+    } catch (e) {
+        // ignore
+    }
+    
+    return null;
+};
+
+/*----------------------------------------------------------------------
  *  Help and Debugging
- *======================================================================
+ *----------------------------------------------------------------------
  */
 Exhibit.UI.docRoot = "http://simile.mit.edu/wiki/";
 Exhibit.UI.validator = "http://simile.mit.edu/babel/validator";
@@ -42,9 +168,9 @@ Exhibit.UI.showJsonFileValidation = function(message, url) {
     }
 };
 
-/*======================================================================
+/*----------------------------------------------------------------------
  *  Status Indication and Feedback
- *======================================================================
+ *----------------------------------------------------------------------
  */
 Exhibit.UI._busyIndicator = null;
 Exhibit.UI._busyIndicatorCount = 0;
@@ -87,9 +213,9 @@ Exhibit.UI.hideBusyIndicator = function() {
     }
 };
 
-/*======================================================================
+/*----------------------------------------------------------------------
  *  Common UI Generation
- *======================================================================
+ *----------------------------------------------------------------------
  */
 Exhibit.UI.protectUI = function(elmt) {
     SimileAjax.DOM.appendClassName(elmt, "exhibit-ui-protection");
