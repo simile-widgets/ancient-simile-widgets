@@ -46,6 +46,7 @@ td {
     background-repeat: no-repeat;
     background-attachment: fixed; 
     border-left: 1px solid #ccc;
+    padding: 1em;
 }
 
 #view-panel {

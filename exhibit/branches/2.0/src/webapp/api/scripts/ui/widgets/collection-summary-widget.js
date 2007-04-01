@@ -103,15 +103,9 @@ Exhibit.CollectionSummaryWidget.prototype._resetCollection = function() {
     var state = {};
     var collection = this._collection;
     
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = collection.clearAllRestrictions();
-        },
-        undo: function() {
-            collection.applyRestrictions(state.restrictions);
-        },
-        label:      Exhibit.CollectionSummaryWidget.l10n.resetActionTitle,
-        uiLayer:    SimileAjax.WindowManager.getBaseLayer(),
-        lengthy:    true
-    });
+    SimileAjax.History.addLengthyAction(
+        function() { state.restrictions = collection.clearAllRestrictions(); },
+        function() { collection.applyRestrictions(state.restrictions); },
+        Exhibit.CollectionSummaryWidget.l10n.resetActionTitle
+    );
 };

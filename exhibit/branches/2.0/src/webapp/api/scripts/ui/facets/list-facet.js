@@ -102,7 +102,7 @@ Exhibit.ListFacet.prototype.hasRestrictions = function() {
 
 Exhibit.ListFacet.prototype.clearAllRestrictions = function() {
     var restrictions = [];
-    if (this.selectedCount > 0) {
+    if (this._valueSet.size() > 0) {
         this._valueSet.visit(function(v) {
             restrictions.push(v);
         });
@@ -235,35 +235,24 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
 
 Exhibit.ListFacet.prototype._filter = function(value, label) {
     var selected = !this._valueSet.contains(value);
-    
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
-            self.setSelection(value, selected);
-        },
-        undo: function() {
-            self.setSelection(value, !selected);
-        },
-        label: selected ? 
-            ("set " + this._settings.facetLabel + " = " + label) :
-            ("unset " + this._settings.facetLabel + " = " + label),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+    SimileAjax.History.addLengthyAction(
+        function() { self.setSelection(value, selected); },
+        function() { self.setSelection(value, !selected); },
+        String.substitute(
+            Exhibit.FacetUtilities.l10n[selected ? "facetSelectActionTitle" : "facetUnselectActionTitle"],
+            [ label, this._settings.facetLabel ])
+    );
 };
 
 Exhibit.ListFacet.prototype._clearSelections = function() {
     var state = {};
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = self.clearAllRestrictions();
-        },
-        undo: function() {
-            self.applyRestrictions(state.restrictions);
-        },
-        label: "clear selections in facet " + this._settings.facetLabel,
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+    SimileAjax.History.addLengthyAction(
+        function() { state.restrictions = self.clearAllRestrictions(); },
+        function() { self.applyRestrictions(state.restrictions); },
+        String.substitute(
+            Exhibit.FacetUtilities.l10n["facetClearSelectionsActionTitle"],
+            [ this._settings.facetLabel ])
+    );
 };

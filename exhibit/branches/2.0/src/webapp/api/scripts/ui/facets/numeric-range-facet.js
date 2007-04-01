@@ -233,36 +233,27 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
     );
 };
 
-Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, selected) {
+Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, oldSelected) {
     var self = this;
-    var range = from + " to " + to;
-    SimileAjax.History.addAction({
-        perform: function() {
-            self.setRange(from, to, !selected);
-        },
-        undo: function() {
-            self.setRange(from, to, selected);
-        },
-        label: selected ?
-            ("Remove range " + range + " from " + this._settings.facetLabel) :
-            ("Add range " + range + " to " + this._settings.facetLabel),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+    var label = from + " to " + to;
+    var selected = !oldSelected;
+    SimileAjax.History.addLengthyAction(
+        function() { self.setRange(from, to, selected); },
+        function() { self.setRange(from, to, oldSelected); },
+        String.substitute(
+            Exhibit.FacetUtilities.l10n[selected ? "facetSelectActionTitle" : "facetUnselectActionTitle"],
+            [ label, this._settings.facetLabel ])
+    );
 };
 
 Exhibit.NumericRangeFacet.prototype._clearSelections = function() {
     var state = {};
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
-            state.restrictions = self.clearAllRestrictions();
-        },
-        undo: function() {
-            self.applyRestrictions(state.restrictions);
-        },
-        label: "clear selections",
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+    SimileAjax.History.addLengthyAction(
+        function() { state.restrictions = self.clearAllRestrictions(); },
+        function() { self.applyRestrictions(state.restrictions); },
+        String.substitute(
+            Exhibit.FacetUtilities.l10n["facetClearSelectionsActionTitle"],
+            [ this._settings.facetLabel ])
+    );
 };

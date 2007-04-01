@@ -609,20 +609,18 @@ Exhibit.OrderedViewFrame.prototype._reSort = function(index, propertyID, forward
         Exhibit.Database.l10n.sortLabels["text"];
     
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
+    SimileAjax.History.addLengthyAction(
+        function() {
             self._orders = newOrders;
             self.parentReconstruct();
         },
-        undo: function() {
+        function() {
             self._orders = oldOrders;
             self.parentReconstruct();
         },
-        label: Exhibit.OrderedViewFrame.l10n.formatSortActionTitle(
-            propertyLabel, ascending ? sortLabels.ascending : sortLabels.descending),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+        Exhibit.OrderedViewFrame.l10n.formatSortActionTitle(
+            propertyLabel, ascending ? sortLabels.ascending : sortLabels.descending)
+    );
 };
 
 Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
@@ -638,20 +636,18 @@ Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
         Exhibit.Database.l10n.sortLabels["text"];
     
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
+    SimileAjax.History.addLengthyAction(
+        function() {
             self._orders = newOrders;
             self.parentReconstruct();
         },
-        undo: function() {
+        function() {
             self._orders = oldOrders;
             self.parentReconstruct();
         },
-        label: Exhibit.OrderedViewFrame.l10n.formatRemoveOrderActionTitle(
-            propertyLabel, order.ascending ? sortLabels.ascending : sortLabels.descending),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+        Exhibit.OrderedViewFrame.l10n.formatRemoveOrderActionTitle(
+            propertyLabel, order.ascending ? sortLabels.ascending : sortLabels.descending)
+    );
 };
 
 Exhibit.OrderedViewFrame.prototype._setShowAll = function(showAll) {
@@ -663,38 +659,34 @@ Exhibit.OrderedViewFrame.prototype._toggleGroup = function() {
     var settings = this._settings;
     var oldGrouped = settings.grouped;
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
+    SimileAjax.History.addLengthyAction(
+        function() {
             settings.grouped = !oldGrouped;
             self.parentReconstruct();
         },
-        undo: function() {
+        function() {
             settings.grouped = oldGrouped;
             self.parentReconstruct();
         },
-        label: Exhibit.OrderedViewFrame.l10n[
-            oldGrouped ? "ungroupActionTitle" : "groupAsSortedActionTitle"],
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+        Exhibit.OrderedViewFrame.l10n[
+            oldGrouped ? "ungroupActionTitle" : "groupAsSortedActionTitle"]
+    );
 };
 
 Exhibit.OrderedViewFrame.prototype._toggleShowDuplicates = function() {
     var settings = this._settings;
     var oldShowDuplicates = settings.showDuplicates;
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
+    SimileAjax.History.addLengthyAction(
+        function() {
             settings.showDuplicates = !oldShowDuplicates;
             self.parentReconstruct();
         },
-        undo: function() {
+        function() {
             settings.showDuplicates = oldShowDuplicates;
             self.parentReconstruct();
         },
-        label: Exhibit.OrderedViewFrame.l10n[
-            oldShowDuplicates ? "hideDuplicatesActionTitle" : "showDuplicatesActionTitle"],
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+        Exhibit.OrderedViewFrame.l10n[
+            oldShowDuplicates ? "hideDuplicatesActionTitle" : "showDuplicatesActionTitle"]
+    );
 };

@@ -453,21 +453,19 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
     var newSortAscending = oldSortColumn == newSortColumn ? !oldSortAscending : true;
     
     var self = this;
-    SimileAjax.History.addAction({
-        perform: function() {
+    SimileAjax.History.addLengthyAction(
+        function() {
             self._sortColumn = newSortColumn;
             self._sortAscending = newSortAscending;
             self._reconstruct();
         },
-        undo: function() {
+        function() {
             self._sortColumn = oldSortColumn;
             self._sortAscending = oldSortAscending;
             self._reconstruct();
         },
-        label: Exhibit.TabularView.l10n.makeSortActionTitle(this._columns[columnIndex].label, newSortAscending),
-        uiLayer: SimileAjax.WindowManager.getBaseLayer(),
-        lengthy: true
-    });
+        Exhibit.TabularView.l10n.makeSortActionTitle(this._columns[columnIndex].label, newSortAscending)
+    );
 };
 
 Exhibit.TabularView._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
