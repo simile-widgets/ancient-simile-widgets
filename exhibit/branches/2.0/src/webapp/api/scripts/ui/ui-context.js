@@ -25,17 +25,19 @@ Exhibit.UIContext.createRootContext = function(configuration, exhibit) {
     return context;
 };
 
-Exhibit.UIContext.create = function(configuration, parentUIContext) {
+Exhibit.UIContext.create = function(configuration, parentUIContext, ignoreLenses) {
     var context = Exhibit.UIContext._createWithParent(parentUIContext);
-    Exhibit.UIContext._configure(context, configuration);
+    Exhibit.UIContext._configure(context, configuration, ignoreLenses);
     
     return context;
 };
 
-Exhibit.UIContext.createFromDOM = function(configElmt, parentUIContext) {
+Exhibit.UIContext.createFromDOM = function(configElmt, parentUIContext, ignoreLenses) {
     var context = Exhibit.UIContext._createWithParent(parentUIContext);
     
-    Exhibit.UIContext.registerLensesFromDOM(configElmt, context.getLensRegistry());
+    if (!(ignoreLenses)) {
+        Exhibit.UIContext.registerLensesFromDOM(configElmt, context.getLensRegistry());
+    }
     
     var id = Exhibit.getAttribute(configElmt, "collectionID");
     if (id != null && id.length > 0) {
@@ -45,7 +47,7 @@ Exhibit.UIContext.createFromDOM = function(configElmt, parentUIContext) {
     Exhibit.SettingsUtilities.collectSettingsFromDOM(
         configElmt, Exhibit.UIContext._settingSpecs, context._settings);
         
-    Exhibit.UIContext._configure(context, Exhibit.getConfigurationFromDOM(configElmt));
+    Exhibit.UIContext._configure(context, Exhibit.getConfigurationFromDOM(configElmt), ignoreLenses);
     
     return context;
 };
@@ -119,15 +121,17 @@ Exhibit.UIContext._settingSpecs = {
     "locale":           { type: "text" }
 };
 
-Exhibit.UIContext._configure = function(context, configuration) {
+Exhibit.UIContext._configure = function(context, configuration, ignoreLenses) {
     Exhibit.UIContext.registerLenses(configuration, context.getLensRegistry());
     
     if ("collectionID" in configuration) {
         context._collection = context._exhibit.getCollection(configuration["collectionID"]);
     }
     
-    Exhibit.SettingsUtilities.collectSettings(
-        configuration, Exhibit.UIContext._settingSpecs, context._settings);
+    if (!(ignoreLenses)) {
+        Exhibit.SettingsUtilities.collectSettings(
+            configuration, Exhibit.UIContext._settingSpecs, context._settings);
+    }
 };
 
 /*----------------------------------------------------------------------

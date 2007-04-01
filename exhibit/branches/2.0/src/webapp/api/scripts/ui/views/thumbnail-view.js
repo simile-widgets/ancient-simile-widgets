@@ -24,8 +24,10 @@ Exhibit.ThumbnailView = function(containerElmt, uiContext) {
 Exhibit.ThumbnailView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.ThumbnailView(
         containerElmt,
-        Exhibit.UIContext.create(configuration, uiContext)
+        Exhibit.UIContext.create(configuration, uiContext, true)
     );
+    
+    view._lensRegistry = Exhibit.UIContext.createLensRegistry(configuration, uiContext.getLensRegistry());
     view._orderedViewFrame.configure(configuration);
     
     view._initializeUI();
@@ -36,9 +38,10 @@ Exhibit.ThumbnailView.createFromDOM = function(configElmt, containerElmt, uiCont
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
     var view = new Exhibit.ThumbnailView(
         containerElmt != null ? containerElmt : configElmt, 
-        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
+        Exhibit.UIContext.createFromDOM(configElmt, uiContext, true)
     );
     
+    view._lensRegistry = Exhibit.UIContext.createLensRegistryFromDOM(configElmt, configuration, uiContext.getLensRegistry());
     view._orderedViewFrame.configureFromDOM(configElmt);
     view._orderedViewFrame.configure(configuration);
     
@@ -53,6 +56,7 @@ Exhibit.ThumbnailView.prototype.dispose = function() {
     
     this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
+    this._lensRegistry = null;
     this._dom = null;
     
     this._div = null;
@@ -145,7 +149,7 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
             "exhibit-thumbnailView-itemContainer-IE" :
             "exhibit-thumbnailView-itemContainer";
         
-        var itemLens = view._uiContext.getLensRegistry().createLens(itemID, itemLensDiv, view._uiContext);
+        var itemLens = view._lensRegistry.createLens(itemID, itemLensDiv, view._uiContext);
         state.itemContainer.appendChild(itemLensDiv);
     };
                 
