@@ -22,7 +22,6 @@
     
         var javascriptFiles = [
             "exhibit.js",
-            "ui.js",
             "persistence.js",
             
             "util/set.js",
@@ -30,41 +29,39 @@
             "util/settings.js",
             "util/views.js",
             
-            "database.js",
-            "expression.js",
-            "functions.js",
-            "collection.js",
+            "data/database.js",
+            "data/expression.js",
+            "data/functions.js",
+            "data/collection.js",
             
-            "ui-context.js",
-            "component.js",
-            "lens.js",
+            "data/importers/exhibit-json-importer.js",
+            "data/importers/html-table-importer.js",
+            "data/importers/jsonp-importer.js",
             
-            "facets/list-facet.js",
-            "facets/numeric-range-facet.js",
+            "data/exporters/rdf-xml-exporter.js",
+            "data/exporters/semantic-wikitext-exporter.js",
+            "data/exporters/exhibit-json-exporter.js",
+            "data/exporters/tsv-exporter.js",
+            "data/exporters/bibtex-exporter.js",
             
-            "view-panel.js",
-            "logo.js",
+            "ui/ui.js",
+            "ui/ui-context.js",
+            "ui/component.js",
+            "ui/lens.js",
+            "ui/view-panel.js",
+            "ui/logo.js",
+            "ui/facets/list-facet.js",
+            "ui/facets/numeric-range-facet.js",
+            "ui/widgets/collection-summary-widget.js",
             
-            "widgets/collection-summary-widget.js",
-            
-            "views/ordered-view-frame.js",
-            "views/tile-view.js",
-            "views/thumbnail-view.js",
-            "views/map-view.js",
-            "views/timeline-view.js",
-            "views/tabular-view.js",
-            "views/scatter-plot-view.js",
-            "views/pivot-table-view.js",
-            
-            "importers/exhibit-json-importer.js",
-            "importers/html-table-importer.js",
-            "importers/jsonp-importer.js",
-            
-            "exporters/rdf-xml-exporter.js",
-            "exporters/semantic-wikitext-exporter.js",
-            "exporters/exhibit-json-exporter.js",
-            "exporters/tsv-exporter.js",
-            "exporters/bibtex-exporter.js"
+            "ui/views/ordered-view-frame.js",
+            "ui/views/tile-view.js",
+            "ui/views/thumbnail-view.js",
+            "ui/views/map-view.js",
+            "ui/views/timeline-view.js",
+            "ui/views/tabular-view.js",
+            "ui/views/scatter-plot-view.js",
+            "ui/views/pivot-table-view.js"
         ];
         var cssFiles = [
             "exhibit.css"
