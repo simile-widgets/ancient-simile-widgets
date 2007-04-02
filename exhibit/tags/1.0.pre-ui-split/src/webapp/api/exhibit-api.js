@@ -177,7 +177,7 @@
         
         //var url = "/ajax/api/simile-ajax-api.js";
         //var url = "http://static.simile.mit.edu/ajax/api/simile-ajax-api.js";
-        var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
+        var url = "http://simile.mit.edu/repository/ajax/tags/1.0/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {
             var script = document.createElement("script");
             script.type = "text/javascript";
