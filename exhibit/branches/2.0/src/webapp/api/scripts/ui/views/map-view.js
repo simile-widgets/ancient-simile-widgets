@@ -32,6 +32,7 @@ Exhibit.MapView._settingSpecs = {
     "overviewControl":  { type: "boolean",  defaultValue: false     },
     "type":             { type: "enum",     defaultValue: "normal", choices: [ "normal", "satellite", "hybrid" ] },
     "bubbleTip":        { type: "enum",     defaultValue: "top",    choices: [ "top", "bottom" ] },
+    "mapHeight":        { type: "int",      defaultValue: 400       },
     "mapConstructor":   { type: "function", defaultValue: null      }
 };
 
@@ -202,15 +203,16 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
 
 Exhibit.MapView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
-    this._collectionSummaryWidget.dispose();
+    
+    this._map = null;
+    
+    this._dom.dispose();
+    this._dom = null;
+    
     this._uiContext.dispose();
+    this._uiContext = null;
     
     this._div.innerHTML = "";
-    
-    this._collectionSummaryWidget = null;
-    this._uiContext = null;
-    this._dom.map = null;
-    this._dom = null;
     this._div = null;
     
     GUnload();
@@ -220,46 +222,59 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.MapView.theme.constructDom(this._div, this._uiContext);
-    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        {}, 
-        this._dom.collectionSummaryDiv, 
-        this._uiContext
-    );
+    this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
+        this._div, 
+        this._uiContext, 
+        true, // showSummary
+        {   onResize: function() { 
+                self._map.checkResize(); 
+            } 
+        }, 
+        {   markerGenerator: function(color) {
+                var shape = "square";
+                return SimileAjax.Graphics.createTranslucentImage(
+                    Exhibit.MapView._markerUrlPrefix + 
+                    [   shape,
+                        color,
+                        [ "m", shape, color, "legend.png" ].join("-")
+                    ].join("/")
+                );
+            }
+        }
+    );    
     
-    var mapDiv = this._dom.getMapDiv();
-    mapDiv.style.height = "400px";
+    var mapDiv = this._dom.plotContainer;
+    mapDiv.style.height = settings.mapHeight + "px";
+    mapDiv.className = "exhibit-mapView-map";
     
     var settings = this._settings;
     if (settings._mapConstructor != null) {
-        this._dom.map = settings._mapConstructor(mapDiv);
+        this._map = settings._mapConstructor(mapDiv);
     } else {
-        this._dom.map = new GMap2(mapDiv);
-        this._dom.map.enableDoubleClickZoom();
-        this._dom.map.enableContinuousZoom();
+        this._map = new GMap2(mapDiv);
+        this._map.enableDoubleClickZoom();
+        this._map.enableContinuousZoom();
 
-        this._dom.map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
-        this._dom.map.addControl(settings.size == "small" ?
-            new GSmallMapControl() : new GLargeMapControl());
-            
-    	if (settings.overviewControl) {
-    	    this._dom.map.addControl(new GOverviewMapControl);
-    	}
+        this._map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
         
+        this._map.addControl(settings.size == "small" ? new GSmallMapControl() : new GLargeMapControl());
+    	if (settings.overviewControl) {
+    	    this._map.addControl(new GOverviewMapControl);
+    	}
         if (settings.scaleControl) {
-            this._dom.map.addControl(new GScaleControl());
+            this._map.addControl(new GScaleControl());
         }
         
-        this._dom.map.addControl(new GMapTypeControl());
+        this._map.addControl(new GMapTypeControl());
         switch (settings.type) {
         case "normal":
-            this._dom.map.setMapType(G_NORMAL_MAP);
+            this._map.setMapType(G_NORMAL_MAP);
             break;
         case "satellite":
-            this._dom.map.setMapType(G_SATELLITE_MAP);
+            this._map.setMapType(G_SATELLITE_MAP);
             break;
         case "hybrid":
-            this._dom.map.setMapType(G_HYBRID_MAP);
+            this._map.setMapType(G_HYBRID_MAP);
             break;
         }
     }
@@ -278,9 +293,9 @@ Exhibit.MapView.prototype._reconstruct = function() {
      */
     var originalSize = collection.countAllItems();
     var currentSize = collection.countRestrictedItems();
-    var mappableSize = 0;
+    var unplottableItems = [];
     
-    this._dom.map.clearOverlays();
+    this._map.clearOverlays();
     this._dom.legendWidget.clear();
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
@@ -311,8 +326,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
                         };
                     }
                 }
-                
-                mappableSize++;
+            } else {
+                unplottableItems.push(itemID);
             }
         });
         
@@ -356,30 +371,31 @@ Exhibit.MapView.prototype._reconstruct = function() {
 
             var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
             var marker = new GMarker(point, icon);
-            if (maxAutoZoom > locationData.latlng.maxAutoZoom)
+            if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
                 maxAutoZoom = locationData.latlng.maxAutoZoom;
+            }
             bounds.extend(point);
 
             GEvent.addListener(marker, "click", function() { 
-        		self._dom.map.openInfoWindow(marker.getPoint(), self._createInfoWindow(items));
+        		self._map.openInfoWindow(marker.getPoint(), self._createInfoWindow(items));
             });
-            self._dom.map.addOverlay(marker);
+            self._map.addOverlay(marker);
         }
-        for (latlngKey in locationToData) {
+        for (var latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
         }
         
         if (bounds && typeof settings.zoom == "undefined") {
-            var zoom = Math.max(0,self._dom.map.getBoundsZoomLevel(bounds)-1);
+            var zoom = Math.max(0,self._map.getBoundsZoomLevel(bounds)-1);
             //console.log( zoom, settings.maxAutoZoom, maxAutoZoom );
             zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);
-            self._dom.map.setZoom(zoom);
+            self._map.setZoom(zoom);
         }
-        if (bounds && typeof settings.center == "undefined")
-            self._dom.map.setCenter(bounds.getCenter());
-
+        if (bounds && typeof settings.center == "undefined") {
+            self._map.setCenter(bounds.getCenter());
+        }
     }
-    this._dom.setMappableCounts(currentSize, mappableSize);
+    this._dom.setUnplottableMessage(currentSize, unplottableItems);
 };
 
 Exhibit.MapView.prototype._createInfoWindow = function(items) {

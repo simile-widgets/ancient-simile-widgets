@@ -109,29 +109,32 @@ Exhibit.TimelineView._configure = function(view, configuration) {
 
 Exhibit.TimelineView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
-    this._collectionSummaryWidget.dispose();
-    this._uiContext.dispose();
+    
+    this._timeline = null;
+    this._dom.dispose();
+    this._dom = null;
     
     this._div.innerHTML = "";
-    
-    this._collectionSummaryWidget = null;
-    this._uiContext = null;
-    
-    this._dom.timeline = null;
-    this._dom = null;
     this._div = null;
+    
+    this._uiContext.dispose();
+    this._uiContext = null;
 };
 
 Exhibit.TimelineView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.TimelineView.theme.constructDom(this._div, this._uiContext);
-    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        {}, 
-        this._dom.collectionSummaryDiv, 
-        this._uiContext
-    );
+    this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
+        this._div, 
+        this._uiContext, 
+        true, // showSummary
+        {   onResize: function() { 
+                self._timeline.layout();
+            } 
+        }, 
+        {}
+    );    
     
     this._eventSource = new Timeline.DefaultEventSource();
     this._reconstruct();
@@ -140,20 +143,21 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
 Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
     var settings = this._settings;
     
-    if (this._dom.timeline != null) {
-        this._dom.timeline.dispose();
+    if (this._timeline != null) {
+        this._timeline.dispose();
     }
     
     if (newEvents) {
         this._eventSource.addMany(newEvents);
     }
     
-    var timelineDiv = this._dom.getTimelineDiv();
+    var timelineDiv = this._dom.plotContainer;
     if (settings.timelineConstructor != null) {
-        this._dom.timeline = settings.timelineConstructor(timelineDiv, this._eventSource);
+        this._timeline = settings.timelineConstructor(timelineDiv, this._eventSource);
     } else {
-        timelineDiv.style.height = "400px";
-        
+        timelineDiv.style.height = settings.timelineHeight + "px";
+        timelineDiv.className = "exhibit-timelineView-timeline";
+
         var theme = Timeline.ClassicTheme.create();
         theme.event.bubble.width = this._uiContext.getSetting("bubbleWidth");
         theme.event.bubble.height = this._uiContext.getSetting("bubbleHeight");
@@ -235,7 +239,7 @@ Exhibit.TimelineView.prototype._reconstructTimeline = function(newEvents) {
         bandInfos[1].highlight = true;
         bandInfos[1].eventPainter.setLayout(bandInfos[0].eventPainter.getLayout());
 
-        this._dom.timeline = Timeline.create(timelineDiv, bandInfos, Timeline.HORIZONTAL);
+        this._timeline = Timeline.create(timelineDiv, bandInfos, Timeline.HORIZONTAL);
     }
 };
 
@@ -250,7 +254,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
      *  Get the current collection and check if it's empty
      */
     var currentSize = collection.countRestrictedItems();
-    var plottableSize = 0;
+    var unplottableItems = [];
     
     this._dom.legendWidget.clear();
     this._eventSource.clear();
@@ -291,11 +295,9 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         
         currentSet.visit(function(itemID) {
             var durations = [];
-            self._getDuration(itemID, database, function(duration) { durations.push(duration); });
+            self._getDuration(itemID, database, function(duration) { if ("start" in duration) durations.push(duration); });
             
             if (durations.length > 0) {
-                plottableSize++;
-                
                 var colorKey = null;
                 accessors.getColor(itemID, database, function(v) { colorKey = v; });
                 
@@ -312,9 +314,12 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 for (var i = 0; i < durations.length; i++) {
                     addEvent(itemID, durations[i], colorData);
                 }
+            } else {
+                unplottableItems.push(itemID);
             }
         });
         
+        var plottableSize = currentSize - unplottableItems.length;
         if (plottableSize > this._largestSize) {
             this._largestSize = plottableSize;
             this._reconstructTimeline(events);
@@ -322,7 +327,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             this._eventSource.addMany(events);
         }
         
-        var band = this._dom.timeline.getBand(0);
+        var band = this._timeline.getBand(0);
         var centerDate = band.getCenterVisibleDate();
         if (centerDate < this._eventSource.getEarliestDate()) {
             band.scrollToCenter(this._eventSource.getEarliestDate());
@@ -330,8 +335,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             band.scrollToCenter(this._eventSource.getLatestDate());
         }
     }
-    
-    this._dom.setPlottableCounts(currentSize, plottableSize);
+    this._dom.setUnplottableMessage(currentSize, unplottableItems);
 };
 
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {

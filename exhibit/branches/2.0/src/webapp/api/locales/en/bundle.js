@@ -60,6 +60,10 @@ Exhibit.UIContext.l10n["eng"]={initialSettings:{"bubbleWidth":400,"bubbleHeight"
 
 Exhibit.FacetUtilities.l10n={clearSelectionsTooltip:"Clear these selections",facetSelectActionTitle:"Select %0 in facet %1",facetUnselectActionTitle:"Unselect %0 in facet %1",facetClearSelectionsActionTitle:"Clear selections in facet %0"};
 
+/* views-l10n.js */
+
+Exhibit.ViewUtilities.l10n={unplottableMessageFormatter:function(totalCount,unplottableItems,uiContext){var count=unplottableItems.length;return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> "+"out of <class class='exhibit-views-totalCount'>%1</span> cannot be plotted.",[count==1?(count+" result"):(count+" results"),totalCount]);}};
+
 /* view-panel-l10n.js */
 
 Exhibit.ViewPanel.l10n={createSelectViewActionTitle:function(viewLabel){return"select "+viewLabel+" view";},missingViewClassMessage:"The specification for one of the views is missing the viewClass field.",viewClassNotFunctionMessage:function(expr){return"The viewClass attribute value '"+expr+"' you have specified\n"+"for one of the views does not evaluate to a Javascript function.";},badViewClassMessage:function(expr){return"The viewClass attribute value '"+expr+"' you have specified\n"+"for one of the views is not a valid Javascript expression.";}};

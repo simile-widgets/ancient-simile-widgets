@@ -292,14 +292,12 @@ td.exhibit-lens-property-name {
 td.exhibit-lens-property-values {
 }
 
-div.exhibit-mapView-mapContainer {
-}
+/*==================================================
+ * Styles for map view
+ *==================================================
+ */
 div.exhibit-mapView-map {
     border: 1px solid #738699;
-}
-div.exhibit-mapView-mappableDetails {
-    padding:        1em;
-    text-align:     center;
 }
 div.exhibit-pivotTableView-tableContainer {
 }
@@ -411,11 +409,6 @@ div.exhibit-scatterPlotView-point {
     cursor:     pointer;
     overflow:   hidden;
 }
-
-div.exhibit-scatterPlotView-mappableDetails {
-    padding:        1em;
-    text-align:     center;
-}
 table.exhibit-tabularView-body {
     width: 100%;
 }
@@ -460,16 +453,10 @@ div.exhibit-thumbnailView-itemContainer-IE {
 }
 
 td.exhibit-tileView-itemIndex {
-}div.exhibit-timelineView-timelineContainer {
-}
-div.exhibit-timelineView-timeline {
+}div.exhibit-timelineView-timeline {
     border:         1px solid #738699;
     font-family:    Trebuchet MS, Helvetica, sans serif;
     font-size:      10pt;
-}
-div.exhibit-timelineView-plottableDetails {
-    padding:        1em;
-    text-align:     center;
 }
 /*==================================================
  * View Panel styles
@@ -497,9 +484,19 @@ div.exhibit-viewPanel-viewContainer {
 }
 
 /*==================================================
- * Collection View styles
+ * Common styles for views
  *==================================================
  */
+div.exhibit-views-unplottableMessage {
+    padding:        1em;
+    text-align:     center;
+}
+.exhibit-views-unplottableCount {
+    font-weight: bold;
+}
+.exhibit-views-totalCount {
+}
+
 div.exhibit-collectionView {
 }
 

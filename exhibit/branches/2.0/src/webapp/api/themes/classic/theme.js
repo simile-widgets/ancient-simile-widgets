@@ -10,10 +10,8 @@
         "ordered-view-frame-theme.js",
         "tile-view-theme.js",
         "thumbnail-view-theme.js",
-        "map-view-theme.js",
         "timeline-view-theme.js",
         "tabular-view-theme.js",
-        "scatter-plot-view-theme.js",
         "pivot-table-view-theme.js"
     ];
     var cssFiles = [
@@ -21,6 +19,7 @@
         
         "browse-panel.css",
         "facet.css",
+        "views.css",
         
         "view-panel.css",
         

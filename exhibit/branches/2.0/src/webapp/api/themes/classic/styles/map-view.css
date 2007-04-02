@@ -1,9 +1,7 @@
-div.exhibit-mapView-mapContainer {
-}
+/*==================================================
+ * Styles for map view
+ *==================================================
+ */
 div.exhibit-mapView-map {
     border: 1px solid #738699;
-}
-div.exhibit-mapView-mappableDetails {
-    padding:        1em;
-    text-align:     center;
 }

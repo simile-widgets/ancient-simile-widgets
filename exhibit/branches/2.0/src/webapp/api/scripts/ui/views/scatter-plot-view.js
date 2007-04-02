@@ -157,14 +157,14 @@ Exhibit.ScatterPlotView.evaluateSingle = function(expression, itemID, database) 
 
 Exhibit.ScatterPlotView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
-    this._collectionSummaryWidget.dispose();
+    
+    this._dom.dispose();
+    this._dom = null;
+    
     this._uiContext.dispose();
+    this._uiContext = null;
     
     this._div.innerHTML = "";
-    
-    this._collectionSummaryWidget = null;
-    this._uiContext = null;
-    this._dom = null;
     this._div = null;
 };
 
@@ -172,17 +172,17 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.ScatterPlotView.theme.constructDom(
+    this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
         this._div, 
-        function() { return self._reconstruct(); },
-        this._uiContext
+        this._uiContext, 
+        true, // showSummary
+        {   onResize: function() { 
+                self._reconstruct();
+            } 
+        }, 
+        {}
     );
-    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        {}, 
-        this._dom.collectionSummaryDiv, 
-        this._uiContext
-    );
-    
+    this._dom.plotContainer.className = "exhibit-scatterPlotView-plotContainer";
     this._dom.plotContainer.style.height = this._settings.plotHeight + "px";
     this._reconstruct();
 };
@@ -202,7 +202,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
     var unscaleY = self._axisInverseFuncs.y;
     
     var currentSize = collection.countRestrictedItems();
-    var mappableSize = 0;
+    var unplottableItems = [];
     
     this._dom.legendWidget.clear();
     if (currentSize > 0) {
@@ -256,9 +256,9 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
                         yAxisMin = Math.min(yAxisMin, xy.scaledY);
                         yAxisMax = Math.max(yAxisMax, xy.scaledY);
                     }
-                    
-                    mappableSize++;
                 }
+            } else {
+                unplottableItems.push(itemID);
             }
         });
         
@@ -441,15 +441,11 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         }
         canvasDiv.style.display = "block";
     }
-    this._dom.setPlottableCounts(currentSize, mappableSize);
+    this._dom.setUnplottableMessage(currentSize, unplottableItems);
 };
 
 Exhibit.ScatterPlotView.prototype._openPopup = function(elmt, items) {
-    Exhibit.ViewUtilities.openBubbleForItems(
-        elmt, 
-        items, 
-        this._uiContext
-    );
+    Exhibit.ViewUtilities.openBubbleForItems(elmt, items, this._uiContext);
 };
 
 Exhibit.ScatterPlotView._makePoint = function(color, left, bottom, tooltip) {

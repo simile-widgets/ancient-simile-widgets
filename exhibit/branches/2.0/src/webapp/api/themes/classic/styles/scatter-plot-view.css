@@ -86,8 +86,3 @@ div.exhibit-scatterPlotView-point {
     cursor:     pointer;
     overflow:   hidden;
 }
-
-div.exhibit-scatterPlotView-mappableDetails {
-    padding:        1em;
-    text-align:     center;
-}

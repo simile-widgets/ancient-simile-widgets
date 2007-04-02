@@ -23,7 +23,8 @@
         "scatter-plot-view-l10n.js",
         "pivot-table-view-l10n.js",
         
-        "util/facets-l10n.js"
+        "util/facets-l10n.js",
+        "util/views-l10n.js"
     ];
     var cssFiles = [
     ];
