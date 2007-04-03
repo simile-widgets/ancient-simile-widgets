@@ -220,6 +220,7 @@ Exhibit.MapView.prototype.dispose = function() {
 
 Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
+    var settings = this._settings;
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(

@@ -19,18 +19,6 @@ div.exhibit-browsePanel-logoContainer {
 }
 
 /*==================================================
- * Collection Summary Widget styles
- *==================================================
- */
-div.exhibit-collectionSummaryWidget {
-}
-span.exhibit-collectionSummaryWidget-count {
-    font-size:      200%;
-}
-span.exhibit-collectionSummaryWidget-types {
-    padding-left:   0.5em;
-}
-/*==================================================
  * Exhibit common styles
  *==================================================
  */
@@ -184,6 +172,38 @@ div.exhibit-focusDialog-controls {
 .exhibit-busyIndicator-content img {
     vertical-align: middle;
 }
+div.exhibit-lens {
+    border:         1px solid #aaa;
+    margin-bottom:  1em;
+}
+
+div.exhibit-lens-title {
+    font-weight:    bold;
+    background:     #eee;
+    padding:        2px;
+}
+
+.exhibit-lens-copyButton {
+    float:  right;
+}
+
+div.exhibit-lens-body {
+	padding: 0.3em;
+}
+
+table.exhibit-lens-properties {
+}
+
+tr.exhibit-lens-property {
+}
+
+td.exhibit-lens-property-name {
+	color: #888;
+}
+
+td.exhibit-lens-property-values {
+}
+
 /*==================================================
  * Facet box
  *==================================================
@@ -246,52 +266,77 @@ div.exhibit-facet-value-count {
 div.exhibit-facet-value-inner {
     position:       relative;
 }
-div.exhibit-legendWidget {
-    margin:         1em 0;
+/*==================================================
+ * Common styles for views
+ *==================================================
+ */
+div.exhibit-views-unplottableMessage {
+    padding:        1em;
     text-align:     center;
-    line-height:    2em;
 }
-div.exhibit-legendWidget-entry {
-}
-span.exhibit-legendWidget-entry-title {
+.exhibit-views-unplottableCount {
     font-weight: bold;
 }
-span.exhibit-legendWidget-entry-swatch {
-    border:     1px solid #888;
-    padding:    0px 3px;
-}
-div.exhibit-lens {
-    border:         1px solid #aaa;
-    margin-bottom:  1em;
+.exhibit-views-totalCount {
 }
 
-div.exhibit-lens-title {
-    font-weight:    bold;
-    background:     #eee;
-    padding:        2px;
+div.exhibit-collectionView {
 }
 
-.exhibit-lens-copyButton {
-    float:  right;
+div.exhibit-collectionView-header {
+}
+span.exhibit-collectionView-header-count {
+    font-size:      200%;
+}
+span.exhibit-collectionView-header-types {
+    padding-left:   0.5em;
+}
+span.exhibit-collectionView-header-details {
+    padding-left:   0.5em;
+    color:          #888;
+}
+div.exhibit-collectionView-header-sortControls {
+    text-align:     center;
+    margin:         1em 0;
+}
+.exhibit-collectionView-header-groupControls {
+    cursor: pointer;
+}
+.exhibit-collectionView-header-duplicateControls {
+    cursor: pointer;
 }
 
-div.exhibit-lens-body {
-	padding: 0.3em;
+div.exhibit-collectionView-body {
 }
 
-table.exhibit-lens-properties {
+div.exhibit-collectionView-group {
 }
 
-tr.exhibit-lens-property {
+span.exhibit-collectionView-group-count {
 }
 
-td.exhibit-lens-property-name {
-	color: #888;
+div.exhibit-collectionView-group-content {
+    margin-left: 1em;
 }
 
-td.exhibit-lens-property-values {
+div.exhibit-collectionView-group h1 {
+    font-size:      150%;
+    margin:         1em 0;
 }
 
+div.exhibit-collectionView-group h2 {
+    font-size:      120%;
+    margin:         0.5em 0;
+}
+
+.exhibit-collectionView-group h3 {
+}
+
+div.exhibit-collectionView-footer {
+    clear:      both;
+    text-align: center;
+    margin:     2em 0;
+}
 /*==================================================
  * Styles for map view
  *==================================================
@@ -310,16 +355,6 @@ div.exhibit-pivotTableView-resizer {
 div.exhibit-pivotTableView-mappableDetails {
     padding:        1em;
     text-align:     center;
-}
-/*==================================================
- * Resizable Div Widget styles
- *==================================================
- */
-div.exhibit-resizableDivWidget-resizer {
-    text-align:     center;
-    cursor:         s-resize;
-    height:         15px;
-    clear:          both;
 }
 div.exhibit-scatterPlotView-plotContainer {
     position: relative;
@@ -484,73 +519,38 @@ div.exhibit-viewPanel-viewContainer {
 }
 
 /*==================================================
- * Common styles for views
+ * Collection Summary Widget styles
  *==================================================
  */
-div.exhibit-views-unplottableMessage {
-    padding:        1em;
-    text-align:     center;
+div.exhibit-collectionSummaryWidget {
 }
-.exhibit-views-unplottableCount {
-    font-weight: bold;
-}
-.exhibit-views-totalCount {
-}
-
-div.exhibit-collectionView {
-}
-
-div.exhibit-collectionView-header {
-}
-span.exhibit-collectionView-header-count {
+span.exhibit-collectionSummaryWidget-count {
     font-size:      200%;
 }
-span.exhibit-collectionView-header-types {
+span.exhibit-collectionSummaryWidget-types {
     padding-left:   0.5em;
 }
-span.exhibit-collectionView-header-details {
-    padding-left:   0.5em;
-    color:          #888;
-}
-div.exhibit-collectionView-header-sortControls {
+div.exhibit-legendWidget {
+    margin:         1em 0;
     text-align:     center;
-    margin:         1em 0;
+    line-height:    2em;
 }
-.exhibit-collectionView-header-groupControls {
-    cursor: pointer;
+div.exhibit-legendWidget-entry {
 }
-.exhibit-collectionView-header-duplicateControls {
-    cursor: pointer;
+span.exhibit-legendWidget-entry-title {
+    font-weight: bold;
 }
-
-div.exhibit-collectionView-body {
+span.exhibit-legendWidget-entry-swatch {
+    border:     1px solid #888;
+    padding:    0px 3px;
 }
-
-div.exhibit-collectionView-group {
-}
-
-span.exhibit-collectionView-group-count {
-}
-
-div.exhibit-collectionView-group-content {
-    margin-left: 1em;
-}
-
-div.exhibit-collectionView-group h1 {
-    font-size:      150%;
-    margin:         1em 0;
-}
-
-div.exhibit-collectionView-group h2 {
-    font-size:      120%;
-    margin:         0.5em 0;
-}
-
-.exhibit-collectionView-group h3 {
-}
-
-div.exhibit-collectionView-footer {
-    clear:      both;
-    text-align: center;
-    margin:     2em 0;
+/*==================================================
+ * Resizable Div Widget styles
+ *==================================================
+ */
+div.exhibit-resizableDivWidget-resizer {
+    text-align:     center;
+    cursor:         s-resize;
+    height:         15px;
+    clear:          both;
 }
