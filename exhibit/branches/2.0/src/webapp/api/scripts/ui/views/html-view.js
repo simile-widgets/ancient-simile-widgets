@@ -3,35 +3,37 @@
  *==================================================
  */
 
-Exhibit.HTMLView = function(containerElmt, uiContext) {
-    var view = this;
+Exhibit.HTMLView = function(containerElmt, uiContext, html) {
+    this.html = html;
+    this.view = this.moveChildNodes(html, containerElmt);
+    //this._uiContext = uiContext;
 };
 
-Exhibit.HTMLView.create = function(configuration, containerElmt, uiContext) {
-    var view = new Exhibit.HTMLView(
-        containerElmt,
-        Exhibit.UIContext.create(configuration, uiContext)
-    );
-    return view;
-};
-
-Exhibit.HTMLView.createFromDOM = function(configElmt, containerElmt, uiContext) {
-    console.log( configElmt, containerElmt, uiContext );
-    var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var view = new Exhibit.HTMLView(
+Exhibit.HTMLView.create = Exhibit.HTMLView.createFromDOM = function(
+    configElmt,
+    containerElmt,
+    uiContext
+) {
+    return new Exhibit.HTMLView(
         containerElmt != null ? containerElmt : configElmt,
-        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
+        null,//Exhibit.UIContext.createFromDOM(configElmt, uiContext),
+	configElmt
     );
-    return view;
 };
 
 Exhibit.HTMLView.prototype.dispose = function() {
-    this._dom.dispose();
-    this._dom = null;
+    //this._uiContext.dispose();
+    //this._uiContext = null;
 
-    this._uiContext.dispose();
-    this._uiContext = null;
+    this.html = this.moveChildNodes(this.view, this.html);
+    this.view = this.html = null;
+};
 
-    this._div.innerHTML = "";
-    this._div = null;
+Exhibit.HTMLView.prototype.moveChildNodes = function(src, dst) {
+    if( src === dst ) return dst;
+    var tmp = document.createDocumentFragment();
+    while(src.firstChild)
+        tmp.appendChild(src.firstChild);
+    dst.appendChild(tmp);
+    return dst;
 };
