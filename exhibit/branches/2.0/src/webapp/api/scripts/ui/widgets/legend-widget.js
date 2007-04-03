@@ -6,9 +6,10 @@ Exhibit.LegendWidget = function(configuration, containerElmt, uiContext) {
     this._configuration = configuration;
     this._div = containerElmt;
     this._uiContext = uiContext;
-    
-    this._keys = {};
-    
+
+    this._sortedKeys = [];
+    this._labelNodes = {};
+
     this._markerGenerator = "markerGenerator" in configuration ?
         configuration.markerGenerator :
         Exhibit.LegendWidget._defaultColorMarkerGenerator;
@@ -38,16 +39,15 @@ Exhibit.LegendWidget.prototype._initializeUI = function() {
 
 Exhibit.LegendWidget.prototype.clear = function() {
     this._div.innerHTML = "";
-    this._keys = {};
+    this._sortedKeys = [];
+    this._labelNodes = {};
 };
 
 Exhibit.LegendWidget.prototype.addEntry = function(key, value, label) {
-    if (key in this._keys) {
+    if (key in this._labelNodes) {
         return;
     }
-    
-    this._keys[key] = true;
-    
+
     var dom = SimileAjax.DOM.createDOMFromString(
         "span",
         "<span id='marker'></span>\u00a0" +
@@ -58,10 +58,21 @@ Exhibit.LegendWidget.prototype.addEntry = function(key, value, label) {
         { marker: this._markerGenerator(value) }
     );
     dom.elmt.className = "exhibit-legendWidget-entry";
-        
     this._labelStyler(dom.label, value);
-    this._div.appendChild(dom.elmt);
+
+    this._labelNodes[key] = dom;
+    this._sortedKeys.push(key);
+    this._sortedKeys.sort(Exhibit.LegendWidget._localeSort);
+
+    this._div.innerHTML = "";
+    for( var i = 0; dom = this._labelNodes[this._sortedKeys[i]]; i++ ) {
+        this._div.appendChild(dom.elmt);
+    }
 };
+
+Exhibit.LegendWidget._localeSort = function(a,b) {
+    return a.localeCompare(b);
+}
 
 Exhibit.LegendWidget._defaultColorMarkerGenerator = function(value) {
     var span = document.createElement("span");
