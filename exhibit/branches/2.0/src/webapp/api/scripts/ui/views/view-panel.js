@@ -161,7 +161,7 @@ Exhibit.ViewPanel.prototype._initializeUI = function() {
     }
     
     var self = this;
-    this._dom = Exhibit.ViewPanel.theme.constructDom(
+    this._dom = Exhibit.ViewPanel.constructDom(
         this._div.firstChild,
         this._viewLabels,
         this._viewTooltips,
@@ -263,7 +263,7 @@ Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, dat
 };
 
 Exhibit.ViewPanel.makeCopyAllButton = function(collection, database, generatedContentElmtRetriever, layer) {
-    var button = Exhibit.Theme.createCopyButton(true);
+    var button = Exhibit.UI.createCopyButton(true);
     var handler = function(elmt, evt, target) {
         Exhibit.ViewPanel._showCopyMenu(elmt, collection, database, generatedContentElmtRetriever);
     }
@@ -273,7 +273,7 @@ Exhibit.ViewPanel.makeCopyAllButton = function(collection, database, generatedCo
 };
 
 Exhibit.ViewPanel._showCopyMenu = function(elmt, collection, database, generatedContentElmtRetriever) {
-    var popupDom = Exhibit.Theme.createPopupMenuDom(elmt);
+    var popupDom = Exhibit.UI.createPopupMenuDom(elmt);
     
     var makeMenuItem = function(exporter) {
         popupDom.appendMenuItem(
@@ -281,7 +281,7 @@ Exhibit.ViewPanel._showCopyMenu = function(elmt, collection, database, generated
             null,
             function() {
                 var text = exporter.exportMany(collection.getRestrictedItems(), database);
-                Exhibit.Theme.createCopyDialogBox(text).open();
+                Exhibit.UI.createCopyDialogBox(text).open();
             }
         );
     }
@@ -296,7 +296,7 @@ Exhibit.ViewPanel._showCopyMenu = function(elmt, collection, database, generated
             Exhibit.l10n.htmlExporterLabel,
             null,
             function() {
-                Exhibit.Theme.createCopyDialogBox(
+                Exhibit.UI.createCopyDialogBox(
                     generatedContentElmtRetriever().innerHTML
                         //.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\&/g, "&amp;")
                 ).open();
@@ -307,3 +307,64 @@ Exhibit.ViewPanel._showCopyMenu = function(elmt, collection, database, generated
     popupDom.open();
 };
 
+Exhibit.ViewPanel.constructDom = function(
+    div,
+    viewLabels,
+    viewTooltips,
+    onSelectView
+) {
+    var l10n = Exhibit.ViewPanel.l10n;
+    var template = {
+        elmt: div,
+        className: "exhibit-viewPanel exhibit-ui-protection",
+        children: [
+            {   tag:        "div",
+                className:  "exhibit-viewPanel-viewSelection",
+                field:      "viewSelectionDiv"
+            },
+            {   tag:        "div",
+                className:  "exhibit-viewPanel-viewContainer",
+                field:      "viewContainerDiv"
+            }
+        ]
+    };
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
+    dom.getViewContainer = function() {
+        return dom.viewContainerDiv;
+    };
+    dom.setViewIndex = function(index) {
+        if (viewLabels.length > 1) {
+            dom.viewSelectionDiv.innerHTML = "";
+            
+            var appendView = function(i) {
+                var selected = (i == index);
+                if (i > 0) {
+                    dom.viewSelectionDiv.appendChild(document.createTextNode(" \u2022 "));
+                }
+                
+                var span = document.createElement("span");
+                span.className = selected ? 
+                    "exhibit-viewPanel-viewSelection-selectedView" :
+                    "exhibit-viewPanel-viewSelection-view";
+                span.title = viewTooltips[i];
+                span.innerHTML = viewLabels[i];
+                
+                if (!selected) {
+                    var handler = function(elmt, evt, target) {
+                        onSelectView(i);
+                        SimileAjax.DOM.cancelEvent(evt);
+                        return false;
+                    }
+                    SimileAjax.WindowManager.registerEvent(span, "click", handler);
+                }
+                dom.viewSelectionDiv.appendChild(span);
+            };
+            
+            for (var i = 0; i < viewLabels.length; i++) {
+                appendView(i);
+            }
+        }
+    };
+    
+    return dom;
+};

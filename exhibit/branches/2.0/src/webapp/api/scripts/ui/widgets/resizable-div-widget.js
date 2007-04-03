@@ -33,7 +33,7 @@ Exhibit.ResizableDivWidget.prototype._initializeUI = function() {
     this._div.innerHTML = 
         "<div></div>" +
         "<div class='exhibit-resizableDivWidget-resizer'>" +
-            SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.Theme.urlPrefix + "images/down-arrow.png") +
+            SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix + "images/down-arrow.png") +
         "</div>";
         
     this._contentDiv = this._div.childNodes[0];

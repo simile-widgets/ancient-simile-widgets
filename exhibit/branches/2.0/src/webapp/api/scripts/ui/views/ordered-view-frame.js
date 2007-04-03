@@ -171,7 +171,7 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
     this._divFooter.innerHTML = "";
     
     var self = this;
-    this._headerDom = Exhibit.OrderedViewFrame.theme.createHeaderDom(
+    this._headerDom = Exhibit.OrderedViewFrame.createHeaderDom(
         this._uiContext.getExhibit(), 
         this._divHeader, 
         function(elmt, evt, target) {
@@ -196,7 +196,7 @@ Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
         },
         this._generatedContentElmtRetriever // HACK
     );
-    this._footerDom = Exhibit.OrderedViewFrame.theme.createFooterDom(
+    this._footerDom = Exhibit.OrderedViewFrame.createFooterDom(
         this._uiContext.getExhibit(), 
         this._divFooter, 
         function(elmt, evt, target) {
@@ -247,7 +247,7 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
         var orderDoms = [];
         var buildOrderDom = function(order, index) {
             var property = database.getProperty(order.property);
-            var orderDom = Exhibit.OrderedViewFrame.theme.createOrderDom(
+            var orderDom = Exhibit.OrderedViewFrame.createOrderDom(
                 (order.forward) ? property.getPluralLabel() : property.getReversePluralLabel(),
                 function(elmt, evt, target) {
                     self._openSortPopup(elmt, index);
@@ -474,7 +474,7 @@ Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
     var self = this;
     var database = this._uiContext.getDatabase();
     
-    var popupDom = Exhibit.Theme.createPopupMenuDom(elmt);
+    var popupDom = Exhibit.UI.createPopupMenuDom(elmt);
     
     /*
      *  Ascending/descending/remove options for the current order
@@ -490,7 +490,7 @@ Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
         
         popupDom.appendMenuItem(
             sortLabels.ascending, 
-            Exhibit.Theme.urlPrefix +
+            Exhibit.urlPrefix +
                 (order.ascending ? "images/option-check.png" : "images/option.png"),
             order.ascending ?
                 function() {} :
@@ -506,7 +506,7 @@ Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
         );
         popupDom.appendMenuItem(
             sortLabels.descending, 
-            Exhibit.Theme.urlPrefix +
+            Exhibit.urlPrefix +
                 (order.ascending ? "images/option.png" : "images/option-check.png"),
             order.ascending ?
                 function() {
@@ -689,4 +689,132 @@ Exhibit.OrderedViewFrame.prototype._toggleShowDuplicates = function() {
         Exhibit.OrderedViewFrame.l10n[
             oldShowDuplicates ? "hideDuplicatesActionTitle" : "showDuplicatesActionTitle"]
     );
+};
+
+Exhibit.OrderedViewFrame.createHeaderDom = function(
+    exhibit, 
+    headerDiv,
+    onThenSortBy,
+    onGroupToggle,
+    onShowDuplicatesToggle,
+    generatedContentElmtRetriever
+) {
+    var l10n = Exhibit.OrderedViewFrame.l10n;
+    var headerTemplate = {
+        elmt:       headerDiv,
+        className:  "exhibit-collectionView-header",
+        children: [
+            {   tag:    "div",
+                field:  "collectionSummaryDiv"
+            },
+            {   tag:        "div",
+                field:      "sortControlsDiv",
+                className:  "exhibit-collectionView-header-sortControls",
+                children: l10n.createSortingControlsTemplate(
+                    Exhibit.UI.makeActionLink(l10n.thenSortByLabel, onThenSortBy)
+                ).concat([
+                    " \u2022 ",
+                    {   tag:    "span",
+                        field:  "groupSpan",
+                        className: "exhibit-collectionView-header-groupControls",
+                        children: [
+                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option.png"),
+                                field:      "groupOption",
+                                style: {  display: "none" }
+                            },
+                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option-check.png"),
+                                field:      "groupOptionChecked",
+                                style: {  display: "none" }
+                            },
+                            " ",
+                            l10n.groupedAsSorted
+                        ]
+                    },
+                    " \u2022 ",
+                    {   tag:    "span",
+                        field:  "duplicateSpan",
+                        className: "exhibit-collectionView-header-duplicateControls",
+                        children: [
+                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option.png"),
+                                field:      "duplicateOption",
+                                style: {  display: "none" }
+                            },
+                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option-check.png"),
+                                field:      "duplicateOptionChecked",
+                                style: {  display: "none" }
+                            },
+                            " ",
+                            l10n.showDuplicates
+                        ]
+                    }
+                ])
+            }
+        ]
+    };
+    var dom = SimileAjax.DOM.createDOMFromTemplate(headerTemplate);
+    SimileAjax.WindowManager.registerEvent(dom.groupSpan, "click", onGroupToggle);
+    SimileAjax.WindowManager.registerEvent(dom.duplicateSpan, "click", onShowDuplicatesToggle);
+    
+    dom.setOrders = function(orderDoms) {
+        dom.ordersSpan.innerHTML = "";
+        
+        var addDelimiter = Exhibit.l10n.createListDelimiter(dom.ordersSpan, orderDoms.length);
+        for (var i = 0; i < orderDoms.length; i++) {
+            addDelimiter();
+            dom.ordersSpan.appendChild(orderDoms[i].elmt);
+        }
+        addDelimiter();
+    };
+    dom.setGrouped = function(grouped) {
+        dom.groupOption.style.display = grouped ? "none" : "inline";
+        dom.groupOptionChecked.style.display = grouped ? "inline" : "none";
+    };
+    dom.setShowDuplicates = function(show) {
+        dom.duplicateOption.style.display = show ? "none" : "inline";
+        dom.duplicateOptionChecked.style.display = show ? "inline" : "none";
+    };
+    dom.enableThenByAction = function(enabled) {
+        Exhibit.UI.enableActionLink(dom.thenByLink, enabled);
+    };
+    
+    return dom;
+};
+
+Exhibit.OrderedViewFrame.createOrderDom = function(label, onPopup) {
+    var a = Exhibit.UI.makeActionLink(label, onPopup);
+    //a.appendChild(Exhibit.UI.createTranslucentImage("images/down-arrow.png"));
+    
+    return { elmt: a };
+}
+
+Exhibit.OrderedViewFrame.createFooterDom = function(
+    exhibit, 
+    footerDiv,
+    onShowAll,
+    onDontShowAll
+) {
+    var l10n = Exhibit.OrderedViewFrame.l10n;
+    var footerTemplate = {
+        elmt:       footerDiv,
+        className:  "exhibit-collectionView-footer screen",
+        children:   []
+    };
+    
+    var dom = SimileAjax.DOM.createDOMFromTemplate(footerTemplate);
+    dom.setCounts = function(count, limitCount, showAll, canToggle) {
+        dom.elmt.innerHTML = "";
+        if (canToggle && count > limitCount) {
+            if (showAll) {
+                dom.elmt.appendChild(
+                    Exhibit.UI.makeActionLink(
+                        l10n.formatDontShowAll(limitCount), onDontShowAll));
+            } else {
+                dom.elmt.appendChild(
+                    Exhibit.UI.makeActionLink(
+                        l10n.formatShowAll(count), onShowAll));
+            }
+        }
+    };
+    
+    return dom;
 };

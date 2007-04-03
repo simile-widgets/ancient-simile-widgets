@@ -305,9 +305,9 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 if (colorKey in self._colorMap) {
                     colorData = self._colorMap[colorKey];
                 } else {
-                    colorData = Exhibit.TimelineView.theme.markers[self._maxColorIndex];
+                    colorData = Exhibit.TimelineView.markers[self._maxColorIndex];
                     self._colorMap[colorKey] = colorData;
-                    self._maxColorIndex = (self._maxColorIndex + 1) % Exhibit.TimelineView.theme.markers.length;
+                    self._maxColorIndex = (self._maxColorIndex + 1) % Exhibit.TimelineView.markers.length;
                 }
                 legendWidget.addEntry(colorKey, colorData.color, colorKey);
                 
@@ -341,3 +341,30 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {
     this._uiContext.getLensRegistry().createLens(evt._itemID, elmt, this._uiContext);
 };
+
+Exhibit.TimelineView.markers = [
+    {   color:      "FF9000",
+        textColor:  "000000"
+    },
+    {   color:      "5D7CBA",
+        textColor:  "000000"
+    },
+    {   color:      "A97838",
+        textColor:  "000000"
+    },
+    {   color:      "8B9BBA",
+        textColor:  "000000"
+    },
+    {   color:      "BF955F",
+        textColor:  "000000"
+    },
+    {   color:      "003EBA",
+        textColor:  "FFFFFF"
+    },
+    {   color:      "29447B",
+        textColor:  "FFFFFF"
+    },
+    {   color:      "543C1C",
+        textColor:  "FFFFFF"
+    }
+];

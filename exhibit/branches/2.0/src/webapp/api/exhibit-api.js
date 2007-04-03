@@ -69,10 +69,27 @@
             "ui/views/html-view.js"
         ];
         var cssFiles = [
-            "exhibit.css"
+            "exhibit.css",
+            "browse-panel.css",
+            "lens.css",
+            
+            "util/facets.css",
+            "util/views.css",
+            
+            "widgets/collection-summary-widget.css",
+            "widgets/resizable-div-widget.css",
+            "widgets/legend-widget.css",
+            
+            "views/view-panel.css",
+            "views/tile-view.css",
+            "views/map-view.css",
+            "views/timeline-view.css",
+            "views/thumbnail-view.css",
+            "views/tabular-view.css",
+            "views/scatter-plot-view.css",
+            "views/pivot-table-view.css"
         ];
         
-        var theme = "classic";
         var locales = [ "en" ];
         var gmapKey = null;
         
@@ -84,8 +101,6 @@
                 var p = parameters[i];
                 if (p.name == "bundle") {
                     Exhibit.bundle = p.value != "false";
-                } else if (p.name == "theme") {
-                    theme = p.value;
                 } else if (p.name == "locale") {
                     // ISO-639 language codes, optional ISO-3166 country codes (2 characters)
                     var segments = p.value.split("-");
@@ -164,14 +179,8 @@
         }
         
         /*
-         *  Theme and localization
+         *  Localization
          */
-        SimileAjax.includeJavascriptFiles(
-            document, 
-            Exhibit.urlPrefix + "themes/", 
-            [ theme + "/theme.js" ]
-        );
-        
         var localeFiles = [];
         for (var i = 0; i < locales.length; i++) {
             localeFiles.push(locales[i] + "/locale.js");

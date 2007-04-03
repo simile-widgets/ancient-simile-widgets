@@ -120,7 +120,7 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
     this._orderedViewFrame.onNewGroup = function(groupSortKey, keyType, groupLevel) {
         closeGroups(groupLevel);
         
-        var groupDom = Exhibit.ThumbnailView.theme.constructGroup(
+        var groupDom = Exhibit.ThumbnailView.constructGroup(
             groupLevel,
             groupSortKey
         );
@@ -136,7 +136,7 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
         //if (index > 10) return;
         
         if (state.itemContainer == null) {
-            state.itemContainer = Exhibit.ThumbnailView.theme.constructItemContainer();
+            state.itemContainer = Exhibit.ThumbnailView.constructItemContainer();
             state.div.appendChild(state.itemContainer);
         }
         
@@ -161,3 +161,44 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
     
     this._div.style.display = "block";
 };
+
+Exhibit.ThumbnailView.constructGroup = function(
+    groupLevel,
+    label
+) {
+    var l10n = Exhibit.ThumbnailView.l10n;
+    var template = {
+        tag: "div",
+        className: "exhibit-thumbnailView-group",
+        children: [
+            {   tag: "h" + (groupLevel + 1),
+                children: [ 
+                    label,
+                    {   tag:        "span",
+                        className:  "exhibit-collectionView-group-count",
+                        children: [
+                            " (",
+                            {   tag: "span",
+                                field: "countSpan"
+                            },
+                            ")"
+                        ]
+                    }
+                ],
+                field: "header"
+            },
+            {   tag: "div",
+                className: "exhibit-collectionView-group-content",
+                field: "contentDiv"
+            }
+        ]
+    };
+    return SimileAjax.DOM.createDOMFromTemplate(template);
+};
+
+Exhibit.ThumbnailView.constructItemContainer = function() {
+    var div = document.createElement("div");
+    div.className = "exhibit-thumbnailView-body";
+    return div;
+};
+    

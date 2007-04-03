@@ -18,7 +18,7 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
             "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
         "</div>" +
         "<div class='exhibit-facet-body-frame' id='frameDiv'></div>",
-        { checkImage: Exhibit.Theme.createTranslucentImage("images/black-check-no-border.png") }
+        { checkImage: Exhibit.UI.createTranslucentImage("images/black-check-no-border.png") }
     );
     var resizableDivWidget = Exhibit.ResizableDivWidget.create({}, dom.frameDiv, uiContext);
     
@@ -52,7 +52,7 @@ Exhibit.FacetUtilities.constructFacetItem = function(
             "<div class='exhibit-facet-value-count'>" +
                 count +
                 SimileAjax.Graphics.createTranslucentImageHTML(
-                    Exhibit.Theme.urlPrefix + (selected ? 
+                    Exhibit.urlPrefix + (selected ? 
                         "images/black-check-no-border.png" :
                         (facetHasSelection ? "images/no-check-no-border.png" : "images/gray-check-no-border.png")
                     )

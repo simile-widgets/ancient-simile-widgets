@@ -111,7 +111,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
     this._orderedViewFrame.onNewGroup = function(groupSortKey, keyType, groupLevel) {
         closeGroups(groupLevel);
         
-        var groupDom = Exhibit.TileView.theme.constructGroup(groupLevel, groupSortKey);
+        var groupDom = Exhibit.TileView.constructGroup(groupLevel, groupSortKey);
         
         state.div.appendChild(groupDom.elmt);
         state.div = groupDom.contentDiv;
@@ -124,7 +124,7 @@ Exhibit.TileView.prototype._reconstruct = function() {
         //if (index > 10) return;
         
         if (state.table == null) {
-            state.table = Exhibit.TileView.theme.constructTable();
+            state.table = Exhibit.TileView.constructTable();
             state.div.appendChild(state.table);
         }
         
@@ -154,3 +154,41 @@ Exhibit.TileView.prototype._reconstruct = function() {
     
     this._div.style.display = "block";
 };
+
+Exhibit.TileView.constructGroup = function(groupLevel, label) {
+    var l10n = Exhibit.TileView.l10n;
+    var template = {
+        tag: "div",
+        className: "exhibit-collectionView-group",
+        children: [
+            {   tag: "h" + (groupLevel + 1),
+                children: [ 
+                    label,
+                    {   tag:        "span",
+                        className:  "exhibit-collectionView-group-count",
+                        children: [
+                            " (",
+                            {   tag: "span",
+                                field: "countSpan"
+                            },
+                            ")"
+                        ]
+                    }
+                ],
+                field: "header"
+            },
+            {   tag: "div",
+                className: "exhibit-collectionView-group-content",
+                field: "contentDiv"
+            }
+        ]
+    };
+    return SimileAjax.DOM.createDOMFromTemplate(template);
+};
+
+Exhibit.TileView.constructTable = function() {
+    var table = document.createElement("table");
+    table.className = "exhibit-tileView-body";
+    return table;
+};
+    

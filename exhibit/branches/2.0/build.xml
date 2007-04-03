@@ -41,16 +41,6 @@
         </fileset>
   	</jsmin>
   	
-  	<!-- ========== Themes ========== -->
-    <jsmin output="src/webapp/api/themes/classic/bundle.js">
-        <fileset dir="src/webapp/api/themes/classic/scripts" />
-  	</jsmin>
-    <concat destfile="src/webapp/api/themes/classic/bundle.css">
-        <fileset dir="src/webapp/api/themes/classic/styles">
-        	<include name="**/*.css" />
-        </fileset>
-    </concat>
-  	
   	<!-- ========== Locales ========== -->
     <jsmin output="src/webapp/api/locales/en/bundle.js" verbose="true">
         <fileset dir="src/webapp/api/locales/en/scripts">

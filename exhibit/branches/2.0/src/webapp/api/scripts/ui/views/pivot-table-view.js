@@ -101,7 +101,7 @@ Exhibit.PivotTableView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.PivotTableView.theme.constructDom(this._div);
+    this._dom = Exhibit.PivotTableView.constructDom(this._div);
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
         {}, 
         this._dom.collectionSummaryDiv, 
@@ -273,4 +273,23 @@ Exhibit.PivotTableView.prototype._openPopup = function(elmt, items) {
         var itemLens = this._uiContext.getLensRegistry().createLens(items[0], itemLensDiv, this._uiContext);
         bubble.content.appendChild(itemLensDiv);
     }
+};
+
+Exhibit.PivotTableView.constructDom = function(div) {
+    var l10n = Exhibit.PivotTableView.l10n;
+    var template = {
+        elmt: div,
+        children: [
+            {   tag:        "div",
+                className:  "exhibit-collectionView-header",
+                field:      "collectionSummaryDiv"
+            },
+            {   tag:        "div",
+                field:      "tableContainer",
+                className:  "exhibit-pivotTableView-tableContainer"
+            }
+        ]
+    };
+    
+    return SimileAjax.DOM.createDOMFromTemplate(template);
 };

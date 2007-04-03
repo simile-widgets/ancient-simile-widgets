@@ -201,7 +201,7 @@ Exhibit.TabularView.prototype._initializeUI = function() {
     var self = this;
     
     this._div.innerHTML = "";
-    this._dom = Exhibit.TabularView.theme.createDom(this._div);
+    this._dom = Exhibit.TabularView.createDom(this._div);
     this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
         {}, 
         this._dom.collectionSummaryDiv, 
@@ -303,7 +303,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
 	    table.appendChild(colgroup);
 
             var td = document.createElement("th");
-            Exhibit.TabularView.theme.createColumnHeader(
+            Exhibit.TabularView.createColumnHeader(
                 exhibit, td, column.label, i == self._sortColumn, self._sortAscending,
                 function(elmt, evt, target) {
                     self._doSort(i);
@@ -483,4 +483,50 @@ Exhibit.TabularView._constructDefaultValueList = function(values, valueType, par
     var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.size());
     values.visit(processOneValue);
     addDelimiter();
+};
+
+Exhibit.TabularView.createDom = function(div) {
+    var l10n = Exhibit.TabularView.l10n;
+    var headerTemplate = {
+        elmt:       div,
+        className:  "exhibit-collectionView-header",
+        children: [
+            {   tag:    "div",
+                field:  "collectionSummaryDiv"
+            },
+            {   tag:    "div",
+                field:  "bodyDiv"
+            }
+        ]
+    };
+    return SimileAjax.DOM.createDOMFromTemplate(headerTemplate);
+};
+
+Exhibit.TabularView.createColumnHeader = function(
+    exhibit, 
+    th,
+    label,
+    sort,
+    sortAscending,
+    sortFunction
+) {
+    var l10n = Exhibit.TabularView.l10n;
+    var template = {
+        elmt:       th,
+        className:  sort ? 
+                    "exhibit-tabularView-columnHeader-sorted" : 
+                    "exhibit-tabularView-columnHeader",
+        title: sort ? l10n.columnHeaderReSortTooltip : l10n.columnHeaderSortTooltip,
+        children: [ label ]
+    };
+    if (sort) {
+        template.children.push({
+            elmt: Exhibit.UI.createTranslucentImage(
+                sortAscending ? "images/up-arrow.png" : "images/down-arrow.png")
+        });
+    }
+    SimileAjax.WindowManager.registerEvent(th, "click", sortFunction, null);
+    
+    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
+    return dom;
 };
