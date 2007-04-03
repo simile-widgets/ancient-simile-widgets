@@ -65,7 +65,8 @@
             "ui/views/timeline-view.js",
             "ui/views/tabular-view.js",
             "ui/views/scatter-plot-view.js",
-            "ui/views/pivot-table-view.js"
+            "ui/views/pivot-table-view.js",
+            "ui/views/html-view.js"
         ];
         var cssFiles = [
             "exhibit.css"
