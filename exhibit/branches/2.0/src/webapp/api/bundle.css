@@ -118,12 +118,12 @@ div.exhibit-menu-section {
 /*
  *  Copy Button and Dialog Box
  */
-button.exhibit-copyButton {
+button.exhibit-copyButton, button.exhibit-button {
     border: 1px dashed;
     cursor: pointer;
     margin: 2px;
 }
-button:hover.exhibit-copyButton {
+button:hover.exhibit-copyButton, button.exhibit-button:hover {
     background: white;
     border:     1px dashed blue;
     color:      blue;
@@ -559,6 +559,13 @@ span.exhibit-legendWidget-entry-title {
 span.exhibit-legendWidget-entry-swatch {
     border:     1px solid #888;
     padding:    0px 3px;
+}
+.exhibit-optionWidget {
+    cursor:     pointer;
+}
+
+.exhibit-optionWidget img {
+    vertical-align: middle;
 }
 /*==================================================
  * Resizable Div Widget styles

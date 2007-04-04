@@ -559,3 +559,6 @@ Exhibit.UI.createFocusDialogBox = function(itemID, exhibit, configuration) {
 Exhibit.UI.createTranslucentImage = function(relativeUrl) {
     return SimileAjax.Graphics.createTranslucentImage(Exhibit.urlPrefix + relativeUrl);
 };
+Exhibit.UI.createTranslucentImageHTML = function(relativeUrl) {
+    return SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix + relativeUrl);
+};

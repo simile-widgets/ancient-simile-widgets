@@ -56,6 +56,7 @@
             "ui/widgets/collection-summary-widget.js",
             "ui/widgets/resizable-div-widget.js",
             "ui/widgets/legend-widget.js",
+            "ui/widgets/option-widget.js",
             
             "ui/views/view-panel.js",
             "ui/views/ordered-view-frame.js",
@@ -79,6 +80,7 @@
             "widgets/collection-summary-widget.css",
             "widgets/resizable-div-widget.css",
             "widgets/legend-widget.css",
+            "widgets/option-widget.css",
             
             "views/view-panel.css",
             "views/tile-view.css",

@@ -15,7 +15,11 @@ Exhibit.OrderedViewFrame._settingSpecs = {
     "showAll":              { type: "boolean", defaultValue: false },
     "grouped":              { type: "boolean", defaultValue: true },
     "showDuplicates":       { type: "boolean", defaultValue: false },
-    "initialCount":         { type: "int",     defaultValue: 10 }
+    "abbreviatedCount":     { type: "int",     defaultValue: 10 },
+    "showHeader":           { type: "boolean", defaultValue: true },
+    "showSummary":          { type: "boolean", defaultValue: true },
+    "showControls":         { type: "boolean", defaultValue: true },
+    "showFooter":           { type: "boolean", defaultValue: true }
 };
     
 Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
@@ -84,13 +88,14 @@ Exhibit.OrderedViewFrame.prototype._internalValidate = function() {
 };
 
 Exhibit.OrderedViewFrame.prototype.dispose = function() {
-    this._collectionSummaryWidget.dispose();
-    this._divHeader.innerHTML = "";
-    this._divFooter.innerHTML = "";
-    
-    this._collectionSummaryWidget = null;
-    this._headerDom = null;
-    this._footerDom = null;
+    if (this._headerDom) {
+        this._headerDom.dispose();
+        this._headerDom = null;
+    }
+    if (this._footerDom) {
+        this._footerDom.dispose();
+        this._footerDom = null;
+    }
     
     this._divHeader = null;
     this._divFooter = null;
@@ -167,55 +172,25 @@ Exhibit.OrderedViewFrame.prototype._configurePossibleOrders = function(possibleO
 };
 
 Exhibit.OrderedViewFrame.prototype.initializeUI = function() {
-    this._divHeader.innerHTML = "";
-    this._divFooter.innerHTML = "";
-    
     var self = this;
-    this._headerDom = Exhibit.OrderedViewFrame.createHeaderDom(
-        this._uiContext.getExhibit(), 
-        this._divHeader, 
-        function(elmt, evt, target) {
-            Exhibit.ViewPanel.resetCollection(self._collection);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
-        function(elmt, evt, target) {
-            self._openSortPopup(elmt, -1);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
-        function(elmt, evt, target) {
-            self._toggleGroup();
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
-        function(elmt, evt, target) {
-            self._toggleShowDuplicates();
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
-        this._generatedContentElmtRetriever // HACK
-    );
-    this._footerDom = Exhibit.OrderedViewFrame.createFooterDom(
-        this._uiContext.getExhibit(), 
-        this._divFooter, 
-        function(elmt, evt, target) {
-            self._setShowAll(true);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        },
-        function(elmt, evt, target) {
-            self._setShowAll(false);
-            SimileAjax.DOM.cancelEvent(evt);
-            return false;
-        }
-    );
-    
-    this._collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
-        {},
-        this._headerDom.collectionSummaryDiv, 
-        this._uiContext
-    );
+    if (this._settings.showHeader) {
+        this._headerDom = Exhibit.OrderedViewFrame.createHeaderDom(
+            this._uiContext,
+            this._divHeader, 
+            this._settings.showSummary,
+            this._settings.showControls,
+            function(elmt, evt, target) { self._openSortPopup(elmt, -1); },
+            function(elmt, evt, target) { self._toggleGroup(); }
+        );
+    }
+    if (this._settings.showFooter) {
+        this._footerDom = Exhibit.OrderedViewFrame.createFooterDom(
+            this._uiContext,
+            this._divFooter, 
+            function(elmt, evt, target) { self._setShowAll(true); },
+            function(elmt, evt, target) { self._setShowAll(false); }
+        );
+    }
 };
 
 Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
@@ -223,17 +198,8 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
     var collection = this._uiContext.getCollection();
     var database = this._uiContext.getDatabase();
     
-    /*
-     *  Get the current collection and check if it's empty
-     */
     var originalSize = collection.countAllItems();
     var currentSize = collection.countRestrictedItems();
-    
-    /*
-     *  Set the header UI
-     */
-    this._headerDom.setGrouped(this._settings.grouped);
-    this._headerDom.setShowDuplicates(this._settings.showDuplicates);
     
     var hasSomeGrouping = false;
     if (currentSize > 0) {
@@ -244,27 +210,41 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
         /*
          *  Build sort controls
          */
-        var orderDoms = [];
-        var buildOrderDom = function(order, index) {
+        var orderElmts = [];
+        var buildOrderElmt = function(order, index) {
             var property = database.getProperty(order.property);
-            var orderDom = Exhibit.OrderedViewFrame.createOrderDom(
-                (order.forward) ? property.getPluralLabel() : property.getReversePluralLabel(),
+            var label = property != null ?
+                (order.forward ? property.getPluralLabel() : property.getReversePluralLabel()) :
+                (order.forward ? order.property : "reverse of " + order.property);
+                
+            orderElmts.push(Exhibit.UI.makeActionLink(
+                label,
                 function(elmt, evt, target) {
                     self._openSortPopup(elmt, index);
-                    SimileAjax.DOM.cancelEvent(evt);
-                    return false;
                 }
-            );
-            orderDoms.push(orderDom);
+            ));
         };
         for (var i = 0; i < this._orders.length; i++) {
-            buildOrderDom(this._orders[i], i);
+            buildOrderElmt(this._orders[i], i);
         }
-        this._headerDom.setOrders(orderDoms);
-        this._headerDom.enableThenByAction(orderDoms.length < this._possibleOrders.length);
+        
+        if (this._settings.showHeader && this._settings.showControls) {
+            this._headerDom.setOrders(orderElmts);
+            this._headerDom.enableThenByAction(orderElmts.length < this._possibleOrders.length);
+        }
     }
     
-    this._footerDom.setCounts(currentSize, this._initialCount, this._showAll, !(hasSomeGrouping && this._grouped));
+    if (this._settings.showHeader && this._settings.showControls) {
+        this._headerDom.groupOptionWidget.setChecked(this._settings.grouped);
+    }
+    if (this._settings.showFooter) {
+        this._footerDom.setCounts(
+            currentSize, 
+            this._settings.abbreviatedCount, 
+            this._settings.showAll, 
+            !(hasSomeGrouping && this._grouped)
+        );
+    }
 };
 
 Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
@@ -276,12 +256,12 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
     
     var hasSomeGrouping = false;
     var createItem = function(itemID) {
-        if ((hasSomeGrouping && settings.grouped) || settings.showAll || itemIndex < settings.initialCount) {
+        if ((hasSomeGrouping && settings.grouped) || settings.showAll || itemIndex < settings.abbreviatedCount) {
             self.onNewItem(itemID, itemIndex++);
         }
     };
     var createGroup = function(label, valueType, index) {
-        if ((hasSomeGrouping && settings.grouped) || settings.showAll || itemIndex < settings.initialCount) {
+        if ((hasSomeGrouping && settings.grouped) || settings.showAll || itemIndex < settings.abbreviatedCount) {
             self.onNewGroup(label, valueType, index);
         }
     };
@@ -651,8 +631,20 @@ Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
 };
 
 Exhibit.OrderedViewFrame.prototype._setShowAll = function(showAll) {
-    this._showAll = showAll;
-    this.parentReconstruct();
+    var self = this;
+    var settings = this._settings;
+    SimileAjax.History.addLengthyAction(
+        function() {
+            settings.showAll = showAll;
+            self.parentReconstruct();
+        },
+        function() {
+            settings.showAll = !showAll;
+            self.parentReconstruct();
+        },
+        Exhibit.OrderedViewFrame.l10n[
+            showAll ? "showAllActionTitle" : "dontShowAllActionTitle"]
+    );
 };
 
 Exhibit.OrderedViewFrame.prototype._toggleGroup = function() {
@@ -669,7 +661,7 @@ Exhibit.OrderedViewFrame.prototype._toggleGroup = function() {
             self.parentReconstruct();
         },
         Exhibit.OrderedViewFrame.l10n[
-            oldGrouped ? "ungroupActionTitle" : "groupAsSortedActionTitle"]
+            oldGrouped ? "ungroupAsSortedActionTitle" : "groupAsSortedActionTitle"]
     );
 };
 
@@ -691,130 +683,106 @@ Exhibit.OrderedViewFrame.prototype._toggleShowDuplicates = function() {
     );
 };
 
+Exhibit.OrderedViewFrame.headerTemplate =
+    "<div id='collectionSummaryDiv' style='display: none;'></div>" +
+    "<div class='exhibit-collectionView-header-sortControls' style='display: none;' id='controlsDiv'>" +
+        "%0" + // sorting controls template
+        " \u2022 " +
+        "<a id='groupOption' class='exhibit-action'></a>" + 
+    "</div>";
+
 Exhibit.OrderedViewFrame.createHeaderDom = function(
-    exhibit, 
+    uiContext,
     headerDiv,
+    showSummary,
+    showControls,
     onThenSortBy,
-    onGroupToggle,
-    onShowDuplicatesToggle,
-    generatedContentElmtRetriever
+    onGroupToggle
 ) {
     var l10n = Exhibit.OrderedViewFrame.l10n;
-    var headerTemplate = {
-        elmt:       headerDiv,
-        className:  "exhibit-collectionView-header",
-        children: [
-            {   tag:    "div",
-                field:  "collectionSummaryDiv"
-            },
-            {   tag:        "div",
-                field:      "sortControlsDiv",
-                className:  "exhibit-collectionView-header-sortControls",
-                children: l10n.createSortingControlsTemplate(
-                    Exhibit.UI.makeActionLink(l10n.thenSortByLabel, onThenSortBy)
-                ).concat([
-                    " \u2022 ",
-                    {   tag:    "span",
-                        field:  "groupSpan",
-                        className: "exhibit-collectionView-header-groupControls",
-                        children: [
-                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option.png"),
-                                field:      "groupOption",
-                                style: {  display: "none" }
-                            },
-                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option-check.png"),
-                                field:      "groupOptionChecked",
-                                style: {  display: "none" }
-                            },
-                            " ",
-                            l10n.groupedAsSorted
-                        ]
-                    },
-                    " \u2022 ",
-                    {   tag:    "span",
-                        field:  "duplicateSpan",
-                        className: "exhibit-collectionView-header-duplicateControls",
-                        children: [
-                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option.png"),
-                                field:      "duplicateOption",
-                                style: {  display: "none" }
-                            },
-                            {   elmt:       Exhibit.UI.createTranslucentImage("images/option-check.png"),
-                                field:      "duplicateOptionChecked",
-                                style: {  display: "none" }
-                            },
-                            " ",
-                            l10n.showDuplicates
-                        ]
-                    }
-                ])
-            }
-        ]
-    };
-    var dom = SimileAjax.DOM.createDOMFromTemplate(headerTemplate);
-    SimileAjax.WindowManager.registerEvent(dom.groupSpan, "click", onGroupToggle);
-    SimileAjax.WindowManager.registerEvent(dom.duplicateSpan, "click", onShowDuplicatesToggle);
+    var template = String.substitute(Exhibit.OrderedViewFrame.headerTemplate, [ l10n.sortingControlsTemplate ]);
+    var dom = SimileAjax.DOM.createDOMFromString(headerDiv, template, {});
+    headerDiv.className = "exhibit-collectionView-header";
     
-    dom.setOrders = function(orderDoms) {
-        dom.ordersSpan.innerHTML = "";
+    if (showSummary) {
+        dom.collectionSummaryDiv.style.display = "block";
+        dom.collectionSummaryWidget = Exhibit.CollectionSummaryWidget.create(
+            {},
+            dom.collectionSummaryDiv, 
+            uiContext
+        );
+    }
+    if (showControls) {
+        dom.controlsDiv.style.display = "block";
+        dom.groupOptionWidget = Exhibit.OptionWidget.create(
+            {   label:      l10n.groupedAsSortedOptionLabel,
+                onToggle:   onGroupToggle
+            },
+            dom.groupOption,
+            uiContext
+        );
         
-        var addDelimiter = Exhibit.l10n.createListDelimiter(dom.ordersSpan, orderDoms.length);
-        for (var i = 0; i < orderDoms.length; i++) {
+        SimileAjax.WindowManager.registerEvent(dom.thenSortByAction, "click", onThenSortBy);
+        dom.enableThenByAction = function(enabled) {
+            Exhibit.UI.enableActionLink(dom.thenSortByAction, enabled);
+        };
+        dom.setOrders = function(orderElmts) {
+            dom.ordersSpan.innerHTML = "";
+            
+            var addDelimiter = Exhibit.l10n.createListDelimiter(dom.ordersSpan, orderElmts.length);
+            for (var i = 0; i < orderElmts.length; i++) {
+                addDelimiter();
+                dom.ordersSpan.appendChild(orderElmts[i]);
+            }
             addDelimiter();
-            dom.ordersSpan.appendChild(orderDoms[i].elmt);
+        };
+    }
+    
+    dom.dispose = function() {
+        if ("collectionSummaryWidget" in dom) {
+            dom.collectionSummaryWidget.dispose();
+            dom.collectionSummaryWidget = null;
         }
-        addDelimiter();
-    };
-    dom.setGrouped = function(grouped) {
-        dom.groupOption.style.display = grouped ? "none" : "inline";
-        dom.groupOptionChecked.style.display = grouped ? "inline" : "none";
-    };
-    dom.setShowDuplicates = function(show) {
-        dom.duplicateOption.style.display = show ? "none" : "inline";
-        dom.duplicateOptionChecked.style.display = show ? "inline" : "none";
-    };
-    dom.enableThenByAction = function(enabled) {
-        Exhibit.UI.enableActionLink(dom.thenByLink, enabled);
-    };
+        
+        dom.groupOptionWidget.dispose();
+        dom.groupOptionWidget = null;
+    }
     
     return dom;
 };
 
-Exhibit.OrderedViewFrame.createOrderDom = function(label, onPopup) {
-    var a = Exhibit.UI.makeActionLink(label, onPopup);
-    //a.appendChild(Exhibit.UI.createTranslucentImage("images/down-arrow.png"));
+Exhibit.OrderedViewFrame.footerTemplate = "<span id='showAllSpan'></span>";
     
-    return { elmt: a };
-}
-
 Exhibit.OrderedViewFrame.createFooterDom = function(
-    exhibit, 
+    uiContext,
     footerDiv,
     onShowAll,
     onDontShowAll
 ) {
     var l10n = Exhibit.OrderedViewFrame.l10n;
-    var footerTemplate = {
-        elmt:       footerDiv,
-        className:  "exhibit-collectionView-footer screen",
-        children:   []
-    };
     
-    var dom = SimileAjax.DOM.createDOMFromTemplate(footerTemplate);
+    var dom = SimileAjax.DOM.createDOMFromString(
+        footerDiv,
+        Exhibit.OrderedViewFrame.footerTemplate,
+        {}
+    );
+    footerDiv.className = "exhibit-collectionView-footer";
+    
     dom.setCounts = function(count, limitCount, showAll, canToggle) {
-        dom.elmt.innerHTML = "";
+        dom.showAllSpan.innerHTML = "";
         if (canToggle && count > limitCount) {
             if (showAll) {
-                dom.elmt.appendChild(
+                dom.showAllSpan.appendChild(
                     Exhibit.UI.makeActionLink(
                         l10n.formatDontShowAll(limitCount), onDontShowAll));
             } else {
-                dom.elmt.appendChild(
+                dom.showAllSpan.appendChild(
                     Exhibit.UI.makeActionLink(
                         l10n.formatShowAll(count), onShowAll));
             }
         }
     };
+    dom.dispose = function() {};
     
     return dom;
 };
