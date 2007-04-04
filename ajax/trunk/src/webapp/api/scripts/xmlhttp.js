@@ -72,25 +72,25 @@ SimileAjax.XmlHttp._createRequest = function() {
                 // silent
             }
         }
+        // fall through to try new XMLHttpRequest();
+    }
+
+    try {
+        var f = function() {
+            return new XMLHttpRequest();
+        };
+        var o = f();
+        
+        // We are replacing the SimileAjax._createXmlHttpRequest
+        // function with this inner function as we've
+        // found out that it works. This is so that we
+        // don't have to do all the testing over again
+        // on subsequent calls.
+        SimileAjax.XmlHttp._createRequest = f;
+        
+        return o;
+    } catch (e) {
         throw new Error("Failed to create an XMLHttpRequest object");
-    } else {
-        try {
-            var f = function() {
-                return new XMLHttpRequest();
-            };
-            var o = f();
-            
-            // We are replacing the SimileAjax._createXmlHttpRequest
-            // function with this inner function as we've
-            // found out that it works. This is so that we
-            // don't have to do all the testing over again
-            // on subsequent calls.
-            SimileAjax.XmlHttp._createRequest = f;
-            
-            return o;
-        } catch (e) {
-            throw new Error("Failed to create an XMLHttpRequest object");
-        }
     }
 };
 
