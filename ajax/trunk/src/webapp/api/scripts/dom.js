@@ -272,7 +272,7 @@ SimileAjax.DOM.createDOMFromString = function(root, s, fieldElmts) {
 SimileAjax.DOM._processDOMConstructedFromString = function(dom, elmt, fieldElmts) {
     var id = elmt.id;
     if (id != null && id.length > 0) {
-        delete elmt.id;
+        elmt.removeAttribute("id");
         if (id in fieldElmts) {
             var parentElmt = elmt.parentNode;
             parentElmt.insertBefore(fieldElmts[id], elmt);
