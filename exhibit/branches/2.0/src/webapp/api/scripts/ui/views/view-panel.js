@@ -112,12 +112,14 @@ Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
     Exhibit.UIContext.registerLensesFromDOM(div, viewPanel._uiContext.getLensRegistry());
     
     var initialView = Exhibit.getAttribute(div, "initialView");
-    if (initialView != null) {
+    if (initialView != null && initialView.length > 0) {
         try {
-            viewPanel._viewIndex = parseInt(initialView);
+            var n = parseInt(initialView);
+            if (!isNaN(n)) {
+                viewPanel._viewIndex = n;
+            }
         } catch (e) {
         }
-        
     }
     
     viewPanel._internalValidate();
