@@ -98,12 +98,12 @@ div.exhibit-menu-section {
 /*
  *  Copy Button and Dialog Box
  */
-button.exhibit-copyButton {
+button.exhibit-copyButton, button.exhibit-button {
     border: 1px dashed;
     cursor: pointer;
     margin: 2px;
 }
-button:hover.exhibit-copyButton {
+button:hover.exhibit-copyButton, button.exhibit-button:hover {
     background: white;
     border:     1px dashed blue;
     color:      blue;

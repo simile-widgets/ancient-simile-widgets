@@ -292,19 +292,26 @@ Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext) {
 };
 
 Exhibit.UI.makeCopyButton = function(itemID, database, layer) {
-    var button = Exhibit.UI.createCopyButton(false);
     var handler = function(elmt, evt, target) {
         Exhibit.UI._showCopyMenu(elmt, itemID, database);
     }
-    SimileAjax.WindowManager.registerEvent(button, "click", handler);
-        
-    return button;
+    return Exhibit.UI.createButton(Exhibit.l10n.copyButtonLabel,
+                                   handler, "exhibit-copyButton");
 };
 
-Exhibit.UI.createCopyButton = function(all) {
+Exhibit.UI.createCopyButton = function(all, handler) {
+    return Exhibit.UI.createButton(all ? Exhibit.l10n.copyAllButtonLabel
+                                       : Exhibit.l10n.copyButtonLabel,
+                                   handler, "exhibit-copyButton");
+};
+
+Exhibit.UI.createButton = function(name, handler, className) {
     var button = document.createElement("button");
-    button.className = "exhibit-copyButton screen";
-    button.innerHTML = all ? Exhibit.l10n.copyAllButtonLabel : Exhibit.l10n.copyButtonLabel;
+    button.className = (className || "exhibit-button") + " screen";
+    button.innerHTML = name;
+    if (handler) {
+        SimileAjax.WindowManager.registerEvent(button, "click", handler);
+    }
     return button;
 };
 
