@@ -158,6 +158,9 @@ Exhibit.ScatterPlotView.evaluateSingle = function(expression, itemID, database) 
 Exhibit.ScatterPlotView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
     
+    this._toolboxWidget.dispose();
+    this._toolboxWidget = null;
+    
     this._dom.dispose();
     this._dom = null;
     
@@ -182,6 +185,8 @@ Exhibit.ScatterPlotView.prototype._initializeUI = function() {
         }, 
         {}
     );
+    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+    
     this._dom.plotContainer.className = "exhibit-scatterPlotView-plotContainer";
     this._dom.plotContainer.style.height = this._settings.plotHeight + "px";
     this._reconstruct();

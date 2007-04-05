@@ -206,6 +206,9 @@ Exhibit.MapView.prototype.dispose = function() {
     
     this._map = null;
     
+    this._toolboxWidget.dispose();
+    this._toolboxWidget = null;
+    
     this._dom.dispose();
     this._dom = null;
     
@@ -243,6 +246,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
             }
         }
     );    
+    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     
     var mapDiv = this._dom.plotContainer;
     mapDiv.style.height = settings.mapHeight + "px";

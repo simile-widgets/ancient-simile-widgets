@@ -291,20 +291,6 @@ Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext) {
     bubble.content.appendChild(itemLensDiv);
 };
 
-Exhibit.UI.makeCopyButton = function(itemID, database, layer) {
-    var handler = function(elmt, evt, target) {
-        Exhibit.UI._showCopyMenu(elmt, itemID, database);
-    }
-    return Exhibit.UI.createButton(Exhibit.l10n.copyButtonLabel,
-                                   handler, "exhibit-copyButton");
-};
-
-Exhibit.UI.createCopyButton = function(all, handler) {
-    return Exhibit.UI.createButton(all ? Exhibit.l10n.copyAllButtonLabel
-                                       : Exhibit.l10n.copyButtonLabel,
-                                   handler, "exhibit-copyButton");
-};
-
 Exhibit.UI.createButton = function(name, handler, className) {
     var button = document.createElement("button");
     button.className = (className || "exhibit-button") + " screen";
@@ -364,89 +350,6 @@ Exhibit.UI.createPopupMenuDom = function(element) {
             this.elmt.appendChild(hr);
         }
     };
-    return dom;
-};
-
-Exhibit.UI._showCopyMenu = function(elmt, itemID, database) {
-    var popupDom = Exhibit.UI.createPopupMenuDom(elmt);
-    
-    var makeMenuItem = function(exporter) {
-        popupDom.appendMenuItem(
-            exporter.getLabel(),
-            null,
-            function() {
-                var text = exporter.exportOne(itemID, database);
-                Exhibit.UI.createCopyDialogBox(text).open();
-            }
-        );
-    }
-    
-    var exporters = Exhibit.getExporters();
-    for (var i = 0; i < exporters.length; i++) {
-        makeMenuItem(exporters[i]);
-    }
-    
-    popupDom.open();
-};
-
-Exhibit.UI.createCopyDialogBox = function(string) {
-    var template = {
-        tag:        "div",
-        className:  "exhibit-copyDialog exhibit-ui-protection",
-        children: [
-            {   tag:        "button",
-                field:      "closeButton",
-                children:    [ Exhibit.l10n.copyDialogBoxCloseButtonLabel ]
-            },
-            {   tag:        "p",
-                children:   [ Exhibit.l10n.copyDialogBoxPrompt ]
-            },
-            {   tag:        "div",
-                field:      "textAreaContainer"
-            }
-        ]
-    };
-    var dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    dom.textAreaContainer.innerHTML = 
-        "<textarea wrap='off' rows='15'>" + string + "</textarea>";
-        
-    dom.close = function() {
-        document.body.removeChild(dom.elmt);
-    };
-    dom.open = function() {
-        dom.elmt.style.top = (document.body.scrollTop + 100) + "px";
-        
-        document.body.appendChild(dom.elmt);
-        dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
-        
-        var textarea = dom.textAreaContainer.firstChild;
-        textarea.select();
-        
-        SimileAjax.WindowManager.registerEvent(
-            dom.closeButton, 
-            "click", 
-            function(elmt, evt, target) {
-                SimileAjax.WindowManager.popLayer(dom.layer);
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            }, 
-            dom.layer
-        );
-        SimileAjax.WindowManager.registerEvent(
-            textarea, 
-            "keyup", 
-            function(elmt, evt, target) {
-                if (evt.keyCode == 27) { // ESC
-                    SimileAjax.WindowManager.popLayer(dom.layer);
-                    SimileAjax.DOM.cancelEvent(evt);
-                    return false;
-                }
-                return true;
-            }, 
-            dom.layer
-        );
-    };
-    
     return dom;
 };
 

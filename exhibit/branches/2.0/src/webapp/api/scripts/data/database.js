@@ -111,7 +111,7 @@ Exhibit.Database._Impl.prototype._loadLinks = function(links, fDone) {
                     importer.load(link, database, fNext);
                     return;
                 } catch (e) {
-                    SimileAjax.Debug.log("Error using importer for data of type " + link.type);
+                    SimileAjax.Debug.exception(e, "Error using importer for data of type " + link.type);
                 }
             } else {
                 SimileAjax.Debug.log("No importer for data of type " + link.type);

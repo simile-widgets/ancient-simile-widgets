@@ -57,6 +57,7 @@
             "ui/widgets/resizable-div-widget.js",
             "ui/widgets/legend-widget.js",
             "ui/widgets/option-widget.js",
+            "ui/widgets/toolbox-widget.js",
             
             "ui/views/view-panel.js",
             "ui/views/ordered-view-frame.js",
@@ -81,6 +82,7 @@
             "widgets/resizable-div-widget.css",
             "widgets/legend-widget.css",
             "widgets/option-widget.css",
+            "widgets/toolbox-widget.css",
             
             "views/view-panel.css",
             "views/tile-view.css",
@@ -200,8 +202,8 @@
         window.SimileAjax_onLoad = loadMe;
         
         //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
-        var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
-        //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
+        //var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
+        var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {
             var script = document.createElement("script");
             script.type = "text/javascript";

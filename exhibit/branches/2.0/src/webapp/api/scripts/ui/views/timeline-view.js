@@ -111,6 +111,10 @@ Exhibit.TimelineView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
     
     this._timeline = null;
+    
+    this._toolboxWidget.dispose();
+    this._toolboxWidget = null;
+    
     this._dom.dispose();
     this._dom = null;
     
@@ -135,6 +139,7 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
         }, 
         {}
     );    
+    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     
     this._eventSource = new Timeline.DefaultEventSource();
     this._reconstruct();

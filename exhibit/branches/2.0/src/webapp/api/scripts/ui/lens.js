@@ -83,9 +83,6 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, uiContext) {
                 className:  "exhibit-lens-title",
                 title:      label,
                 children:   [ 
-                    {   elmt:       Exhibit.UI.makeCopyButton(itemID, database),
-                        className:  "exhibit-copyButton exhibit-lens-copyButton screen"
-                    },
                     label + " (",
                     {   tag:        "a",
                         href:       Exhibit.Persistence.getItemLink(itemID),
@@ -107,6 +104,9 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, uiContext) {
         ]
     };
     var dom = SimileAjax.DOM.createDOMFromTemplate(template);
+    
+    div.setAttribute("ex:itemID", itemID);
+    Exhibit.ToolboxWidget.createFromDOM(div, div, uiContext);
     
     var pairs = Exhibit.ViewPanel.getPropertyValuesPairs(
         itemID, properties, database);
@@ -438,7 +438,7 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
         job.uiContext, 
         job
     );
-        
+    
     var node = job.div.firstChild;
     var tagName = node.tagName;
     if (tagName == "span") {
@@ -446,6 +446,9 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
     } else {
         node.style.display = "block";
     }
+    
+    job.div.setAttribute("ex:itemID", job.itemID);
+    Exhibit.ToolboxWidget.createFromDOM(job.div, job.div, job.uiContext);
 };
 
 Exhibit.Lens._constructFromLensTemplateNode = function(
@@ -559,9 +562,6 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
     
     if (templateNode.control != null) {
         switch (templateNode.control) {
-        case "copy-button":
-            elmt.appendChild(Exhibit.UI.makeCopyButton(roots["value"], database));
-            break;
         case "item-link":
             var a = document.createElement("a");
             a.innerHTML = Exhibit.l10n.itemLinkLabel;

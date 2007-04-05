@@ -186,13 +186,18 @@ Exhibit.TabularView.prototype._internalValidate = function() {
 
 Exhibit.TabularView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
+    
+    this._toolboxWidget.dispose();
+    this._toolboxWidget = null;
+    
     this._collectionSummaryWidget.dispose();
+    this._collectionSummaryWidget = null;
+    
     this._uiContext.dispose();
+    this._uiContext = null;
     
     this._div.innerHTML = "";
     
-    this._collectionSummaryWidget = null;
-    this._uiContext = null;
     this._dom = null;
     this._div = null;
 };
@@ -207,6 +212,7 @@ Exhibit.TabularView.prototype._initializeUI = function() {
         this._dom.collectionSummaryDiv, 
         this._uiContext
     );
+    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     
     this._reconstruct();
 };

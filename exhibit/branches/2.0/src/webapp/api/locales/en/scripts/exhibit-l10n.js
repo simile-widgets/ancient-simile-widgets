@@ -26,10 +26,10 @@ Exhibit.l10n = {
     /*
      *  Copy button and dialog box
      */
-    copyButtonLabel:                "Copy",
-    copyAllButtonLabel:             "Copy All",
-    copyDialogBoxCloseButtonLabel:  "Close",
-    copyDialogBoxPrompt:            
+    exportButtonLabel:                "Export",
+    exportAllButtonLabel:             "Export All",
+    exportDialogBoxCloseButtonLabel:  "Close",
+    exportDialogBoxPrompt:
         "Copy this code to your clipboard as you would copy any text. Press ESC to close this dialog box.",
         
     /*

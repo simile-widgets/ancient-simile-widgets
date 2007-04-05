@@ -52,12 +52,16 @@ Exhibit.ThumbnailView.createFromDOM = function(configElmt, containerElmt, uiCont
 Exhibit.ThumbnailView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
     
-    this._div.innerHTML = "";
+    this._toolboxWidget.dispose();
+    this._toolboxWidget = null;
     
     this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
+    
     this._lensRegistry = null;
     this._dom = null;
+    
+    this._div.innerHTML = "";
     
     this._div = null;
     this._uiContext = null;
@@ -81,6 +85,7 @@ Exhibit.ThumbnailView.prototype._initializeUI = function() {
         ]
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(template);
+    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     
     var self = this;
     this._orderedViewFrame._divHeader = this._dom.headerDiv;

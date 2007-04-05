@@ -43,7 +43,7 @@ Exhibit.OptionWidget.prototype._initializeUI = function() {
             [ this._label ]
         ),
         {   uncheckedImage: SimileAjax.Graphics.createTranslucentImage(Exhibit.OptionWidget.uncheckedImageURL),
-            checkedImage:   SimileAjax.Graphics.createTranslucentImage(Exhibit.OptionWidget.checkedImageURL),
+            checkedImage:   SimileAjax.Graphics.createTranslucentImage(Exhibit.OptionWidget.checkedImageURL)
         }
     );
     

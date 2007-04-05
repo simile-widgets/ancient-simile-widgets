@@ -264,51 +264,6 @@ Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, dat
     return pairs;
 };
 
-Exhibit.ViewPanel.makeCopyAllButton = function(collection, database, generatedContentElmtRetriever, layer) {
-    var button = Exhibit.UI.createCopyButton(true);
-    var handler = function(elmt, evt, target) {
-        Exhibit.ViewPanel._showCopyMenu(elmt, collection, database, generatedContentElmtRetriever);
-    }
-    SimileAjax.WindowManager.registerEvent(button, "click", handler);
-        
-    return button;
-};
-
-Exhibit.ViewPanel._showCopyMenu = function(elmt, collection, database, generatedContentElmtRetriever) {
-    var popupDom = Exhibit.UI.createPopupMenuDom(elmt);
-    
-    var makeMenuItem = function(exporter) {
-        popupDom.appendMenuItem(
-            exporter.getLabel(),
-            null,
-            function() {
-                var text = exporter.exportMany(collection.getRestrictedItems(), database);
-                Exhibit.UI.createCopyDialogBox(text).open();
-            }
-        );
-    }
-    
-    var exporters = Exhibit.getExporters();
-    for (var i = 0; i < exporters.length; i++) {
-        makeMenuItem(exporters[i]);
-    }
-    
-    if (generatedContentElmtRetriever != null) {
-        popupDom.appendMenuItem(
-            Exhibit.l10n.htmlExporterLabel,
-            null,
-            function() {
-                Exhibit.UI.createCopyDialogBox(
-                    generatedContentElmtRetriever().innerHTML
-                        //.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\&/g, "&amp;")
-                ).open();
-            }
-        );
-    }
-    
-    popupDom.open();
-};
-
 Exhibit.ViewPanel.constructDom = function(
     div,
     viewLabels,

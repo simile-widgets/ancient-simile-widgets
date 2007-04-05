@@ -247,13 +247,17 @@ Exhibit._Impl.prototype.configureFromDOM = function() {
     
     for (var i = 0; i < componentElmts.length; i++) {
         var elmt = componentElmts[i];
-        var component = Exhibit.UI.createFromDOM(elmt, this._uiContext);
-        if (component != null) {
-            var id = elmt.id;
-            if (id == null || id.length == 0) {
-                id = "component" + Math.floor(Math.random() * 1000000);
+        try {
+            var component = Exhibit.UI.createFromDOM(elmt, this._uiContext);
+            if (component != null) {
+                var id = elmt.id;
+                if (id == null || id.length == 0) {
+                    id = "component" + Math.floor(Math.random() * 1000000);
+                }
+                this.setComponent(id, component);
             }
-            this.setComponent(id, component);
+        } catch (e) {
+            SimileAjax.Debug.exception(e);
         }
     }
 };
