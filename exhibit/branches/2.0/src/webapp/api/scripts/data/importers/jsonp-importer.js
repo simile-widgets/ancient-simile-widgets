@@ -15,7 +15,7 @@ Exhibit.importers["application/jsonp"] = Exhibit.JSONPImporter;
 // name) can assign that variable with the return value, and things will
 // work out, as much as they can (i e concurrent requests can get mixed up).
 Exhibit.JSONPImporter.load = function(
-    link, database, cont, fConvert, staticJSONPCallback
+    link, database, cont, fConvert, staticJSONPCallback, charset
 ) {
     var url = link;
     if (typeof link != "string") {
@@ -89,7 +89,10 @@ Exhibit.JSONPImporter.load = function(
     }
 
     var fail = callbackFull + "_fail('"+ callbackURL +"');";
-    var script = SimileAjax.includeJavascriptFile(document, callbackURL, fail);
+    var script = SimileAjax.includeJavascriptFile(document,
+                                                  callbackURL,
+                                                  fail,
+                                                  charset);
     Exhibit.UI.showBusyIndicator();
     return Exhibit.JSONPImporter._callbacks[callbackName];
 };
