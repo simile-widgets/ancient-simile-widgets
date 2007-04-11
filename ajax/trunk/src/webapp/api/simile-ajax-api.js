@@ -44,12 +44,13 @@ if (typeof SimileAjax == "undefined") {
         }
         return null;
     };
-    SimileAjax.includeJavascriptFile = function(doc, url, onerror) {
+    SimileAjax.includeJavascriptFile = function(doc, url, onerror, charset) {
         onerror = onerror || "";
         if (doc.body == null) {
             try {
                 var q = "'" + onerror.replace( /'/g, '&apos' ) + "'"; // "
                 doc.write("<script src='" + url + "' onerror="+ q +
+                          (charset ? " charset='"+ charset +"'" : "") +
                           " type='text/javascript'>"+ onerror + "</script>");
                 return;
             } catch (e) {
@@ -60,7 +61,10 @@ if (typeof SimileAjax == "undefined") {
         var script = doc.createElement("script");
         if (onerror) {
             script.innerHTML = onerror;
-            script.setAttribute('onerror', onerror);
+            script.setAttribute("onerror", onerror);
+        }
+        if (charset) {
+            script.setAttribute("charset", charset);
         }
         script.type = "text/javascript";
         script.language = "JavaScript";
