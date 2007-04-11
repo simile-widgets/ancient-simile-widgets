@@ -2,7 +2,7 @@
  *  Exhibit.JSONPImporter
  *==================================================
  */
- 
+
 Exhibit.JSONPImporter = {
     _callbacks: {}
 };
@@ -20,38 +20,38 @@ Exhibit.JSONPImporter.load = function(
     var url = link;
     if (typeof link != "string") {
         url = Exhibit.Persistence.resolveURL(link.href);
-        fConvert = Exhibit.getAttribute(link, 'converter');
-        staticJSONPCallback = Exhibit.getAttribute(link, 'jsonp-callback');
+        fConvert = Exhibit.getAttribute(link, "converter");
+        staticJSONPCallback = Exhibit.getAttribute(link, "jsonp-callback");
+        charset = Exhibit.getAttribute(link, "charset");
     }
     if (typeof fConvert == "string") {
-	var name = fConvert;
-	name = name.charAt(0).toLowerCase() + name.substring(1) + 'Converter';
-	if (name in Exhibit.JSONPImporter) {
-	    fConvert = Exhibit.JSONPImporter[name];
-	} else {
-	    try {
-		fConvert = eval(fConvert);
-	    } catch (e) {
-		fConvert = null;
-		// silent
-	    }
-	}
+        var name = fConvert;
+        name = name.charAt(0).toLowerCase() + name.substring(1) + "Converter";
+        if (name in Exhibit.JSONPImporter) {
+            fConvert = Exhibit.JSONPImporter[name];
+        } else {
+            try {
+                fConvert = eval(fConvert);
+            } catch (e) {
+                fConvert = null;
+                // silent
+            }
+        }
     }
 
     var next = Exhibit.JSONPImporter._callbacks.next || 1;
     Exhibit.JSONPImporter._callbacks.next = next + 1;
-    
+
     var callbackName = "cb" + next.toString(36);
     var callbackURL = url;
     if (callbackURL.indexOf("?") == -1)
         callbackURL += "?";
-        
+
     var lastChar = callbackURL.charAt(callbackURL.length - 1);
     if (lastChar != "=") {
-        if (lastChar != '&' && lastChar != "?")
+        if (lastChar != "&" && lastChar != "?")
             callbackURL += "&";
-            
-        callbackURL += 'callback=';
+        callbackURL += "callback=";
     }
 
     var callbackFull = "Exhibit.JSONPImporter._callbacks." + callbackName;
@@ -108,33 +108,33 @@ Exhibit.JSONPImporter.load = function(
 Exhibit.JSONPImporter.transformJSON = function(json, index, mapping, converters) {
     var objects = json, items = [];
     if (index) {
-	index = index.split(".");
-	while (index.length) {
-	    objects = objects[index.shift()];
-	}
+        index = index.split(".");
+        while (index.length) {
+            objects = objects[index.shift()];
+        }
     }
     for (var i = 0, object; object = objects[i]; i++) {
-	var item = {};
-	for (var name in mapping) {
-	    var index = mapping[name];
-	    if (!mapping.hasOwnProperty(name) || // gracefully handle poisoned
-		!object.hasOwnProperty(index)) continue; // Object.prototype
-	    var property = object[index];
-	    if (converters && converters.hasOwnProperty(name)) {
-		property = converters[name](property, object, i, objects, json);
-	    }
-	    if (typeof property != "undefined") {
-		item[name] = property;
-	    }
-	}
-	items.push(item);
+        var item = {};
+        for (var name in mapping) {
+            var index = mapping[name];
+            if (!mapping.hasOwnProperty(name) || // gracefully handle poisoned
+                !object.hasOwnProperty(index)) continue; // Object.prototype
+            var property = object[index];
+            if (converters && converters.hasOwnProperty(name)) {
+                property = converters[name](property, object, i, objects, json);
+            }
+            if (typeof property != "undefined") {
+                item[name] = property;
+            }
+        }
+        items.push(item);
     }
     return items;
 };
 
 Exhibit.JSONPImporter.deliciousConverter = function(json, url) {
     var items = Exhibit.JSONPImporter.transformJSON(json, null,
-	{ label:"u", note:"n", description:"d", tags:"t" });
+        { label:"u", note:"n", description:"d", tags:"t" });
     return { items:items, properties:{ url:{ valueType:"url" } } };
 };
 
@@ -143,32 +143,32 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
     var properties = {};
     var types = {};
     var valueTypes = { "text" : true, "number" : true, "item" : true, "url" : true, "boolean" : true };
-    
+
     var entries = json.feed.entry;
     for (var i = 0; i < entries.length; i++) {
         var entry = entries[i];
         var item = { label: entry.title.$t };
         var fields = entry.content.$t;
-        
+
         var openBrace = fields.indexOf("{");
         while (openBrace >= 0) {
             var closeBrace = fields.indexOf("}", openBrace+1);
             if (closeBrace < 0) {
                 break;
             }
-            
+
             var fieldSpec = fields.substring(openBrace+1, closeBrace).trim().split(":");
             openBrace = fields.indexOf("{", closeBrace+1);
-            
+
             var fieldValues = openBrace > 0 ? fields.substring(closeBrace+1, openBrace) : fields.substr(closeBrace+1);
             fieldValues = fieldValues.replace(/^\:\s+|,\s+$/g, "");
-            
+
             var fieldName = fieldSpec[0].trim();
             var property = properties[fieldName];
             if (!(property)) {
                 var fieldDetails = fieldSpec.length > 1 ? fieldSpec[1].split(",") : [];
                 property = {};
-                
+
                 for (var d = 0; d < fieldDetails.length; d++) {
                     var detail = fieldDetails[d].trim();
                     var property = { single: false };
@@ -178,10 +178,10 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
                         property.single = true;
                     }
                 }
-                
+
                 properties[fieldName] = property;
             }
-            
+
             if (!property.single) {
                 fieldValues = fieldValues.split(";");
                 for (var v = 0; v < fieldValues.length; v++) {
@@ -192,6 +192,6 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
         }
         items.push(item);
     }
-  
+
     return { types:types, properties:properties, items:items };
 };
