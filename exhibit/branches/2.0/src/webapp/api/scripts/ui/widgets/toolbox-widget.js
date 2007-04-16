@@ -65,7 +65,7 @@ Exhibit.ToolboxWidget.prototype._onContainerMouseOver = function(evt) {
         var docHeight = document.body.offsetHeight;
         
         var popup = document.createElement("div");
-        popup.className = "exhibit-toolboxWidget-popup";
+        popup.className = "exhibit-toolboxWidget-popup screen";
         popup.style.top = coords.top + "px";
         popup.style.right = (docWidth - coords.left - this._containerElmt.offsetWidth) + "px";
         
