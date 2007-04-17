@@ -165,7 +165,7 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
             function(a, b) { return a.label.localeCompare(b.label); };
         
         var labeler = facetValueResult.valueType == "item" ?
-            function(v) { return database.getObject(v, "label"); } :
+            function(v) { var l = database.getObject(v, "label"); return l != null ? l : v; } :
             function(v) { return v; }
         
         facetValues.visit(function(facetValue) {
