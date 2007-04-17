@@ -178,7 +178,7 @@ SimileAjax.WindowManager._onBodyKeyDown = function(elmt, evt, target) {
         } else if ((evt.keyCode == 17 || evt.keyCode == 16) && SimileAjax.WindowManager._draggingMode != "copy") {
             SimileAjax.WindowManager._draggingMode = "copy";
             
-            var img = SimileAjax.Graphics.createTranslucentImage(document, SimileAjax.urlPrefix + "images/copy.png");
+            var img = SimileAjax.Graphics.createTranslucentImage(SimileAjax.urlPrefix + "images/copy.png");
             img.style.position = "absolute";
             img.style.left = (SimileAjax.WindowManager._ghostCoords.left - 16) + "px";
             img.style.top = (SimileAjax.WindowManager._ghostCoords.top) + "px";
