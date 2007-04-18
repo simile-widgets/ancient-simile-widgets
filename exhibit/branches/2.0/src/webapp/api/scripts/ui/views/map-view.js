@@ -348,7 +348,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var colorData;
             if (locationData.colorKey == null) {
                 colorData = Exhibit.MapView._mixMarker;
-                legendWidget.addEntry("Mixed", colorData.color, "Mixed");
+                var mixed = Exhibit.MapView.l10n.mixedLegendKey;
+                legendWidget.addEntry(mixed, colorData.color, mixed);
             } else {
                 if (locationData.colorKey in self._colorMap) {
                     colorData = self._colorMap[locationData.colorKey];
