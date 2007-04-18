@@ -2,7 +2,7 @@
  *  Exhibit Utility Functions
  *==================================================
  */
- Exhibit.Util = new Object();
+Exhibit.Util = {};
 
 /*
  * Augment an object by replacing its key:value pairs with those
@@ -29,4 +29,25 @@ Exhibit.Util.augment = function (oSelf, oOther) {
         }
     }
     return oSelf;
+}
+
+// Round a number n to the nearest multiple of precision (any positive value),
+// such as 5000, 0.1 (one decimal), 1e-12 (twelve decimals), or 1024 (if you'd
+// want "to the nearest kilobyte" -- so round(66000, 1024) == "65536"). You are
+// also guaranteed to get the precision you ask for, so round(0, 0.1) == "0.0".
+Exhibit.Util.round = function(n, precision) {
+    precision = precision || 1;
+    var lg = Math.floor( Math.log(precision) / Math.log(10) );
+    n = (Math.round(n / precision) * precision).toString();
+    var d = n.split(".");
+    if (lg >= 0) {
+        return d[0];
+    }
+
+    lg = -lg;
+    d[1] = (d[1]||"").substring(0, lg);
+    while (d[1].length < lg) {
+        d[1] += "0";
+    }
+    return d.join(".");  
 }

@@ -184,3 +184,44 @@ Exhibit.Functions["date-range"] = {
         };
     }
 };
+
+Exhibit.Functions["distance"] = {
+    _units: {
+        km:         1e3,
+        mile:       1609.344
+    },
+    _computeDistance: function(from, to, unit, roundTo) {
+        var range = from.distanceFrom(to);
+        if (!roundTo) roundTo = 1;
+        if (isFinite(range)) {
+            if (this._units.hasOwnProperty(unit)) {
+                range = range / this._units[unit];
+            }
+            return Exhibit.Util.round(range, roundTo);
+        }
+        return null;
+    },
+    f: function(args) {
+        var self = this;
+        var data = {};
+        var name = ["origo", "lat", "lng", "unit", "round"];
+        for (var i = 0, n; n = name[i]; i++) {
+            args[i].values.visit(function(v) { data[n] = v; });
+        }
+
+        var latlng = data.origo.split(",");
+        var from = new GLatLng( latlng[0], latlng[1] );
+        var to = new GLatLng( data.lat, data.lng );
+        var set = new Exhibit.Set();
+        var range = this._computeDistance(from, to, data.unit, data.round);
+        if (range != null) {
+            set.add(range);
+        }
+
+        return {
+            valueType:  "number",
+            values:     set,
+            count:      set.size()
+        };
+    }
+};
