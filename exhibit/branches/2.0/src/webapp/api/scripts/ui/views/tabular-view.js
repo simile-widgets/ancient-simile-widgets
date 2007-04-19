@@ -285,7 +285,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                     break;
                 default:
                     Exhibit.TabularView._constructDefaultValueList(
-                        results.values, results.valueType, td, exhibit);
+                        results.values, results.valueType, td, this._uiContext);
                 }
                 
                 if (column.styler != null) {
@@ -474,12 +474,11 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
     );
 };
 
-Exhibit.TabularView._constructDefaultValueList = function(values, valueType, parentElmt, exhibit) {
-    var view = this;
+Exhibit.TabularView._constructDefaultValueList = function(values, valueType, parentElmt, uiContext) {
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, view._uiContext));
+            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, uiContext));
         } :
         function(value) {
             addDelimiter();
