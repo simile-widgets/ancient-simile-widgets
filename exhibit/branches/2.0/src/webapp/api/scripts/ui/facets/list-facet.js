@@ -7,11 +7,24 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
     
-    this._path = null;
+    this._expression = null;
     this._valueSet = new Exhibit.Set();
     
     this._settings = {};
     this._dom = null;
+    
+    var self = this;
+    this._listener = { 
+        onRootItemsChanged: function() {
+            if ("_itemToValue" in self) {
+                delete self._itemToValue;
+            }
+            if ("_valueToItem" in self) {
+                delete self._valueToItem;
+            }
+        }
+    };
+    uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.ListFacet._settingSpecs = {
@@ -44,10 +57,7 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
     try {
         var expressionString = Exhibit.getAttribute(configElmt, "expression");
         if (expressionString != null && expressionString.length > 0) {
-            var expression = Exhibit.Expression.parse(expressionString);
-            if (expression.isPath()) {
-                facet._path = expression.getPath();
-            }
+            facet._expression = Exhibit.Expression.parse(expressionString);
         }
         
         var selection = Exhibit.getAttribute(configElmt, "selection", ";");
@@ -70,10 +80,7 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
     Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.ListFacet._settingSpecs, facet._settings);
     
     if ("expression" in configuration) {
-        var expression = Exhibit.Expression.parse(configuration.expression);
-        if (expression.isPath()) {
-            facet._path = expression.getPath();
-        }
+        facet._expression = Exhibit.Expression.parse(configuration.expression);
     }
     if ("selection" in configuration) {
         var selection = configuration.selection;
@@ -84,16 +91,16 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
 }
 
 Exhibit.ListFacet.prototype.dispose = function() {
-    this._div.innerHTML = "";
-    
-    this._div = null;
+    this._uiContext.getCollection().removeListener(this._listener);
     this._uiContext = null;
     
-    this._path = null;
-    this._valueSet = null;
-    
-    this._settings = null;
+    this._div.innerHTML = "";
+    this._div = null;
     this._dom = null;
+    
+    this._expression = null;
+    this._valueSet = null;
+    this._settings = null;
 };
 
 Exhibit.ListFacet.prototype.hasRestrictions = function() {
@@ -131,12 +138,30 @@ Exhibit.ListFacet.prototype.setSelection = function(value, selected) {
 Exhibit.ListFacet.prototype.restrict = function(items) {
     if (this._valueSet.size() == 0) {
         return items;
-    } else {
-        return this._path.walkBackward(
+    } else if (this._expression.isPath()) {
+        return this._expression.getPath().walkBackward(
             this._valueSet, 
             "item", items, 
             this._uiContext.getDatabase()
         ).values;
+    } else {
+        this._buildMaps();
+        
+        var set = new Exhibit.Set();
+        var valueToItem = this._valueToItem;
+        
+        this._valueSet.visit(function(value) {
+            if (value in valueToItem) {
+                var itemA = valueToItem[value];
+                for (var i = 0; i < itemA.length; i++) {
+                    var item = itemA[i];
+                    if (items.contains(item)) {
+                        set.add(item);
+                    }
+                }
+            }
+        });
+        return set;
     }
 };
 
@@ -149,37 +174,61 @@ Exhibit.ListFacet.prototype.update = function(items) {
 
 Exhibit.ListFacet.prototype._computeFacet = function(items) {
     var database = this._uiContext.getDatabase();
-    var path = this._path;
     var entries = [];
+    var valueType = "text";
     
-    var facetValueResult = path.walkForward(items, "item", database);
-    var facetValues = facetValueResult.values;
-    if (facetValues.size() > 0) {
+    if (this._expression.isPath()) {
+        var path = this._expression.getPath();
+        var facetValueResult = path.walkForward(items, "item", database);
+        valueType = facetValueResult.valueType;
+        
+        var facetValues = facetValueResult.values;
+        if (facetValues.size() > 0) {
+            facetValues.visit(function(facetValue) {
+                var itemSubset = path.evaluateBackward(facetValue, valueType, items, database).values;
+                entries.push({ value: facetValue, count: itemSubset.size() });
+            });
+        };
+    } else {
+        this._buildMaps();
+        
+        valueType = this._valueType;
+        for (var value in this._valueToItem) {
+            var itemA = this._valueToItem[value];
+            var count = 0;
+            for (var i = 0; i < itemA.length; i++) {
+                if (items.contains(itemA[i])) {
+                    count++;
+                }
+            }
+            
+            if (count > 0) {
+                entries.push({ value: value, count: count });
+            }
+        }
+    }
+    
+    if (entries.length > 0) {
         var selection = this._valueSet;
-        var sorter = (facetValueResult.valueType == "number") ?
+        var labeler = valueType == "item" ?
+            function(v) { var l = database.getObject(v, "label"); return l != null ? l : v; } :
+            function(v) { return v; }
+            
+        for (var i = 0; i < entries.length; i++) {
+            var entry = entries[i];
+            entry.label = labeler(entry.value);
+            entry.selected = selection.contains(entry.value);
+        }
+            
+        entries.sort((valueType == "number") ?
             function(a, b) {
                 a = parseFloat(a.value);
                 b = parseFloat(b.value);
                 return a < b ? -1 : a > b ? 1 : 0;
             } :
-            function(a, b) { return a.label.localeCompare(b.label); };
-        
-        var labeler = facetValueResult.valueType == "item" ?
-            function(v) { var l = database.getObject(v, "label"); return l != null ? l : v; } :
-            function(v) { return v; }
-        
-        facetValues.visit(function(facetValue) {
-            var itemSubset = path.evaluateBackward(facetValue, facetValueResult.valueType, items, database).values;
-            var entry = {
-                value:      facetValue,
-                count:      itemSubset.size(),
-                label:      labeler(facetValue),
-                selected:   selection.contains(facetValue)
-            };
-            entries.push(entry);
-        });
-        entries.sort(sorter);
-    };
+            function(a, b) { return a.label.localeCompare(b.label); }
+        );
+    }
     return entries;
 }
 
@@ -250,4 +299,38 @@ Exhibit.ListFacet.prototype._clearSelections = function() {
             Exhibit.FacetUtilities.l10n["facetClearSelectionsActionTitle"],
             [ this._settings.facetLabel ])
     );
+};
+
+Exhibit.ListFacet.prototype._buildMaps = function() {
+    if (!("_itemToValue" in this) || !("_valueToItem" in this)) {
+        var itemToValue = {};
+        var valueToItem = {};
+        var valueType = "text";
+        
+        var insert = function(x, y, map) {
+            if (x in map) {
+                map[x].push(y);
+            } else {
+                map[x] = [ y ];
+            }
+        };
+        
+        var expression = this._expression;
+        var database = this._uiContext.getDatabase();
+        
+        this._uiContext.getCollection().getAllItems().visit(function(item) {
+            var results = expression.evaluateOnItem(item, database);
+            if (results.values.size() > 0) {
+                valueType = results.valueType;
+                results.values.visit(function(value) {
+                    insert(item, value, itemToValue);
+                    insert(value, item, valueToItem);
+                });
+            }
+        });
+        
+        this._itemToValue = itemToValue;
+        this._valueToItem = valueToItem;
+        this._valueType = valueType;
+    }
 };

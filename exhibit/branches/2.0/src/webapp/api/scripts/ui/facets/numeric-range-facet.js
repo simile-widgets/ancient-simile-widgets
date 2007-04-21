@@ -7,11 +7,21 @@ Exhibit.NumericRangeFacet = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
     
-    this._path = null;
+    this._expression = null;
     this._settings = {};
     
     this._dom = null;
     this._ranges = [];
+    
+    var self = this;
+    this._listener = { 
+        onRootItemsChanged: function() {
+            if ("_rangeIndex" in self) {
+                delete self._rangeIndex;
+            }
+        }
+    };
+    uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.NumericRangeFacet._settingSpecs = {
@@ -45,10 +55,7 @@ Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, ui
     try {
         var expressionString = Exhibit.getAttribute(configElmt, "expression");
         if (expressionString != null && expressionString.length > 0) {
-            var expression = Exhibit.Expression.parse(expressionString);
-            if (expression.isPath()) {
-                facet._path = expression.getPath();
-            }
+            facet._expression = Exhibit.Expression.parse(expressionString);
         }
     } catch (e) {
         SimileAjax.Debug.exception(e, "NumericRangeFacet: Error processing configuration of numeric range facet");
@@ -64,22 +71,21 @@ Exhibit.NumericRangeFacet._configure = function(facet, configuration) {
     Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.NumericRangeFacet._settingSpecs, facet._settings);
     
     if ("expression" in configuration) {
-        var expression = Exhibit.Expression.parse(configuration.expression);
-        if (expression.isPath()) {
-            facet._path = expression.getPath();
-        }
+        facet._expression = Exhibit.Expression.parse(configuration.expression);
     }
 }
 
 Exhibit.NumericRangeFacet.prototype.dispose = function() {
-    this._div.innerHTML = "";
-    
-    this._div = null;
+    this._uiContext.getCollection().removeListener(this._listener);
     this._uiContext = null;
-    
-    this._path = null;
-    this._settings = null;
+
+    this._div.innerHTML = "";
+    this._div = null;
     this._dom = null;
+    
+    this._expression = null;
+    this._settings = null;
+    this._ranges = null;
 };
 
 Exhibit.NumericRangeFacet.prototype.hasRestrictions = function() {
@@ -125,14 +131,23 @@ Exhibit.NumericRangeFacet.prototype.setRange = function(from, to, selected) {
 Exhibit.NumericRangeFacet.prototype.restrict = function(items) {
     if (this._ranges.length == 0) {
         return items;
-    } else {
-        var path = this._path;
+    } else if (this._expression.isPath()) {
+        var path = this._expression.getPath();
         var database = this._uiContext.getDatabase();
         
         var set = new Exhibit.Set();
         for (var i = 0; i < this._ranges.length; i++) {
             var range = this._ranges[i];
             set.addSet(path.rangeBackward(range.from, range.to, items, database).values);
+        }
+        return set;
+    } else {
+        this._buildRangeIndex();
+        
+        var set = new Exhibit.Set();
+        for (var i = 0; i < this._ranges.length; i++) {
+            var range = this._ranges[i];
+            this._rangeIndex.getSubjectsInRange(range.from, range.to, false, set, items);
         }
         return set;
     }
@@ -148,28 +163,45 @@ Exhibit.NumericRangeFacet.prototype.update = function(items) {
 
 Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
     var self = this;
-    var database = this._uiContext.getDatabase();
+    var ranges = [];
     
-    var propertyID = this._path.getLastSegment().property;
-    var property = database.getProperty(propertyID);
-    if (property == null) {
-        return null;
+    var rangeIndex;
+    var computeItems;
+    if (this._expression.isPath()) {
+        var database = this._uiContext.getDatabase();
+        var path = this._expression.getPath();
+        
+        var propertyID = path.getLastSegment().property;
+        var property = database.getProperty(propertyID);
+        if (property == null) {
+            return null;
+        }
+        
+        rangeIndex = property.getRangeIndex();
+        countItems = function(range) {
+            return path.rangeBackward(range.from, range.to, items, database).values.size();
+        }
+    } else {
+        this._buildRangeIndex();
+        
+        rangeIndex = this._rangeIndex;
+        countItems = function(range) {
+            return rangeIndex.getSubjectsInRange(range.from, range.to, false, null, items).size();
+        }
     }
     
-    var rangeIndex = property.getRangeIndex();
     var min = rangeIndex.getMin();
     var max = rangeIndex.getMax();
     min = Math.floor(min / this._settings.interval) * this._settings.interval;
     max = Math.ceil(max / this._settings.interval) * this._settings.interval;
     
-    var ranges = [];
     for (var x = min; x < max; x += this._settings.interval) {
         var range = { 
             from:       x, 
             to:         x + this._settings.interval, 
             selected:   false
         };
-        range.items = this._path.rangeBackward(range.from, range.to, items, database).values
+        range.count = countItems(range);
         
         for (var i = 0; i < this._ranges.length; i++) {
             var range2 = this._ranges[i];
@@ -205,8 +237,8 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
         
         for (var i = 0; i < ranges.length; i++) {
             var range = ranges[i];
-            if (range.selected || range.items.size() > 0) {
-                makeFacetValue(range.from, range.to, range.items.size(), range.selected);
+            if (range.selected || range.count > 0) {
+                makeFacetValue(range.from, range.to, range.count, range.selected);
             }
         }
     containerDiv.style.display = "block";
@@ -251,4 +283,27 @@ Exhibit.NumericRangeFacet.prototype._clearSelections = function() {
             Exhibit.FacetUtilities.l10n["facetClearSelectionsActionTitle"],
             [ this._settings.facetLabel ])
     );
+};
+
+
+Exhibit.NumericRangeFacet.prototype._buildRangeIndex = function() {
+    if (!("_rangeIndex" in this)) {
+        var expression = this._expression;
+        var database = this._uiContext.getDatabase();
+        var getter = function(item, f) {
+            expression.evaluateOnItem(item, database).values.visit(function(value) {
+                if (typeof value != "number") {
+                    value = parseFloat(value);
+                }
+                if (!isNaN(value)) {
+                    f(value);
+                }
+            });
+        };
+    
+        this._rangeIndex = new Exhibit.Database._RangeIndex(
+            this._uiContext.getCollection().getAllItems(),
+            getter
+        );    
+    }
 };

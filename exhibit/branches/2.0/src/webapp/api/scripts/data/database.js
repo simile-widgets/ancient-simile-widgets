@@ -641,28 +641,14 @@ Exhibit.Database._Impl.prototype.getBackwardProperties = function(o) {
 };
 
 Exhibit.Database._Impl.prototype.getSubjectsInRange = function(p, min, max, inclusive, set, filter) {
-    if (!set) {
-        set = new Exhibit.Set();
-    }
-    
     var property = this.getProperty(p);
     if (property != null) {
         var rangeIndex = property.getRangeIndex();
         if (rangeIndex != null) {
-            var f = (filter != null) ?
-                function(item) {
-                    if (filter.contains(item)) {
-                        set.add(item);
-                    }
-                } :
-                function(item) {
-                    set.add(item);
-                };
-                
-            rangeIndex.getRange(f, min, max, inclusive);
+            return rangeIndex.getSubjectsInRange(min, max, inclusive, set, filter);
         }
     }
-    return set;
+    return (!set) ? new Exhibit.Set() : set;
 };
 
 Exhibit.Database._Impl.prototype.getTypeLabels = function(set) {
@@ -866,6 +852,26 @@ Exhibit.Database._RangeIndex.prototype.getRange = function(visitor, min, max, in
             break;
         }
     }
+};
+
+Exhibit.Database._RangeIndex.prototype.getSubjectsInRange = function(min, max, inclusive, set, filter) {
+    if (!set) {
+        set = new Exhibit.Set();
+    }
+    
+    var f = (filter != null) ?
+        function(item) {
+            if (filter.contains(item)) {
+                set.add(item);
+            }
+        } :
+        function(item) {
+            set.add(item);
+        };
+        
+    this.getRange(f, min, max, inclusive);
+    
+    return set;
 };
 
 Exhibit.Database._RangeIndex.prototype.countRange = function(min, max, inclusive) {
