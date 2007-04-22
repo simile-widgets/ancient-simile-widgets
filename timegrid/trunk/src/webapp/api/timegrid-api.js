@@ -4,6 +4,3 @@
  * standard Timegrid operate.
  * ===========================================================================
  */
-
- var Timegrid = new Object();
- Timegrid.Platform = new Object();

@@ -4,16 +4,16 @@
  */
 
 
-Timeline.DefaultEventSource = function(eventIndex) {
-    this._events = (eventIndex instanceof Object) ? eventIndex : new Timeline.EventIndex();
+Timegrid.DefaultEventSource = function(eventIndex) {
+    this._events = (eventIndex instanceof Object) ? eventIndex : new Timegrid.EventIndex();
     this._listeners = [];
 };
 
-Timeline.DefaultEventSource.prototype.addListener = function(listener) {
+Timegrid.DefaultEventSource.prototype.addListener = function(listener) {
     this._listeners.push(listener);
 };
 
-Timeline.DefaultEventSource.prototype.removeListener = function(listener) {
+Timegrid.DefaultEventSource.prototype.removeListener = function(listener) {
     for (var i = 0; i < this._listeners.length; i++) {
         if (this._listeners[i] == listener) {
             this._listeners.splice(i, 1);
@@ -22,7 +22,7 @@ Timeline.DefaultEventSource.prototype.removeListener = function(listener) {
     }
 };
 
-Timeline.DefaultEventSource.prototype.loadXML = function(xml, url) {
+Timegrid.DefaultEventSource.prototype.loadXML = function(xml, url) {
     var base = this._getBaseURL(url);
     
     var wikiURL = xml.documentElement.getAttribute("wiki-url");
@@ -39,7 +39,7 @@ Timeline.DefaultEventSource.prototype.loadXML = function(xml, url) {
             if (node.firstChild != null && node.firstChild.nodeType == 3) {
                 description = node.firstChild.nodeValue;
             }
-            var evt = new Timeline.DefaultEventSource.Event(
+            var evt = new Timegrid.DefaultEventSource.Event(
                 parseDateTimeFunction(node.getAttribute("start")),
                 parseDateTimeFunction(node.getAttribute("end")),
                 parseDateTimeFunction(node.getAttribute("latestStart")),
@@ -72,7 +72,7 @@ Timeline.DefaultEventSource.prototype.loadXML = function(xml, url) {
 };
 
 
-Timeline.DefaultEventSource.prototype.loadJSON = function(data, url) {
+Timegrid.DefaultEventSource.prototype.loadJSON = function(data, url) {
     var base = this._getBaseURL(url);
     var added = false;  
     if (data && data.events){
@@ -84,7 +84,7 @@ Timeline.DefaultEventSource.prototype.loadJSON = function(data, url) {
        
         for (var i=0; i < data.events.length; i++){
             var event = data.events[i];
-            var evt = new Timeline.DefaultEventSource.Event(
+            var evt = new Timegrid.DefaultEventSource.Event(
                 parseDateTimeFunction(event.start),
                 parseDateTimeFunction(event.end),
                 parseDateTimeFunction(event.latestStart),
@@ -117,7 +117,7 @@ Timeline.DefaultEventSource.prototype.loadJSON = function(data, url) {
 /*
  *  Contributed by Morten Frederiksen, http://www.wasab.dk/morten/
  */
-Timeline.DefaultEventSource.prototype.loadSPARQL = function(xml, url) {
+Timegrid.DefaultEventSource.prototype.loadSPARQL = function(xml, url) {
     var base = this._getBaseURL(url);
     
     var dateTimeFormat = 'iso8601';
@@ -164,7 +164,7 @@ Timeline.DefaultEventSource.prototype.loadSPARQL = function(xml, url) {
                 bindings["start"] = bindings["date"];
             }
             
-            var evt = new Timeline.DefaultEventSource.Event(
+            var evt = new Timegrid.DefaultEventSource.Event(
                 parseDateTimeFunction(bindings["start"]),
                 parseDateTimeFunction(bindings["end"]),
                 parseDateTimeFunction(bindings["latestStart"]),
@@ -195,57 +195,57 @@ Timeline.DefaultEventSource.prototype.loadSPARQL = function(xml, url) {
     }
 };
 
-Timeline.DefaultEventSource.prototype.add = function(evt) {
+Timegrid.DefaultEventSource.prototype.add = function(evt) {
     this._events.add(evt);
     this._fire("onAddOne", [evt]);
 };
 
-Timeline.DefaultEventSource.prototype.addMany = function(events) {
+Timegrid.DefaultEventSource.prototype.addMany = function(events) {
     for (var i = 0; i < events.length; i++) {
         this._events.add(events[i]);
     }
     this._fire("onAddMany", []);
 };
 
-Timeline.DefaultEventSource.prototype.clear = function() {
+Timegrid.DefaultEventSource.prototype.clear = function() {
     this._events.removeAll();
     this._fire("onClear", []);
 };
 
-Timeline.DefaultEventSource.prototype.getEventIterator = function(startDate, endDate) {
+Timegrid.DefaultEventSource.prototype.getEventIterator = function(startDate, endDate) {
     return this._events.getIterator(startDate, endDate);
 };
 
-Timeline.DefaultEventSource.prototype.getAllEventIterator = function() {
+Timegrid.DefaultEventSource.prototype.getAllEventIterator = function() {
     return this._events.getAllIterator();
 };
 
-Timeline.DefaultEventSource.prototype.getCount = function() {
+Timegrid.DefaultEventSource.prototype.getCount = function() {
     return this._events.getCount();
 };
 
-Timeline.DefaultEventSource.prototype.getEarliestDate = function() {
+Timegrid.DefaultEventSource.prototype.getEarliestDate = function() {
     return this._events.getEarliestDate();
 };
 
-Timeline.DefaultEventSource.prototype.getLatestDate = function() {
+Timegrid.DefaultEventSource.prototype.getLatestDate = function() {
     return this._events.getLatestDate();
 };
 
-Timeline.DefaultEventSource.prototype._fire = function(handlerName, args) {
+Timegrid.DefaultEventSource.prototype._fire = function(handlerName, args) {
     for (var i = 0; i < this._listeners.length; i++) {
         var listener = this._listeners[i];
         if (handlerName in listener) {
             try {
                 listener[handlerName].apply(listener, args);
             } catch (e) {
-                Timeline.Debug.exception(e);
+                Timegrid.Debug.exception(e);
             }
         }
     }
 };
 
-Timeline.DefaultEventSource.prototype._getBaseURL = function(url) {
+Timegrid.DefaultEventSource.prototype._getBaseURL = function(url) {
     if (url.indexOf("://") < 0) {
         var url2 = this._getBaseURL(document.location.href);
         if (url.substr(0,1) == "/") {
@@ -263,7 +263,7 @@ Timeline.DefaultEventSource.prototype._getBaseURL = function(url) {
     }
 };
 
-Timeline.DefaultEventSource.prototype._resolveRelativeURL = function(url, base) {
+Timegrid.DefaultEventSource.prototype._resolveRelativeURL = function(url, base) {
     if (url == null || url == "") {
         return url;
     } else if (url.indexOf("://") > 0) {
@@ -276,7 +276,7 @@ Timeline.DefaultEventSource.prototype._resolveRelativeURL = function(url, base) 
 };
 
 
-Timeline.DefaultEventSource.Event = function(
+Timegrid.DefaultEventSource.Event = function(
         start, end, latestStart, earliestEnd, instant, 
         text, description, image, link,
         icon, color, textColor) {
@@ -291,8 +291,8 @@ Timeline.DefaultEventSource.Event = function(
     this._latestStart = (latestStart != null) ? latestStart : (instant ? this._end : this._start);
     this._earliestEnd = (earliestEnd != null) ? earliestEnd : (instant ? this._start : this._end);
     
-    this._text = Timeline.HTML.deEntify(text);
-    this._description = Timeline.HTML.deEntify(description);
+    this._text = Timegrid.HTML.deEntify(text);
+    this._description = Timegrid.HTML.deEntify(description);
     this._image = (image != null && image != "") ? image : null;
     this._link = (link != null && link != "") ? link : null;
     
@@ -304,7 +304,7 @@ Timeline.DefaultEventSource.Event = function(
     this._wikiSection = null;
 };
 
-Timeline.DefaultEventSource.Event.prototype = {
+Timegrid.DefaultEventSource.Event.prototype = {
     getID:          function() { return this._id; },
     
     isInstant:      function() { return this._instant; },
@@ -348,7 +348,7 @@ Timeline.DefaultEventSource.Event.prototype = {
             var a = document.createElement("a");
             a.href = url;
             a.target = "new";
-            a.innerHTML = Timeline.strings[Timeline.Platform.clientLocale].wikiLinkLabel;
+            a.innerHTML = Timegrid.strings[Timegrid.Platform.clientLocale].wikiLinkLabel;
             
             elmt.appendChild(document.createTextNode("["));
             elmt.appendChild(a);
