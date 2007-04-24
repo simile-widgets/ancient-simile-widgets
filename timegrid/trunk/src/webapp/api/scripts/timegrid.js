@@ -1,9 +1,9 @@
-/*****************************************************************************
+/******************************************************************************
  * Timegrid
- */
+ *****************************************************************************/
 
-Timegrid.create = function(node, eventSource, layout) {
-    return new Timegrid._Impl(node, eventSource, layout);
+Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
+    return new Timegrid._Impl(node, eventSource, layoutName, layoutParams);
 };
 
 Timegrid.loadXML = function(url, f) {
@@ -17,7 +17,7 @@ Timegrid.loadXML = function(url, f) {
         }
         f(xml, url);
     };
-    Timeline.XmlHttp.get(url, fError, fDone);
+    SimileAjax.XmlHttp.get(url, fError, fDone);
 };
 
 Timegrid.loadJSON = function(url, f) {
@@ -27,13 +27,14 @@ Timegrid.loadJSON = function(url, f) {
     var fDone = function(xmlhttp) {
         f(eval('(' + xmlhttp.responseText + ')'), url);
     };
-    Timegrid.XmlHttp.get(url, fError, fDone);
+    SimileAjax.XmlHttp.get(url, fError, fDone);
 };
 
-Timegrid._Impl = function(node, eventSource, layout) {
+Timegrid._Impl = function(node, eventSource, layoutName, layoutParams) {
     this._container = node;
     this._eventSource = eventSource;
-    this._layout = (layout == null ? Timegrid.DefaultLayout : layout);
+    this._layout = Timegrid.LayoutFactory.createLayout(layoutName, eventSource,
+                                                       layoutParams);
     this._initialize();
 };
 
@@ -41,8 +42,7 @@ Timegrid._Impl.prototype._initialize = function() {
     var container = this._container;
     var doc = container.ownerDocument;
 
-    container.className = container.className.split(" ").
-                               concat("timegrid-container").join(" ");
+    $(container).addClass("timegrid-container");
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }

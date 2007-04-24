@@ -4,10 +4,16 @@
  *   is capable of, e.g. month, week, n-day, etc.
  *****************************************************************************/
 
-Timegrid.LayoutFactory = function() {};
+Timegrid.DEFAULT_LAYOUT = "week";
+Timegrid.LayoutFactory = new Object();
 
 /**
  * Instantiates a Timegrid layout with the given parameter hash.
+ *
+ * @param {String} name the name of the layout
+ * @param eventSource an EventSource object to layout and render
+ * @param params a hash of parameters to be passed into the desired layout
+ * @return a Timegrid.Layout instance of the specified subclass
  */
 Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
     var layout = new Timegrid.WeekLayout(params);
@@ -15,13 +21,15 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
     return layout;
 };
 
-Timegrid.Layout = new function() {};
+Timegrid.Layout = new function() {
+    this.a = "a";
+};
 
-Timegrid.Layout.render = new function() {
+Timegrid.Layout.prototype.render = new function(parentNode) {
 
 };
 
-Timegrid.Layout.initializeGrid = new function(eventSource) {
+Timegrid.Layout.prototype.initializeGrid = new function(eventSource) {
     this.eventSource = eventSource;
     this.eventGrid = new EventGrid([], this.xSize, this.ySize, 
                                    this.xMapper, this.yMapper);
@@ -38,3 +46,11 @@ Timegrid.WeekLayout = new function(params) {
     this.yMapper = function(evt) { return evt.getStart().getHours(); };
 };
 Timegrid.WeekLayout.prototype = new Timegrid.Layout();
+
+Timegrid.MonthLayout = new function(params) {
+    this.xSize = 7;
+    this.ySize = 5;
+    this.xMapper = function(evt) {};
+    this.yMapper = function(evt) {};
+};
+Timegrid.MonthLayout.prototype = new Timegrid.Layout();
