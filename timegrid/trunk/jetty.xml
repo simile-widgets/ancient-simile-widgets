@@ -62,7 +62,7 @@
         <!-- ======================================================= -->
         <Item>
           <New id="aContext" class="org.mortbay.jetty.handler.ContextHandler">
-            <Set name="contextPath">/timeline</Set>
+            <Set name="contextPath">/timegrid</Set>
             <Set name="resourceBase">./src/webapp/</Set>
             <Set name="handler">
               <New id="javadocServletHandler" class="org.mortbay.jetty.servlet.ServletHandler">
@@ -70,7 +70,7 @@
                     <Array type="org.mortbay.jetty.servlet.ServletHolder">
                         <Item>
                            <New class="org.mortbay.jetty.servlet.ServletHolder">
-                               <Set name="name">Timeline</Set>
+                               <Set name="name">Timegrid</Set>
                                <Set name="className">org.mortbay.jetty.servlet.DefaultServlet</Set>
                            </New>
                         </Item>
