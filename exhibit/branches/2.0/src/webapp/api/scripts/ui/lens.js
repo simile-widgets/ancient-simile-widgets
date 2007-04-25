@@ -106,7 +106,7 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, uiContext) {
     var dom = SimileAjax.DOM.createDOMFromTemplate(template);
     
     div.setAttribute("ex:itemID", itemID);
-    Exhibit.ToolboxWidget.createFromDOM(div, div, uiContext);
+    //Exhibit.ToolboxWidget.createFromDOM(div, div, uiContext);
     
     var pairs = Exhibit.ViewPanel.getPropertyValuesPairs(
         itemID, properties, database);
@@ -448,7 +448,7 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
     }
     
     job.div.setAttribute("ex:itemID", job.itemID);
-    Exhibit.ToolboxWidget.createFromDOM(job.div, job.div, job.uiContext);
+    //Exhibit.ToolboxWidget.createFromDOM(job.div, job.div, job.uiContext);
 };
 
 Exhibit.Lens._constructFromLensTemplateNode = function(
