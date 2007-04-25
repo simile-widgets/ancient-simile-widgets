@@ -4,11 +4,11 @@
     <link rel='stylesheet' href='../styles.css' type='text/css' />
     <script src="../../api/timegrid-api.js" type="text/javascript"></script>
     <script>
-        var tl;
-        function onLoad() {
-            var eventSource = new Timegrid.DefaultEventSource();            
-            tg = Timegrid.create($("#tg"), eventSource, "week", {});
-            tl.loadXML("jfk.xml", function(xml, url) { eventSource.loadXML(xml, url); });            
+        var tg;
+        var eventSource = new Timegrid.DefaultEventSource();      
+        function onLoad() {      
+            tg = Timegrid.create(document.getElementById("tg"), eventSource, "week", {});
+            tg.loadXML("jfk.xml", function(xml, url) { eventSource.loadXML(xml, url); });            
         }
     </script>
 </head>

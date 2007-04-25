@@ -347,7 +347,7 @@ Timegrid.DefaultEventSource.Event.prototype = {
             var a = document.createElement("a");
             a.href = url;
             a.target = "new";
-            a.innerHTML = Timegrid.strings[Timegrid.Platform.clientLocale].wikiLinkLabel;
+            a.innerHTML = "Discuss";
             
             elmt.appendChild(document.createTextNode("["));
             elmt.appendChild(a);

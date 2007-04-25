@@ -22,8 +22,8 @@ Timegrid.NativeDateUnit.getParser = function(format) {
         format = format.toLowerCase();
     }
     return (format == "iso8601" || format == "iso 8601") ?
-        Timegrid.DateTime.parseIso8601DateTime : 
-        Timegrid.DateTime.parseGregorianDateTime;
+        SimileAjax.DateTime.parseIso8601DateTime : 
+        SimileAjax.DateTime.parseGregorianDateTime;
 };
 
 Timegrid.NativeDateUnit.parseFromObject = function(o) {

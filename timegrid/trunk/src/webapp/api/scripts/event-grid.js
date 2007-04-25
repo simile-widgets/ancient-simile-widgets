@@ -7,10 +7,10 @@
 Timegrid.EventGrid = function(events, xSize, ySize, xMapper, yMapper) {
     // Construct the actual array container for events
     this.grid = new Array(xSize);
-    for (col in this.grid) {
-        col = new Array(ySize);
-        for (cell in col) {
-            cell = [];
+    for (i = 0; i < xSize; i++) {
+        this.grid[i] = new Array(ySize);
+        for (j = 0; j < ySize; j++) {
+            this.grid[i][j] = [];
         }
     }
     this.xMapper = xMapper;
@@ -21,8 +21,8 @@ Timegrid.EventGrid = function(events, xSize, ySize, xMapper, yMapper) {
 };
 
 Timegrid.EventGrid.prototype.add = function(evt) {
-    var x = xMapper(evt);
-    var y = yMapper(evt);
+    var x = this.xMapper(evt);
+    var y = this.yMapper(evt);
     this.get(x,y).push(evt);
     this.size++;
 };
