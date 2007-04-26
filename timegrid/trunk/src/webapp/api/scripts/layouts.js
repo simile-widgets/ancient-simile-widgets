@@ -6,8 +6,6 @@
 
 Timegrid.DEFAULT_LAYOUT = "week";
 Timegrid.LayoutFactory = new Object();
-Timegrid.Theme = Timegrid.ClassicTheme.create("en");
-Timegrid.Labeller = new Timegrid.GregorianDateLabeller("en", 4);
 
 /**
  * Instantiates a Timegrid layout with the given parameter hash.
@@ -60,7 +58,8 @@ Timegrid.WeekLayout.prototype.render = function(doc) {
     var layoutDiv = doc.createElement("div");
     var table = doc.createElement("table");
     var thead = doc.createElement("tr");
-    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var days = ["", "Sunday", "Monday", "Tuesday", "Wednesday", 
+                "Thursday", "Friday", "Saturday"];
     for (i in days) {
         var th = doc.createElement("th");
         th.innerHTML = days[i];
@@ -71,20 +70,23 @@ Timegrid.WeekLayout.prototype.render = function(doc) {
     for (y = 0; y < this.ySize; y++) {
         var row = doc.createElement("tr");
         table.appendChild(row);
+        var hcell = doc.createElement("td");
+        hcell.innerHTML = "<h3>" + y + "</h3>";
+        row.appendChild(hcell);
         for (x = 0; x < this.xSize; x++) {
             var cell = doc.createElement("td");
             var elist = doc.createElement("ul");
             var events = this.eventGrid.get(x,y);
             row.appendChild(cell);
             cell.appendChild(elist);
-            // I'm not really sure why, but apparently for-in loops create indices...
             for (i in events) {
-                var li = doc.createElement("li");
+                var ediv = doc.createElement("div");
+                var jediv = $(ediv);
                 var event = events[i];
-                $(li).addClass("timegrid-event");
-                //event.fillInfoBubble(li, Timegrid.Theme, Timegrid.Labeller);
-                li.innerHTML = event.getText();
-                elist.appendChild(li);
+                jediv.addClass("timegrid-event");
+                jediv.css("height", 30 * event.getInterval().hours);
+                ediv.innerHTML = event.getText();
+                elist.appendChild(ediv);
             }
         }
     }

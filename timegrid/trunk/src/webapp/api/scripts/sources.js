@@ -322,6 +322,11 @@ Timegrid.DefaultEventSource.Event.prototype = {
     getIcon:        function() { return this._icon; },
     getColor:       function() { return this._color; },
     getTextColor:   function() { return this._textColor; },
+
+    getInterval: function() {
+        return new SimileAjax.DateTime.Interval(this.getEnd() - 
+                this.getStart());
+    },
     
     getProperty:    function(name) { return null; },
     

@@ -3,10 +3,51 @@ html {
     font-size: 9pt;
 }
 
-li {
+ul, li, p, h3 {
+    margin: 0;
+    padding: 0;
+}
+
+ul, li {
     font-size: 9pt;
 }
 
+th, td {
+    clear: none;
+    border: 1px black solid;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr {
+    height: 30px;
+}
+
 td {
-    border-style: solid;
+    margin: 0;
+    padding: 0;
+    width: 100px;
+}
+
+div.timegrid-hline {
+    height: 1px;
+    background-color: black;
+}
+
+div.timegrid-vline {
+    width: 1px;
+    background-color: black;
+}
+
+div.timegrid-event {
+    position: absolute;
+    border: 1px black solid;
+    width: 100px;
+    background-color: #aaf;
+    padding: 0;
+    /* Weird positioning hack... */
+    margin-top: -15px;
+    margin-left: -1px;
 }

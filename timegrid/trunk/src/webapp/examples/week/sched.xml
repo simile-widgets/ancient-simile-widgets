@@ -1,0 +1,35 @@
+<data 
+    wiki-url="http://simile.mit.edu/shelf/"
+    wiki-section="Simile JFK Timeline"
+    >
+    <event start="Sun Apr 22 2007 12:00:00 GMT-0500"
+        end="Sun Apr 22 2007 13:00:00 GMT-0500" isDuration="true"
+        title="Sunday Brunch">
+        A delicious Sunday brunch filled with eggs and other warm yummy things.
+    </event>
+    <event start="Sun Apr 22 2007 19:00:00 GMT-0500"
+        end="Sun Apr 22 2007 23:00:00 GMT-0500" isDuration="true"
+        title="Tooling">
+        Tooling on psets.
+    </event>
+    <event start="Mon Apr 23 2007 09:00:00 GMT-0500"
+        end="Mon Apr 23 2007 10:00:00 GMT-0500" isDuration="true"
+        title="18.03 Lecture">
+        Differential equations are fun!
+    </event>
+    <event start="Mon Apr 23 2007 10:00:00 GMT-0500"
+        end="Mon Apr 23 2007 12:00:00 GMT-0500" isDuration="true"
+        title="8.02 TEAL">
+        Electricity and magnetism, anyone?
+    </event>
+    <event start="Tue Apr 24 2007 08:00:00 GMT-0500"
+        end="Tue Apr 24 2007 23:00:00 GMT-0500" isDuration="true"
+        title="One Nap to Rule Them All">
+        So maybe I was a little tired.
+    </event>
+    <event start="Thu Apr 26 2007 17:00:00 GMT-0500"
+        end="Thu Apr 26 2007 18:00:00 GMT-0500" isDuration="true"
+        title="Dinner">
+        But not the only one.
+    </event>
+</data>
