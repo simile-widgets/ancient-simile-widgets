@@ -44,10 +44,11 @@ Exhibit.LegendWidget.prototype.clear = function() {
 };
 
 Exhibit.LegendWidget.prototype.addEntry = function(key, value, label) {
-    if (key in this._labelNodes) {
+    if ((key in this._labelNodes) || (key == null)) {
         return;
     }
 
+    label = (label != null) ? label.toString() : key.toString();
     var dom = SimileAjax.DOM.createDOMFromString(
         "span",
         "<span id='marker'></span>\u00a0" +
