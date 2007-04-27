@@ -105,16 +105,21 @@ Exhibit.Database._Impl.prototype._loadLinks = function(links, fDone) {
     var fNext = function() {
         while (links.length > 0) {
             var link = links.shift();
-            var importer = Exhibit.importers[link.type];
+            var type = link.type;
+            if (type == null || type.length == 0) {
+                type = "application/json";
+            }
+            
+            var importer = Exhibit.importers[type];
             if (importer) {
                 try {
                     importer.load(link, database, fNext);
                     return;
                 } catch (e) {
-                    SimileAjax.Debug.exception(e, "Error using importer for data of type " + link.type);
+                    SimileAjax.Debug.exception(e, "Error using importer for data of type " + type);
                 }
             } else {
-                SimileAjax.Debug.log("No importer for data of type " + link.type);
+                SimileAjax.Debug.log("No importer for data of type " + type);
             }
         } 
         
