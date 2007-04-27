@@ -152,6 +152,8 @@ Exhibit.UIContext.registerLens = function(configuration, lensRegistry) {
 };
 
 Exhibit.UIContext.registerLensFromDOM = function(elmt, lensRegistry) {
+    elmt.style.display = "none";
+    
     var itemTypes = Exhibit.getAttribute(elmt, "itemTypes", ",");
     var template = null;
     
