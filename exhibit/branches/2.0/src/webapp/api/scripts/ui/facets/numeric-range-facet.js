@@ -60,6 +60,7 @@ Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, ui
     } catch (e) {
         SimileAjax.Debug.exception(e, "NumericRangeFacet: Error processing configuration of numeric range facet");
     }
+    Exhibit.NumericRangeFacet._configure(facet, configuration);
     
     facet._initializeUI();
     uiContext.getCollection().addFacet(facet);
@@ -72,6 +73,17 @@ Exhibit.NumericRangeFacet._configure = function(facet, configuration) {
     
     if ("expression" in configuration) {
         facet._expression = Exhibit.Expression.parse(configuration.expression);
+    }
+    
+    if (!("facetLabel" in facet._settings)) {
+        facet._settings.facetLabel = "missing ex:facetLabel";
+        if (facet._expression != null && facet._expression.isPath()) {
+            var segment = facet._expression.getPath().getLastSegment();
+            var property = facet._uiContext.getDatabase().getProperty(segment.property);
+            if (property != null) {
+                facet._settings.facetLabel = segment.forward ? property.getLabel() : property.getReverseLabel();
+            }
+        }
     }
 }
 
