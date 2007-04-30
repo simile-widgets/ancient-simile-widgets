@@ -88,6 +88,29 @@ Exhibit.Functions["add"] = {
     }
 };
 
+// Note: arguments expanding to multiple items get concatenated in random order
+Exhibit.Functions["concat"] = {
+    f: function(args) {
+        var result = [];
+        for (var i = 0; i < args.length; i++) {
+            args[i].values.visit(function(v) {
+                if (v != null) {
+                    result.push(v);
+                }
+            });
+        }
+
+        var set = new Exhibit.Set();
+        set.add(result.join(''));
+
+        return {
+            valueType:  "text",
+            values:     set,
+            count:      set.size()
+        };
+    }
+};
+
 Exhibit.Functions["multiply"] = {
     f: function(args) {
         var product = 1;
