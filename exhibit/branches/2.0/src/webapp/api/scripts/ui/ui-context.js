@@ -171,7 +171,7 @@ Exhibit.UIContext.registerLensFromDOM = function(elmt, lensRegistry) {
     }
     
     if (template != null) {
-        if (itemTypes == null || itemTypes.length == 0) {
+        if (itemTypes == null || itemTypes.length == 0 || (itemTypes.length == 1 && itemTypes[0] == "")) {
             lensRegistry.registerDefaultLens(template);
         } else {
             for (var i = 0; i < itemTypes.length; i++) {

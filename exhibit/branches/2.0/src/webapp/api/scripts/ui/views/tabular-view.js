@@ -72,30 +72,30 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContex
     }
     
     var s = Exhibit.getAttribute(configElmt, "sortColumn");
-    if (s != null) {
+    if (s != null && s.length > 0) {
         view._sortColumn = parseInt(s);
     }
     s = Exhibit.getAttribute(configElmt, "sortAscending");
-    if (s != null) {
+    if (s != null && s.length > 0) {
         view._sortAscending = (s == "true");
     }
     s = Exhibit.getAttribute(configElmt, "initialCount");
-    if (s != null) {
+    if (s != null && s.length > 0) {
         view._initialCount = parseInt(s);
     }
     s = Exhibit.getAttribute(configElmt, "showAll");
-    if (s != null) {
+    if (s != null && s.length > 0) {
         view._showAll = (s == "true");
     }
     s = Exhibit.getAttribute(configElmt, "rowStyler");
-    if (s != null) {
+    if (s != null && s.length > 0) {
         var f = eval(s);
         if (typeof f == "function") {
             view._rowStyler = f;
         }
     }
     s = Exhibit.getAttribute(configElmt, "tableStyler");
-    if (s != null) {
+    if (s != null && s.length > 0) {
         f = eval(s);
         if (typeof f == "function") {
             view._tableStyler = f;
