@@ -12,7 +12,8 @@ if (typeof SimileAjax == "undefined") {
     var SimileAjax = {
         loaded:                 false,
         loadingScriptsCount:    0,
-        error:                  null
+        error:                  null,
+        params:                 { bundle:"true" }
     };
     
     SimileAjax.Platform = new Object();
@@ -99,19 +100,54 @@ if (typeof SimileAjax == "undefined") {
             SimileAjax.includeCssFile(doc, urlPrefix + filenames[i]);
         }
     };
-    SimileAjax.parseURLParameters = function(url) {
-        var pairs = [];
-        var question = url.indexOf("?");
-        if (question >= 0) {
-            var params = url.substr(question+1).split("&");
-            for (var p = 0; p < params.length; p++) {
-                var pair = params[p].split("=");
-                pairs.push({ name: pair[0], value: pair.length > 1 ? pair[1] : "" });
-            }
-        }
-        return pairs;
+
+    /**
+     * Parse out the query parameters from a URL
+     * @param {String} url    the url to parse, or location.href if undefined
+     * @param {Object} to     optional object to extend with the parameters
+     * @param {Object} types  optional object mapping keys to value types
+     *        (String, Number, Boolean or Array, String by default)
+     * @return a key/value Object whose keys are the query parameter names
+     * @type Object
+     */
+    SimileAjax.parseURLParameters = function(url, to, types) {
+	if (typeof url == "undefined") {
+            url = location.href;
+	}
+	var q = url.indexOf("?");
+        if (q < 0) return to;
+	url = (url+"#").slice(q+1, url.indexOf("#")); // toss the URL fragment
+        to = to || {};
+	types = types || {};
+	var params = url.split("&"), param, parsed = {};
+	var decode = window.decodeURIComponent || unescape;
+	for (var i = 0; param = params[i]; i++) {
+	    var eq = param.indexOf("=");
+	    var name = decode(param.slice(0,eq));
+	    var old = parsed[name];
+	    if (typeof old == "undefined") {
+		old = [];
+	    } else if (!(old instanceof Array)) {
+		old = [old];
+	    }
+	    parsed[name] = old.concat(decode(param.slice(eq+1)));
+	}
+	for (i in parsed) {
+	    if (!parsed.hasOwnProperty(i)) continue;
+	    var type = types[i] || String;
+	    var data = parsed[i];
+	    if (!(data instanceof Array)) {
+		data = [data];
+	    }
+	    if (type === Boolean && data[0] == "false") {
+		to[i] = false; // because Boolean("false") === true
+	    } else {
+		to[i] = type.apply(this, data);
+	    }
+	}
+	return to;
     };
-    
+
     (function() {
         var javascriptFiles = [
             "platform.js",
@@ -130,7 +166,6 @@ if (typeof SimileAjax == "undefined") {
         var cssFiles = [
         ];
         
-        var bundle = true;
         if (typeof SimileAjax_urlPrefix == "string") {
             SimileAjax.urlPrefix = SimileAjax_urlPrefix;
         } else {
@@ -139,21 +174,17 @@ if (typeof SimileAjax == "undefined") {
                 SimileAjax.error = new Error("Failed to derive URL prefix for Simile Ajax API code files");
                 return;
             }
-            
-            var q = url.indexOf("?");
-            if (q > 0 && url.substr(q) == "?bundle=false") {
-                bundle = false;
-            }
-            
+
             SimileAjax.urlPrefix = url.substr(0, url.indexOf("simile-ajax-api.js"));
         }
-        
-        if (bundle) {
+
+        SimileAjax.parseURLParameters(url, SimileAjax.params, {bundle:Boolean});
+        if (SimileAjax.params.bundle) {
             SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix, [ "bundle.js" ]);
         } else {
             SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
         }
-            SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
+	SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
         
         SimileAjax.loaded = true;
     })();
