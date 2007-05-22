@@ -114,8 +114,8 @@
             Exhibit.urlPrefix = Exhibit_urlPrefix;
             if ("Exhibit_parameters" in window) {
                 SimileAjax.parseURLParameters(Exhibit_parameters,
-					      Exhibit.params,
-					      paramTypes);
+                                              Exhibit.params,
+                                              paramTypes);
             }
         } else {
             var url = SimileAjax.findScript(document, "/exhibit-api.js");
@@ -128,28 +128,28 @@
             SimileAjax.parseURLParameters(url, Exhibit.params, paramTypes);
         }
 
-	if (Exhibit.params.locale) { // ISO-639 language codes,
-	    // optional ISO-3166 country codes (2 characters)
-	    var segments = Exhibit.params.locale.split("-");
-	    if (segments.length > 1) {
-		locales.push(segments[0]);
-	    }
-	    locales.push(Exhibit.params.locale);
-	}
-	if (Exhibit.params.gmapkey) {
-	    includeMap = true;
-	}
-	if (Exhibit.params.views) {
-	    var views = Exhibit.params.views.split(",");
-	    for (var j = 0; j < views.length; j++) {
-		var view = views[j];
-		if (view == "timeline") {
-		    includeTimeline = true;
-		} else if (view == "map") {
-		    includeMap = true;
-		}
-	    }
-	}
+        if (Exhibit.params.locale) { // ISO-639 language codes,
+            // optional ISO-3166 country codes (2 characters)
+            var segments = Exhibit.params.locale.split("-");
+            if (segments.length > 1) {
+                locales.push(segments[0]);
+            }
+            locales.push(Exhibit.params.locale);
+        }
+        if (Exhibit.params.gmapkey) {
+            includeMap = true;
+        }
+        if (Exhibit.params.views) {
+            var views = Exhibit.params.views.split(",");
+            for (var j = 0; j < views.length; j++) {
+                var view = views[j];
+                if (view == "timeline") {
+                    includeTimeline = true;
+                } else if (view == "map") {
+                    includeMap = true;
+                }
+            }
+        }
 
         /*
          *  External components
@@ -158,7 +158,7 @@
             SimileAjax.includeJavascriptFile(
                 document, 
                 "http://maps.google.com/maps?file=api&v=2&key=" +
-		Exhibit.params.gmapkey
+                Exhibit.params.gmapkey
             );
         }
         if (includeTimeline) {
@@ -187,11 +187,14 @@
             localeFiles.push(locales[i] + "/locale.js");
         };
         SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "locales/", localeFiles);
-        
-        SimileAjax.includeJavascriptFile(document, Exhibit.urlPrefix + "scripts/create.js");
         Exhibit.loaded = true;
+        if (Exhibit.params.callback) {
+            eval(Exhibit.params.callback+"()");
+        } else {
+            SimileAjax.includeJavascriptFile(document, Exhibit.urlPrefix + "scripts/create.js");
+        }
     };
-    
+
     /*
      *  Load SimileAjax if it's not already loaded
      */
