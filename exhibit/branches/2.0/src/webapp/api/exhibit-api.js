@@ -102,11 +102,13 @@
         var defaultClientLocales = ("language" in navigator ? navigator.language : navigator.browserLanguage).split(";");
         for (var l = 0; l < defaultClientLocales.length; l++) {
             var locale = defaultClientLocales[l];
-            var segments = locale.split("-");
-            if (segments.length > 1) {
-                locales.push(segments[0]);
+            if (locale != "en") {
+                var segments = locale.split("-");
+                if (segments.length > 1 && segments[0] != "en") {
+                    locales.push(segments[0]);
+                }
+                locales.push(locale);
             }
-            locales.push(locale);
         }
 
         var paramTypes = { bundle:Boolean };
@@ -130,11 +132,13 @@
 
         if (Exhibit.params.locale) { // ISO-639 language codes,
             // optional ISO-3166 country codes (2 characters)
-            var segments = Exhibit.params.locale.split("-");
-            if (segments.length > 1) {
-                locales.push(segments[0]);
+            if (Exhibit.params.locale != "en") {
+                var segments = Exhibit.params.locale.split("-");
+                if (segments.length > 1 && segments[0] != "en") {
+                    locales.push(segments[0]);
+                }
+                locales.push(Exhibit.params.locale);
             }
-            locales.push(Exhibit.params.locale);
         }
         if (Exhibit.params.gmapkey) {
             includeMap = true;
@@ -151,48 +155,48 @@
             }
         }
 
+        var scriptURLs = [];
+        var cssURLs = [];
+        
         /*
          *  External components
          */
         if (includeMap && Exhibit.params.gmapkey) {
-            SimileAjax.includeJavascriptFile(
-                document, 
-                "http://maps.google.com/maps?file=api&v=2&key=" +
-                Exhibit.params.gmapkey
-            );
+            scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
         }
         if (includeTimeline) {
-            SimileAjax.includeJavascriptFile(
-                document, 
-                "http://static.simile.mit.edu/timeline/api/timeline-api.js"
-            );
+            scriptURLs.push("http://static.simile.mit.edu/timeline/api/timeline-api.js");
         }
         
         /*
          *  Core scripts and styles
          */
         if (Exhibit.params.bundle) {
-            SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix, [ "bundle.js" ]);
-            SimileAjax.includeCssFiles(document, Exhibit.urlPrefix, [ "bundle.css" ]);
+            scriptURLs.push(Exhibit.urlPrefix + "bundle.js");
+            cssURLs.push(Exhibit.urlPrefix + "bundle.css");
         } else {
-            SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "scripts/", javascriptFiles);
-            SimileAjax.includeCssFiles(document, Exhibit.urlPrefix + "styles/", cssFiles);
+            SimileAjax.prefixURLs(scriptURLs, Exhibit.urlPrefix + "scripts/", javascriptFiles);
+            SimileAjax.prefixURLs(cssURLs, Exhibit.urlPrefix + "styles/", cssFiles);
         }
         
         /*
          *  Localization
          */
-        var localeFiles = [];
         for (var i = 0; i < locales.length; i++) {
-            localeFiles.push(locales[i] + "/locale.js");
+            scriptURLs.push(Exhibit.urlPrefix + "locales/" + locales[i] + "/locale.js");
         };
-        SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix + "locales/", localeFiles);
-        Exhibit.loaded = true;
+        
         if (Exhibit.params.callback) {
-            eval(Exhibit.params.callback+"()");
+            window.SimileAjax_onLoad = function() {
+                eval(Exhibit.params.callback + "()");
+            }
         } else {
-            SimileAjax.includeJavascriptFile(document, Exhibit.urlPrefix + "scripts/create.js");
+            scriptURLs.push(Exhibit.urlPrefix + "scripts/create.js");
         }
+        
+        SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
+        SimileAjax.includeCssFiles(document, "", cssURLs);
+        Exhibit.loaded = true;
     };
 
     /*
@@ -201,7 +205,7 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
+        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js";
         var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
         //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {

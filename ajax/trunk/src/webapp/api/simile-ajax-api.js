@@ -100,6 +100,18 @@ if (typeof SimileAjax == "undefined") {
             SimileAjax.includeCssFile(doc, urlPrefix + filenames[i]);
         }
     };
+    
+    /**
+     * Append into urls each string in suffixes after prefixing it with urlPrefix.
+     * @param {Array} urls
+     * @param {String} urlPrefix
+     * @param {Array} suffixes
+     */
+    SimileAjax.prefixURLs = function(urls, urlPrefix, suffixes) {
+        for (var i = 0; i < suffixes.length; i++) {
+            urls.push(urlPrefix + suffixes[i]);
+        }
+    };
 
     /**
      * Parse out the query parameters from a URL
@@ -111,41 +123,41 @@ if (typeof SimileAjax == "undefined") {
      * @type Object
      */
     SimileAjax.parseURLParameters = function(url, to, types) {
-	if (typeof url == "undefined") {
+        if (typeof url == "undefined") {
             url = location.href;
-	}
-	var q = url.indexOf("?");
+        }
+        var q = url.indexOf("?");
         if (q < 0) return to;
-	url = (url+"#").slice(q+1, url.indexOf("#")); // toss the URL fragment
+        url = (url+"#").slice(q+1, url.indexOf("#")); // toss the URL fragment
         to = to || {};
-	types = types || {};
-	var params = url.split("&"), param, parsed = {};
-	var decode = window.decodeURIComponent || unescape;
-	for (var i = 0; param = params[i]; i++) {
-	    var eq = param.indexOf("=");
-	    var name = decode(param.slice(0,eq));
-	    var old = parsed[name];
-	    if (typeof old == "undefined") {
-		old = [];
-	    } else if (!(old instanceof Array)) {
-		old = [old];
-	    }
-	    parsed[name] = old.concat(decode(param.slice(eq+1)));
-	}
-	for (i in parsed) {
-	    if (!parsed.hasOwnProperty(i)) continue;
-	    var type = types[i] || String;
-	    var data = parsed[i];
-	    if (!(data instanceof Array)) {
-		data = [data];
-	    }
-	    if (type === Boolean && data[0] == "false") {
-		to[i] = false; // because Boolean("false") === true
-	    } else {
-		to[i] = type.apply(this, data);
-	    }
-	}
-	return to;
+        types = types || {};
+        var params = url.split("&"), param, parsed = {};
+        var decode = window.decodeURIComponent || unescape;
+        for (var i = 0; param = params[i]; i++) {
+            var eq = param.indexOf("=");
+            var name = decode(param.slice(0,eq));
+            var old = parsed[name];
+            if (typeof old == "undefined") {
+                old = [];
+            } else if (!(old instanceof Array)) {
+                old = [old];
+            }
+            parsed[name] = old.concat(decode(param.slice(eq+1)));
+        }
+        for (var i in parsed) {
+            if (!parsed.hasOwnProperty(i)) continue;
+            var type = types[i] || String;
+            var data = parsed[i];
+            if (!(data instanceof Array)) {
+                data = [data];
+            }
+            if (type === Boolean && data[0] == "false") {
+                to[i] = false; // because Boolean("false") === true
+            } else {
+                to[i] = type.apply(this, data);
+            }
+        }
+        return to;
     };
 
     (function() {
@@ -184,7 +196,7 @@ if (typeof SimileAjax == "undefined") {
         } else {
             SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
         }
-	SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
+        SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
         
         SimileAjax.loaded = true;
     })();
