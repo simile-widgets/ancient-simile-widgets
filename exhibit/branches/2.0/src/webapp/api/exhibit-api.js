@@ -15,7 +15,7 @@
     
         window.Exhibit = {
             loaded:     false,
-            bundle:     true,
+            params:     { bundle:true },
             namespace:  "http://simile.mit.edu/2006/11/exhibit#",
             importers:  {}
         };
@@ -95,39 +95,9 @@
         ];
         
         var locales = [ "en" ];
-        var gmapKey = null;
-        
+
         var includeMap = false;
         var includeTimeline = false;
-        
-        var processURLParameters = function(parameters) {
-            for (var i = 0; i < parameters.length; i++) {
-                var p = parameters[i];
-                if (p.name == "bundle") {
-                    Exhibit.bundle = p.value != "false";
-                } else if (p.name == "locale") {
-                    // ISO-639 language codes, optional ISO-3166 country codes (2 characters)
-                    var segments = p.value.split("-");
-                    if (segments.length > 1) {
-                        locales.push(segments[0]);
-                    }
-                    locales.push(p.value);
-                } else if (p.name == "gmapkey") {
-                    gmapKey = p.value;
-                    includeMap = true;
-                } else if (p.name == "views") {
-                    var views = p.value.split(",");
-                    for (var j = 0; j < views.length; j++) {
-                        var view = views[j];
-                        if (view == "timeline") {
-                            includeTimeline = true;
-                        } else if (view == "map") {
-                            includeMap = true;
-                        }
-                    }
-                }
-            }
-        };
         
         var defaultClientLocales = ("language" in navigator ? navigator.language : navigator.browserLanguage).split(";");
         for (var l = 0; l < defaultClientLocales.length; l++) {
@@ -138,30 +108,57 @@
             }
             locales.push(locale);
         }
-        
+
+        var paramTypes = { bundle:Boolean };
         if (typeof Exhibit_urlPrefix == "string") {
             Exhibit.urlPrefix = Exhibit_urlPrefix;
             if ("Exhibit_parameters" in window) {
-                processURLParameters(Exhibit_parameters);
+                SimileAjax.parseURLParameters(Exhibit_parameters,
+					      Exhibit.params,
+					      paramTypes);
             }
         } else {
-            var url = SimileAjax.findScript(document, "exhibit-api.js");
+            var url = SimileAjax.findScript(document, "/exhibit-api.js");
             if (url == null) {
                 Exhibit.error = new Error("Failed to derive URL prefix for Simile Exhibit API code files");
                 return;
             }
             Exhibit.urlPrefix = url.substr(0, url.indexOf("exhibit-api.js"));
         
-            processURLParameters(SimileAjax.parseURLParameters(url));
+            SimileAjax.parseURLParameters(url, Exhibit.params, paramTypes);
         }
-        
+
+	if (Exhibit.params.locale) { // ISO-639 language codes,
+	    // optional ISO-3166 country codes (2 characters)
+	    var segments = Exhibit.params.locale.split("-");
+	    if (segments.length > 1) {
+		locales.push(segments[0]);
+	    }
+	    locales.push(Exhibit.params.locale);
+	}
+	if (Exhibit.params.gmapkey) {
+	    includeMap = true;
+	}
+	if (Exhibit.params.views) {
+	    var views = Exhibit.params.views.split(",");
+	    for (var j = 0; j < views.length; j++) {
+		var view = views[j];
+		if (view == "timeline") {
+		    includeTimeline = true;
+		} else if (view == "map") {
+		    includeMap = true;
+		}
+	    }
+	}
+
         /*
          *  External components
          */
-        if (gmapKey != null && includeMap) {
+        if (includeMap && Exhibit.params.gmapkey) {
             SimileAjax.includeJavascriptFile(
                 document, 
-                "http://maps.google.com/maps?file=api&v=2&key=" + gmapKey
+                "http://maps.google.com/maps?file=api&v=2&key=" +
+		Exhibit.params.gmapkey
             );
         }
         if (includeTimeline) {
@@ -174,7 +171,7 @@
         /*
          *  Core scripts and styles
          */
-        if (Exhibit.bundle) {
+        if (Exhibit.params.bundle) {
             SimileAjax.includeJavascriptFiles(document, Exhibit.urlPrefix, [ "bundle.js" ]);
             SimileAjax.includeCssFiles(document, Exhibit.urlPrefix, [ "bundle.css" ]);
         } else {

@@ -20,7 +20,7 @@
     ];
 
     var urlPrefix = Exhibit.urlPrefix + "locales/sv/";
-    if (Exhibit.bundle) {
+    if (Exhibit.params.bundle) {
         SimileAjax.includeJavascriptFiles(document, urlPrefix, [ "bundle.js" ]);
         if (cssFiles.length > 0) {
             SimileAjax.includeCssFiles(document, urlPrefix, [ "bundle.css" ]);
