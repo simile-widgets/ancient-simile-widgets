@@ -111,7 +111,7 @@
             }
         }
 
-        var paramTypes = { bundle:Boolean };
+        var paramTypes = { bundle:Boolean, js:Array, css:Array };
         if (typeof Exhibit_urlPrefix == "string") {
             Exhibit.urlPrefix = Exhibit_urlPrefix;
             if ("Exhibit_parameters" in window) {
@@ -155,8 +155,8 @@
             }
         }
 
-        var scriptURLs = [];
-        var cssURLs = [];
+        var scriptURLs = Exhibit.params.js || [];
+        var cssURLs = Exhibit.params.css || [];
         
         /*
          *  External components
@@ -193,7 +193,7 @@
         } else {
             scriptURLs.push(Exhibit.urlPrefix + "scripts/create.js");
         }
-        
+
         SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
         SimileAjax.includeCssFiles(document, "", cssURLs);
         Exhibit.loaded = true;
