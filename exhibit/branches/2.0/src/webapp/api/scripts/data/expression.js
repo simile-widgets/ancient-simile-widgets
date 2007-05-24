@@ -15,7 +15,12 @@ Exhibit.Expression._Impl.prototype.evaluate = function(
     defaultRootName, 
     database
 ) {
-    return this._rootNode.evaluate(roots, rootValueTypes, defaultRootName, database);
+    var collection = this._rootNode.evaluate(roots, rootValueTypes, defaultRootName, database);
+    return {
+        values:     collection.getSet(),
+        valueType:  collection.valueType,
+        size:       collection.size
+    };
 };
 
 Exhibit.Expression._Impl.prototype.evaluateOnItem = function(itemID, database) {
@@ -33,9 +38,9 @@ Exhibit.Expression._Impl.prototype.evaluateSingle = function(
     defaultRootName, 
     database
 ) {
-    var results = this._rootNode.evaluate(roots, rootValueTypes, defaultRootName, database);
-    var result = { value: null, valueType: results.valueType };
-    results.values.visit(function(v) { result.value = v; return true; });
+    var collection = this._rootNode.evaluate(roots, rootValueTypes, defaultRootName, database);
+    var result = { value: null, valueType: collection.valueType };
+    colleciton.forEachValue(function(v) { result.value = v; return true; });
     
     return result;
 };
@@ -69,6 +74,46 @@ Exhibit.Expression._Impl.prototype.getPath = function() {
 };
 
 /*==================================================
+ *  Exhibit.Expression._Collection
+ *==================================================
+ */
+Exhibit.Expression._Collection = function(values, valueType) {
+    this._values = values;
+    this.valueType = valueType;
+    
+    if (values instanceof Array) {
+        this.forEachValue = Exhibit.Expression._Collection._forEachValueInArray;
+        this.getSet = Exhibit.Expression._Collection._getSetFromArray;
+        this.size = values.length;
+    } else {
+        this.forEachValue = Exhibit.Expression._Collection._forEachValueInSet;
+        this.getSet = Exhibit.Expression._Collection._getSetFromSet;
+        this.size = values.size();
+    }
+};
+
+Exhibit.Expression._Collection._forEachValueInSet = function(f) {
+    this._values.visit(f);
+};
+
+Exhibit.Expression._Collection._forEachValueInArray = function(f) {
+    var a = this._values;
+    for (var i = 0; i < a.length; i++) {
+        if (f(a[i])) {
+            break;
+        }
+    }
+};
+
+Exhibit.Expression._Collection._getSetFromSet = function() {
+    return this._values;
+};
+
+Exhibit.Expression._Collection._getSetFromArray = function() {
+    return new Exhibit.Set(this._values);
+};
+
+/*==================================================
  *  Exhibit.Expression.Path
  *==================================================
  */
@@ -79,7 +124,7 @@ Exhibit.Expression.Path = function() {
 
 Exhibit.Expression.Path.create = function(property, forward) {
     var path = new Exhibit.Expression.Path();
-    path._segments.push({ property: property, forward: forward, isList: false });
+    path._segments.push({ property: property, forward: forward, isArray: false });
     return path;
 };
 
@@ -123,16 +168,21 @@ Exhibit.Expression.Path.prototype.evaluate = function(
     database
 ) {
     var rootName = this._rootName != null ? this._rootName : defaultRootName;
+    var valueType = rootName in rootValueTypes ? rootValueTypes[rootName] : "text";
     
-    var set = new Exhibit.Set();
-    var root = roots[rootName];
-    if (root instanceof Exhibit.Set) {
-        set.addSet(root);
+    var collection = null;
+    if (rootName in roots) {
+        var root = roots[rootName];
+        if (root instanceof Exhibit.Set || root instanceof Array) {
+            collection = new Exhibit.Expression._Collection(root, valueType);
+        } else {
+            collection = new Exhibit.Expression._Collection([ root ], valueType);
+        }
+        
+        return this._walkForward(collection, database);
     } else {
-        set.add(root);
+        throw new Error("No such variable called " + rootName);
     }
-    
-    return this._walkForward(set, rootValueTypes[rootName], database);
 };
 
 Exhibit.Expression.Path.prototype.evaluateBackward = function(
@@ -141,10 +191,9 @@ Exhibit.Expression.Path.prototype.evaluateBackward = function(
     filter,
     database
 ) {
-    var set = new Exhibit.Set();
-    set.add(value);
+    var collection = new Exhibit.Expression._Collection([ value ], valueType);
     
-    return this._walkBackward(set, valueType, filter, database);
+    return this._walkBackward(collection, filter, database);
 }
 
 Exhibit.Expression.Path.prototype.walkForward = function(
@@ -152,7 +201,7 @@ Exhibit.Expression.Path.prototype.walkForward = function(
     valueType,
     database
 ) {
-    return this._walkForward(new Exhibit.Set(values), valueType, database);
+    return this._walkForward(new Exhibit.Expression._Collection(values, valueType), database);
 };
 
 Exhibit.Expression.Path.prototype.walkBackward = function(
@@ -161,49 +210,87 @@ Exhibit.Expression.Path.prototype.walkBackward = function(
     filter,
     database
 ) {
-    return this._walkBackward(new Exhibit.Set(values), valueType, filter, database);
+    return this._walkBackward(new Exhibit.Expression._Collection(values, valueType), filter, database);
 };
 
-Exhibit.Expression.Path.prototype._walkForward = function(set, valueType, database) {
+Exhibit.Expression.Path.prototype._walkForward = function(collection, database) {
     for (var i = 0; i < this._segments.length; i++) {
         var segment = this._segments[i];
-        if (segment.forward) {
-            set = database.getObjectsUnion(set, segment.property);
-            
-            var property = database.getProperty(segment.property);
-            valueType = property != null ? property.getValueType() : "text";
+        if (segment.isArray) {
+            var a = [];
+            var valueType;
+            if (segment.forward) {
+                collection.forEachValue(function(v) {
+                    database.getObjects(v, segment.property).visit(function(v2) { a.push(v2); });
+                });
+                
+                var property = database.getProperty(segment.property);
+                valueType = property != null ? property.getValueType() : "text";
+            } else {
+                collection.forEachValue(function(v) {
+                    database.getSubjects(v, segment.property).visit(function(v2) { a.push(v2); });
+                });
+                valueType = "item";
+            }
+            collection = new Exhibit.Expression._Collection(a, valueType);
         } else {
-            set = database.getSubjectsUnion(set, segment.property);
-            valueType = "item";
+            if (segment.forward) {
+                var values = database.getObjectsUnion(collection.getSet(), segment.property);
+                var property = database.getProperty(segment.property);
+                var valueType = property != null ? property.getValueType() : "text";
+                collection = new Exhibit.Expression._Collection(values, valueType);
+            } else {
+                var values = database.getSubjectsUnion(collection.getSet(), segment.property);
+                collection = new Exhibit.Expression._Collection(values, "item");
+            }
         }
     }
     
-    return {
-        valueType:  valueType,
-        values:     set,
-        count:      set.size()
-    };
+    return collection;
 };
 
-Exhibit.Expression.Path.prototype._walkBackward = function(set, valueType, filter, database) {
+Exhibit.Expression.Path.prototype._walkBackward = function(collection, filter, database) {
     for (var i = this._segments.length - 1; i >= 0; i--) {
         var segment = this._segments[i];
-        if (segment.forward) {
-            set = database.getSubjectsUnion(set, segment.property, null, i == 0 ? filter : null);
-            valueType = "item";
+        if (segment.isArray) {
+            var a = [];
+            var valueType;
+            if (segment.forward) {
+                collection.forEachValue(function(v) {
+                    database.getSubjects(v, segment.property).visit(function(v2) { 
+                        if (i > 0 || filter == null || filter.contains(v2)) {
+                            a.push(v2); 
+                        }
+                    });
+                });
+                
+                var property = database.getProperty(segment.property);
+                valueType = property != null ? property.getValueType() : "text";
+            } else {
+                collection.forEachValue(function(v) {
+                    database.getObjects(v, segment.property).visit(function(v2) { 
+                        if (i > 0 || filter == null || filter.contains(v2)) {
+                            a.push(v2); 
+                        }
+                    });
+                });
+                valueType = "item";
+            }
+            collection = new Exhibit.Expression._Collection(a, valueType);
         } else {
-            set = database.getObjectsUnion(set, segment.property, null, i == 0 ? filter : null);
-            
-            var property = database.getProperty(segment.property);
-            valueType = property != null ? property.getValueType() : "text";
+            if (segment.forward) {
+                var values = database.getSubjectsUnion(collection.getSet(), segment.property, null, i == 0 ? filter : null);
+                collection = new Exhibit.Expression._Collection(values, "item");
+            } else {
+                var values = database.getObjectsUnion(collection.getSet(), segment.property, null, i == 0 ? filter : null);
+                var property = database.getProperty(segment.property);
+                var valueType = property != null ? property.getValueType() : "text";
+                collection = new Exhibit.Expression._Collection(values, valueType);
+            }
         }
     }
     
-    return {
-        valueType:  valueType,
-        values:     set,
-        count:      set.size()
-    };
+    return collection;
 };
 
 Exhibit.Expression.Path.prototype.rangeBackward = function(
@@ -266,14 +353,7 @@ Exhibit.Expression._Constant.prototype.evaluate = function(
     defaultRootName, 
     database
 ) {
-    var set = new Exhibit.Set();
-    set.add(this._value);
-    
-    return {
-        valueType:  this._valueType,
-        values:     set,
-        count:      1
-    };
+    return new Exhibit.Expression._Collection([ this._value ], this._valueType);
 };
 
 /*==================================================
@@ -291,7 +371,7 @@ Exhibit.Expression._Operator.prototype.evaluate = function(
     defaultRootName, 
     database
 ) {
-    var set = new Exhibit.Set();
+    var values = [];
     
     var args = [];
     for (var i = 0; i < this._args.length; i++) {
@@ -301,32 +381,28 @@ Exhibit.Expression._Operator.prototype.evaluate = function(
     var operator = Exhibit.Expression._operators[this._operator];
     var f = operator.f;
     if (operator.argumentType == "number") {
-        args[0].values.visit(function(v1) {
+        args[0].forEachValue(function(v1) {
             if (!(typeof v1 == "number")) {
                 v1 = parseFloat(v1);
             }
         
-            args[1].values.visit(function(v2) {
+            args[1].forEachValue(function(v2) {
                 if (!(typeof v2 == "number")) {
                     v2 = parseFloat(v2);
                 }
                 
-                set.add(f(v1, v2));
+                values.push(f(v1, v2));
             });
         });
     } else {
-        args[0].values.visit(function(v1) {
-            args[1].values.visit(function(v2) {
-                set.add(f(v1, v2));
+        args[0].forEachValue(function(v1) {
+            args[1].forEachValue(function(v2) {
+                values.push(f(v1, v2));
             });
         });
     }
     
-    return {
-        valueType:  operator.valueType,
-        values:     set,
-        count:      set.size()
-    };
+    return new Exhibit.Expression._Collection(values, operator.valueType);
 };
 
 Exhibit.Expression._operators = {
@@ -353,6 +429,14 @@ Exhibit.Expression._operators = {
     "=" : {
         valueType: "boolean",
         f: function(a, b) { return a == b; }
+    },
+    "<>" : {
+        valueType: "boolean",
+        f: function(a, b) { return a != b; }
+    },
+    "><" : {
+        valueType: "boolean",
+        f: function(a, b) { return a != b; }
     },
     "<" : {
         argumentType: "number",
@@ -426,29 +510,46 @@ Exhibit.Expression._ControlCall.prototype.evaluate = function(
         var oldValueType = rootValueTypes["value"];
         rootValueTypes["value"] = collection.valueType;
         
-        var results = new Exhibit.Set();
+        var results = [];
         var valueType = "text";
         
-        collection.values.visit(function(element) {
+        collection.forEachValue(function(element) {
             roots["value"] = element;
             
-            var r = self._args[1].evaluate(roots, rootValueTypes, defaultRootName, database);
-            valueType = r.valueType;
-            results.addSet(r.values);
+            var collection2 = self._args[1].evaluate(roots, rootValueTypes, defaultRootName, database);
+            valueType = collection2.valueType;
+            
+            collection2.forEachValue(function(result) {
+                results.push(result);
+            });
         });
         
         roots["value"] = oldValue;
         rootValueTypes["value"] = oldValueType;
         
-        return {
-            valueType:  valueType,
-            values:     results,
-            count:      results.size()
-        };
+        return new Exhibit.Expression._Collection(results, valueType);
+    } else if (this._name == "if") {
+        var conditionCollection = this._args[0].evaluate(roots, rootValueTypes, defaultRootName, database);
+        var condition = false;
+        conditionCollection.forEachValue(function(v) {
+            if (v) {
+                condition = true;
+                return true;
+            }
+        });
+        
+        if (condition) {
+            return this._args[1].evaluate(roots, rootValueTypes, defaultRootName, database);
+        } else {
+            return this._args[2].evaluate(roots, rootValueTypes, defaultRootName, database);
+        }
+    } else if (this._name == "default") {
+        for (var i = 0; i < this._args.length; i++) {
+            var collection = this._args[i].evaluate(roots, rootValueTypes, defaultRootName, database);
+            if (collection.size > 0) {
+                return collection;
+            }
+        }
+        return new Exhibit.Expression._Collection([], "text");
     }
-    return {
-        valueType:  "text",
-        values:     new Exhibit.Set(),
-        count:      0
-    };
 };

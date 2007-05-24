@@ -73,7 +73,7 @@ Exhibit.ExpressionParser._internalParse = function(scanner, several) {
             var identifier = token.value;
             next();
             
-            if ("foreach" == identifier || "if" == identifier) {
+            if ("foreach" == identifier || "if" == identifier || "default" == identifier) {
                 if (token != null && token.type == Scanner.DELIMITER && token.value == "(") {
                     next();
                     

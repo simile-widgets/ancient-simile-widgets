@@ -155,7 +155,7 @@ Exhibit.ListFacet.prototype.restrict = function(items) {
             this._valueSet, 
             "item", items, 
             this._uiContext.getDatabase()
-        ).values;
+        ).getSet();
     } else {
         this._buildMaps();
         
@@ -194,11 +194,10 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
         var facetValueResult = path.walkForward(items, "item", database);
         valueType = facetValueResult.valueType;
         
-        var facetValues = facetValueResult.values;
-        if (facetValues.size() > 0) {
-            facetValues.visit(function(facetValue) {
-                var itemSubset = path.evaluateBackward(facetValue, valueType, items, database).values;
-                entries.push({ value: facetValue, count: itemSubset.size() });
+        if (facetValueResult.size > 0) {
+            facetValueResult.forEachValue(function(facetValue) {
+                var itemSubcollection = path.evaluateBackward(facetValue, valueType, items, database);
+                entries.push({ value: facetValue, count: itemSubcollection.size });
             });
         };
     } else {

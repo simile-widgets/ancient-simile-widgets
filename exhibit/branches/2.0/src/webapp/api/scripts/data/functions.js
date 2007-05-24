@@ -8,54 +8,43 @@ Exhibit.Functions = {};
 Exhibit.Functions["union"] = {
     f: function(args) {
         var set = new Exhibit.Set();
-        if (args.length == 0) {
-            return { valueType: "text", values: set, count: 0 };
-        } else {
+        var valueType = null;
+        
+        if (args.length > 0) {
             var valueType = args[0].valueType;
-            set.addSet(args[0].values);
-            
-            for (var i = 1; i < args.length; i++) {
+            for (var i = 0; i < args.length; i++) {
                 var arg = args[i];
-                if (valueType == arg.valueType) {
-                    set.addSet(arg.values);
+                if (arg.size > 0) {
+                    if (valueType == null) {
+                        valueType = arg.valueType;
+                    }
+                    set.addSet(arg.getSet());
                 }
             }
-            
-            return { valueType: valueType, values: set, count: set.size() };
         }
+        return new Exhibit.Expression._Collection(set, valueType != null ? valueType : "text");
     }
 };
 
 Exhibit.Functions["contains"] = {
     f: function(args) {
-        var result = args[0].values.size() > 0;
-        args[1].values.visit(function(v) {
-            if (!args[0].values.contains(v)) {
+        var result = args[0].size > 0;
+        var set = args[0].getSet();
+        
+        args[1].forEachValue(function(v) {
+            if (!set.contains(v)) {
                 result = false;
+                return true;
             }
         });
         
-        var set = new Exhibit.Set();
-        set.add(result);
-        
-        return {
-            valueType:  "boolean",
-            values:     set,
-            count:      set.size()
-        };
+        return new Exhibit.Expression._Collection([ result ], "boolean");
     }
 };
 
 Exhibit.Functions["count"] = {
     f: function(args) {
-        var set = new Exhibit.Set();
-        set.add(args[0].values.size());
-        
-        return {
-            valueType:  "number",
-            values:     set,
-            count:      set.size()
-        };
+        return new Exhibit.Expression._Collection([ args[0].size ], "number");
     }
 };
 
@@ -63,7 +52,7 @@ Exhibit.Functions["add"] = {
     f: function(args) {
         var total = 0;
         for (var i = 0; i < args.length; i++) {
-            args[i].values.visit(function(v) {
+            args[i].forEachValue(function(v) {
                 if (v != null) {
                     if (typeof v == "number") {
                         total += v;
@@ -77,14 +66,7 @@ Exhibit.Functions["add"] = {
             });
         }
         
-        var set = new Exhibit.Set();
-        set.add(total);
-        
-        return {
-            valueType:  "number",
-            values:     set,
-            count:      set.size()
-        };
+        return new Exhibit.Expression._Collection([ total ], "number");
     }
 };
 
@@ -93,21 +75,14 @@ Exhibit.Functions["concat"] = {
     f: function(args) {
         var result = [];
         for (var i = 0; i < args.length; i++) {
-            args[i].values.visit(function(v) {
+            args[i].forEachValue(function(v) {
                 if (v != null) {
                     result.push(v);
                 }
             });
         }
 
-        var set = new Exhibit.Set();
-        set.add(result.join(''));
-
-        return {
-            valueType:  "text",
-            values:     set,
-            count:      set.size()
-        };
+        return new Exhibit.Expression._Collection([ result.join('') ], "text");
     }
 };
 
@@ -115,7 +90,7 @@ Exhibit.Functions["multiply"] = {
     f: function(args) {
         var product = 1;
         for (var i = 0; i < args.length; i++) {
-            args[i].values.visit(function(v) {
+            args[i].forEachValue(function(v) {
                 if (v != null) {
                     if (typeof v == "number") {
                         product *= v;
@@ -129,14 +104,7 @@ Exhibit.Functions["multiply"] = {
             });
         }
         
-        var set = new Exhibit.Set();
-        set.add(total);
-        
-        return {
-            valueType:  "number",
-            values:     set,
-            count:      set.size()
-        };
+        return new Exhibit.Expression._Collection([ product ], "number");
     }
 };
 
@@ -180,31 +148,22 @@ Exhibit.Functions["date-range"] = {
         var self = this;
         
         var from = Number.POSITIVE_INFINITY;
-        args[0].values.visit(function(v) {
+        args[0].forEachValue(function(v) {
             from = Math.min(from, self._parseDate(v));
         });
         
         var to = Number.NEGATIVE_INFINITY;
-        args[1].values.visit(function(v) {
+        args[1].forEachValue(function(v) {
             to = Math.max(to, self._parseDate(v));
         });
         
         var interval = "day";
-        args[2].values.visit(function(v) {
+        args[2].forEachValue(function(v) {
             interval = v;
         });
             
-        var set = new Exhibit.Set();
         var range = this._computeRange(from, to, interval);
-        if (range != null) {
-            set.add(range);
-        }
-        
-        return {
-            valueType:  "number",
-            values:     set,
-            count:      set.size()
-        };
+        return new Exhibit.Expression._Collection(range != null ? [ range ] : [], "number");
     }
 };
 
@@ -229,22 +188,14 @@ Exhibit.Functions["distance"] = {
         var data = {};
         var name = ["origo", "lat", "lng", "unit", "round"];
         for (var i = 0, n; n = name[i]; i++) {
-            args[i].values.visit(function(v) { data[n] = v; });
+            args[i].forEachValue(function(v) { data[n] = v; });
         }
 
         var latlng = data.origo.split(",");
         var from = new GLatLng( latlng[0], latlng[1] );
         var to = new GLatLng( data.lat, data.lng );
-        var set = new Exhibit.Set();
+        
         var range = this._computeDistance(from, to, data.unit, data.round);
-        if (range != null) {
-            set.add(range);
-        }
-
-        return {
-            valueType:  "number",
-            values:     set,
-            count:      set.size()
-        };
+        return new Exhibit.Expression._Collection(range != null ? [ range ] : [], "number");
     }
 };
