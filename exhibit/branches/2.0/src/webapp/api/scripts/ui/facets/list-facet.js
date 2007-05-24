@@ -57,7 +57,7 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
     try {
         var expressionString = Exhibit.getAttribute(configElmt, "expression");
         if (expressionString != null && expressionString.length > 0) {
-            facet._expression = Exhibit.Expression.parse(expressionString);
+            facet._expression = Exhibit.ExpressionParser.parse(expressionString);
         }
         
         var selection = Exhibit.getAttribute(configElmt, "selection", ";");
@@ -81,7 +81,7 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
     Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.ListFacet._settingSpecs, facet._settings);
     
     if ("expression" in configuration) {
-        facet._expression = Exhibit.Expression.parse(configuration.expression);
+        facet._expression = Exhibit.ExpressionParser.parse(configuration.expression);
     }
     if ("selection" in configuration) {
         var selection = configuration.selection;

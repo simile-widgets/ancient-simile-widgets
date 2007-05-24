@@ -32,6 +32,7 @@
             
             "data/database.js",
             "data/expression.js",
+            "data/expression-parser.js",
             "data/functions.js",
             "data/collection.js",
             
@@ -205,7 +206,7 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js";
+        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
         var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
         //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {

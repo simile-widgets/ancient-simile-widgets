@@ -115,7 +115,7 @@ Exhibit.OrderedViewFrame.prototype._configureOrders = function(orders) {
             ascending = ("ascending" in order) ? (order.ascending) : true;
         }
         
-        var expression = Exhibit.Expression.parse(expr);
+        var expression = Exhibit.ExpressionParser.parse(expr);
         if (expression.isPath()) {
             var path = expression.getPath();
             if (path.getSegmentCount() == 1) {
@@ -144,7 +144,7 @@ Exhibit.OrderedViewFrame.prototype._configurePossibleOrders = function(possibleO
             ascending = ("ascending" in order) ? (order.ascending) : true;
         }
         
-        var expression = Exhibit.Expression.parse(expr);
+        var expression = Exhibit.ExpressionParser.parse(expr);
         if (expression.isPath()) {
             var path = expression.getPath();
             if (path.getSegmentCount() == 1) {

@@ -245,7 +245,7 @@ Exhibit.SettingsUtilities._createTupleAccessor = function(f, spec) {
     }
     
     try {
-        var expression = Exhibit.Expression.parse(value);
+        var expression = Exhibit.ExpressionParser.parse(value);
         
         var parsers = [];
         var bindingTypes = spec.types;
@@ -295,7 +295,7 @@ Exhibit.SettingsUtilities._createElementalAccessor = function(f, spec) {
     }
     
     try {
-        var expression = Exhibit.Expression.parse(value);
+        var expression = Exhibit.ExpressionParser.parse(value);
         
         var parser = Exhibit.SettingsUtilities._typeToParser(bindingType);
         

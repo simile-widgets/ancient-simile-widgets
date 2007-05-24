@@ -279,21 +279,21 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
             if (name == "control") {
                 templateNode.control = value;
             } else if (name == "content") {
-                templateNode.content = Exhibit.Expression.parse(value);
+                templateNode.content = Exhibit.ExpressionParser.parse(value);
             } else if (name == "if-exists") {
                 templateNode.condition = {
                     test:       "if-exists",
-                    expression: Exhibit.Expression.parse(value)
+                    expression: Exhibit.ExpressionParser.parse(value)
                 };
             } else if (name == "if") {
                 templateNode.condition = {
                     test:       "if",
-                    expression: Exhibit.Expression.parse(value)
+                    expression: Exhibit.ExpressionParser.parse(value)
                 };
             } else if (name == "select") {
                 templateNode.condition = {
                     test:       "select",
-                    expression: Exhibit.Expression.parse(value)
+                    expression: Exhibit.ExpressionParser.parse(value)
                 };
             } else if (name == "case") {
                 templateNode.condition = {
@@ -308,7 +308,7 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
                     }
                     templateNode.contentAttributes.push({
                         name:       name.substr(0, x),
-                        expression: Exhibit.Expression.parse(value)
+                        expression: Exhibit.ExpressionParser.parse(value)
                     });
                 } else {
                     x = name.indexOf("-subcontent");
@@ -417,7 +417,7 @@ Exhibit.Lens._parseSubcontentAttribute = function(value) {
         }
         
         fragments.push(value.substring(current, open));
-        fragments.push(Exhibit.Expression.parse(value.substring(open + 2, close)));
+        fragments.push(Exhibit.ExpressionParser.parse(value.substring(open + 2, close)));
         
         current = close + 2;
     }

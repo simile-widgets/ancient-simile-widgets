@@ -1,6 +1,6 @@
 /*==================================================
  *  Exhibit.Functions
- *  http://simile.mit.edu/wiki/Exhibit/API/Expression
+ *  http://simile.mit.edu/wiki/Exhibit/API/Functions
  *==================================================
  */
 Exhibit.Functions = {};

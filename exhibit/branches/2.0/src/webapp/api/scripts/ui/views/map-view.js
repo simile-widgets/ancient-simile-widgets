@@ -146,7 +146,7 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
         accuracy = 4;
     }
     
-    var expression = Exhibit.Expression.parse(addressExpressionString);
+    var expression = Exhibit.ExpressionParser.parse(addressExpressionString);
     var jobs = [];
     set.visit(function(item) {
         var address = expression.evaluateSingle(

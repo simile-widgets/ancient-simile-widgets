@@ -51,7 +51,7 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContex
         
         var s = Exhibit.getAttribute(configElmt, "columns");
         if (s != null && s.length > 0) {
-            expressions = Exhibit.Expression.parseSeveral(s);
+            expressions = Exhibit.ExpressionParser.parseSeveral(s);
         }
         
         for (var i = 0; i < expressions.length; i++) {
@@ -127,7 +127,7 @@ Exhibit.TabularView._configure = function(view, configuration) {
                 format = column.format;
             }
             
-            var expression = Exhibit.Expression.parse(expr);
+            var expression = Exhibit.ExpressionParser.parse(expr);
             if (expression.isPath()) {
                 var path = expression.getPath();
                 if (format == null) {
@@ -172,7 +172,7 @@ Exhibit.TabularView.prototype._internalValidate = function() {
             var propertyID = propertyIDs[i];
             if (propertyID != "uri") {
                 this._columns.push(
-                    {   expression: Exhibit.Expression.parse("." + propertyID),
+                    {   expression: Exhibit.ExpressionParser.parse("." + propertyID),
                         styler:     null,
                         label:      database.getProperty(propertyID).getLabel(),
                         format:     "list"

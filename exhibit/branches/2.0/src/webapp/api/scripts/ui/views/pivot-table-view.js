@@ -63,7 +63,7 @@ Exhibit.PivotTableView._configure = function(view, configuration) {
 
 Exhibit.PivotTableView._parseExpression = function(s) {
     try {
-        return Exhibit.Expression.parse(s);
+        return Exhibit.ExpressionParser.parse(s);
     } catch (e) {
         SimileAjax.Debug.exception(e, "Error parsing expression " + s);
     }
@@ -72,7 +72,7 @@ Exhibit.PivotTableView._parseExpression = function(s) {
 
 Exhibit.PivotTableView._parsePath = function(s) {
     try {
-        var expression = Exhibit.Expression.parse(s);
+        var expression = Exhibit.ExpressionParser.parse(s);
         if (expression.isPath()) {
             return expression.getPath();
         } else {
