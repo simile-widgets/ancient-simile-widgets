@@ -123,14 +123,18 @@ if (typeof SimileAjax == "undefined") {
      * @type Object
      */
     SimileAjax.parseURLParameters = function(url, to, types) {
+        to = to || {};
+        types = types || {};
+        
         if (typeof url == "undefined") {
             url = location.href;
         }
         var q = url.indexOf("?");
-        if (q < 0) return to;
+        if (q < 0) {
+            return to;
+        }
         url = (url+"#").slice(q+1, url.indexOf("#")); // toss the URL fragment
-        to = to || {};
-        types = types || {};
+        
         var params = url.split("&"), param, parsed = {};
         var decode = window.decodeURIComponent || unescape;
         for (var i = 0; param = params[i]; i++) {
