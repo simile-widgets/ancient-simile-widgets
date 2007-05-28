@@ -108,7 +108,7 @@ Exhibit.Formatter._NumberFormatter.prototype.format = function(value, appender) 
 };
 
 Exhibit.Formatter._NumberFormatter.prototype.formatText = function(value) {
-    if (this._decimalDigits = -1) {
+    if (this._decimalDigits == -1) {
         return value.toString();
     } else {
         return new Number(value).toFixed(this._decimalDigits);
@@ -228,7 +228,7 @@ Exhibit.Formatter._CurrencyFormatter.prototype.format = function(value, appender
 Exhibit.Formatter._CurrencyFormatter.prototype.formatText = function(value) {
     var negative = value < 0;
     var text;
-    if (this._decimalDigits = -1) {
+    if (this._decimalDigits == -1) {
         text = Math.abs(value);
     } else {
         text = new Number(Math.abs(value)).toFixed(this._decimalDigits);
@@ -364,12 +364,12 @@ Exhibit.Formatter._DateFormatter.prototype.format = function(value, appender) {
 };
 
 Exhibit.Formatter._DateFormatter.prototype.formatText = function(value) {
-    value = (value instanceof Date) ? value : SimileAjax.DateTime.parseIso8601DateTime(value);
-    if (value == null) {
-        return "";
+    var date = (value instanceof Date) ? value : SimileAjax.DateTime.parseIso8601DateTime(value);
+    if (date == null) {
+        return value;
     }
     
-    value.setTime(value.getTime() + this._timeZone * 3600000);
+    date.setTime(date.getTime() + this._timeZone * 3600000);
     
     var text = "";
     var segments = this._segments;
@@ -378,7 +378,7 @@ Exhibit.Formatter._DateFormatter.prototype.formatText = function(value) {
         if (typeof segment == "string") {
             text += segment;
         } else {
-            text += segment(value);
+            text += segment(date);
         }
     }
     return text;

@@ -11,9 +11,9 @@ Exhibit.FormatParser.parse = function(uiContext, s, startIndex, results) {
     
     var scanner = new Exhibit.FormatScanner(s, startIndex);
     try {
-        Exhibit.FormatParser._internalParse(uiContext, scanner, results, false);
+        return Exhibit.FormatParser._internalParse(uiContext, scanner, results, false);
     } finally {
-        results.index = scanner.token != null ? scanner.token.start : scanner.index();
+        results.index = scanner.token() != null ? scanner.token().start : scanner.index();
     }
 };
 
@@ -25,7 +25,7 @@ Exhibit.FormatParser.parseSeveral = function(uiContext, s, startIndex, results) 
     try {
         return Exhibit.FormatParser._internalParse(uiContext, scanner, results, true);
     } finally {
-        results.index = scanner.token != null ? scanner.token.start : scanner.index();
+        results.index = scanner.token() != null ? scanner.token().start : scanner.index();
     }
 };
 
@@ -164,7 +164,7 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
         case "number":
             switch (settingName) {
             case "decimal-digits":
-                parseNonnegativeInteger(valueType, settingName);
+                parseNonnegativeInteger(valueType, settingName, { "default": -1 });
                 return;
             }
             break;
@@ -282,20 +282,17 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
         if (!(valueType in Exhibit.FormatParser._valueTypes)) {
             throw new Error("Unsupported value type " + valueType + " at position " + makePosition());
         }
-        
         next();
-        if (token == null || token.type != Scanner.DELIMITER || token.value != "{") {
-            throw new Error("Missing { at position " + makePosition());
+        
+        if (token != null && token.type == Scanner.DELIMITER && token.value == "{") {
+            next();
+            parseSettingList(valueType);
+            
+            if (token == null || token.type != Scanner.DELIMITER || token.value != "}") {
+                throw new Error("Missing } at position " + makePosition());
+            }
+            next();
         }
-        
-        next();
-        parseSettingList(valueType);
-        
-        if (token == null || token.type != Scanner.DELIMITER || token.value != "}") {
-            throw new Error("Missing } at position " + makePosition());
-        }
-        next();
-        
         return valueType;
     };
     var parseRuleList = function() {
