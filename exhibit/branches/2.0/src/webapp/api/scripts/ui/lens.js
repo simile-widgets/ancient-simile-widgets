@@ -632,6 +632,10 @@ Exhibit.Lens._constructElmtWithAttributes = function(templateNode, parentElmt, d
 };
 
 Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt, uiContext) {
+    uiContext.formatList(values, values.size(), valueType, function(elmt) {
+        parentElmt.appendChild(elmt);
+    });
+    /*
     var processOneValue = (valueType == "item") ?
         function(value) {
             addDelimiter();
@@ -652,4 +656,5 @@ Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt
         values.visit(processOneValue);
     }
     addDelimiter();
+    */
 };

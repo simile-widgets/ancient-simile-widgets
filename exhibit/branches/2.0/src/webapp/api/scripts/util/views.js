@@ -25,9 +25,11 @@ Exhibit.ViewUtilities.fillBubbleWithItems = function(bubbleElmt, arrayOfItemIDs,
     if (arrayOfItemIDs.length > 1) {
         var ul = document.createElement("ul");
         for (var i = 0; i < arrayOfItemIDs.length; i++) {
-            var li = document.createElement("li");
-            li.appendChild(Exhibit.UI.makeItemSpan(arrayOfItemIDs[i], null, uiContext));
-            ul.appendChild(li);
+            uiContext.format(arrayOfItemIDs[i], "item", function(elmt) {
+                var li = document.createElement("li");
+                li.appendChild(elmt);
+                ul.appendChild(li);
+            });
         }
         bubbleElmt.appendChild(ul);
     } else {

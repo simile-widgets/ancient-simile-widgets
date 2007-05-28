@@ -13,7 +13,7 @@ Exhibit.ExpressionParser.parse = function(s, startIndex, results) {
     try {
         return Exhibit.ExpressionParser._internalParse(scanner, false);
     } finally {
-        results.index = scanner.token != null ? scanner.token.start : scanner.index();
+        results.index = scanner.token() != null ? scanner.token().start : scanner.index();
     }
 };
 
@@ -25,7 +25,7 @@ Exhibit.ExpressionParser.parseSeveral = function(s, startIndex, results) {
     try {
         return Exhibit.ExpressionParser._internalParse(scanner, true);
     } finally {
-        results.index = scanner.token != null ? scanner.token.start : scanner.index();
+        results.index = scanner.token() != null ? scanner.token().start : scanner.index();
     }
 };
 

@@ -63,7 +63,7 @@ Exhibit.ViewPanel.create = function(configuration, div, uiContext) {
 };
 
 Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
-    var viewPanel = new Exhibit.ViewPanel(div, uiContext);
+    var viewPanel = new Exhibit.ViewPanel(div, Exhibit.UIContext.createFromDOM(div, uiContext, false));
     
     var node = div.firstChild;
     while (node != null) {
@@ -109,7 +109,6 @@ Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
         }
         node = node.nextSibling;
     }
-    Exhibit.UIContext.registerLensesFromDOM(div, viewPanel._uiContext.getLensRegistry());
     
     var initialView = Exhibit.getAttribute(div, "initialView");
     if (initialView != null && initialView.length > 0) {

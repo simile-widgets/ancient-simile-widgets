@@ -49,6 +49,8 @@
             "ui/ui.js",
             "ui/ui-context.js",
             "ui/lens.js",
+            "ui/format-parser.js",
+            "ui/formatter.js",
             
             "ui/facets/list-facet.js",
             "ui/facets/numeric-range-facet.js",

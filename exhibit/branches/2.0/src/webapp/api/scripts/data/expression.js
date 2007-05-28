@@ -40,7 +40,7 @@ Exhibit.Expression._Impl.prototype.evaluateSingle = function(
 ) {
     var collection = this._rootNode.evaluate(roots, rootValueTypes, defaultRootName, database);
     var result = { value: null, valueType: collection.valueType };
-    colleciton.forEachValue(function(v) { result.value = v; return true; });
+    collection.forEachValue(function(v) { result.value = v; return true; });
     
     return result;
 };

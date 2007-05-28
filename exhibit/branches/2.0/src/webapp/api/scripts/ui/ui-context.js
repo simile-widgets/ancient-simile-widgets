@@ -9,6 +9,9 @@ Exhibit.UIContext = function() {
     this._collection = null;
     this._lensRegistry = new Exhibit.LensRegistry();
     this._settings = {};
+    
+    this._formatters = {};
+    this._listFormatter = null;
 };
 
 Exhibit.UIContext.createRootContext = function(configuration, exhibit) {
@@ -42,6 +45,11 @@ Exhibit.UIContext.createFromDOM = function(configElmt, parentUIContext, ignoreLe
     var id = Exhibit.getAttribute(configElmt, "collectionID");
     if (id != null && id.length > 0) {
         context._collection = context._exhibit.getCollection(id);
+    }
+    
+    var formats = Exhibit.getAttribute(configElmt, "formats");
+    if (formats != null && formats.length > 0) {
+        Exhibit.FormatParser.parseSeveral(context, formats, 0, {});
     }
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(
@@ -97,8 +105,31 @@ Exhibit.UIContext.prototype.getSetting = function(name) {
         (this._parent != null ? this._parent.getSetting(name) : undefined);
 };
 
+Exhibit.UIContext.prototype.getBooleanSetting = function(name, defaultValue) {
+    var v = this.getSetting(name);
+    return v == undefined || v == null ? defaultValue : v;
+};
+
 Exhibit.UIContext.prototype.putSetting = function(name, value) {
     this._settings[name] = value;
+};
+
+Exhibit.UIContext.prototype.format = function(value, valueType, appender) {
+    var f;
+    if (valueType in this._formatters) {
+        f = this._formatters[valueType];
+    } else {
+        f = this._formatters[valueType] = 
+            new Exhibit.Formatter._constructors[valueType](this);
+    }
+    f.format(value, appender);
+};
+
+Exhibit.UIContext.prototype.formatList = function(iterator, count, valueType, appender) {
+    if (this._listFormatter == null) {
+        this._listFormatter = new Exhibit.Formatter._ListFormatter(this);
+    }
+    this._listFormatter.formatList(iterator, count, valueType, appender);
 };
 
 /*----------------------------------------------------------------------
@@ -126,6 +157,10 @@ Exhibit.UIContext._configure = function(context, configuration, ignoreLenses) {
     
     if ("collectionID" in configuration) {
         context._collection = context._exhibit.getCollection(configuration["collectionID"]);
+    }
+    
+    if ("formats" in configuration) {
+        Exhibit.FormatParser.parseSeveral(context, configuration.formats, 0, {});
     }
     
     if (!(ignoreLenses)) {
