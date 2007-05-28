@@ -1,8 +1,11 @@
 /*======================================================================
- *  Exhibit
- *  Code to automatically create the database if there is no onload
- *  handler on the body element, and then to create an exhibit if
- *  there's no ex:ondataload handler on the body element.
+ *  Exhibit auto-create
+ *  Code to automatically create the database, load the data links in
+ *  <head>, and then to create an exhibit if there's no ex:ondataload 
+ *  handler on the body element.
+ *
+ *  You can avoid running this code by adding the URL parameter
+ *  autoCreate=false when you include exhibit-api.js.
  *======================================================================
  */
 $(document).ready(function() { 
