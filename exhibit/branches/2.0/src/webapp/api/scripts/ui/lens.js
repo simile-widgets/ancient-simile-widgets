@@ -265,6 +265,8 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
         children:               null
     };
     
+    var parseChildTextNodes = true;
+    
     var attributes = elmt.attributes;
     for (var i = 0; i < attributes.length; i++) {
         var attribute = attributes[i];
@@ -290,6 +292,7 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
                     test:       "if",
                     expression: Exhibit.ExpressionParser.parse(value)
                 };
+                parseChildTextNodes = false;
             } else if (name == "select") {
                 templateNode.condition = {
                     test:       "select",
@@ -300,6 +303,7 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
                     test:   "case",
                     value:  value
                 };
+                parseChildTextNodes = false;
             } else {
                 var x = name.indexOf("-content");
                 if (x > 0) {
@@ -374,7 +378,9 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
     if (childNode != null) {
         templateNode.children = [];
         while (childNode != null) {
-            templateNode.children.push(Exhibit.Lens._processTemplateNode(childNode, isXML));
+            if ((parseChildTextNodes && childNode.nodeType == 3) || childNode.nodeType == 1) {
+                templateNode.children.push(Exhibit.Lens._processTemplateNode(childNode, isXML));
+            }
             childNode = childNode.nextSibling;
         }
     }
@@ -472,14 +478,24 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 return;
             }
         } else if (templateNode.condition.test == "if") {
-            if (!templateNode.condition.expression.evaluate(
+            if (templateNode.condition.expression.evaluate(
                     roots,
                     rootValueTypes,
                     "value",
                     database
                 ).values.contains(true)) {
-                return;
+                
+                if (children != null && children.length > 0) {
+                    Exhibit.Lens._constructFromLensTemplateNode(
+                        roots, rootValueTypes, children[0], parentElmt, uiContext, job);
+                }
+            } else {
+                if (children != null && children.length > 1) {
+                    Exhibit.Lens._constructFromLensTemplateNode(
+                        roots, rootValueTypes, children[1], parentElmt, uiContext, job);
+                }
             }
+            return;
         } else if (templateNode.condition.test == "select") {
             var values = templateNode.condition.expression.evaluate(
                 roots,

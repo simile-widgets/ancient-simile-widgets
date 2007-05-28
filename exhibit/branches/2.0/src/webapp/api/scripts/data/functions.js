@@ -42,9 +42,21 @@ Exhibit.Functions["contains"] = {
     }
 };
 
+Exhibit.Functions["exists"] = {
+    f: function(args) {
+        return new Exhibit.Expression._Collection([ args[0].size > 0 ], "boolean");
+    }
+};
+
 Exhibit.Functions["count"] = {
     f: function(args) {
         return new Exhibit.Expression._Collection([ args[0].size ], "number");
+    }
+};
+
+Exhibit.Functions["not"] = {
+    f: function(args) {
+        return new Exhibit.Expression._Collection([ !args[0].contains(true) ], "boolean");
     }
 };
 

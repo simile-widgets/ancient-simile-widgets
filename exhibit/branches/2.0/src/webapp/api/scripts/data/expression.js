@@ -84,10 +84,12 @@ Exhibit.Expression._Collection = function(values, valueType) {
     if (values instanceof Array) {
         this.forEachValue = Exhibit.Expression._Collection._forEachValueInArray;
         this.getSet = Exhibit.Expression._Collection._getSetFromArray;
+        this.contains = Exhibit.Expression._Collection._containsInArray;
         this.size = values.length;
     } else {
         this.forEachValue = Exhibit.Expression._Collection._forEachValueInSet;
         this.getSet = Exhibit.Expression._Collection._getSetFromSet;
+        this.contains = Exhibit.Expression._Collection._containsInSet;
         this.size = values.size();
     }
 };
@@ -111,6 +113,20 @@ Exhibit.Expression._Collection._getSetFromSet = function() {
 
 Exhibit.Expression._Collection._getSetFromArray = function() {
     return new Exhibit.Set(this._values);
+};
+
+Exhibit.Expression._Collection._containsInSet = function(v) {
+    this._values.contains(v);
+};
+
+Exhibit.Expression._Collection._containsInArray = function(v) {
+    var a = this._values;
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] == v) {
+            return true;
+        }
+    }
+    return false;
 };
 
 /*==================================================
