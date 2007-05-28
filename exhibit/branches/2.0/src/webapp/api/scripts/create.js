@@ -5,34 +5,26 @@
  *  there's no ex:ondataload handler on the body element.
  *======================================================================
  */
-(function() {
-    if (document.body == null && window.onload == null) {
-        var f = function() {
-            if (document.body.onload == null || document.body.onload == f) {
-                var fDone = function() {
-                    window.exhibit = Exhibit.create();
-                    window.exhibit.configureFromDOM();
-                };
-                
-                try {
-                    var s = Exhibit.getAttribute(document.body, "ondataload");
-                    if (s != null && typeof s == "string" && s.length > 0) {
-                        fDone = function() {
-                            var f = eval(s);
-                            if (typeof f == "function") {
-                                f.call();
-                            }
-                        }
-                    }
-                } catch (e) {
-                    // silent
+$(document).ready(function() { 
+    var fDone = function() {
+        window.exhibit = Exhibit.create();
+        window.exhibit.configureFromDOM();
+    };
+    
+    try {
+        var s = Exhibit.getAttribute(document.body, "ondataload");
+        if (s != null && typeof s == "string" && s.length > 0) {
+            fDone = function() {
+                var f = eval(s);
+                if (typeof f == "function") {
+                    f.call();
                 }
-                
-                window.database = Exhibit.Database.create();
-                window.database.loadDataLinks(fDone);
             }
-        };
-        
-        window.onload = f;
+        }
+    } catch (e) {
+        // silent
     }
-})();
+    
+    window.database = Exhibit.Database.create();
+    window.database.loadDataLinks(fDone);
+});

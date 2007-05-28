@@ -22,6 +22,7 @@
     <jsmin output="src/webapp/api/bundle.js">
         <fileset dir="src/webapp/api/scripts">
             <include name="**/*.js" />
+            <exclude name="create.js" />
         </fileset>
       </jsmin>
     <concat destfile="src/webapp/api/bundle.css">

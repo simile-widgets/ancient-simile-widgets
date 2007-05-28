@@ -15,7 +15,7 @@
     
         window.Exhibit = {
             loaded:     false,
-            params:     { bundle:true },
+            params:     { bundle: true, autoCreate: true },
             namespace:  "http://simile.mit.edu/2006/11/exhibit#",
             importers:  {}
         };
@@ -114,7 +114,7 @@
             }
         }
 
-        var paramTypes = { bundle:Boolean, js:Array, css:Array };
+        var paramTypes = { bundle:Boolean, js:Array, css:Array, autoCreate:Boolean };
         if (typeof Exhibit_urlPrefix == "string") {
             Exhibit.urlPrefix = Exhibit_urlPrefix;
             if ("Exhibit_parameters" in window) {
@@ -193,7 +193,7 @@
             window.SimileAjax_onLoad = function() {
                 eval(Exhibit.params.callback + "()");
             }
-        } else {
+        } else if (Exhibit.params.autoCreate) {
             scriptURLs.push(Exhibit.urlPrefix + "scripts/create.js");
         }
 
@@ -208,7 +208,7 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
+        //var url = "http://dfhuynh.csail.mit.edu:8888/ajax/api/simile-ajax-api.js?bundle=false";
         var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
         //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {

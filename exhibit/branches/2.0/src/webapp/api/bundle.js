@@ -1,10 +1,5 @@
 
 
-/* create.js */
-
-(function(){if(document.body==null&&window.onload==null){var f=function(){if(document.body.onload==null||document.body.onload==f){var fDone=function(){window.exhibit=Exhibit.create();window.exhibit.configureFromDOM();};try{var s=Exhibit.getAttribute(document.body,"ondataload");if(s!=null&&typeof s=="string"&&s.length>0){fDone=function(){var f=eval(s);if(typeof f=="function"){f.call();}}}}catch(e){}
-window.database=Exhibit.Database.create();window.database.loadDataLinks(fDone);}};window.onload=f;}})();
-
 /* collection.js */
 
 Exhibit.Collection=function(id,database){this._id=id;this._database=database;this._listeners=new SimileAjax.ListenerQueue();this._facets=[];this._updating=false;this._items=null;this._restrictedItems=null;var self=this;this._listener={onAfterLoadingItems:function(){self._update();}};database.addListener(this._listener);};Exhibit.Collection.create=function(id,configuration,database){var collection=new Exhibit.Collection(id,database);if("itemTypes"in configuration){collection._itemTypes=configuration.itemTypes;collection._update=Exhibit.Collection._typeBasedCollection_update;}else{collection._update=Exhibit.Collection._allItemsCollection_update;}
