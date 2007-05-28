@@ -448,6 +448,10 @@ Exhibit.Formatter._DateFormatter._retrievers = {
         var h = date.getUTCHours();
         return Exhibit.Formatter._DateFormatter._pad(h == 0 ? 12 : (h > 12 ? h - 12 : h));
     },
+    "h": function(date) {
+        var h = date.getUTCHours();
+        return (h == 0 ? 12 : (h > 12 ? h - 12 : h)).toString();
+    },
     
     // am/pm
     "a": function(date) {
