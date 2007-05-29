@@ -173,9 +173,11 @@ Exhibit.Collection.prototype.onFacetUpdated = function(facetChanged) {
 }
 
 Exhibit.Collection.prototype._onRootItemsChanged = function() {
+    this._listeners.fire("onRootItemsChanged", []);
+    
     this._computeRestrictedItems();
     this._updateFacets(null);
-    this._listeners.fire("onRootItemsChanged", []);
+    
     this._listeners.fire("onItemsChanged", []);
 };
 
