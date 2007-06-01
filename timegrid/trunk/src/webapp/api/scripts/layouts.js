@@ -28,16 +28,6 @@ Timegrid.Layout = function() {
     this.yMapper = function() {};
 };
 
-Timegrid.Layout.prototype.initializeGrid = function(eventSource) {
-    this.eventSource = eventSource;
-    this.eventGrid = new Timegrid.EventGrid([], this.xSize, this.ySize, 
-                                            this.xMapper, this.yMapper);
-    var iterator = eventSource.getAllEventIterator();
-    while (iterator.hasNext()) {
-        this.eventGrid.add(iterator.next());
-    }
-};
-
 Timegrid.WeekLayout = function(params) {
     Timegrid.WeekLayout.superclass.call(this, params);
     this.xSize = 7;
@@ -46,6 +36,26 @@ Timegrid.WeekLayout = function(params) {
     this.yMapper = function(evt) { return evt.getStart().getHours(); };
 };
 Timegrid.extend(Timegrid.WeekLayout, Timegrid.Layout);
+
+Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
+    this.eventSource = eventSource;
+    this.eventGrid = new Timegrid.EventGrid([], this.xSize, this.ySize, 
+                                            this.xMapper, this.yMapper);
+    this.startTime = eventSource.getEarliestDate();
+    if (this.startTime) {
+        // Here we compute the end of the week based on start time
+        this.endTime = new Date(this.startTime);
+        this.endTime.setDate(this.endTime.getDate() + 
+                             (6 - this.endTime.getDay()));
+        this.endTime.setHours(24);
+        // We only want events for one week
+        var iterator = eventSource.getEventIterator(this.startTime,
+                                                    this.endTime);
+        while (iterator.hasNext()) {
+            this.eventGrid.add(iterator.next());
+        }
+    }
+};
 
 /**
  * Renders out this layout into a DOM object with a wrapping div element as its
@@ -81,7 +91,7 @@ Timegrid.WeekLayout.prototype.render = function(doc) {
             cell.appendChild(elist);
             for (i in events) {
                 var ediv = doc.createElement("div");
-                var jediv = $(ediv);
+                var jediv = $(ediv); // jQuery!
                 var event = events[i];
                 jediv.addClass("timegrid-event");
                 jediv.css("height", 30 * event.getInterval().hours);
