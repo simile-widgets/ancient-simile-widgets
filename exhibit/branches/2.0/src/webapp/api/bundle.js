@@ -1831,7 +1831,7 @@ while(i<this._maxIndex){
 var j=this._text.substr(i).search(/\W/);
 if(j>0){
 i+=j;
-}else if("-".indexOf(this._text.charAt(i))>=0){
+}else if("-+".indexOf(this._text.charAt(i))>=0){
 i++;
 }else{
 break;

@@ -44,6 +44,7 @@ Exhibit.ExpressionParser._internalParse = function(scanner, several) {
             if (token != null && token.type == Scanner.IDENTIFIER) {
                 path.appendSegment(token.value, hopOperator);
                 next();
+
             } else {
                 throw new Error("Missing property ID at position " + makePosition());
             }
@@ -160,19 +161,30 @@ Exhibit.ExpressionParser._internalParse = function(scanner, several) {
         return expression;
     };
     var parseExpressionList = function() {
+
         var expressions = [ parseExpression() ];
+
         while (token != null && token.type == Scanner.DELIMITER && token.value == ",") {
+
             next();
+
             expressions.push(parseExpression());
+
         }
+
         return expressions;
+
     }
     
     if (several) {
         var roots = parseExpressionList();
+
         var expressions = [];
+
         for (var r = 0; r < roots.length; r++) {
+
             expressions.push(new Exhibit.Expression._Impl(roots[r]));
+
         }
         return expressions;
     } else {
@@ -317,7 +329,7 @@ Exhibit.ExpressionScanner.prototype.next = function() {
                 var j = this._text.substr(i).search(/\W/);
                 if (j > 0) {
                     i += j;
-                } else if ("-".indexOf(this._text.charAt(i)) >= 0) {
+                } else if ("-+".indexOf(this._text.charAt(i)) >= 0) {
                     i++;
                 } else {
                     break;
