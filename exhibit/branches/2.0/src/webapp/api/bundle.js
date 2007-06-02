@@ -3202,7 +3202,8 @@ this.setComponent(id,component);
 }
 };
 
-Exhibit._Impl.prototype.configureFromDOM=function(){
+
+Exhibit._Impl.prototype.configureFromDOM=function(root){
 var collectionElmts=[];
 var componentElmts=[];
 var f=function(elmt){
@@ -3223,7 +3224,7 @@ node=node.nextSibling;
 }
 }
 };
-f(document.body);
+f(root||document.body);
 
 for(var i=0;i<collectionElmts.length;i++){
 var elmt=collectionElmts[i];
