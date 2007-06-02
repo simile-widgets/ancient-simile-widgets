@@ -213,7 +213,12 @@ Exhibit._Impl.prototype.configure = function(configuration) {
     }
 };
 
-Exhibit._Impl.prototype.configureFromDOM = function() {
+/**
+ * Set up this Exhibit's view from its DOM configuration.
+ * @param {Node} root  optional root node, below which configuration gets read
+ *                     (defaults to document.body, when none provided)
+ */
+Exhibit._Impl.prototype.configureFromDOM = function(root) {
     var collectionElmts = [];
     var componentElmts = [];
     var f = function(elmt) {
@@ -234,7 +239,7 @@ Exhibit._Impl.prototype.configureFromDOM = function() {
             }
         }
     };
-    f(document.body);
+    f(root || document.body);
     
     for (var i = 0; i < collectionElmts.length; i++) {
         var elmt = collectionElmts[i];
