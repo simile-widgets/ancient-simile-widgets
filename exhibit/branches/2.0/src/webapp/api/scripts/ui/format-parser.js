@@ -171,7 +171,7 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
         case "date":
             switch (settingName) {
             case "time-zone":
-                parseNumber(valueType, settingName, { "default" : 0 });
+                parseNumber(valueType, settingName, { "default" : null });
                 return;
             case "show":
                 parseChoices(valueType, settingName, [ "date", "time", "date-time" ]);
@@ -255,10 +255,13 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
             " for value type " + valueType + " found at position " + makePosition());
     };
     var parseSettingList = function(valueType) {
+
         while (token != null && token.type == Scanner.IDENTIFIER) {
             var settingName = token.value;
+
             next();
             
+
             if (token == null || token.type != Scanner.DELIMITER || token.value != ":") {
                 throw new Error("Missing : at position " + makePosition());
             }
@@ -266,12 +269,14 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
             
             parseSetting(valueType, settingName);
             
+
             if (token == null || token.type != Scanner.DELIMITER || token.value != ";") {
                 break;
             } else {
                 next();
             }
         }
+
     }
     var parseRule = function() {
         if (token == null || token.type != Scanner.IDENTIFIER) {
@@ -298,9 +303,12 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
     var parseRuleList = function() {
         var valueType = "text";
         while (token != null) {
+
             valueType = parseRule();
+
         }
         return valueType;
+
     }
     
     if (several) {

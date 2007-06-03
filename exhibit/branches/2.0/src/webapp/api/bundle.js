@@ -4170,7 +4170,7 @@ break;
 case"date":
 switch(settingName){
 case"time-zone":
-parseNumber(valueType,settingName,{"default":0});
+parseNumber(valueType,settingName,{"default":null});
 return;
 case"show":
 parseChoices(valueType,settingName,["date","time","date-time"]);
@@ -4567,7 +4567,9 @@ this._maxLength=0;
 };
 
 Exhibit.Formatter._TextFormatter.prototype.format=function(value,appender){
-appender(document.createTextNode(this.formatText(value)));
+var span=document.createElement("span");
+span.innerHTML=this.formatText(value);
+appender(span);
 };
 
 Exhibit.Formatter._TextFormatter.prototype.formatText=function(value){
@@ -4766,8 +4768,9 @@ return title;
 Exhibit.Formatter._DateFormatter=function(uiContext){
 this._timeZone=uiContext.getSetting("format/date/time-zone");
 if(!(typeof this._timeZone=="number")){
-this._timeZone=0;
+this._timeZone=-(new Date().getTimezoneOffset())/60;
 }
+this._timeZoneOffset=this._timeZone*3600000;
 
 var mode=uiContext.getSetting("format/date/mode");
 var show=uiContext.getSetting("format/date/show");
@@ -4799,7 +4802,7 @@ template=uiContext.getSetting("format/date/template");
 }
 
 if(typeof template!="string"){
-template="dd/MM/yy";
+template="EEE, MMM d, yyyy, hh:mm a";
 }
 
 var segments=[];
@@ -4840,7 +4843,7 @@ if(date==null){
 return value;
 }
 
-date.setTime(date.getTime()+this._timeZone*3600000);
+date.setTime(date.getTime()+this._timeZoneOffset);
 
 var text="";
 var segments=this._segments;

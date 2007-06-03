@@ -78,7 +78,9 @@ Exhibit.Formatter._TextFormatter = function(uiContext) {
 };
 
 Exhibit.Formatter._TextFormatter.prototype.format = function(value, appender) {
-    appender(document.createTextNode(this.formatText(value)));
+    var span = document.createElement("span");
+    span.innerHTML = this.formatText(value);
+    appender(span);
 };
 
 Exhibit.Formatter._TextFormatter.prototype.formatText = function(value) {
@@ -295,8 +297,9 @@ Exhibit.Formatter._ItemFormatter.prototype.formatText = function(value) {
 Exhibit.Formatter._DateFormatter = function(uiContext) {
     this._timeZone = uiContext.getSetting("format/date/time-zone");
     if (!(typeof this._timeZone == "number")) {
-        this._timeZone = 0;
+        this._timeZone = -(new Date().getTimezoneOffset()) / 60;
     }
+    this._timeZoneOffset = this._timeZone * 3600000;
     
     var mode = uiContext.getSetting("format/date/mode");
     var show = uiContext.getSetting("format/date/show");
@@ -328,7 +331,7 @@ Exhibit.Formatter._DateFormatter = function(uiContext) {
     }
     
     if (typeof template != "string") {
-        template = "dd/MM/yy";
+        template = "EEE, MMM d, yyyy, hh:mm a";
     }
     
     var segments = [];
@@ -369,7 +372,7 @@ Exhibit.Formatter._DateFormatter.prototype.formatText = function(value) {
         return value;
     }
     
-    date.setTime(date.getTime() + this._timeZone * 3600000);
+    date.setTime(date.getTime() + this._timeZoneOffset);
     
     var text = "";
     var segments = this._segments;
