@@ -3176,6 +3176,17 @@ SimileAjax.Debug.exception(e);
 this._componentMap[id]=c;
 };
 
+Exhibit._Impl.prototype.disposeComponent=function(id){
+if(id in this._componentMap){
+try{
+this._componentMap[id].dispose();
+}catch(e){
+SimileAjax.Debug.exception(e);
+}
+delete this._componentMap[id];
+}
+};
+
 Exhibit._Impl.prototype.configure=function(configuration){
 if("collections"in configuration){
 for(var i=0;i<configuration.collections.length;i++){
@@ -7518,9 +7529,10 @@ Exhibit.OrderedViewFrame.headerTemplate=
 "<div id='collectionSummaryDiv' style='display: none;'></div>"+
 "<div class='exhibit-collectionView-header-sortControls' style='display: none;' id='controlsDiv'>"+
 "%0"+
-"<div class='exhibit-collectionView-header-groupControl'> \u2022 "+
+"<span class='exhibit-collectionView-header-groupControl'> \u2022 "+
 "<a id='groupOption' class='exhibit-action'></a>"+
-"</div></div>";
+"</span>"+
+"</div>";
 
 Exhibit.OrderedViewFrame.createHeaderDom=function(
 uiContext,
@@ -7560,20 +7572,12 @@ Exhibit.UI.enableActionLink(dom.thenSortByAction,enabled);
 dom.setOrders=function(orderElmts){
 dom.ordersSpan.innerHTML="";
 
-
-
 var addDelimiter=Exhibit.l10n.createListDelimiter(dom.ordersSpan,orderElmts.length);
-
 for(var i=0;i<orderElmts.length;i++){
-
 addDelimiter();
-
 dom.ordersSpan.appendChild(orderElmts[i]);
-
 }
-
 addDelimiter();
-
 };
 }
 
@@ -9697,6 +9701,7 @@ this._viewConfigs=[];
 this._viewLabels=[];
 this._viewTooltips=[];
 this._viewDomConfigs=[];
+this._viewIDs=[];
 
 this._viewIndex=0;
 this._view=null;
@@ -9729,11 +9734,17 @@ tooltip=viewClass.l10n.viewTooltip;
 tooltip=label;
 }
 
+var id=viewPanel._generateViewID();
+if("id"in viewConfig){
+id=viewConfig.id;
+}
+
 viewPanel._viewConstructors.push(viewClass);
 viewPanel._viewConfigs.push(viewConfig);
 viewPanel._viewLabels.push(label);
 viewPanel._viewTooltips.push(tooltip);
 viewPanel._viewDomConfigs.push(null);
+viewPanel._viewIDs.push(id);
 }
 }
 
@@ -9769,6 +9780,7 @@ SimileAjax.Debug.warn("Unknown viewClass "+viewClassString);
 
 var label=Exhibit.getAttribute(node,"label");
 var tooltip=Exhibit.getAttribute(node,"title");
+var id=node.id;
 
 if(label==null){
 if("viewLabel"in viewClass.l10n){
@@ -9784,12 +9796,16 @@ tooltip=viewClass.l10n.viewTooltip;
 tooltip=label;
 }
 }
+if(id==null||id.length==0){
+id=viewPanel._generateViewID();
+}
 
 viewPanel._viewConstructors.push(viewClass);
 viewPanel._viewConfigs.push(null);
 viewPanel._viewLabels.push(label);
 viewPanel._viewTooltips.push(tooltip);
 viewPanel._viewDomConfigs.push(node);
+viewPanel._viewIDs.push(id);
 }
 }
 node=node.nextSibling;
@@ -9825,6 +9841,10 @@ this._uiContext=null;
 this._div=null;
 };
 
+Exhibit.ViewPanel.prototype._generateViewID=function(){
+return"view"+Math.floor(Math.random()*1000000).toString();
+};
+
 Exhibit.ViewPanel.prototype._internalValidate=function(){
 if(this._viewConstructors.length==0){
 this._viewConstructors.push(Exhibit.TileView);
@@ -9832,6 +9852,7 @@ this._viewConfigs.push({});
 this._viewLabels.push(Exhibit.TileView.l10n.viewLabel);
 this._viewTooltips.push(Exhibit.TileView.l10n.viewTooltip);
 this._viewDomConfigs.push(null);
+this._viewIDs.push(this._generateViewID());
 }
 
 this._viewIndex=
@@ -9860,10 +9881,6 @@ this._createView();
 };
 
 Exhibit.ViewPanel.prototype._createView=function(){
-if(this._view){
-this._view.dispose();
-}
-
 var viewContainer=this._dom.getViewContainer();
 viewContainer.innerHTML="";
 
@@ -9871,6 +9888,7 @@ var viewDiv=document.createElement("div");
 viewContainer.appendChild(viewDiv);
 
 var index=this._viewIndex;
+try{
 if(this._viewDomConfigs[index]!=null){
 this._view=this._viewConstructors[index].createFromDOM(
 this._viewDomConfigs[index],
@@ -9884,7 +9902,20 @@ viewContainer,
 this._uiContext
 );
 }
+}catch(e){
+SimileAjax.Debug.exception(e,"Failed to create view");
+}
+this._uiContext.getExhibit().setComponent(this._viewIDs[index],this._view);
 this._dom.setViewIndex(index);
+};
+
+Exhibit.ViewPanel.prototype._switchView=function(newIndex){
+if(this._view){
+this._uiContext.getExhibit().disposeComponent(this._viewIndex);
+this._view=null;
+}
+this._viewIndex=newIndex;
+this._createView();
 };
 
 Exhibit.ViewPanel.prototype._selectView=function(newIndex){
@@ -9892,12 +9923,10 @@ var oldIndex=this._viewIndex;
 var self=this;
 SimileAjax.History.addLengthyAction(
 function(){
-self._viewIndex=newIndex;
-self._createView();
+self._switchView(newIndex);
 },
 function(){
-self._viewIndex=oldIndex;
-self._createView();
+self._switchView(oldIndex);
 },
 Exhibit.ViewPanel.l10n.createSelectViewActionTitle(self._viewLabels[newIndex])
 );

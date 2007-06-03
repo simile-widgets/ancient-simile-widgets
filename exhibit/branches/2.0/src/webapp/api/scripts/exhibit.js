@@ -187,6 +187,17 @@ Exhibit._Impl.prototype.setComponent = function(id, c) {
     this._componentMap[id] = c;
 };
 
+Exhibit._Impl.prototype.disposeComponent = function(id) {
+    if (id in this._componentMap) {
+        try{
+            this._componentMap[id].dispose();
+        } catch(e) {
+            SimileAjax.Debug.exception(e);
+        }
+        delete this._componentMap[id];
+    }
+};
+
 Exhibit._Impl.prototype.configure = function(configuration) {
     if ("collections" in configuration) {
         for (var i = 0; i < configuration.collections.length; i++) {

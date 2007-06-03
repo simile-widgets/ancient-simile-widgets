@@ -687,9 +687,10 @@ Exhibit.OrderedViewFrame.headerTemplate =
     "<div id='collectionSummaryDiv' style='display: none;'></div>" +
     "<div class='exhibit-collectionView-header-sortControls' style='display: none;' id='controlsDiv'>" +
         "%0" + // sorting controls template
-        "<div class='exhibit-collectionView-header-groupControl'> \u2022 " +
-        "<a id='groupOption' class='exhibit-action'></a>" + 
-    "</div></div>";
+        "<span class='exhibit-collectionView-header-groupControl'> \u2022 " +
+            "<a id='groupOption' class='exhibit-action'></a>" + 
+        "</span>" +
+    "</div>";
 
 Exhibit.OrderedViewFrame.createHeaderDom = function(
     uiContext,
