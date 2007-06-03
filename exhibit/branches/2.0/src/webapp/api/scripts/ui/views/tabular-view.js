@@ -457,13 +457,13 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
     var self = this;
     SimileAjax.History.addLengthyAction(
         function() {
-            settings._sortColumn = newSortColumn;
-            settings._sortAscending = newSortAscending;
+            settings.sortColumn = newSortColumn;
+            settings.sortAscending = newSortAscending;
             self._reconstruct();
         },
         function() {
-            settings._sortColumn = oldSortColumn;
-            settings._sortAscending = oldSortAscending;
+            settings.sortColumn = oldSortColumn;
+            settings.sortAscending = oldSortAscending;
             self._reconstruct();
         },
         Exhibit.TabularView.l10n.makeSortActionTitle(this._columns[columnIndex].label, newSortAscending)
