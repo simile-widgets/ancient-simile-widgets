@@ -186,6 +186,10 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
                 return;
             }
             break;
+        case "boolean":
+            switch (settingName) {
+            }
+            break;
         case "text":
             switch (settingName) {
             case "max-length":

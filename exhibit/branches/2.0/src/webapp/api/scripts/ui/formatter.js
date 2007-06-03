@@ -92,6 +92,23 @@ Exhibit.Formatter._TextFormatter.prototype.formatText = function(value) {
 };
 
 /*==================================================
+ *  Exhibit.Formatter._BooleanFormatter
+ *==================================================
+ */
+Exhibit.Formatter._BooleanFormatter = function(uiContext) {
+};
+
+Exhibit.Formatter._BooleanFormatter.prototype.format = function(value, appender) {
+    var span = document.createElement("span");
+    span.innerHTML = this.formatText(value);
+    appender(span);
+};
+
+Exhibit.Formatter._BooleanFormatter.prototype.formatText = function(value) {
+    return (typeof value == "boolean" ? value : (typeof value == "string" ? (value == "true") : false)) ? "true" : "false";
+};
+
+/*==================================================
  *  Exhibit.Formatter._NumberFormatter
  *==================================================
  */
@@ -489,6 +506,7 @@ Exhibit.Formatter._constructors = {
     "number" : Exhibit.Formatter._NumberFormatter,
     "date" : Exhibit.Formatter._DateFormatter,
     "text" : Exhibit.Formatter._TextFormatter,
+    "boolean" : Exhibit.Formatter._BooleanFormatter,
     "image" : Exhibit.Formatter._ImageFormatter,
     "url" : Exhibit.Formatter._URLFormatter,
     "item" : Exhibit.Formatter._ItemFormatter,

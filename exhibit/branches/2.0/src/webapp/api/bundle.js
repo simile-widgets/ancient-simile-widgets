@@ -4185,6 +4185,10 @@ enterSetting(valueType,"mode",null);
 return;
 }
 break;
+case"boolean":
+switch(settingName){
+}
+break;
 case"text":
 switch(settingName){
 case"max-length":
@@ -4581,6 +4585,20 @@ return value.substr(0,this._maxLength)+"...";
 };
 
 
+Exhibit.Formatter._BooleanFormatter=function(uiContext){
+};
+
+Exhibit.Formatter._BooleanFormatter.prototype.format=function(value,appender){
+var span=document.createElement("span");
+span.innerHTML=this.formatText(value);
+appender(span);
+};
+
+Exhibit.Formatter._BooleanFormatter.prototype.formatText=function(value){
+return(typeof value=="boolean"?value:(typeof value=="string"?(value=="true"):false))?"true":"false";
+};
+
+
 Exhibit.Formatter._NumberFormatter=function(uiContext){
 this._decimalDigits=uiContext.getSetting("format/number/decimal-digits");
 
@@ -4957,6 +4975,7 @@ Exhibit.Formatter._constructors={
 "number":Exhibit.Formatter._NumberFormatter,
 "date":Exhibit.Formatter._DateFormatter,
 "text":Exhibit.Formatter._TextFormatter,
+"boolean":Exhibit.Formatter._BooleanFormatter,
 "image":Exhibit.Formatter._ImageFormatter,
 "url":Exhibit.Formatter._URLFormatter,
 "item":Exhibit.Formatter._ItemFormatter,
@@ -8617,10 +8636,6 @@ for(var i=0;i<items.length;i++){
 var item=items[i];
 var tr=table.insertRow(i);
 
-if(this._settings.rowStyler!=null){
-this._settings.rowStyler(item.id,database,tr,i);
-}
-
 for(var c=0;c<this._columns.length;c++){
 var column=this._columns[c];
 var td=tr.insertCell(c);
@@ -8643,6 +8658,10 @@ function(elmt){td.appendChild(elmt);}
 if(column.styler!=null){
 column.styler(item.id,database,td);
 }
+}
+
+if(this._settings.rowStyler!=null){
+this._settings.rowStyler(item.id,database,tr,i);
 }
 }
 

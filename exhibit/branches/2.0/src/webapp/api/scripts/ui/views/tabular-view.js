@@ -260,10 +260,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             var item = items[i];
             var tr = table.insertRow(i);
             
-            if (this._settings.rowStyler != null) {
-                this._settings.rowStyler(item.id, database, tr, i);
-            }
-            
             for (var c = 0; c < this._columns.length; c++) {
                 var column = this._columns[c];
                 var td = tr.insertCell(c);
@@ -286,6 +282,10 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                 if (column.styler != null) {
                     column.styler(item.id, database, td);
                 }
+            }
+            
+            if (this._settings.rowStyler != null) {
+                this._settings.rowStyler(item.id, database, tr, i);
             }
         }
 
