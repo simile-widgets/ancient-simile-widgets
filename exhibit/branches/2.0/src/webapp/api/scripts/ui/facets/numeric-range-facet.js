@@ -237,7 +237,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
                 return false;
             };
             var onSelectOnly = function(elmt, evt, target) {
-                self._toggleRange(from, to, selected, true);
+                self._toggleRange(from, to, selected, !(evt.ctrlKey || evt.metaKey));
                 SimileAjax.DOM.cancelEvent(evt);
                 return false;
             };
@@ -278,10 +278,11 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
     );
 };
 
-Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, wasSelected, clearOthers) {
+Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, wasSelected, singleSelection) {
     var self = this;
     var label = from + " to " + to;
-    if (clearOthers && (this._ranges.length > 1 || !wasSelected)) {
+    var wasOnlyThingSelected = (this._ranges.length == 1 && wasSelected);
+    if (singleSelection && !wasOnlyThingSelected) {
         var newRestrictions = [ { from: from, to: to } ];
         var oldRestrictions = [].concat(this._ranges);
     

@@ -3612,7 +3612,7 @@ SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
 var onSelectOnly=function(elmt,evt,target){
-self._filter(entry.value,entry.label,true);
+self._filter(entry.value,entry.label,!(evt.ctrlKey||evt.metaKey));
 SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
@@ -3636,10 +3636,11 @@ containerDiv.style.display="block";
 this._dom.setSelectionCount(this._valueSet.size());
 };
 
-Exhibit.ListFacet.prototype._filter=function(value,label,clearOthers){
+Exhibit.ListFacet.prototype._filter=function(value,label,singleSelection){
 var self=this;
 var wasSelected=this._valueSet.contains(value);
-if(clearOthers&&(this._valueSet.size()>1||!wasSelected)){
+var wasOnlyThingSelected=(this._valueSet.size()==1&&wasSelected);
+if(singleSelection&&!wasOnlyThingSelected){
 var newRestrictions=[value];
 var oldRestrictions=[];
 this._valueSet.visit(function(v){
@@ -3949,7 +3950,7 @@ SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
 var onSelectOnly=function(elmt,evt,target){
-self._toggleRange(from,to,selected,true);
+self._toggleRange(from,to,selected,!(evt.ctrlKey||evt.metaKey));
 SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
@@ -3990,10 +3991,11 @@ this._uiContext
 );
 };
 
-Exhibit.NumericRangeFacet.prototype._toggleRange=function(from,to,wasSelected,clearOthers){
+Exhibit.NumericRangeFacet.prototype._toggleRange=function(from,to,wasSelected,singleSelection){
 var self=this;
 var label=from+" to "+to;
-if(clearOthers&&(this._ranges.length>1||!wasSelected)){
+var wasOnlyThingSelected=(this._ranges.length==1&&wasSelected);
+if(singleSelection&&!wasOnlyThingSelected){
 var newRestrictions=[{from:from,to:to}];
 var oldRestrictions=[].concat(this._ranges);
 

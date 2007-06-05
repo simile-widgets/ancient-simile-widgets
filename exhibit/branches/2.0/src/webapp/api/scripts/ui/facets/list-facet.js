@@ -271,7 +271,7 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
                 return false;
             };
             var onSelectOnly = function(elmt, evt, target) {
-                self._filter(entry.value, entry.label, true);
+                self._filter(entry.value, entry.label, !(evt.ctrlKey || evt.metaKey));
                 SimileAjax.DOM.cancelEvent(evt);
                 return false;
             };
@@ -295,10 +295,11 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     this._dom.setSelectionCount(this._valueSet.size());
 };
 
-Exhibit.ListFacet.prototype._filter = function(value, label, clearOthers) {
+Exhibit.ListFacet.prototype._filter = function(value, label, singleSelection) {
     var self = this;
     var wasSelected = this._valueSet.contains(value);
-    if (clearOthers && (this._valueSet.size() > 1 || !wasSelected)) {
+    var wasOnlyThingSelected = (this._valueSet.size() == 1 && wasSelected);
+    if (singleSelection && !wasOnlyThingSelected) {
         var newRestrictions = [ value ];
         var oldRestrictions = [];
         this._valueSet.visit(function(v) {
