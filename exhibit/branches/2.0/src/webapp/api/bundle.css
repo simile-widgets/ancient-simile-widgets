@@ -250,6 +250,7 @@ span.exhibit-facet-header-detail {
 }
     
 div.exhibit-facet-body-frame {
+    clear:          both;
 }
 
 div.exhibit-facet-body {
