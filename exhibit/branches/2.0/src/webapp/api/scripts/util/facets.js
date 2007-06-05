@@ -6,6 +6,8 @@
  */
 Exhibit.FacetUtilities = new Object();
 
+
+
 Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAllSelections, uiContext) {
     div.className = "exhibit-facet";
     var dom = SimileAjax.DOM.createDOMFromString(
@@ -18,7 +20,7 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
             "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
         "</div>" +
         "<div class='exhibit-facet-body-frame' id='frameDiv'></div>",
-        { checkImage: Exhibit.UI.createTranslucentImage("images/black-check-no-border.png") }
+        { checkImage: Exhibit.UI.createTranslucentImage("images/black-check.png") }
     );
     var resizableDivWidget = Exhibit.ResizableDivWidget.create({}, dom.frameDiv, uiContext);
     
@@ -40,30 +42,31 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     selected, 
     facetHasSelection,
     onSelect,
+    onSelectOnly,
     uiContext
 ) {
-    var classes = [ "exhibit-facet-value" ];
-    if (selected) {
-        classes.push("exhibit-facet-value-selected");
-    }
-    
-    var elmt = SimileAjax.DOM.createElementFromString(
-        "<div class='exhibit-facet-value' title='" + label + "'>" +
-            "<div class='exhibit-facet-value-count'>" +
-                count +
-                SimileAjax.Graphics.createTranslucentImageHTML(
-                    Exhibit.urlPrefix + (selected ? 
-                        "images/black-check-no-border.png" :
-                        (facetHasSelection ? "images/no-check-no-border.png" : "images/gray-check-no-border.png")
-                    )
-                ) +
-            "</div>" +
-            "<div class='exhibit-facet-value-inner'>" + label + "</div>" +
+    var dom = SimileAjax.DOM.createDOMFromString(
+        "div",
+        "<div class='exhibit-facet-value-count'>" + count + "</div>" +
+        "<div class='exhibit-facet-value-inner' id='inner'>" + 
+            (   facetHasSelection ?
+                (   "<div class='exhibit-facet-value-checkbox'>&nbsp;" +
+                    SimileAjax.Graphics.createTranslucentImageHTML(
+                        Exhibit.urlPrefix + (selected ? "images/black-check.png" : "images/no-check.png")) +
+                    "</div>"
+                ) : 
+                ""
+            ) +
+            label +
         "</div>"
     );
-    elmt.className = classes.join(" ");
-    SimileAjax.WindowManager.registerEvent(elmt, "click", onSelect, SimileAjax.WindowManager.getBaseLayer());
+    dom.elmt.className = selected ? "exhibit-facet-value exhibit-facet-value-selected" : "exhibit-facet-value";
+    dom.elmt.title = label;
     
-    return elmt;
+    SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelectOnly, SimileAjax.WindowManager.getBaseLayer());
+    if (facetHasSelection) {
+        SimileAjax.WindowManager.registerEvent(dom.inner.firstChild, "click", onSelect, SimileAjax.WindowManager.getBaseLayer());
+    }
+    return dom.elmt;
 };
 

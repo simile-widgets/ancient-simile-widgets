@@ -232,7 +232,12 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
     containerDiv.style.display = "none";
         var makeFacetValue = function(from, to, count, selected) {
             var onSelect = function(elmt, evt, target) {
-                self._toggleRange(from, to, selected);
+                self._toggleRange(from, to, selected, false);
+                SimileAjax.DOM.cancelEvent(evt);
+                return false;
+            };
+            var onSelectOnly = function(elmt, evt, target) {
+                self._toggleRange(from, to, selected, true);
                 SimileAjax.DOM.cancelEvent(evt);
                 return false;
             };
@@ -242,6 +247,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
                 selected, 
                 facetHasSelection,
                 onSelect,
+                onSelectOnly,
                 self._uiContext
             );
             containerDiv.appendChild(elmt);
@@ -272,17 +278,29 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
     );
 };
 
-Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, oldSelected) {
+Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, wasSelected, clearOthers) {
     var self = this;
     var label = from + " to " + to;
-    var selected = !oldSelected;
-    SimileAjax.History.addLengthyAction(
-        function() { self.setRange(from, to, selected); },
-        function() { self.setRange(from, to, oldSelected); },
-        String.substitute(
-            Exhibit.FacetUtilities.l10n[selected ? "facetSelectActionTitle" : "facetUnselectActionTitle"],
-            [ label, this._settings.facetLabel ])
-    );
+    if (clearOthers && (this._ranges.length > 1 || !wasSelected)) {
+        var newRestrictions = [ { from: from, to: to } ];
+        var oldRestrictions = [].concat(this._ranges);
+    
+        SimileAjax.History.addLengthyAction(
+            function() { self.applyRestrictions(newRestrictions); },
+            function() { self.applyRestrictions(oldRestrictions); },
+            String.substitute(
+                Exhibit.FacetUtilities.l10n["facetSelectOnlyActionTitle"],
+                [ label, this._settings.facetLabel ])
+        );
+    } else {
+        SimileAjax.History.addLengthyAction(
+            function() { self.setRange(from, to, !wasSelected); },
+            function() { self.setRange(from, to, wasSelected); },
+            String.substitute(
+                Exhibit.FacetUtilities.l10n[wasSelected ? "facetUnselectActionTitle" : "facetSelectActionTitle"],
+                [ label, this._settings.facetLabel ])
+        );
+    }
 };
 
 Exhibit.NumericRangeFacet.prototype._clearSelections = function() {

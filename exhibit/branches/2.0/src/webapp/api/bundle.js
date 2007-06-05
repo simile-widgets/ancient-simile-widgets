@@ -3473,8 +3473,9 @@ return restrictions;
 };
 
 Exhibit.ListFacet.prototype.applyRestrictions=function(restrictions){
+this._valueSet=new Exhibit.Set();
 for(var i=0;i<restrictions.length;i++){
-this.setSelection(restrictions[i],true);
+this._valueSet.add(restrictions[i]);
 }
 this._notifyCollection();
 };
@@ -3606,7 +3607,12 @@ containerDiv.style.display="none";
 var facetHasSelection=this._valueSet.size()>0;
 var constructValue=function(entry){
 var onSelect=function(elmt,evt,target){
-self._filter(entry.value,entry.label);
+self._filter(entry.value,entry.label,false);
+SimileAjax.DOM.cancelEvent(evt);
+return false;
+};
+var onSelectOnly=function(elmt,evt,target){
+self._filter(entry.value,entry.label,true);
 SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
@@ -3616,6 +3622,7 @@ entry.count,
 entry.selected,
 facetHasSelection,
 onSelect,
+onSelectOnly,
 self._uiContext
 );
 containerDiv.appendChild(elmt);
@@ -3629,16 +3636,32 @@ containerDiv.style.display="block";
 this._dom.setSelectionCount(this._valueSet.size());
 };
 
-Exhibit.ListFacet.prototype._filter=function(value,label){
-var selected=!this._valueSet.contains(value);
+Exhibit.ListFacet.prototype._filter=function(value,label,clearOthers){
 var self=this;
+var wasSelected=this._valueSet.contains(value);
+if(clearOthers&&(this._valueSet.size()>1||!wasSelected)){
+var newRestrictions=[value];
+var oldRestrictions=[];
+this._valueSet.visit(function(v){
+oldRestrictions.push(v);
+});
+
 SimileAjax.History.addLengthyAction(
-function(){self.setSelection(value,selected);},
-function(){self.setSelection(value,!selected);},
+function(){self.applyRestrictions(newRestrictions);},
+function(){self.applyRestrictions(oldRestrictions);},
 String.substitute(
-Exhibit.FacetUtilities.l10n[selected?"facetSelectActionTitle":"facetUnselectActionTitle"],
+Exhibit.FacetUtilities.l10n["facetSelectOnlyActionTitle"],
 [label,this._settings.facetLabel])
 );
+}else{
+SimileAjax.History.addLengthyAction(
+function(){self.setSelection(value,!wasSelected);},
+function(){self.setSelection(value,wasSelected);},
+String.substitute(
+Exhibit.FacetUtilities.l10n[wasSelected?"facetUnselectActionTitle":"facetSelectActionTitle"],
+[label,this._settings.facetLabel])
+);
+}
 };
 
 Exhibit.ListFacet.prototype._clearSelections=function(){
@@ -3921,7 +3944,12 @@ var containerDiv=this._dom.valuesContainer;
 containerDiv.style.display="none";
 var makeFacetValue=function(from,to,count,selected){
 var onSelect=function(elmt,evt,target){
-self._toggleRange(from,to,selected);
+self._toggleRange(from,to,selected,false);
+SimileAjax.DOM.cancelEvent(evt);
+return false;
+};
+var onSelectOnly=function(elmt,evt,target){
+self._toggleRange(from,to,selected,true);
 SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
@@ -3931,6 +3959,7 @@ count,
 selected,
 facetHasSelection,
 onSelect,
+onSelectOnly,
 self._uiContext
 );
 containerDiv.appendChild(elmt);
@@ -3961,17 +3990,29 @@ this._uiContext
 );
 };
 
-Exhibit.NumericRangeFacet.prototype._toggleRange=function(from,to,oldSelected){
+Exhibit.NumericRangeFacet.prototype._toggleRange=function(from,to,wasSelected,clearOthers){
 var self=this;
 var label=from+" to "+to;
-var selected=!oldSelected;
+if(clearOthers&&(this._ranges.length>1||!wasSelected)){
+var newRestrictions=[{from:from,to:to}];
+var oldRestrictions=[].concat(this._ranges);
+
 SimileAjax.History.addLengthyAction(
-function(){self.setRange(from,to,selected);},
-function(){self.setRange(from,to,oldSelected);},
+function(){self.applyRestrictions(newRestrictions);},
+function(){self.applyRestrictions(oldRestrictions);},
 String.substitute(
-Exhibit.FacetUtilities.l10n[selected?"facetSelectActionTitle":"facetUnselectActionTitle"],
+Exhibit.FacetUtilities.l10n["facetSelectOnlyActionTitle"],
 [label,this._settings.facetLabel])
 );
+}else{
+SimileAjax.History.addLengthyAction(
+function(){self.setRange(from,to,!wasSelected);},
+function(){self.setRange(from,to,wasSelected);},
+String.substitute(
+Exhibit.FacetUtilities.l10n[wasSelected?"facetUnselectActionTitle":"facetSelectActionTitle"],
+[label,this._settings.facetLabel])
+);
+}
 };
 
 Exhibit.NumericRangeFacet.prototype._clearSelections=function(){
@@ -6353,11 +6394,11 @@ dom.layer
 return dom;
 };
 
-Exhibit.UI.createTranslucentImage=function(relativeUrl){
-return SimileAjax.Graphics.createTranslucentImage(Exhibit.urlPrefix+relativeUrl);
+Exhibit.UI.createTranslucentImage=function(relativeUrl,verticalAlign){
+return SimileAjax.Graphics.createTranslucentImage(Exhibit.urlPrefix+relativeUrl,verticalAlign);
 };
-Exhibit.UI.createTranslucentImageHTML=function(relativeUrl){
-return SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix+relativeUrl);
+Exhibit.UI.createTranslucentImageHTML=function(relativeUrl,verticalAlign){
+return SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix+relativeUrl,verticalAlign);
 };
 
 
@@ -10695,7 +10736,7 @@ div,
 "<span class='exhibit-facet-header-title'>"+facetLabel+"</span>"+
 "</div>"+
 "<div class='exhibit-facet-body-frame' id='frameDiv'></div>",
-{checkImage:Exhibit.UI.createTranslucentImage("images/black-check-no-border.png")}
+{checkImage:Exhibit.UI.createTranslucentImage("images/black-check.png")}
 );
 var resizableDivWidget=Exhibit.ResizableDivWidget.create({},dom.frameDiv,uiContext);
 
@@ -10717,31 +10758,32 @@ count,
 selected,
 facetHasSelection,
 onSelect,
+onSelectOnly,
 uiContext
 ){
-var classes=["exhibit-facet-value"];
-if(selected){
-classes.push("exhibit-facet-value-selected");
-}
-
-var elmt=SimileAjax.DOM.createElementFromString(
-"<div class='exhibit-facet-value' title='"+label+"'>"+
-"<div class='exhibit-facet-value-count'>"+
-count+
+var dom=SimileAjax.DOM.createDOMFromString(
+"div",
+"<div class='exhibit-facet-value-count'>"+count+"</div>"+
+"<div class='exhibit-facet-value-inner' id='inner'>"+
+(facetHasSelection?
+("<div class='exhibit-facet-value-checkbox'>&nbsp;"+
 SimileAjax.Graphics.createTranslucentImageHTML(
-Exhibit.urlPrefix+(selected?
-"images/black-check-no-border.png":
-(facetHasSelection?"images/no-check-no-border.png":"images/gray-check-no-border.png")
-)
+Exhibit.urlPrefix+(selected?"images/black-check.png":"images/no-check.png"))+
+"</div>"
+):
+""
 )+
-"</div>"+
-"<div class='exhibit-facet-value-inner'>"+label+"</div>"+
+label+
 "</div>"
 );
-elmt.className=classes.join(" ");
-SimileAjax.WindowManager.registerEvent(elmt,"click",onSelect,SimileAjax.WindowManager.getBaseLayer());
+dom.elmt.className=selected?"exhibit-facet-value exhibit-facet-value-selected":"exhibit-facet-value";
+dom.elmt.title=label;
 
-return elmt;
+SimileAjax.WindowManager.registerEvent(dom.elmt,"click",onSelectOnly,SimileAjax.WindowManager.getBaseLayer());
+if(facetHasSelection){
+SimileAjax.WindowManager.registerEvent(dom.inner.firstChild,"click",onSelect,SimileAjax.WindowManager.getBaseLayer());
+}
+return dom.elmt;
 };
 
 

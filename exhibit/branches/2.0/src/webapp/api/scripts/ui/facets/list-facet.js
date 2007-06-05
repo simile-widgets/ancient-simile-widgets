@@ -132,8 +132,9 @@ Exhibit.ListFacet.prototype.clearAllRestrictions = function() {
 };
 
 Exhibit.ListFacet.prototype.applyRestrictions = function(restrictions) {
+    this._valueSet = new Exhibit.Set();
     for (var i = 0; i < restrictions.length; i++) {
-        this.setSelection(restrictions[i], true);
+        this._valueSet.add(restrictions[i]);
     }
     this._notifyCollection();
 };
@@ -265,7 +266,12 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
         var facetHasSelection = this._valueSet.size() > 0;
         var constructValue = function(entry) {
             var onSelect = function(elmt, evt, target) {
-                self._filter(entry.value, entry.label);
+                self._filter(entry.value, entry.label, false);
+                SimileAjax.DOM.cancelEvent(evt);
+                return false;
+            };
+            var onSelectOnly = function(elmt, evt, target) {
+                self._filter(entry.value, entry.label, true);
                 SimileAjax.DOM.cancelEvent(evt);
                 return false;
             };
@@ -275,6 +281,7 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
                 entry.selected, 
                 facetHasSelection,
                 onSelect,
+                onSelectOnly,
                 self._uiContext
             );
             containerDiv.appendChild(elmt);
@@ -288,16 +295,32 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     this._dom.setSelectionCount(this._valueSet.size());
 };
 
-Exhibit.ListFacet.prototype._filter = function(value, label) {
-    var selected = !this._valueSet.contains(value);
+Exhibit.ListFacet.prototype._filter = function(value, label, clearOthers) {
     var self = this;
-    SimileAjax.History.addLengthyAction(
-        function() { self.setSelection(value, selected); },
-        function() { self.setSelection(value, !selected); },
-        String.substitute(
-            Exhibit.FacetUtilities.l10n[selected ? "facetSelectActionTitle" : "facetUnselectActionTitle"],
-            [ label, this._settings.facetLabel ])
-    );
+    var wasSelected = this._valueSet.contains(value);
+    if (clearOthers && (this._valueSet.size() > 1 || !wasSelected)) {
+        var newRestrictions = [ value ];
+        var oldRestrictions = [];
+        this._valueSet.visit(function(v) {
+            oldRestrictions.push(v);
+        });
+    
+        SimileAjax.History.addLengthyAction(
+            function() { self.applyRestrictions(newRestrictions); },
+            function() { self.applyRestrictions(oldRestrictions); },
+            String.substitute(
+                Exhibit.FacetUtilities.l10n["facetSelectOnlyActionTitle"],
+                [ label, this._settings.facetLabel ])
+        );
+    } else {
+        SimileAjax.History.addLengthyAction(
+            function() { self.setSelection(value, !wasSelected); },
+            function() { self.setSelection(value, wasSelected); },
+            String.substitute(
+                Exhibit.FacetUtilities.l10n[wasSelected ? "facetUnselectActionTitle" : "facetSelectActionTitle"],
+                [ label, this._settings.facetLabel ])
+        );
+    }
 };
 
 Exhibit.ListFacet.prototype._clearSelections = function() {

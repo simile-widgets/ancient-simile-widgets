@@ -459,9 +459,9 @@ Exhibit.UI.createFocusDialogBox = function(itemID, exhibit, configuration) {
     return dom;
 };
 
-Exhibit.UI.createTranslucentImage = function(relativeUrl) {
-    return SimileAjax.Graphics.createTranslucentImage(Exhibit.urlPrefix + relativeUrl);
+Exhibit.UI.createTranslucentImage = function(relativeUrl, verticalAlign) {
+    return SimileAjax.Graphics.createTranslucentImage(Exhibit.urlPrefix + relativeUrl, verticalAlign);
 };
-Exhibit.UI.createTranslucentImageHTML = function(relativeUrl) {
-    return SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix + relativeUrl);
+Exhibit.UI.createTranslucentImageHTML = function(relativeUrl, verticalAlign) {
+    return SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix + relativeUrl, verticalAlign);
 };

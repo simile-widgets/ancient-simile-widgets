@@ -13,8 +13,10 @@ div.exhibit-facet-header-filterControl {
     float:          right;
     width:          2em;
     display:        none;
-    background:     #FFFFE0;
     cursor:         pointer;
+}
+div.exhibit-facet-header-filterControl img {
+    vertical-align: text-bottom;
 }
 
 span.exhibit-facet-header-title {
@@ -42,21 +44,25 @@ div.exhibit-facet-body {
 div.exhibit-facet-value {
     cursor:         pointer;
     position:       relative;
-    margin-left:    3em;
+    margin-left:    2em;
     padding:        2px 0px;
 }
 div.exhibit-facet-value-selected {
-	background:     #FFFFE0;
+    font-weight:    bold;
 }
 
 div.exhibit-facet-value-count {
     position:       absolute;
-    left:           -3em;
-    width:          3em;
+    left:           -2em;
+    width:          2em;
     text-align:     right;
     color:          #aaa;
 }
 
 div.exhibit-facet-value-inner {
-    position:       relative;
+    padding-left:   0.25em;
+}
+
+div.exhibit-facet-value-checkbox {
+    float:          right;
 }
