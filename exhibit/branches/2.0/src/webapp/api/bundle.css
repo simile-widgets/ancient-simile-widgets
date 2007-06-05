@@ -268,6 +268,7 @@ div.exhibit-facet-value {
     position:       relative;
     margin-left:    2em;
     padding:        2px 0px;
+    clear:          both;
 }
 div.exhibit-facet-value-selected {
     font-weight:    bold;
