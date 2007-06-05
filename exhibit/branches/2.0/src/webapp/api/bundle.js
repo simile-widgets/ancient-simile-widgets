@@ -9954,7 +9954,7 @@ this._dom.setViewIndex(index);
 
 Exhibit.ViewPanel.prototype._switchView=function(newIndex){
 if(this._view){
-this._uiContext.getExhibit().disposeComponent(this._viewIndex);
+this._uiContext.getExhibit().disposeComponent(this._viewIDs[this._viewIndex]);
 this._view=null;
 }
 this._viewIndex=newIndex;
