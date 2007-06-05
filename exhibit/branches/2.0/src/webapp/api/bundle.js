@@ -10765,13 +10765,14 @@ var dom=SimileAjax.DOM.createDOMFromString(
 "div",
 "<div class='exhibit-facet-value-count'>"+count+"</div>"+
 "<div class='exhibit-facet-value-inner' id='inner'>"+
-(facetHasSelection?
 ("<div class='exhibit-facet-value-checkbox'>&nbsp;"+
 SimileAjax.Graphics.createTranslucentImageHTML(
-Exhibit.urlPrefix+(selected?"images/black-check.png":"images/no-check.png"))+
+Exhibit.urlPrefix+
+(facetHasSelection?
+(selected?"images/black-check.png":"images/no-check.png"):
+"images/no-check-no-border.png"
+))+
 "</div>"
-):
-""
 )+
 label+
 "</div>"
