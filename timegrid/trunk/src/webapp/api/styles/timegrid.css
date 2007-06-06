@@ -15,6 +15,7 @@ ul, li {
 th, td {
     clear: none;
     border: 1px black solid;
+    padding: 5px;
 }
 
 table {
@@ -32,13 +33,25 @@ td {
 }
 
 div.timegrid-hline {
+    position: absolute;
     height: 1px;
-    background-color: black;
+    background-color: #999;
 }
 
 div.timegrid-vline {
+    position: absolute;
     width: 1px;
-    background-color: black;
+    background-color: #444;
+}
+
+div.timegrid-events {
+    position: relative;
+    z-index: 2;
+}
+
+div.timegrid-gridlines {
+    position: relative;
+    z-index: 1;
 }
 
 div.timegrid-event {
@@ -47,7 +60,4 @@ div.timegrid-event {
     width: 100px;
     background-color: #aaf;
     padding: 0;
-    /* Weird positioning hack... */
-    margin-top: -15px;
-    margin-left: -1px;
 }

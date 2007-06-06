@@ -5,6 +5,8 @@ Timegrid.WeekLayout = function(params) {
     this.ySize = 24;
     this.xMapper = function(obj) { return obj.time.getDay(); };
     this.yMapper = function(obj) { return obj.time.getHours(); };
+    this.xCell = 100;
+    this.yCell = 30;
 };
 Timegrid.extend(Timegrid.WeekLayout, Timegrid.Layout);
 
@@ -24,7 +26,6 @@ Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
                                                     this.endTime);
         while (iterator.hasNext()) {
             var endpoints = Timegrid.WeekLayout.getEndpoints(iterator.next());
-            console.log(endpoints[0].time);
             this.eventGrid.addAll(endpoints);
         }
     }
@@ -38,43 +39,70 @@ Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
  * @return a rendered DOM tree descended from a div element
  */
 Timegrid.WeekLayout.prototype.render = function(doc) {
-    var layoutDiv = doc.createElement("div");
-    var table = doc.createElement("table");
-    var thead = doc.createElement("tr");
-    var days = ["", "Sunday", "Monday", "Tuesday", "Wednesday", 
-                "Thursday", "Friday", "Saturday"];
-    for (i in days) {
-        var th = doc.createElement("th");
-        th.innerHTML = days[i];
-        thead.appendChild(th);
-    }
-    table.appendChild(thead);
-    layoutDiv.appendChild(table);
-    for (y = 0; y < this.ySize; y++) {
-        var row = doc.createElement("tr");
-        table.appendChild(row);
-        var hcell = doc.createElement("td");
-        hcell.innerHTML = "<h3>" + y + "</h3>";
-        row.appendChild(hcell);
-        for (x = 0; x < this.xSize; x++) {
-            var cell = doc.createElement("td");
-            var elist = doc.createElement("ul");
+    var timegridDiv = doc.createElement("div");
+    timegridDiv.appendChild(this.renderEvents(doc));
+    timegridDiv.appendChild(this.renderGridlines(doc));
+    return timegridDiv;
+};
+
+Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
+    var eventContainer = doc.createElement("div");
+    $(eventContainer).addClass("timegrid-events");
+    var currentEvents = {};
+    var currentCount = 0; // We need to keep track of how many 
+    for (x = 0; x < this.xSize; x++) {
+        for (y = 0; y < this.ySize; y++) {
             var endpoints = this.eventGrid.get(x,y);
-            row.appendChild(cell);
-            cell.appendChild(elist);
             for (i in endpoints) {
-                var ediv = doc.createElement("div");
-                var jediv = $(ediv); // jQuery!
                 var endpoint = endpoints[i];
-                jediv.addClass("timegrid-event");
-                jediv.css("height", 30 * event.getInterval().hours);
-                ediv.innerHTML = event.getText();
-                elist.appendChild(ediv);
+                if (endpoint.type == "start") {
+                    // Render the event
+                    var eventDiv = this.renderEvent(endpoint.event, x, y);
+                    eventContainer.appendChild(eventDiv);
+                    // Push the event div onto the current events set
+                    currentEvents[endpoint.event.getID()] = eventDiv;
+                    currentCount++;
+                    // Adjust widths as necessary
+                    for each (eDiv in currentEvents) {
+                        $(eDiv).css("width", this.xCell / currentCount - 1);
+                    }
+                } else {
+                    // Pop event from current events set
+                    delete currentEvents[endpoint.event.getID()];
+                    currentCount--;
+                }
             }
         }
     }
-    
-    return layoutDiv;
+    return eventContainer;
+};
+
+Timegrid.WeekLayout.prototype.renderGridlines = function(doc) {
+    var gridlineContainer = doc.createElement("div");
+    $(gridlineContainer).addClass("timegrid-gridlines");
+    for (var x = 0; x <= this.xSize; x++) {
+        var vlineDiv = $("<div></div>").addClass("timegrid-vline");
+        vlineDiv.css("height", this.ySize * this.yCell);
+        vlineDiv.css("left", x * this.xCell);
+        $(gridlineContainer).append(vlineDiv);
+    }
+    for (var y = 0; y <= this.ySize; y++) {
+        var hlineDiv = $("<div></div>").addClass("timegrid-hline");
+        hlineDiv.css("width", this.xSize * this.xCell);
+        hlineDiv.css("top", y * this.yCell);
+        $(gridlineContainer).append(hlineDiv);
+    }
+    return gridlineContainer;
+};
+
+Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {
+    var jediv = $("<div>" + evt.getText() + "</div>"); // jQuery!
+    console.log(evt.getStart());
+    jediv.addClass("timegrid-event");
+    jediv.css("height", this.yCell * evt.getInterval().hours - 1);
+    jediv.css("top", this.yCell * y);
+    jediv.css("left", this.xCell * x);
+    return jediv.get()[0]; // Return the actual DOM element
 };
 
 Timegrid.WeekLayout.getEndpoints = function(evt) {
@@ -84,5 +112,5 @@ Timegrid.WeekLayout.getEndpoints = function(evt) {
              { type: "end",
                time: evt.getEnd(),
                event: evt } ];
-}
+};
 
