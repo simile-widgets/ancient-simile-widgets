@@ -1,39 +1,10 @@
-/******************************************************************************
- * Layouts
- *   This is where we define the entrypoint for  all of the different default 
- *   layouts that Timegrid is capable of, e.g. month, week, n-day, etc.
- *****************************************************************************/
-
-Timegrid.DEFAULT_LAYOUT = "week";
-Timegrid.LayoutFactory = new Object();
-
-/**
- * Instantiates a Timegrid layout with the given parameter hash.
- *
- * @param {String} name the name of the layout
- * @param eventSource an EventSource object to layout and render
- * @param params a hash of parameters to be passed into the desired layout
- * @return a Timegrid.Layout instance of the specified subclass
- */
-Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
-    var layout = new Timegrid.WeekLayout(params);
-    layout.initializeGrid(eventSource);
-    return layout;
-};
-
-Timegrid.Layout = function() {
-    this.xSize = 0;
-    this.ySize = 0;
-    this.xMapper = function() {};
-    this.yMapper = function() {};
-};
 
 Timegrid.WeekLayout = function(params) {
     Timegrid.WeekLayout.superclass.call(this, params);
     this.xSize = 7;
     this.ySize = 24;
-    this.xMapper = function(obj) { return obj.getTime().getDay(); };
-    this.yMapper = function(obj) { return obj.getTime().getHours(); };
+    this.xMapper = function(obj) { return obj.time.getDay(); };
+    this.yMapper = function(obj) { return obj.time.getHours(); };
 };
 Timegrid.extend(Timegrid.WeekLayout, Timegrid.Layout);
 
@@ -52,7 +23,9 @@ Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
         var iterator = eventSource.getEventIterator(this.startTime,
                                                     this.endTime);
         while (iterator.hasNext()) {
-            this.eventGrid.add(iterator.next());
+            var endpoints = Timegrid.WeekLayout.getEndpoints(iterator.next());
+            console.log(endpoints[0].time);
+            this.eventGrid.addAll(endpoints);
         }
     }
 };
@@ -86,13 +59,13 @@ Timegrid.WeekLayout.prototype.render = function(doc) {
         for (x = 0; x < this.xSize; x++) {
             var cell = doc.createElement("td");
             var elist = doc.createElement("ul");
-            var events = this.eventGrid.get(x,y);
+            var endpoints = this.eventGrid.get(x,y);
             row.appendChild(cell);
             cell.appendChild(elist);
-            for (i in events) {
+            for (i in endpoints) {
                 var ediv = doc.createElement("div");
                 var jediv = $(ediv); // jQuery!
-                var event = events[i];
+                var endpoint = endpoints[i];
                 jediv.addClass("timegrid-event");
                 jediv.css("height", 30 * event.getInterval().hours);
                 ediv.innerHTML = event.getText();
@@ -104,11 +77,12 @@ Timegrid.WeekLayout.prototype.render = function(doc) {
     return layoutDiv;
 };
 
-Timegrid.MonthLayout = function(params) {
-    Timegrid.MonthLayout.superclass.call(this, params);
-    this.xSize = 7;
-    this.ySize = 5;
-    this.xMapper = function(evt) {};
-    this.yMapper = function(evt) {};
-};
-Timegrid.extend(Timegrid.MonthLayout, Timegrid.Layout);
+Timegrid.WeekLayout.getEndpoints = function(evt) {
+    return [ { type: "start",
+               time: evt.getStart(),
+               event: evt },
+             { type: "end",
+               time: evt.getEnd(),
+               event: evt } ];
+}
+

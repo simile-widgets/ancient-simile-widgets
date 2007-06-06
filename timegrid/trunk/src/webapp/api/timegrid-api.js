@@ -25,12 +25,15 @@
             "util/debug.js",
             "util/data-structure.js",
             
-            "event-grid.js",
+            "grid.js",
             "units.js",
             "sources.js",
             "themes.js",
             "labellers.js",
-            "layouts.js"
+            "layouts.js",
+
+            "layouts/weekly.js",
+            "layouts/monthly.js"
         ];
         var cssFiles = [
             "timegrid.css"
