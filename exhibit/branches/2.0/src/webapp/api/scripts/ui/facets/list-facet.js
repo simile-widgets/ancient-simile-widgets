@@ -32,10 +32,8 @@ Exhibit.ListFacet._settingSpecs = {
 };
 
 Exhibit.ListFacet.create = function(configuration, containerElmt, uiContext) {
-    var facet = new Exhibit.ListFacet(
-        containerElmt,
-        Exhibit.UIContext.create(configuration, uiContext)
-    );
+    var uiContext = Exhibit.UIContext.create(configuration, uiContext);
+    var facet = new Exhibit.ListFacet(containerElmt, uiContext);
     
     Exhibit.ListFacet._configure(facet, configuration);
     
@@ -47,9 +45,10 @@ Exhibit.ListFacet.create = function(configuration, containerElmt, uiContext) {
 
 Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
+    var uiContext = Exhibit.UIContext.createFromDOM(configElmt, uiContext);
     var facet = new Exhibit.ListFacet(
         containerElmt != null ? containerElmt : configElmt, 
-        Exhibit.UIContext.create(configuration, uiContext)
+        uiContext
     );
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.ListFacet._settingSpecs, facet._settings);

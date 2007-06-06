@@ -3340,6 +3340,246 @@ Exhibit.Persistence.getItemLink=function(itemID){
 return Exhibit.Persistence.getURLWithoutQueryAndHash()+"#"+encodeURIComponent(itemID);
 };
 
+/* color-coder.js */
+
+
+
+Exhibit.ColorCoder=function(uiContext){
+this._uiContext=uiContext;
+this._settings={};
+
+this._map={};
+this._mixedCase={label:"mixed",color:"#fff"};
+this._missingCase={label:"missing",color:"#888"};
+this._othersCase={label:"others",color:"#aaa"};
+};
+
+Exhibit.ColorCoder._settingSpecs={
+};
+
+Exhibit.ColorCoder.create=function(configuration,uiContext){
+var coder=new Exhibit.ColorCoder(Exhibit.UIContext.create(configuration,uiContext));
+
+Exhibit.ColorCoder._configure(coder,configuration);
+return coder;
+};
+
+Exhibit.ColorCoder.createFromDOM=function(configElmt,uiContext){
+configElmt.style.display="none";
+
+var configuration=Exhibit.getConfigurationFromDOM(configElmt);
+var coder=new Exhibit.ColorCoder(Exhibit.UIContext.create(configuration,uiContext));
+
+Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.ColorCoder._settingSpecs,coder._settings);
+
+try{
+var node=configElmt.firstChild;
+while(node!=null){
+if(node.nodeType==1){
+coder._addEntry(
+Exhibit.getAttribute(node,"case"),
+node.firstChild.nodeValue.trim(),
+Exhibit.getAttribute(node,"color"));
+}
+node=node.nextSibling;
+}
+}catch(e){
+SimileAjax.Debug.exception(e,"ColorCoder: Error processing configuration of coder");
+}
+
+Exhibit.ColorCoder._configure(coder,configuration);
+return coder;
+};
+
+Exhibit.ColorCoder._configure=function(coder,configuration){
+Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.ColorCoder._settingSpecs,coder._settings);
+
+if("entries"in configuration){
+var entries=configuration.entries;
+for(var i=0;i<entries.length;i++){
+coder._addEntry(entries[i].kase,entries[i].key,entries[i].color);
+}
+}
+}
+
+Exhibit.ColorCoder.prototype.dispose=function(){
+this._uiContext=null;
+this._settings=null;
+};
+
+Exhibit.ColorCoder._colorTable={
+"red":"#ff0000",
+"green":"#00ff00",
+"blue":"#0000ff",
+"white":"#ffffff",
+"black":"#000000",
+"gray":"#888888"
+};
+
+Exhibit.ColorCoder.prototype._addEntry=function(kase,key,color){
+if(color in Exhibit.ColorCoder._colorTable){
+color=Exhibit.ColorCoder._colorTable[color];
+}
+
+var entry=null;
+switch(kase){
+case"others":entry=this._othersCase;break;
+case"mixed":entry=this._mixedCase;break;
+case"missing":entry=this._missingCase;break;
+}
+if(entry!=null){
+entry.label=key;
+entry.color=color;
+}else{
+this._map[key]={color:color};
+}
+};
+
+Exhibit.ColorCoder.prototype.translate=function(key,flags){
+if(key in this._map){
+if(flags)flags.keys.add(key);
+return this._map[key].color;
+}else if(key==null){
+if(flags)flags.missing=true;
+return this._missingCase.color;
+}else{
+if(flags)flags.others=true;
+return this._othersCase.color;
+}
+};
+
+Exhibit.ColorCoder.prototype.translateSet=function(keys,flags){
+var color=null;
+var self=this;
+keys.visit(function(key){
+var color2=self.translate(key,flags);
+if(color==null){
+color=color2;
+}else if(color!=color2){
+if(flags)flags.mixed=true;
+color=self._mixedCase.color;
+return true;
+}
+return false;
+});
+
+if(color!=null){
+return color;
+}else{
+if(flags)flags.missing=true;
+return this._missingCase.color;
+}
+};
+
+Exhibit.ColorCoder.prototype.getOthersLabel=function(){
+return this._othersCase.label;
+};
+Exhibit.ColorCoder.prototype.getOthersColor=function(){
+return this._othersCase.color;
+};
+
+Exhibit.ColorCoder.prototype.getMissingLabel=function(){
+return this._missingCase.label;
+};
+Exhibit.ColorCoder.prototype.getMissingColor=function(){
+return this._missingCase.color;
+};
+
+Exhibit.ColorCoder.prototype.getMixedLabel=function(){
+return this._mixedCase.label;
+};
+Exhibit.ColorCoder.prototype.getMixedColor=function(){
+return this._mixedCase.color;
+};
+
+
+/* default-color-coder.js */
+
+
+
+Exhibit.DefaultColorCoder=function(uiContext){
+};
+
+Exhibit.DefaultColorCoder._colors=[
+"#FF9000",
+"#5D7CBA",
+"#A97838",
+"#8B9BBA",
+"#FFC77F",
+"#003EBA",
+"#29447B",
+"#543C1C"
+];
+Exhibit.DefaultColorCoder._map={};
+Exhibit.DefaultColorCoder._mixedCase={label:"mixed",color:"#fff"};
+Exhibit.DefaultColorCoder._othersCase={label:"others",color:"#aaa"};
+Exhibit.DefaultColorCoder._missingCase={label:"missing",color:"#888"};
+Exhibit.DefaultColorCoder._nextColor=0;
+
+Exhibit.DefaultColorCoder.prototype.translate=function(key,flags){
+if(key==null){
+if(flags)flags.missing=true;
+return Exhibit.DefaultColorCoder._missingCase.color;
+}else{
+if(flags)flags.keys.add(key);
+if(key in Exhibit.DefaultColorCoder._map){
+return Exhibit.DefaultColorCoder._map[key];
+}else{
+var color=Exhibit.DefaultColorCoder._colors[Exhibit.DefaultColorCoder._nextColor];
+Exhibit.DefaultColorCoder._nextColor=
+(Exhibit.DefaultColorCoder._nextColor+1)%Exhibit.DefaultColorCoder._colors.length;
+
+Exhibit.DefaultColorCoder._map[key]=color;
+return color;
+}
+}
+};
+
+Exhibit.DefaultColorCoder.prototype.translateSet=function(keys,flags){
+var color=null;
+var self=this;
+keys.visit(function(key){
+var color2=self.translate(key,flags);
+if(color==null){
+color=color2;
+}else if(color!=color2){
+color=Exhibit.DefaultColorCoder._mixedCase.color;
+flags.mixed=true;
+return true;
+}
+return false;
+});
+
+if(color!=null){
+return color;
+}else{
+flags.missing=true;
+return Exhibit.DefaultColorCoder._missingCase.color;
+}
+};
+
+Exhibit.DefaultColorCoder.prototype.getOthersLabel=function(){
+return Exhibit.DefaultColorCoder._othersCase.label;
+};
+Exhibit.DefaultColorCoder.prototype.getOthersColor=function(){
+return Exhibit.DefaultColorCoder._othersCase.color;
+};
+
+Exhibit.DefaultColorCoder.prototype.getMissingLabel=function(){
+return Exhibit.DefaultColorCoder._missingCase.label;
+};
+Exhibit.DefaultColorCoder.prototype.getMissingColor=function(){
+return Exhibit.DefaultColorCoder._missingCase.color;
+};
+
+Exhibit.DefaultColorCoder.prototype.getMixedLabel=function(){
+return Exhibit.DefaultColorCoder._mixedCase.label;
+};
+Exhibit.DefaultColorCoder.prototype.getMixedColor=function(){
+return Exhibit.DefaultColorCoder._mixedCase.color;
+};
+
+
 /* list-facet.js */
 
 
@@ -3373,10 +3613,8 @@ Exhibit.ListFacet._settingSpecs={
 };
 
 Exhibit.ListFacet.create=function(configuration,containerElmt,uiContext){
-var facet=new Exhibit.ListFacet(
-containerElmt,
-Exhibit.UIContext.create(configuration,uiContext)
-);
+var uiContext=Exhibit.UIContext.create(configuration,uiContext);
+var facet=new Exhibit.ListFacet(containerElmt,uiContext);
 
 Exhibit.ListFacet._configure(facet,configuration);
 
@@ -3388,9 +3626,10 @@ return facet;
 
 Exhibit.ListFacet.createFromDOM=function(configElmt,containerElmt,uiContext){
 var configuration=Exhibit.getConfigurationFromDOM(configElmt);
+var uiContext=Exhibit.UIContext.createFromDOM(configElmt,uiContext);
 var facet=new Exhibit.ListFacet(
 containerElmt!=null?containerElmt:configElmt,
-Exhibit.UIContext.create(configuration,uiContext)
+uiContext
 );
 
 Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.ListFacet._settingSpecs,facet._settings);
@@ -3743,9 +3982,10 @@ Exhibit.NumericRangeFacet._settingSpecs={
 };
 
 Exhibit.NumericRangeFacet.create=function(configuration,containerElmt,uiContext){
+var uiContext=Exhibit.UIContext.create(configuration,uiContext);
 var facet=new Exhibit.NumericRangeFacet(
 containerElmt,
-Exhibit.UIContext.create(configuration,uiContext)
+uiContext
 );
 
 Exhibit.NumericRangeFacet._configure(facet,configuration);
@@ -3758,9 +3998,10 @@ return facet;
 
 Exhibit.NumericRangeFacet.createFromDOM=function(configElmt,containerElmt,uiContext){
 var configuration=Exhibit.getConfigurationFromDOM(configElmt);
+var uiContext=Exhibit.UIContext.createFromDOM(configElmt,uiContext);
 var facet=new Exhibit.NumericRangeFacet(
 containerElmt!=null?containerElmt:configElmt,
-Exhibit.UIContext.create(configuration,uiContext)
+uiContext
 );
 
 Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.NumericRangeFacet._settingSpecs,facet._settings);

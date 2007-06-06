@@ -30,9 +30,10 @@ Exhibit.NumericRangeFacet._settingSpecs = {
 };
 
 Exhibit.NumericRangeFacet.create = function(configuration, containerElmt, uiContext) {
+    var uiContext = Exhibit.UIContext.create(configuration, uiContext);
     var facet = new Exhibit.NumericRangeFacet(
         containerElmt,
-        Exhibit.UIContext.create(configuration, uiContext)
+        uiContext
     );
     
     Exhibit.NumericRangeFacet._configure(facet, configuration);
@@ -45,9 +46,10 @@ Exhibit.NumericRangeFacet.create = function(configuration, containerElmt, uiCont
 
 Exhibit.NumericRangeFacet.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
+    var uiContext = Exhibit.UIContext.createFromDOM(configElmt, uiContext);
     var facet = new Exhibit.NumericRangeFacet(
         containerElmt != null ? containerElmt : configElmt, 
-        Exhibit.UIContext.create(configuration, uiContext)
+        uiContext
     );
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.NumericRangeFacet._settingSpecs, facet._settings);
