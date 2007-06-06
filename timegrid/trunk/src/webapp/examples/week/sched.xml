@@ -27,6 +27,11 @@
         title="One Nap to Rule Them All">
         So maybe I was a little tired.
     </event>
+    <event start="Tue Apr 24 2007 10:00:00 GMT-0400"
+        end="Tue Apr 24 2007 18:00:00 GMT-0400" isDuration="true"
+        title="Snoring">
+        Don't judge.
+    </event>
     <event start="Thu Apr 26 2007 17:00:00 GMT-0400"
         end="Thu Apr 26 2007 18:00:00 GMT-0400" isDuration="true"
         title="Dinner">

@@ -62,9 +62,13 @@ Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
                     // Push the event div onto the current events set
                     currentEvents[endpoint.event.getID()] = eventDiv;
                     currentCount++;
-                    // Adjust widths as necessary
+                    // Adjust widths and offsets as necessary
+                    var hIndex = 0;
                     for each (eDiv in currentEvents) {
-                        $(eDiv).css("width", this.xCell / currentCount - 1);
+                        var newWidth = this.xCell / currentCount;
+                        $(eDiv).css("width", newWidth - 1);
+                        $(eDiv).css("left", this.xCell * x + newWidth * hIndex);
+                        hIndex++;
                     }
                 } else {
                     // Pop event from current events set
