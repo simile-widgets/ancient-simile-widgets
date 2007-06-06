@@ -9,11 +9,10 @@ Exhibit.MapView = function(containerElmt, uiContext) {
 
     this._settings = {};
     this._accessors = {
-        getProxy: function(itemID, database, visitor) { visitor(itemID); }
+        getProxy: function(itemID, database, visitor) { visitor(itemID); },
+        getColorKey: null
     };
-    
-    this._colorMap = {};
-    this._maxColorIndex = 0;
+    this._colorCoder = null;
     
     var view = this;
     this._listener = { 
@@ -33,7 +32,9 @@ Exhibit.MapView._settingSpecs = {
     "type":             { type: "enum",     defaultValue: "normal", choices: [ "normal", "satellite", "hybrid" ] },
     "bubbleTip":        { type: "enum",     defaultValue: "top",    choices: [ "top", "bottom" ] },
     "mapHeight":        { type: "int",      defaultValue: 400       },
-    "mapConstructor":   { type: "function", defaultValue: null      }
+    "mapConstructor":   { type: "function", defaultValue: null      },
+    "color":            { type: "text",     defaultValue: "#FF9000" },
+    "colorCoder":       { type: "text",     defaultValue: null      }
 };
 
 Exhibit.MapView._accessorSpecs = [
@@ -72,8 +73,12 @@ Exhibit.MapView._accessorSpecs = [
             }
         ]
     },
-    {   accessorName:   "getColor",
-        attributeName:  "marker",
+    {   accessorName:   "getColorKey",
+        attributeName:  "marker", // backward compatibility
+        type:           "text"
+    },
+    {   accessorName:   "getColorKey",
+        attributeName:  "colorKey",
         type:           "text"
     }
 ];
@@ -85,6 +90,7 @@ Exhibit.MapView.create = function(configuration, containerElmt, uiContext) {
     );
     Exhibit.MapView._configure(view, configuration);
     
+    view._internalValidate();
     view._initializeUI();
     return view;
 };
@@ -100,6 +106,7 @@ Exhibit.MapView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.MapView._settingSpecs, view._settings);
     Exhibit.MapView._configure(view, configuration);
     
+    view._internalValidate();
     view._initializeUI();
     return view;
 };
@@ -114,31 +121,6 @@ Exhibit.MapView._configure = function(view, configuration) {
             accessors.getLatlng(proxy, database, visitor);
         });
     };
-};
-
-Exhibit.MapView._colors = [
-    {   color:  "FF9000"
-    },
-    {   color:  "5D7CBA"
-    },
-    {   color:  "A97838"
-    },
-    {   color:  "8B9BBA"
-    },
-    {   color:  "FFC77F"
-    },
-    {   color:  "003EBA"
-    },
-    {   color:  "29447B"
-    },
-    {   color:  "543C1C"
-    }
-];
-Exhibit.MapView._wildcardMarker = {
-    color:  "888888"
-};
-Exhibit.MapView._mixMarker = {
-    color:  "FFFFFF"
 };
 
 Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProperty, outputTextArea, database, accuracy) {
@@ -221,6 +203,18 @@ Exhibit.MapView.prototype.dispose = function() {
     GUnload();
 };
 
+Exhibit.MapView.prototype._internalValidate = function() {
+    if ("getColorKey" in this._accessors) {
+        if ("colorCoder" in this._settings) {
+            this._colorCoder = this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+        }
+        
+        if (this._colorCoder == null) {
+            this._colorCoder = new Exhibit.DefaultColorCoder(this._uiContext);
+        }
+    }
+};
+
 Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     var settings = this._settings;
@@ -237,11 +231,10 @@ Exhibit.MapView.prototype._initializeUI = function() {
         {   markerGenerator: function(color) {
                 var shape = "square";
                 return SimileAjax.Graphics.createTranslucentImage(
-                    Exhibit.MapView._markerUrlPrefix + 
-                    [   shape,
-                        color,
-                        [ "m", shape, color, "legend.png" ].join("-")
-                    ].join("/")
+                    Exhibit.MapView._markerUrlPrefix +
+                        "?renderer=map-marker&shape=" + Exhibit.MapView._defaultMarkerShape + 
+                        "&width=20&height=20&pinHeight=5&background=" + color.substr(1),
+                    "middle"
                 );
             }
         }
@@ -263,9 +256,9 @@ Exhibit.MapView.prototype._initializeUI = function() {
         this._map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
         
         this._map.addControl(settings.size == "small" ? new GSmallMapControl() : new GLargeMapControl());
-    	if (settings.overviewControl) {
-    	    this._map.addControl(new GOverviewMapControl);
-    	}
+        if (settings.overviewControl) {
+            this._map.addControl(new GOverviewMapControl);
+        }
         if (settings.scaleControl) {
             this._map.addControl(new GScaleControl());
         }
@@ -305,14 +298,18 @@ Exhibit.MapView.prototype._reconstruct = function() {
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
         var locationToData = {};
+        var hasColorKey = (this._accessors.getColorKey != null);
         
         currentSet.visit(function(itemID) {
             var latlngs = [];
             self._getLatlng(itemID, database, function(v) { if ("lat" in v && "lng" in v) latlngs.push(v); });
             
             if (latlngs.length > 0) {
-                var colorKey = null;
-                accessors.getColor(itemID, database, function(v) { colorKey = v; });
+                var colorKeys = null;
+                if (hasColorKey) {
+                    colorKeys = new Exhibit.Set();
+                    accessors.getColorKey(itemID, database, function(v) { colorKeys.add(v); });
+                }
                 
                 for (var n = 0; n < latlngs.length; n++) {
                     var latlng = latlngs[n];
@@ -320,15 +317,18 @@ Exhibit.MapView.prototype._reconstruct = function() {
                     if (latlngKey in locationToData) {
                         var locationData = locationToData[latlngKey];
                         locationData.items.push(itemID);
-                        if (locationData.colorKey != colorKey) {
-                            locationData.colorKey = null;
+                        if (hasColorKey) {
+                            locationData.colorKeys.addSet(colorKeys);
                         }
                     } else {
-                        locationToData[latlngKey] = {
+                        var locationData = {
                             latlng:     latlng,
-                            items:      [ itemID ],
-                            colorKey:  colorKey
+                            items:      [ itemID ]
                         };
+                        if (hasColorKey) {
+                            locationData.colorKeys = colorKeys;
+                        }
+                        locationToData[latlngKey] = locationData;
                     }
                 }
             } else {
@@ -336,54 +336,36 @@ Exhibit.MapView.prototype._reconstruct = function() {
             }
         });
         
-        var legendWidget = this._dom.legendWidget;
+        var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
         var shape = Exhibit.MapView._defaultMarkerShape;
         var bounds, maxAutoZoom = Infinity;
         var addMarkerAtLocation = function(locationData) {
-            var items = locationData.items;
-            if( !bounds ) {
+            var itemCount = locationData.items.length;
+            if (!bounds) {
                 bounds = new GLatLngBounds();
             }
-
-            var colorData;
-            if (locationData.colorKey == null) {
-                colorData = Exhibit.MapView._mixMarker;
-                var mixed = Exhibit.MapView.l10n.mixedLegendKey;
-                legendWidget.addEntry(mixed, colorData.color, mixed);
-            } else {
-                if (locationData.colorKey in self._colorMap) {
-                    colorData = self._colorMap[locationData.colorKey];
-                } else {
-                    colorData = Exhibit.MapView._colors[self._maxColorIndex];
-                    self._colorMap[locationData.colorKey] = colorData;
-                    self._maxColorIndex = (self._maxColorIndex + 1) % Exhibit.MapView._colors.length;
-                }
-                legendWidget.addEntry(locationData.colorKey, colorData.color, locationData.colorKey);
+            
+            var color = self._settings.color;
+            if (hasColorKey) {
+                color = self._colorCoder.translateSet(locationData.colorKeys, colorCodingFlags);
             }
             
-            var icon;
-            if (items.length == 1) {
-                if (!("icon" in colorData)) {
-                    colorData.icon = Exhibit.MapView._makeIcon(shape, colorData.color, "space", settings.bubbleTip);
-                }
-                icon = colorData.icon;
-            } else {
-                icon = Exhibit.MapView._makeIcon(
-                    shape, 
-                    colorData.color, 
-                    locationData.items.length > 50 ? "..." : locationData.items.length
-                );
-            }
-
+            var icon = Exhibit.MapView._makeIcon(
+                shape, 
+                color, 
+                itemCount == 1 ? "" : itemCount.toString(),
+                self._settings.bubbleTip
+            );
+            
             var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
             var marker = new GMarker(point, icon);
             if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
                 maxAutoZoom = locationData.latlng.maxAutoZoom;
             }
             bounds.extend(point);
-
+            
             GEvent.addListener(marker, "click", function() { 
-        		self._map.openInfoWindow(marker.getPoint(), self._createInfoWindow(items));
+                marker.openInfoWindow(self._createInfoWindow(locationData.items));
             });
             self._map.addOverlay(marker);
         }
@@ -391,9 +373,29 @@ Exhibit.MapView.prototype._reconstruct = function() {
             addMarkerAtLocation(locationToData[latlngKey]);
         }
         
+        if (hasColorKey) {
+            var legendWidget = this._dom.legendWidget;
+            var colorCoder = this._colorCoder;
+            var keys = colorCodingFlags.keys.toArray().sort();
+            for (var k = 0; k < keys.length; k++) {
+                var key = keys[k];
+                var color = colorCoder.translate(key);
+                legendWidget.addEntry(color, key);
+            }
+            
+            if (colorCodingFlags.others) {
+                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+            }
+            if (colorCodingFlags.mixed) {
+                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+            }
+            if (colorCodingFlags.missing) {
+                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+            }
+        }
+        
         if (bounds && typeof settings.zoom == "undefined") {
-            var zoom = Math.max(0,self._map.getBoundsZoomLevel(bounds)-1);
-            //console.log( zoom, settings.maxAutoZoom, maxAutoZoom );
+            var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
             zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);
             self._map.setZoom(zoom);
         }
@@ -413,37 +415,50 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
 };
 
 Exhibit.MapView._iconData = null;
-Exhibit.MapView._markerUrlPrefix = "http://static.simile.mit.edu/graphics/maps/markers/";
-Exhibit.MapView._defaultMarkerShape = "square";
+Exhibit.MapView._markerUrlPrefix = "http://simile.mit.edu/painter/painter?";
+Exhibit.MapView._defaultMarkerShape = "circle";
 
 Exhibit.MapView._makeIcon = function(shape, color, label, bubbleTip) {
-    /*
-     *  Some static initialization is delayed until here.
-     */
-    if (Exhibit.MapView._iconData == null) {
-        Exhibit.MapView._iconData = {
-            iconSize:               new GSize(40, 35),
-            iconAnchor:             new GPoint(20, 35),
-            shadowSize:             new GSize(55, 40),
-            infoWindowAnchorBottom: new GPoint(19, 1),
-            infoWindowAnchorTop:    new GPoint(19, 34),
-            imageMap:               [ 6,0, 6,22, 15,22, 20,34, 25,25, 34,22, 34,0 ]
-        };
-    }
+    var extra = label.length * 3;
+    var halfWidth = 12 + extra;
+    var width = halfWidth * 2;
+    var bodyHeight = 24;
+    var pinHeight = 6;
+    var pinHalfWidth = 3;
+    var height = bodyHeight + pinHeight;
     
-    var data = Exhibit.MapView._iconData;
-    var icon = new GIcon(G_DEFAULT_ICON);
-    icon.image = Exhibit.MapView._markerUrlPrefix + 
-        [   shape,
-            color,
-            [ "m", shape, color, label + ".png" ].join("-")
-        ].join("/");
-    icon.shadow = Exhibit.MapView._markerUrlPrefix + [ "m", shape, "shadow.png" ].join("-");
-    icon.iconSize = data.iconSize;
-    icon.iconAnchor = data.iconAnchor;
-    icon.imageMap = data.imageMap;
-    icon.shadowSize = data.shadowSize;
-    icon.infoWindowAnchor = bubbleTip == "bottom" ? data.infoWindowAnchorBottom : data.infoWindowAnchorTop;
+    var icon = new GIcon();
+    icon.image = Exhibit.MapView._markerUrlPrefix + [
+        "renderer=map-marker",
+        "shape=" + shape,
+        "width=" + width,
+        "height=" + bodyHeight,
+        "pinHeight=" + pinHeight,
+        "pinWidth=" + (pinHalfWidth * 2),
+        "background=" + color.substr(1),
+        "label=" + label
+    ].join("&");
+    icon.shadow = Exhibit.MapView._markerUrlPrefix + [
+        "renderer=map-marker-shadow",
+        "shape=" + shape,
+        "width=" + width,
+        "height=" + bodyHeight,
+        "pinHeight=" + pinHeight,
+        "pinWidth=" + (pinHalfWidth * 2)
+    ].join("&");
+    icon.iconSize = new GSize(width, height);
+    icon.iconAnchor = new GPoint(halfWidth, height);
+    icon.imageMap = [ 
+        0, 0, 
+        0, bodyHeight, 
+        halfWidth - pinHalfWidth, bodyHeight,
+        halfWidth, height,
+        halfWidth + pinHalfWidth, bodyHeight,
+        width, bodyHeight,
+        width, 0
+    ];
+    icon.shadowSize = new GSize(width * 1.5, height - 2);
+    icon.infoWindowAnchor = (bubbleTip == "bottom") ? new GPoint(halfWidth, height) : new GPoint(halfWidth, 0);
     
     return icon;
 };

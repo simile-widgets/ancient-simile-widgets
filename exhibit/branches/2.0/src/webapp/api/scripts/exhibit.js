@@ -231,14 +231,20 @@ Exhibit._Impl.prototype.configure = function(configuration) {
  */
 Exhibit._Impl.prototype.configureFromDOM = function(root) {
     var collectionElmts = [];
-    var componentElmts = [];
+    var coderElmts = [];
+    var lensElmts = [];
+    var facetElmts = [];
+    var otherElmts = [];
     var f = function(elmt) {
         var role = Exhibit.getRoleAttribute(elmt);
         if (role.length > 0) {
-            if (role == "collection") {
-                collectionElmts.push(elmt);
-            } else {
-                componentElmts.push(elmt);
+            switch (role) {
+            case "collection":  collectionElmts.push(elmt); break;
+            case "coder":       coderElmts.push(elmt); break;
+            case "lens":        lensElmts.push(elmt); break;
+            case "facet":       facetElmts.push(elmt); break;
+            default: 
+                otherElmts.push(elmt);
             }
         } else {
             var node = elmt.firstChild;
@@ -261,19 +267,27 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
         this.setCollection(id, Exhibit.Collection.createFromDOM(id, elmt, this.getDatabase()));
     }
     
-    for (var i = 0; i < componentElmts.length; i++) {
-        var elmt = componentElmts[i];
-        try {
-            var component = Exhibit.UI.createFromDOM(elmt, this._uiContext);
-            if (component != null) {
-                var id = elmt.id;
-                if (id == null || id.length == 0) {
-                    id = "component" + Math.floor(Math.random() * 1000000);
+    var uiContext = this._uiContext;
+    var self = this;
+    var processElmts = function(elmts) {
+        for (var i = 0; i < elmts.length; i++) {
+            var elmt = elmts[i];
+            try {
+                var component = Exhibit.UI.createFromDOM(elmt, uiContext);
+                if (component != null) {
+                    var id = elmt.id;
+                    if (id == null || id.length == 0) {
+                        id = "component" + Math.floor(Math.random() * 1000000);
+                    }
+                    self.setComponent(id, component);
                 }
-                this.setComponent(id, component);
+            } catch (e) {
+                SimileAjax.Debug.exception(e);
             }
-        } catch (e) {
-            SimileAjax.Debug.exception(e);
         }
-    }
+    };
+    processElmts(coderElmts);
+    processElmts(lensElmts);
+    processElmts(facetElmts);
+    processElmts(otherElmts);
 };

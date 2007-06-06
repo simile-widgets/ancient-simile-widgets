@@ -133,11 +133,11 @@ Exhibit.PivotTableView.prototype._makeTable = function(items) {
     var self = this;
     var database = this._uiContext.getDatabase();
     
-    var rowResults = this._rowPath.walkForward(items, "item", database);
-    var columnResults = this._columnPath.walkForward(items, "item", database);
+    var rowResults = this._rowPath.walkForward(items, "item", database).getSet();
+    var columnResults = this._columnPath.walkForward(items, "item", database).getSet();
     
-    var rowValues = Exhibit.PivotTableView._sortValues(rowResults.values);
-    var columnValues = Exhibit.PivotTableView._sortValues(columnResults.values);
+    var rowValues = Exhibit.PivotTableView._sortValues(rowResults);
+    var columnValues = Exhibit.PivotTableView._sortValues(columnResults);
     
     var rowCount = rowValues.length;
     var columnCount = columnValues.length;
@@ -190,7 +190,7 @@ Exhibit.PivotTableView.prototype._makeTable = function(items) {
         td.innerHTML = rowValues[r].label;
         td.style.borderBottom = "1px solid #aaa";
         
-        var rowItems = this._rowPath.evaluateBackward(rowValue, rowResults.valueType, items, database).values;
+        var rowItems = this._rowPath.evaluateBackward(rowValue, rowResults.valueType, items, database).getSet();
         for (var c = 0; c < columnCount; c++) {
             var columnPair = columnValues[c];
             var columnValue = columnPair.value;
@@ -202,7 +202,7 @@ Exhibit.PivotTableView.prototype._makeTable = function(items) {
             
             var cellItemResults = this._columnPath.evaluateBackward(columnValue, columnResults.valueType, rowItems, database);
             var cellResults = this._cellExpression.evaluate(
-                { "value" : cellItemResults.values },
+                { "value" : cellItemResults.getSet() },
                 { "value" : cellItemResults.valueType },
                 "value",
                 database

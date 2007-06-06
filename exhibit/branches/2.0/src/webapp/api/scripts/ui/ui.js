@@ -23,6 +23,8 @@ Exhibit.UI.create = function(configuration, elmt, uiContext) {
             return Exhibit.UI.createView(configuration, elmt, uiContext);
         case "facet":
             return Exhibit.UI.createFacet(configuration, elmt, uiContext);
+        case "coder":
+            return Exhibit.UI.createCoder(configuration, uiContext);
         case "viewPanel":
             return Exhibit.ViewPanel.create(configuration, elmt, uiContext);
         case "logo":
@@ -45,6 +47,8 @@ Exhibit.UI.createFromDOM = function(elmt, uiContext) {
         return Exhibit.UI.createViewFromDOM(elmt, null, uiContext);
     case "facet":
         return Exhibit.UI.createFacetFromDOM(elmt, null, uiContext);
+    case "coder":
+        return Exhibit.UI.createCoderFromDOM(elmt, uiContext);
     case "viewPanel":
         return Exhibit.ViewPanel.createFromDOM(elmt, uiContext);
     case "logo":
@@ -62,20 +66,19 @@ Exhibit.UI.createView = function(configuration, elmt, uiContext) {
 };
 
 Exhibit.UI.createViewFromDOM = function(elmt, container, uiContext) {
-    var viewClassString = Exhibit.getAttribute(elmt, "viewClass");
-    var viewClass = Exhibit.TileView;
-    
-    if (viewClassString != null && viewClassString.length > 0) {
-        viewClass = Exhibit.UI.viewClassNameToViewClass(viewClassString);
-        if (viewClass == null) {
-            SimileAjax.Debug.warn("Unknown viewClass " + viewClassString);
-        }
-    }
+    var viewClass = Exhibit.UI.viewClassNameToViewClass(Exhibit.getAttribute(elmt, "viewClass"));
     return viewClass.createFromDOM(elmt, container, uiContext);
 };
 
 Exhibit.UI.viewClassNameToViewClass = function(name) {
-    return Exhibit.UI._stringToObject(name, "View");
+    if (name != null && name.length > 0) {
+        try {
+            return Exhibit.UI._stringToObject(name, "View");
+        } catch (e) {
+            SimileAjax.Debug.warn("Unknown viewClass " + name);
+        }
+    }
+    return Exhibit.TileView;
 };
 
 Exhibit.UI.createFacet = function(configuration, elmt, uiContext) {
@@ -87,13 +90,33 @@ Exhibit.UI.createFacetFromDOM = function(elmt, container, uiContext) {
     var facetClassString = Exhibit.getAttribute(elmt, "facetClass");
     var facetClass = Exhibit.ListFacet;
     if (facetClassString != null && facetClassString.length > 0) {
-        facetClass = Exhibit.UI._stringToObject(facetClassString, "Facet");
-        if (facetClass == null) {
-            SimileAjax.Debug.warn("Unknown facetClass " + facetClassString);
+        try {
+            facetClass = Exhibit.UI._stringToObject(facetClassString, "Facet");
+        } catch (e) {
+            SimileAjax.Debug.exception(e, "Unknown facetClass " + facetClassString);
         }
     }
     
     return facetClass.createFromDOM(elmt, container, uiContext);
+};
+
+Exhibit.UI.createCoder = function(configuration, uiContext) {
+    var coderClass = "coderClass" in configuration ? configuration.coderClass : Exhibit.ColorCoder;
+    return coderClass.create(configuration, uiContext);
+};
+
+Exhibit.UI.createCoderFromDOM = function(elmt, uiContext) {
+    var coderClassString = Exhibit.getAttribute(elmt, "coderClass");
+    var coderClass = Exhibit.ColorCoder;
+    if (coderClassString != null && coderClassString.length > 0) {
+        try {
+            coderClass = Exhibit.UI._stringToObject(coderClassString, "Coder");
+        } catch (e) {
+            SimileAjax.Debug.exception(e, "Unknown coderClass " + coderClassString);
+        }
+    }
+    
+    return coderClass.createFromDOM(elmt, uiContext);
 };
 
 Exhibit.UI._stringToObject = function(name, suffix) {
@@ -127,7 +150,7 @@ Exhibit.UI._stringToObject = function(name, suffix) {
         // ignore
     }
     
-    return null;
+    throw new Error("Unknown class " + name);
 };
 
 /*----------------------------------------------------------------------

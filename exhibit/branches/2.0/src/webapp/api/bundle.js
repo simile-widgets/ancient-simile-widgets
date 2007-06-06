@@ -3216,14 +3216,20 @@ this.setComponent(id,component);
 
 Exhibit._Impl.prototype.configureFromDOM=function(root){
 var collectionElmts=[];
-var componentElmts=[];
+var coderElmts=[];
+var lensElmts=[];
+var facetElmts=[];
+var otherElmts=[];
 var f=function(elmt){
 var role=Exhibit.getRoleAttribute(elmt);
 if(role.length>0){
-if(role=="collection"){
-collectionElmts.push(elmt);
-}else{
-componentElmts.push(elmt);
+switch(role){
+case"collection":collectionElmts.push(elmt);break;
+case"coder":coderElmts.push(elmt);break;
+case"lens":lensElmts.push(elmt);break;
+case"facet":facetElmts.push(elmt);break;
+default:
+otherElmts.push(elmt);
 }
 }else{
 var node=elmt.firstChild;
@@ -3246,21 +3252,29 @@ id="default";
 this.setCollection(id,Exhibit.Collection.createFromDOM(id,elmt,this.getDatabase()));
 }
 
-for(var i=0;i<componentElmts.length;i++){
-var elmt=componentElmts[i];
+var uiContext=this._uiContext;
+var self=this;
+var processElmts=function(elmts){
+for(var i=0;i<elmts.length;i++){
+var elmt=elmts[i];
 try{
-var component=Exhibit.UI.createFromDOM(elmt,this._uiContext);
+var component=Exhibit.UI.createFromDOM(elmt,uiContext);
 if(component!=null){
 var id=elmt.id;
 if(id==null||id.length==0){
 id="component"+Math.floor(Math.random()*1000000);
 }
-this.setComponent(id,component);
+self.setComponent(id,component);
 }
 }catch(e){
 SimileAjax.Debug.exception(e);
 }
 }
+};
+processElmts(coderElmts);
+processElmts(lensElmts);
+processElmts(facetElmts);
+processElmts(otherElmts);
 };
 
 
@@ -6210,6 +6224,8 @@ case"view":
 return Exhibit.UI.createView(configuration,elmt,uiContext);
 case"facet":
 return Exhibit.UI.createFacet(configuration,elmt,uiContext);
+case"coder":
+return Exhibit.UI.createCoder(configuration,uiContext);
 case"viewPanel":
 return Exhibit.ViewPanel.create(configuration,elmt,uiContext);
 case"logo":
@@ -6232,6 +6248,8 @@ case"view":
 return Exhibit.UI.createViewFromDOM(elmt,null,uiContext);
 case"facet":
 return Exhibit.UI.createFacetFromDOM(elmt,null,uiContext);
+case"coder":
+return Exhibit.UI.createCoderFromDOM(elmt,uiContext);
 case"viewPanel":
 return Exhibit.ViewPanel.createFromDOM(elmt,uiContext);
 case"logo":
@@ -6249,20 +6267,19 @@ return viewClass.create(configuration,elmt,uiContext);
 };
 
 Exhibit.UI.createViewFromDOM=function(elmt,container,uiContext){
-var viewClassString=Exhibit.getAttribute(elmt,"viewClass");
-var viewClass=Exhibit.TileView;
-
-if(viewClassString!=null&&viewClassString.length>0){
-viewClass=Exhibit.UI.viewClassNameToViewClass(viewClassString);
-if(viewClass==null){
-SimileAjax.Debug.warn("Unknown viewClass "+viewClassString);
-}
-}
+var viewClass=Exhibit.UI.viewClassNameToViewClass(Exhibit.getAttribute(elmt,"viewClass"));
 return viewClass.createFromDOM(elmt,container,uiContext);
 };
 
 Exhibit.UI.viewClassNameToViewClass=function(name){
+if(name!=null&&name.length>0){
+try{
 return Exhibit.UI._stringToObject(name,"View");
+}catch(e){
+SimileAjax.Debug.warn("Unknown viewClass "+name);
+}
+}
+return Exhibit.TileView;
 };
 
 Exhibit.UI.createFacet=function(configuration,elmt,uiContext){
@@ -6274,13 +6291,33 @@ Exhibit.UI.createFacetFromDOM=function(elmt,container,uiContext){
 var facetClassString=Exhibit.getAttribute(elmt,"facetClass");
 var facetClass=Exhibit.ListFacet;
 if(facetClassString!=null&&facetClassString.length>0){
+try{
 facetClass=Exhibit.UI._stringToObject(facetClassString,"Facet");
-if(facetClass==null){
-SimileAjax.Debug.warn("Unknown facetClass "+facetClassString);
+}catch(e){
+SimileAjax.Debug.exception(e,"Unknown facetClass "+facetClassString);
 }
 }
 
 return facetClass.createFromDOM(elmt,container,uiContext);
+};
+
+Exhibit.UI.createCoder=function(configuration,uiContext){
+var coderClass="coderClass"in configuration?configuration.coderClass:Exhibit.ColorCoder;
+return coderClass.create(configuration,uiContext);
+};
+
+Exhibit.UI.createCoderFromDOM=function(elmt,uiContext){
+var coderClassString=Exhibit.getAttribute(elmt,"coderClass");
+var coderClass=Exhibit.ColorCoder;
+if(coderClassString!=null&&coderClassString.length>0){
+try{
+coderClass=Exhibit.UI._stringToObject(coderClassString,"Coder");
+}catch(e){
+SimileAjax.Debug.exception(e,"Unknown coderClass "+coderClassString);
+}
+}
+
+return coderClass.createFromDOM(elmt,uiContext);
 };
 
 Exhibit.UI._stringToObject=function(name,suffix){
@@ -6314,7 +6351,7 @@ return eval(name);
 
 }
 
-return null;
+throw new Error("Unknown class "+name);
 };
 
 
@@ -6695,11 +6732,10 @@ this._uiContext=uiContext;
 
 this._settings={};
 this._accessors={
-getProxy:function(itemID,database,visitor){visitor(itemID);}
+getProxy:function(itemID,database,visitor){visitor(itemID);},
+getColorKey:null
 };
-
-this._colorMap={};
-this._maxColorIndex=0;
+this._colorCoder=null;
 
 var view=this;
 this._listener={
@@ -6719,7 +6755,9 @@ Exhibit.MapView._settingSpecs={
 "type":{type:"enum",defaultValue:"normal",choices:["normal","satellite","hybrid"]},
 "bubbleTip":{type:"enum",defaultValue:"top",choices:["top","bottom"]},
 "mapHeight":{type:"int",defaultValue:400},
-"mapConstructor":{type:"function",defaultValue:null}
+"mapConstructor":{type:"function",defaultValue:null},
+"color":{type:"text",defaultValue:"#FF9000"},
+"colorCoder":{type:"text",defaultValue:null}
 };
 
 Exhibit.MapView._accessorSpecs=[
@@ -6758,8 +6796,12 @@ optional:true
 }
 ]
 },
-{accessorName:"getColor",
+{accessorName:"getColorKey",
 attributeName:"marker",
+type:"text"
+},
+{accessorName:"getColorKey",
+attributeName:"colorKey",
 type:"text"
 }
 ];
@@ -6771,6 +6813,7 @@ Exhibit.UIContext.create(configuration,uiContext)
 );
 Exhibit.MapView._configure(view,configuration);
 
+view._internalValidate();
 view._initializeUI();
 return view;
 };
@@ -6786,6 +6829,7 @@ Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.MapView._acc
 Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.MapView._settingSpecs,view._settings);
 Exhibit.MapView._configure(view,configuration);
 
+view._internalValidate();
 view._initializeUI();
 return view;
 };
@@ -6800,31 +6844,6 @@ accessors.getProxy(itemID,database,function(proxy){
 accessors.getLatlng(proxy,database,visitor);
 });
 };
-};
-
-Exhibit.MapView._colors=[
-{color:"FF9000"
-},
-{color:"5D7CBA"
-},
-{color:"A97838"
-},
-{color:"8B9BBA"
-},
-{color:"FFC77F"
-},
-{color:"003EBA"
-},
-{color:"29447B"
-},
-{color:"543C1C"
-}
-];
-Exhibit.MapView._wildcardMarker={
-color:"888888"
-};
-Exhibit.MapView._mixMarker={
-color:"FFFFFF"
 };
 
 Exhibit.MapView.lookupLatLng=function(set,addressExpressionString,outputProperty,outputTextArea,database,accuracy){
@@ -6907,6 +6926,18 @@ this._div=null;
 GUnload();
 };
 
+Exhibit.MapView.prototype._internalValidate=function(){
+if("getColorKey"in this._accessors){
+if("colorCoder"in this._settings){
+this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+}
+
+if(this._colorCoder==null){
+this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
+}
+}
+};
+
 Exhibit.MapView.prototype._initializeUI=function(){
 var self=this;
 var settings=this._settings;
@@ -6924,10 +6955,9 @@ self._map.checkResize();
 var shape="square";
 return SimileAjax.Graphics.createTranslucentImage(
 Exhibit.MapView._markerUrlPrefix+
-[shape,
-color,
-["m",shape,color,"legend.png"].join("-")
-].join("/")
+"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+"&width=20&height=20&pinHeight=5&background="+color.substr(1),
+"middle"
 );
 }
 }
@@ -6989,14 +7019,18 @@ this._dom.legendWidget.clear();
 if(currentSize>0){
 var currentSet=collection.getRestrictedItems();
 var locationToData={};
+var hasColorKey=(this._accessors.getColorKey!=null);
 
 currentSet.visit(function(itemID){
 var latlngs=[];
 self._getLatlng(itemID,database,function(v){if("lat"in v&&"lng"in v)latlngs.push(v);});
 
 if(latlngs.length>0){
-var colorKey=null;
-accessors.getColor(itemID,database,function(v){colorKey=v;});
+var colorKeys=null;
+if(hasColorKey){
+colorKeys=new Exhibit.Set();
+accessors.getColorKey(itemID,database,function(v){colorKeys.add(v);});
+}
 
 for(var n=0;n<latlngs.length;n++){
 var latlng=latlngs[n];
@@ -7004,15 +7038,18 @@ var latlngKey=latlng.lat+","+latlng.lng;
 if(latlngKey in locationToData){
 var locationData=locationToData[latlngKey];
 locationData.items.push(itemID);
-if(locationData.colorKey!=colorKey){
-locationData.colorKey=null;
+if(hasColorKey){
+locationData.colorKeys.addSet(colorKeys);
 }
 }else{
-locationToData[latlngKey]={
+var locationData={
 latlng:latlng,
-items:[itemID],
-colorKey:colorKey
+items:[itemID]
 };
+if(hasColorKey){
+locationData.colorKeys=colorKeys;
+}
+locationToData[latlngKey]=locationData;
 }
 }
 }else{
@@ -7020,44 +7057,26 @@ unplottableItems.push(itemID);
 }
 });
 
-var legendWidget=this._dom.legendWidget;
+var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
 var shape=Exhibit.MapView._defaultMarkerShape;
 var bounds,maxAutoZoom=Infinity;
 var addMarkerAtLocation=function(locationData){
-var items=locationData.items;
+var itemCount=locationData.items.length;
 if(!bounds){
 bounds=new GLatLngBounds();
 }
 
-var colorData;
-if(locationData.colorKey==null){
-colorData=Exhibit.MapView._mixMarker;
-var mixed=Exhibit.MapView.l10n.mixedLegendKey;
-legendWidget.addEntry(mixed,colorData.color,mixed);
-}else{
-if(locationData.colorKey in self._colorMap){
-colorData=self._colorMap[locationData.colorKey];
-}else{
-colorData=Exhibit.MapView._colors[self._maxColorIndex];
-self._colorMap[locationData.colorKey]=colorData;
-self._maxColorIndex=(self._maxColorIndex+1)%Exhibit.MapView._colors.length;
-}
-legendWidget.addEntry(locationData.colorKey,colorData.color,locationData.colorKey);
+var color=self._settings.color;
+if(hasColorKey){
+color=self._colorCoder.translateSet(locationData.colorKeys,colorCodingFlags);
 }
 
-var icon;
-if(items.length==1){
-if(!("icon"in colorData)){
-colorData.icon=Exhibit.MapView._makeIcon(shape,colorData.color,"space",settings.bubbleTip);
-}
-icon=colorData.icon;
-}else{
-icon=Exhibit.MapView._makeIcon(
+var icon=Exhibit.MapView._makeIcon(
 shape,
-colorData.color,
-locationData.items.length>50?"...":locationData.items.length
+color,
+itemCount==1?"":itemCount.toString(),
+self._settings.bubbleTip
 );
-}
 
 var point=new GLatLng(locationData.latlng.lat,locationData.latlng.lng);
 var marker=new GMarker(point,icon);
@@ -7067,7 +7086,7 @@ maxAutoZoom=locationData.latlng.maxAutoZoom;
 bounds.extend(point);
 
 GEvent.addListener(marker,"click",function(){
-self._map.openInfoWindow(marker.getPoint(),self._createInfoWindow(items));
+marker.openInfoWindow(self._createInfoWindow(locationData.items));
 });
 self._map.addOverlay(marker);
 }
@@ -7075,9 +7094,29 @@ for(var latlngKey in locationToData){
 addMarkerAtLocation(locationToData[latlngKey]);
 }
 
+if(hasColorKey){
+var legendWidget=this._dom.legendWidget;
+var colorCoder=this._colorCoder;
+var keys=colorCodingFlags.keys.toArray().sort();
+for(var k=0;k<keys.length;k++){
+var key=keys[k];
+var color=colorCoder.translate(key);
+legendWidget.addEntry(color,key);
+}
+
+if(colorCodingFlags.others){
+legendWidget.addEntry(colorCoder.getOthersColor(),colorCoder.getOthersLabel());
+}
+if(colorCodingFlags.mixed){
+legendWidget.addEntry(colorCoder.getMixedColor(),colorCoder.getMixedLabel());
+}
+if(colorCodingFlags.missing){
+legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
+}
+}
+
 if(bounds&&typeof settings.zoom=="undefined"){
 var zoom=Math.max(0,self._map.getBoundsZoomLevel(bounds)-1);
-
 zoom=Math.min(zoom,maxAutoZoom,settings.maxAutoZoom);
 self._map.setZoom(zoom);
 }
@@ -7097,35 +7136,50 @@ this._uiContext
 };
 
 Exhibit.MapView._iconData=null;
-Exhibit.MapView._markerUrlPrefix="http://static.simile.mit.edu/graphics/maps/markers/";
-Exhibit.MapView._defaultMarkerShape="square";
+Exhibit.MapView._markerUrlPrefix="http://simile.mit.edu/painter/painter?";
+Exhibit.MapView._defaultMarkerShape="circle";
 
 Exhibit.MapView._makeIcon=function(shape,color,label,bubbleTip){
+var extra=label.length*3;
+var halfWidth=12+extra;
+var width=halfWidth*2;
+var bodyHeight=24;
+var pinHeight=6;
+var pinHalfWidth=3;
+var height=bodyHeight+pinHeight;
 
-if(Exhibit.MapView._iconData==null){
-Exhibit.MapView._iconData={
-iconSize:new GSize(40,35),
-iconAnchor:new GPoint(20,35),
-shadowSize:new GSize(55,40),
-infoWindowAnchorBottom:new GPoint(19,1),
-infoWindowAnchorTop:new GPoint(19,34),
-imageMap:[6,0,6,22,15,22,20,34,25,25,34,22,34,0]
-};
-}
-
-var data=Exhibit.MapView._iconData;
-var icon=new GIcon(G_DEFAULT_ICON);
-icon.image=Exhibit.MapView._markerUrlPrefix+
-[shape,
-color,
-["m",shape,color,label+".png"].join("-")
-].join("/");
-icon.shadow=Exhibit.MapView._markerUrlPrefix+["m",shape,"shadow.png"].join("-");
-icon.iconSize=data.iconSize;
-icon.iconAnchor=data.iconAnchor;
-icon.imageMap=data.imageMap;
-icon.shadowSize=data.shadowSize;
-icon.infoWindowAnchor=bubbleTip=="bottom"?data.infoWindowAnchorBottom:data.infoWindowAnchorTop;
+var icon=new GIcon();
+icon.image=Exhibit.MapView._markerUrlPrefix+[
+"renderer=map-marker",
+"shape="+shape,
+"width="+width,
+"height="+bodyHeight,
+"pinHeight="+pinHeight,
+"pinWidth="+(pinHalfWidth*2),
+"background="+color.substr(1),
+"label="+label
+].join("&");
+icon.shadow=Exhibit.MapView._markerUrlPrefix+[
+"renderer=map-marker-shadow",
+"shape="+shape,
+"width="+width,
+"height="+bodyHeight,
+"pinHeight="+pinHeight,
+"pinWidth="+(pinHalfWidth*2)
+].join("&");
+icon.iconSize=new GSize(width,height);
+icon.iconAnchor=new GPoint(halfWidth,height);
+icon.imageMap=[
+0,0,
+0,bodyHeight,
+halfWidth-pinHalfWidth,bodyHeight,
+halfWidth,height,
+halfWidth+pinHalfWidth,bodyHeight,
+width,bodyHeight,
+width,0
+];
+icon.shadowSize=new GSize(width*1.5,height-2);
+icon.infoWindowAnchor=(bubbleTip=="bottom")?new GPoint(halfWidth,height):new GPoint(halfWidth,0);
 
 return icon;
 };
@@ -8049,11 +8103,11 @@ Exhibit.PivotTableView.prototype._makeTable=function(items){
 var self=this;
 var database=this._uiContext.getDatabase();
 
-var rowResults=this._rowPath.walkForward(items,"item",database);
-var columnResults=this._columnPath.walkForward(items,"item",database);
+var rowResults=this._rowPath.walkForward(items,"item",database).getSet();
+var columnResults=this._columnPath.walkForward(items,"item",database).getSet();
 
-var rowValues=Exhibit.PivotTableView._sortValues(rowResults.values);
-var columnValues=Exhibit.PivotTableView._sortValues(columnResults.values);
+var rowValues=Exhibit.PivotTableView._sortValues(rowResults);
+var columnValues=Exhibit.PivotTableView._sortValues(columnResults);
 
 var rowCount=rowValues.length;
 var columnCount=columnValues.length;
@@ -8106,7 +8160,7 @@ td=tr.insertCell(cellToInsert++);
 td.innerHTML=rowValues[r].label;
 td.style.borderBottom="1px solid #aaa";
 
-var rowItems=this._rowPath.evaluateBackward(rowValue,rowResults.valueType,items,database).values;
+var rowItems=this._rowPath.evaluateBackward(rowValue,rowResults.valueType,items,database).getSet();
 for(var c=0;c<columnCount;c++){
 var columnPair=columnValues[c];
 var columnValue=columnPair.value;
@@ -8118,7 +8172,7 @@ td.title=rowPair.label+" / "+columnPair.label;
 
 var cellItemResults=this._columnPath.evaluateBackward(columnValue,columnResults.valueType,rowItems,database);
 var cellResults=this._cellExpression.evaluate(
-{"value":cellItemResults.values},
+{"value":cellItemResults.getSet()},
 {"value":cellItemResults.valueType},
 "value",
 database
@@ -8227,7 +8281,8 @@ this._uiContext=uiContext;
 this._settings={};
 this._accessors={
 getPointLabel:function(itemID,database,visitor){visitor(database.getObject(itemID,"label"));},
-getProxy:function(itemID,database,visitor){visitor(itemID);}
+getProxy:function(itemID,database,visitor){visitor(itemID);},
+getColorKey:null
 };
 
 
@@ -8257,7 +8312,9 @@ Exhibit.ScatterPlotView._settingSpecs={
 "yAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},
 "yAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},
 "xLabel":{type:"text",defaultValue:"x"},
-"yLabel":{type:"text",defaultValue:"y"}
+"yLabel":{type:"text",defaultValue:"y"},
+"color":{type:"text",defaultValue:"#0000aa"},
+"colorCoder":{type:"text",defaultValue:null}
 };
 
 Exhibit.ScatterPlotView._accessorSpecs=[
@@ -8289,8 +8346,8 @@ bindingName:"y"
 }
 ]
 },
-{accessorName:"getColor",
-attributeName:"color",
+{accessorName:"getColorKey",
+attributeName:"colorKey",
 type:"text"
 }
 ];
@@ -8302,6 +8359,7 @@ Exhibit.UIContext.create(configuration,uiContext)
 );
 Exhibit.ScatterPlotView._configure(view,configuration);
 
+view._internalValidate();
 view._initializeUI();
 return view;
 };
@@ -8317,6 +8375,7 @@ Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.ScatterPlotV
 Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.ScatterPlotView._settingSpecs,view._settings);
 Exhibit.ScatterPlotView._configure(view,configuration);
 
+view._internalValidate();
 view._initializeUI();
 return view;
 };
@@ -8390,6 +8449,18 @@ this._div.innerHTML="";
 this._div=null;
 };
 
+Exhibit.ScatterPlotView.prototype._internalValidate=function(){
+if("getColorKey"in this._accessors){
+if("colorCoder"in this._settings){
+this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+}
+
+if(this._colorCoder==null){
+this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
+}
+}
+};
+
 Exhibit.ScatterPlotView.prototype._initializeUI=function(){
 var self=this;
 
@@ -8431,6 +8502,7 @@ var unplottableItems=[];
 this._dom.legendWidget.clear();
 if(currentSize>0){
 var currentSet=collection.getRestrictedItems();
+var hasColorKey=(this._accessors.getColorKey!=null);
 
 var xyToData={};
 var xAxisMin=settings.xAxisMin;
@@ -8444,8 +8516,11 @@ var xys=[];
 self._getXY(itemID,database,function(xy){if("x"in xy&&"y"in xy)xys.push(xy);});
 
 if(xys.length>0){
-var colorKey="";
-accessors.getColor(itemID,database,function(v){colorKey=v;});
+var colorKeys=null;
+if(hasColorKey){
+colorKeys=new Exhibit.Set();
+accessors.getColorKey(itemID,database,function(v){colorKeys.add(v);});
+}
 
 for(var i=0;i<xys.length;i++){
 var xy=xys[i];
@@ -8453,8 +8528,8 @@ var xyKey=xy.x+","+xy.y;
 if(xyKey in xyToData){
 var xyData=xyToData[xyKey];
 xyData.items.push(itemID);
-if(xyData.colorKey!=colorKey){
-xyData.colorKey=null;
+if(hasColorKey){
+xyData.colorKeys.addSet(colorKeys);
 }
 }else{
 try{
@@ -8467,11 +8542,14 @@ continue;
 continue;
 }
 
-xyToData[xyKey]={
+var xyData={
 xy:xy,
-items:[itemID],
-colorKey:colorKey
+items:[itemID]
 };
+if(hasColorKey){
+xyData.colorKeys=colorKeys;
+}
+xyToData[xyKey]=xyData;
 
 xAxisMin=Math.min(xAxisMin,xy.scaledX);
 xAxisMax=Math.max(xAxisMax,xy.scaledX);
@@ -8616,23 +8694,14 @@ yNameDiv.innerHTML=settings.yLabel;
 yAxisDivInner.appendChild(yNameDiv);
 
 
-var legendWidget=this._dom.legendWidget;
+var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
 var addPointAtLocation=function(xyData){
 var items=xyData.items;
 
-var color;
-if(xyData.colorKey==null){
-color=Exhibit.ScatterPlotView._mixColor;
-}else{
-if(xyData.colorKey in self._colorKeyCache){
-color=self._colorKeyCache[xyData.colorKey];
-}else{
-color=Exhibit.ScatterPlotView._colors[self._maxColor];
-self._colorKeyCache[xyData.colorKey]=color;
-self._maxColor=(self._maxColor+1)%Exhibit.ScatterPlotView._colors.length;
+var color=settings.color;
+if(hasColorKey){
+color=self._colorCoder.translateSet(xyData.colorKeys,colorCodingFlags);
 }
-}
-legendWidget.addEntry(xyData.colorKey,color,xyData.colorKey);
 
 var xy=xyData.xy;
 var marker=Exhibit.ScatterPlotView._makePoint(
@@ -8654,6 +8723,27 @@ for(xyKey in xyToData){
 addPointAtLocation(xyToData[xyKey]);
 }
 canvasDiv.style.display="block";
+
+if(hasColorKey){
+var legendWidget=this._dom.legendWidget;
+var colorCoder=this._colorCoder;
+var keys=colorCodingFlags.keys.toArray().sort();
+for(var k=0;k<keys.length;k++){
+var key=keys[k];
+var color=colorCoder.translate(key);
+legendWidget.addEntry(color,key);
+}
+
+if(colorCodingFlags.others){
+legendWidget.addEntry(colorCoder.getOthersColor(),colorCoder.getOthersLabel());
+}
+if(colorCodingFlags.mixed){
+legendWidget.addEntry(colorCoder.getMixedColor(),colorCoder.getMixedLabel());
+}
+if(colorCodingFlags.missing){
+legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
+}
+}
 }
 this._dom.setUnplottableMessage(currentSize,unplottableItems);
 };
@@ -8664,8 +8754,8 @@ Exhibit.ViewUtilities.openBubbleForItems(elmt,items,this._uiContext);
 
 Exhibit.ScatterPlotView._makePoint=function(color,left,bottom,tooltip){
 var outer=document.createElement("div");
-outer.innerHTML="<div class='exhibit-scatterPlotView-point' style='background: #"+color+
-"; width: 6px; height: 6px; left: "+left+"px; bottom: "+bottom+"px;' title='"+tooltip+"'></div>";
+outer.innerHTML="<div class='exhibit-scatterPlotView-point' style='background: "+color+
+"; width: 6px; height: 6px; left: "+(left-3)+"px; bottom: "+(bottom+3)+"px;' title='"+tooltip+"'></div>";
 
 return outer.firstChild;
 };
@@ -9600,11 +9690,9 @@ this._uiContext=uiContext;
 this._settings={};
 this._accessors={
 getEventLabel:function(itemID,database,visitor){visitor(database.getObject(itemID,"label"));},
-getProxy:function(itemID,database,visitor){visitor(itemID);}
+getProxy:function(itemID,database,visitor){visitor(itemID);},
+getColorKey:null
 };
-
-this._colorMap=new Object();
-this._maxColorIndex=0;
 
 this._largestSize=0;
 
@@ -9629,7 +9717,8 @@ Exhibit.TimelineView._settingSpecs={
 "bottomBandUnit":{type:"enum",choices:Exhibit.TimelineView._intervalChoices},
 "bottomBandPixelsPerUnit":{type:"int",defaultValue:200},
 "timelineHeight":{type:"int",defaultValue:400},
-"timelineConstructor":{type:"function",defaultValue:null}
+"timelineConstructor":{type:"function",defaultValue:null},
+"colorCoder":{type:"text",defaultValue:null}
 };
 
 Exhibit.TimelineView._accessorSpecs=[
@@ -9649,8 +9738,12 @@ optional:true
 }
 ]
 },
-{accessorName:"getColor",
+{accessorName:"getColorKey",
 attributeName:"marker",
+type:"text"
+},
+{accessorName:"getColorKey",
+attributeName:"colorKey",
 type:"text"
 },
 {accessorName:"getEventLabel",
@@ -9666,6 +9759,7 @@ Exhibit.UIContext.create(configuration,uiContext)
 );
 Exhibit.TimelineView._configure(view,configuration);
 
+view._internalValidate();
 view._initializeUI();
 return view;
 };
@@ -9681,6 +9775,7 @@ Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.TimelineView
 Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.TimelineView._settingSpecs,view._settings);
 Exhibit.TimelineView._configure(view,configuration);
 
+view._internalValidate();
 view._initializeUI();
 return view;
 };
@@ -9713,6 +9808,18 @@ this._div=null;
 
 this._uiContext.dispose();
 this._uiContext=null;
+};
+
+Exhibit.TimelineView.prototype._internalValidate=function(){
+if("getColorKey"in this._accessors){
+if("colorCoder"in this._settings){
+this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+}
+
+if(this._colorCoder==null){
+this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
+}
+}
 };
 
 Exhibit.TimelineView.prototype._initializeUI=function(){
@@ -9762,25 +9869,15 @@ if(settings.topBandUnit!=null||settings.bottomBandUnit!=null){
 if(Exhibit.TimelineView._intervalLabelMap==null){
 Exhibit.TimelineView._intervalLabelMap={
 "millisecond":Timeline.DateTime.MILLISECOND,
-
 "second":Timeline.DateTime.SECOND,
-
 "minute":Timeline.DateTime.MINUTE,
-
 "hour":Timeline.DateTime.HOUR,
-
 "day":Timeline.DateTime.DAY,
-
 "week":Timeline.DateTime.WEEK,
-
 "month":Timeline.DateTime.MONTH,
-
 "year":Timeline.DateTime.YEAR,
-
 "decade":Timeline.DateTime.DECADE,
-
 "century":Timeline.DateTime.CENTURY,
-
 "millennium":Timeline.DateTime.MILLENNIUM
 };
 }
@@ -9864,10 +9961,11 @@ this._eventSource.clear();
 
 if(currentSize>0){
 var currentSet=collection.getRestrictedItems();
-var legendWidget=this._dom.legendWidget;
+var hasColorKey=(this._accessors.getColorKey!=null);
+var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
 var events=[];
 
-var addEvent=function(itemID,duration,colorData){
+var addEvent=function(itemID,duration,color){
 var label;
 accessors.getEventLabel(itemID,database,function(v){label=v;return true;});
 
@@ -9882,8 +9980,8 @@ label,
 null,
 null,
 null,
-"#"+colorData.color,
-"#"+(duration.end==null?colorData.color:colorData.textColor)
+color,
+"black"
 );
 evt._itemID=itemID;
 evt.getProperty=function(name){
@@ -9901,26 +9999,42 @@ var durations=[];
 self._getDuration(itemID,database,function(duration){if("start"in duration)durations.push(duration);});
 
 if(durations.length>0){
-var colorKey=null;
-accessors.getColor(itemID,database,function(v){colorKey=v;});
+var color=null;
+if(hasColorKey){
+var colorKeys=new Exhibit.Set();
+accessors.getColorKey(itemID,database,function(key){colorKeys.add(key);});
 
-var colorData;
-if(colorKey in self._colorMap){
-colorData=self._colorMap[colorKey];
-}else{
-colorData=Exhibit.TimelineView.markers[self._maxColorIndex];
-self._colorMap[colorKey]=colorData;
-self._maxColorIndex=(self._maxColorIndex+1)%Exhibit.TimelineView.markers.length;
+color=self._colorCoder.translateSet(colorKeys,colorCodingFlags);
 }
-legendWidget.addEntry(colorKey,colorData.color,colorKey);
 
 for(var i=0;i<durations.length;i++){
-addEvent(itemID,durations[i],colorData);
+addEvent(itemID,durations[i],color);
 }
 }else{
 unplottableItems.push(itemID);
 }
 });
+
+if(hasColorKey){
+var legendWidget=this._dom.legendWidget;
+var colorCoder=this._colorCoder;
+var keys=colorCodingFlags.keys.toArray().sort();
+for(var k=0;k<keys.length;k++){
+var key=keys[k];
+var color=colorCoder.translate(key);
+legendWidget.addEntry(color,key);
+}
+
+if(colorCodingFlags.others){
+legendWidget.addEntry(colorCoder.getOthersColor(),colorCoder.getOthersLabel());
+}
+if(colorCodingFlags.mixed){
+legendWidget.addEntry(colorCoder.getMixedColor(),colorCoder.getMixedLabel());
+}
+if(colorCodingFlags.missing){
+legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
+}
+}
 
 var plottableSize=currentSize-unplottableItems.length;
 if(plottableSize>this._largestSize){
@@ -9944,34 +10058,6 @@ this._dom.setUnplottableMessage(currentSize,unplottableItems);
 Exhibit.TimelineView.prototype._fillInfoBubble=function(evt,elmt,theme,labeller){
 this._uiContext.getLensRegistry().createLens(evt._itemID,elmt,this._uiContext);
 };
-
-Exhibit.TimelineView.markers=[
-{color:"FF9000",
-textColor:"000000"
-},
-{color:"5D7CBA",
-textColor:"000000"
-},
-{color:"A97838",
-textColor:"000000"
-},
-{color:"8B9BBA",
-textColor:"000000"
-},
-{color:"BF955F",
-textColor:"000000"
-},
-{color:"003EBA",
-textColor:"FFFFFF"
-},
-{color:"29447B",
-textColor:"FFFFFF"
-},
-{color:"543C1C",
-textColor:"FFFFFF"
-}
-];
-
 
 /* view-panel.js */
 
@@ -10446,9 +10532,6 @@ this._configuration=configuration;
 this._div=containerElmt;
 this._uiContext=uiContext;
 
-this._sortedKeys=[];
-this._labelNodes={};
-
 this._markerGenerator="markerGenerator"in configuration?
 configuration.markerGenerator:
 Exhibit.LegendWidget._defaultColorMarkerGenerator;
@@ -10478,15 +10561,9 @@ this._div.innerHTML="";
 
 Exhibit.LegendWidget.prototype.clear=function(){
 this._div.innerHTML="";
-this._sortedKeys=[];
-this._labelNodes={};
 };
 
-Exhibit.LegendWidget.prototype.addEntry=function(key,value,label){
-if((key in this._labelNodes)||(key==null)){
-return;
-}
-
+Exhibit.LegendWidget.prototype.addEntry=function(value,label){
 label=(label!=null)?label.toString():key.toString();
 var dom=SimileAjax.DOM.createDOMFromString(
 "span",
@@ -10499,15 +10576,7 @@ label.replace(/\s+/g,"\u00a0")+
 );
 dom.elmt.className="exhibit-legendWidget-entry";
 this._labelStyler(dom.label,value);
-
-this._labelNodes[key]=dom;
-this._sortedKeys.push(key);
-this._sortedKeys.sort(Exhibit.LegendWidget._localeSort);
-
-this._div.innerHTML="";
-for(var i=0;dom=this._labelNodes[this._sortedKeys[i]];i++){
 this._div.appendChild(dom.elmt);
-}
 };
 
 Exhibit.LegendWidget._localeSort=function(a,b){
@@ -10517,7 +10586,7 @@ return a.localeCompare(b);
 Exhibit.LegendWidget._defaultColorMarkerGenerator=function(value){
 var span=document.createElement("span");
 span.className="exhibit-legendWidget-entry-swatch";
-span.style.background="#"+value;
+span.style.background=value;
 span.innerHTML="\u00a0\u00a0";
 return span;
 };
@@ -11119,18 +11188,13 @@ break;
 Exhibit.SettingsUtilities=new Object();
 
 
-
-
 Exhibit.SettingsUtilities.collectSettings=function(config,specs,settings){
-
 Exhibit.SettingsUtilities._internalCollectSettings(
 function(field){return config[field];},
 specs,
 settings
 );
 };
-
-
 
 Exhibit.SettingsUtilities.collectSettingsFromDOM=function(configElmt,specs,settings){
 Exhibit.SettingsUtilities._internalCollectSettings(
@@ -11140,31 +11204,18 @@ settings
 );
 };
 
-
 Exhibit.SettingsUtilities._internalCollectSettings=function(f,specs,settings){
-
 for(var field in specs){
-
 var spec=specs[field];
-
-
-
 var name=field;
-
 if("name"in spec){
-
 name=spec.name;
-
 }
-
 if(!(name in settings)&&"defaultValue"in spec){
 settings[name]=spec.defaultValue;
-
 }
 
-
 var value=f(field);
-
 if(value==null){
 continue;
 }
@@ -11173,133 +11224,73 @@ if(value.length==0){
 continue;
 }
 
-
 var type="text";
-
 if("type"in spec){
-
 type=spec.type;
-
 }
-
-
 
 var dimensions=1;
-
 if("dimensions"in spec){
-
 dimensions=spec.dimensions;
-
 }
-
-
 
 try{
-
 if(dimensions>1){
-
 var separator=",";
-
 if("separator"in spec){
-
 separator=spec.separator;
-
 }
-
-
 
 var a=value.split(separator);
 if(a.length!=dimensions){
 throw new Error("Expected a tuple of "+dimensions+" dimensions separated with "+separator+" but got "+value);
 }else{
-
 for(var i=0;i<a.length;i++){
-
 a[i]=Exhibit.SettingsUtilities._parseSetting(a[i].trim(),type,spec);
-
 }
-
-
 
 settings[name]=a;
 }
-
 }else{
-
 settings[name]=Exhibit.SettingsUtilities._parseSetting(value,type,spec);
-
 }
-
 }catch(e){
-
 SimileAjax.Debug.exception(e);
-
 }
-
 }
-
 };
 
-
-
 Exhibit.SettingsUtilities._parseSetting=function(s,type,spec){
-
 if(type=="text"){
-
 return s;
-
 }else if(type=="float"){
-
 var f=parseFloat(s);
-
 if(isNaN(f)){
-
 throw new Error("Expected a floating point number but got "+s);
-
 }else{
-
 return f;
-
 }
-
 }else if(type=="int"){
-
 var n=parseInt(s);
-
 if(isNaN(n)){
-
 throw new Error("Expected an integer but got "+s);
-
 }else{
-
 return n;
-
 }
-
 }else if(type=="boolean"){
-
 s=s.toLowerCase();
-
 if(s=="true"){
-
 return true;
-
 }else if(s=="false"){
-
 return false;
-
 }else{
-
 throw new Error("Expected either 'true' or 'false' but got "+s);
-
 }
-
 }else if(type=="function"){
 try{
 if(typeof s=="string"){
 s=eval(s);
 }
-
 if(typeof s=="function"){
 return s;
 }
@@ -11308,43 +11299,27 @@ return s;
 }
 
 throw new Error("Expected a function or the name of a function but got "+s);
-
 }else if(type=="enum"){
-
 var choices=spec.choices;
-
 for(var i=0;i<choices.length;i++){
-
 if(choices[i]==s){
-
 return s;
-
 }
-
 }
-
 throw new Error("Expected one of "+choices.join(", ")+" but got "+s);
-
 }else{
-
 throw new Error("Unknown setting type "+type);
-
 }
-
 };
 
 
-
 Exhibit.SettingsUtilities.createAccessors=function(config,specs,accessors){
-
 Exhibit.SettingsUtilities._internalCreateAccessors(
 function(field){return config[field];},
 specs,
 accessors
 );
 };
-
-
 
 Exhibit.SettingsUtilities.createAccessorsFromDOM=function(configElmt,specs,accessors){
 Exhibit.SettingsUtilities._internalCreateAccessors(
@@ -11355,12 +11330,9 @@ accessors
 };
 
 Exhibit.SettingsUtilities._internalCreateAccessors=function(f,specs,accessors){
-
 for(var field in specs){
-
 var spec=specs[field];
 var accessorName=spec.accessorName;
-
 var accessor=null;
 var isTuple=false;
 

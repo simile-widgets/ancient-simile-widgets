@@ -55,6 +55,9 @@
             "ui/facets/list-facet.js",
             "ui/facets/numeric-range-facet.js",
             
+            "ui/coders/color-coder.js",
+            "ui/coders/default-color-coder.js",
+            
             "ui/widgets/logo.js",
             "ui/widgets/collection-summary-widget.js",
             "ui/widgets/resizable-div-widget.js",

@@ -30,12 +30,10 @@ Exhibit.SettingsUtilities.collectSettingsFromDOM = function(configElmt, specs, s
 Exhibit.SettingsUtilities._internalCollectSettings = function(f, specs, settings) {
     for (var field in specs) {
         var spec = specs[field];
-        
         var name = field;
         if ("name" in spec) {
             name = spec.name;
         }
-        
         if (!(name in settings) && "defaultValue" in spec) {
             settings[name] = spec.defaultValue;
         }
@@ -236,6 +234,7 @@ Exhibit.SettingsUtilities._createBindingsAccessor = function(f, bindingSpecs) {
 
 Exhibit.SettingsUtilities._createTupleAccessor = function(f, spec) {
     var value = f(spec.attributeName);
+
     if (value == null) {
         return null;
     }
@@ -255,8 +254,11 @@ Exhibit.SettingsUtilities._createTupleAccessor = function(f, spec) {
         
         var bindingNames = spec.bindingNames;
         var separator = ",";
+
         if ("separator" in spec) {
+
             separator = spec.separator;
+
         }
         
         return function(itemID, database, visitor, tuple) {
@@ -273,6 +275,7 @@ Exhibit.SettingsUtilities._createTupleAccessor = function(f, spec) {
                 }
             );
         };
+
     } catch (e) {
         SimileAjax.Debug.exception(e);
         return null;
@@ -281,6 +284,7 @@ Exhibit.SettingsUtilities._createTupleAccessor = function(f, spec) {
 
 Exhibit.SettingsUtilities._createElementalAccessor = function(f, spec) {
     var value = f(spec.attributeName);
+
     if (value == null) {
         return null;
     }
@@ -290,10 +294,14 @@ Exhibit.SettingsUtilities._createElementalAccessor = function(f, spec) {
     }
     
     var bindingType = "text";
+
     if ("type" in spec) {
+
         bindingType = spec.type;
+
     }
     
+
     try {
         var expression = Exhibit.ExpressionParser.parse(value);
         
@@ -304,6 +312,7 @@ Exhibit.SettingsUtilities._createElementalAccessor = function(f, spec) {
                 function(v) { return parser(v, visitor); }
             );
         };
+
     } catch (e) {
         SimileAjax.Debug.exception(e);
         return null;
@@ -319,6 +328,7 @@ Exhibit.SettingsUtilities._typeToParser = function(type) {
     case "boolean": return Exhibit.SettingsUtilities._booleanParser;
     default:
         throw new Error("Unknown setting type " + type);
+
     }
 }
 

@@ -9,7 +9,8 @@ Exhibit.ScatterPlotView = function(containerElmt, uiContext) {
     this._settings = {};
     this._accessors = {
         getPointLabel:  function(itemID, database, visitor) { visitor(database.getObject(itemID, "label")); },
-        getProxy:       function(itemID, database, visitor) { visitor(itemID); }
+        getProxy:       function(itemID, database, visitor) { visitor(itemID); },
+        getColorKey:    null
     };
     
     // Function maps that allow for other axis scales (logarithmic, etc.), defaults to identity/linear
@@ -39,7 +40,9 @@ Exhibit.ScatterPlotView._settingSpecs = {
     "yAxisMax":     { type: "float", defaultValue: Number.NEGATIVE_INFINITY },
     "yAxisType":    { type: "enum",  defaultValue: "linear", choices: [ "linear", "log" ] },
     "xLabel":       { type: "text",  defaultValue: "x" },
-    "yLabel":       { type: "text",  defaultValue: "y" }
+    "yLabel":       { type: "text",  defaultValue: "y" },
+    "color":        { type: "text",  defaultValue: "#0000aa" },
+    "colorCoder":   { type: "text",  defaultValue: null }
 };
 
 Exhibit.ScatterPlotView._accessorSpecs = [
@@ -71,8 +74,8 @@ Exhibit.ScatterPlotView._accessorSpecs = [
             }
         ]
     },
-    {   accessorName:   "getColor",
-        attributeName:  "color",
+    {   accessorName:   "getColorKey",
+        attributeName:  "colorKey",
         type:           "text"
     }
 ];
@@ -84,6 +87,7 @@ Exhibit.ScatterPlotView.create = function(configuration, containerElmt, uiContex
     );
     Exhibit.ScatterPlotView._configure(view, configuration);
     
+    view._internalValidate();
     view._initializeUI();
     return view;
 };
@@ -99,6 +103,7 @@ Exhibit.ScatterPlotView.createFromDOM = function(configElmt, containerElmt, uiCo
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.ScatterPlotView._settingSpecs, view._settings);
     Exhibit.ScatterPlotView._configure(view, configuration);
     
+    view._internalValidate();
     view._initializeUI();
     return view;
 };
@@ -139,6 +144,7 @@ Exhibit.ScatterPlotView._getAxisInverseFunc = function(s) {
     };
 }
 
+
 Exhibit.ScatterPlotView._colors = [
     "FF9000",
     "5D7CBA",
@@ -169,6 +175,18 @@ Exhibit.ScatterPlotView.prototype.dispose = function() {
     
     this._div.innerHTML = "";
     this._div = null;
+};
+
+Exhibit.ScatterPlotView.prototype._internalValidate = function() {
+    if ("getColorKey" in this._accessors) {
+        if ("colorCoder" in this._settings) {
+            this._colorCoder = this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+        }
+        
+        if (this._colorCoder == null) {
+            this._colorCoder = new Exhibit.DefaultColorCoder(this._uiContext);
+        }
+    }
 };
 
 Exhibit.ScatterPlotView.prototype._initializeUI = function() {
@@ -212,6 +230,7 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
     this._dom.legendWidget.clear();
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
+        var hasColorKey = (this._accessors.getColorKey != null);
         
         var xyToData = {};
         var xAxisMin = settings.xAxisMin;
@@ -227,8 +246,11 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             self._getXY(itemID, database, function(xy) { if ("x" in xy && "y" in xy) xys.push(xy); });
             
             if (xys.length > 0) {
-                var colorKey = "";
-                accessors.getColor(itemID, database, function(v) { colorKey = v; });
+                var colorKeys = null;
+                if (hasColorKey) {
+                    colorKeys = new Exhibit.Set();
+                    accessors.getColorKey(itemID, database, function(v) { colorKeys.add(v); });
+                }
                 
                 for (var i = 0; i < xys.length; i++) {
                     var xy = xys[i];
@@ -236,8 +258,8 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
                     if (xyKey in xyToData) {
                         var xyData = xyToData[xyKey];
                         xyData.items.push(itemID);
-                        if (xyData.colorKey != colorKey) {
-                            xyData.colorKey = null;
+                        if (hasColorKey) {
+                            xyData.colorKeys.addSet(colorKeys);
                         }
                     } else {
                         try {
@@ -250,11 +272,14 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
                             continue; // ignore the point since we can't scale it, e.g., log(0)
                         }
                         
-                        xyToData[xyKey] = {
+                        var xyData = {
                             xy:         xy,
-                            items:      [ itemID ],
-                            colorKey:  colorKey
+                            items:      [ itemID ]
                         };
+                        if (hasColorKey) {
+                            xyData.colorKeys = colorKeys;
+                        }
+                        xyToData[xyKey] = xyData;
                         
                         xAxisMin = Math.min(xAxisMin, xy.scaledX);
                         xAxisMax = Math.max(xAxisMax, xy.scaledX);
@@ -407,23 +432,14 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
         /*
          *  Plot the points
          */
-        var legendWidget = this._dom.legendWidget;
+        var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
         var addPointAtLocation = function(xyData) {
             var items = xyData.items;
             
-            var color;
-            if (xyData.colorKey == null) {
-                color = Exhibit.ScatterPlotView._mixColor;
-            } else {
-                if (xyData.colorKey in self._colorKeyCache) {
-                    color = self._colorKeyCache[xyData.colorKey];
-                } else {
-                    color = Exhibit.ScatterPlotView._colors[self._maxColor];
-                    self._colorKeyCache[xyData.colorKey] = color;
-                    self._maxColor = (self._maxColor + 1) % Exhibit.ScatterPlotView._colors.length;
-                }
+            var color = settings.color;
+            if (hasColorKey) {
+                color = self._colorCoder.translateSet(xyData.colorKeys, colorCodingFlags);
             }
-            legendWidget.addEntry(xyData.colorKey, color, xyData.colorKey);
             
             var xy = xyData.xy;
             var marker = Exhibit.ScatterPlotView._makePoint(
@@ -445,6 +461,27 @@ Exhibit.ScatterPlotView.prototype._reconstruct = function() {
             addPointAtLocation(xyToData[xyKey]);
         }
         canvasDiv.style.display = "block";
+        
+        if (hasColorKey) {
+            var legendWidget = this._dom.legendWidget;
+            var colorCoder = this._colorCoder;
+            var keys = colorCodingFlags.keys.toArray().sort();
+            for (var k = 0; k < keys.length; k++) {
+                var key = keys[k];
+                var color = colorCoder.translate(key);
+                legendWidget.addEntry(color, key);
+            }
+            
+            if (colorCodingFlags.others) {
+                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+            }
+            if (colorCodingFlags.mixed) {
+                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+            }
+            if (colorCodingFlags.missing) {
+                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+            }
+        }
     }
     this._dom.setUnplottableMessage(currentSize, unplottableItems);
 };
@@ -455,8 +492,8 @@ Exhibit.ScatterPlotView.prototype._openPopup = function(elmt, items) {
 
 Exhibit.ScatterPlotView._makePoint = function(color, left, bottom, tooltip) {
     var outer = document.createElement("div");
-    outer.innerHTML = "<div class='exhibit-scatterPlotView-point' style='background: #" + color + 
-        "; width: 6px; height: 6px; left: " + left + "px; bottom: " + bottom + "px;' title='" + tooltip + "'></div>";
+    outer.innerHTML = "<div class='exhibit-scatterPlotView-point' style='background: " + color + 
+        "; width: 6px; height: 6px; left: " + (left - 3) + "px; bottom: " + (bottom + 3) + "px;' title='" + tooltip + "'></div>";
         
     return outer.firstChild;
 };

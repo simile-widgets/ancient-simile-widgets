@@ -37,6 +37,15 @@
                 <h1>US Presidents</h1>
                 <p>Here is the <a href="presidents.js" target="_blank">Exhibit JSON data file</a>.
                 
+                <div ex:role="coder" ex:coderClass="Color" id="party-colors">
+                    <span ex:color="red">Republican</span>
+                    <span ex:color="blue">Democratic</span>
+                    
+                    <span ex:case="others"  ex:color="#aaa">Other parties</span>
+                    <span ex:case="mixed"   ex:color="#eee">Many parties</span>
+                    <span ex:case="missing" ex:color="#444">No party</span>
+                </div>
+                
                 <div id="exhibit-view-panel" ex:role="viewPanel">
                     <div class="item" ex:role="lens" style="display: none;">
                         <table cellpadding="10" width="100%">
@@ -81,7 +90,8 @@
                         ex:viewClass="Map"
                         ex:label="Birth Places"
                         ex:latlng=".birthLatLng"
-                        ex:marker=".party"
+                        ex:colorKey=".party"
+                        ex:colorCoder="party-colors"
                         ex:center="38.479394673276445, -95.361328125"
                         ex:zoom="4"
                         ex:bubbleWidth="200"
@@ -115,7 +125,8 @@
                         ex:proxy=".presidency"
                         ex:start=".inDate"
                         ex:end=".outDate"
-                        ex:marker=".party"
+                        ex:colorKey=".party"
+                        ex:colorCoder="party-colors"
                         ex:bubbleWidth="320"
                         ex:bubbleHeight="200"
                         ex:topBandPixelsPerUnit="400"
