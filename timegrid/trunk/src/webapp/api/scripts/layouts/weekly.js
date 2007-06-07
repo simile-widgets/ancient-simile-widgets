@@ -94,6 +94,7 @@ Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
 Timegrid.WeekLayout.prototype.renderGridlines = function(doc) {
     var gridlineContainer = doc.createElement("div");
     $(gridlineContainer).addClass("timegrid-gridlines");
+    gridlineContainer.style.height = this.ySize * this.yCell;
     for (var x = 0; x < this.xSize; x++) {
         var vlineDiv = $("<div></div>").addClass("timegrid-vline");
         vlineDiv.css("height", this.ySize * this.yCell);
