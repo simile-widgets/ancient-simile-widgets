@@ -33,14 +33,14 @@ td {
 }
 
 div.timegrid-container {
-    overflow: auto;
-    height: 400px;
-    min-width: 50px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 div.timegrid-hline {
     position: absolute;
     height: 1px;
+    overflow: hidden;
     background-color: #999;
 }
 

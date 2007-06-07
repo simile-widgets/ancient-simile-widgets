@@ -75,7 +75,6 @@ Timegrid._Impl.prototype._construct = function() {
     var container = this._container;
     var doc = container.ownerDocument;
 
-    $(container).addClass("timegrid-container");
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }

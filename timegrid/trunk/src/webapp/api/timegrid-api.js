@@ -24,7 +24,6 @@
             "util/html.js",
             "util/debug.js",
             "util/data-structure.js",
-            "util/niftycube.js",
             
             "grid.js",
             "units.js",
@@ -38,7 +37,6 @@
         ];
         var cssFiles = [
             "timegrid.css",
-            "niftyCorners.css"
         ];
         
         var locales = [ "en" ];

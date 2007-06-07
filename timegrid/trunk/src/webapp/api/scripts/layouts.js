@@ -27,3 +27,7 @@ Timegrid.Layout = function() {
     this.xMapper = function() {};
     this.yMapper = function() {};
 };
+
+Timegrid.Layout.prototype.configure = function(params) {
+
+};
