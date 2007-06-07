@@ -32,6 +32,12 @@ td {
     width: 100px;
 }
 
+div.timegrid-container {
+    overflow: auto;
+    height: 400px;
+    min-width: 50px;
+}
+
 div.timegrid-hline {
     position: absolute;
     height: 1px;

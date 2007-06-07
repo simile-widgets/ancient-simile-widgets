@@ -100,8 +100,7 @@ Timegrid.WeekLayout.prototype.renderGridlines = function(doc) {
 };
 
 Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {
-    var jediv = $("<div>" + evt.getText() + "</div>"); // jQuery!
-    console.log(evt.getStart());
+    var jediv = $("<div>" + evt.getText() + "</div>");
     jediv.addClass("timegrid-event");
     jediv.css("height", this.yCell * evt.getInterval().hours - 1);
     jediv.css("top", this.yCell * y);
