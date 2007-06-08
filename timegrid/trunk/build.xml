@@ -41,4 +41,13 @@
         </fileset>
     </concat>
   </target>
+  
+  <target name="docs">
+    <exec executable="perl">
+        <arg value="C:\Program Files\JSDoc\jsdoc.pl"/>
+        <arg value="-r"/>
+        <arg value="-d=docs"/>
+        <arg value="src"/>
+    </exec>
+  </target>
 </project>

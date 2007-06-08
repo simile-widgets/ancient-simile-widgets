@@ -1,4 +1,18 @@
-
+/******************************************************************************
+ * WeekLayout
+ * @fileoverview
+ *   This is where the weekly layout is defined.  The layout is designed to 
+ *   resemble the equivalent Google Calendar view.
+ * @author masont
+ *****************************************************************************/
+ 
+ /**
+  * Constructs a WeekLayout object.
+  * @class WeekLayout is a subclass of Layout that implements a weekly event
+  *     calendar, modeled off of the weekly view found in Google Calendar.
+  * @extends Timegrid.Layout
+  * @constructor
+  */
 Timegrid.WeekLayout = function(params) {
     Timegrid.WeekLayout.superclass.call(this, params);
     this.xSize = 7;
@@ -58,7 +72,7 @@ Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
     var eventContainer = doc.createElement("div");
     $(eventContainer).addClass("timegrid-events");
     var currentEvents = {};
-    var currentCount = 0; // We need to keep track of how many 
+    var currentCount = 0;
     for (x = 0; x < this.xSize; x++) {
         for (y = 0; y < this.ySize; y++) {
             var endpoints = this.eventGrid.get(x,y);
@@ -80,7 +94,7 @@ Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
                         $(eDiv).css("left", this.xCell * x + newWidth * hIndex + "%");
                         hIndex++;
                     }
-                } else {
+                } else if (endpoint.type == "end") {
                     // Pop event from current events set
                     delete currentEvents[endpoint.event.getID()];
                     currentCount--;

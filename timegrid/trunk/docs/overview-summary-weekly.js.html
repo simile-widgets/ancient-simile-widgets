@@ -1,0 +1,318 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+ Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="weekly.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b></b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>weekly.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		This is where the weekly layout is defined.  The layout is designed to 
+   resemble the equivalent Google Calendar view.
+ <BR/><BR/><B>Author:</B> masont<BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="Timegrid/WeekLayout.html">Timegrid.WeekLayout</a></b></td>
+    <td>WeekLayout is a subclass of Layout that implements a weekly event
+     calendar, modeled off of the weekly view found in Google Calendar.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">/******************************************************************************
+ * WeekLayout
+ * <span class="attrib">@fileoverview</span>
+ *   This is where the weekly layout is defined.  The layout is designed to 
+ *   resemble the equivalent Google Calendar view.
+ * <span class="attrib">@author</span> masont
+ *****************************************************************************/</span>
+ 
+ <span class="comment">/**
+  * Constructs a WeekLayout object.
+  * <span class="attrib">@class</span> WeekLayout is a subclass of Layout that implements a weekly event
+  *     calendar, modeled off of the weekly view found in Google Calendar.
+  * <span class="attrib">@extends</span> Timegrid.Layout
+  * <span class="attrib">@constructor</span>
+  */</span>
+Timegrid.WeekLayout = <span class="reserved">function</span>(params) {
+    Timegrid.WeekLayout.superclass.call(<span class="reserved">this</span>, params);
+    <span class="reserved">this</span>.xSize = 7;
+    <span class="reserved">this</span>.ySize = 24;
+    <span class="reserved">this</span>.xMapper = <span class="reserved">function</span>(obj) { <span class="reserved">return</span> obj.time.getDay(); };
+    <span class="reserved">this</span>.yMapper = <span class="reserved">function</span>(obj) { <span class="reserved">return</span> obj.time.getHours(); };
+    
+    <span class="reserved">this</span>.height = 500.0;
+    <span class="reserved">this</span>.width = 700.0;
+    <span class="reserved">this</span>.xCell = 100.0 / <span class="reserved">this</span>.xSize; <span class="comment">// x positions are calculated in %</span>
+    <span class="reserved">this</span>.yCell = (<span class="reserved">this</span>.height - 1) / <span class="reserved">this</span>.ySize;
+    
+    <span class="reserved">this</span>.yCell = 40;
+    <span class="reserved">this</span>.configure(params);
+};
+Timegrid.extend(Timegrid.WeekLayout, Timegrid.Layout);
+
+Timegrid.WeekLayout.<span class="reserved">prototype</span>.initializeGrid = <span class="reserved">function</span>(eventSource) {
+    <span class="reserved">this</span>.eventSource = eventSource;
+    <span class="reserved">this</span>.eventGrid = new Timegrid.Grid([], <span class="reserved">this</span>.xSize, <span class="reserved">this</span>.ySize, 
+                                           <span class="reserved">this</span>.xMapper, <span class="reserved">this</span>.yMapper);
+    <span class="reserved">this</span>.startTime = eventSource.getEarliestDate();
+    <span class="reserved">if</span> (<span class="reserved">this</span>.startTime) {
+        <span class="comment">// Here we compute the end of the week based on start time</span>
+        <span class="reserved">this</span>.endTime = new Date(<span class="reserved">this</span>.startTime);
+        <span class="reserved">this</span>.endTime.setDate(<span class="reserved">this</span>.endTime.getDate() + 
+                             (6 - <span class="reserved">this</span>.endTime.getDay()));
+        <span class="reserved">this</span>.endTime.setHours(24);
+        <span class="comment">// We only want events for one week</span>
+        var iterator = eventSource.getEventIterator(<span class="reserved">this</span>.startTime,
+                                                    <span class="reserved">this</span>.endTime);
+        <span class="reserved">while</span> (iterator.hasNext()) {
+            var endpoints = Timegrid.WeekLayout.getEndpoints(iterator.next());
+            <span class="reserved">this</span>.eventGrid.addAll(endpoints);
+        }
+    }
+};
+
+<span class="comment">/**
+ * Renders out this layout into a DOM object with a wrapping div element as its
+ * parent, returning the div.
+ *
+ * <span class="attrib">@param</span> the parent document
+ * <span class="attrib">@return</span> a rendered DOM tree descended from a div element
+ */</span>
+Timegrid.WeekLayout.<span class="reserved">prototype</span>.render = <span class="reserved">function</span>(doc) {
+    var timegridDiv = doc.createElement(<span class="literal">"div"</span>);
+    timegridDiv.style.height = <span class="reserved">this</span>.height;
+    timegridDiv.style.width = <span class="reserved">this</span>.width;
+    $(timegridDiv).addClass(<span class="literal">"timegrid-container"</span>);
+    timegridDiv.appendChild(<span class="reserved">this</span>.renderEvents(doc));
+    timegridDiv.appendChild(<span class="reserved">this</span>.renderGridlines(doc));
+    <span class="reserved">return</span> timegridDiv;
+};
+
+Timegrid.WeekLayout.<span class="reserved">prototype</span>.renderEvents = <span class="reserved">function</span>(doc) {
+    var eventContainer = doc.createElement(<span class="literal">"div"</span>);
+    $(eventContainer).addClass(<span class="literal">"timegrid-events"</span>);
+    var currentEvents = {};
+    var currentCount = 0;
+    <span class="reserved">for</span> (x = 0; x &lt; <span class="reserved">this</span>.xSize; x++) {
+        <span class="reserved">for</span> (y = 0; y &lt; <span class="reserved">this</span>.ySize; y++) {
+            var endpoints = <span class="reserved">this</span>.eventGrid.get(x,y);
+            <span class="reserved">for</span> (i in endpoints) {
+                var endpoint = endpoints[i];
+                <span class="reserved">if</span> (endpoint.type == <span class="literal">"start"</span>) {
+                    <span class="comment">// Render the event</span>
+                    var eventDiv = <span class="reserved">this</span>.renderEvent(endpoint.event, x, y);
+                    eventContainer.appendChild(eventDiv);
+                    <span class="comment">// Push the event div onto the current events set</span>
+                    currentEvents[endpoint.event.getID()] = eventDiv;
+                    currentCount++;
+                    <span class="comment">// Adjust widths and offsets as necessary</span>
+                    var hIndex = 0;
+                    <span class="reserved">for</span> (id in currentEvents) {
+                        var eDiv = currentEvents[id];
+                        var newWidth = <span class="reserved">this</span>.xCell / currentCount;
+                        $(eDiv).css(<span class="literal">"width"</span>, newWidth + <span class="literal">"%"</span>);
+                        $(eDiv).css(<span class="literal">"left"</span>, <span class="reserved">this</span>.xCell * x + newWidth * hIndex + <span class="literal">"%"</span>);
+                        hIndex++;
+                    }
+                } <span class="reserved">else</span> <span class="reserved">if</span> (endpoint.type == <span class="literal">"end"</span>) {
+                    <span class="comment">// Pop event from current events set</span>
+                    delete currentEvents[endpoint.event.getID()];
+                    currentCount--;
+                }
+            }
+        }
+    }
+    <span class="reserved">return</span> eventContainer;
+};
+
+Timegrid.WeekLayout.<span class="reserved">prototype</span>.renderGridlines = <span class="reserved">function</span>(doc) {
+    var gridlineContainer = doc.createElement(<span class="literal">"div"</span>);
+    $(gridlineContainer).addClass(<span class="literal">"timegrid-gridlines"</span>);
+    gridlineContainer.style.height = <span class="reserved">this</span>.ySize * <span class="reserved">this</span>.yCell;
+    <span class="reserved">for</span> (var x = 0; x &lt; <span class="reserved">this</span>.xSize; x++) {
+        var vlineDiv = $(<span class="literal">"&lt;div&gt;&lt;/div&gt;"</span>).addClass(<span class="literal">"timegrid-vline"</span>);
+        vlineDiv.css(<span class="literal">"height"</span>, <span class="reserved">this</span>.ySize * <span class="reserved">this</span>.yCell);
+        vlineDiv.css(<span class="literal">"left"</span>, x * <span class="reserved">this</span>.xCell + <span class="literal">"%"</span>);
+        $(gridlineContainer).append(vlineDiv);
+    }
+    <span class="reserved">for</span> (var y = 0; y &lt;= <span class="reserved">this</span>.ySize; y++) {
+        var hlineDiv = $(<span class="literal">"&lt;div&gt;&lt;/div&gt;"</span>).addClass(<span class="literal">"timegrid-hline"</span>);
+        hlineDiv.css(<span class="literal">"width"</span>, <span class="literal">"100%"</span>);
+        hlineDiv.css(<span class="literal">"top"</span>, y * <span class="reserved">this</span>.yCell);
+        $(gridlineContainer).append(hlineDiv);
+    }
+    <span class="reserved">return</span> gridlineContainer;
+};
+
+Timegrid.WeekLayout.<span class="reserved">prototype</span>.renderEvent = <span class="reserved">function</span>(evt, x, y) {
+    var jediv = $(<span class="literal">"&lt;div&gt;"</span> + evt.getText() + <span class="literal">"&lt;/div&gt;"</span>);
+    jediv.addClass(<span class="literal">"timegrid-event"</span>);
+    jediv.css(<span class="literal">"height"</span>, <span class="reserved">this</span>.yCell * evt.getInterval().hours - 1);
+    jediv.css(<span class="literal">"top"</span>, <span class="reserved">this</span>.yCell * y);
+    jediv.css(<span class="literal">"left"</span>, <span class="reserved">this</span>.xCell * x + <span class="literal">'%'</span>);
+    <span class="reserved">return</span> jediv.get()[0]; <span class="comment">// Return the actual DOM element</span>
+};
+
+Timegrid.WeekLayout.getEndpoints = <span class="reserved">function</span>(evt) {
+    <span class="reserved">return</span> [ { type: <span class="literal">"start"</span>,
+               time: evt.getStart(),
+               event: evt },
+             { type: <span class="literal">"end"</span>,
+               time: evt.getEnd(),
+               event: evt } ];
+};
+
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b></b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jun  8 12:02:42 2007</div>
+</body>
+</html>

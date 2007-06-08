@@ -1,0 +1,278 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+ Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="util.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b></b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>util.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		No overview generated for 'util.js'<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">/******************************************************************************
+ * Utility Functions
+ *****************************************************************************/</span>
+
+Timegrid.extend = <span class="reserved">function</span>(subclass, superclass) {
+   <span class="reserved">function</span> Dummy() {};
+   Dummy.<span class="reserved">prototype</span> = superclass.<span class="reserved">prototype</span>;
+   subclass.<span class="reserved">prototype</span> = new Dummy();
+   subclass.<span class="reserved">prototype</span>.constructor = subclass;
+   subclass.superclass = superclass;
+   subclass.superproto = superclass.<span class="reserved">prototype</span>;
+};
+
+<span class="comment">/**
+ * This stuff really ought to be defined in SimileAjax...I think...but I'm
+ * putting it here as an ugly hack, to make things work for now.
+ */</span>
+SimileAjax.DateTime.MILLISECOND    = 0;
+SimileAjax.DateTime.SECOND         = 1;
+SimileAjax.DateTime.MINUTE         = 2;
+SimileAjax.DateTime.HOUR           = 3;
+SimileAjax.DateTime.DAY            = 4;
+SimileAjax.DateTime.WEEK           = 5;
+SimileAjax.DateTime.MONTH          = 6;
+SimileAjax.DateTime.YEAR           = 7;
+SimileAjax.DateTime.DECADE         = 8;
+SimileAjax.DateTime.CENTURY        = 9;
+SimileAjax.DateTime.MILLENNIUM     = 10;
+
+SimileAjax.DateTime.EPOCH          = -1;
+SimileAjax.DateTime.ERA            = -2; 
+
+SimileAjax.DateTime.parseGregorianDateTime = <span class="reserved">function</span>(o) {
+    <span class="reserved">if</span> (o == null) {
+        <span class="reserved">return</span> null;
+    } <span class="reserved">else</span> <span class="reserved">if</span> (o instanceof Date) {
+        <span class="reserved">return</span> o;
+    }
+    
+    var s = o.toString();
+    <span class="reserved">if</span> (s.length &gt; 0 &amp;&amp; s.length &lt; 8) {
+        var space = s.indexOf(<span class="literal">" "</span>);
+        <span class="reserved">if</span> (space &gt; 0) {
+            var year = parseInt(s.substr(0, space));
+            var suffix = s.substr(space + 1);
+            <span class="reserved">if</span> (suffix.toLowerCase() == <span class="literal">"bc"</span>) {
+                year = 1 - year;
+            }
+        } <span class="reserved">else</span> {
+            var year = parseInt(s);
+        }
+            
+        var d = new Date(0);
+        d.setUTCFullYear(year);
+        
+        <span class="reserved">return</span> d;
+    }
+    
+    try {
+        <span class="reserved">return</span> new Date(Date.parse(s));
+    } catch (e) {
+        <span class="reserved">return</span> null;
+    }
+};
+
+SimileAjax.DateTime.gregorianUnitLengths = [];
+    (<span class="reserved">function</span>() {
+        var d = SimileAjax.DateTime;
+        var a = d.gregorianUnitLengths;
+        
+        a[d.MILLISECOND] = 1;
+        a[d.SECOND]      = 1000;
+        a[d.MINUTE]      = a[d.SECOND] * 60;
+        a[d.HOUR]        = a[d.MINUTE] * 60;
+        a[d.DAY]         = a[d.HOUR] * 24;
+        a[d.WEEK]        = a[d.DAY] * 7;
+        a[d.MONTH]       = a[d.DAY] * 31;
+        a[d.YEAR]        = a[d.DAY] * 365;
+        a[d.DECADE]      = a[d.YEAR] * 10;
+        a[d.CENTURY]     = a[d.YEAR] * 100;
+        a[d.MILLENNIUM]  = a[d.YEAR] * 1000;
+    })();
+
+SimileAjax.DateTime.removeTimeZoneOffset = <span class="reserved">function</span>(date, timeZone) {
+    <span class="reserved">return</span> new Date(date.getTime() + 
+        timeZone * SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR]);
+};
+
+SimileAjax.DateTime.Interval = <span class="reserved">function</span>(ms) {
+    <span class="comment">// Conversion factors as varants to eliminate all the multiplication</span>
+    var SECONDS_CF     = 1000;
+    var MINUTES_CF     = 60000;          
+    var HOURS_CF       = 3600000;       
+    var DAYS_CF        = 86400000;     
+    var WEEKS_CF       = 604800000;   
+    var FORTNIGHTS_CF  = 1209600000; 
+    var MONTHS_CF      = 2592000000;
+    var QUARTERS_CF    = 7776000000;
+    var YEARS_CF       = 31557600000;
+    var DECADES_CF     = 315576000000;
+    var CENTURIES_CF   = 3155760000000;
+
+    <span class="reserved">this</span>.milliseconds = Math.abs(ms);
+    <span class="reserved">this</span>.seconds      = Math.round(<span class="reserved">this</span>.milliseconds / SECONDS_CF); 
+    <span class="reserved">this</span>.minutes      = Math.round(<span class="reserved">this</span>.milliseconds / MINUTES_CF);
+    <span class="reserved">this</span>.hours        = Math.round(<span class="reserved">this</span>.milliseconds / HOURS_CF);
+    <span class="reserved">this</span>.days         = Math.round(<span class="reserved">this</span>.milliseconds / DAYS_CF);
+    <span class="reserved">this</span>.weeks        = Math.round(<span class="reserved">this</span>.milliseconds / WEEKS_CF);
+    <span class="reserved">this</span>.fortnights   = Math.round(<span class="reserved">this</span>.milliseconds / FORTNIGHTS_CF);
+    <span class="reserved">this</span>.months       = Math.round(<span class="reserved">this</span>.milliseconds / MONTHS_CF);
+    <span class="comment">// rounding errors!</span>
+    <span class="reserved">this</span>.quarters     = Math.round(<span class="reserved">this</span>.milliseconds / QUARTERS_CF);
+    <span class="comment">// rounding errors!</span>
+    <span class="reserved">this</span>.years        = Math.round(<span class="reserved">this</span>.milliseconds / YEARS_CF); 
+    <span class="comment">// rounding errors!</span>
+    <span class="reserved">this</span>.decades      = Math.round(<span class="reserved">this</span>.milliseconds / DECADES_CF); 
+    <span class="comment">// rounding errors!  </span>
+    <span class="reserved">this</span>.centuries    = Math.round(<span class="reserved">this</span>.milliseconds / CENTURIES_CF);  
+    <span class="comment">// rounding errors!</span>
+};
+
+SimileAjax.DateTime.Interval.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
+    <span class="reserved">return</span> <span class="reserved">this</span>.milliseconds.toString();
+};
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b></b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jun  8 12:02:42 2007</div>
+</body>
+</html>

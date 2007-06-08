@@ -1,0 +1,606 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+ Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="sources.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b></b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>sources.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		No overview generated for 'sources.js'<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="Timegrid/DefaultEventSource.html">Timegrid.DefaultEventSource</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="Timegrid/DefaultEventSource/Event.html">Timegrid.DefaultEventSource.Event</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">/******************************************************************************
+ *  Default Event Source
+ *****************************************************************************/</span>
+
+
+Timegrid.DefaultEventSource = <span class="reserved">function</span>(eventIndex) {
+    <span class="reserved">this</span>._events = (eventIndex instanceof Object) ? eventIndex : new Timegrid.EventIndex();
+    <span class="reserved">this</span>._listeners = [];
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.addListener = <span class="reserved">function</span>(listener) {
+    <span class="reserved">this</span>._listeners.push(listener);
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.removeListener = <span class="reserved">function</span>(listener) {
+    <span class="reserved">for</span> (var i = 0; i &lt; <span class="reserved">this</span>._listeners.length; i++) {
+        <span class="reserved">if</span> (<span class="reserved">this</span>._listeners[i] == listener) {
+            <span class="reserved">this</span>._listeners.splice(i, 1);
+            break;
+        }
+    }
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.loadXML = <span class="reserved">function</span>(xml, url) {
+    var base = <span class="reserved">this</span>._getBaseURL(url);
+    
+    var wikiURL = xml.documentElement.getAttribute(<span class="literal">"wiki-url"</span>);
+    var wikiSection = xml.documentElement.getAttribute(<span class="literal">"wiki-section"</span>);
+
+    var dateTimeFormat = xml.documentElement.getAttribute(<span class="literal">"date-time-format"</span>);
+    var parseDateTimeFunction = <span class="reserved">this</span>._events.getUnit().getParser(dateTimeFormat);
+
+    var node = xml.documentElement.firstChild;
+    var added = false;
+    <span class="reserved">while</span> (node != null) {
+        <span class="reserved">if</span> (node.nodeType == 1) {
+            var description = <span class="literal">""</span>;
+            <span class="reserved">if</span> (node.firstChild != null &amp;&amp; node.firstChild.nodeType == 3) {
+                description = node.firstChild.nodeValue;
+            }
+            var evt = new Timegrid.DefaultEventSource.Event(
+                parseDateTimeFunction(node.getAttribute(<span class="literal">"start"</span>)),
+                parseDateTimeFunction(node.getAttribute(<span class="literal">"end"</span>)),
+                parseDateTimeFunction(node.getAttribute(<span class="literal">"latestStart"</span>)),
+                parseDateTimeFunction(node.getAttribute(<span class="literal">"earliestEnd"</span>)),
+                node.getAttribute(<span class="literal">"isDuration"</span>) != <span class="literal">"true"</span>,
+                node.getAttribute(<span class="literal">"title"</span>),
+                description,
+                <span class="reserved">this</span>._resolveRelativeURL(node.getAttribute(<span class="literal">"image"</span>), base),
+                <span class="reserved">this</span>._resolveRelativeURL(node.getAttribute(<span class="literal">"link"</span>), base),
+                <span class="reserved">this</span>._resolveRelativeURL(node.getAttribute(<span class="literal">"icon"</span>), base),
+                node.getAttribute(<span class="literal">"color"</span>),
+                node.getAttribute(<span class="literal">"textColor"</span>)
+            );
+            evt._node = node;
+            evt.getProperty = <span class="reserved">function</span>(name) {
+                <span class="reserved">return</span> <span class="reserved">this</span>._node.getAttribute(name);
+            };
+            evt.setWikiInfo(wikiURL, wikiSection);
+            
+            <span class="reserved">this</span>._events.add(evt);
+            
+            added = true;
+        }
+        node = node.nextSibling;
+    }
+
+    <span class="reserved">if</span> (added) {
+        <span class="reserved">this</span>._fire(<span class="literal">"onAddMany"</span>, []);
+    }
+};
+
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.loadJSON = <span class="reserved">function</span>(data, url) {
+    var base = <span class="reserved">this</span>._getBaseURL(url);
+    var added = false;  
+    <span class="reserved">if</span> (data &amp;&amp; data.events){
+        var wikiURL = (<span class="literal">"wikiURL"</span> in data) ? data.wikiURL : null;
+        var wikiSection = (<span class="literal">"wikiSection"</span> in data) ? data.wikiSection : null;
+    
+        var dateTimeFormat = (<span class="literal">"dateTimeFormat"</span> in data) ? data.dateTimeFormat : null;
+        var parseDateTimeFunction = <span class="reserved">this</span>._events.getUnit().getParser(dateTimeFormat);
+       
+        <span class="reserved">for</span> (var i=0; i &lt; data.events.length; i++){
+            var event = data.events[i];
+            var evt = new Timegrid.DefaultEventSource.Event(
+                parseDateTimeFunction(event.start),
+                parseDateTimeFunction(event.end),
+                parseDateTimeFunction(event.latestStart),
+                parseDateTimeFunction(event.earliestEnd),
+                event.isDuration || false,
+                event.title,
+                event.description,
+                <span class="reserved">this</span>._resolveRelativeURL(event.image, base),
+                <span class="reserved">this</span>._resolveRelativeURL(event.link, base),
+                <span class="reserved">this</span>._resolveRelativeURL(event.icon, base),
+                event.color,
+                event.textColor
+            );
+            evt._obj = event;
+            evt.getProperty = <span class="reserved">function</span>(name) {
+                <span class="reserved">return</span> <span class="reserved">this</span>._obj[name];
+            };
+            evt.setWikiInfo(wikiURL, wikiSection);
+
+            <span class="reserved">this</span>._events.add(evt);
+            added = true;
+        }
+    }
+   
+    <span class="reserved">if</span> (added) {
+        <span class="reserved">this</span>._fire(<span class="literal">"onAddMany"</span>, []);
+    }
+};
+
+<span class="comment">/*
+ *  Contributed by Morten Frederiksen, http://www.wasab.dk/morten/
+ */</span>
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.loadSPARQL = <span class="reserved">function</span>(xml, url) {
+    var base = <span class="reserved">this</span>._getBaseURL(url);
+    
+    var dateTimeFormat = <span class="literal">'iso8601'</span>;
+    var parseDateTimeFunction = <span class="reserved">this</span>._events.getUnit().getParser(dateTimeFormat);
+
+    <span class="reserved">if</span> (xml == null) {
+        <span class="reserved">return</span>;
+    }
+    
+    <span class="comment">/*
+     *  Find &lt;results&gt; tag
+     */</span>
+    var node = xml.documentElement.firstChild;
+    <span class="reserved">while</span> (node != null &amp;&amp; (node.nodeType != 1 || node.nodeName != <span class="literal">'results'</span>)) {
+        node = node.nextSibling;
+    }
+    
+    var wikiURL = null;
+    var wikiSection = null;
+    <span class="reserved">if</span> (node != null) {
+        wikiURL = node.getAttribute(<span class="literal">"wiki-url"</span>);
+        wikiSection = node.getAttribute(<span class="literal">"wiki-section"</span>);
+        
+        node = node.firstChild;
+    }
+    
+    var added = false;
+    <span class="reserved">while</span> (node != null) {
+        <span class="reserved">if</span> (node.nodeType == 1) {
+            var bindings = { };
+            var binding = node.firstChild;
+            <span class="reserved">while</span> (binding != null) {
+                <span class="reserved">if</span> (binding.nodeType == 1 &amp;&amp; 
+                    binding.firstChild != null &amp;&amp; 
+                    binding.firstChild.nodeType == 1 &amp;&amp; 
+                    binding.firstChild.firstChild != null &amp;&amp; 
+                    binding.firstChild.firstChild.nodeType == 3) {
+                    bindings[binding.getAttribute(<span class="literal">'name'</span>)] = binding.firstChild.firstChild.nodeValue;
+                }
+                binding = binding.nextSibling;
+            }
+            
+            <span class="reserved">if</span> (bindings[<span class="literal">"start"</span>] == null &amp;&amp; bindings[<span class="literal">"date"</span>] != null) {
+                bindings[<span class="literal">"start"</span>] = bindings[<span class="literal">"date"</span>];
+            }
+            
+            var evt = new Timegrid.DefaultEventSource.Event(
+                parseDateTimeFunction(bindings[<span class="literal">"start"</span>]),
+                parseDateTimeFunction(bindings[<span class="literal">"end"</span>]),
+                parseDateTimeFunction(bindings[<span class="literal">"latestStart"</span>]),
+                parseDateTimeFunction(bindings[<span class="literal">"earliestEnd"</span>]),
+                bindings[<span class="literal">"isDuration"</span>] != <span class="literal">"true"</span>,
+                bindings[<span class="literal">"title"</span>],
+                bindings[<span class="literal">"description"</span>],
+                <span class="reserved">this</span>._resolveRelativeURL(bindings[<span class="literal">"image"</span>], base),
+                <span class="reserved">this</span>._resolveRelativeURL(bindings[<span class="literal">"link"</span>], base),
+                <span class="reserved">this</span>._resolveRelativeURL(bindings[<span class="literal">"icon"</span>], base),
+                bindings[<span class="literal">"color"</span>],
+                bindings[<span class="literal">"textColor"</span>]
+            );
+            evt._bindings = bindings;
+            evt.getProperty = <span class="reserved">function</span>(name) {
+                <span class="reserved">return</span> <span class="reserved">this</span>._bindings[name];
+            };
+            evt.setWikiInfo(wikiURL, wikiSection);
+            
+            <span class="reserved">this</span>._events.add(evt);
+            added = true;
+        }
+        node = node.nextSibling;
+    }
+
+    <span class="reserved">if</span> (added) {
+        <span class="reserved">this</span>._fire(<span class="literal">"onAddMany"</span>, []);
+    }
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.add = <span class="reserved">function</span>(evt) {
+    <span class="reserved">this</span>._events.add(evt);
+    <span class="reserved">this</span>._fire(<span class="literal">"onAddOne"</span>, [evt]);
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.addMany = <span class="reserved">function</span>(events) {
+    <span class="reserved">for</span> (var i = 0; i &lt; events.length; i++) {
+        <span class="reserved">this</span>._events.add(events[i]);
+    }
+    <span class="reserved">this</span>._fire(<span class="literal">"onAddMany"</span>, []);
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.clear = <span class="reserved">function</span>() {
+    <span class="reserved">this</span>._events.removeAll();
+    <span class="reserved">this</span>._fire(<span class="literal">"onClear"</span>, []);
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.getEventIterator = <span class="reserved">function</span>(startDate, endDate) {
+    <span class="reserved">return</span> <span class="reserved">this</span>._events.getIterator(startDate, endDate);
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.getAllEventIterator = <span class="reserved">function</span>() {
+    <span class="reserved">return</span> <span class="reserved">this</span>._events.getAllIterator();
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.getCount = <span class="reserved">function</span>() {
+    <span class="reserved">return</span> <span class="reserved">this</span>._events.getCount();
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.getEarliestDate = <span class="reserved">function</span>() {
+    <span class="reserved">return</span> <span class="reserved">this</span>._events.getEarliestDate();
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>.getLatestDate = <span class="reserved">function</span>() {
+    <span class="reserved">return</span> <span class="reserved">this</span>._events.getLatestDate();
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>._fire = <span class="reserved">function</span>(handlerName, args) {
+    <span class="reserved">for</span> (var i = 0; i &lt; <span class="reserved">this</span>._listeners.length; i++) {
+        var listener = <span class="reserved">this</span>._listeners[i];
+        <span class="reserved">if</span> (handlerName in listener) {
+            try {
+                listener[handlerName].apply(listener, args);
+            } catch (e) {
+                Timegrid.Debug.exception(e);
+            }
+        }
+    }
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>._getBaseURL = <span class="reserved">function</span>(url) {
+    <span class="reserved">if</span> (url.indexOf(<span class="literal">"://"</span>) &lt; 0) {
+        var url2 = <span class="reserved">this</span>._getBaseURL(document.location.href);
+        <span class="reserved">if</span> (url.substr(0,1) == <span class="literal">"/"</span>) {
+            url = url2.substr(0, url2.indexOf(<span class="literal">"/"</span>, url2.indexOf(<span class="literal">"://"</span>) + 3)) + url;
+        } <span class="reserved">else</span> {
+            url = url2 + url;
+        }
+    }
+    
+    var i = url.lastIndexOf(<span class="literal">"/"</span>);
+    <span class="reserved">if</span> (i &lt; 0) {
+        <span class="reserved">return</span> <span class="literal">""</span>;
+    } <span class="reserved">else</span> {
+        <span class="reserved">return</span> url.substr(0, i+1);
+    }
+};
+
+Timegrid.DefaultEventSource.<span class="reserved">prototype</span>._resolveRelativeURL = <span class="reserved">function</span>(url, base) {
+    <span class="reserved">if</span> (url == null || url == <span class="literal">""</span>) {
+        <span class="reserved">return</span> url;
+    } <span class="reserved">else</span> <span class="reserved">if</span> (url.indexOf(<span class="literal">"://"</span>) &gt; 0) {
+        <span class="reserved">return</span> url;
+    } <span class="reserved">else</span> <span class="reserved">if</span> (url.substr(0,1) == <span class="literal">"/"</span>) {
+        <span class="reserved">return</span> base.substr(0, base.indexOf(<span class="literal">"/"</span>, base.indexOf(<span class="literal">"://"</span>) + 3)) + url;
+    } <span class="reserved">else</span> {
+        <span class="reserved">return</span> base + url;
+    }
+};
+
+
+Timegrid.DefaultEventSource.Event = <span class="reserved">function</span>(
+        start, end, latestStart, earliestEnd, instant, 
+        text, description, image, link,
+        icon, color, textColor) {
+        
+    <span class="reserved">this</span>._id = <span class="literal">"e"</span> + Math.floor(Math.random() * 1000000);
+    
+    <span class="reserved">this</span>._instant = instant || (end == null);
+    
+    <span class="reserved">this</span>._start = start;
+    <span class="reserved">this</span>._end = (end != null) ? end : start;
+    
+    <span class="reserved">this</span>._latestStart = (latestStart != null) ? latestStart : (instant ? <span class="reserved">this</span>._end : <span class="reserved">this</span>._start);
+    <span class="reserved">this</span>._earliestEnd = (earliestEnd != null) ? earliestEnd : (instant ? <span class="reserved">this</span>._start : <span class="reserved">this</span>._end);
+    
+    <span class="reserved">this</span>._text = Timegrid.HTML.deEntify(text);
+    <span class="reserved">this</span>._description = Timegrid.HTML.deEntify(description);
+    <span class="reserved">this</span>._image = (image != null &amp;&amp; image != <span class="literal">""</span>) ? image : null;
+    <span class="reserved">this</span>._link = (link != null &amp;&amp; link != <span class="literal">""</span>) ? link : null;
+    
+    <span class="reserved">this</span>._icon = (icon != null &amp;&amp; icon != <span class="literal">""</span>) ? icon : null;
+    <span class="reserved">this</span>._color = (color != null &amp;&amp; color != <span class="literal">""</span>) ? color : null;
+    <span class="reserved">this</span>._textColor = (textColor != null &amp;&amp; textColor != <span class="literal">""</span>) ? textColor : null;
+    
+    <span class="reserved">this</span>._wikiURL = null;
+    <span class="reserved">this</span>._wikiSection = null;
+};
+
+Timegrid.DefaultEventSource.Event.<span class="reserved">prototype</span> = {
+    getID:          <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._id; },
+    
+    isInstant:      <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._instant; },
+    isImprecise:    <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._start != <span class="reserved">this</span>._latestStart || <span class="reserved">this</span>._end != <span class="reserved">this</span>._earliestEnd; },
+    
+    getStart:       <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._start; },
+    getEnd:         <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._end; },
+    getLatestStart: <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._latestStart; },
+    getEarliestEnd: <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._earliestEnd; },
+    
+    getText:        <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._text; },
+    getDescription: <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._description; },
+    getImage:       <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._image; },
+    getLink:        <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._link; },
+    
+    getIcon:        <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._icon; },
+    getColor:       <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._color; },
+    getTextColor:   <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._textColor; },
+
+    getInterval: <span class="reserved">function</span>() {
+        <span class="reserved">return</span> new SimileAjax.DateTime.Interval(<span class="reserved">this</span>.getEnd() - 
+                <span class="reserved">this</span>.getStart());
+    },
+    
+    getProperty:    <span class="reserved">function</span>(name) { <span class="reserved">return</span> null; },
+    
+    getWikiURL:     <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._wikiURL; },
+    getWikiSection: <span class="reserved">function</span>() { <span class="reserved">return</span> <span class="reserved">this</span>._wikiSection; },
+    setWikiInfo: <span class="reserved">function</span>(wikiURL, wikiSection) {
+        <span class="reserved">this</span>._wikiURL = wikiURL;
+        <span class="reserved">this</span>._wikiSection = wikiSection;
+    },
+    
+    fillDescription: <span class="reserved">function</span>(elmt) {
+        elmt.innerHTML = <span class="reserved">this</span>._description;
+    },
+    fillWikiInfo: <span class="reserved">function</span>(elmt) {
+        <span class="reserved">if</span> (<span class="reserved">this</span>._wikiURL != null &amp;&amp; <span class="reserved">this</span>._wikiSection != null) {
+            var wikiID = <span class="reserved">this</span>.getProperty(<span class="literal">"wikiID"</span>);
+            <span class="reserved">if</span> (wikiID == null || wikiID.length == 0) {
+                wikiID = <span class="reserved">this</span>.getText();
+            }
+            wikiID = wikiID.replace(/\s/g, <span class="literal">"_"</span>);
+            
+            var url = <span class="reserved">this</span>._wikiURL + <span class="reserved">this</span>._wikiSection.replace(/\s/g, <span class="literal">"_"</span>) + <span class="literal">"/"</span> + wikiID;
+            var a = document.createElement(<span class="literal">"a"</span>);
+            a.href = url;
+            a.target = <span class="literal">"new"</span>;
+            a.innerHTML = <span class="literal">"Discuss"</span>;
+            
+            elmt.appendChild(document.createTextNode(<span class="literal">"["</span>));
+            elmt.appendChild(a);
+            elmt.appendChild(document.createTextNode(<span class="literal">"]"</span>));
+        } <span class="reserved">else</span> {
+            elmt.style.display = <span class="literal">"none"</span>;
+        }
+    },
+    fillTime: <span class="reserved">function</span>(elmt, labeller) {
+        <span class="reserved">if</span> (<span class="reserved">this</span>._instant) {
+            <span class="reserved">if</span> (<span class="reserved">this</span>.isImprecise()) {
+                elmt.appendChild(elmt.ownerDocument.createTextNode(labeller.labelPrecise(<span class="reserved">this</span>._start)));
+                elmt.appendChild(elmt.ownerDocument.createElement(<span class="literal">"br"</span>));
+                elmt.appendChild(elmt.ownerDocument.createTextNode(labeller.labelPrecise(<span class="reserved">this</span>._end)));
+            } <span class="reserved">else</span> {
+                elmt.appendChild(elmt.ownerDocument.createTextNode(labeller.labelPrecise(<span class="reserved">this</span>._start)));
+            }
+        } <span class="reserved">else</span> {
+            <span class="reserved">if</span> (<span class="reserved">this</span>.isImprecise()) {
+                elmt.appendChild(elmt.ownerDocument.createTextNode(
+                    labeller.labelPrecise(<span class="reserved">this</span>._start) + <span class="literal">" ~ "</span> + labeller.labelPrecise(<span class="reserved">this</span>._latestStart)));
+                elmt.appendChild(elmt.ownerDocument.createElement(<span class="literal">"br"</span>));
+                elmt.appendChild(elmt.ownerDocument.createTextNode(
+                    labeller.labelPrecise(<span class="reserved">this</span>._earliestEnd) + <span class="literal">" ~ "</span> + labeller.labelPrecise(<span class="reserved">this</span>._end)));
+            } <span class="reserved">else</span> {
+                elmt.appendChild(elmt.ownerDocument.createTextNode(labeller.labelPrecise(<span class="reserved">this</span>._start)));
+                elmt.appendChild(elmt.ownerDocument.createElement(<span class="literal">"br"</span>));
+                elmt.appendChild(elmt.ownerDocument.createTextNode(labeller.labelPrecise(<span class="reserved">this</span>._end)));
+            }
+        }
+    },
+    fillInfoBubble: <span class="reserved">function</span>(elmt, theme, labeller) {
+        var doc = elmt.ownerDocument;
+        
+        var title = <span class="reserved">this</span>.getText();
+        var link = <span class="reserved">this</span>.getLink();
+        var image = <span class="reserved">this</span>.getImage();
+        
+        <span class="reserved">if</span> (image != null) {
+            var img = doc.createElement(<span class="literal">"img"</span>);
+            img.src = image;
+            
+            theme.event.bubble.imageStyler(img);
+            elmt.appendChild(img);
+        }
+        
+        var divTitle = doc.createElement(<span class="literal">"div"</span>);
+        var textTitle = doc.createTextNode(title);
+        <span class="reserved">if</span> (link != null) {
+            var a = doc.createElement(<span class="literal">"a"</span>);
+            a.href = link;
+            a.appendChild(textTitle);
+            divTitle.appendChild(a);
+        } <span class="reserved">else</span> {
+            divTitle.appendChild(textTitle);
+        }
+        theme.event.bubble.titleStyler(divTitle);
+        elmt.appendChild(divTitle);
+        
+        var divBody = doc.createElement(<span class="literal">"div"</span>);
+        <span class="reserved">this</span>.fillDescription(divBody);
+        theme.event.bubble.bodyStyler(divBody);
+        elmt.appendChild(divBody);
+        
+        var divTime = doc.createElement(<span class="literal">"div"</span>);
+        <span class="reserved">this</span>.fillTime(divTime, labeller);
+        theme.event.bubble.timeStyler(divTime);
+        elmt.appendChild(divTime);
+        
+        var divWiki = doc.createElement(<span class="literal">"div"</span>);
+        <span class="reserved">this</span>.fillWikiInfo(divWiki);
+        theme.event.bubble.wikiStyler(divWiki);
+        elmt.appendChild(divWiki);
+    }
+};
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b></b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jun  8 12:02:42 2007</div>
+</body>
+</html>

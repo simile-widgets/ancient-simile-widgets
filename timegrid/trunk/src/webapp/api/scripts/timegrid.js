@@ -70,8 +70,9 @@ Timegrid._Impl.prototype.loadXML = function(url, f) {
 };
 
 Timegrid._Impl.prototype._construct = function() {
-    this._layout = Timegrid.LayoutFactory.createLayout(this._layoutName, this._eventSource,
-                                                       this._layoutParams);
+    var layoutFactory = new Timegrid.LayoutFactory();
+    this._layout = layoutFactory.createLayout(this._layoutName, this._eventSource,
+                                              this._layoutParams);
     var container = this._container;
     var doc = container.ownerDocument;
 
