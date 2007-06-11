@@ -31,11 +31,9 @@ Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
         this._possibleOrders = [];
         this._configurePossibleOrders(configuration.possibleOrders);
     }
-    
+
     Exhibit.SettingsUtilities.collectSettings(
         configuration, Exhibit.OrderedViewFrame._settingSpecs, this._settings);
-    
-    this._internalValidate();
 };
 
 Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration) {
@@ -46,7 +44,7 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
     }
     
     var directions = Exhibit.getAttribute(domConfiguration, "directions", ",");
-    if (directions != null && directions.length > 0) {
+    if (directions != null && directions.length > 0 && this._orders) {
         for (var i = 0; i < directions.length && i < this._orders.length; i++) {
             this._orders[i].ascending = (directions[i].toLowerCase() != "descending");
         }
@@ -57,7 +55,7 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
         this._possibleOrders = [];
         this._configurePossibleOrders(possibleOrders);
     }
-    
+
     var possibleDirections = Exhibit.getAttribute(domConfiguration, "possibleDirections", ",");
     if (possibleDirections != null && possibleDirections.length > 0) {
         for (var i = 0; i < possibleDirections.length && i < this._possibleOrders.length; i++) {
@@ -67,25 +65,7 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(
         domConfiguration, Exhibit.OrderedViewFrame._settingSpecs, this._settings);
-
-    this._internalValidate();
 }
-
-Exhibit.OrderedViewFrame.prototype._internalValidate = function() {
-    if (this._possibleOrders == null) {
-        this._possibleOrders = [
-            {   property:   "label",
-                forward:    true,
-                ascending:  true
-            }
-        ];
-    }
-    if (this._orders == null) {
-        this._orders = [
-            this._possibleOrders[0]
-        ];
-    }
-};
 
 Exhibit.OrderedViewFrame.prototype.dispose = function() {
     if (this._headerDom) {
@@ -224,13 +204,14 @@ Exhibit.OrderedViewFrame.prototype.reconstruct = function() {
                 }
             ));
         };
-        for (var i = 0; i < this._orders.length; i++) {
-            buildOrderElmt(this._orders[i], i);
+        var orders = this._getOrders();
+        for (var i = 0; i < orders.length; i++) {
+            buildOrderElmt(orders[i], i);
         }
         
         if (this._settings.showHeader && this._settings.showControls) {
             this._headerDom.setOrders(orderElmts);
-            this._headerDom.enableThenByAction(orderElmts.length < this._possibleOrders.length);
+            this._headerDom.enableThenByAction(orderElmts.length < this._getPossibleOrders().length);
         }
     }
     
@@ -251,7 +232,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
     var self = this;
     var settings = this._settings;
     var database = this._uiContext.getDatabase();
-    var orders = this._orders;
+    var orders = this._getOrders();
     var itemIndex = 0;
     
     var hasSomeGrouping = false;
@@ -265,7 +246,7 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
             self.onNewGroup(label, valueType, index);
         }
     };
-    
+
     var processLevel = function(items, index) {
         var order = orders[index];
         var values = order.forward ? 
@@ -450,17 +431,33 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
     return hasSomeGrouping;
 };
 
+Exhibit.OrderedViewFrame.prototype._getOrders = function() {
+    return this._orders || [ this._getPossibleOrders()[0] ];
+};
+
+Exhibit.OrderedViewFrame.prototype._getPossibleOrders = function() {
+    var possibleOrders = this._possibleOrders;
+    if (possibleOrders == null) {
+        possibleOrders = this._uiContext.getDatabase().getAllProperties();
+        for (var i = 0, p; p = possibleOrders[i]; i++ ) {
+            possibleOrders[i] = { ascending:true, forward:true, property:p };
+        }
+    }
+    return possibleOrders;
+};
+
 Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
     var self = this;
     var database = this._uiContext.getDatabase();
     
     var popupDom = Exhibit.UI.createPopupMenuDom(elmt);
-    
+
     /*
      *  Ascending/descending/remove options for the current order
      */
+    var configuredOrders = this._getOrders();
     if (index >= 0) {
-        var order = this._orders[index];
+        var order = configuredOrders[index];
         var property = database.getProperty(order.property);
         var propertyLabel = order.forward ? property.getPluralLabel() : property.getReversePluralLabel();
         var valueType = order.forward ? property.getValueType() : "item";
@@ -500,7 +497,7 @@ Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
                 } :
                 function() {}
         );
-        if (this._orders.length > 1) {
+        if (configuredOrders.length > 1) {
             popupDom.appendSeparator();
             popupDom.appendMenuItem(
                 Exhibit.OrderedViewFrame.l10n.removeOrderLabel, 
@@ -514,11 +511,12 @@ Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
      *  The remaining possible orders
      */
     var orders = [];
-    for (var i = 0; i < this._possibleOrders.length; i++) {
-        var possibleOrder = this._possibleOrders[i];
+    var possibleOrders = this._getPossibleOrders();
+    for (i = 0; i < possibleOrders.length; i++) {
+        var possibleOrder = possibleOrders[i];
         var skip = false;
-        for (var j = (index < 0) ? this._orders.length - 1 : index; j >= 0; j--) {
-            var existingOrder = this._orders[j];
+        for (var j = (index < 0) ? configuredOrders.length - 1 : index; j >= 0; j--) {
+            var existingOrder = configuredOrders[j];
             if (existingOrder.property == possibleOrder.property && 
                 existingOrder.forward == possibleOrder.forward) {
                 skip = true;
@@ -572,10 +570,10 @@ Exhibit.OrderedViewFrame.prototype._openSortPopup = function(elmt, index) {
 };
 
 Exhibit.OrderedViewFrame.prototype._reSort = function(index, propertyID, forward, ascending, slice) {
-    index = (index < 0) ? this._orders.length : index;
+    var oldOrders = this._getOrders();
+    index = (index < 0) ? oldOrders.length : index;
     
-    var oldOrders = this._orders;
-    var newOrders = this._orders.slice(0, index);
+    var newOrders = oldOrders.slice(0, index);
     newOrders.push({ property: propertyID, forward: forward, ascending: ascending });
     if (!slice) {
         newOrders = newOrders.concat(oldOrders.slice(index+1));
@@ -604,8 +602,8 @@ Exhibit.OrderedViewFrame.prototype._reSort = function(index, propertyID, forward
 };
 
 Exhibit.OrderedViewFrame.prototype._removeOrder = function(index) {
-    var oldOrders = this._orders;
-    var newOrders = this._orders.slice(0, index).concat(this._orders.slice(index + 1));
+    var oldOrders = this._getOrders();
+    var newOrders = oldOrders.slice(0, index).concat(oldOrders.slice(index + 1));
     
     var order = oldOrders[index];
     var property = this._uiContext.getDatabase().getProperty(order.property);
