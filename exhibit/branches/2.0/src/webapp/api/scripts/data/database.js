@@ -153,30 +153,35 @@ Exhibit.Database._Impl.prototype.loadTypes = function(typeEntries, baseURI) {
         }
     
         for (var typeID in typeEntries) {
-            if (typeID != undefined && typeID != null) {
-                var typeEntry = typeEntries[typeID];
+            if (typeof typeID != "string") {
+                continue;
+            }
+            
+            var typeEntry = typeEntries[typeID];
+            if (typeof typeEntry != "object") {
+                continue;
+            }
+            
+            var type;
+            if (typeID in this._types) {
+                type = this._types[typeID];
+            } else {
+                type = new Exhibit.Database._Type(typeID);
+                this._types[typeID] = type;
+            };
+            
+            type._uri = ("uri" in typeEntry) ? 
+                typeEntry.uri : 
+                (baseURI + "type#" + encodeURIComponent(typeID));
+            type._label = ("label" in typeEntry) ? 
+                typeEntry.label : 
+                typeID;
+            type._pluralLabel = ("pluralLabel" in typeEntry) ? 
+                typeEntry.pluralLabel : 
+                type._label;
                 
-                var type;
-                if (typeID in this._types) {
-                    type = this._types[typeID];
-                } else {
-                    type = new Exhibit.Database._Type(typeID);
-                    this._types[typeID] = type;
-                };
-                
-                type._uri = ("uri" in typeEntry) ? 
-                    typeEntry.uri : 
-                    (baseURI + "type#" + encodeURIComponent(typeID));
-                type._label = ("label" in typeEntry) ? 
-                    typeEntry.label : 
-                    typeID;
-                type._pluralLabel = ("pluralLabel" in typeEntry) ? 
-                    typeEntry.pluralLabel : 
-                    type._label;
-                    
-                if ("origin" in typeEntry) {
-                    type._origin = typeEntry.origin;
-                }
+            if ("origin" in typeEntry) {
+                type._origin = typeEntry.origin;
             }
         }
         
@@ -197,7 +202,14 @@ Exhibit.Database._Impl.prototype.loadProperties = function(propertyEntries, base
         }
     
         for (var propertyID in propertyEntries) {
+            if (typeof propertyID != "string") {
+                continue;
+            }
+            
             var propertyEntry = propertyEntries[propertyID];
+            if (typeof propertyEntry != "object") {
+                continue;
+            }
             
             var property;
             if (propertyID in this._properties) {
@@ -252,7 +264,7 @@ Exhibit.Database._Impl.prototype.loadItems = function(itemEntries, baseURI) {
         
         for (var i = 0; i < itemEntries.length; i++) {
             var entry = itemEntries[i];
-            if (entry != null && typeof entry != "undefined") {
+            if (typeof entry == "object") {
                 this._loadItem(entry, indexTriple, baseURI);
             }
         }
@@ -374,6 +386,10 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
     }
     
     for (var p in itemEntry) {
+        if (typeof p != "string") {
+            continue;
+        }
+        
         if (p != "uri" && p != "label" && p != "id" && p != "type") {
             this._ensurePropertyExists(p, baseURI)._onNewData();
             
@@ -382,7 +398,7 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
                 for (var j = 0; j < v.length; j++) {
                     indexFunction(id, p, v[j]);
                 }
-            } else {
+            } else if (v != undefined && v != null) {
                 indexFunction(id, p, v);
             }
         }

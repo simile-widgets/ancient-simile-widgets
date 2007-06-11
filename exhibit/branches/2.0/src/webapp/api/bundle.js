@@ -366,8 +366,14 @@ baseURI+="/";
 }
 
 for(var typeID in typeEntries){
-if(typeID!=undefined&&typeID!=null){
+if(typeof typeID!="string"){
+continue;
+}
+
 var typeEntry=typeEntries[typeID];
+if(typeof typeEntry!="object"){
+continue;
+}
 
 var type;
 if(typeID in this._types){
@@ -391,7 +397,6 @@ if("origin"in typeEntry){
 type._origin=typeEntry.origin;
 }
 }
-}
 
 this._listeners.fire("onAfterLoadingTypes",[]);
 }catch(e){
@@ -410,7 +415,14 @@ baseURI+="/";
 }
 
 for(var propertyID in propertyEntries){
+if(typeof propertyID!="string"){
+continue;
+}
+
 var propertyEntry=propertyEntries[propertyID];
+if(typeof propertyEntry!="object"){
+continue;
+}
 
 var property;
 if(propertyID in this._properties){
@@ -465,7 +477,7 @@ indexPut(ops,o,p,s);
 
 for(var i=0;i<itemEntries.length;i++){
 var entry=itemEntries[i];
-if(entry!=null&&typeof entry!="undefined"){
+if(typeof entry=="object"){
 this._loadItem(entry,indexTriple,baseURI);
 }
 }
@@ -587,6 +599,10 @@ this._ensureTypeExists(type,baseURI);
 }
 
 for(var p in itemEntry){
+if(typeof p!="string"){
+continue;
+}
+
 if(p!="uri"&&p!="label"&&p!="id"&&p!="type"){
 this._ensurePropertyExists(p,baseURI)._onNewData();
 
@@ -595,7 +611,7 @@ if(v instanceof Array){
 for(var j=0;j<v.length;j++){
 indexFunction(id,p,v[j]);
 }
-}else{
+}else if(v!=undefined&&v!=null){
 indexFunction(id,p,v);
 }
 }
