@@ -34,6 +34,8 @@ Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
 
     Exhibit.SettingsUtilities.collectSettings(
         configuration, Exhibit.OrderedViewFrame._settingSpecs, this._settings);
+        
+    this._internalValidate();
 };
 
 Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration) {
@@ -44,7 +46,7 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
     }
     
     var directions = Exhibit.getAttribute(domConfiguration, "directions", ",");
-    if (directions != null && directions.length > 0 && this._orders) {
+    if (directions != null && directions.length > 0 && this._orders != null) {
         for (var i = 0; i < directions.length && i < this._orders.length; i++) {
             this._orders[i].ascending = (directions[i].toLowerCase() != "descending");
         }
@@ -57,7 +59,7 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
     }
 
     var possibleDirections = Exhibit.getAttribute(domConfiguration, "possibleDirections", ",");
-    if (possibleDirections != null && possibleDirections.length > 0) {
+    if (possibleDirections != null && possibleDirections.length > 0 && this._possibleOrders != null) {
         for (var i = 0; i < possibleDirections.length && i < this._possibleOrders.length; i++) {
             this._possibleOrders.ascending = (possibleDirections[i].toLowerCase() != "descending");
         }
@@ -65,6 +67,8 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(
         domConfiguration, Exhibit.OrderedViewFrame._settingSpecs, this._settings);
+        
+    this._internalValidate();
 }
 
 Exhibit.OrderedViewFrame.prototype.dispose = function() {
@@ -82,6 +86,15 @@ Exhibit.OrderedViewFrame.prototype.dispose = function() {
     this._uiContext = null;
 };
 
+Exhibit.OrderedViewFrame.prototype._internalValidate = function() {
+    if (this._orders != null && this._orders.length == 0) {
+        this._orders = null;
+    }
+    if (this._possibleOrders != null && this._possibleOrders.length == 0) {
+        this._possibleOrders = null;
+    }
+};
+
 Exhibit.OrderedViewFrame.prototype._configureOrders = function(orders) {
     for (var i = 0; i < orders.length; i++) {
         var order = orders[i];
@@ -90,28 +103,34 @@ Exhibit.OrderedViewFrame.prototype._configureOrders = function(orders) {
         
         if (typeof order == "string") {
             expr = order;
-        } else {
+        } else if (typeof order == "object") {
             expr = order.expression,
             ascending = ("ascending" in order) ? (order.ascending) : true;
+        } else {
+            SimileAjax.Debug.warn("Bad order object " + order);
+            continue;
         }
-        
-        var expression = Exhibit.ExpressionParser.parse(expr);
-        if (expression.isPath()) {
-            var path = expression.getPath();
-            if (path.getSegmentCount() == 1) {
-                var segment = path.getSegment(0);
-                this._orders.push({
-                    property:   segment.property,
-                    forward:    segment.forward,
-                    ascending:  ascending
-                });
+            
+        try {
+            var expression = Exhibit.ExpressionParser.parse(expr);
+            if (expression.isPath()) {
+                var path = expression.getPath();
+                if (path.getSegmentCount() == 1) {
+                    var segment = path.getSegment(0);
+                    this._orders.push({
+                        property:   segment.property,
+                        forward:    segment.forward,
+                        ascending:  ascending
+                    });
+                }
             }
+        } catch (e) {
+            SimileAjax.Debug.warn("Bad order expression " + expr);
         }
     }
 };
 
 Exhibit.OrderedViewFrame.prototype._configurePossibleOrders = function(possibleOrders) {
-    var hasLabel = false;
     for (var i = 0; i < possibleOrders.length; i++) {
         var order = possibleOrders[i];
         var expr;
@@ -119,35 +138,30 @@ Exhibit.OrderedViewFrame.prototype._configurePossibleOrders = function(possibleO
         
         if (typeof order == "string") {
             expr = order;
-        } else {
+        } else if (typeof order == "object") {
             expr = order.expression,
             ascending = ("ascending" in order) ? (order.ascending) : true;
+        } else {
+            SimileAjax.Debug.warn("Bad possible order object " + order);
+            continue;
         }
-        
-        var expression = Exhibit.ExpressionParser.parse(expr);
-        if (expression.isPath()) {
-            var path = expression.getPath();
-            if (path.getSegmentCount() == 1) {
-                var segment = path.getSegment(0);
-                this._possibleOrders.push({
-                    property:   segment.property,
-                    forward:    segment.forward,
-                    ascending:  ascending
-                });
-                
-                if (segment.property == "label" && segment.forward) {
-                    hasLabel = true;
+            
+        try {
+            var expression = Exhibit.ExpressionParser.parse(expr);
+            if (expression.isPath()) {
+                var path = expression.getPath();
+                if (path.getSegmentCount() == 1) {
+                    var segment = path.getSegment(0);
+                    this._possibleOrders.push({
+                        property:   segment.property,
+                        forward:    segment.forward,
+                        ascending:  ascending
+                    });
                 }
             }
+        } catch (e) {
+            SimileAjax.Debug.warn("Bad possible order expression " + expr);
         }
-    }
-    
-    if (!hasLabel) {
-        this._possibleOrders.push({ 
-            property:   "label", 
-            forward:    true, 
-            ascending:  true 
-        });
     }
 };
 
@@ -436,12 +450,22 @@ Exhibit.OrderedViewFrame.prototype._getOrders = function() {
 };
 
 Exhibit.OrderedViewFrame.prototype._getPossibleOrders = function() {
-    var possibleOrders = this._possibleOrders;
-    if (possibleOrders == null) {
+    var possibleOrders = null;
+    if (this._possibleOrders == null) {
         possibleOrders = this._uiContext.getDatabase().getAllProperties();
         for (var i = 0, p; p = possibleOrders[i]; i++ ) {
             possibleOrders[i] = { ascending:true, forward:true, property:p };
         }
+    } else {
+        possibleOrders = [].concat(this._possibleOrders);
+    }
+    
+    if (possibleOrders.length == 0) {
+        possibleOrders.push({
+            property:   "label", 
+            forward:    true, 
+            ascending:  true 
+        });
     }
     return possibleOrders;
 };
