@@ -3066,6 +3066,132 @@ return{types:types,properties:properties,items:items};
 };
 
 
+/* rdfa-importer.js */
+
+
+
+var RDFA=new Object();
+RDFA.url='http://www.w3.org/2006/07/SWD/RDFa/impl/js/20070301/rdfa.js';
+
+Exhibit.RDFaImporter={
+};
+
+Exhibit.importers["application/RDFa"]=Exhibit.RDFaImporter;
+
+Exhibit.RDFaImporter.load=function(link,database,cont){
+try{
+if((link.getAttribute('href')||"").length==0){
+
+
+Exhibit.RDFaImporter.loadRDFa(null,document,database);
+}else{
+iframe=document.createElement("iframe");
+iframe.style.display='none';
+iframe.setAttribute('onLoad','Exhibit.RDFaImporter.loadRDFa(this, this.contentDocument, database)');
+iframe.src=link.href
+document.body.appendChild(iframe);
+}
+}catch(e){
+SimileAjax.Debug.exception(e);
+}finally{
+if(cont){
+cont();
+}
+}
+};
+
+Exhibit.RDFaImporter.loadRDFa=function(iframe,rdfa,database){
+
+var textOf=function(n){return n.textContent||n.innerText||"";};
+var readAttributes=function(node,attributes){
+var result={},found=false,attr,value,i;
+for(i=0;attr=attributes[i];i++){
+value=Exhibit.getAttribute(node,attr);
+if(value){
+result[attr]=value;
+found=true;
+}
+}
+return found&&result;
+};
+
+
+RDFA.CALLBACK_DONE_PARSING=function(){
+if(iframe!=null){
+document.body.removeChild(iframe);
+}
+
+this.cloneObject=function(what){
+for(var i in what){
+this[i]=what[i];
+}
+};
+
+var triples=this.triples;
+var parsed={"classes":{},"properties":{},"items":[]};
+for(var i in triples){
+var item={};
+
+item['id'],item['uri'],item['label']=i;
+
+var tri=triples[i];
+for(var j in tri){
+for(var k=0;k<tri[j].length;k++){
+if(tri[j][k].predicate.ns){
+var p_label=tri[j][k].predicate.ns.prefix+':'+tri[j][k].predicate.suffix;
+
+
+
+if(j=='http://www.w3.org/1999/02/22-rdf-syntax-ns#type'){
+try{
+var type_uri=tri[j][k]['object'];
+var matches=type_uri.match(/(.+?)(#|\/)([a-zA-Z_]+)?$/);
+var type_label=matches[3]+'('+matches[1]+')';
+parsed['classes'][type_label]={"label":type_label,"uri":type_uri}
+item['type']=type_label;
+}catch(e){
+
+};
+}else{
+parsed['properties'][p_label]={"uri":j,"label":tri[j][k]['predicate']['suffix']};
+try{
+if(!item[p_label]){
+item[p_label]=[];
+}
+item[p_label].push(tri[j][k]['object']);
+}catch(e){
+SimileAjax.Debug.log("problem adding property value: "+e);
+}
+
+if(j=='http://purl.org/dc/elements/1.1/title'||
+j=='http://www.w3.org/2000/01/rdf-schema#'||
+j=='http://xmlns.com/foaf/0.1/name'){
+item.label=item[p_label];
+}
+}
+}
+else{
+item[j]=tri[j][k]['object'];
+}
+}
+}
+
+parsed['items'].push(new this.cloneObject(item));
+}
+database.loadData(parsed,Exhibit.Persistence.resolveURL(location.href));
+}
+
+
+RDFA.CALLBACK_DONE_LOADING=function(){
+RDFA.parse(rdfa);
+};
+
+
+
+SimileAjax.includeJavascriptFile(document,RDFA.url);
+};
+
+
 /* exhibit.js */
 
 

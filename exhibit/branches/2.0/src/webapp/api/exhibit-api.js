@@ -40,6 +40,7 @@
             "data/importers/html-table-importer.js",
             "data/importers/jsonp-importer.js",
             "data/importers/babel-based-importer.js",
+            "data/importers/rdfa-importer.js",
             
             "data/exporters/rdf-xml-exporter.js",
             "data/exporters/semantic-wikitext-exporter.js",
