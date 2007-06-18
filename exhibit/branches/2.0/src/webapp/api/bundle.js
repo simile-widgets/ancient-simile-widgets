@@ -3178,7 +3178,7 @@ item[j]=tri[j][k]['object'];
 
 parsed['items'].push(new this.cloneObject(item));
 }
-database.loadData(parsed,Exhibit.Persistence.resolveURL(location.href));
+database.loadData(parsed,Exhibit.Persistence.getBaseURL(document.location.href));
 }
 
 
@@ -3484,6 +3484,10 @@ processElmts(otherElmts);
 Exhibit.Persistence={};
 
 Exhibit.Persistence.getBaseURL=function(url){
+
+
+
+try{
 if(url.indexOf("://")<0){
 var url2=Exhibit.Persistence.getBaseURL(document.location.href);
 if(url.substr(0,1)=="/"){
@@ -3498,6 +3502,9 @@ if(i<0){
 return"";
 }else{
 return url.substr(0,i+1);
+}
+}catch(e){
+return url;
 }
 };
 
@@ -6934,7 +6941,7 @@ this._settings={};
 this._accessors={
 getProxy:function(itemID,database,visitor){visitor(itemID);},
 getColorKey:null,
-getIcon:null,
+getIcon:null
 };
 this._colorCoder=null;
 

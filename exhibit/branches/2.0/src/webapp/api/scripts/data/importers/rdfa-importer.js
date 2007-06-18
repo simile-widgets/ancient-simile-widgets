@@ -112,7 +112,7 @@ Exhibit.RDFaImporter.loadRDFa = function(iframe, rdfa, database) {
             
             parsed['items'].push(new this.cloneObject(item));
         }
-        database.loadData(parsed, Exhibit.Persistence.resolveURL(location.href));
+        database.loadData(parsed, Exhibit.Persistence.getBaseURL(document.location.href));
     }
 
     // callback when the RDF/A loading is done.

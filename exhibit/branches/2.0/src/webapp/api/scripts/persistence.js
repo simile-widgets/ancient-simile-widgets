@@ -5,20 +5,27 @@
 Exhibit.Persistence = {};
 
 Exhibit.Persistence.getBaseURL = function(url) {
-    if (url.indexOf("://") < 0) {
-        var url2 = Exhibit.Persistence.getBaseURL(document.location.href);
-        if (url.substr(0,1) == "/") {
-            url = url2.substr(0, url2.indexOf("/", url2.indexOf("://") + 3)) + url;
-        } else {
-            url = url2 + url;
+    // HACK: for some unknown reason Safari keeps throwing
+    //      TypeError: no default value
+    // when this function is called from the RDFa importer. So I put a try catch here.
+    try {
+        if (url.indexOf("://") < 0) {
+            var url2 = Exhibit.Persistence.getBaseURL(document.location.href);
+            if (url.substr(0,1) == "/") {
+                url = url2.substr(0, url2.indexOf("/", url2.indexOf("://") + 3)) + url;
+            } else {
+                url = url2 + url;
+            }
         }
-    }
-    
-    var i = url.lastIndexOf("/");
-    if (i < 0) {
-        return "";
-    } else {
-        return url.substr(0, i+1);
+        
+        var i = url.lastIndexOf("/");
+        if (i < 0) {
+            return "";
+        } else {
+            return url.substr(0, i+1);
+        }
+    } catch (e) {
+        return url;
     }
 };
 

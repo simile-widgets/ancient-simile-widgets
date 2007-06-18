@@ -11,7 +11,7 @@ Exhibit.MapView = function(containerElmt, uiContext) {
     this._accessors = {
         getProxy:    function(itemID, database, visitor) { visitor(itemID); },
         getColorKey: null,
-        getIcon:     null,
+        getIcon:     null
     };
     this._colorCoder = null;
     
