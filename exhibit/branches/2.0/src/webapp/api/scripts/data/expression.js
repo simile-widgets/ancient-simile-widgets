@@ -62,7 +62,7 @@ Exhibit.Expression._Impl.prototype.testExists = function(
 ) {
     return this.isPath() ?
         this._rootNode.testExists(roots, rootValueTypes, defaultRootName, database) :
-        false;
+        this.evaluate(roots, rootValueTypes, defaultRootName, database).values.size() > 0;
 };
 
 Exhibit.Expression._Impl.prototype.isPath = function() {
@@ -351,7 +351,7 @@ Exhibit.Expression.Path.prototype.testExists = function(
     defaultRootName, 
     database
 ) {
-    return this.evaluate(roots, rootValueTypes, defaultRootName, database).count > 0;
+    return this.evaluate(roots, rootValueTypes, defaultRootName, database).size > 0;
 };
 
 /*==================================================

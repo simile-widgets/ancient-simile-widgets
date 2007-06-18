@@ -325,12 +325,8 @@ type="application/json";
 
 var importer=Exhibit.importers[type];
 if(importer){
-try{
 importer.load(link,database,fNext);
 return;
-}catch(e){
-SimileAjax.Debug.exception(e,"Error using importer for data of type "+type);
-}
 }else{
 SimileAjax.Debug.log("No importer for data of type "+type);
 }
@@ -344,6 +340,9 @@ fNext();
 };
 
 Exhibit.Database._Impl.prototype.loadData=function(o,baseURI){
+if(typeof baseURI=="undefined"){
+baseURI=location.href;
+}
 if("types"in o){
 this.loadTypes(o.types,baseURI);
 }
@@ -497,6 +496,7 @@ return this._types[typeID];
 Exhibit.Database._Impl.prototype.getProperty=function(propertyID){
 return propertyID in this._properties?this._properties[propertyID]:null;
 };
+
 
 Exhibit.Database._Impl.prototype.getAllProperties=function(){
 if(this._propertyArray==null){
@@ -1931,7 +1931,7 @@ database
 ){
 return this.isPath()?
 this._rootNode.testExists(roots,rootValueTypes,defaultRootName,database):
-false;
+this.evaluate(roots,rootValueTypes,defaultRootName,database).values.size()>0;
 };
 
 Exhibit.Expression._Impl.prototype.isPath=function(){
@@ -2214,7 +2214,7 @@ rootValueTypes,
 defaultRootName,
 database
 ){
-return this.evaluate(roots,rootValueTypes,defaultRootName,database).count>0;
+return this.evaluate(roots,rootValueTypes,defaultRootName,database).size>0;
 };
 
 
