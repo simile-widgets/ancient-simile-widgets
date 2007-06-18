@@ -322,6 +322,7 @@ Exhibit.SettingsUtilities._createElementalAccessor = function(f, spec) {
 Exhibit.SettingsUtilities._typeToParser = function(type) {
     switch (type) {
     case "text":    return Exhibit.SettingsUtilities._textParser;
+    case "url":     return Exhibit.SettingsUtilities._urlParser;
     case "float":   return Exhibit.SettingsUtilities._floatParser;
     case "int":     return Exhibit.SettingsUtilities._intParser;
     case "date":    return Exhibit.SettingsUtilities._dateParser;
@@ -376,6 +377,10 @@ Exhibit.SettingsUtilities._booleanParser = function(v, f) {
         return f(false);
     }
     return false;
+};
+
+Exhibit.SettingsUtilities._urlParser = function(v, f) {
+    return f(Exhibit.Persistence.resolveURL(v.toString()));
 };
 
 Exhibit.SettingsUtilities._evaluateBindings = function(value, database, visitor, bindings) {
