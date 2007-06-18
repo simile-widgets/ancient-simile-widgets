@@ -36,7 +36,7 @@ Exhibit.Database._Impl = function() {
     itemType._label         = l10n.itemType.label;
     itemType._pluralLabel   = l10n.itemType.pluralLabel;
     this._types["Item"]     = itemType;
-    
+
     var labelProperty = new Exhibit.Database._Property("label");
     labelProperty._uri                  = "http://www.w3.org/2000/01/rdf-schema#label";
     labelProperty._valueType            = "text";
@@ -109,20 +109,16 @@ Exhibit.Database._Impl.prototype._loadLinks = function(links, fDone) {
             if (type == null || type.length == 0) {
                 type = "application/json";
             }
-            
+
             var importer = Exhibit.importers[type];
             if (importer) {
-                try {
-                    importer.load(link, database, fNext);
-                    return;
-                } catch (e) {
-                    SimileAjax.Debug.exception(e, "Error using importer for data of type " + type);
-                }
+                importer.load(link, database, fNext);
+                return;
             } else {
                 SimileAjax.Debug.log("No importer for data of type " + type);
             }
-        } 
-        
+        }
+
         if (fDone != null) {
             fDone();
         }
@@ -285,6 +281,9 @@ Exhibit.Database._Impl.prototype.getProperty = function(propertyID) {
     return propertyID in this._properties ? this._properties[propertyID] : null;
 };
 
+/**
+ * Get an array of all property names known to this database.
+ */
 Exhibit.Database._Impl.prototype.getAllProperties = function() {
     if (this._propertyArray == null) {
         this._propertyArray = [];
