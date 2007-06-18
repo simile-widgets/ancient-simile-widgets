@@ -127,6 +127,9 @@ Exhibit.Database._Impl.prototype._loadLinks = function(links, fDone) {
 };
 
 Exhibit.Database._Impl.prototype.loadData = function(o, baseURI) {
+    if (typeof baseURI == "undefined") {
+        baseURI = location.href;
+    }
     if ("types" in o) {
         this.loadTypes(o.types, baseURI);
     }
