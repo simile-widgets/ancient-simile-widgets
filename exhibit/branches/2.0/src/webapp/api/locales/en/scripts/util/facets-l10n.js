@@ -8,5 +8,7 @@ Exhibit.FacetUtilities.l10n = {
     facetSelectActionTitle:             "Select %0 in facet %1",
     facetUnselectActionTitle:           "Unselect %0 in facet %1",
     facetSelectOnlyActionTitle:         "Select only %0 in facet %1",
-    facetClearSelectionsActionTitle:    "Clear selections in facet %0"
+    facetClearSelectionsActionTitle:    "Clear selections in facet %0",
+    facetTextSearchActionTitle:         "Text search %0",
+    facetClearTextSearchActionTitle:    "Clear text search"
 };

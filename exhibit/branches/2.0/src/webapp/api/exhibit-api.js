@@ -56,6 +56,7 @@
             
             "ui/facets/list-facet.js",
             "ui/facets/numeric-range-facet.js",
+            "ui/facets/text-search-facet.js",
             
             "ui/coders/color-coder.js",
             "ui/coders/default-color-coder.js",

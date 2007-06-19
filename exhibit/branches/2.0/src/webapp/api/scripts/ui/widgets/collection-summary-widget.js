@@ -35,6 +35,7 @@ Exhibit.CollectionSummaryWidget.prototype.dispose = function() {
     this._collection.removeListener(this._listener);
     this._div.innerHTML = "";
     
+    this._noResultsDom = null;
     this._allResultsDom = null;
     this._filteredResultsDom = null;
     this._div = null;
@@ -63,6 +64,15 @@ Exhibit.CollectionSummaryWidget.prototype._initializeUI = function() {
         "span", 
         String.substitute(
             l10n.filteredResultsTemplate,
+            [ "exhibit-collectionSummaryWidget-count", "exhibit-collectionSummaryWidget-types" ]
+        ),
+        {   resetActionLink: Exhibit.UI.makeActionLink(l10n.resetFiltersLabel, onClearFilters)
+        }
+    );
+    this._noResultsDom = SimileAjax.DOM.createDOMFromString(
+        "span", 
+        String.substitute(
+            l10n.noResultsTemplate,
             [ "exhibit-collectionSummaryWidget-count", "exhibit-collectionSummaryWidget-types" ]
         ),
         {   resetActionLink: Exhibit.UI.makeActionLink(l10n.resetFiltersLabel, onClearFilters)

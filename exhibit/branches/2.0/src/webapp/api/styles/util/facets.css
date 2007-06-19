@@ -68,3 +68,14 @@ div.exhibit-facet-value-inner {
 div.exhibit-facet-value-checkbox {
     float:          right;
 }
+
+/*==================================================
+ * Text search facet
+ *==================================================
+ */
+div.exhibit-text-facet {
+}
+
+div.exhibit-text-facet input {
+    width: 100%;
+}
