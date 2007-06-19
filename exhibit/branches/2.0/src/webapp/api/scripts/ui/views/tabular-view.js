@@ -76,7 +76,7 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContex
             var column = view._columns[index];
             var o = {};
             
-            column.format = Exhibit.FormatParser.parse(column.uiContext, formats, startPosition, o);
+            column.format = Exhibit.FormatParser.parseSeveral(column.uiContext, formats, startPosition, o);
             
             startPosition = o.index;
             while (startPosition < formats.length && " \t\r\n".indexOf(formats.charAt(startPosition)) >= 0) {

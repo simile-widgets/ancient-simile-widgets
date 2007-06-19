@@ -306,13 +306,10 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
     };
     var parseRuleList = function() {
         var valueType = "text";
-        while (token != null) {
-
+        while (token != null && token.type == Scanner.IDENTIFIER) {
             valueType = parseRule();
-
         }
         return valueType;
-
     }
     
     if (several) {

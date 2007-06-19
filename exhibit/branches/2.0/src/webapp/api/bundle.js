@@ -5065,13 +5065,10 @@ return valueType;
 };
 var parseRuleList=function(){
 var valueType="text";
-while(token!=null){
-
+while(token!=null&&token.type==Scanner.IDENTIFIER){
 valueType=parseRule();
-
 }
 return valueType;
-
 }
 
 if(several){
@@ -9369,7 +9366,7 @@ while(index<view._columns.length&&startPosition<formats.length){
 var column=view._columns[index];
 var o={};
 
-column.format=Exhibit.FormatParser.parse(column.uiContext,formats,startPosition,o);
+column.format=Exhibit.FormatParser.parseSeveral(column.uiContext,formats,startPosition,o);
 
 startPosition=o.index;
 while(startPosition<formats.length&&" \t\r\n".indexOf(formats.charAt(startPosition))>=0){
