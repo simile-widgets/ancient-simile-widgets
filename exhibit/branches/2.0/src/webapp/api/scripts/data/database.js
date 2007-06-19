@@ -362,7 +362,8 @@ Exhibit.Database._Impl.prototype.getNamespaces = function(idToQualifiedName, pre
 
 Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, baseURI) {
     if (!("label" in itemEntry) && !("id" in itemEntry)) {
-        SimileAjax.Debug.warn("Item entry has no label and no id: " + itemEntry);
+        SimileAjax.Debug.warn("Item entry has no label and no id: " +
+                              SimileAjax.JSON.toJSONString( itemEntry ));
         return;
     }
     
@@ -370,7 +371,8 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
     if (!("label" in itemEntry)) {
         id = itemEntry.id;
         if (!this._items.contains(id)) {
-            SimileAjax.Debug.warn("Cannot add new item containing no label: " + itemEntry);
+            SimileAjax.Debug.warn("Cannot add new item containing no label: " +
+                                  SimileAjax.JSON.toJSONString( itemEntry ));
         }
     } else {
         var label = itemEntry.label;
