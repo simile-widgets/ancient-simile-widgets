@@ -61,7 +61,7 @@ if (typeof SimileAjax == "undefined") {
 
         var script = doc.createElement("script");
         if (onerror) {
-            script.innerHTML = onerror;
+            try { script.innerHTML = onerror; } catch(e) {}
             script.setAttribute("onerror", onerror);
         }
         if (charset) {
