@@ -5,8 +5,9 @@
 Exhibit.CollectionSummaryWidget = function(containerElmt, uiContext) {
     this._exhibit = uiContext.getExhibit();
     this._collection = uiContext.getCollection();
+    this._uiContext = uiContext;
     this._div = containerElmt;
-    
+
     var widget = this;
     this._listener = { onItemsChanged: function() { widget._reconstruct(); } };
     this._collection.addListener(this._listener);
@@ -75,8 +76,9 @@ Exhibit.CollectionSummaryWidget.prototype._initializeUI = function() {
 Exhibit.CollectionSummaryWidget.prototype._reconstruct = function() {
     var originalSize = this._collection.countAllItems();
     var currentSize = this._collection.countRestrictedItems();
+    var database = this._uiContext.getDatabase();
     var dom = this._dom;
-    
+
     this._div.innerHTML = "";
     if (originalSize > 0) {
         if (currentSize == 0) {
