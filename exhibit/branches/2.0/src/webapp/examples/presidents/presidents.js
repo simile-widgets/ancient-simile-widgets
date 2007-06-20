@@ -546,7 +546,7 @@
             index: 37,
             term: [ 47 ],
             dieInOffice: 'no',
-            imageURL: 'http://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Gerald_Ford.jpg/82px-Gerald_Ford.jpg',
+            imageURL: 'http://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Gerald_Ford.jpg/100px-Gerald_Ford.jpg',
             url: 'http://en.wikipedia.org/wiki/Gerald_Ford',
             party: "Republican",
             birth: '1913-07-14',
