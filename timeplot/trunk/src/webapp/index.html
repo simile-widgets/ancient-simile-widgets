@@ -1,0 +1,49 @@
+<html>
+<head>
+    <title>SIMILE | Timeplot</title>
+    <link rel='stylesheet' href='styles.css' type='text/css' />
+    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+    
+    <script src="api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <script>
+        var timeplot;
+        function onLoad() {
+            var eventSource = new Timeplot.DefaultEventSource();        
+
+            var layerInfos = [
+                Timeplot.createLayerInfo({
+                    id: "web",
+                    eventSource: eventSource,
+                    column: 1
+                })
+            ];
+            
+            timeplot = Timeplot.create(document.getElementById("timeplot"), layerInfos);
+            timeplot.loadText("examples/simile/data.txt", " ", eventSource);
+        }
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    timeplot.paint();
+                }, 0);
+            }
+        }    
+    </script>
+</head>
+<body onload="onLoad();" onresize="onResize();">
+<!--#include virtual="sidebar.html" -->
+<ul id="path">
+  <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+  <li><span>Timeplot</span></li>
+</ul>
+
+<div id="body">
+    <h1>Timeplot</h1>
+    <div id="timeplot" style="height: 200px; margin: 2em;"></div>
+</div>
+    
+</body>
+</html>
