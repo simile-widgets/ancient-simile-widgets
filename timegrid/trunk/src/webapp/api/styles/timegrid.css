@@ -35,6 +35,7 @@ td {
 div.timegrid-container {
     overflow-y: scroll;
     overflow-x: hidden;
+    border: 1px inset black;
 }
 
 div.timegrid-hline {
