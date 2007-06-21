@@ -68,15 +68,17 @@ Timeplot.Layer.prototype.paint = function() {
         geometry.setMinValue(stats.min);
         geometry.setMaxValue(stats.max);
         
-        ctx.lineTo(10,10);
+        ctx.beginPath();
         
 	    var iterator = source.getAllEventIterator();
 	    while (iterator.hasNext()) {
 	    	var event = iterator.next();
 	    	var value = event.getValues()[this._layerInfo.column - 1];
 	    	var p = geometry.locate(event.getStart(), value);
-	    	//log(expand(p));
-	    	ctx.fillRect(p.x,0,1,p.y);
+	    	ctx.lineTo(p.x,p.y);
 	    }
+        
+        ctx.lineTo(this._canvas.width, 0);
+        ctx.fill();        
 	}
 }
