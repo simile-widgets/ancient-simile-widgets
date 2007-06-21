@@ -21,10 +21,21 @@ Timeplot.Layer = function(timeplot, layerInfo, index) {
         this._eventSource.addListener(this._eventListener);
     }
     
-    this._canvas = this._timeplot.getDocument().createElement("canvas");
-    this._canvas.className = "timeplot-layer";
-    this._canvas.style.display = "none";
-    this._timeplot.add(this._canvas);
+    var canvas = this._timeplot.getDocument().createElement("canvas");
+    
+    if (canvas.getContext) {
+    	this._canvas = canvas;
+	    this._canvas.className = "timeplot-layer";
+	    this._canvas.style.display = "none";
+	    this._timeplot.add(this._canvas);
+    } else {
+	    this._message = SimileAjax.Graphics.createMessageBubble(this._timeplot.getDocument());
+	    this._message.containerDiv.className = "timeplot-message-container";
+	    this._timeplot.appendChild(this._message.containerDiv);
+	    this._message.contentDiv.className = "timeplot-message";
+	    this._message.contentDiv.innerHTML = "We're sorry, but your web browser is not currently supported by Timeplot.";
+        this._message.containerDiv.style.display = "block";
+    }
 };
 
 Timeplot.Layer.prototype.dispose = function() {
@@ -36,15 +47,36 @@ Timeplot.Layer.prototype.dispose = function() {
 };
 
 Timeplot.Layer.prototype.paint = function() {
-	this._canvas.width = this._timeplot.getPixelWidth() - 1;
-    this._canvas.height = this._timeplot.getPixelHeight() - 1;
-    this._canvas.style.display = "block";
-	if (this._canvas.getContext) {
-		var ctx = this._canvas.getContext('2d');
-	    ctx.fillRect(25,25,100,100);
-	    ctx.clearRect(45,45,60,60);
-	    ctx.strokeRect(50,50,50,50);
-    }
-    
-    // ********************** draw the chart here !! ********************    
+	if (this._canvas) {
+        var geometry = this._layerInfo.geometry;
+
+		this._canvas.width = this._timeplot.getPixelWidth();
+	    this._canvas.height = this._timeplot.getPixelHeight();
+	    this._canvas.style.display = "block";
+
+        geometry.setWidth(this._canvas.width);
+        geometry.setHeight(this._canvas.height);
+
+        var ctx = this._canvas.getContext('2d');
+        ctx.translate(0,this._canvas.height);
+        ctx.scale(1,-1);
+        	
+	    var source = this._eventSource;
+	    geometry.setEarliestDate(source.getEarliestDate());
+	    geometry.setLatestDate(source.getLatestDate());
+	    var stats = source.getStats(this._layerInfo.column - 1);
+        geometry.setMinValue(stats.min);
+        geometry.setMaxValue(stats.max);
+        
+        ctx.lineTo(10,10);
+        
+	    var iterator = source.getAllEventIterator();
+	    while (iterator.hasNext()) {
+	    	var event = iterator.next();
+	    	var value = event.getValues()[this._layerInfo.column - 1];
+	    	var p = geometry.locate(event.getStart(), value);
+	    	//log(expand(p));
+	    	ctx.fillRect(p.x,0,1,p.y);
+	    }
+	}
 }

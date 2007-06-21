@@ -23,7 +23,8 @@
         var javascriptFiles = [
             "timeplot.js",
             "layer.js",
-            "sources.js"
+            "sources.js",
+            "geometry.js"
         ];
         var cssFiles = [
             "timeplot.css"

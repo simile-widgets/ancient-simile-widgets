@@ -10,6 +10,7 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url) 
         return;
     }
 
+    this._events.maxValues = new Array
     var base = this._getBaseURL(url);
     
     var dateTimeFormat = 'iso8601';
@@ -24,9 +25,8 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url) 
             var row = data[i];
             var evt = new Timeline.DefaultEventSource.NumericEvent(
                 parseDateTimeFunction(row[0]),
-                //row[0],
                 null,
-                row.slice(1)
+                this._process(row.slice(1))
             );
             this._events.add(evt);
             added = true;
@@ -37,6 +37,40 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url) 
         this._fire("onAddMany", []);
     }
 };
+
+Timeplot.DefaultEventSource.prototype.getStats = function(column) {
+	return this._events._stats[column];
+}
+
+Timeplot.DefaultEventSource.prototype._process = function(row) {
+	if (!this._events._stats) {
+		this._events._stats = new Array(row.length);
+	}
+	
+	if (this._events._stats < row.length) {
+		this._events._stats = this._events._stats.concat(new Array(row.length - this._event._stats));
+	}
+	
+	for (var i = 0; i < row.length; i++) {
+		var stats = this._events._stats[i];
+		if (!stats) {
+			stats = { min : Number.MAX_VALUE , max : Number.MIN_VALUE };
+			this._events._stats[i] = stats;
+		}
+	    var value = parseInt(row[i]);
+	    if (!isNaN(value)) {
+	       if (value < stats.min) {
+	           stats.min = value;
+	       }
+	       if (value > stats.max) {
+	       	   stats.max = value;
+	       }	
+	    }
+	    row[i] = value;	
+	}
+	
+	return row;
+}
 
 /*
  * Adapted from http://www.kawa.net/works/js/jkl/js/jkl-parsexml.js by Yusuke Kawasaki

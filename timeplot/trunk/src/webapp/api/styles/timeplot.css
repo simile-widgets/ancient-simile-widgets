@@ -4,7 +4,7 @@
 
 .timeplot-copyright {
     position: absolute;
-    bottom: 0px;
+    top: 0px;
     left: 0px;
     z-index: 1000;
     cursor: pointer;
@@ -29,4 +29,5 @@
 
 .timeplot-layer {
     border: 1px solid #ccc;
+    padding: 12px;
 }

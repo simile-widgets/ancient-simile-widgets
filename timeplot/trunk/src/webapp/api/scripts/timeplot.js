@@ -3,6 +3,9 @@
  *==================================================
  */
 
+log = SimileAjax.Debug.log;
+expand = SimileAjax.Debug.objectToString;
+ 
 Timeplot.strings = {}; // localization string tables
 
 Timeplot.create = function(elmt, layerInfos) {
@@ -12,8 +15,9 @@ Timeplot.create = function(elmt, layerInfos) {
 Timeplot.createLayerInfo = function(params) {
     return {   
     	id:             ("id" in params) ? params.id : null,
-        eventSource:    ("eventSource" in params) ? params.eventSource : null,
+        eventSource:    ("eventSource" in params) ? params.eventSource : new Timeplot.DefaultEventSource(),
         column:         ("column" in params) ? params.column : 1,
+        geometry:       ("geometry" in params) ? params.geometry : new Timeplot.DefaultGeometry(),
         timeZone:       ("timeZone" in params) ? params.timeZone : 0
     };
 };
