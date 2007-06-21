@@ -573,7 +573,8 @@ qname.prefix=baseToPrefix[qname.base];
 
 Exhibit.Database._Impl.prototype._loadItem=function(itemEntry,indexFunction,baseURI){
 if(!("label"in itemEntry)&&!("id"in itemEntry)){
-SimileAjax.Debug.warn("Item entry has no label and no id: "+itemEntry);
+SimileAjax.Debug.warn("Item entry has no label and no id: "+
+SimileAjax.JSON.toJSONString(itemEntry));
 return;
 }
 
@@ -581,7 +582,8 @@ var id;
 if(!("label"in itemEntry)){
 id=itemEntry.id;
 if(!this._items.contains(id)){
-SimileAjax.Debug.warn("Cannot add new item containing no label: "+itemEntry);
+SimileAjax.Debug.warn("Cannot add new item containing no label: "+
+SimileAjax.JSON.toJSONString(itemEntry));
 }
 }else{
 var label=itemEntry.label;
@@ -9355,11 +9357,12 @@ expression:expression,
 uiContext:Exhibit.UIContext.create({},view._uiContext,true),
 styler:null,
 label:i<labels.length?labels[i]:null,
-format:"text"
+format:"list"
 });
 }
 
 var formats=Exhibit.getAttribute(configElmt,"columnFormats");
+if(formats!=null&&formats.length>0){
 var index=0;
 var startPosition=0;
 while(index<view._columns.length&&startPosition<formats.length){
@@ -9377,6 +9380,7 @@ startPosition++;
 }
 
 index++;
+}
 }
 }catch(e){
 SimileAjax.Debug.exception(e,"TabularView: Error processing configuration of tabular view");
@@ -9427,9 +9431,12 @@ format=column.format;
 var expression=Exhibit.ExpressionParser.parse(expr);
 if(expression.isPath()){
 var path=expression.getPath();
-if(format==null){
+if(format!=null&&format.length>0){
+format=Exhibit.FormatParser.parse(view._uiContext,format,0);
+}else{
 format="list";
 }
+
 view._columns.push({
 expression:expression,
 styler:styler,
@@ -10509,7 +10516,7 @@ null,
 null,
 null,
 color,
-"black"
+color
 );
 evt._itemID=itemID;
 evt.getProperty=function(name){

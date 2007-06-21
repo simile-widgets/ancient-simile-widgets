@@ -303,7 +303,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 null,   // link url
                 null,   // icon url
                 color,
-                "black"
+                color
             );
             evt._itemID = itemID;
             evt.getProperty = function(name) {

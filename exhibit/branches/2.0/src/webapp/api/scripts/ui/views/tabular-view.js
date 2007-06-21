@@ -65,28 +65,30 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContex
                 uiContext:  Exhibit.UIContext.create({}, view._uiContext, true),
                 styler:     null,
                 label:      i < labels.length ? labels[i] : null,
-                format:     "text"
+                format:     "list"
             });
         }
         
         var formats = Exhibit.getAttribute(configElmt, "columnFormats");
-        var index = 0;
-        var startPosition = 0;
-        while (index < view._columns.length && startPosition < formats.length) {
-            var column = view._columns[index];
-            var o = {};
-            
-            column.format = Exhibit.FormatParser.parseSeveral(column.uiContext, formats, startPosition, o);
-            
-            startPosition = o.index;
-            while (startPosition < formats.length && " \t\r\n".indexOf(formats.charAt(startPosition)) >= 0) {
-                startPosition++;
+        if (formats != null && formats.length > 0) {
+            var index = 0;
+            var startPosition = 0;
+            while (index < view._columns.length && startPosition < formats.length) {
+                var column = view._columns[index];
+                var o = {};
+                
+                column.format = Exhibit.FormatParser.parseSeveral(column.uiContext, formats, startPosition, o);
+                
+                startPosition = o.index;
+                while (startPosition < formats.length && " \t\r\n".indexOf(formats.charAt(startPosition)) >= 0) {
+                    startPosition++;
+                }
+                if (startPosition < formats.length && formats.charAt(startPosition) == ",") {
+                    startPosition++;
+                }
+                
+                index++;
             }
-            if (startPosition < formats.length && formats.charAt(startPosition) == ",") {
-                startPosition++;
-            }
-            
-            index++;
         }
     } catch (e) {
         SimileAjax.Debug.exception(e, "TabularView: Error processing configuration of tabular view");
@@ -137,9 +139,12 @@ Exhibit.TabularView._configure = function(view, configuration) {
             var expression = Exhibit.ExpressionParser.parse(expr);
             if (expression.isPath()) {
                 var path = expression.getPath();
-                if (format == null) {
+                if (format != null && format.length > 0) {
+                    format = Exhibit.FormatParser.parse(view._uiContext, format, 0);
+                } else {
                     format = "list";
                 }
+                
                 view._columns.push({
                     expression: expression,
                     styler:     styler,

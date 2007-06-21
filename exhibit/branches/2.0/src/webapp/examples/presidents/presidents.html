@@ -112,7 +112,8 @@
                         ex:viewClass="Map"
                         ex:label="Death Places"
                         ex:latlng=".deathLatLng"
-                        ex:marker=".party"
+                        ex:colorKey=".party"
+                        ex:colorCoder="party-colors"
                         ex:center="38.479394673276445, -95.361328125"
                         ex:zoom="4"
                         ex:bubbleWidth="200"
@@ -140,7 +141,7 @@
             </td>
             <td id="sidebar">
                 <div id="exhibit-browse-panel">
-                    <div ex:role="facet" ex:facetClass="TextSearch" ex:xexpressions=".religion"></div>
+                    <div ex:role="facet" ex:facetClass="TextSearch"></div>
                     <div ex:role="facet" ex:expression=".religion" ex:facetLabel="Religions"></div>
                     <div ex:role="facet" ex:expression=".party" ex:facetLabel="Political Parties"></div>
                     <div ex:role="facet" ex:expression=".dieInOffice" ex:facetLabel="Died In Office"></div>
