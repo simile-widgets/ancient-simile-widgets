@@ -77,7 +77,8 @@
             "ui/views/tabular-view.js",
             "ui/views/scatter-plot-view.js",
             "ui/views/pivot-table-view.js",
-            "ui/views/html-view.js"
+            "ui/views/html-view.js",
+			"ui/views/vemap-view.js"
         ];
         var cssFiles = [
             "exhibit.css",
@@ -180,6 +181,8 @@
         if (includeTimeline) {
             scriptURLs.push("http://static.simile.mit.edu/timeline/api/timeline-api.js");
         }
+
+		scriptURLs.push("http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=5") // for virtual earth
         
         /*
          *  Core scripts and styles
