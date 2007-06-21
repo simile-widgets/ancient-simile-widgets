@@ -1,5 +1,99 @@
 
 
+/* platform.js */
+
+
+
+SimileAjax.Platform.os={
+isMac:false,
+isWin:false,
+isWin32:false,
+isUnix:false
+};
+SimileAjax.Platform.browser={
+isIE:false,
+isNetscape:false,
+isMozilla:false,
+isFirefox:false,
+isOpera:false,
+isSafari:false,
+
+majorVersion:0,
+minorVersion:0
+};
+
+(function(){
+var an=navigator.appName.toLowerCase();
+var ua=navigator.userAgent.toLowerCase();
+
+
+SimileAjax.Platform.os.isMac=(ua.indexOf('mac')!=-1);
+SimileAjax.Platform.os.isWin=(ua.indexOf('win')!=-1);
+SimileAjax.Platform.os.isWin32=SimileAjax.Platform.isWin&&(
+ua.indexOf('95')!=-1||
+ua.indexOf('98')!=-1||
+ua.indexOf('nt')!=-1||
+ua.indexOf('win32')!=-1||
+ua.indexOf('32bit')!=-1
+);
+SimileAjax.Platform.os.isUnix=(ua.indexOf('x11')!=-1);
+
+
+SimileAjax.Platform.browser.isIE=(an.indexOf("microsoft")!=-1);
+SimileAjax.Platform.browser.isNetscape=(an.indexOf("netscape")!=-1);
+SimileAjax.Platform.browser.isMozilla=(ua.indexOf("mozilla")!=-1);
+SimileAjax.Platform.browser.isFirefox=(ua.indexOf("firefox")!=-1);
+SimileAjax.Platform.browser.isOpera=(an.indexOf("opera")!=-1);
+SimileAjax.Platform.browser.isSafari=(an.indexOf("safari")!=-1);
+
+var parseVersionString=function(s){
+var a=s.split(".");
+SimileAjax.Platform.browser.majorVersion=parseInt(a[0]);
+SimileAjax.Platform.browser.minorVersion=parseInt(a[1]);
+};
+var indexOf=function(s,sub,start){
+var i=s.indexOf(sub,start);
+return i>=0?i:s.length;
+};
+
+if(SimileAjax.Platform.browser.isMozilla){
+var offset=ua.indexOf("mozilla/");
+if(offset>=0){
+parseVersionString(ua.substring(offset+8,indexOf(ua," ",offset)));
+}
+}
+if(SimileAjax.Platform.browser.isIE){
+var offset=ua.indexOf("msie ");
+if(offset>=0){
+parseVersionString(ua.substring(offset+5,indexOf(ua,";",offset)));
+}
+}
+if(SimileAjax.Platform.browser.isNetscape){
+var offset=ua.indexOf("rv:");
+if(offset>=0){
+parseVersionString(ua.substring(offset+3,indexOf(ua,")",offset)));
+}
+}
+if(SimileAjax.Platform.browser.isFirefox){
+var offset=ua.indexOf("firefox/");
+if(offset>=0){
+parseVersionString(ua.substring(offset+8,indexOf(ua," ",offset)));
+}
+}
+
+if(!("localeCompare"in String.prototype)){
+String.prototype.localeCompare=function(s){
+if(this<s)return-1;
+else if(this>s)return 1;
+else return 0;
+};
+}
+})();
+
+SimileAjax.Platform.getDefaultLocale=function(){
+return SimileAjax.Platform.clientLocale;
+};
+
 /* ajax.js */
 
 
@@ -1258,140 +1352,6 @@ return false;
 };
 })();
 
-
-/* platform.js */
-
-
-
-SimileAjax.Platform.os={
-isMac:false,
-isWin:false,
-isWin32:false,
-isUnix:false
-};
-SimileAjax.Platform.browser={
-isIE:false,
-isNetscape:false,
-isMozilla:false,
-isFirefox:false,
-isOpera:false,
-isSafari:false,
-
-majorVersion:0,
-minorVersion:0
-};
-
-(function(){
-var an=navigator.appName.toLowerCase();
-var ua=navigator.userAgent.toLowerCase();
-
-
-SimileAjax.Platform.os.isMac=(ua.indexOf('mac')!=-1);
-SimileAjax.Platform.os.isWin=(ua.indexOf('win')!=-1);
-SimileAjax.Platform.os.isWin32=SimileAjax.Platform.isWin&&(
-ua.indexOf('95')!=-1||
-ua.indexOf('98')!=-1||
-ua.indexOf('nt')!=-1||
-ua.indexOf('win32')!=-1||
-ua.indexOf('32bit')!=-1
-);
-SimileAjax.Platform.os.isUnix=(ua.indexOf('x11')!=-1);
-
-
-SimileAjax.Platform.browser.isIE=(an.indexOf("microsoft")!=-1);
-SimileAjax.Platform.browser.isNetscape=(an.indexOf("netscape")!=-1);
-SimileAjax.Platform.browser.isMozilla=(ua.indexOf("mozilla")!=-1);
-SimileAjax.Platform.browser.isFirefox=(ua.indexOf("firefox")!=-1);
-SimileAjax.Platform.browser.isOpera=(an.indexOf("opera")!=-1);
-SimileAjax.Platform.browser.isSafari=(an.indexOf("safari")!=-1);
-
-var parseVersionString=function(s){
-var a=s.split(".");
-SimileAjax.Platform.browser.majorVersion=parseInt(a[0]);
-SimileAjax.Platform.browser.minorVersion=parseInt(a[1]);
-};
-var indexOf=function(s,sub,start){
-var i=s.indexOf(sub,start);
-return i>=0?i:s.length;
-};
-
-if(SimileAjax.Platform.browser.isMozilla){
-var offset=ua.indexOf("mozilla/");
-if(offset>=0){
-parseVersionString(ua.substring(offset+8,indexOf(ua," ",offset)));
-}
-}
-if(SimileAjax.Platform.browser.isIE){
-var offset=ua.indexOf("msie ");
-if(offset>=0){
-parseVersionString(ua.substring(offset+5,indexOf(ua,";",offset)));
-}
-}
-if(SimileAjax.Platform.browser.isNetscape){
-var offset=ua.indexOf("rv:");
-if(offset>=0){
-parseVersionString(ua.substring(offset+3,indexOf(ua,")",offset)));
-}
-}
-if(SimileAjax.Platform.browser.isFirefox){
-var offset=ua.indexOf("firefox/");
-if(offset>=0){
-parseVersionString(ua.substring(offset+8,indexOf(ua," ",offset)));
-}
-}
-
-if(!("localeCompare"in String.prototype)){
-String.prototype.localeCompare=function(s){
-if(this<s)return-1;
-else if(this>s)return 1;
-else return 0;
-};
-}
-})();
-
-SimileAjax.Platform.getDefaultLocale=function(){
-return SimileAjax.Platform.clientLocale;
-};
-
-/* signal.js */
-
-
-(function(){
-var substring=SimileAjax.urlPrefix+"scripts/signal.js";
-var heads=document.documentElement.getElementsByTagName("head");
-for(var h=0;h<heads.length;h++){
-var node=heads[h].firstChild;
-while(node!=null){
-if(node.nodeType==1&&node.tagName.toLowerCase()=="script"){
-var url=node.src;
-var i=url.indexOf(substring);
-if(i>=0){
-heads[h].removeChild(node);
-
-var count=parseInt(url.substr(substring.length+1));
-SimileAjax.loadingScriptsCount-=count;
-
-if(SimileAjax.loadingScriptsCount==0){
-var f=null;
-if(typeof SimileAjax_onLoad=="string"){
-f=eval(SimileAjax_onLoad);
-SimileAjax_onLoad=null;
-}else if(typeof SimileAjax_onLoad=="function"){
-f=SimileAjax_onLoad;
-SimileAjax_onLoad=null;
-}
-
-if(f!=null){
-f();
-}
-}
-return;
-}
-}
-node=node.nextSibling;
-}
-}
-})();
 
 /* string.js */
 
