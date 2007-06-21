@@ -6,6 +6,18 @@ Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
     return new Timegrid._Impl(node, eventSource, layoutName, layoutParams);
 };
 
+Timegrid.createFromDOM = function(elmt) {
+    var config = $(elmt).attrs('tg');
+    var eventSource = new Timegrid.DefaultEventSource();
+    var tg = Timegrid.create(elmt, eventSource, config.view, config);
+    if (config.src) {
+        tg.loadXML(config.src, function(xml, url) {
+            eventSource.loadXML(xml, url); 
+        });
+    }
+    return tg;
+};
+
 Timegrid.loadXML = function(url, f) {
     var fError = function(statusText, status, xmlhttp) {
         alert("Failed to load data XML from " + url + "\n" + statusText);
@@ -70,15 +82,15 @@ Timegrid._Impl.prototype.loadXML = function(url, f) {
 };
 
 Timegrid._Impl.prototype._construct = function() {
-    var layoutFactory = new Timegrid.LayoutFactory();
-    this._layout = layoutFactory.createLayout(this._layoutName, this._eventSource,
-                                              this._layoutParams);
+    this._layout = Timegrid.LayoutFactory.createLayout(this._layoutName, this._eventSource,
+                                                       this._layoutParams);
     var container = this._container;
     var doc = container.ownerDocument;
 
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
+    $(container).addClass('timegrid-default');
     
     var message = SimileAjax.Graphics.createMessageBubble(doc);
     message.containerDiv.className = "timegrid-message-container";

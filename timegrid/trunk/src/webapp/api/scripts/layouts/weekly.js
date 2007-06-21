@@ -105,17 +105,21 @@ Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
     return eventContainer;
 };
 
+Timegrid.WeekLayout.prototype.renderLabels = function(doc) {
+    var rowLabelContainer = doc.createElement("div");
+};
+
 Timegrid.WeekLayout.prototype.renderGridlines = function(doc) {
     var gridlineContainer = doc.createElement("div");
     $(gridlineContainer).addClass("timegrid-gridlines");
     gridlineContainer.style.height = this.ySize * this.yCell;
-    for (var x = 0; x < this.xSize; x++) {
+    for (var x = 0; x < this.xSize; x++) { // Vertical lines
         var vlineDiv = $("<div></div>").addClass("timegrid-vline");
         vlineDiv.css("height", this.ySize * this.yCell);
         vlineDiv.css("left", x * this.xCell + "%");
         $(gridlineContainer).append(vlineDiv);
     }
-    for (var y = 0; y <= this.ySize; y++) {
+    for (var y = 0; y <= this.ySize; y++) { // Horizontal lines
         var hlineDiv = $("<div></div>").addClass("timegrid-hline");
         hlineDiv.css("width", "100%");
         hlineDiv.css("top", y * this.yCell);
@@ -127,7 +131,7 @@ Timegrid.WeekLayout.prototype.renderGridlines = function(doc) {
 Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {
     var jediv = $("<div>" + evt.getText() + "</div>");
     jediv.addClass("timegrid-event");
-    jediv.css("height", this.yCell * evt.getInterval().hours - 1);
+    jediv.css("height", this.yCell * evt.getInterval().hours);
     jediv.css("top", this.yCell * y);
     jediv.css("left", this.xCell * x + '%');
     return jediv.get()[0]; // Return the actual DOM element
