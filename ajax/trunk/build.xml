@@ -1,0 +1,30 @@
+<!--+
+    |
+    |           +===========================+
+    |           |    Exhibit Build System   |
+    |           +===========================+
+    |
+    | This is just for bundling and minifying javascript and CSS files.
+    |
+    +-->
+
+<project default="bundle" basedir="." name="Exhibit">
+
+<!-- === Initialize ================================================= -->
+    
+  <target name="tasks">
+    <taskdef name="jsmin"
+        classname="edu.mit.simile.jsminTask.JSMinTask"
+        classpath="tools/jsminTask.jar"/>
+  </target>
+      
+  <target name="bundle" depends="tasks">
+    <jsmin output="src/webapp/api/bundle.js">
+        <fileset dir="src/webapp/api/scripts">
+            <include name="**/*.js" />
+            <!-- <exclude name="signal.js" />
+            <exclude name="platform.js" /> -->
+        </fileset>
+      </jsmin>
+  </target>
+</project>
