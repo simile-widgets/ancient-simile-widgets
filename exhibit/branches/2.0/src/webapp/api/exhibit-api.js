@@ -170,8 +170,12 @@
         /*
          *  External components
          */
-        if (includeMap && Exhibit.params.gmapkey) {
-            scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
+        if (includeMap) {
+            if (Exhibit.params.gmapkey) {
+                scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
+            } else {
+                scriptURLs.push("http://maps.google.com/maps?file=api&v=2");
+            }
         }
         if (includeTimeline) {
             scriptURLs.push("http://static.simile.mit.edu/timeline/api/timeline-api.js");
