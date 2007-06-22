@@ -23,7 +23,7 @@
             "util/html.js",
             "util/debug.js",
             "util/data-structure.js",
-            "util/dom.js",
+            "util/jquery.simile.js",
             
             "grid.js",
             "units.js",

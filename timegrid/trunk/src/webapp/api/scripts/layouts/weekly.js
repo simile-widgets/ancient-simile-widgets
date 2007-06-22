@@ -60,8 +60,8 @@ Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
  */
 Timegrid.WeekLayout.prototype.render = function(doc) {
     var timegridDiv = doc.createElement("div");
-    timegridDiv.style.height = this.height;
-    timegridDiv.style.width = this.width;
+    timegridDiv.style.height = this.height + "px";
+    timegridDiv.style.width = this.width + "px";
     $(timegridDiv).addClass("timegrid-container");
     timegridDiv.appendChild(this.renderEvents(doc));
     timegridDiv.appendChild(this.renderGridlines(doc));
@@ -112,7 +112,7 @@ Timegrid.WeekLayout.prototype.renderLabels = function(doc) {
 Timegrid.WeekLayout.prototype.renderGridlines = function(doc) {
     var gridlineContainer = doc.createElement("div");
     $(gridlineContainer).addClass("timegrid-gridlines");
-    gridlineContainer.style.height = this.ySize * this.yCell;
+    gridlineContainer.style.height = this.ySize * this.yCell + "px";
     for (var x = 0; x < this.xSize; x++) { // Vertical lines
         var vlineDiv = $("<div></div>").addClass("timegrid-vline");
         vlineDiv.css("height", this.ySize * this.yCell);

@@ -1,11 +1,17 @@
-Timegrid.DOM = new Object();
-
 /**
- * The attrs method extends jQuery to allow for aggregating attributes of 
- * all matched elements in a $('..') expression into a nice hash.  It also
- * supports only returning attributes within a certain namespace, e.g. ex:role.
+ * This code implements the Simile jQuery plugin, which in turns simply
+ * provides several convenient and useful functions for manipulating the
+ * DOM, etc.
+ * @overview Simile jQuery plugin
  */
+
 jQuery.fn.extend({
+    /**
+     * The attrs method extends jQuery to allow for aggregating attributes of 
+     * all matched elements in a $('..') expression into a nice hash.  It also
+     * supports only returning attributes within a certain namespace, e.g. 
+     * ex:role, when provided with the namespace prefix as an argument.
+     */
     attrs: function(ns) {
         // Caching the compiled regex speeds this up a bit
         if (!this.__namespaceRegexps) {
