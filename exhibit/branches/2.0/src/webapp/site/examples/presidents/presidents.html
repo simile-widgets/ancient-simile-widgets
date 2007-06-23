@@ -9,7 +9,7 @@
     <!--script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQ_WLz7LpUMtzN755Z1xScTjdiF-xRJO2-n-QiclGr93ekHLb-pnN0tgQ" type="text/javascript"></script-->
 
     <!-- key for 127.0.0.1 -->
-    <script src="../../api/exhibit-api.js?bundle=false" type="text/javascript"></script>
+    <script src="../../../api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRT5LtkxOPBYoMsEVM7PszcKlvbgPBSuyv33s9BC557dxHekLQenXP30HA&bundle=false" type="text/javascript"></script>
 
     <script type="text/javascript">
         var rowStyler = function(item, database, tr) {
@@ -62,8 +62,8 @@
                             </tr>
                         </table>
                     </div>
-					<div ex:role="view"
-                        ex:viewClass="VEMap"
+                    <div ex:role="view"
+                        ex:viewClass="Map"
                         ex:label="Birth Places"
                         ex:latlng=".birthLatLng"
                         ex:colorKey=".party"
@@ -84,13 +84,13 @@
                             <span ex:content=".birthPlace"></span>, <span ex:content=".birth"></span>
                         </div>
                     </div>
-					<div ex:role="view"
-                        ex:viewClass="VEMap"
+                    <div ex:role="view"
+                        ex:viewClass="Map"
                         ex:label="Death Places"
                         ex:latlng=".deathLatLng"
-						ex:colorKey=".party"
+                        ex:colorKey=".party"
                         ex:colorCoder="party-colors"
-						ex:center="38.479394673276445, -95.361328125"
+                        ex:center="38.479394673276445, -95.361328125"
                         ex:zoom="4"
                         ex:bubbleWidth="200"
                         ex:bubbleHeight="200"
@@ -101,10 +101,47 @@
                             <span ex:content=".deathPlace"></span>, <span ex:content=".death"></span>
                         </div>
                     </div>
+                    <div ex:role="view"
+                        ex:viewClass="Timeline"
+                        ex:label="Terms"
+                        ex:proxy=".presidency"
+                        ex:start=".inDate"
+                        ex:end=".outDate"
+                        ex:colorKey=".party"
+                        ex:colorCoder="party-colors"
+                        ex:bubbleWidth="320"
+                        ex:bubbleHeight="200"
+                        ex:topBandPixelsPerUnit="400"
+                        ></div>
+                    <div ex:role="view"
+                        ex:viewClass="Tabular"
+                        ex:label="Table"
+                        ex:columns=".term, .label, .imageURL, .party, .presidency.inDate, .presidency.outDate, add(foreach(.presidency, date-range(.inDate, .outDate, 'day')))"
+                        ex:columnLabels="term, name, photo, party, took office, left office, days in office"
+                        ex:columnFormats="list, list, image, list, list, date { mode: short }, list"
+                        ex:sortColumn="4"
+                        ex:sortAscending="true"
+                        ex:rowStyler="rowStyler"
+                        ></div>
+                    <div ex:role="view"
+                        ex:viewClass="Tile"
+                        ex:label="Details"
+                        ex:orders=".term"
+                        ex:possibleOrders=".religion, .party, .birth, .death, .term"
+                        ex:grouped="false"
+                        ></div>
+                    <div ex:role="view"
+                        ex:viewClass="Thumbnail"
+                        ex:label="Photos"
+                        ex:orders=".party"
+                        ex:possibleOrders=".religion, .party, .birth, .death, .term">
+                        <div ex:role="exhibit-lens" ex:templateFile="president-thumbnail.xml"></div>
+                    </div>
                 </div>
             </td>
             <td id="sidebar">
                 <div id="exhibit-browse-panel">
+                    <div ex:role="facet" ex:facetClass="TextSearch"></div>
                     <div ex:role="facet" ex:expression=".religion" ex:facetLabel="Religions"></div>
                     <div ex:role="facet" ex:expression=".party" ex:facetLabel="Political Parties"></div>
                     <div ex:role="facet" ex:expression=".dieInOffice" ex:facetLabel="Died In Office"></div>
