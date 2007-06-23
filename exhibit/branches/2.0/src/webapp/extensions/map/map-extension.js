@@ -35,6 +35,8 @@ Exhibit.MapExtension = {
     if (Exhibit.MapExtension.params.service == "google") {
         if (Exhibit.params.gmapkey) {
             scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
+        } else if (Exhibit.MapExtension.params.gmapkey) {
+            scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.MapExtension.params.gmapkey);
         } else {
             scriptURLs.push("http://maps.google.com/maps?file=api&v=2");
         }
