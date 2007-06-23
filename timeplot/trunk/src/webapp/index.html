@@ -23,15 +23,22 @@
 
             var lineColor = new Timeplot.Color('#606060');
             var color1 = new Timeplot.Color('#8DDB74');
-            var color2 = new Timeplot.Color('#7CBCFF');
+            var color2 = new Timeplot.Color('#FF7976');
+            var color3 = new Timeplot.Color('#7CBCFF');
             
             var layerInfos1 = [
                 Timeplot.createLayerInfo({
-                    id: "web",
+                    id: "web total",
+                    eventSource: eventSource,
+                    column: 1,
+                    lineColor: color2,
+                    fillColor: color2.darken(30)
+                }),
+                Timeplot.createLayerInfo({
+                    id: "web clean",
                     eventSource: eventSource,
                     column: 2,
-                    lineColor: color1.darken(20),
-                    fillColor: color1
+                    lineColor: color1
                 })
             ];
             
@@ -43,7 +50,7 @@
                     id: "news",
                     eventSource: eventSource,
                     column: 3,
-                    lineColor: color2
+                    lineColor: color3
                 })
             ];
             
@@ -55,8 +62,8 @@
             if (resizeTimerID == null) {
                 resizeTimerID = window.setTimeout(function() {
                     resizeTimerID = null;
-                    if (timeplot1) timeplot1.paint();
-                    if (timeplot2) timeplot2.paint();
+                    if (timeplot1) timeplot1.resize();
+                    if (timeplot2) timeplot2.resize();
                 }, 0);
             }
         }    

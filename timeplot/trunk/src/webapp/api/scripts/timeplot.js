@@ -70,6 +70,10 @@ Timeplot._Impl.prototype.getUnit = function() {
     return this._unit;
 };
 
+Timeplot._Impl.prototype.getCanvas = function() {
+    return this._canvas;
+};
+
 Timeplot._Impl.prototype.loadText = function(url, separator, eventSource) {
     var tp = this;
     
@@ -95,46 +99,81 @@ Timeplot._Impl.prototype.loadText = function(url, separator, eventSource) {
 Timeplot._Impl.prototype.loadXML = Timeline._Impl.prototype.loadXML;
 Timeplot._Impl.prototype.loadJSON = Timeline._Impl.prototype.loadJSON;
 
-Timeplot._Impl.prototype.paint = function() {
+Timeplot._Impl.prototype.resize = function() {
+	this._prepareCanvas();
+
     for (var i = 0; i < this._layers.length; i++) {
         this._layers[i].paint();
     }
-};
+}
+
+Timeplot._Impl.prototype._prepareCanvas = function() {
+    var canvas = this.getCanvas();
+
+    canvas.width = this.getPixelWidth();
+    canvas.height = this.getPixelHeight();
+
+    var ctx = canvas.getContext('2d');
+    ctx.translate(0,canvas.height);
+    ctx.scale(1,-1);
+    ctx.globalCompositeOperation = 'source-over';
+}
 
 Timeplot._Impl.prototype._initialize = function() {
     var containerDiv = this._containerDiv;
     var doc = containerDiv.ownerDocument;
-    
+
+    // make sure the timeplot div has the right class    
     containerDiv.className = containerDiv.className.split(" ").concat("timeplot-container").join(" ");
         
+    // clean it up if it contains some content
     while (containerDiv.firstChild) {
         containerDiv.removeChild(containerDiv.firstChild);
     }
     
-    // inserting copyright and link to simile
-    var elmtCopyright = SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/copyright.png");
-    elmtCopyright.className = "timeplot-copyright";
-    elmtCopyright.title = "Timeplot (c) SIMILE - http://simile.mit.edu/timeplot/";
-    SimileAjax.DOM.registerEvent(elmtCopyright, "click", function() { window.location = "http://simile.mit.edu/timeplot/"; });
-    containerDiv.appendChild(elmtCopyright);
+    var canvas = doc.createElement("canvas");
     
-    // creating layers
-    this._layers = [];
-    if (this._layerInfos) {
-	    for (var i = 0; i < this._layerInfos.length; i++) {
-	        var layer = new Timeplot.Layer(this, this._layerInfos[i], i);
-	        this._layers.push(layer);
+    if (canvas.getContext) {
+        this._canvas = canvas;
+        canvas.className = "timeplot-canvas";
+        this._prepareCanvas();
+        containerDiv.appendChild(canvas);
+
+	    // inserting copyright and link to simile
+	    var elmtCopyright = SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/copyright.png");
+	    elmtCopyright.className = "timeplot-copyright";
+	    elmtCopyright.title = "Timeplot (c) SIMILE - http://simile.mit.edu/timeplot/";
+	    SimileAjax.DOM.registerEvent(elmtCopyright, "click", function() { window.location = "http://simile.mit.edu/timeplot/"; });
+	    containerDiv.appendChild(elmtCopyright);
+	    
+	    // creating layers
+	    this._layers = [];
+	    if (this._layerInfos) {
+	        for (var i = 0; i < this._layerInfos.length; i++) {
+	            var layer = new Timeplot.Layer(this, this._layerInfos[i], i);
+	            this._layers.push(layer);
+	        }
 	    }
+	        
+	    // creating loading UI
+	    var message = SimileAjax.Graphics.createMessageBubble(doc);
+	    message.containerDiv.className = "timeplot-message-container";
+	    containerDiv.appendChild(message.containerDiv);
+	    
+	    message.contentDiv.className = "timeplot-message";
+	    message.contentDiv.innerHTML = "<img src='http://static.simile.mit.edu/timeline/api/images/progress-running.gif' /> Loading...";
+	    
+	    this.showLoadingMessage = function() { message.containerDiv.style.display = "block"; };
+	    this.hideLoadingMessage = function() { message.containerDiv.style.display = "none"; };
+
+    } else {
+
+        this._message = SimileAjax.Graphics.createMessageBubble(doc);
+        this._message.containerDiv.className = "timeplot-message-container";
+        this._message.contentDiv.className = "timeplot-message";
+        this._message.contentDiv.innerHTML = "We're sorry, but your web browser is not currently supported by Timeplot.";
+        this.appendChild(this._message.containerDiv);
+        this._message.containerDiv.style.display = "block";
+
     }
-        
-    // creating loading UI
-    var message = SimileAjax.Graphics.createMessageBubble(doc);
-    message.containerDiv.className = "timeplot-message-container";
-    containerDiv.appendChild(message.containerDiv);
-    
-    message.contentDiv.className = "timeplot-message";
-    message.contentDiv.innerHTML = "<img src='http://static.simile.mit.edu/timeline/api/images/progress-running.gif' /> Loading...";
-    
-    this.showLoadingMessage = function() { message.containerDiv.style.display = "block"; };
-    this.hideLoadingMessage = function() { message.containerDiv.style.display = "none"; };
 };
