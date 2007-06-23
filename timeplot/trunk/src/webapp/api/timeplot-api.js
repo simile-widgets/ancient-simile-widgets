@@ -24,7 +24,9 @@
             "timeplot.js",
             "layer.js",
             "sources.js",
-            "geometry.js"
+            "geometry.js",
+            "color.js",
+            "math.js"
         ];
         var cssFiles = [
             "timeplot.css"

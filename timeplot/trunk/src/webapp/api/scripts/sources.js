@@ -42,6 +42,10 @@ Timeplot.DefaultEventSource.prototype.getStats = function(column) {
 	return this._events._stats[column];
 }
 
+Timeplot.DefaultEventSource.prototype.getEvents = function() {
+    return this._events._events;
+}
+
 Timeplot.DefaultEventSource.prototype._process = function(row) {
 	if (!this._events._stats) {
 		this._events._stats = new Array(row.length);

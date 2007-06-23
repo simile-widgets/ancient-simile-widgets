@@ -3,7 +3,7 @@
  *==================================================*/
 
 Timeplot.DefaultGeometry = function() {
-};
+}
 
 Timeplot.DefaultGeometry.prototype.locate = function(date, value) {
     var p = {};

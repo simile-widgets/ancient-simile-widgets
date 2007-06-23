@@ -4,22 +4,50 @@
     <link rel='stylesheet' href='styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
+    <style>
+        .timeplot {
+            height: 200px;
+            margin: 2em;
+            padding: 12px;
+            border: 1px solid #ccc;
+        }    
+    </style>
+    
     <script src="api/timeplot-api.js?bundle=false" type="text/javascript"></script>
     <script>
-        var timeplot;
+        var timeplot1;
+        var timeplot2;
+        
         function onLoad() {
-            var eventSource = new Timeplot.DefaultEventSource();        
+            var eventSource = new Timeplot.DefaultEventSource();
 
-            var layerInfos = [
+            var lineColor = new Timeplot.Color('#606060');
+            var color1 = new Timeplot.Color('#8DDB74');
+            var color2 = new Timeplot.Color('#7CBCFF');
+            
+            var layerInfos1 = [
                 Timeplot.createLayerInfo({
                     id: "web",
                     eventSource: eventSource,
-                    column: 1
+                    column: 2,
+                    lineColor: color1.darken(20),
+                    fillColor: color1
                 })
             ];
             
-            timeplot = Timeplot.create(document.getElementById("timeplot"), layerInfos);
-            timeplot.loadText("examples/simile/data.txt", " ", eventSource);
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), layerInfos1);
+            timeplot1.loadText("examples/simile/data.txt", " ", eventSource);
+
+            var layerInfos2 = [
+                Timeplot.createLayerInfo({
+                    id: "news",
+                    eventSource: eventSource,
+                    column: 3,
+                    lineColor: color2
+                })
+            ];
+            
+            timeplot2 = Timeplot.create(document.getElementById("timeplot2"), layerInfos2);
         }
         
         var resizeTimerID = null;
@@ -27,7 +55,8 @@
             if (resizeTimerID == null) {
                 resizeTimerID = window.setTimeout(function() {
                     resizeTimerID = null;
-                    timeplot.paint();
+                    if (timeplot1) timeplot1.paint();
+                    if (timeplot2) timeplot2.paint();
                 }, 0);
             }
         }    
@@ -42,7 +71,8 @@
 
 <div id="body">
     <h1>Timeplot</h1>
-    <div id="timeplot" style="height: 200px; margin: 2em;"></div>
+    <div id="timeplot1" class="timeplot"></div>
+    <div id="timeplot2" class="timeplot"></div>
 </div>
     
 </body>

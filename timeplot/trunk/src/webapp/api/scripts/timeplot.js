@@ -18,7 +18,9 @@ Timeplot.createLayerInfo = function(params) {
         eventSource:    ("eventSource" in params) ? params.eventSource : new Timeplot.DefaultEventSource(),
         column:         ("column" in params) ? params.column : 1,
         geometry:       ("geometry" in params) ? params.geometry : new Timeplot.DefaultGeometry(),
-        timeZone:       ("timeZone" in params) ? params.timeZone : 0
+        timeZone:       ("timeZone" in params) ? params.timeZone : 0,
+        fillColor:      ("fillColor" in params) ? params.fillColor : null,
+        lineColor:      ("lineColor" in params) ? params.lineColor : new Timeplot.Color("#606060")
     };
 };
 
@@ -53,11 +55,15 @@ Timeplot._Impl.prototype.remove = function(div) {
 };
 
 Timeplot._Impl.prototype.getPixelWidth = function() {
-    return this._containerDiv.offsetWidth;
+    var w = window.getComputedStyle(this._containerDiv, null).getPropertyValue("width");
+    w = parseInt(w.replace("px",""));
+    return w;
 };
 
 Timeplot._Impl.prototype.getPixelHeight = function() {
-    return this._containerDiv.offsetHeight;
+    var h = window.getComputedStyle(this._containerDiv, null).getPropertyValue("height");
+    h = parseInt(h.replace("px",""));
+    return h;    
 };
 
 Timeplot._Impl.prototype.getUnit = function() {
