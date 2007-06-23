@@ -372,13 +372,6 @@ div.exhibit-collectionView-footer {
     text-align: center;
     margin:     2em 0;
 }
-/*==================================================
- * Styles for map view
- *==================================================
- */
-div.exhibit-mapView-map {
-    border: 1px solid #738699;
-}
 div.exhibit-pivotTableView-tableContainer {
 }
 

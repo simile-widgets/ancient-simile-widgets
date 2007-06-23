@@ -42,7 +42,7 @@
         </fileset>
     </concat>
       
-    <!-- Exhibit -->
+    <!-- Time extension -->
     <jsmin output="src/webapp/extensions/time/time-extension-bundle.js">
         <fileset dir="src/webapp/extensions/time/scripts">
             <include name="**/*.js" />
@@ -50,6 +50,18 @@
     </jsmin>
     <concat destfile="src/webapp/extensions/time/time-extension-bundle.css">
         <fileset dir="src/webapp/extensions/time/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+    
+    <!-- Map extension -->
+    <jsmin output="src/webapp/extensions/map/map-extension-bundle.js">
+        <fileset dir="src/webapp/extensions/map/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/extensions/map/map-extension-bundle.css">
+        <fileset dir="src/webapp/extensions/map/styles">
             <include name="**/*.css" />
         </fileset>
     </concat>
@@ -71,8 +83,8 @@
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/api/locales/sp/exhibit-es-bundle.css">
-        <fileset dir="src/webapp/api/locales/sp/styles">
+    <concat destfile="src/webapp/api/locales/es/exhibit-es-bundle.css">
+        <fileset dir="src/webapp/api/locales/es/styles">
             <include name="**/*.css" />
         </fileset>
     </concat>

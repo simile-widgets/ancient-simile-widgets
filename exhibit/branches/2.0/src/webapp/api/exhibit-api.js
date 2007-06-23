@@ -200,12 +200,7 @@
             scriptURLs.push(Exhibit.urlPrefix + "../extensions/time/time-extension.js");
         }
         if (includeMap) {
-            if (Exhibit.params.gmapkey) {
-                scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
-            } else {
-                scriptURLs.push("http://maps.google.com/maps?file=api&v=2");
-                scriptURLs.push("http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=5") // for virtual earth
-            }
+            scriptURLs.push(Exhibit.urlPrefix + "../extensions/map/map-extension.js");
         }
         
         SimileAjax.includeJavascriptFiles(document, "", scriptURLs);

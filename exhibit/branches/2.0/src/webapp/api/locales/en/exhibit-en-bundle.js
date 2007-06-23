@@ -165,21 +165,6 @@ saveButtonLabel:"Save"
 };
 
 
-/* map-view-l10n.js */
-
-
-
-Exhibit.MapView.l10n={
-viewLabel:"Map",
-viewTooltip:"View items on a map",
-mixedLegendKey:"Mixed",
-colorLegendTitle:"Color Legend",
-formatMappableCount:function(count){
-return"Only "+count+" can be plotted on map.";
-}
-};
-
-
 /* ordered-view-frame-l10n.js */
 
 
