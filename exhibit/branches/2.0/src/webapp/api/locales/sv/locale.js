@@ -12,7 +12,6 @@
         "ordered-view-frame-l10n.js",
         "tile-view-l10n.js",
         "map-view-l10n.js",
-        "timeline-view-l10n.js",
         "thumbnail-view-l10n.js",
         "tabular-view-l10n.js"
     ];
@@ -21,9 +20,9 @@
 
     var urlPrefix = Exhibit.urlPrefix + "locales/sv/";
     if (Exhibit.params.bundle) {
-        SimileAjax.includeJavascriptFiles(document, urlPrefix, [ "bundle.js" ]);
+        SimileAjax.includeJavascriptFiles(document, urlPrefix, [ "exhibit-sv-bundle.js" ]);
         if (cssFiles.length > 0) {
-            SimileAjax.includeCssFiles(document, urlPrefix, [ "bundle.css" ]);
+            SimileAjax.includeCssFiles(document, urlPrefix, [ "exhibit-sv-bundle.css" ]);
         }
     } else {
         SimileAjax.includeJavascriptFiles(document, urlPrefix + "scripts/", javascriptFiles);

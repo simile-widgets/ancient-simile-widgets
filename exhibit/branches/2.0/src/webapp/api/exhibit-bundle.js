@@ -10214,22 +10214,23 @@ return div;
 };
 
 
-/* timeline-view.js */
+/* vemap-view.js */
 
 
 
-Exhibit.TimelineView=function(containerElmt,uiContext){
+
+
+Exhibit.VEMapView=function(containerElmt,uiContext){
 this._div=containerElmt;
 this._uiContext=uiContext;
 
 this._settings={};
 this._accessors={
-getEventLabel:function(itemID,database,visitor){visitor(database.getObject(itemID,"label"));},
 getProxy:function(itemID,database,visitor){visitor(itemID);},
-getColorKey:null
+getColorKey:null,
+getIcon:null
 };
-
-this._largestSize=0;
+this._colorCoder=null;
 
 var view=this;
 this._listener={
@@ -10240,36 +10241,62 @@ view._reconstruct();
 uiContext.getCollection().addListener(this._listener);
 };
 
-Exhibit.TimelineView._intervalChoices=[
-"millisecond","second","minute","hour","day","week","month","year","decade","century","millennium"
-];
-
-Exhibit.TimelineView._settingSpecs={
-"topBandHeight":{type:"int",defaultValue:75},
-"topBandUnit":{type:"enum",choices:Exhibit.TimelineView._intervalChoices},
-"topBandPixelsPerUnit":{type:"int",defaultValue:200},
-"bottomBandHeight":{type:"int",defaultValue:25},
-"bottomBandUnit":{type:"enum",choices:Exhibit.TimelineView._intervalChoices},
-"bottomBandPixelsPerUnit":{type:"int",defaultValue:200},
-"timelineHeight":{type:"int",defaultValue:400},
-"timelineConstructor":{type:"function",defaultValue:null},
-"colorCoder":{type:"text",defaultValue:null}
+Exhibit.VEMapView._settingSpecs={
+"center":{type:"float",defaultValue:[20,0],dimensions:2},
+"zoom":{type:"float",defaultValue:2},
+"size":{type:"text",defaultValue:"small"},
+"scaleControl":{type:"boolean",defaultValue:true},
+"overviewControl":{type:"boolean",defaultValue:false},
+"type":{type:"enum",defaultValue:"normal",choices:["normal","satellite","hybrid"]},
+"bubbleTip":{type:"enum",defaultValue:"top",choices:["top","bottom"]},
+"mapHeight":{type:"int",defaultValue:400},
+"mapConstructor":{type:"function",defaultValue:null},
+"color":{type:"text",defaultValue:"#FF9000"},
+"colorCoder":{type:"text",defaultValue:null},
+"iconScale":{type:"float",defaultValue:1},
+"iconOffsetX":{type:"float",defaultValue:0},
+"iconOffsetY":{type:"float",defaultValue:0},
+"shape":{type:"text",defaultValue:"circle"},
+"bodyWidth":{type:"int",defaultValue:24},
+"bodyHeight":{type:"int",defaultValue:24},
+"pin":{type:"boolean",defaultValue:true},
+"pinHeight":{type:"int",defaultValue:6},
+"pinWidth":{type:"int",defaultValue:6}
 };
 
-Exhibit.TimelineView._accessorSpecs=[
+Exhibit.VEMapView._accessorSpecs=[
 {accessorName:"getProxy",
 attributeName:"proxy"
 },
-{accessorName:"getDuration",
-bindings:[
-{attributeName:"start",
-type:"date",
-bindingName:"start"
+{accessorName:"getLatlng",
+alternatives:[
+{bindings:[
+{attributeName:"latlng",
+types:["float","float"],
+bindingNames:["lat","lng"]
 },
-{attributeName:"end",
-type:"date",
-bindingName:"end",
+{attributeName:"maxAutoZoom",
+type:"float",
+bindingName:"maxAutoZoom",
 optional:true
+}
+]
+},
+{bindings:[
+{attributeName:"lat",
+type:"float",
+bindingName:"lat"
+},
+{attributeName:"lng",
+type:"float",
+bindingName:"lng"
+},
+{attributeName:"maxAutoZoom",
+type:"float",
+bindingName:"maxAutoZoom",
+optional:true
+}
+]
 }
 ]
 },
@@ -10281,56 +10308,56 @@ type:"text"
 attributeName:"colorKey",
 type:"text"
 },
-{accessorName:"getEventLabel",
-attributeName:"eventLabel",
-type:"text"
+{accessorName:"getIcon",
+attributeName:"icon",
+type:"url"
 }
 ];
 
-Exhibit.TimelineView.create=function(configuration,containerElmt,uiContext){
-var view=new Exhibit.TimelineView(
+Exhibit.VEMapView.create=function(configuration,containerElmt,uiContext){
+var view=new Exhibit.VEMapView(
 containerElmt,
 Exhibit.UIContext.create(configuration,uiContext)
 );
-Exhibit.TimelineView._configure(view,configuration);
+Exhibit.VEMapView._configure(view,configuration);
 
 view._internalValidate();
 view._initializeUI();
 return view;
 };
 
-Exhibit.TimelineView.createFromDOM=function(configElmt,containerElmt,uiContext){
+Exhibit.VEMapView.createFromDOM=function(configElmt,containerElmt,uiContext){
 var configuration=Exhibit.getConfigurationFromDOM(configElmt);
-var view=new Exhibit.TimelineView(
+var view=new Exhibit.VEMapView(
 containerElmt!=null?containerElmt:configElmt,
 Exhibit.UIContext.createFromDOM(configElmt,uiContext)
 );
 
-Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.TimelineView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.TimelineView._settingSpecs,view._settings);
-Exhibit.TimelineView._configure(view,configuration);
+Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.VEMapView._accessorSpecs,view._accessors);
+Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.VEMapView._settingSpecs,view._settings);
+Exhibit.VEMapView._configure(view,configuration);
 
 view._internalValidate();
 view._initializeUI();
 return view;
 };
 
-Exhibit.TimelineView._configure=function(view,configuration){
-Exhibit.SettingsUtilities.createAccessors(configuration,Exhibit.TimelineView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.TimelineView._settingSpecs,view._settings);
+Exhibit.VEMapView._configure=function(view,configuration){
+Exhibit.SettingsUtilities.createAccessors(configuration,Exhibit.VEMapView._accessorSpecs,view._accessors);
+Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.VEMapView._settingSpecs,view._settings);
 
 var accessors=view._accessors;
-view._getDuration=function(itemID,database,visitor){
+view._getLatlng=function(itemID,database,visitor){
 accessors.getProxy(itemID,database,function(proxy){
-accessors.getDuration(proxy,database,visitor);
+accessors.getLatlng(proxy,database,visitor);
 });
 };
 };
 
-Exhibit.TimelineView.prototype.dispose=function(){
+Exhibit.VEMapView.prototype.dispose=function(){
 this._uiContext.getCollection().removeListener(this._listener);
 
-this._timeline=null;
+this._map=null;
 
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
@@ -10338,14 +10365,16 @@ this._toolboxWidget=null;
 this._dom.dispose();
 this._dom=null;
 
+this._uiContext.dispose();
+this._uiContext=null;
+
 this._div.innerHTML="";
 this._div=null;
 
-this._uiContext.dispose();
-this._uiContext=null;
+
 };
 
-Exhibit.TimelineView.prototype._internalValidate=function(){
+Exhibit.VEMapView.prototype._internalValidate=function(){
 if("getColorKey"in this._accessors){
 if("colorCoder"in this._settings){
 this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
@@ -10357,198 +10386,148 @@ this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 }
 };
 
-Exhibit.TimelineView.prototype._initializeUI=function(){
+Exhibit.VEMapView.prototype._initializeUI=function(){
 var self=this;
+var settings=this._settings;
 
 this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
 this._div,
 this._uiContext,
 true,
-{onResize:function(){
-self._timeline.layout();
+{},
+{markerGenerator:function(color){
+var shape="square";
+return SimileAjax.Graphics.createTranslucentImage(
+Exhibit.VEMapView._markerUrlPrefix+
+"?renderer=map-marker&shape="+Exhibit.VEMapView._defaultMarkerShape+
+"&width=20&height=20&pinHeight=5&background="+color.substr(1),
+"middle"
+);
 }
-},
-{}
+}
 );
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
 
-this._eventSource=new Timeline.DefaultEventSource();
+var mapDiv=this._dom.plotContainer;
+mapDiv.style.height=settings.mapHeight+"px";
+mapDiv.className="exhibit-mapView-map";
+mapDiv.style.position="relative";
+mapDiv.int=1
+mapDiv.id="map-"+mapDiv.int++;
+
+var settings=this._settings;
+if(settings._mapConstructor!=null){
+this._map=settings._mapConstructor(mapDiv);
+}
+else{
+this._map=new VEMap(mapDiv.id);
+this._map.LoadMap(new VELatLong(settings.center[0],settings.center[1]),settings.zoom);
+}
 this._reconstruct();
 };
 
-Exhibit.TimelineView.prototype._reconstructTimeline=function(newEvents){
-var settings=this._settings;
-
-if(this._timeline!=null){
-this._timeline.dispose();
-}
-
-if(newEvents){
-this._eventSource.addMany(newEvents);
-}
-
-var timelineDiv=this._dom.plotContainer;
-if(settings.timelineConstructor!=null){
-this._timeline=settings.timelineConstructor(timelineDiv,this._eventSource);
-}else{
-timelineDiv.style.height=settings.timelineHeight+"px";
-timelineDiv.className="exhibit-timelineView-timeline";
-
-var theme=Timeline.ClassicTheme.create();
-theme.event.bubble.width=this._uiContext.getSetting("bubbleWidth");
-theme.event.bubble.height=this._uiContext.getSetting("bubbleHeight");
-
-var topIntervalUnit,bottomIntervalUnit;
-if(settings.topBandUnit!=null||settings.bottomBandUnit!=null){
-if(Exhibit.TimelineView._intervalLabelMap==null){
-Exhibit.TimelineView._intervalLabelMap={
-"millisecond":Timeline.DateTime.MILLISECOND,
-"second":Timeline.DateTime.SECOND,
-"minute":Timeline.DateTime.MINUTE,
-"hour":Timeline.DateTime.HOUR,
-"day":Timeline.DateTime.DAY,
-"week":Timeline.DateTime.WEEK,
-"month":Timeline.DateTime.MONTH,
-"year":Timeline.DateTime.YEAR,
-"decade":Timeline.DateTime.DECADE,
-"century":Timeline.DateTime.CENTURY,
-"millennium":Timeline.DateTime.MILLENNIUM
-};
-}
-
-if(settings.topBandUnit==null){
-bottomIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.bottomBandUnit];
-topIntervalUnit=bottomIntervalUnit-1;
-}else if(settings.bottomBandUnit==null){
-topIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.topBandUnit];
-bottomIntervalUnit=topIntervalUnit+1;
-}else{
-topIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.topBandUnit];
-bottomIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.bottomBandUnit];
-}
-}else{
-var earliest=this._eventSource.getEarliestDate();
-var latest=this._eventSource.getLatestDate();
-
-var totalDuration=latest.getTime()-earliest.getTime();
-var totalEventCount=this._eventSource.getCount();
-if(totalDuration>0&&totalEventCount>1){
-var totalDensity=totalEventCount/totalDuration;
-
-var topIntervalUnit=Timeline.DateTime.MILLENNIUM;
-while(topIntervalUnit>0){
-var intervalDuration=Timeline.DateTime.gregorianUnitLengths[topIntervalUnit];
-var eventsPerPixel=totalDensity*intervalDuration/settings.topBandPixelsPerUnit;
-if(eventsPerPixel<0.01){
-break;
-}
-topIntervalUnit--;
-}
-}else{
-topIntervalUnit=Timeline.DateTime.YEAR;
-}
-bottomIntervalUnit=topIntervalUnit+1;
-}
-
-var bandInfos=[
-Timeline.createBandInfo({
-width:settings.topBandHeight+"%",
-intervalUnit:topIntervalUnit,
-intervalPixels:settings.topBandPixelsPerUnit,
-eventSource:this._eventSource,
-
-theme:theme
-}),
-Timeline.createBandInfo({
-width:settings.bottomBandHeight+"%",
-intervalUnit:bottomIntervalUnit,
-intervalPixels:settings.bottomBandPixelsPerUnit,
-eventSource:this._eventSource,
-
-showEventText:false,
-trackHeight:0.5,
-trackGap:0.2,
-theme:theme
-})
-];
-bandInfos[1].syncWith=0;
-bandInfos[1].highlight=true;
-bandInfos[1].eventPainter.setLayout(bandInfos[0].eventPainter.getLayout());
-
-this._timeline=Timeline.create(timelineDiv,bandInfos,Timeline.HORIZONTAL);
-}
-};
-
-Exhibit.TimelineView.prototype._reconstruct=function(){
+Exhibit.VEMapView.prototype._reconstruct=function(){
 var self=this;
 var collection=this._uiContext.getCollection();
 var database=this._uiContext.getDatabase();
 var settings=this._settings;
 var accessors=this._accessors;
-
-
+var originalSize=collection.countAllItems();
 var currentSize=collection.countRestrictedItems();
 var unplottableItems=[];
 
+this._map.DeleteAllShapeLayers();
 this._dom.legendWidget.clear();
-this._eventSource.clear();
 
 if(currentSize>0){
 var currentSet=collection.getRestrictedItems();
+var locationToData={};
 var hasColorKey=(this._accessors.getColorKey!=null);
-var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
-var events=[];
-
-var addEvent=function(itemID,duration,color){
-var label;
-accessors.getEventLabel(itemID,database,function(v){label=v;return true;});
-
-var evt=new Timeline.DefaultEventSource.Event(
-duration.start,
-duration.end,
-null,
-null,
-duration.end==null,
-label,
-"",
-null,
-null,
-null,
-color,
-color
-);
-evt._itemID=itemID;
-evt.getProperty=function(name){
-return database.getObject(this._itemID,name);
-};
-evt.fillInfoBubble=function(elmt,theme,labeller){
-self._fillInfoBubble(this,elmt,theme,labeller);
-};
-
-events.push(evt);
-};
+var hasIcon=(this._accessors.getIcon!=null);
 
 currentSet.visit(function(itemID){
-var durations=[];
-self._getDuration(itemID,database,function(duration){if("start"in duration)durations.push(duration);});
+var latlngs=[];
+self._getLatlng(itemID,database,function(v){
+if("lat"in v&&"lng"in v)latlngs.push(v);
+}
+);
 
-if(durations.length>0){
-var color=null;
+if(latlngs.length>0){
+var colorKeys=null;
 if(hasColorKey){
-var colorKeys=new Exhibit.Set();
-accessors.getColorKey(itemID,database,function(key){colorKeys.add(key);});
-
-color=self._colorCoder.translateSet(colorKeys,colorCodingFlags);
+colorKeys=new Exhibit.Set();
+accessors.getColorKey(itemID,database,function(v){colorKeys.add(v);});
 }
 
-for(var i=0;i<durations.length;i++){
-addEvent(itemID,durations[i],color);
+
+for(var n=0;n<latlngs.length;n++){
+var latlng=latlngs[n];
+var latlngKey=latlng.lat+","+latlng.lng;
+if(latlngKey in locationToData){
+var locationData=locationToData[latlngKey];
+locationData.items.push(itemID);
+if(hasColorKey){
+locationData.colorKeys.addSet(colorKeys);
+}
+}else{
+var locationData={
+latlng:latlng,
+items:[itemID]
+};
+if(hasColorKey){
+locationData.colorKeys=colorKeys;
+}
+locationToData[latlngKey]=locationData;
+}
 }
 }else{
 unplottableItems.push(itemID);
 }
 });
+
+var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
+var bounds,maxAutoZoom=Infinity;
+var addMarkerAtLocation=function(locationData){
+var itemCount=locationData.items.length;
+var shape=self._settings.shape;
+var color=self._settings.color;
+if(hasColorKey){
+color=self._colorCoder.translateSet(locationData.colorKeys,colorCodingFlags);
+}
+
+var icon=null;
+if(itemCount==1){
+if(hasIcon){
+accessors.getIcon(locationData.items[0],database,function(v){icon=v;});
+}
+}
+
+var icon=Exhibit.VEMapView._makeIcon(
+shape,
+color,
+itemCount==1?"":itemCount.toString(),
+icon,
+self._settings
+);
+
+var layer=new VEShapeLayer();
+var point=new VELatLong(locationData.latlng.lat,locationData.latlng.lng);
+var marker=new VEShape(VEShapeType.Pushpin,point);
+var title=locationData.items[0];
+var description=self._createDescription(locationData.items);
+
+marker.SetCustomIcon(icon);
+marker.SetTitle(title);
+marker.SetDescription(description);
+marker.SetIconAnchor(point);
+
+self._map.AddShapeLayer(layer);
+layer.AddShape(marker);
+}
+for(var latlngKey in locationToData){
+addMarkerAtLocation(locationToData[latlngKey]);
+}
 
 if(hasColorKey){
 var legendWidget=this._dom.legendWidget;
@@ -10570,29 +10549,90 @@ if(colorCodingFlags.missing){
 legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
 }
 }
-
-var plottableSize=currentSize-unplottableItems.length;
-if(plottableSize>this._largestSize){
-this._largestSize=plottableSize;
-this._reconstructTimeline(events);
-}else{
-this._eventSource.addMany(events);
-}
-
-var band=this._timeline.getBand(0);
-var centerDate=band.getCenterVisibleDate();
-if(centerDate<this._eventSource.getEarliestDate()){
-band.scrollToCenter(this._eventSource.getEarliestDate());
-}else if(centerDate>this._eventSource.getLatestDate()){
-band.scrollToCenter(this._eventSource.getLatestDate());
-}
 }
 this._dom.setUnplottableMessage(currentSize,unplottableItems);
 };
 
-Exhibit.TimelineView.prototype._fillInfoBubble=function(evt,elmt,theme,labeller){
-this._uiContext.getLensRegistry().createLens(evt._itemID,elmt,this._uiContext);
+
+Exhibit.VEMapView.prototype._createDescription=function(items){
+var bubbleElmt=Exhibit.ViewUtilities.fillBubbleWithItems(
+null,
+items,
+this._uiContext
+);
+var newElmt=document.createElement("div");
+newElmt.appendChild(bubbleElmt);
+
+console.log(newElmt.innerHTML);
+return newElmt.innerHTML;
 };
+
+Exhibit.VEMapView._iconData=null;
+Exhibit.VEMapView._markerUrlPrefix="http://simile.mit.edu/painter/painter?";
+Exhibit.VEMapView._defaultMarkerShape="circle";
+
+
+Exhibit.VEMapView._makeIcon=function(shape,color,label,iconURL,settings){
+var extra=label.length*3;
+var halfWidth=Math.ceil(settings.bodyWidth/2)+extra;
+var bodyHeight=settings.bodyHeight;
+var width=halfWidth*2;
+var height=bodyHeight;
+
+var icon=new VECustomIconSpecification
+
+var imageParameters=[
+"renderer=map-marker",
+"shape="+shape,
+"width="+width,
+"height="+bodyHeight,
+"background="+color.substr(1),
+"label="+label
+];
+
+var pinParameters=[];
+
+if(iconURL!=null){
+imageParameters.push("icon="+iconURL);
+if(settings.iconScale!=1){
+imageParameters.push("iconScale="+settings.iconScale);
+}
+if(settings.iconOffsetX!=1){
+imageParameters.push("iconX="+settings.iconOffsetX);
+}
+if(settings.iconOffsetY!=1){
+imageParameters.push("iconY="+settings.iconOffsetY);
+}
+}
+
+
+if(settings.pin){
+var pinHeight=settings.pinHeight;
+var pinHalfWidth=Math.ceil(settings.pinWidth/4);
+
+height+=pinHeight;
+
+pinParameters.push("pinHeight="+pinHeight);
+pinParameters.push("pinWidth="+(pinHalfWidth*2));
+
+
+
+console.log(icon.ImageOffset);
+}else{
+pinParameters.push("pin=false");
+}
+
+icon.TextContent=" "
+icon.Image=Exhibit.MapView._markerUrlPrefix+imageParameters.concat(pinParameters).join("&");
+icon.ImageHeight=height;
+icon.ImageWidth=width;
+
+
+
+return icon
+
+};
+
 
 /* view-panel.js */
 

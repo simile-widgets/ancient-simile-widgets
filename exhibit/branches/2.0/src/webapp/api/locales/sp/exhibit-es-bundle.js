@@ -264,21 +264,6 @@ viewTooltip:"Ver elementos en una lista detallada"
 };
 
 
-/* timeline-view-l10n-spanish.js */
-
-
-
-Exhibit.TimelineView.l10n={
-viewLabel:"Diagrama Temporal",
-viewTooltip:"Ver elementos organizados temporalmente",
-colorLegendTitle:"Color Leyenda",
-relayoutButtonLabel:"Redibujar",
-formatMappableCount:function(count){
-return"Solamente "+count+" pueden ser representados en el diagrama.";
-}
-};
-
-
 /* view-panel-l10n-spanish.js */
 
 

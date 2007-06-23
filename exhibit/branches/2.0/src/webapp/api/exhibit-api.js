@@ -17,7 +17,8 @@
             loaded:     false,
             params:     { bundle: true, autoCreate: true },
             namespace:  "http://simile.mit.edu/2006/11/exhibit#",
-            importers:  {}
+            importers:  {},
+            locales:    [ "en" ]
         };
     
         var javascriptFiles = [
@@ -78,7 +79,7 @@
             "ui/views/scatter-plot-view.js",
             "ui/views/pivot-table-view.js",
             "ui/views/html-view.js",
-			"ui/views/vemap-view.js"
+            "ui/views/vemap-view.js"
         ];
         var cssFiles = [
             "exhibit.css",
@@ -104,8 +105,6 @@
             "views/pivot-table-view.css"
         ];
         
-        var locales = [ "en" ];
-
         var includeMap = false;
         var includeTimeline = false;
         
@@ -115,9 +114,9 @@
             if (locale != "en") {
                 var segments = locale.split("-");
                 if (segments.length > 1 && segments[0] != "en") {
-                    locales.push(segments[0]);
+                    Exhibit.locales.push(segments[0]);
                 }
-                locales.push(locale);
+                Exhibit.locales.push(locale);
             }
         }
 
@@ -145,9 +144,9 @@
             if (Exhibit.params.locale != "en") {
                 var segments = Exhibit.params.locale.split("-");
                 if (segments.length > 1 && segments[0] != "en") {
-                    locales.push(segments[0]);
+                    Exhibit.locales.push(segments[0]);
                 }
-                locales.push(Exhibit.params.locale);
+                Exhibit.locales.push(Exhibit.params.locale);
             }
         }
         if (Exhibit.params.gmapkey) {
@@ -167,29 +166,13 @@
 
         var scriptURLs = Exhibit.params.js || [];
         var cssURLs = Exhibit.params.css || [];
-        
-        /*
-         *  External components
-         */
-        if (includeMap) {
-            if (Exhibit.params.gmapkey) {
-                scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
-            } else {
-                scriptURLs.push("http://maps.google.com/maps?file=api&v=2");
-            }
-        }
-        if (includeTimeline) {
-            scriptURLs.push("http://static.simile.mit.edu/timeline/api/timeline-api.js");
-        }
-
-		scriptURLs.push("http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=5") // for virtual earth
-        
+                
         /*
          *  Core scripts and styles
          */
         if (Exhibit.params.bundle) {
-            scriptURLs.push(Exhibit.urlPrefix + "bundle.js");
-            cssURLs.push(Exhibit.urlPrefix + "bundle.css");
+            scriptURLs.push(Exhibit.urlPrefix + "exhibit-bundle.js");
+            cssURLs.push(Exhibit.urlPrefix + "exhibit-bundle.css");
         } else {
             SimileAjax.prefixURLs(scriptURLs, Exhibit.urlPrefix + "scripts/", javascriptFiles);
             SimileAjax.prefixURLs(cssURLs, Exhibit.urlPrefix + "styles/", cssFiles);
@@ -198,8 +181,8 @@
         /*
          *  Localization
          */
-        for (var i = 0; i < locales.length; i++) {
-            scriptURLs.push(Exhibit.urlPrefix + "locales/" + locales[i] + "/locale.js");
+        for (var i = 0; i < Exhibit.locales.length; i++) {
+            scriptURLs.push(Exhibit.urlPrefix + "locales/" + Exhibit.locales[i] + "/locale.js");
         };
         
         if (Exhibit.params.callback) {
@@ -210,6 +193,21 @@
             scriptURLs.push(Exhibit.urlPrefix + "scripts/create.js");
         }
 
+        /*
+         *  Extensions (for backward compatibility)
+         */
+        if (includeTimeline) {
+            scriptURLs.push(Exhibit.urlPrefix + "../extensions/time/time-extension.js");
+        }
+        if (includeMap) {
+            if (Exhibit.params.gmapkey) {
+                scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
+            } else {
+                scriptURLs.push("http://maps.google.com/maps?file=api&v=2");
+                scriptURLs.push("http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=5") // for virtual earth
+            }
+        }
+        
         SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
         SimileAjax.includeCssFiles(document, "", cssURLs);
         Exhibit.loaded = true;
@@ -221,8 +219,8 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
-        var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
+        var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js";
+        //var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
         //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {
             var script = document.createElement("script");

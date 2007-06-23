@@ -276,20 +276,6 @@ viewTooltip:"View items as tiles in a list"
 };
 
 
-/* timeline-view-l10n.js */
-
-
-
-Exhibit.TimelineView.l10n={
-viewLabel:"Timeline",
-viewTooltip:"View items on a timeline",
-colorLegendTitle:"Color Legend",
-formatMappableCount:function(count){
-return"Only "+count+" can be plotted on the timeline.";
-}
-};
-
-
 /* ui-context-l10n.js */
 
 
