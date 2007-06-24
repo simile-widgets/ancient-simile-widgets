@@ -2,10 +2,7 @@
 
 /* database-l10n.js */
 
-*==================================================
-*Exhibit.Database Swedish localization
-*==================================================
-*/
+
 Exhibit.Database.l10n={
 itemType:{
 label:"Sak",
@@ -30,8 +27,8 @@ reverseGroupingLabel:"saker av dessa typer"
 uriProperty:{
 label:"URI",
 pluralLabel:"URIer",
-reverseLabel:"URI för",
-reversePluralLabel:"URIer för",
+reverseLabel:"URI f√∂r",
+reversePluralLabel:"URIer f√∂r",
 groupingLabel:"URIer",
 reverseGroupingLabel:"saker med dessa URIer"
 },
@@ -41,16 +38,16 @@ ascending:"a - z",
 descending:"z - a"
 },
 "number":{
-ascending:"lägst först",
-descending:"högst först"
+ascending:"l√§gst f√∂rst",
+descending:"h√∂gst f√∂rst"
 },
 "date":{
-ascending:"tidigast först",
-descending:"nyligast först"
+ascending:"tidigast f√∂rst",
+descending:"nyligast f√∂rst"
 },
 "boolean":{
-ascending:"falskt först",
-descending:"sant först"
+ascending:"falskt f√∂rst",
+descending:"sant f√∂rst"
 },
 "item":{
 ascending:"a - z",
@@ -62,48 +59,45 @@ descending:"z - a"
 
 /* exhibit-l10n.js */
 
-*==================================================
-*Exhibit Swedish localization
-*==================================================
-*/
+
 
 Exhibit.l10n={
 missingLabel:"saknas",
 missingSortKey:"(saknas)",
 notApplicableSortKey:"(n/a)",
-itemLinkLabel:"länk",
+itemLinkLabel:"l√§nk",
 
 busyIndicatorMessage:"Arbetar...",
-showDocumentationMessage:"Relevant dokumentation kommer visas efter det här meddelandet.",
-showJavascriptValidationMessage:"Felet förklaras mer ingående efter det här meddelandet.",
+showDocumentationMessage:"Relevant dokumentation kommer visas efter det h√§r meddelandet.",
+showJavascriptValidationMessage:"Felet f√∂rklaras mer ing√•ende efter det h√§r meddelandet.",
 
-showJsonValidationMessage:"Felet förklaras mer ingående efter det här meddelandet.",
-showJsonValidationFormMessage:"Vi skickar dig till en webtjänst du kan ladda upp din kod till för felsökning efter det här meddelandet.",
+showJsonValidationMessage:"Felet f√∂rklaras mer ing√•ende efter det h√§r meddelandet.",
+showJsonValidationFormMessage:"Vi skickar dig till en webtj√§nst du kan ladda upp din kod till f√∂r fels√∂kning efter det h√§r meddelandet.",
 
 badJsonMessage:function(url,e){
-return"JSON-filen\n  "+url+"\ninnehåller fel:\n\n"+e;
+return"JSON-filen\n  "+url+"\ninneh√•ller fel:\n\n"+e;
 },
 failedToLoadDataFileMessage:function(url){
 return"Kunde inte hitta filen\n  "+url+
-"\nKontrollera att filnamnet är korrekt.";
+"\nKontrollera att filnamnet √§r korrekt.";
 },
 
 
 copyButtonLabel:"Kopiera",
 copyAllButtonLabel:"Kopiera allt",
-copyDialogBoxCloseButtonLabel:"Stäng",
+copyDialogBoxCloseButtonLabel:"St√§ng",
 copyDialogBoxPrompt:
-"Kopiera det här till klippbordet precis som du skulle göra för annan text. Tryck ESC för att stänga den här dialogen.",
+"Kopiera det h√§r till klippbordet precis som du skulle g√∂ra f√∂r annan text. Tryck ESC f√∂r att st√§nga den h√§r dialogen.",
 
 
-focusDialogBoxCloseButtonLabel:"Stäng",
+focusDialogBoxCloseButtonLabel:"St√§ng",
 
 
 rdfXmlExporterLabel:"RDF/XML",
 smwExporterLabel:"Semantisk wikitext",
 exhibitJsonExporterLabel:"Exhibit JSON",
-tsvExporterLabel:"Tabseparerade värden",
-htmlExporterLabel:"HTML för den här vyn",
+tsvExporterLabel:"Tabseparerade v√§rden",
+htmlExporterLabel:"HTML f√∂r den h√§r vyn",
 
 
 composeListString:function(a){
@@ -146,20 +140,17 @@ saveButtonLabel:"Spara"
 
 /* list-facet-l10n.js */
 
-*==================================================
-*Exhibit.ListFacet Swedish localization
-*==================================================
-*/
+
 
 Exhibit.ListFacet.l10n={
-clearSelectionsTooltip:"ångra dessa val",
+clearSelectionsTooltip:"√•ngra dessa val",
 ungroupLink:"(avgruppera)",
 ungroupAllButton:"avgruppera alla",
-closeButton:"stäng",
+closeButton:"st√§ng",
 groupByLink:"gruppera efter",
-collapseLink:"slå samman",
+collapseLink:"sl√• samman",
 expandLink:"expandera",
-toggleGroupTooltip:"slå av/på grupp",
+toggleGroupTooltip:"sl√• av/p√• grupp",
 groupByLabel:"gruppera efter",
 groupTheGroupsByLabel:"gruppera grupperna efter"
 };
@@ -176,23 +167,20 @@ clearSelectionsTooltip:"Clear these selections"
 
 /* ordered-view-frame-l10n.js */
 
-*==================================================
-*Exhibit.OrderedViewFrame Swedish localization
-*==================================================
-*/
+
 
 Exhibit.OrderedViewFrame.l10n={
 thenSortByLabel:"och sedan efter...",
-removeOrderLabel:"Ta bort det här sorteringskriteriet",
+removeOrderLabel:"Ta bort det h√§r sorteringskriteriet",
 formatSortActionTitle:function(propertyLabel,sortLabel){
 return"Sorterat efter "+propertyLabel+" ("+sortLabel+")";
 },
 formatRemoveOrderActionTitle:function(propertyLabel,sortLabel){
 return"Ta bort sorteringskriteriet "+propertyLabel+" ("+sortLabel+")";
 },
-resetActionTitle:"Återställ",
+resetActionTitle:"√Öterst√§ll",
 formatDontShowAll:function(limitCount){
-return"Visa bara de första  "+limitCount+" resultaten";
+return"Visa bara de f√∂rsta  "+limitCount+" resultaten";
 },
 formatShowAll:function(count){
 return"Visa samtliga "+count+" resultat";
@@ -223,24 +211,21 @@ ungroupActionTitle:"ogrupperade",
 
 showDuplicates:"visa dubletter",
 showDuplicatesActionTitle:"visa dubletter",
-hideDuplicatesActionTitle:"göm dubletter"
+hideDuplicatesActionTitle:"g√∂m dubletter"
 };
 
 
 /* tabular-view-l10n.js */
 
-*==================================================
-*Exhibit.TabularView Swedish localization
-*==================================================
-*/
+
 
 Exhibit.TabularView.l10n={
 viewLabel:"Tabell",
 viewTooltip:"Visa i tabell",
-resetActionTitle:"Återställ",
+resetActionTitle:"√Öterst√§ll",
 
-columnHeaderSortTooltip:"Klicka för att sortera efter den här kolumnen",
-columnHeaderReSortTooltip:"Klicka för att välja omvänd ordning",
+columnHeaderSortTooltip:"Klicka f√∂r att sortera efter den h√§r kolumnen",
+columnHeaderReSortTooltip:"Klicka f√∂r att v√§lja omv√§nd ordning",
 makeSortActionTitle:function(label,ascending){
 return"sortera efter "+(ascending?"stigande ":"fallande ")+
 label;
@@ -270,15 +255,12 @@ viewTooltip:"Visa som lista"
 
 /* view-panel-l10n.js */
 
-*==================================================
-*Exhibit.ViewPanel Swedish localization
-*==================================================
-*/
+
 
 Exhibit.ViewPanel.l10n={
 resetFiltersLabel:"visa alla",
 createSelectViewActionTitle:function(viewLabel){
-return"välj vyn "+viewLabel;
+return"v√§lj vyn "+viewLabel;
 },
 createNoResultsTemplate:function(
 countClass,
@@ -297,7 +279,7 @@ children:[" resultat"]
 ". ",
 {tag:"span",
 className:detailsClass,
-children:["Välj bort några filter för fler resultat."]
+children:["V√§lj bort n√•gra filter f√∂r fler resultat."]
 }
 ];
 },
@@ -338,7 +320,7 @@ className:"screen",
 children:[
 " (",
 {elmt:resetActionLink,
-title:"Välj bort alla filter och se samtliga"
+title:"V√§lj bort alla filter och se samtliga"
 },
 ")"
 ]
@@ -348,13 +330,13 @@ title:"Välj bort alla filter och se samtliga"
 ];
 },
 
-missingViewClassMessage:"Specifikationen för en av vyerna saknas i fältet viewClass.",
+missingViewClassMessage:"Specifikationen f√∂r en av vyerna saknas i f√§ltet viewClass.",
 viewClassNotFunctionMessage:function(expr){
-return"Värdet '"+expr+"' du angivit för attributet viewClass\n"+
-"för en av dessa vyer var inte namnet på en javascriptfunktion.";
+return"V√§rdet '"+expr+"' du angivit f√∂r attributet viewClass\n"+
+"f√∂r en av dessa vyer var inte namnet p√• en javascriptfunktion.";
 },
 badViewClassMessage:function(expr){
-return"Värdet '"+expr+"' du angivit för attributet viewClass\n"+
-"för en av dessa vyer är inte ett giltigt javascriptuttryck.";
+return"V√§rdet '"+expr+"' du angivit f√∂r attributet viewClass\n"+
+"f√∂r en av dessa vyer √§r inte ett giltigt javascriptuttryck.";
 }
 };

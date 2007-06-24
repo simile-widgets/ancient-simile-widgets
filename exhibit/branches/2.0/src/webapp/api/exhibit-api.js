@@ -2,7 +2,7 @@
  *  Simile Exhibit API
  *
  *  Include Exhibit in your HTML file as follows:
- *    <script src="http://simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
+ *    <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js" type="text/javascript"></script>
  *
  *==================================================
  */
@@ -73,13 +73,8 @@
             "ui/views/ordered-view-frame.js",
             "ui/views/tile-view.js",
             "ui/views/thumbnail-view.js",
-            "ui/views/map-view.js",
-            "ui/views/timeline-view.js",
             "ui/views/tabular-view.js",
-            "ui/views/scatter-plot-view.js",
-            "ui/views/pivot-table-view.js",
-            "ui/views/html-view.js",
-            "ui/views/vemap-view.js"
+            "ui/views/html-view.js"
         ];
         var cssFiles = [
             "exhibit.css",
@@ -97,12 +92,8 @@
             
             "views/view-panel.css",
             "views/tile-view.css",
-            "views/map-view.css",
-            "views/timeline-view.css",
             "views/thumbnail-view.css",
-            "views/tabular-view.css",
-            "views/scatter-plot-view.css",
-            "views/pivot-table-view.css"
+            "views/tabular-view.css"
         ];
         
         var includeMap = false;
@@ -214,8 +205,8 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js";
-        //var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
+        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js";
+        var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
         //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {
             var script = document.createElement("script");

@@ -53,7 +53,7 @@ Exhibit.MapExtension = {
     }
     
     for (var i = 0; i < Exhibit.locales.length; i++) {
-        scriptURLs.push(Exhibit.MapExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/map-view-l10n.js");
+        scriptURLs.push(Exhibit.MapExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/map-locale.js");
     };
     
     SimileAjax.includeJavascriptFiles(document, "", scriptURLs);

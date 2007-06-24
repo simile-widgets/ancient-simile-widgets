@@ -41,8 +41,7 @@ Exhibit.ChartExtension = {
     }
     
     for (var i = 0; i < Exhibit.locales.length; i++) {
-        scriptURLs.push(Exhibit.ChartExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/scatter-plot-view-l10n.js");
-        scriptURLs.push(Exhibit.ChartExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/pivot-table-view-l10n.js");
+        scriptURLs.push(Exhibit.ChartExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/chart-locale.js");
     };
     
     SimileAjax.includeJavascriptFiles(document, "", scriptURLs);

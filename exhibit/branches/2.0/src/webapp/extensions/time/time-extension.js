@@ -39,7 +39,7 @@ Exhibit.TimeExtension = {
     }
     
     for (var i = 0; i < Exhibit.locales.length; i++) {
-        scriptURLs.push(Exhibit.TimeExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/timeline-view-l10n.js");
+        scriptURLs.push(Exhibit.TimeExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/time-locale.js");
     };
     
     SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
