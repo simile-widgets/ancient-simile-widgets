@@ -18,7 +18,7 @@ Exhibit.UIContext.createRootContext = function(configuration, exhibit) {
     var context = new Exhibit.UIContext();
     context._exhibit = exhibit;
     
-    var settings = Exhibit.UIContext.l10n["eng"].initialSettings;
+    var settings = Exhibit.UIContext.l10n.initialSettings;
     for (var n in settings) {
         context._settings[n] = settings[n];
     }
@@ -92,11 +92,6 @@ Exhibit.UIContext.prototype.getCollection = function() {
 
 Exhibit.UIContext.prototype.getLensRegistry = function() {
     return this._lensRegistry;
-};
-
-Exhibit.UIContext.prototype.getLocalization = function(module) {
-    var locale = this.getSetting("locale");
-    return module.l10n[locale];
 };
 
 Exhibit.UIContext.prototype.getSetting = function(name) {

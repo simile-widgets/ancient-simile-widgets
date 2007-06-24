@@ -1,78 +1,80 @@
-/*==================================================
+﻿/*==================================================
  *  Exhibit Swedish localization
  *==================================================
  */
 
-Exhibit.l10n = {
-    missingLabel:   "saknas",
-    missingSortKey: "(saknas)",
-    notApplicableSortKey: "(n/a)",
-    itemLinkLabel:  "länk",
+if (!("l10n" in Exhibit)) {
+    Exhibit.l10n = {};
+}
 
-    busyIndicatorMessage:       "Arbetar...",
-    showDocumentationMessage:   "Relevant dokumentation kommer visas efter det här meddelandet.",
-    showJavascriptValidationMessage: "Felet förklaras mer ingående efter det här meddelandet.",
+Exhibit.l10n.missingLabel = "saknas";
+Exhibit.l10n.missingSortKey = "(saknas)";
+Exhibit.l10n.notApplicableSortKey = "(n/a)";
+Exhibit.l10n.itemLinkLabel = "länk";
 
-    showJsonValidationMessage: "Felet förklaras mer ingående efter det här meddelandet.",
-    showJsonValidationFormMessage: "Vi skickar dig till en webtjänst du kan ladda upp din kod till för felsökning efter det här meddelandet.",
+Exhibit.l10n.busyIndicatorMessage = "Arbetar...";
+Exhibit.l10n.showDocumentationMessage = "Relevant dokumentation kommer visas efter det här meddelandet.";
+Exhibit.l10n.showJavascriptValidationMessage = "Felet förklaras mer ingående efter det här meddelandet.";
 
-    badJsonMessage: function(url, e) {
-        return "JSON-filen\n  " + url + "\ninnehåller fel:\n\n" + e;
-    },
-    failedToLoadDataFileMessage: function(url) {
-        return "Kunde inte hitta filen\n  " + url +
-             "\nKontrollera att filnamnet är korrekt.";
-    },
+Exhibit.l10n.showJsonValidationMessage = "Felet förklaras mer ingående efter det här meddelandet.";
+Exhibit.l10n.showJsonValidationFormMessage = "Vi skickar dig till en webtjänst du kan ladda upp din kod till för felsökning efter det här meddelandet.";
 
-    /*
-     *  Copy button and dialog box
-     */
-    copyButtonLabel:                "Kopiera",
-    copyAllButtonLabel:             "Kopiera allt",
-    copyDialogBoxCloseButtonLabel:  "Stäng",
-    copyDialogBoxPrompt:
-        "Kopiera det här till klippbordet precis som du skulle göra för annan text. Tryck ESC för att stänga den här dialogen.",
+Exhibit.l10n.badJsonMessage = function(url, e) {
+    return "JSON-filen\n  " + url + "\ninnehåller fel =\n\n" + e;
+};
+Exhibit.l10n.failedToLoadDataFileMessage = function(url) {
+    return "Kunde inte hitta filen\n  " + url +
+         "\nKontrollera att filnamnet är korrekt.";
+};
 
-    /*
-     *  Focusdialog box
-     */
-    focusDialogBoxCloseButtonLabel:  "Stäng",
+/*
+ *  Copy button and dialog box
+ */
+Exhibit.l10n.copyButtonLabel =                "Kopiera";
+Exhibit.l10n.copyAllButtonLabel =             "Kopiera allt";
+Exhibit.l10n.copyDialogBoxCloseButtonLabel =  "Stäng";
+Exhibit.l10n.copyDialogBoxPrompt =
+    "Kopiera det här till klippbordet precis som du skulle göra för annan text. Tryck ESC för att stänga den här dialogen.";
 
-    /*
-     *  Common exporters' labels
-     */
-    rdfXmlExporterLabel:            "RDF/XML",
-    smwExporterLabel:               "Semantisk wikitext",
-    exhibitJsonExporterLabel:       "Exhibit JSON",
-    tsvExporterLabel:               "Tabseparerade värden",
-    htmlExporterLabel:              "HTML för den här vyn",
+/*
+ *  Focusdialog box
+ */
+Exhibit.l10n.focusDialogBoxCloseButtonLabel =  "Stäng";
 
-    /*
-     *  List composition
-     */
-    composeListString: function(a) {
-        var s = "";
-        for (var i = 0; i < a.length; i++) {
-            if (i > 0) {
-                if (i < a.length - 1)
-                    s += ", ";
-                else
-                    s += " och ";
-            }
-            s += a[i];
+/*
+ *  Common exporters' labels
+ */
+Exhibit.l10n.rdfXmlExporterLabel =            "RDF/XML";
+Exhibit.l10n.smwExporterLabel =               "Semantisk wikitext";
+Exhibit.l10n.exhibitJsonExporterLabel =       "Exhibit JSON";
+Exhibit.l10n.tsvExporterLabel =               "Tabseparerade värden";
+Exhibit.l10n.htmlExporterLabel =              "HTML för den här vyn";
+
+/*
+ *  List composition
+ */
+Exhibit.l10n.composeListString = function(a) {
+    var s = "";
+    for (var i = 0; i < a.length; i++) {
+        if (i > 0) {
+            if (i < a.length - 1)
+                s += ", ";
+            else
+                s += " och ";
         }
-        return s;
-    },
-    createListDelimiter: function(parentElmt, count) {
-        var f = function() {
-            if (f.index > 0 && f.index < count) {
-                parentElmt.appendChild(document.createTextNode(
-                    (f.index == count - 1) ? " och " : ", "));
-            }
-            f.index++;
-        };
-        f.index = 0;
-
-        return f;
+        s += a[i];
     }
+    return s;
+};
+Exhibit.l10n.createListDelimiter = function(parentElmt, count) {
+    var f = function() {
+        if (f.index > 0 && f.index < count) {
+            parentElmt.appendChild(document.createTextNode(
+                (f.index == count - 1) ? " och " : ", "));
+        }
+        f.index++;
+    };
+    f.index = 0;
+
+    return f;
 };

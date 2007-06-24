@@ -2,8 +2,7 @@
  *  Exhibit.Lens English localization
  *==================================================
  */
- 
-Exhibit.Lens.l10n = {
-    editButtonLabel:   "Edit",
-    saveButtonLabel:   "Save"
-};
+
+if (!("l10n" in Exhibit.Lens)) {
+    Exhibit.Lens.l10n = {};
+}

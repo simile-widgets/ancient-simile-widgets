@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.FacetUtilities English localization
+ *  Exhibit.FacetUtilities Swedish localization
  *==================================================
  */
 
@@ -7,7 +7,7 @@ if (!("l10n" in Exhibit.FacetUtilities)) {
     Exhibit.FacetUtilities.l10n = {};
 }
 
-Exhibit.FacetUtilities.l10n.clearSelectionsTooltip = "Clear these selections";
+Exhibit.FacetUtilities.l10n.clearSelectionsTooltip = "ångra dessa val";
 Exhibit.FacetUtilities.l10n.facetSelectActionTitle = "Select %0 in facet %1";
 Exhibit.FacetUtilities.l10n.facetUnselectActionTitle = "Unselect %0 in facet %1";
 Exhibit.FacetUtilities.l10n.facetSelectOnlyActionTitle = "Select only %0 in facet %1";

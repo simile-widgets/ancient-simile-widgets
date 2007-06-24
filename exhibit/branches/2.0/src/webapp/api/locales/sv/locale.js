@@ -5,15 +5,17 @@
 (function() {
     var javascriptFiles = [
         "exhibit-l10n.js",
-        "database-l10n.js",
-        "lens-l10n.js",
-        "list-facet-l10n.js",
-        "view-panel-l10n.js",
-        "ordered-view-frame-l10n.js",
-        "tile-view-l10n.js",
-        "map-view-l10n.js",
-        "thumbnail-view-l10n.js",
-        "tabular-view-l10n.js"
+        "data/database-l10n.js",
+        "ui/ui-context-l10n.js",
+        "ui/lens-l10n.js",
+        "ui/widgets/collection-summary-widget-l10n.js",
+        "ui/views/view-panel-l10n.js",
+        "ui/views/ordered-view-frame-l10n.js",
+        "ui/views/tile-view-l10n.js",
+        "ui/views/thumbnail-view-l10n.js",
+        "ui/views/tabular-view-l10n.js",
+        "util/facets-l10n.js",
+        "util/views-l10n.js"
     ];
     var cssFiles = [
     ];

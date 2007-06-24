@@ -84,32 +84,17 @@
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/api/locales/en/exhibit-en-bundle.css">
-        <fileset dir="src/webapp/api/locales/en/styles">
-            <include name="**/*.css" />
-        </fileset>
-    </concat>
     
     <jsmin output="src/webapp/api/locales/es/exhibit-es-bundle.js">
         <fileset dir="src/webapp/api/locales/es/scripts">
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/api/locales/es/exhibit-es-bundle.css">
-        <fileset dir="src/webapp/api/locales/es/styles">
-            <include name="**/*.css" />
-        </fileset>
-    </concat>
     
     <jsmin output="src/webapp/api/locales/sv/exhibit-sv-bundle.js">
         <fileset dir="src/webapp/api/locales/sv/scripts">
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/api/locales/sv/exhibit-sv-bundle.css">
-        <fileset dir="src/webapp/api/locales/sv/styles">
-            <include name="**/*.css" />
-        </fileset>
-    </concat>
   </target>
 </project>

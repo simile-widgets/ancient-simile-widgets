@@ -2,8 +2,7 @@
  *  Exhibit.Lens Swedish localization
  *==================================================
  */
- 
-Exhibit.Lens.l10n = {
-    editButtonLabel:   "Redigera",
-    saveButtonLabel:   "Spara"
-};
+
+if (!("l10n" in Exhibit.Lens)) {
+    Exhibit.Lens.l10n = {}
+}

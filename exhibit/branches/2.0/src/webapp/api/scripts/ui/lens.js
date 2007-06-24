@@ -651,26 +651,4 @@ Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt
     uiContext.formatList(values, values.size(), valueType, function(elmt) {
         parentElmt.appendChild(elmt);
     });
-    /*
-    var processOneValue = (valueType == "item") ?
-        function(value) {
-            addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, uiContext));
-        } :
-        function(value) {
-            addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeValueSpan(value, valueType));
-        };
-        
-    if (values instanceof Array) {
-        var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.length);
-        for (var i = 0; i < values.length; i++) {
-            processOneValue(values[i]);
-        }
-    } else {
-        var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.size());
-        values.visit(processOneValue);
-    }
-    addDelimiter();
-    */
 };

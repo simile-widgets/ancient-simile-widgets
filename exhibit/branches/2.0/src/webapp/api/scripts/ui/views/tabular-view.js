@@ -476,19 +476,9 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
 };
 
 Exhibit.TabularView._constructDefaultValueList = function(values, valueType, parentElmt, uiContext) {
-    var processOneValue = (valueType == "item") ?
-        function(value) {
-            addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeItemSpan(value, null, uiContext));
-        } :
-        function(value) {
-            addDelimiter();
-            parentElmt.appendChild(Exhibit.UI.makeValueSpan(value, valueType));
-        };
-        
-    var addDelimiter = Exhibit.l10n.createListDelimiter(parentElmt, values.size());
-    values.visit(processOneValue);
-    addDelimiter();
+    uiContext.formatList(values, values.size(), valueType, function(elmt) {
+        parentElmt.appendChild(elmt);
+    });
 };
 
 Exhibit.TabularView.createDom = function(div) {

@@ -6382,7 +6382,6 @@ Exhibit.Lens._constructDefaultValueList=function(values,valueType,parentElmt,uiC
 uiContext.formatList(values,values.size(),valueType,function(elmt){
 parentElmt.appendChild(elmt);
 });
-
 };
 
 
@@ -6405,7 +6404,7 @@ Exhibit.UIContext.createRootContext=function(configuration,exhibit){
 var context=new Exhibit.UIContext();
 context._exhibit=exhibit;
 
-var settings=Exhibit.UIContext.l10n["eng"].initialSettings;
+var settings=Exhibit.UIContext.l10n.initialSettings;
 for(var n in settings){
 context._settings[n]=settings[n];
 }
@@ -6476,11 +6475,6 @@ return this._collection;
 
 Exhibit.UIContext.prototype.getLensRegistry=function(){
 return this._lensRegistry;
-};
-
-Exhibit.UIContext.prototype.getLocalization=function(module){
-var locale=this.getSetting("locale");
-return module.l10n[locale];
 };
 
 Exhibit.UIContext.prototype.getSetting=function(name){
@@ -8445,19 +8439,9 @@ Exhibit.TabularView.l10n.makeSortActionTitle(this._columns[columnIndex].label,ne
 };
 
 Exhibit.TabularView._constructDefaultValueList=function(values,valueType,parentElmt,uiContext){
-var processOneValue=(valueType=="item")?
-function(value){
-addDelimiter();
-parentElmt.appendChild(Exhibit.UI.makeItemSpan(value,null,uiContext));
-}:
-function(value){
-addDelimiter();
-parentElmt.appendChild(Exhibit.UI.makeValueSpan(value,valueType));
-};
-
-var addDelimiter=Exhibit.l10n.createListDelimiter(parentElmt,values.size());
-values.visit(processOneValue);
-addDelimiter();
+uiContext.formatList(values,values.size(),valueType,function(elmt){
+parentElmt.appendChild(elmt);
+});
 };
 
 Exhibit.TabularView.createDom=function(div){
