@@ -196,34 +196,6 @@ return"Show all "+count+" results";
 }
 };
 
-/* pivot-table-view-l10n.js */
-
-
-
-Exhibit.PivotTableView.l10n={
-viewLabel:"Scatter Plot",
-viewTooltip:"View items on a pivot table",
-formatMappableCount:function(count){
-return"Only "+count+" can be plotted.";
-}
-};
-
-
-/* scatter-plot-view-l10n.js */
-
-
-
-Exhibit.ScatterPlotView.l10n={
-viewLabel:"Scatter Plot",
-viewTooltip:"View items on a scatter plot",
-mixedLegendKey:"Mixed",
-colorLegendTitle:"Color Legend",
-formatMappableCount:function(count){
-return"Only "+count+" can be plotted.";
-}
-};
-
-
 /* tabular-view-l10n.js */
 
 

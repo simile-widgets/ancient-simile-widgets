@@ -159,21 +159,6 @@ groupTheGroupsByLabel:"Agrupar los grupos por"
 };
 
 
-/* map-view-l10n-spanish.js */
-
-
-
-Exhibit.MapView.l10n={
-viewLabel:"Mapa",
-viewTooltip:"Visualizar elementos en un mapa",
-mixedLegendKey:"Combinado",
-colorLegendTitle:"Color leyenda",
-formatMappableCount:function(count){
-return"Solamente "+count+" pueden ser representados en el mapa.";
-}
-};
-
-
 /* numeric-range-facet-l10n.js */
 
 

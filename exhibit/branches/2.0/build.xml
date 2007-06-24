@@ -66,6 +66,18 @@
         </fileset>
     </concat>
     
+    <!-- Chart extension -->
+    <jsmin output="src/webapp/extensions/chart/chart-extension-bundle.js">
+        <fileset dir="src/webapp/extensions/chart/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/extensions/chart/chart-extension-bundle.css">
+        <fileset dir="src/webapp/extensions/chart/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+    
       <!-- ========== Locales ========== -->
     <jsmin output="src/webapp/api/locales/en/exhibit-en-bundle.js">
         <fileset dir="src/webapp/api/locales/en/scripts">
@@ -78,8 +90,8 @@
         </fileset>
     </concat>
     
-    <jsmin output="src/webapp/api/locales/sp/exhibit-es-bundle.js">
-        <fileset dir="src/webapp/api/locales/sp/scripts">
+    <jsmin output="src/webapp/api/locales/es/exhibit-es-bundle.js">
+        <fileset dir="src/webapp/api/locales/es/scripts">
             <include name="**/*.js" />
         </fileset>
     </jsmin>
