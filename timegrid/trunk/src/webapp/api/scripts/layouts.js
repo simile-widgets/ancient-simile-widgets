@@ -45,10 +45,32 @@ Timegrid.Layout = function() {
      * @type int
      */
     this.ySize = 0;
-    this.xMapper = function() {};
-    this.yMapper = function() {};
+    this.xMapper = function(obj) { return 0; };
+    this.yMapper = function(obj) { return 0; };
 };
 
 Timegrid.Layout.prototype.configure = function(params) {
+    console.log(params);
+    for (attr in params) {
+        this[attr] = params[attr];
+    }
+};
 
+Timegrid.Layout.prototype.renderGridlines = function(doc) {
+    var gridlineContainer = doc.createElement("div");
+    $(gridlineContainer).addClass("timegrid-gridlines");
+    gridlineContainer.style.height = this.ySize * this.yCell + "px";
+    for (var x = 0; x < this.xSize; x++) { // Vertical lines
+        var vlineDiv = $("<div></div>").addClass("timegrid-vline");
+        vlineDiv.css("height", this.ySize * this.yCell);
+        vlineDiv.css("left", x * this.xCell + "%");
+        $(gridlineContainer).append(vlineDiv);
+    }
+    for (var y = 0; y <= this.ySize; y++) { // Horizontal lines
+        var hlineDiv = $("<div></div>").addClass("timegrid-hline");
+        hlineDiv.css("width", "100%");
+        hlineDiv.css("top", y * this.yCell);
+        $(gridlineContainer).append(hlineDiv);
+    }
+    return gridlineContainer;
 };

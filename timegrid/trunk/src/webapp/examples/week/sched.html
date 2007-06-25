@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
           "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tg="http://simile.mit.edu/timegrid" xml:lang="en">
 <head>
     <title>SIMILE | Timegrid | Examples | Weekly Schedule</title>
     <link rel='stylesheet' href='../styles.css' type='text/css' />
@@ -17,15 +18,10 @@
 
 <div id="body">
     <h1>My Weekly Schedule</h1>
-    
     <h2>Boring Stuff</h2>
-    <div tg:role="grid" tg:src="sched.xml" tg:view="weekly">
-    </div>
-    
+    <div tg:role="grid" tg:src="sched.xml" tg:view="weekly" style="height: 450px"></div>
     <h2>Parties</h2>
-    <div tg:role="grid" tg:src="parties.xml" tg:view="weekly">
-    </div>
-    
+    <div tg:role="grid" tg:src="parties.xml" tg:view="weekly" style="height: 450px" tg:height="700"></div>
 </div>
 
 </body>

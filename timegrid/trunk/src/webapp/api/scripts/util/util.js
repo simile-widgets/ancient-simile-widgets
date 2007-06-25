@@ -11,10 +11,6 @@ Timegrid.extend = function(subclass, superclass) {
    subclass.superproto = superclass.prototype;
 };
 
-jQuery.extend({
-    
-});
-
 /**
  * This stuff really ought to be defined in SimileAjax...I think...but I'm
  * putting it here as an ugly hack, to make things work for now.

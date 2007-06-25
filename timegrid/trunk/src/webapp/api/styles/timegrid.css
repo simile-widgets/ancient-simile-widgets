@@ -12,27 +12,7 @@ ul, li {
     font-size: 9pt;
 }
 
-th, td {
-    clear: none;
-    border: 1px black solid;
-    padding: 5px;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-tr {
-    height: 30px;
-}
-
-td {
-    margin: 0;
-    padding: 0;
-    width: 100px;
-}
-
-div.timegrid-container {
+div.timegrid-default {
     overflow-y: scroll;
     overflow-x: hidden;
     border: 1px inset black;

@@ -20,13 +20,14 @@ Timegrid.WeekLayout = function(params) {
     this.xMapper = function(obj) { return obj.time.getDay(); };
     this.yMapper = function(obj) { return obj.time.getHours(); };
     
+    // These are default values that can be overridden in configure
     this.height = 500.0;
     this.width = 700.0;
-    this.xCell = 100.0 / this.xSize; // x positions are calculated in %
-    this.yCell = (this.height - 1) / this.ySize;
     
-    this.yCell = 40;
     this.configure(params);
+    
+    this.xCell = this.xCell || 100.0 / this.xSize; // x positions are calculated in %
+    this.yCell = this.yCell || (this.height - 1) / this.ySize; // y positions are pixels
 };
 Timegrid.extend(Timegrid.WeekLayout, Timegrid.Layout);
 
@@ -107,25 +108,6 @@ Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
 
 Timegrid.WeekLayout.prototype.renderLabels = function(doc) {
     var rowLabelContainer = doc.createElement("div");
-};
-
-Timegrid.WeekLayout.prototype.renderGridlines = function(doc) {
-    var gridlineContainer = doc.createElement("div");
-    $(gridlineContainer).addClass("timegrid-gridlines");
-    gridlineContainer.style.height = this.ySize * this.yCell + "px";
-    for (var x = 0; x < this.xSize; x++) { // Vertical lines
-        var vlineDiv = $("<div></div>").addClass("timegrid-vline");
-        vlineDiv.css("height", this.ySize * this.yCell);
-        vlineDiv.css("left", x * this.xCell + "%");
-        $(gridlineContainer).append(vlineDiv);
-    }
-    for (var y = 0; y <= this.ySize; y++) { // Horizontal lines
-        var hlineDiv = $("<div></div>").addClass("timegrid-hline");
-        hlineDiv.css("width", "100%");
-        hlineDiv.css("top", y * this.yCell);
-        $(gridlineContainer).append(hlineDiv);
-    }
-    return gridlineContainer;
 };
 
 Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {

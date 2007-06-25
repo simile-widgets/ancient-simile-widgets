@@ -7,7 +7,7 @@ Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
 };
 
 Timegrid.createFromDOM = function(elmt) {
-    var config = $(elmt).attrs('tg');
+    var config = Timegrid.getConfigFromDOM(elmt);
     var eventSource = new Timegrid.DefaultEventSource();
     var tg = Timegrid.create(elmt, eventSource, config.view, config);
     if (config.src) {
@@ -16,6 +16,17 @@ Timegrid.createFromDOM = function(elmt) {
         });
     }
     return tg;
+};
+
+Timegrid.getConfigFromDOM = function(elmt) {
+    var config = $(elmt).attrs('tg');
+    if (!('height' in config) && $(elmt).height()) {
+        config.height = $(elmt).height();
+    }
+    if (!('width' in config) && $(elmt).width()) {
+        config.width = $(elmt).width();
+    }
+    return config;
 };
 
 Timegrid.loadXML = function(url, f) {
