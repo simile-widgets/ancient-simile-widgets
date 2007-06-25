@@ -2,15 +2,6 @@
  * Utility Functions
  *****************************************************************************/
 
-Timegrid.extend = function(subclass, superclass) {
-   function Dummy() {};
-   Dummy.prototype = superclass.prototype;
-   subclass.prototype = new Dummy();
-   subclass.prototype.constructor = subclass;
-   subclass.superclass = superclass;
-   subclass.superproto = superclass.prototype;
-};
-
 /**
  * This stuff really ought to be defined in SimileAjax...I think...but I'm
  * putting it here as an ugly hack, to make things work for now.

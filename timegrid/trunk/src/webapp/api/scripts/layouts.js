@@ -24,9 +24,14 @@ Timegrid.LayoutFactory = function() {};
  * @return {Timegrid.Layout} a Timegrid.Layout instance of the specified subclass
  */
 Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
-    var layout = new Timegrid.WeekLayout(params);
-    layout.initializeGrid(eventSource);
-    return layout;
+    var constructor = Timegrid[$.trim($.capitalize(name)) + 'Layout'];
+    var layout;
+    if (typeof constructor == 'function') {
+        layout = new constructor(params);
+        layout.initializeGrid(eventSource);
+        return layout;
+    };
+    return;
 };
 
 /**
@@ -50,11 +55,15 @@ Timegrid.Layout = function() {
 };
 
 Timegrid.Layout.prototype.configure = function(params) {
-    console.log(params);
     for (attr in params) {
         this[attr] = params[attr];
     }
 };
+
+Timegrid.Layout.prototype.render = function(doc) {
+    throw "A render method must be provided for each layout.";
+    return;
+}
 
 Timegrid.Layout.prototype.renderGridlines = function(doc) {
     var gridlineContainer = doc.createElement("div");

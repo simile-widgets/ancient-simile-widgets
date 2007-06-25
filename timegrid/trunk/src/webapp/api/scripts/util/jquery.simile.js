@@ -4,6 +4,26 @@
  * DOM, etc.
  * @overview Simile jQuery plugin
  */
+ 
+jQuery.extend({
+    /**
+     * Simply capitalizes the first letter of each word in its argument.
+     */
+    capitalize: function(s) {
+        return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase();
+    },
+    /**
+     * Provides a basic mechanism for Javascript inheritance.
+     */
+    inherit:  function(subclass, superclass) {
+        function Dummy() {};
+        Dummy.prototype = superclass.prototype;
+        subclass.prototype = new Dummy();
+        subclass.prototype.constructor = subclass;
+        subclass.superclass = superclass;
+        subclass.superproto = superclass.prototype;
+    }
+});
 
 jQuery.fn.extend({
     /**

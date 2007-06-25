@@ -29,7 +29,7 @@ Timegrid.WeekLayout = function(params) {
     this.xCell = this.xCell || 100.0 / this.xSize; // x positions are calculated in %
     this.yCell = this.yCell || (this.height - 1) / this.ySize; // y positions are pixels
 };
-Timegrid.extend(Timegrid.WeekLayout, Timegrid.Layout);
+$.inherit(Timegrid.WeekLayout, Timegrid.Layout);
 
 Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
     this.eventSource = eventSource;

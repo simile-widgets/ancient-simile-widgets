@@ -1,3 +1,10 @@
+/******************************************************************************
+ * MonthLayout
+ * @fileoverview
+ *   This is where the monthly layout is defined.  The layout is designed to 
+ *   resemble the equivalent Google Calendar view.
+ * @author masont
+ *****************************************************************************/
 
 Timegrid.MonthLayout = function(params) {
     Timegrid.MonthLayout.superclass.call(this, params);
@@ -6,5 +13,5 @@ Timegrid.MonthLayout = function(params) {
     this.xMapper = function(evt) {};
     this.yMapper = function(evt) {};
 };
-Timegrid.extend(Timegrid.MonthLayout, Timegrid.Layout);
+$.inherit(Timegrid.MonthLayout, Timegrid.Layout);
 
