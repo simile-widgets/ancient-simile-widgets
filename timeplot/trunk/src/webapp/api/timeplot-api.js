@@ -21,12 +21,14 @@
         };
     
         var javascriptFiles = [
+            "oop.js",
             "timeplot.js",
-            "layer.js",
+            "plot.js",
             "sources.js",
             "geometry.js",
             "color.js",
-            "math.js"
+            "math.js",
+            "processor.js"
         ];
         var cssFiles = [
             "timeplot.css"

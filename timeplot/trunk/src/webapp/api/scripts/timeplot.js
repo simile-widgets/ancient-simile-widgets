@@ -6,17 +6,14 @@
 log = SimileAjax.Debug.log;
 expand = SimileAjax.Debug.objectToString;
  
-Timeplot.strings = {}; // localization string tables
-
-Timeplot.create = function(elmt, layerInfos) {
-    return new Timeplot._Impl(elmt, layerInfos);
+Timeplot.create = function(elmt, plotInfos) {
+    return new Timeplot._Impl(elmt, plotInfos);
 };
 
-Timeplot.createLayerInfo = function(params) {
+Timeplot.createPlotInfo = function(params) {
     return {   
     	id:             ("id" in params) ? params.id : null,
-        eventSource:    ("eventSource" in params) ? params.eventSource : new Timeplot.DefaultEventSource(),
-        column:         ("column" in params) ? params.column : 1,
+        dataSource:     ("dataSource" in params) ? params.dataSource : null,
         geometry:       ("geometry" in params) ? params.geometry : new Timeplot.DefaultGeometry(),
         timeZone:       ("timeZone" in params) ? params.timeZone : 0,
         fillColor:      ("fillColor" in params) ? params.fillColor : null,
@@ -26,19 +23,19 @@ Timeplot.createLayerInfo = function(params) {
 
 // -------------------------------------------------------
 
-Timeplot._Impl = function(elmt, layerInfos, unit) {
+Timeplot._Impl = function(elmt, plotInfos, unit) {
     this._containerDiv = elmt;
-    this._layerInfos = layerInfos;
+    this._plotInfos = plotInfos;
     this._unit = (unit != null) ? unit : Timeline.NativeDateUnit;
     this._initialize();
 };
 
 Timeplot._Impl.prototype.dispose = function() {
-    for (var i = 0; i < this._layers.length; i++) {
-        this._layers[i].dispose();
+    for (var i = 0; i < this._plots.length; i++) {
+        this._plots[i].dispose();
     }
-    this._layers = null;
-    this._layersInfos = null;
+    this._plots = null;
+    this._plotsInfos = null;
     this._containerDiv.innerHTML = "";
 };
 
@@ -102,8 +99,8 @@ Timeplot._Impl.prototype.loadJSON = Timeline._Impl.prototype.loadJSON;
 Timeplot._Impl.prototype.resize = function() {
 	this._prepareCanvas();
 
-    for (var i = 0; i < this._layers.length; i++) {
-        this._layers[i].paint();
+    for (var i = 0; i < this._plots.length; i++) {
+        this._plots[i].paint();
     }
 }
 
@@ -146,12 +143,12 @@ Timeplot._Impl.prototype._initialize = function() {
 	    SimileAjax.DOM.registerEvent(elmtCopyright, "click", function() { window.location = "http://simile.mit.edu/timeplot/"; });
 	    containerDiv.appendChild(elmtCopyright);
 	    
-	    // creating layers
-	    this._layers = [];
-	    if (this._layerInfos) {
-	        for (var i = 0; i < this._layerInfos.length; i++) {
-	            var layer = new Timeplot.Layer(this, this._layerInfos[i], i);
-	            this._layers.push(layer);
+	    // creating plots
+	    this._plots = [];
+	    if (this._plotInfos) {
+	        for (var i = 0; i < this._plotInfos.length; i++) {
+	            var plot = new Timeplot.Plot(this, this._plotInfos[i], i);
+	            this._plots.push(plot);
 	        }
 	    }
 	        

@@ -25,8 +25,7 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url) 
             var row = data[i];
             var evt = new Timeline.DefaultEventSource.NumericEvent(
                 parseDateTimeFunction(row[0]),
-                null,
-                this._process(row.slice(1))
+                row.slice(1)
             );
             this._events.add(evt);
             added = true;
@@ -36,44 +35,6 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url) 
     if (added) {
         this._fire("onAddMany", []);
     }
-};
-
-Timeplot.DefaultEventSource.prototype.getStats = function(column) {
-	return this._events._stats[column];
-}
-
-Timeplot.DefaultEventSource.prototype.getEvents = function() {
-    return this._events._events;
-}
-
-Timeplot.DefaultEventSource.prototype._process = function(row) {
-	if (!this._events._stats) {
-		this._events._stats = new Array(row.length);
-	}
-	
-	if (this._events._stats < row.length) {
-		this._events._stats = this._events._stats.concat(new Array(row.length - this._event._stats));
-	}
-	
-	for (var i = 0; i < row.length; i++) {
-		var stats = this._events._stats[i];
-		if (!stats) {
-			stats = { min : Number.MAX_VALUE , max : Number.MIN_VALUE };
-			this._events._stats[i] = stats;
-		}
-	    var value = parseInt(row[i]);
-	    if (!isNaN(value)) {
-	       if (value < stats.min) {
-	           stats.min = value;
-	       }
-	       if (value > stats.max) {
-	       	   stats.max = value;
-	       }	
-	    }
-	    row[i] = value;	
-	}
-	
-	return row;
 }
 
 /*
@@ -132,25 +93,140 @@ Timeplot.DefaultEventSource.prototype._parseText = function (text, separator) {
     }
     if ( table.length < 0 ) return;                     // null data
     return table;
-};
+}
 
 // -----------------------------------------------------------------------
 
-Timeplot.DefaultEventSource.NumericEvent = function(start, end, values) {
-        
+Timeplot.DefaultEventSource.NumericEvent = function(time, values) {
     this._id = "e" + Math.floor(Math.random() * 1000000);
-    
-    this._start = start;
-    this._end = (end != null) ? end : start;
-    
+    this._time = time;
     this._values = values;
 };
 
 Timeline.DefaultEventSource.NumericEvent.prototype = {
     getID:          function() { return this._id; },
-    
-    getStart:       function() { return this._start; },
-    getEnd:         function() { return this._end; },
-    
-    getValues:      function() { return this._values; }
+    getTime:        function() { return this._time; },
+    getValues:      function() { return this._values; },
+
+    // these are required by the EventSource
+    getStart:       function() { return this._time; },
+    getEnd:         function() { return this._time; }
 };
+
+// -----------------------------------------------------------------------
+
+Timeplot.DataSource = function(eventSource) {
+	this._eventSource = eventSource;
+    var source = this;
+    this._processingListener = {
+        onAddMany: function() { source._process(); },
+        onClear:   function() { source._clear(); }
+    }
+    this.addListener(this._processingListener);
+    this._listeners = [];
+};
+
+Timeplot.DataSource.prototype = {
+  
+    _clear: function() {
+    	this._data = null;
+    	this._range = null;
+    },
+    
+    _process: function() {
+    	this._data = {
+    		times: new Array(),
+    		values: new Array()
+    	};
+        this._range = {
+            earliestDate: new Date(),
+            latestDate: new Date(),
+            mix: 0,
+            max: 0
+        };
+    },
+
+    getRange: function() {
+        return this._range;
+    },
+    
+    getData: function() {
+        return this._data;
+    },
+
+    addListener: function(listener) {
+    	this._eventSource.addListener(listener);
+    },
+
+    removeListener: function(listener) {
+    	this._eventSource.removeListener(listener);
+    },
+    
+    replaceListener: function(oldListener, newListener) {
+    	this.removeListener(oldListener);
+    	this.addListener(newListener);
+    }
+    
+}
+
+// -----------------------------------------------------------------------
+
+Timeplot.ColumnSource = function(eventSource, column) {
+	// FIXME(SM): how can we call the overloaded constructor instead of
+	// repeating all the same actions here?
+    this._eventSource = eventSource;
+    this._listeners = [];
+    var source = this;
+    this._processingListener = {
+        onAddMany: function() { source._process(); },
+        onClear:   function() { source._clear(); }
+    }
+    this.addListener(this._processingListener);
+    this._column = column - 1;
+};
+
+Object.extend(Timeplot.ColumnSource.prototype,Timeplot.DataSource.prototype);
+
+Timeplot.ColumnSource.prototype.dispose = function() {
+    this.removeListener(this._processingListener);
+    this._clear();
+}
+
+Timeplot.ColumnSource.prototype._process = function() {
+	var count = this._eventSource.getCount();
+	var times = new Array(count);
+	var values = new Array(count);
+	var min = Number.MAX_VALUE;
+	var max = Number.MIN_VALUE;
+	var i = 0;
+	
+	var iterator = this._eventSource.getAllEventIterator();
+	while (iterator.hasNext()) {
+		var event = iterator.next();
+		var time = event.getTime();
+		times[i] = time;
+		var value = parseInt(event.getValues()[this._column]);
+        if (!isNaN(value)) {
+           if (value < min) {
+               min = value;
+           }
+           if (value > max) {
+               max = value;
+           }    
+            values[i] = value;
+        }
+		i++;
+	}
+
+    this._data = {
+        times: times,
+        values: values
+    };
+    
+    this._range = {
+        earliestDate: this._eventSource.getEarliestDate(),
+        latestDate: this._eventSource.getLatestDate(),
+        min: min,
+        max: max
+    };
+}
