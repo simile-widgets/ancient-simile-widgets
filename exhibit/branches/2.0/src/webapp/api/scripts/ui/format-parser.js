@@ -240,7 +240,7 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
                 parseChoices(valueType, settingName, [ "first", "last", "after-sign" ]);
                 return;
             case "decimal-digits":
-                parseNonnegativeInteger(valueType, settingName);
+                parseNonnegativeInteger(valueType, settingName, { "default" : -1 });
                 return;
             }
             break;
@@ -250,7 +250,7 @@ Exhibit.FormatParser._internalParse = function(uiContext, scanner, results, seve
             case "last-separator":
             case "pair-separator":
             case "empty-text":
-                parseString(valueType, settingName);
+                parseString(valueType, settingName, {});
                 return;
             }
             break;
