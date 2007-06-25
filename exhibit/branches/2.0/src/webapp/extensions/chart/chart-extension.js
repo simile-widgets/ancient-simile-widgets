@@ -12,11 +12,13 @@ Exhibit.ChartExtension = {
 (function() {
     var javascriptFiles = [
         "scatter-plot-view.js",
-        "pivot-table-view.js"
+        "pivot-table-view.js",
+        "bar-chart-view.js"
     ];
     var cssFiles = [
         "scatter-plot-view.css",
-        "pivot-table-view.css"
+        "pivot-table-view.css",
+        "bar-chart-view.css"
     ];
         
     var url = SimileAjax.findScript(document, "/chart-extension.js");
