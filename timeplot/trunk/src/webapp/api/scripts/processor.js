@@ -42,7 +42,7 @@ Timeplot.Processor.prototype = {
         var data = this._dataSource.getData();
         var range = this._dataSource.getRange();
     
-        var newValues = this._operator(data.values, this._params);
+        var newValues = this._operator(data, this._params);
         var newValueRange = Timeplot.Math.range(newValues);
         
         this._data = {

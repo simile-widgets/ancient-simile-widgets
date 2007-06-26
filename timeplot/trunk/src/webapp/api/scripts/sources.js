@@ -171,6 +171,10 @@ Timeplot.DataSource.prototype = {
 
 // -----------------------------------------------------------------------
 
+/**
+ * Data Source that extracts the time series out of a single column 
+ * from the events
+ */
 Timeplot.ColumnSource = function(eventSource, column) {
 	// FIXME(SM): how can we call the overloaded constructor instead of
 	// repeating all the same actions here?
@@ -205,7 +209,7 @@ Timeplot.ColumnSource.prototype._process = function() {
 		var event = iterator.next();
 		var time = event.getTime();
 		times[i] = time;
-		var value = parseInt(event.getValues()[this._column]);
+		var value = this._getValue(event);
         if (!isNaN(value)) {
            if (value < min) {
                min = value;
@@ -229,4 +233,37 @@ Timeplot.ColumnSource.prototype._process = function() {
         min: min,
         max: max
     };
+}
+
+Timeplot.ColumnSource.prototype._getValue = function(event) {
+    return parseInt(event.getValues()[this._column]);
+}
+
+// ---------------------------------------------------------------
+
+/**
+ * Data Source that generates the time series out of the difference
+ * between the first and the second column
+ */
+Timeplot.ColumnDiffSource = function(eventSource, column1, column2) {
+    // FIXME(SM): how can we call the overloaded constructor instead of
+    // repeating all the same actions here?
+    this._eventSource = eventSource;
+    this._listeners = [];
+    var source = this;
+    this._processingListener = {
+        onAddMany: function() { source._process(); },
+        onClear:   function() { source._clear(); }
+    }
+    this.addListener(this._processingListener);
+    this._column1 = column1 - 1;
+    this._column2 = column2 - 1;
+};
+
+Object.extend(Timeplot.ColumnDiffSource.prototype,Timeplot.ColumnSource.prototype);
+
+Timeplot.ColumnDiffSource.prototype._getValue = function(event) {
+    var a = parseInt(event.getValues()[this._column1]);
+    var b = parseInt(event.getValues()[this._column2])
+    return a - b;
 }

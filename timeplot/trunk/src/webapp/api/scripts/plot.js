@@ -55,7 +55,7 @@ Timeplot.Plot.prototype = {
 	        
 	        ctx.beginPath();
 	        this._plot(geometry,function(p) {
-	            ctx.lineTo(p.x,p.y);
+               ctx.lineTo(p.x,p.y);
 	        });
 	        ctx.lineTo(canvas.width, 0);
 	        ctx.fill();
@@ -66,7 +66,7 @@ Timeplot.Plot.prototype = {
 	    ctx.lineJoin = 'miter';
 	    ctx.beginPath();
 	    this._plot(geometry,function(p) {
-	        ctx.lineTo(p.x,p.y);
+           ctx.lineTo(p.x,p.y);
 	    });
 	    ctx.stroke();
 	    

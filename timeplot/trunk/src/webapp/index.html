@@ -7,62 +7,97 @@
     <style>
         .timeplot {
             height: 200px;
-            margin: 2em;
             padding: 12px;
             border: 1px solid #ccc;
         }    
+
+        .label {
+            color: #666;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        #timeplot2 {
+            height: 100px;
+        }
     </style>
     
     <script src="api/timeplot-api.js?bundle=false" type="text/javascript"></script>
     <script>
         var timeplot1;
         var timeplot2;
+        var timeplot3;
         
         function onLoad() {
             var eventSource = new Timeplot.DefaultEventSource();
 
-            var lineColor = new Timeplot.Color('#606060');
-            var color1 = new Timeplot.Color('#8DDB74');
-            var color2 = new Timeplot.Color('#FF7976');
+            var quietLine  = new Timeplot.Color('#97A88E');
+            var loudLine   = new Timeplot.Color('#977470');
+            var lightFill  = new Timeplot.Color('#F0EBD2');
+            var darkFill = new Timeplot.Color('#D2BD9E');
+    
+            var webTraffic = new Timeplot.ColumnSource(eventSource,2);
+            var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
+            var webGeometry = new Timeplot.DefaultGeometry();
             
             var plotsInfo1 = [
                 Timeplot.createPlotInfo({
-                    id: "web total",
-                    dataSource: new Timeplot.ColumnSource(eventSource,1),
-                    lineColor: color2,
-                    fillColor: color2.darken(30)
+                    id: "web clean avg",
+                    dataSource: avgWebTraffic,
+                    geometry: webGeometry,
+                    lineColor: loudLine,
+                    fillColor: lightFill
                 }),
                 Timeplot.createPlotInfo({
                     id: "web clean",
-                    dataSource: new Timeplot.ColumnSource(eventSource,2),
-                    lineColor: color1
+                    dataSource: webTraffic,
+                    geometry: webGeometry,
+                    lineColor: quietLine,
                 })
             ];
             
             timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotsInfo1);
             timeplot1.loadText("examples/simile/data.txt", " ", eventSource);
 
-            var color3 = new Timeplot.Color('#7CBCFF');
-            var color4 = new Timeplot.Color('#1D58A6');
-            var color5 = new Timeplot.Color('#B4AB90');
-            var news = new Timeplot.ColumnSource(eventSource,3);
-            var summedNews = new Timeplot.Processor(news,Timeplot.Math.integral);
-            
             var plotsInfo2 = [
-                Timeplot.createPlotInfo({ 
-                    id: "news",
-                    dataSource: summedNews,
-                    lineColor: color4,
-                    fillColor: color3
-                }),
-                Timeplot.createPlotInfo({ 
-                    id: "news",
-                    dataSource: news,
-                    lineColor: color5,
+                Timeplot.createPlotInfo({
+                    id: "crawlers",
+                    dataSource: new Timeplot.ColumnDiffSource(eventSource,1,2),
+                    lineColor: quietLine,
+                    fillColor: quietLine.lighten(30)
                 })
             ];
             
             timeplot2 = Timeplot.create(document.getElementById("timeplot2"), plotsInfo2);
+
+            var news = new Timeplot.ColumnSource(eventSource,3);
+            var smoothedNews = new Timeplot.Processor(news,Timeplot.Operator.average, { size: 8 });
+            var summedNews = new Timeplot.Processor(news,Timeplot.Operator.sum);
+            var newsGeometry = new Timeplot.DefaultGeometry();
+            
+            var plotsInfo3 = [
+                Timeplot.createPlotInfo({ 
+                    id: "cumulative news",
+                    dataSource: summedNews,
+                    lineColor: loudLine,
+                    fillColor: lightFill
+                }),
+                Timeplot.createPlotInfo({ 
+                    id: "news",
+                    dataSource: news,
+                    geometry: newsGeometry,
+                    lineColor: quietLine
+                }),
+                Timeplot.createPlotInfo({ 
+                    id: "smoothed news",
+                    dataSource: smoothedNews,
+                    geometry: newsGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot3 = Timeplot.create(document.getElementById("timeplot3"), plotsInfo3);
         }
         
         var resizeTimerID = null;
@@ -72,6 +107,7 @@
                     resizeTimerID = null;
                     if (timeplot1) timeplot1.resize();
                     if (timeplot2) timeplot2.resize();
+                    if (timeplot3) timeplot3.resize();
                 }, 0);
             }
         }    
@@ -86,8 +122,12 @@
 
 <div id="body">
     <h1>Timeplot</h1>
+    <div class="label">Web Traffic</div>
     <div id="timeplot1" class="timeplot"></div>
+    <div class="label">Web Crawlers Traffic</div>
     <div id="timeplot2" class="timeplot"></div>
+    <div class="label">Newsfeed Traffic</div>
+    <div id="timeplot3" class="timeplot"></div>
 </div>
     
 </body>

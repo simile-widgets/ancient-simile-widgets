@@ -1,99 +1,31 @@
+/* -----------------------------------------------------------------------------
+ * Operators
+ * 
+ * These are functions that can be used directly as Timeplot.Processor operators
+ * ----------------------------------------------------------------------------- */
+
+Timeplot.Operator = { 
+    
+    sum: function(data, params) {
+        return Timeplot.Math.integral(data.values);
+    },
+    
+    average: function(data, params) {
+        var size = ("size" in params) ? params.size : 30;
+        var result = Timeplot.Math.movingAverage(data.values, size);
+        return result;
+    }
+}
+
+/* -----------------------------------------------------------------------------
+ * Math Utility functions
+ * ----------------------------------------------------------------------------- */
+
 Timeplot.Math = { 
 	
-	// operators: these are functions that operator on an array of numerical values
-	// and return a different array of numeric values with the same size. These
-	// can be used as a functional parameter to the Timeplot.Filter to process
-	// such values 
-	// ----------------------------------------------------------------------------
-	
-    integral: function(f) {
-        var F = f.length;
-        
-        var g = new Array(F);
-        var sum = 0;
-        
-        for (var t = 0; t < F; t++) {
-           sum += f[t];
-           g[t] = sum;  
-        }
-        
-        return g;
-    },
-	
-    normalize: function(f) {
-        var F = f.length;
-        var sum = 0.0;
-        
-        for (var t = 0; t < F; t++) {
-            sum += f[t];
-        }
-        
-        for (var t = 0; t < F; t++) {
-            f[t] /= sum;
-        }
-        
-        return f;
-    },
-	
-	directDCT: function(x) {
-	    var N = x.length;
-	    var y = new Array(N);
-	
-	    with (Math) {
-	        for (var k = 0; k < N; k++) {
-	            var sum = 0.0;
-	            for (var n = 0; n < N; n++) {
-	                var arg = PI * k * (2.0 * n + 1) / (2 * N);
-	                var cosine = cos(arg);
-	                var product = x[n] * cosine;
-	                sum += product;
-	            } 
-	    
-	            var alpha;
-	            if (k == 0) {
-	                alpha = 1.0 / sqrt(2);
-	            } else {
-	                alpha = 1;
-	            }
-	            y[k] = sum * alpha * sqrt(2.0 / N);
-	        }
-	    }
-	    
-	    return y;
-	},
-
-    inverseDCT : function(y) {
-	    var N = y.length;
-	    var x = new Array(N);
-	    
-	    with (Math) {
-	        for (var n = 0; n < N; n++) {
-	            var sum = 0.0;
-	            for (var k = 0; k < N; k++) {
-	                var arg = PI * k * (2.0 * n + 1) / (2 * N);
-	                var cosine = cos(arg);
-	                var product = y[k] * cosine;
-	        
-	                var alpha;
-	                if (k == 0) {
-	                    alpha = 1.0 / sqrt(2);
-	                } else {
-	                    alpha = 1;
-	                }
-	        
-	                sum += alpha * product;
-	            }
-	        
-	            x[n] = sum * sqrt(2.0 / N);
-	        }
-	    }
-	    
-	    return x;
-	},
-
-    // ------ Utility functions on arrays ------------------------------------------------- 
-    // (but that can't be used as filtering operators directly)
-
+    /**
+     * Evaluates the range (min and max values) of the given array
+     */
     range: function(f) {
         var F = f.length;
         var min = Number.MAX_VALUE;
@@ -115,48 +47,123 @@ Timeplot.Math = {
         }
     },
     
+    /**
+     * Evaluates the windows average of a given array based on the
+     * given window size
+     */
+    movingAverage: function(f, size) {
+        var F = f.length;
+        var g = new Array(F);
+        for (var n = 0; n < F; n++) {
+        	var value = 0;
+        	for (var m = n - size; m < n + size; m++) {
+        		if (m < 0) {
+        		    var v = f[0];
+        		} else if (m >= F) {
+        			var v = f[F-1];
+        		} else {
+        			var v = f[m];
+        		}
+        		value += v;
+        	}
+        	g[n] = value / (2 * size);
+        }
+        return g;             	
+    },
+    
+    /**
+     * Returns an array with the integral of the given array
+     */
+    integral: function(f) {
+        var F = f.length;
+        
+        var g = new Array(F);
+        var sum = 0;
+        
+        for (var t = 0; t < F; t++) {
+           sum += f[t];
+           g[t] = sum;  
+        }
+        
+        return g;
+    },
+
+    /**
+     * Normalizes an array so that its complete integral is 1.
+     * This is useful to obtain arrays that preserve the overall
+     * integral of a convolution. 
+     */
+    normalize: function(f) {
+        var F = f.length;
+        var sum = 0.0;
+        
+        for (var t = 0; t < F; t++) {
+            sum += f[t];
+        }
+        
+        for (var t = 0; t < F; t++) {
+            f[t] /= sum;
+        }
+        
+        return f;
+    },
+
+    /**
+     * Calculates the convolution between two arrays
+     */
     convolution: function(f,g) {
-	    var F = f.length;
-	    var G = g.lenght;
-	    
-	    var c = new Array(F);
-	    
-	    for (var t = 0; t < F; t++) {
-	        for (var k = 0; k < F; k++) {
-	            var a = f[k];
-	            var b = (t - k > 0 && t - k < G) ? g[t-k] : 0;
-	            c[t] = a * b;
-	        }
-	    }
-	
-	    return c;
-	},
+        var F = f.length;
+        var G = g.length;
+        
+        var c = new Array(F);
+        
+        for (var m = 0; m < F; m++) {
+            var r = 0;
+            var end = (m + G < F) ? m + G : F;
+            for (var n = m; n < end; n++) {
+                var a = f[n - G];
+                var b = g[n - m];
+                r += a * b;
+            }
+            c[m] = r;
+        }
+    
+        return c;
+    },
 
     // ------ Array generators ------------------------------------------------- 
     // Functions that generate arrays based on mathematical functions
     // Normally these are used to produce operators by convolving them with the input array
+    // The returned arrays have the property of having 
 
-    gaussian: function(variance, threshold) {
+    /**
+     * Generate the heavyside step function of given size
+     */
+    heavyside: function(size) {
+        var f =  new Array(size);
+        var value = 1 / size;
+        for (var t = 0; t < size; t++) {
+            f[t] = value;
+        }
+        return f;
+    },
+
+    /**
+     * Generate the gaussian function so that at the given 'size' it has value 'threshold'
+     * and make sure its integral is one.
+     */
+    gaussian: function(size, threshold) {
 	    with (Math) {
-	        var radius = sqrt(log(threshold / (variance * sqrt(PI))) / variance);
-	        var size = 2 * radius;
+	    	var radius = size / 2;
+	        var variance = radius * radius / log(threshold); 
 	        var g = new Array(size);
 	        for (var t = 0; t < size; t++) {
-	            var l = t + radius;
+	            var l = t - radius;
 	            g[t] = exp(-variance * l * l);
 	        }
 	    }
 	    
 	    return this.normalize(g);
-	},
-
-    heavyside: function(size) {
-    	var f =  new Array(size);
-    	var value = 1 / size;
-    	for (var t = 0; t < size; t++) {
-    		f[t] = value;
-    	}
-    	return f;
-    }
+	}
     
 }

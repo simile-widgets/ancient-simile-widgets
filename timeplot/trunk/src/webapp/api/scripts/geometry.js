@@ -17,17 +17,15 @@ Timeplot.DefaultGeometry.prototype = {
 	},
 
     setRange: function(range) {
-		if (!this._earliestDate || range.earliestDate.milliseconds < this._earliestDate.milliseconds) {
-		    this._earliestDate = range.earliestDate;
-		}
-	    if (!this._latestDate || range.latestDate.milliseconds > this._latestDate.milliseconds) {
+    	if (!this._earliestDate) {
+	        this._earliestDate = range.earliestDate;
 	        this._latestDate = range.latestDate;
-	    }
-	    this._minValue = range.min;
-	    if (!this._floor) {
-	    	this._floor = this._minValue;
-	    } 
-        this._maxValue = range.max;
+	        this._minValue = range.min;
+	        if (!this._floor) {
+	            this._floor = this._minValue;
+	        } 
+	        this._maxValue = range.max;
+    	}
     },
     
     locate: function(date, value) {
