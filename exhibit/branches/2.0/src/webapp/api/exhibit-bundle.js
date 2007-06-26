@@ -5001,7 +5001,7 @@ case"symbol-placement":
 parseChoices(valueType,settingName,["first","last","after-sign"]);
 return;
 case"decimal-digits":
-parseNonnegativeInteger(valueType,settingName);
+parseNonnegativeInteger(valueType,settingName,{"default":-1});
 return;
 }
 break;
@@ -5011,7 +5011,7 @@ case"separator":
 case"last-separator":
 case"pair-separator":
 case"empty-text":
-parseString(valueType,settingName);
+parseString(valueType,settingName,{});
 return;
 }
 break;
