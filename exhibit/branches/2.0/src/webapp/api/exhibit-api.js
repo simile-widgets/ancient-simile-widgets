@@ -61,6 +61,7 @@
             
             "ui/coders/color-coder.js",
             "ui/coders/default-color-coder.js",
+			"ui/coders/color-gradient-coder.js",
             
             "ui/widgets/logo.js",
             "ui/widgets/collection-summary-widget.js",
