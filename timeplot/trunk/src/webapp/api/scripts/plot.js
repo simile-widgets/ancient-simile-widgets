@@ -38,7 +38,7 @@ Timeplot.Plot.prototype = {
         var source = this._dataSource;
 
 	    var geometry = this._plotInfo.geometry;
-	    geometry.setSize(canvas);
+	    geometry.setCanvas(canvas);
 	    geometry.setRange(source.getRange());
 	
 	    var ctx = canvas.getContext('2d');
@@ -71,6 +71,8 @@ Timeplot.Plot.prototype = {
 	    ctx.stroke();
 	    
 	    ctx.restore();
+	    
+	    geometry.paint();
     },
 
     _plot: function(geometry,f) {
@@ -79,7 +81,7 @@ Timeplot.Plot.prototype = {
 		var values = data.values;
 	    var T = times.length;
 	    for (var t = 0; t < T; t++) {
-    		f(geometry.locate(times[t], values[t]));
+    		f(geometry.toScreen(times[t], values[t]));
 	    }
     }
 }

@@ -164,6 +164,24 @@ Timeplot.Math = {
 	    }
 	    
 	    return this.normalize(g);
+	},
+	
+	// ---- Utility Methods --------------------------------------------------
+	
+	/**
+	 * Return x with n significant figures 
+	 */
+	round: function(x,n) {
+		with (Math) {
+			if (abs(x) > 1) {
+				var l = floor(log(x)/log(10));
+				var d = round(exp((l-n+1)*log(10)));
+                var y = round(round(x / d) * d);
+				return y;
+			} else {
+				throw "FIXME(SM): still to implement for 0 < abs(x) < 1";
+			}
+		}
 	}
     
 }

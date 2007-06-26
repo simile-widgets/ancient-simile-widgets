@@ -1,5 +1,8 @@
 .timeplot-container {
     position: relative;
+    height: 200px;
+    border: 1px solid #ccc;
+    padding: 12px 14px;
 }
 
 .timeplot-copyright {
@@ -25,7 +28,4 @@
 }
 .timeplot-message img {
     vertical-align: middle;
-}
-
-.timeplot-canvas {
 }

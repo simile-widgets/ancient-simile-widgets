@@ -5,12 +5,6 @@
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
     <style>
-        .timeplot {
-            height: 200px;
-            padding: 12px;
-            border: 1px solid #ccc;
-        }    
-
         .label {
             color: #666;
             margin-top: 0.5em;
@@ -32,38 +26,43 @@
         function onLoad() {
             var eventSource = new Timeplot.DefaultEventSource();
 
-            var quietLine  = new Timeplot.Color('#97A88E');
-            var loudLine   = new Timeplot.Color('#977470');
-            var lightFill  = new Timeplot.Color('#F0EBD2');
-            var darkFill = new Timeplot.Color('#D2BD9E');
+            var quietLine  = new Timeplot.Color('#82A6A2');
+            var loudLine   = new Timeplot.Color('#284452');
+            var lightFill  = new Timeplot.Color('#DEE5D1');
+            var gridColor  = new Timeplot.Color('#B0B0B0');
     
             var webTraffic = new Timeplot.ColumnSource(eventSource,2);
             var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
-            var webGeometry = new Timeplot.DefaultGeometry();
+            var webGeometry = new Timeplot.DefaultGeometry({
+                gridColor: gridColor
+            });
             
             var plotsInfo1 = [
-                Timeplot.createPlotInfo({
-                    id: "web clean avg",
-                    dataSource: avgWebTraffic,
-                    geometry: webGeometry,
-                    lineColor: loudLine,
-                    fillColor: lightFill
-                }),
                 Timeplot.createPlotInfo({
                     id: "web clean",
                     dataSource: webTraffic,
                     geometry: webGeometry,
                     lineColor: quietLine,
+                }),
+                Timeplot.createPlotInfo({
+                    id: "web clean avg",
+                    dataSource: avgWebTraffic,
+                    geometry: webGeometry,
+                    lineColor: loudLine
                 })
             ];
             
             timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotsInfo1);
             timeplot1.loadText("examples/simile/data.txt", " ", eventSource);
 
+            var crawlersGeometry = new Timeplot.DefaultGeometry({
+                gridColor: gridColor
+            });
             var plotsInfo2 = [
                 Timeplot.createPlotInfo({
                     id: "crawlers",
                     dataSource: new Timeplot.ColumnDiffSource(eventSource,1,2),
+                    geometry: crawlersGeometry,
                     lineColor: quietLine,
                     fillColor: quietLine.lighten(30)
                 })
