@@ -212,7 +212,7 @@ Exhibit._Impl.prototype.configure = function(configuration) {
     if ("components" in configuration) {
         for (var i = 0; i < configuration.components.length; i++) {
             var config = configuration.components[i];
-            var component = Exhibit.UI.create(config, this._uiContext);
+            var component = Exhibit.UI.create(config, config.elmt, this._uiContext);
             if (component != null) {
                 var id = elmt.id;
                 if (id == null || id.length == 0) {

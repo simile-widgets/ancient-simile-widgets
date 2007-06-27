@@ -83,7 +83,7 @@ Exhibit.UI.viewClassNameToViewClass = function(name) {
 
 Exhibit.UI.createFacet = function(configuration, elmt, uiContext) {
     var facetClass = "facetClass" in configuration ? configuration.facetClass : Exhibit.ListFacet;
-    return facetClass.create(configuration, elmt, container, uiContext);
+    return facetClass.create(configuration, elmt, uiContext);
 };
 
 Exhibit.UI.createFacetFromDOM = function(elmt, container, uiContext) {

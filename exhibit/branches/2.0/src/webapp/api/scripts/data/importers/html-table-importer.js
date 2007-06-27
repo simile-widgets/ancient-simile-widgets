@@ -9,7 +9,7 @@ Exhibit.importers["text/html"] = Exhibit.HtmlTableImporter;
 
 Exhibit.HtmlTableImporter.load = function(link, database, cont) {
     try {
-        var id = /#(.*)/.exec(link.href)[1];
+        var id = /#(.*)/.exec(typeof link == "string" ? link : link.href)[1];
         var table = document.getElementById(id);
         table.style.display = "none"; // as we are replacing it with the exhibit UI
 
