@@ -1,0 +1,38 @@
+<html>
+<head>
+    <title>SIMILE | Exhibit | Countries</title>
+    
+    <link href="data.json" type="application/json" rel="exhibit/data" />
+    
+    <!-- key for the simile web site -->
+    <!--script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRT8JS25vht86mrPMqm9xZ3_t36WsBSDK8ixrPT9HiBqbx74R8zkuY0oGQ" type="text/javascript"></script-->
+    
+    <!-- key for dfhuynh.csail.mit.edu -->
+    <script src="../../../api/exhibit-api.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRTx2KvH4W9TC_V5d1Uu1Jy5dhDJfBSeDh5ZoqVi_C2r4n2a07aPdnlltg" type="text/javascript"></script>
+
+    <!-- key for 127.0.0.1 -->
+    <!--script src="../../../api/exhibit-api.js?gmapkey=http://127.0.0.1:8888/exhibit/site/examples/flags/" type="text/javascript"></script-->
+
+    <link rel='stylesheet' href='styles.css' type='text/css' />
+</head>
+
+<body>
+    <h1>Flags</h1>
+    <p>Adapted from <a href="http://ecmanaut.blogspot.com/">Johan Sundström</a>'s
+        <a href="http://ecmanaut.googlecode.com/svn/trunk/exhibits/countries.html">countries of the world exhibit</a>,
+        with images from <a href="http://www.famfamfam.com/lab/icons/flags/">famfamfam.com</a>.
+        Here is the <a href="data.json" target="_blank">Exhibit JSON data file</a>.
+    </p>
+    
+    <div ex:role="view"
+        ex:viewClass="Map"
+        ex:latlng=".latlng"
+        ex:icon="concat('images/', .code, '.png')"
+        ex:shape="square"
+        ex:bodyWidth="30"
+        ex:bodyHeight="25"
+        ex:mapHeight="600"
+        >
+    </div>
+</body>
+</html>
