@@ -26,8 +26,9 @@ Timegrid.getConfigFromDOM = function(elmt) {
     if (!('width' in config) && $(elmt).width()) {
         config.width = $(elmt).width();
     }
-    config.gridheight = config.gridheight || config.height;
-    config.gridwidth = config.gridwidth || config.width;
+    config.scrollwidth = $.scrollWidth();
+    config.gridheight = config.gridheight || config.height - config.scrollwidth;
+    config.gridwidth = config.gridwidth || config.width - config.scrollwidth;
     return config;
 };
 

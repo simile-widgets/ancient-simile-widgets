@@ -69,15 +69,16 @@ Timegrid.Layout.prototype.configure = function(params) {
  */
 Timegrid.Layout.prototype.render = function() {
     var viewDiv = $("<div></div>").addClass('timegrid-view');
-    viewDiv.height(this.height + "px").width(this.width + "px");
-    var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
-    gridWindowDiv.height(this.height + "px").width(this.width + "px");
     var gridDiv = $('<div></div>').addClass('timegrid-grid');
+    var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
+    
+    viewDiv.height(this.height + "px").width(this.width + "px");
+    gridWindowDiv.height(this.height + "px").width(this.width + "px");
     gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
+    
     var doc = document; // TODO: Refactor the doc variable out
     gridDiv.append(this.renderEvents(doc));
     gridDiv.append(this.renderGridlines(doc));
-    
     
     var xLabels = this.renderXLabels();
     var yLabels = this.renderYLabels();
@@ -124,7 +125,7 @@ Timegrid.Layout.prototype.renderXLabels = function() {
     xLabelsDiv.width(this.gridwidth + "px");
     xLabelContainer.append(xLabelsDiv.addClass('timegrid-xlabels'));
     xLabelContainer.height(this.yCell + "px");
-    xLabelContainer.width(this.width + "px");
+    xLabelContainer.width(this.width - this.scrollwidth + "px");
     var labels = this.getXLabels();
     for (i in labels) {
         var label = $('<div class="timegrid-label">' + labels[i] + '</div>');
@@ -139,7 +140,7 @@ Timegrid.Layout.prototype.renderYLabels = function() {
     var yLabelsDiv = $('<div></div>').height(this.gridheight + "px");
     yLabelsDiv.width("4em").css("left", "0px");
     yLabelContainer.append(yLabelsDiv.addClass('timegrid-ylabels'));
-    yLabelContainer.width("4em").height(this.height + "px");
+    yLabelContainer.width("4em").height(this.height - this.scrollwidth + "px");
     var labels = this.getYLabels();
     for (i in labels) {
         var label = $('<div class="timegrid-label">' + labels[i] + '</div>');
