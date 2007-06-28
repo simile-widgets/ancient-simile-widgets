@@ -28,7 +28,6 @@ Timegrid.getConfigFromDOM = function(elmt) {
     }
     config.gridheight = config.gridheight || config.height;
     config.gridwidth = config.gridwidth || config.width;
-    console.log(config);
     return config;
 };
 
