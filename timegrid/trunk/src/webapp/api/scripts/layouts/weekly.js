@@ -27,7 +27,7 @@ Timegrid.WeekLayout = function(params) {
     this.configure(params);
     
     this.xCell = this.xCell || 100.0 / this.xSize; // x positions are calculated in %
-    this.yCell = this.yCell || (this.height - 1) / this.ySize; // y positions are pixels
+    this.yCell = this.yCell || (this.gridheight - 1) / this.ySize; // y positions are pixels
 };
 $.inherit(Timegrid.WeekLayout, Timegrid.Layout);
 
@@ -50,23 +50,6 @@ Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
             this.eventGrid.addAll(endpoints);
         }
     }
-};
-
-/**
- * Renders out this layout into a DOM object with a wrapping div element as its
- * parent, returning the div.
- *
- * @param the parent document
- * @return a rendered DOM tree descended from a div element
- */
-Timegrid.WeekLayout.prototype.render = function(doc) {
-    var timegridDiv = doc.createElement("div");
-    timegridDiv.style.height = this.height + "px";
-    timegridDiv.style.width = this.width + "px";
-    $(timegridDiv).addClass("timegrid-container");
-    timegridDiv.appendChild(this.renderEvents(doc));
-    timegridDiv.appendChild(this.renderGridlines(doc));
-    return timegridDiv;
 };
 
 Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
@@ -106,10 +89,6 @@ Timegrid.WeekLayout.prototype.renderEvents = function(doc) {
     return eventContainer;
 };
 
-Timegrid.WeekLayout.prototype.renderLabels = function(doc) {
-    var rowLabelContainer = doc.createElement("div");
-};
-
 Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {
     var jediv = $("<div>" + evt.getText() + "</div>");
     jediv.addClass("timegrid-event");
@@ -117,6 +96,17 @@ Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {
     jediv.css("top", this.yCell * y);
     jediv.css("left", this.xCell * x + '%');
     return jediv.get()[0]; // Return the actual DOM element
+};
+
+Timegrid.WeekLayout.prototype.getXLabels = function() {
+    return [ "Sunday", "Monday", "Tuesday", "Wednesday",
+             "Thursday", "Friday", "Saturday" ];
+};
+
+Timegrid.WeekLayout.prototype.getYLabels = function() {
+    return [ "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am",
+             "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm",
+             "6pm", "7pm", "8pm", "9pm", "10pm", "11pm" ];
 };
 
 Timegrid.WeekLayout.getEndpoints = function(evt) {

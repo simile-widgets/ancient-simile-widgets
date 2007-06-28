@@ -12,7 +12,7 @@ Timegrid.createFromDOM = function(elmt) {
     var tg = Timegrid.create(elmt, eventSource, config.view, config);
     if (config.src) {
         tg.loadXML(config.src, function(xml, url) {
-            eventSource.loadXML(xml, url); 
+            eventSource.loadXML(xml, url);
         });
     }
     return tg;
@@ -26,6 +26,9 @@ Timegrid.getConfigFromDOM = function(elmt) {
     if (!('width' in config) && $(elmt).width()) {
         config.width = $(elmt).width();
     }
+    config.gridheight = config.gridheight || config.height;
+    config.gridwidth = config.gridwidth || config.width;
+    console.log(config);
     return config;
 };
 
@@ -72,7 +75,7 @@ Timegrid._Impl = function(node, eventSource, layoutName, layoutParams) {
 
 Timegrid._Impl.prototype.loadXML = function(url, f) {
     var tg = this;
-    
+
     var fError = function(statusText, status, xmlhttp) {
         alert("Failed to load data xml from " + url + "\n" + statusText);
         tg.hideLoadingMessage();
@@ -82,18 +85,21 @@ Timegrid._Impl.prototype.loadXML = function(url, f) {
             var xml = xmlhttp.responseXML;
             if (!xml.documentElement && xmlhttp.responseStream) {
                 xml.load(xmlhttp.responseStream);
-            } 
+            }
             f(xml, url);
         } finally {
             tg.hideLoadingMessage();
         }
     };
     this.showLoadingMessage();
-    window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
+    window.setTimeout(function() {
+        SimileAjax.XmlHttp.get(url, fError, fDone);
+    }, 0);
 };
 
 Timegrid._Impl.prototype._construct = function() {
-    this._layout = Timegrid.LayoutFactory.createLayout(this._layoutName, this._eventSource,
+    this._layout = Timegrid.LayoutFactory.createLayout(this._layoutName,
+                                                       this._eventSource,
                                                        this._layoutParams);
     var container = this._container;
     var doc = container.ownerDocument;
@@ -102,17 +108,18 @@ Timegrid._Impl.prototype._construct = function() {
         container.removeChild(container.firstChild);
     }
     $(container).addClass('timegrid-default');
-    
+
     var message = SimileAjax.Graphics.createMessageBubble(doc);
     message.containerDiv.className = "timegrid-message-container";
     container.appendChild(message.containerDiv);
-    
+
     message.contentDiv.className = "timegrid-message";
-    message.contentDiv.innerHTML = "<img src='" + Timegrid.urlPrefix + "images/progress-running.gif' /> Loading...";
-    
-    this.showLoadingMessage = function() { message.containerDiv.style.display = "block"; };
-    this.hideLoadingMessage = function() { message.containerDiv.style.display = "none"; };
-    
+    message.contentDiv.innerHTML = "<img src='" + Timegrid.urlPrefix
+        + "images/progress-running.gif' /> Loading...";
+
+    this.showLoadingMessage = function() { $(message.containerDiv).show(); };
+    this.hideLoadingMessage = function() { $(message.containerDiv).hide(); };
+
     var layoutDiv = this._layout.render(doc);
     container.appendChild(layoutDiv);
 };

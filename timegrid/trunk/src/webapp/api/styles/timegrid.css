@@ -12,9 +12,9 @@ ul, li {
     font-size: 9pt;
 }
 
-div.timegrid-default {
+div.timegrid-grid-window {
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: auto;
     border: 1px inset black;
 }
 
@@ -39,6 +39,30 @@ div.timegrid-events {
 div.timegrid-gridlines {
     position: relative;
     z-index: 1;
+}
+
+div.timegrid-xlabels {
+    position: absolute;
+}
+
+div.timegrid-ylabels {
+    position: absolute;
+}
+
+div.timegrid-xlabels-window {
+    position: absolute;
+    overflow: hidden;
+}
+
+div.timegrid-ylabels-window {
+    position: absolute;
+    overflow: hidden;
+}
+
+div.timegrid-label {
+    position: absolute;
+    padding: 2px;
+    color: #aaa;
 }
 
 div.timegrid-event {

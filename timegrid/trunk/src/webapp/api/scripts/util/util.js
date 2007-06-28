@@ -1,6 +1,14 @@
 /******************************************************************************
  * Utility Functions
  *****************************************************************************/
+Timegrid.Util = {};
+
+Timegrid.abstract = function(name) {
+    return function() { 
+        throw "A " + name + " method has not been implemented!"; 
+        return;
+    };
+};
 
 /**
  * This stuff really ought to be defined in SimileAjax...I think...but I'm
