@@ -12,6 +12,12 @@
             font-family: 'verdana', 'helvetica', sans serif;
         }        
         
+        .timeplot-grid-label {
+            color: #BBB;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+                
         #timeplot2 {
             height: 100px;
         }
@@ -73,7 +79,9 @@
             var news = new Timeplot.ColumnSource(eventSource,3);
             var smoothedNews = new Timeplot.Processor(news,Timeplot.Operator.average, { size: 8 });
             var summedNews = new Timeplot.Processor(news,Timeplot.Operator.sum);
-            var newsGeometry = new Timeplot.DefaultGeometry();
+            var newsGeometry = new Timeplot.DefaultGeometry({
+                gridColor: gridColor
+            });
             
             var plotsInfo3 = [
                 Timeplot.createPlotInfo({ 

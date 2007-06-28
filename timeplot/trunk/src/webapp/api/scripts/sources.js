@@ -98,7 +98,7 @@ Timeplot.DefaultEventSource.prototype._parseText = function (text, separator) {
 // -----------------------------------------------------------------------
 
 Timeplot.DefaultEventSource.NumericEvent = function(time, values) {
-    this._id = "e" + Math.floor(Math.random() * 1000000);
+    this._id = "e" + Math.round(Math.random() * 1000000);
     this._time = time;
     this._values = values;
 };

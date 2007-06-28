@@ -29,3 +29,10 @@
 .timeplot-message img {
     vertical-align: middle;
 }
+
+.timeplot-label {
+    position: absolute;
+    font-size: 9px;
+}
+
+

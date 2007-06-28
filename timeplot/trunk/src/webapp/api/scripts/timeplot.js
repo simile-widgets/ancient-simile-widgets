@@ -12,7 +12,7 @@ Timeplot.create = function(elmt, plotInfos) {
 
 Timeplot.createPlotInfo = function(params) {
     return {   
-    	id:             ("id" in params) ? params.id : null,
+    	id:             ("id" in params) ? params.id : "p" + Math.round(Math.random() * 1000000),
         dataSource:     ("dataSource" in params) ? params.dataSource : null,
         geometry:       ("geometry" in params) ? params.geometry : new Timeplot.DefaultGeometry(),
         timeZone:       ("timeZone" in params) ? params.timeZone : 0,
@@ -26,151 +26,232 @@ Timeplot.createPlotInfo = function(params) {
 Timeplot._Impl = function(elmt, plotInfos, unit) {
     this._containerDiv = elmt;
     this._plotInfos = plotInfos;
+    this._painters = {
+    	background: [],
+    	foreground: []
+    };
+    this._painter = null;
     this._unit = (unit != null) ? unit : Timeline.NativeDateUnit;
     this._initialize();
 };
 
-Timeplot._Impl.prototype.dispose = function() {
-    for (var i = 0; i < this._plots.length; i++) {
-        this._plots[i].dispose();
-    }
-    this._plots = null;
-    this._plotsInfos = null;
-    this._containerDiv.innerHTML = "";
-};
+Timeplot._Impl.prototype = {
 
-Timeplot._Impl.prototype.getDocument = function() {
-    return this._containerDiv.ownerDocument;
-};
-
-Timeplot._Impl.prototype.add = function(div) {
-    this._containerDiv.appendChild(div);
-};
-
-Timeplot._Impl.prototype.remove = function(div) {
-    this._containerDiv.removeChild(div);
-};
-
-Timeplot._Impl.prototype.getPixelWidth = function() {
-    var w = window.getComputedStyle(this._containerDiv, null).getPropertyValue("width");
-    w = parseInt(w.replace("px",""));
-    return w;
-};
-
-Timeplot._Impl.prototype.getPixelHeight = function() {
-    var h = window.getComputedStyle(this._containerDiv, null).getPropertyValue("height");
-    h = parseInt(h.replace("px",""));
-    return h;    
-};
-
-Timeplot._Impl.prototype.getUnit = function() {
-    return this._unit;
-};
-
-Timeplot._Impl.prototype.getCanvas = function() {
-    return this._canvas;
-};
-
-Timeplot._Impl.prototype.loadText = function(url, separator, eventSource) {
-    var tp = this;
-    
-    var fError = function(statusText, status, xmlhttp) {
-        alert("Failed to load data xml from " + url + "\n" + statusText);
-        tp.hideLoadingMessage();
-    };
-    
-    var fDone = function(xmlhttp) {
-        try {
-            eventSource.loadText(xmlhttp.responseText, separator, url);
-        } catch (e) {
-        	SimileAjax.Debug.exception(e);
-        } finally {
-            tp.hideLoadingMessage();
-        }
-    };
-    
-    this.showLoadingMessage();
-    window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
-};
-
-Timeplot._Impl.prototype.loadXML = Timeline._Impl.prototype.loadXML;
-Timeplot._Impl.prototype.loadJSON = Timeline._Impl.prototype.loadJSON;
-
-Timeplot._Impl.prototype.resize = function() {
-	this._prepareCanvas();
-
-    for (var i = 0; i < this._plots.length; i++) {
-        this._plots[i].paint();
-    }
-}
-
-Timeplot._Impl.prototype._prepareCanvas = function() {
-    var canvas = this.getCanvas();
-
-    canvas.width = this.getPixelWidth();
-    canvas.height = this.getPixelHeight();
-
-    var ctx = canvas.getContext('2d');
-    ctx.translate(0,canvas.height);
-    ctx.scale(1,-1);
-    ctx.globalCompositeOperation = 'source-over';
-}
-
-Timeplot._Impl.prototype._initialize = function() {
-    var containerDiv = this._containerDiv;
-    var doc = containerDiv.ownerDocument;
-
-    // make sure the timeplot div has the right class    
-    containerDiv.className = containerDiv.className.split(" ").concat("timeplot-container").join(" ");
-        
-    // clean it up if it contains some content
-    while (containerDiv.firstChild) {
-        containerDiv.removeChild(containerDiv.firstChild);
-    }
-    
-    var canvas = doc.createElement("canvas");
-    
-    if (canvas.getContext) {
-        this._canvas = canvas;
-        canvas.className = "timeplot-canvas";
-        this._prepareCanvas();
-        containerDiv.appendChild(canvas);
-
-	    // inserting copyright and link to simile
-	    var elmtCopyright = SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/copyright.png");
-	    elmtCopyright.className = "timeplot-copyright";
-	    elmtCopyright.title = "Timeplot (c) SIMILE - http://simile.mit.edu/timeplot/";
-	    SimileAjax.DOM.registerEvent(elmtCopyright, "click", function() { window.location = "http://simile.mit.edu/timeplot/"; });
-	    containerDiv.appendChild(elmtCopyright);
-	    
-	    // creating plots
-	    this._plots = [];
-	    if (this._plotInfos) {
-	        for (var i = 0; i < this._plotInfos.length; i++) {
-	            var plot = new Timeplot.Plot(this, this._plotInfos[i], i);
-	            this._plots.push(plot);
-	        }
+	dispose: function() {
+	    for (var i = 0; i < this._plots.length; i++) {
+	        this._plots[i].dispose();
 	    }
+	    this._plots = null;
+	    this._plotsInfos = null;
+	    this._containerDiv.innerHTML = "";
+	},
+
+    getDocument: function() {
+        return this._containerDiv.ownerDocument;
+    },
+
+    add: function(div) {
+        this._containerDiv.appendChild(div);
+    },
+
+    remove: function(div) {
+        this._containerDiv.removeChild(div);
+    },
+
+    addPainter: function(layerName, painter) {
+    	var layer = this._painters[layerName];
+    	if (layer) {
+	        for (var i = 0; i < layer.length; i++) {
+	            if (layer[i].context._id == painter.context._id) {
+	            	return;
+	            }
+	        }
+	        layer.push(painter);
+    	}
+    },
+    
+    removePainter: function(layerName, painter) {
+    	var layer = this._painters[layerName];
+    	if (layer) {
+            for (var i = 0; i < layer.length; i++) {
+                if (layer[i].context._id == painter.context._id) {
+		            layer.splice(i, 1);
+		            break;
+		        }
+		    }
+    	}
+    },
+    
+    getPixelWidth: function() {
+	    var w = window.getComputedStyle(this._containerDiv, null).getPropertyValue("width");
+	    w = parseInt(w.replace("px",""));
+	    return w;
+	},
+
+	getPixelHeight: function() {
+	    var h = window.getComputedStyle(this._containerDiv, null).getPropertyValue("height");
+	    h = parseInt(h.replace("px",""));
+	    return h;    
+	},
+
+	getUnit: function() {
+	    return this._unit;
+	},
+	
+	getCanvas: function() {
+	    return this._canvas;
+	},
+	
+	loadText: function(url, separator, eventSource) {
+	    var tp = this;
+	    
+	    var fError = function(statusText, status, xmlhttp) {
+	        alert("Failed to load data xml from " + url + "\n" + statusText);
+	        tp.hideLoadingMessage();
+	    };
+	    
+	    var fDone = function(xmlhttp) {
+	        try {
+	            eventSource.loadText(xmlhttp.responseText, separator, url);
+	        } catch (e) {
+	        	SimileAjax.Debug.exception(e);
+	        } finally {
+	            tp.hideLoadingMessage();
+	        }
+	    };
+	    
+	    this.showLoadingMessage();
+	    window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
+	},
+
+    update: function() {
+        for (var i = 0; i < this._plots.length; i++) {
+        	var plot = this._plots[i];
+            plot._geometry.setRange(plot._dataSource.getRange());
+        }
+        this._paint();
+    },
+    
+	resize: function() {
+		this._prepareCanvas();
+		this._paint();
+	},
+	
+	_paint: function() {
+        if (this._painter == null) {
+            var timeplot = this;
+            this._painter = window.setTimeout(function() {
+                timeplot._painter = null;
+                var background = timeplot._painters.background;
+                for (var i = 0; i < background.length; i++) {
+		            try {
+		                background[i].action.apply(background[i].context,[]);
+		            } catch (e) {
+		                Timeline.Debug.exception(e);
+		            }
+                }
+                var foreground = timeplot._painters.foreground;
+		        for (var i = 0; i < foreground.length; i++) {
+                    try {
+                        foreground[i].action.apply(foreground[i].context,[]);
+                    } catch (e) {
+                        Timeline.Debug.exception(e);
+                    }
+		        }
+            }, 10);
+        }
+	},
+
+	_prepareCanvas: function() {
+	    var canvas = this.getCanvas();
+	
+	    canvas.width = this.getPixelWidth();
+	    canvas.height = this.getPixelHeight();
+	
+	    var ctx = canvas.getContext('2d');
+	    ctx.translate(0,canvas.height);
+	    ctx.scale(1,-1);
+	    ctx.globalCompositeOperation = 'source-over';
+	},
+	
+	_initialize: function() {
+	    var containerDiv = this._containerDiv;
+	    var doc = containerDiv.ownerDocument;
+	
+	    // make sure the timeplot div has the right class    
+	    containerDiv.className = "timeplot-container " + containerDiv.className;
 	        
-	    // creating loading UI
-	    var message = SimileAjax.Graphics.createMessageBubble(doc);
-	    message.containerDiv.className = "timeplot-message-container";
-	    containerDiv.appendChild(message.containerDiv);
+	    // clean it up if it contains some content
+	    while (containerDiv.firstChild) {
+	        containerDiv.removeChild(containerDiv.firstChild);
+	    }
 	    
-	    message.contentDiv.className = "timeplot-message";
-	    message.contentDiv.innerHTML = "<img src='http://static.simile.mit.edu/timeline/api/images/progress-running.gif' /> Loading...";
+	    // this is where we'll place the labels
+	    var labels = doc.createElement("div");
+	    containerDiv.appendChild(labels);
 	    
-	    this.showLoadingMessage = function() { message.containerDiv.style.display = "block"; };
-	    this.hideLoadingMessage = function() { message.containerDiv.style.display = "none"; };
+	    var canvas = doc.createElement("canvas");
+	    
+	    if (canvas.getContext) {
+	        this._canvas = canvas;
+	        canvas.className = "timeplot-canvas";
+	        this._prepareCanvas();
+	        containerDiv.appendChild(canvas);
+	
+		    // inserting copyright and link to simile
+		    var elmtCopyright = SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/copyright.png");
+		    elmtCopyright.className = "timeplot-copyright";
+		    elmtCopyright.title = "Timeplot (c) SIMILE - http://simile.mit.edu/timeplot/";
+		    SimileAjax.DOM.registerEvent(elmtCopyright, "click", function() { window.location = "http://simile.mit.edu/timeplot/"; });
+		    containerDiv.appendChild(elmtCopyright);
+		    
+		    var timeplot = this;
+	        var painter = {
+	            onAddMany: function() { timeplot.update(); },
+	            onClear:   function() { timeplot.update(); }
+	        }
 
-    } else {
-
-        this._message = SimileAjax.Graphics.createMessageBubble(doc);
-        this._message.containerDiv.className = "timeplot-message-container";
-        this._message.contentDiv.className = "timeplot-message";
-        this._message.contentDiv.innerHTML = "We're sorry, but your web browser is not currently supported by Timeplot.";
-        this.appendChild(this._message.containerDiv);
-        this._message.containerDiv.style.display = "block";
-
-    }
+            // creating painters
+		    this._plots = [];
+		    if (this._plotInfos) {
+		        for (var i = 0; i < this._plotInfos.length; i++) {
+		            var plot = new Timeplot.Plot(this, this._plotInfos[i]);
+		            var dataSource = plot.getDataSource();
+                    if (dataSource) {
+                        dataSource.addListener(painter);
+                    }
+		            this.addPainter("background", {
+		            	context: plot,
+		            	action: plot.paint
+		            });
+		            this.addPainter("foreground", {
+		            	context: plot.getGeometry(),
+		            	action: plot.getGeometry().paint
+		            });
+                    this._plots.push(plot);
+		        }
+		    }
+		        
+		    // creating loading UI
+		    var message = SimileAjax.Graphics.createMessageBubble(doc);
+		    message.containerDiv.className = "timeplot-message-container";
+		    containerDiv.appendChild(message.containerDiv);
+		    
+		    message.contentDiv.className = "timeplot-message";
+		    message.contentDiv.innerHTML = "<img src='http://static.simile.mit.edu/timeline/api/images/progress-running.gif' /> Loading...";
+		    
+		    this.showLoadingMessage = function() { message.containerDiv.style.display = "block"; };
+		    this.hideLoadingMessage = function() { message.containerDiv.style.display = "none"; };
+	
+	    } else {
+	
+	        this._message = SimileAjax.Graphics.createMessageBubble(doc);
+	        this._message.containerDiv.className = "timeplot-message-container";
+	        this._message.contentDiv.className = "timeplot-message";
+	        this._message.contentDiv.innerHTML = "We're sorry, but your web browser is not currently supported by Timeplot.";
+	        this.appendChild(this._message.containerDiv);
+	        this._message.containerDiv.style.display = "block";
+	
+	    }
+	}
 };

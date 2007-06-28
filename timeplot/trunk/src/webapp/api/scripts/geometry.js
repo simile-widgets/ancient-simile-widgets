@@ -4,33 +4,38 @@
 
 Timeplot.DefaultGeometry = function(params) {
 	if (!params) params = {};
+	this._id = ("id" in params) ? params.id : "g" + Math.round(Math.random() * 1000000);
 	this._axisColor = ("axisColor" in params) ? params.axisColor : new Timeplot.Color("#606060");
     this._gridColor = ("gridColor" in params) ? params.gridColor : null;
     this._center = ("center" in params) ? params.center : 30;
     this._range = ("range" in params) ? params.range : 20;
+    this._minValue = ("min" in params) ? params.min : null;
+    this._maxValue = ("max" in params) ? params.max : null;
 }
 
 Timeplot.DefaultGeometry.prototype = {
 	
-	setFloor: function(value) {
-	    this._floor = value;
-	},
-
 	setCanvas: function(canvas) {
 		this._canvas = canvas;
+        var container = this._canvas.parentNode;
+		this._paddingX = (container.clientWidth - this._canvas.width) / 2;
+		this._paddingY = (container.clientHeight - this._canvas.height) / 2;
 	},
 
     setRange: function(range) {
-    	if (!this._earliestDate) {
-	        this._earliestDate = range.earliestDate;
-	        this._latestDate = range.latestDate;
-	        this._minValue = range.min;
-	        if (!this._floor) {
-	            this._floor = this._minValue;
-	        } 
-	        this._maxValue = range.max * 1.05;
-	        this._gridSpacing = Math.round(this._calculateGridSpacing()) + 0.17309849;
+        if (!this._earliestDate || (this._earliestDate && range.earliestDate.getTime() < this._earliestDate.getTime())) {
+        	this._earliestDate = range.earliestDate;
+        }
+        if (!this._latestDate || (this._latestDate && range.latestDate.getTime() > this._latestDate.getTime())) {
+            this._latestDate = range.latestDate;
+        }
+        if (!this._minValue || (this._minValue && range.minValue < this._minValue)) {
+            this._minValue = range.min;
+        }
+        if (!this._maxValue || (this._maxValue && range.maxValue * 1.05 > this._maxValue)) {
+            this._maxValue = range.max * 1.05; // get a little more head room to avoid hitting the ceiling
     	}
+        this._gridSpacing = this._calculateGridSpacing();
     },
     
     _calculateGridSpacing: function() {
@@ -39,10 +44,16 @@ Timeplot.DefaultGeometry.prototype = {
             var r = Timeplot.Math.round(v,i);
             var y = this._toScreenY(r);
             if (this._center - this._range < y && y < this._center + this._range) {
-        	   return y;
+        	   return {
+        	       y: y,
+        	       value: r
+        	   }
             }
         }
-    	return v;
+    	return {
+    		y: v,
+    		value: this._center
+    	}
     },
     
     toScreen: function(date, value) {
@@ -59,8 +70,8 @@ Timeplot.DefaultGeometry.prototype = {
     },
     
     _toScreenY: function(value) {
-        var range = this._maxValue - this._floor;
-        var value = value - this._floor;
+        var range = this._maxValue - this._minValue;
+        var value = value - this._minValue;
         return (this._canvas.height * value) / range;
     },
     
@@ -77,10 +88,10 @@ Timeplot.DefaultGeometry.prototype = {
     },
     
     _fromScreenY: function(y) {
-        var range = this._maxValue - this._floor;
-        return (range * y / this._canvas.height) + this._floor;
+        var range = this._maxValue - this._minValue;
+        return (range * y / this._canvas.height) + this._minValue;
     },
-    
+
     paint: function() {
         var ctx = this._canvas.getContext('2d');
         
@@ -95,11 +106,23 @@ Timeplot.DefaultGeometry.prototype = {
         if (this._gridColor) {        
             gradient.addColorStop(0, this._gridColor.toString());
     
-            for (var y = this._gridSpacing; y < this._canvas.height; y += this._gridSpacing) {
+            var y = this._gridSpacing.y;
+            var value = this._gridSpacing.value;
+            var counter = 1;
+            while (y < this._canvas.height) {
                 ctx.beginPath();
                 ctx.moveTo(0,y);
                 ctx.lineTo(this._canvas.width,y);
                 ctx.stroke();
+
+		        this.putText(value,"timeplot-grid-label",{
+		            bottom: y,
+		            right: 2
+		        });
+
+                y += this._gridSpacing.y;
+                value += this._gridSpacing.value;
+                counter++;
             }
         }
 
@@ -113,5 +136,29 @@ Timeplot.DefaultGeometry.prototype = {
         ctx.lineTo(this._canvas.width,0);
         ctx.lineTo(this._canvas.width,this._canvas.height);
         ctx.stroke();
+    },
+
+    putText: function(text,clazz,styles) {
+        var container = this._canvas.parentNode.firstChild; // get the label container
+        var doc = container.ownerDocument;
+        var div = doc.createElement("div");
+        div.setAttribute("class", "timeplot-label " + clazz);
+        div.innerHTML = text;
+        if (styles) {
+            for (style in styles) {
+            	if (style == "top") {
+            		styles[style] += this._paddingY;
+            	} else if (style == "bottom") {
+                    styles[style] += this._paddingY;
+            	} else if (style == "left") {
+            		styles[style] += this._paddingX;
+            	} else if (style == "right") {
+            		styles[style] += this._paddingX;
+            	}
+            	div.style[style] = styles[style];
+            }
+        }
+        container.appendChild(div);
     }
+    
 }
