@@ -201,6 +201,7 @@ this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 
 Exhibit.BarChartView.prototype._initializeUI=function(){
 var self=this;
+var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":{}
 
 this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -211,7 +212,7 @@ true,
 self._reconstruct();
 }
 },
-{}
+legendWidgetSettings
 );
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
 
@@ -515,10 +516,14 @@ if(hasColorKey){
 var legendWidget=this._dom.legendWidget;
 var colorCoder=this._colorCoder;
 var keys=colorCodingFlags.keys.toArray().sort();
+if(this._colorCoder._gradientPoints!=null){
+legendWidget.addGradient(this._colorCoder._gradientPoints);
+}else{
 for(var k=0;k<keys.length;k++){
 var key=keys[k];
 var color=colorCoder.translate(key);
 legendWidget.addEntry(color,key);
+}
 }
 
 if(colorCodingFlags.others){
@@ -1036,6 +1041,7 @@ this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 
 Exhibit.ScatterPlotView.prototype._initializeUI=function(){
 var self=this;
+var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":{}
 
 this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -1046,7 +1052,7 @@ true,
 self._reconstruct();
 }
 },
-{}
+legendWidgetSettings
 );
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
 
@@ -1301,10 +1307,14 @@ if(hasColorKey){
 var legendWidget=this._dom.legendWidget;
 var colorCoder=this._colorCoder;
 var keys=colorCodingFlags.keys.toArray().sort();
+if(this._colorCoder._gradientPoints!=null){
+legendWidget.addGradient(this._colorCoder._gradientPoints);
+}else{
 for(var k=0;k<keys.length;k++){
 var key=keys[k];
 var color=colorCoder.translate(key);
 legendWidget.addEntry(color,key);
+}
 }
 
 if(colorCodingFlags.others){

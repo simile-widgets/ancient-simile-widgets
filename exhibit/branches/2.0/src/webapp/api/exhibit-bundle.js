@@ -3722,14 +3722,6 @@ return this._mixedCase.color;
 
 
 
-
-
-
-
-
-
-
-
 Exhibit.ColorGradientCoder=function(uiContext){
 
 this._uiContext=uiContext;
@@ -9724,6 +9716,312 @@ Exhibit.CollectionSummaryWidget.l10n.resetActionTitle
 };
 
 
+/* legend-gradient-widget.js */
+
+
+
+Exhibit.LegendGradientWidget=function(containerElmt,uiContext){
+
+this._div=containerElmt;
+
+this._uiContext=uiContext;
+
+
+
+this._initializeUI();
+
+};
+
+
+
+Exhibit.LegendGradientWidget.create=function(containerElmt,uiContext){
+
+return new Exhibit.LegendGradientWidget(containerElmt,uiContext);
+
+};
+
+
+
+Exhibit.LegendGradientWidget.prototype.addGradient=function(configuration){
+
+var gradientArray=[];
+
+var gradientArray=configuration;
+
+var sortObj=function(a,b){
+
+return a.value-b.value;
+
+};
+
+gradientArray.sort(sortObj);
+
+var theTable=document.createElement("table");
+
+var tableBody=document.createElement("tbody");
+
+var theRow1=document.createElement("tr");
+
+var theRow2=document.createElement("tr");
+
+var theRow3=document.createElement("tr");
+
+theRow1.style.height="2em";
+
+theRow2.style.height="2em";
+
+theRow3.style.height="2em";
+
+theTable.style.width="80%";
+
+theTable.cellSpacing="0";
+
+theTable.style.emptyCells="show";
+
+theTable.style.marginLeft="auto";
+
+theTable.style.marginRight="auto";
+
+tableBody.appendChild(theRow1);
+
+tableBody.appendChild(theRow2);
+
+tableBody.appendChild(theRow3);
+
+theTable.appendChild(tableBody);
+
+
+
+this._row1=theRow1;
+
+this._row2=theRow2;
+
+this._row3=theRow3;
+
+
+
+var globLowPoint=gradientArray[0].value;
+
+var globHighPoint=gradientArray[gradientArray.length-1].value;
+
+var stepSize=(globHighPoint-globLowPoint)/50;
+
+var counter=0;
+
+
+
+for(var i=0;i<gradientArray.length-1;i++){
+
+var lowPoint=gradientArray[i].value;
+
+var highPoint=gradientArray[i+1].value;
+
+
+
+var colorRect=document.createElement("td");
+
+colorRect.style.backgroundColor="rgb("+gradientArray[i].red+","+gradientArray[i].green+","+gradientArray[i].blue+")";
+
+
+
+var numberRect=document.createElement("td");
+
+var textDiv=document.createElement("div");
+
+var theText=document.createTextNode(gradientArray[i].value);
+
+textDiv.appendChild(theText);
+
+numberRect.appendChild(textDiv);
+
+theRow1.appendChild(document.createElement("td"));
+
+theRow2.appendChild(colorRect);
+
+theRow3.appendChild(numberRect);
+
+counter++;
+
+
+
+for(var j=lowPoint+stepSize;j<highPoint;j+=stepSize){
+
+var fraction=(j-lowPoint)/(highPoint-lowPoint);
+
+var newRed=Math.floor(gradientArray[i].red+fraction*(gradientArray[i+1].red-gradientArray[i].red));
+
+var newGreen=Math.floor(gradientArray[i].green+fraction*(gradientArray[i+1].green-gradientArray[i].green));
+
+var newBlue=Math.floor(gradientArray[i].blue+fraction*(gradientArray[i+1].blue-gradientArray[i].blue));
+
+
+
+var colorRect=document.createElement("td");
+
+colorRect.count=counter;
+
+colorRect.style.backgroundColor="rgb("+newRed+","+newGreen+","+newBlue+")";
+
+var numberRect=document.createElement("td");
+
+var textDiv=document.createElement("div");
+
+var theText=document.createTextNode((Math.floor(j*100))/100);
+
+textDiv.appendChild(theText);
+
+numberRect.appendChild(textDiv);
+
+textDiv.style.width="2px";
+
+textDiv.style.overflow="hidden";
+
+textDiv.style.visibility="hidden";
+
+theRow1.appendChild(numberRect);
+
+theRow2.appendChild(colorRect);
+
+theRow3.appendChild(document.createElement("td"));
+
+counter++;
+
+
+
+colorRect.onmouseover=function(){
+
+this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.visibility="visible";
+
+this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.overflow="visible";
+
+this.style.border="solid 1px";
+
+};
+
+colorRect.onmouseout=function(){
+
+this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.visibility="hidden";
+
+this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.overflow="hidden";
+
+this.style.border="none";
+
+
+
+
+
+};
+
+};
+
+};
+
+
+
+var high=gradientArray.length-1
+
+var colorRect=document.createElement("td");
+
+colorRect.style.backgroundColor="rgb("+gradientArray[high].red+","+gradientArray[high].green+","+gradientArray[high].blue+")";
+
+var numberRect=document.createElement("td");
+
+var textDiv=document.createElement("div");
+
+var theText=document.createTextNode(globHighPoint);
+
+textDiv.appendChild(theText);
+
+numberRect.appendChild(textDiv);
+
+theRow1.appendChild(document.createElement("td"));
+
+theRow2.appendChild(colorRect);
+
+theRow3.appendChild(numberRect);
+
+counter++;
+
+
+
+this._div.appendChild(theTable);
+
+};
+
+
+
+Exhibit.LegendGradientWidget.prototype.addEntry=function(color,label){
+
+var cell=document.createElement("td");
+
+cell.style.width="1.5em";
+
+cell.style.height="2em";
+
+this._row1.appendChild(cell);
+
+this._row1.appendChild(document.createElement("td"));
+
+this._row2.appendChild(document.createElement("td"));
+
+this._row3.appendChild(document.createElement("td"));
+
+
+
+var colorCell=document.createElement("td");
+
+colorCell.style.backgroundColor=color;
+
+this._row2.appendChild(colorCell);
+
+
+
+var labelCell=document.createElement("td");
+
+var labelDiv=document.createElement("div");
+
+labelDiv.appendChild(document.createTextNode(label));
+
+labelCell.appendChild(labelDiv);
+
+this._row3.appendChild(labelCell);
+
+}
+
+
+
+Exhibit.LegendGradientWidget.prototype.dispose=function(){
+
+this._div.innerHTML="";
+
+
+
+this._div=null;
+
+this._uiContext=null;
+
+};
+
+
+
+Exhibit.LegendGradientWidget.prototype._initializeUI=function(){
+
+this._div.className="exhibit-legendGradientWidget";
+
+this._div.innerHTML="";
+
+};
+
+
+
+Exhibit.LegendGradientWidget.prototype.clear=function(){
+
+this._div.innerHTML="";
+
+};
+
+
+
 /* legend-widget.js */
 
 
@@ -10903,10 +11201,7 @@ return res;
 
 Exhibit.ViewUtilities=new Object();
 
-
-
 Exhibit.ViewUtilities.openBubbleForItems=function(anchorElmt,arrayOfItemIDs,uiContext){
-
 var coords=SimileAjax.DOM.getPageCoordinates(anchorElmt);
 var bubble=SimileAjax.Graphics.createBubbleForPoint(
 coords.left+Math.round(elmt.offsetWidth/2),
@@ -10917,12 +11212,10 @@ uiContext.getSetting("bubbleHeight")
 Exhibit.ViewUtilities.fillBubbleWithItems(bubble.content,arrayOfItemIDs,uiContext);
 };
 
-
 Exhibit.ViewUtilities.fillBubbleWithItems=function(bubbleElmt,arrayOfItemIDs,uiContext){
 if(bubbleElmt==null){
 bubbleElmt=document.createElement("div");
 }
-
 
 if(arrayOfItemIDs.length>1){
 var ul=document.createElement("ul");
@@ -10943,14 +11236,14 @@ bubbleElmt.appendChild(itemLensDiv);
 return bubbleElmt;
 };
 
-
 Exhibit.ViewUtilities.constructPlottingViewDom=function(
 div,
 uiContext,
 showSummary,
 resizableDivWidgetSettings,
 legendWidgetSettings
-){
+)
+{
 var dom=SimileAjax.DOM.createDOMFromString(
 div,
 "<div class='exhibit-views-header'>"+
@@ -10977,11 +11270,15 @@ uiContext
 );
 dom.plotContainer=dom.resizableDivWidget.getContentDiv();
 
-dom.legendWidget=Exhibit.LegendWidget.create(
+if(legendWidgetSettings=="gradient"){
+dom.legendWidget=Exhibit.LegendGradientWidget.create(
+dom.legendDiv,
+uiContext);
+}else{dom.legendWidget=Exhibit.LegendWidget.create(
 legendWidgetSettings,
 dom.legendDiv,
-uiContext
-);
+uiContext);
+}
 
 dom.setUnplottableMessage=function(totalCount,unplottableItems){
 Exhibit.ViewUtilities._setUnplottableMessage(dom,totalCount,unplottableItems,uiContext);

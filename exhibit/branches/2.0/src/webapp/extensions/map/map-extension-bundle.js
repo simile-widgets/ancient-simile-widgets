@@ -233,6 +233,17 @@ this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 Exhibit.MapView.prototype._initializeUI=function(){
 var self=this;
 var settings=this._settings;
+var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":
+{markerGenerator:function(color){
+var shape="square";
+return SimileAjax.Graphics.createTranslucentImage(
+Exhibit.MapView._markerUrlPrefix+
+"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+"&width=20&height=20&pinHeight=5&background="+color.substr(1),
+"middle"
+);
+}
+};
 
 this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -243,16 +254,7 @@ true,
 self._map.checkResize();
 }
 },
-{markerGenerator:function(color){
-var shape="square";
-return SimileAjax.Graphics.createTranslucentImage(
-Exhibit.MapView._markerUrlPrefix+
-"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
-"&width=20&height=20&pinHeight=5&background="+color.substr(1),
-"middle"
-);
-}
-}
+legendWidgetSettings
 );
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
 
@@ -308,6 +310,7 @@ var unplottableItems=[];
 
 this._map.clearOverlays();
 this._dom.legendWidget.clear();
+
 if(currentSize>0){
 var currentSet=collection.getRestrictedItems();
 var locationToData={};
@@ -400,10 +403,14 @@ if(hasColorKey){
 var legendWidget=this._dom.legendWidget;
 var colorCoder=this._colorCoder;
 var keys=colorCodingFlags.keys.toArray().sort();
+if(this._colorCoder._gradientPoints!=null){
+legendWidget.addGradient(this._colorCoder._gradientPoints);
+}else{
 for(var k=0;k<keys.length;k++){
 var key=keys[k];
 var color=colorCoder.translate(key);
 legendWidget.addEntry(color,key);
+}
 }
 
 if(colorCodingFlags.others){
@@ -696,6 +703,17 @@ this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 Exhibit.VEMapView.prototype._initializeUI=function(){
 var self=this;
 var settings=this._settings;
+var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":
+{markerGenerator:function(color){
+var shape="square";
+return SimileAjax.Graphics.createTranslucentImage(
+Exhibit.MapView._markerUrlPrefix+
+"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+"&width=20&height=20&pinHeight=0&background="+color.substr(1),
+"middle"
+);
+}
+};
 
 this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -703,16 +721,7 @@ this._div,
 this._uiContext,
 true,
 {},
-{markerGenerator:function(color){
-var shape="square";
-return SimileAjax.Graphics.createTranslucentImage(
-Exhibit.VEMapView._markerUrlPrefix+
-"?renderer=map-marker&shape="+Exhibit.VEMapView._defaultMarkerShape+
-"&width=20&height=20&pinHeight=5&background="+color.substr(1),
-"middle"
-);
-}
-}
+legendWidgetSettings
 );
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
 
@@ -840,10 +849,14 @@ if(hasColorKey){
 var legendWidget=this._dom.legendWidget;
 var colorCoder=this._colorCoder;
 var keys=colorCodingFlags.keys.toArray().sort();
+if(this._colorCoder._gradientPoints!=null){
+legendWidget.addGradient(this._colorCoder._gradientPoints);
+}else{
 for(var k=0;k<keys.length;k++){
 var key=keys[k];
 var color=colorCoder.translate(key);
 legendWidget.addEntry(color,key);
+}
 }
 
 if(colorCodingFlags.others){
