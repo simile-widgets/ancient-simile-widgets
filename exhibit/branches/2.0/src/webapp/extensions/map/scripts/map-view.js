@@ -232,6 +232,17 @@ Exhibit.MapView.prototype._internalValidate = function() {
 Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     var settings = this._settings;
+	var legendWidgetSettings="_gradientPoints" in this._colorCoder ? "gradient" :
+		{markerGenerator:function(color){
+			var shape="square";
+			return SimileAjax.Graphics.createTranslucentImage(
+			Exhibit.MapView._markerUrlPrefix+
+			"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+			"&width=20&height=20&pinHeight=5&background="+color.substr(1),
+			"middle"
+			);
+			}
+		};
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -242,16 +253,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
                 self._map.checkResize(); 
             } 
         }, 
-        {   markerGenerator: function(color) {
-                var shape = "square";
-                return SimileAjax.Graphics.createTranslucentImage(
-                    Exhibit.MapView._markerUrlPrefix +
-                        "?renderer=map-marker&shape=" + Exhibit.MapView._defaultMarkerShape + 
-                        "&width=20&height=20&pinHeight=5&background=" + color.substr(1),
-                    "middle"
-                );
-            }
-        }
+        legendWidgetSettings
     );    
     this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     
@@ -298,8 +300,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
     var collection = this._uiContext.getCollection();
     var database = this._uiContext.getDatabase();
     var settings = this._settings;
-    var accessors = this._accessors;
-    
+    var accessors = this._accessors;	
+	
     /*
      *  Get the current collection and check if it's empty
      */
@@ -308,7 +310,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
     var unplottableItems = [];
     
     this._map.clearOverlays();
-    this._dom.legendWidget.clear();
+	this._dom.legendWidget.clear();
+	
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
         var locationToData = {};
@@ -401,22 +404,26 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var legendWidget = this._dom.legendWidget;
             var colorCoder = this._colorCoder;
             var keys = colorCodingFlags.keys.toArray().sort();
-            for (var k = 0; k < keys.length; k++) {
-                var key = keys[k];
-                var color = colorCoder.translate(key);
-                legendWidget.addEntry(color, key);
-            }
-            
-            if (colorCodingFlags.others) {
-                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
-            }
-            if (colorCodingFlags.mixed) {
-                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
-            }
-            if (colorCodingFlags.missing) {
-                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
-            }
-        }
+			if(this._colorCoder._gradientPoints != null) {
+				legendWidget.addGradient(this._colorCoder._gradientPoints);
+			} else {
+	            for (var k = 0; k < keys.length; k++) {
+	                var key = keys[k];
+	                var color = colorCoder.translate(key);
+	                legendWidget.addEntry(color, key);
+	            }
+			}
+			
+			if (colorCodingFlags.others) {
+				legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+			}
+			if (colorCodingFlags.mixed) {
+				legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+			}
+			if (colorCodingFlags.missing) {
+				legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+			}
+		}
         
         if (bounds && typeof settings.zoom == "undefined") {
             var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);

@@ -2,10 +2,6 @@
  *  Exhibit.ColorGradientCoder
  *==================================================
  */
- 
- // find start and end points
- // step size = (end-start) / length of elements
- // iterate color + step size
 
 Exhibit.ColorGradientCoder = function(uiContext) {
     this._uiContext = uiContext;

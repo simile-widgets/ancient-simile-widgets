@@ -207,6 +207,7 @@ Exhibit.BarChartView.prototype._internalValidate = function() {
 
 Exhibit.BarChartView.prototype._initializeUI = function() {
     var self = this;
+	var legendWidgetSettings="_gradientPoints" in this._colorCoder ? "gradient" : {}
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -217,7 +218,7 @@ Exhibit.BarChartView.prototype._initializeUI = function() {
                 self._reconstruct();
             } 
         }, 
-        {}
+        legendWidgetSettings
     );
     this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     
@@ -580,21 +581,25 @@ Exhibit.BarChartView.prototype._reconstruct = function() {
             var legendWidget = this._dom.legendWidget;
             var colorCoder = this._colorCoder;
             var keys = colorCodingFlags.keys.toArray().sort();
-            for (var k = 0; k < keys.length; k++) {
-                var key = keys[k];
-                var color = colorCoder.translate(key);
-                legendWidget.addEntry(color, key);
-            }
-            
-            if (colorCodingFlags.others) {
-                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
-            }
-            if (colorCodingFlags.mixed) {
-                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
-            }
-            if (colorCodingFlags.missing) {
-                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
-            }
+			if(this._colorCoder._gradientPoints != null) {
+				legendWidget.addGradient(this._colorCoder._gradientPoints);
+			} else {
+	            for (var k = 0; k < keys.length; k++) {
+	                var key = keys[k];
+	                var color = colorCoder.translate(key);
+	                legendWidget.addEntry(color, key);
+	            }
+			}
+			
+			if (colorCodingFlags.others) {
+				legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+			}
+			if (colorCodingFlags.mixed) {
+				legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+			}
+			if (colorCodingFlags.missing) {
+				legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+			}
         }
     }
     this._dom.setUnplottableMessage(currentSize, unplottableItems);

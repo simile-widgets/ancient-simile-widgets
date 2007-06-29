@@ -67,6 +67,7 @@
             "ui/widgets/collection-summary-widget.js",
             "ui/widgets/resizable-div-widget.js",
             "ui/widgets/legend-widget.js",
+			"ui/widgets/legend-gradient-widget.js",
             "ui/widgets/option-widget.js",
             "ui/widgets/toolbox-widget.js",
             

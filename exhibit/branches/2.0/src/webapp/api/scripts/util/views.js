@@ -47,7 +47,8 @@ Exhibit.ViewUtilities.constructPlottingViewDom = function(
     showSummary,
     resizableDivWidgetSettings, 
     legendWidgetSettings
-) {
+)
+ { 
     var dom = SimileAjax.DOM.createDOMFromString(
         div,
         "<div class='exhibit-views-header'>" +
@@ -74,11 +75,15 @@ Exhibit.ViewUtilities.constructPlottingViewDom = function(
     );
     dom.plotContainer = dom.resizableDivWidget.getContentDiv();
     
-    dom.legendWidget = Exhibit.LegendWidget.create(
-        legendWidgetSettings,
-        dom.legendDiv, 
-        uiContext
-    );
+    if(legendWidgetSettings == "gradient") {
+		dom.legendWidget = Exhibit.LegendGradientWidget.create(
+				dom.legendDiv,
+				uiContext);
+	} else{	dom.legendWidget = Exhibit.LegendWidget.create(
+				legendWidgetSettings,
+				dom.legendDiv, 
+				uiContext);
+			}
     
     dom.setUnplottableMessage = function(totalCount, unplottableItems) {
         Exhibit.ViewUtilities._setUnplottableMessage(dom, totalCount, unplottableItems, uiContext);
