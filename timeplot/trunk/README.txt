@@ -49,6 +49,12 @@
   located in the LICENSE.txt file located in the same directory as this 
   very file you are reading.
 
+  Timeplot depends on and ships with the Explorer Canvas javascript library 
+  that is released under the Apache License 2.0 and can be found at
+  
+    http://sourceforge.net/projects/excanvas
+
+
 
 
   Credits
