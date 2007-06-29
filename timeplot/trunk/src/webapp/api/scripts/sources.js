@@ -2,7 +2,11 @@
  *  Default Data Source
  *==================================================*/
 
-Timeplot.DefaultEventSource = Timeline.DefaultEventSource;
+Timeplot.DefaultEventSource = function(eventIndex) {
+	Timeline.DefaultEventSource.apply(this, arguments);
+};
+
+Object.extend(Timeplot.DefaultEventSource.prototype, Timeline.DefaultEventSource.prototype);
 
 Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, filter) {
 
@@ -27,7 +31,7 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, 
     if (data) {
         for (var i = 0; i < data.length; i++){
             var row = data[i];
-            var evt = new Timeline.DefaultEventSource.NumericEvent(
+            var evt = new Timeplot.DefaultEventSource.NumericEvent(
                 parseDateTimeFunction(row[0]),
                 row.slice(1)
             );
