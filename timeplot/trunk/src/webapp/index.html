@@ -30,7 +30,24 @@
         var timeplot3;
         
         function onLoad() {
+            if (document.location.toString().match(/^http\:\/\/simile.mit.edu.*$/)) {
+                var dataURL = "http://simile.mit.edu/history/data/webstats.data";
+                var eventsURL = "http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=6";
+            } else {
+                var dataURL = "examples/simile/data.txt";
+                var eventsURL = "examples/simile/events.xml";
+            } 
+
+            var dataFilter = function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    row[0] = row[0].replace(/\//g,"-");
+                }
+                return data;
+            };
+            
             var eventSource = new Timeplot.DefaultEventSource();
+            var eventSource2 = new Timeplot.DefaultEventSource();
 
             var quietLine  = new Timeplot.Color('#82A6A2');
             var loudLine   = new Timeplot.Color('#284452');
@@ -55,11 +72,18 @@
                     dataSource: avgWebTraffic,
                     geometry: webGeometry,
                     lineColor: loudLine
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    geometry: webGeometry,
+                    lineColor: loudLine
                 })
             ];
             
             timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotsInfo1);
-            timeplot1.loadText("examples/simile/data.txt", " ", eventSource);
+            timeplot1.loadText(dataURL, " ", eventSource, dataFilter);
+            timeplot1.loadXML(eventsURL, eventSource2);
 
             var crawlersGeometry = new Timeplot.DefaultGeometry({
                 gridColor: gridColor
@@ -71,6 +95,12 @@
                     geometry: crawlersGeometry,
                     lineColor: quietLine,
                     fillColor: quietLine.lighten(30)
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    geometry: crawlersGeometry,
+                    lineColor: loudLine
                 })
             ];
             
@@ -99,6 +129,12 @@
                 Timeplot.createPlotInfo({ 
                     id: "smoothed news",
                     dataSource: smoothedNews,
+                    geometry: newsGeometry,
+                    lineColor: loudLine
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
                     geometry: newsGeometry,
                     lineColor: loudLine
                 })
