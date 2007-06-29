@@ -3,9 +3,11 @@
  *==================================================
  */
 
-log = SimileAjax.Debug.log;
-expand = SimileAjax.Debug.objectToString;
- 
+Timeline.Debug = SimileAjax.Debug; // timeline uses it's own debug system which is not as advanced
+log = SimileAjax.Debug.log; // shorter name is more usable
+
+// ---------------------------------------------
+
 Timeplot.create = function(elmt, plotInfos) {
     return new Timeplot._Impl(elmt, plotInfos);
 };
@@ -176,7 +178,7 @@ Timeplot._Impl.prototype = {
                     try {
                         background[i].action.apply(background[i].context,[]);
                     } catch (e) {
-                        Timeline.Debug.exception(e);
+                        SimileAjax.Debug.exception(e);
                     }
                 }
                 var foreground = timeplot._painters.foreground;
@@ -184,7 +186,7 @@ Timeplot._Impl.prototype = {
                     try {
                         foreground[i].action.apply(foreground[i].context,[]);
                     } catch (e) {
-                        Timeline.Debug.exception(e);
+                        SimileAjax.Debug.exception(e);
                     }
                 }
             }, 10);
