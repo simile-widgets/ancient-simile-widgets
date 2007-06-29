@@ -60,7 +60,7 @@ Timeplot.Math = {
                 if (m < 0) {
                     var v = f[0];
                 } else if (m >= F) {
-                    var v = f[F-1];
+                    var v = g[n-1];
                 } else {
                     var v = f[m];
                 }
