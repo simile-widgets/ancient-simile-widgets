@@ -4,22 +4,10 @@
 
 
 Timegrid.DefaultEventSource = function(eventIndex) {
+    Timegrid.DefaultEventSource.superclass.call(this);
     this._events = (eventIndex instanceof Object) ? eventIndex : new Timegrid.EventIndex();
-    this._listeners = [];
 };
-
-Timegrid.DefaultEventSource.prototype.addListener = function(listener) {
-    this._listeners.push(listener);
-};
-
-Timegrid.DefaultEventSource.prototype.removeListener = function(listener) {
-    for (var i = 0; i < this._listeners.length; i++) {
-        if (this._listeners[i] == listener) {
-            this._listeners.splice(i, 1);
-            break;
-        }
-    }
-};
+$.inherit(Timegrid.DefaultEventSource, Timegrid.ListenerAware);
 
 Timegrid.DefaultEventSource.prototype.loadXML = function(xml, url) {
     var base = this._getBaseURL(url);
@@ -229,19 +217,6 @@ Timegrid.DefaultEventSource.prototype.getEarliestDate = function() {
 
 Timegrid.DefaultEventSource.prototype.getLatestDate = function() {
     return this._events.getLatestDate();
-};
-
-Timegrid.DefaultEventSource.prototype._fire = function(handlerName, args) {
-    for (var i = 0; i < this._listeners.length; i++) {
-        var listener = this._listeners[i];
-        if (handlerName in listener) {
-            try {
-                listener[handlerName].apply(listener, args);
-            } catch (e) {
-                Timegrid.Debug.exception(e);
-            }
-        }
-    }
 };
 
 Timegrid.DefaultEventSource.prototype._getBaseURL = function(url) {

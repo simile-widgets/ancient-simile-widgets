@@ -27,8 +27,7 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
     var constructor = Timegrid[$.capitalize($.trim(name)) + 'Layout'];
     var layout;
     if (typeof constructor == 'function') {
-        layout = new constructor(params);
-        layout.initializeGrid(eventSource);
+        layout = new constructor(eventSource, params);
         return layout;
     };
     return;
@@ -39,7 +38,7 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
  * @class Layout is the base class for all layouts that Timegrid supports.
  * @constructor
  */
-Timegrid.Layout = function() {
+Timegrid.Layout = function(eventSource, params) {
     /**
      * The number of columns in the grid.
      * @type int

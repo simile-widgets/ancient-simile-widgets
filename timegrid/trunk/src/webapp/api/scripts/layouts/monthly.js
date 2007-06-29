@@ -10,8 +10,8 @@ Timegrid.MonthLayout = function(params) {
     Timegrid.MonthLayout.superclass.call(this, params);
     this.xSize = 7;
     this.ySize = 5;
-    this.xMapper = function(evt) {};
-    this.yMapper = function(evt) {};
+    this.xMapper = function(obj) { return obj.time.getDay(); };
+    this.yMapper = function(obj) { return obj.time.getWeekOfYear(); };
 };
 $.inherit(Timegrid.MonthLayout, Timegrid.Layout);
 

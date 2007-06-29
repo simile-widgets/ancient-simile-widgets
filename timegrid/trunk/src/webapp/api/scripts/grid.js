@@ -5,6 +5,7 @@
  *****************************************************************************/
 
 Timegrid.Grid = function(objs, xSize, ySize, xMapper, yMapper) {
+    Timegrid.Grid.superclass.call(this);
     // Construct the actual array container for objects
     this.grid = new Array(xSize);
     for (i = 0; i < xSize; i++) {
@@ -19,6 +20,7 @@ Timegrid.Grid = function(objs, xSize, ySize, xMapper, yMapper) {
 
     this.addAll(objs);
 };
+$.inherit(Timegrid.Grid, Timegrid.ListenerAware);
 
 Timegrid.Grid.prototype.add = function(obj) {
     var x = this.xMapper(obj);

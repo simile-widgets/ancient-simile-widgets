@@ -13,8 +13,11 @@
   * @extends Timegrid.Layout
   * @constructor
   */
-Timegrid.WeekLayout = function(params) {
-    Timegrid.WeekLayout.superclass.call(this, params);
+Timegrid.WeekLayout = function(eventSource, params) {
+    Timegrid.WeekLayout.superclass.call(this, eventSource, params);
+    var self = this;
+    
+    // Specifications for a week layout
     this.xSize = 7;
     this.ySize = 24;
     this.xMapper = function(obj) { return obj.time.getDay(); };
@@ -26,25 +29,25 @@ Timegrid.WeekLayout = function(params) {
     
     this.configure(params);
     
-    this.xCell = this.xCell || 100.0 / this.xSize; // x positions are calculated in %
-    this.yCell = this.yCell || (this.gridheight - 1) / this.ySize; // y positions are pixels
+    // Compute the cell sizes for the grid
+    this.xCell = this.xCell || 100.0 / this.xSize;
+    this.yCell = this.yCell || (this.gridheight - 1) / this.ySize;
+    
+    // Initialize our eventSource
+    this.eventSource = eventSource;
+    this.startTime = this.eventSource.getEarliestDate();
+    this.endTime = Timegrid.WeekLayout.getEndOfWeek(this.startTime); 
+    this.initializeGrid();
 };
 $.inherit(Timegrid.WeekLayout, Timegrid.Layout);
 
-Timegrid.WeekLayout.prototype.initializeGrid = function(eventSource) {
-    this.eventSource = eventSource;
+Timegrid.WeekLayout.prototype.initializeGrid = function() {
     this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize, 
-                                           this.xMapper, this.yMapper);
-    this.startTime = eventSource.getEarliestDate();
+                                       this.xMapper, this.yMapper);
     if (this.startTime) {
-        // Here we compute the end of the week based on start time
-        this.endTime = new Date(this.startTime);
-        this.endTime.setDate(this.endTime.getDate() + 
-                             (6 - this.endTime.getDay()));
-        this.endTime.setHours(24);
         // We only want events for one week
-        var iterator = eventSource.getEventIterator(this.startTime,
-                                                    this.endTime);
+        var iterator = this.eventSource.getEventIterator(this.startTime,
+                                                         this.endTime);
         while (iterator.hasNext()) {
             var endpoints = Timegrid.WeekLayout.getEndpoints(iterator.next());
             this.eventGrid.addAll(endpoints);
@@ -99,14 +102,23 @@ Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {
 };
 
 Timegrid.WeekLayout.prototype.getXLabels = function() {
-    return [ "Sunday", "Monday", "Tuesday", "Wednesday",
-             "Thursday", "Friday", "Saturday" ];
+    return Date.dayNames;
 };
 
 Timegrid.WeekLayout.prototype.getYLabels = function() {
     return [ "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am",
              "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm",
              "6pm", "7pm", "8pm", "9pm", "10pm", "11pm" ];
+};
+
+Timegrid.WeekLayout.getEndOfWeek = function(date) {
+    if (date) {
+        var endTime = new Date(date);
+        endTime.setDate(endTime.getDate() + (6 - endTime.getDay()));
+        endTime.setHours(24);
+        return endTime;
+    }
+    return false;
 };
 
 Timegrid.WeekLayout.getEndpoints = function(evt) {
