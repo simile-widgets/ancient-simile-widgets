@@ -121,7 +121,7 @@ Timeplot.DefaultEventSource.NumericEvent = function(time, values) {
     this._values = values;
 };
 
-Timeline.DefaultEventSource.NumericEvent.prototype = {
+Timeplot.DefaultEventSource.NumericEvent.prototype = {
     getID:          function() { return this._id; },
     getTime:        function() { return this._time; },
     getValues:      function() { return this._values; },
