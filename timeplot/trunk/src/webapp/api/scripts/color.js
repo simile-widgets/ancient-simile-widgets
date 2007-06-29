@@ -6,24 +6,24 @@
  */
 
 Timeplot.Color = function(color) {
-	this.toHex(color);
+    this.toHex(color);
 };
 
 Timeplot.Color.prototype = {
-    
+
     /**
      * Sets the RGB values of this coor
      * 
      * @param {Number} r,g,b    Red green and blue values (between 0 and 255)
      */
     set: function (r,g,b) {
-    	this.r = r;
-    	this.g = g;
-    	this.b = b;
-    	
-    	return this.check();
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        
+        return this.check();
     },
-    
+
     /**
      * Parses and stores the hex values of the input color string.
      * 
@@ -43,22 +43,22 @@ Timeplot.Color.prototype = {
         }
         return this.check();
     },
-    
+
     /**
      * Lightens the color.
      * 
      * @param {integer} level   Level to lighten the color with.
      */
     lighten: function(level) {
-    	var color = new Timeplot.Color();
-    	color.set(
+        var color = new Timeplot.Color();
+        color.set(
             this.r += parseInt(level, 10),
             this.g += parseInt(level, 10),
             this.b += parseInt(level, 10)
         );
         return color.check();
     },
-    
+
     /**
      * Darkens the color.
      * 
@@ -73,7 +73,7 @@ Timeplot.Color.prototype = {
         );
         return color.check();
     },
-    
+
     /**
      * Checks and validates if the hex values r, g and b are
      * between 0 and 255.
@@ -82,15 +82,15 @@ Timeplot.Color.prototype = {
         if(this.r>255){this.r=255;}else if(this.r<0){this.r=0;}
         if(this.g>255){this.g=255;}else if(this.g<0){this.g=0;}
         if(this.b>255){this.b=255;}else if(this.b<0){this.b=0;}
-    
+
        return this;
     },
-        
+
     /**
      * Returns a string representation of this color.
      */
     toString: function(alpha){
-        return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ((alpha) ? ',' + alpha : '') + ')';       
+        return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ((alpha) ? ',' + alpha : '') + ')';
     }
-        
+
 };

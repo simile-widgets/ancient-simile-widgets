@@ -3,9 +3,9 @@
  *==================================================*/
 
 Timeplot.Processor = function(dataSource, operator, params) {
-	this._dataSource = dataSource;
-	this._operator = operator;
-	this._params = params;
+    this._dataSource = dataSource;
+    this._operator = operator;
+    this._params = params;
 
     this._data = {
         times: new Array(),
@@ -15,10 +15,10 @@ Timeplot.Processor = function(dataSource, operator, params) {
     this._range = {
         earliestDate: new Date(),
         latestDate: new Date(),
-        mix: 0,
+        min: 0,
         max: 0
     };
-    
+
     var processor = this;
     this._processingListener = {
         onAddMany: function() { processor._process(); },
@@ -28,40 +28,40 @@ Timeplot.Processor = function(dataSource, operator, params) {
 };
 
 Timeplot.Processor.prototype = {
-  
+
     _clear: function() {
-    	this.removeListener(this._processingListener);
-    	this._dataSource._clear();
+        this.removeListener(this._processingListener);
+        this._dataSource._clear();
     },
-    
+
     _process: function() {
         // this method requires the dataSource._process() method to be
         // called first as to setup the data and range used below
-        // this should be guaranteed by the order of the listener registration 	
-    
+        // this should be guaranteed by the order of the listener registration  
+
         var data = this._dataSource.getData();
         var range = this._dataSource.getRange();
-    
+
         var newValues = this._operator(data, this._params);
         var newValueRange = Timeplot.Math.range(newValues);
-        
+
         this._data = {
-        	times: data.times,
-        	values: newValues
+            times: data.times,
+            values: newValues
         };
-        
-	    this._range = {
-	        earliestDate: range.earliestDate,
-	        latestDate: range.latestDate,
-	        min: newValueRange.min,
-	        max: newValueRange.max
-	    };
+
+        this._range = {
+            earliestDate: range.earliestDate,
+            latestDate: range.latestDate,
+            min: newValueRange.min,
+            max: newValueRange.max
+        };
     },
-    
+
     getRange: function() {
         return this._range;
     },
-    
+
     getData: function() {
         return this._data;
     },

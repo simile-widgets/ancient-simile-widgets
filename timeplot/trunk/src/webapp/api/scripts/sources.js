@@ -4,7 +4,7 @@
 
 Timeplot.DefaultEventSource = Timeline.DefaultEventSource;
 
-Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url) {
+Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, filter) {
 
     if (text == null) {
         return;
@@ -12,15 +12,19 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url) 
 
     this._events.maxValues = new Array
     var base = this._getBaseURL(url);
-    
+
     var dateTimeFormat = 'iso8601';
     var parseDateTimeFunction = this._events.getUnit().getParser(dateTimeFormat);
 
     var data = this._parseText(text, separator);
-    
+
     var added = false;
-    
-    if (data){
+
+    if (filter) {
+        data = filter(data);
+    }
+
+    if (data) {
         for (var i = 0; i < data.length; i++){
             var row = data[i];
             var evt = new Timeline.DefaultEventSource.NumericEvent(
@@ -47,52 +51,66 @@ Timeplot.DefaultEventSource.prototype._parseText = function (text, separator) {
     var table = [];
     while (pos < len) {
         var line = [];
-        while (pos < len) {
-            if (text.charAt(pos) == '"') {            // "..." quoted column
-                var nextquote = text.indexOf('"', pos+1 );
-                while ( nextquote<len && nextquote > -1 ) {
-                    if ( text.charAt(nextquote+1) != '"' ) {
-                        break;                          // end of column
+        if (text.charAt(pos) != '#') { // if it's not a comment, process
+            while (pos < len) {
+                if (text.charAt(pos) == '"') {            // "..." quoted column
+                    var nextquote = text.indexOf('"', pos+1 );
+                    while (nextquote<len && nextquote > -1) {
+                        if (text.charAt(nextquote+1) != '"') {
+                            break;                          // end of column
+                        }
+                        nextquote = text.indexOf('"', nextquote + 2);
                     }
-                    nextquote = text.indexOf( '"', nextquote+2 );
+                    if ( nextquote < 0 ) {
+                        // unclosed quote
+                    } else if (text.charAt(nextquote + 1) == separator) { // end of column
+                        var quoted = text.substr(pos + 1, nextquote-pos - 1);
+                        quoted = quoted.replace(/""/g,'"');
+                        line[line.length] = quoted;
+                        pos = nextquote + 2;
+                        continue;
+                    } else if (text.charAt(nextquote + 1) == "\n" || // end of line
+                               len == nextquote + 1 ) {              // end of file
+                        var quoted = text.substr(pos + 1, nextquote-pos - 1);
+                        quoted = quoted.replace(/""/g,'"');
+                        line[line.length] = quoted;
+                        pos = nextquote + 2;
+                        break;
+                    } else {
+                        // invalid column
+                    }
                 }
-                if ( nextquote < 0 ) {
-                    // unclosed quote
-                } else if ( text.charAt(nextquote+1) == separator ) { // end of column
-                    var quoted = text.substr( pos+1, nextquote-pos-1 );
-                    quoted = quoted.replace(/""/g,'"');
-                    line[line.length] = quoted;
-                    pos = nextquote+2;
-                    continue;
-                } else if ( text.charAt(nextquote+1) == "\n" || // end of line
-                            len==nextquote+1 ) {                // end of file
-                    var quoted = text.substr( pos+1, nextquote-pos-1 );
-                    quoted = quoted.replace(/""/g,'"');
-                    line[line.length] = quoted;
-                    pos = nextquote+2;
+                var nextseparator = text.indexOf(separator, pos);
+                var nextnline = text.indexOf("\n", pos);
+                if (nextnline < 0) nextnline = len;
+                if (nextseparator > -1 && nextseparator < nextnline) {
+                    line[line.length] = text.substr(pos, nextseparator-pos);
+                    pos = nextseparator + 1;
+                } else {                                    // end of line
+                    line[line.length] = text.substr(pos, nextnline-pos);
+                    pos = nextnline + 1;
                     break;
-                } else {
-                    // invalid column
                 }
             }
-            var nextcomma = text.indexOf( separator, pos );
-            var nextnline = text.indexOf( "\n", pos );
-            if ( nextnline < 0 ) nextnline = len;
-            if ( nextcomma > -1 && nextcomma < nextnline ) {
-                line[line.length] = text.substr( pos, nextcomma-pos );
-                pos = nextcomma+1;
-            } else {                                    // end of line
-                line[line.length] = text.substr( pos, nextnline-pos );
-                pos = nextnline+1;
-                break;
-            }
+        } else { // if it's a comment, ignore
+            var nextnline = text.indexOf("\n", pos);
+            pos = (nextnline > -1) ? nextnline + 1 : cur;
         }
-        if ( line.length >= 0 ) {
+        if (line.length > 0) {
             table[table.length] = line;                 // push line
         }
     }
-    if ( table.length < 0 ) return;                     // null data
+    if (table.length < 0) return;                     // null data
     return table;
+}
+
+Timeplot.DefaultEventSource.prototype.getRange = function() {
+    return {
+        earliestDate: this.getEarliestDate(),
+        latestDate: this.getLatestDate(),
+        min: 0,
+        max: 0
+    };
 }
 
 // -----------------------------------------------------------------------
@@ -116,7 +134,7 @@ Timeline.DefaultEventSource.NumericEvent.prototype = {
 // -----------------------------------------------------------------------
 
 Timeplot.DataSource = function(eventSource) {
-	this._eventSource = eventSource;
+    this._eventSource = eventSource;
     var source = this;
     this._processingListener = {
         onAddMany: function() { source._process(); },
@@ -129,19 +147,19 @@ Timeplot.DataSource = function(eventSource) {
 Timeplot.DataSource.prototype = {
   
     _clear: function() {
-    	this._data = null;
-    	this._range = null;
+        this._data = null;
+        this._range = null;
     },
-    
+
     _process: function() {
-    	this._data = {
-    		times: new Array(),
-    		values: new Array()
-    	};
+        this._data = {
+            times: new Array(),
+            values: new Array()
+        };
         this._range = {
             earliestDate: new Date(),
             latestDate: new Date(),
-            mix: 0,
+            min: 0,
             max: 0
         };
     },
@@ -149,24 +167,24 @@ Timeplot.DataSource.prototype = {
     getRange: function() {
         return this._range;
     },
-    
+
     getData: function() {
         return this._data;
     },
 
     addListener: function(listener) {
-    	this._eventSource.addListener(listener);
+        this._eventSource.addListener(listener);
     },
 
     removeListener: function(listener) {
-    	this._eventSource.removeListener(listener);
+        this._eventSource.removeListener(listener);
     },
-    
+
     replaceListener: function(oldListener, newListener) {
-    	this.removeListener(oldListener);
-    	this.addListener(newListener);
+        this.removeListener(oldListener);
+        this.addListener(newListener);
     }
-    
+
 }
 
 // -----------------------------------------------------------------------
@@ -176,7 +194,7 @@ Timeplot.DataSource.prototype = {
  * from the events
  */
 Timeplot.ColumnSource = function(eventSource, column) {
-	Timeplot.DataSource.apply(this, arguments);
+    Timeplot.DataSource.apply(this, arguments);
     this._column = column - 1;
 };
 
@@ -188,19 +206,19 @@ Timeplot.ColumnSource.prototype.dispose = function() {
 }
 
 Timeplot.ColumnSource.prototype._process = function() {
-	var count = this._eventSource.getCount();
-	var times = new Array(count);
-	var values = new Array(count);
-	var min = Number.MAX_VALUE;
-	var max = Number.MIN_VALUE;
-	var i = 0;
-	
-	var iterator = this._eventSource.getAllEventIterator();
-	while (iterator.hasNext()) {
-		var event = iterator.next();
-		var time = event.getTime();
-		times[i] = time;
-		var value = this._getValue(event);
+    var count = this._eventSource.getCount();
+    var times = new Array(count);
+    var values = new Array(count);
+    var min = Number.MAX_VALUE;
+    var max = Number.MIN_VALUE;
+    var i = 0;
+
+    var iterator = this._eventSource.getAllEventIterator();
+    while (iterator.hasNext()) {
+        var event = iterator.next();
+        var time = event.getTime();
+        times[i] = time;
+        var value = this._getValue(event);
         if (!isNaN(value)) {
            if (value < min) {
                min = value;
@@ -210,14 +228,14 @@ Timeplot.ColumnSource.prototype._process = function() {
            }    
             values[i] = value;
         }
-		i++;
-	}
+        i++;
+    }
 
     this._data = {
         times: times,
         values: values
     };
-    
+
     this._range = {
         earliestDate: this._eventSource.getEarliestDate(),
         latestDate: this._eventSource.getLatestDate(),

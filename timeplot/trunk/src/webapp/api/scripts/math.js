@@ -5,11 +5,11 @@
  * ----------------------------------------------------------------------------- */
 
 Timeplot.Operator = { 
-    
+
     sum: function(data, params) {
         return Timeplot.Math.integral(data.values);
     },
-    
+
     average: function(data, params) {
         var size = ("size" in params) ? params.size : 30;
         var result = Timeplot.Math.movingAverage(data.values, size);
@@ -22,7 +22,7 @@ Timeplot.Operator = {
  * ----------------------------------------------------------------------------- */
 
 Timeplot.Math = { 
-	
+
     /**
      * Evaluates the range (min and max values) of the given array
      */
@@ -30,7 +30,7 @@ Timeplot.Math = {
         var F = f.length;
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
-        
+
         for (var t = 0; t < F; t++) {
             var value = f[t];
             if (value < min) {
@@ -40,13 +40,13 @@ Timeplot.Math = {
                 max = value;
             }    
         }
-        
+
         return {
             min: min,
             max: max
         }
     },
-    
+
     /**
      * Evaluates the windows average of a given array based on the
      * given window size
@@ -55,36 +55,36 @@ Timeplot.Math = {
         var F = f.length;
         var g = new Array(F);
         for (var n = 0; n < F; n++) {
-        	var value = 0;
-        	for (var m = n - size; m < n + size; m++) {
-        		if (m < 0) {
-        		    var v = f[0];
-        		} else if (m >= F) {
-        			var v = f[F-1];
-        		} else {
-        			var v = f[m];
-        		}
-        		value += v;
-        	}
-        	g[n] = value / (2 * size);
+            var value = 0;
+            for (var m = n - size; m < n + size; m++) {
+                if (m < 0) {
+                    var v = f[0];
+                } else if (m >= F) {
+                    var v = f[F-1];
+                } else {
+                    var v = f[m];
+                }
+                value += v;
+            }
+            g[n] = value / (2 * size);
         }
-        return g;             	
+        return g;
     },
-    
+
     /**
      * Returns an array with the integral of the given array
      */
     integral: function(f) {
         var F = f.length;
-        
+
         var g = new Array(F);
         var sum = 0;
-        
+
         for (var t = 0; t < F; t++) {
            sum += f[t];
            g[t] = sum;  
         }
-        
+
         return g;
     },
 
@@ -96,15 +96,15 @@ Timeplot.Math = {
     normalize: function(f) {
         var F = f.length;
         var sum = 0.0;
-        
+
         for (var t = 0; t < F; t++) {
             sum += f[t];
         }
-        
+
         for (var t = 0; t < F; t++) {
             f[t] /= sum;
         }
-        
+
         return f;
     },
 
@@ -114,9 +114,9 @@ Timeplot.Math = {
     convolution: function(f,g) {
         var F = f.length;
         var G = g.length;
-        
+
         var c = new Array(F);
-        
+
         for (var m = 0; m < F; m++) {
             var r = 0;
             var end = (m + G < F) ? m + G : F;
@@ -127,7 +127,7 @@ Timeplot.Math = {
             }
             c[m] = r;
         }
-    
+
         return c;
     },
 
@@ -153,35 +153,35 @@ Timeplot.Math = {
      * and make sure its integral is one.
      */
     gaussian: function(size, threshold) {
-	    with (Math) {
-	    	var radius = size / 2;
-	        var variance = radius * radius / log(threshold); 
-	        var g = new Array(size);
-	        for (var t = 0; t < size; t++) {
-	            var l = t - radius;
-	            g[t] = exp(-variance * l * l);
-	        }
-	    }
-	    
-	    return this.normalize(g);
-	},
-	
-	// ---- Utility Methods --------------------------------------------------
-	
-	/**
-	 * Return x with n significant figures 
-	 */
-	round: function(x,n) {
-		with (Math) {
-			if (abs(x) > 1) {
-				var l = floor(log(x)/log(10));
-				var d = round(exp((l-n+1)*log(10)));
+        with (Math) {
+            var radius = size / 2;
+            var variance = radius * radius / log(threshold); 
+            var g = new Array(size);
+            for (var t = 0; t < size; t++) {
+                var l = t - radius;
+                g[t] = exp(-variance * l * l);
+            }
+        }
+
+        return this.normalize(g);
+    },
+
+    // ---- Utility Methods --------------------------------------------------
+
+    /**
+     * Return x with n significant figures 
+     */
+    round: function(x,n) {
+        with (Math) {
+            if (abs(x) > 1) {
+                var l = floor(log(x)/log(10));
+                var d = round(exp((l-n+1)*log(10)));
                 var y = round(round(x / d) * d);
-				return y;
-			} else {
-				throw "FIXME(SM): still to implement for 0 < abs(x) < 1";
-			}
-		}
-	}
-    
+                return y;
+            } else {
+                throw "FIXME(SM): still to implement for 0 < abs(x) < 1";
+            }
+        }
+    }
+
 }
