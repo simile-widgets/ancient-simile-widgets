@@ -27,8 +27,6 @@ Timegrid.getConfigFromDOM = function(elmt) {
         config.width = $(elmt).width();
     }
     config.scrollwidth = $.scrollWidth();
-    config.gridheight = config.gridheight || config.height - config.scrollwidth;
-    config.gridwidth = config.gridwidth || config.width - config.scrollwidth;
     return config;
 };
 
@@ -120,8 +118,7 @@ Timegrid._Impl.prototype._construct = function() {
     this.showLoadingMessage = function() { $(message.containerDiv).show(); };
     this.hideLoadingMessage = function() { $(message.containerDiv).hide(); };
 
-    var layoutDiv = this._layout.render(doc);
-    container.appendChild(layoutDiv);
+    var layoutDiv = this._layout.render(container);
 };
 
 Timegrid._Impl.prototype._onAddMany = function() {

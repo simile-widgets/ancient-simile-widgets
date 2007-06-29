@@ -12,7 +12,13 @@ ul, li {
     font-size: 9pt;
 }
 
+div.timegrid-view {
+    position: relative;
+    border: 1px white solid;
+}
+
 div.timegrid-grid-window {
+    position: absolute;
     overflow: scroll;
     border: 1px inset black;
 }
@@ -51,6 +57,7 @@ div.timegrid-ylabels {
 div.timegrid-xlabels-window {
     position: absolute;
     overflow: hidden;
+    text-align: center;
 }
 
 div.timegrid-ylabels-window {
