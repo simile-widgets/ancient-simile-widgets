@@ -44,8 +44,6 @@ div.exhibit-facet-body {
 
 div.exhibit-facet-value {
     cursor:         pointer;
-    position:       relative;
-    margin-left:    2em;
     padding:        2px 0px;
     clear:          both;
 }
@@ -54,15 +52,14 @@ div.exhibit-facet-value-selected {
 }
 
 div.exhibit-facet-value-count {
-    position:       absolute;
-    left:           -2em;
+    float:          left;
     width:          2em;
     text-align:     right;
     color:          #aaa;
 }
 
 div.exhibit-facet-value-inner {
-    padding-left:   0.25em;
+    padding-left:   2.5em;
 }
 
 div.exhibit-facet-value-checkbox {
