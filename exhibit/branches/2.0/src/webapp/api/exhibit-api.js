@@ -190,10 +190,10 @@
          *  Extensions (for backward compatibility)
          */
         if (includeTimeline) {
-            scriptURLs.push(Exhibit.urlPrefix + "../extensions/time/time-extension.js");
+            scriptURLs.push(Exhibit.urlPrefix + "../extensions-2.0/time/time-extension.js");
         }
         if (includeMap) {
-            scriptURLs.push(Exhibit.urlPrefix + "../extensions/map/map-extension.js");
+            scriptURLs.push(Exhibit.urlPrefix + "../extensions-2.0/map/map-extension.js");
         }
         
         SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
