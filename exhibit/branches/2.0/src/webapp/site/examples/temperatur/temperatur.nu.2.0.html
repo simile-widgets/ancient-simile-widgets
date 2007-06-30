@@ -61,6 +61,16 @@
                         </div>
                     </div>
                     <div ex:role="view"
+                        ex:label="Latitud / Temperatur"
+                        ex:viewClass="ScatterPlot"
+                        ex:x=".temp"
+                        ex:y=".lat"
+                        ex:xLabel="Temperatur&nbsp;(°C)"
+                        ex:yLabel="Latitud&nbsp;(°)"
+                        ex:yAxisMin="55"
+                        ex:colorKey=".landsdel">
+                    </div>
+                    <div ex:role="view"
                         ex:viewClass="Tabular"
                         ex:label="Tabell"
                         ex:columns=".temp, .ort, .stadsdel, .kommun, .län, .time"
