@@ -67,19 +67,20 @@ Timeplot.Plot.prototype = {
 
         if (this._eventSource) {
             var gradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
-            gradient.addColorStop(0, this._plotInfo.lineColor.toString());
-            gradient.addColorStop(0.5, 'rgba(0,0,0,200)');
             gradient.addColorStop(1, 'rgba(0,0,0,0)');
 
             ctx.strokeStyle = gradient;
-            ctx.fillStyle = (this._plotInfo.fillColor) ? this._plotInfo.fillColor.toString(128) : 'rgba(0,0,0,50)'; 
-            ctx.lineWidth = 0.2;
+            ctx.fillStyle = gradient; 
+            ctx.lineWidth = 0.7;
             ctx.lineJoin = 'miter';
             
             var i = this._eventSource.getAllEventIterator();
             while (i.hasNext()) {
                 var event = i.next();
-                if (event.isInstant) {
+                var color = event.getColor();
+                color = (color) ? new Timeplot.Color(color) : this._plotInfo.lineColor;
+                gradient.addColorStop(0, (color) ? color : this._plotInfo.lineColor.toString());
+	            if (event.isInstant) {
                     var x = this._geometry._toScreenX(event.getStart());
                     ctx.beginPath();
                     ctx.moveTo(x,0);
