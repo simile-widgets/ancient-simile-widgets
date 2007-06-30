@@ -40,8 +40,9 @@ Exhibit.MapView._settingSpecs = {
     "iconOffsetX":      { type: "float",    defaultValue: 0         },
     "iconOffsetY":      { type: "float",    defaultValue: 0         },
     "shape":            { type: "text",     defaultValue: "circle"  },
-    "bodyWidth":        { type: "int",      defaultValue: 24        },
-    "bodyHeight":       { type: "int",      defaultValue: 24        },
+    "shapeWidth":       { type: "int",      defaultValue: 24        },
+    "shapeHeight":      { type: "int",      defaultValue: 24        },
+    "shapeAlpha":       { type: "float",    defaultValue: 0.7       },
     "pin":              { type: "boolean",  defaultValue: true      },
     "pinHeight":        { type: "int",      defaultValue: 6         },
     "pinWidth":         { type: "int",      defaultValue: 6         }
@@ -451,8 +452,8 @@ Exhibit.MapView._defaultMarkerShape = "circle";
 
 Exhibit.MapView._makeIcon = function(shape, color, label, iconURL, settings) {
     var extra = label.length * 3;
-    var halfWidth = Math.ceil(settings.bodyWidth / 2) + extra;
-    var bodyHeight = settings.bodyHeight;
+    var halfWidth = Math.ceil(settings.shapeWidth / 2) + extra;
+    var bodyHeight = settings.shapeHeight;
     var width = halfWidth * 2;
     var height = bodyHeight;
     
@@ -460,6 +461,7 @@ Exhibit.MapView._makeIcon = function(shape, color, label, iconURL, settings) {
     var imageParameters = [
         "renderer=map-marker",
         "shape=" + shape,
+        "alpha=" + settings.shapeAlpha,
         "width=" + width,
         "height=" + bodyHeight,
         "background=" + color.substr(1),

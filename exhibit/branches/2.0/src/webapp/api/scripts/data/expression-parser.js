@@ -326,10 +326,8 @@ Exhibit.ExpressionScanner.prototype.next = function() {
         } else { // identifier
             var i = this._index;
             while (i < this._maxIndex) {
-                var j = this._text.substr(i).search(/\W/);
-                if (j > 0) {
-                    i += j;
-                } else if ("-+".indexOf(this._text.charAt(i)) >= 0) {
+                var c = this._text.charAt(i);
+                if ("(),.!@".indexOf(c) < 0) {
                     i++;
                 } else {
                     break;
