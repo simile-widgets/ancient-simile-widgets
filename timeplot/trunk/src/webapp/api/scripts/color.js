@@ -90,7 +90,7 @@ Timeplot.Color.prototype = {
      * Returns a string representation of this color.
      */
     toString: function(alpha){
-        return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ((alpha) ? ',' + alpha : '') + ')';
+        return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + ((alpha) ? alpha : '1.0') + ')';
     }
 
 };
