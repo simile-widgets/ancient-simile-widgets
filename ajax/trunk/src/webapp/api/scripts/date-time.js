@@ -165,6 +165,39 @@ SimileAjax.DateTime.parseIso8601DateTime = function (string) {
     }
 };
 
+SimileAjax.DateTime.parseGregorianDateTime = function(o) {
+    if (o == null) {
+        return null;
+    } else if (o instanceof Date) {
+        return o;
+    }
+    
+    var s = o.toString();
+    if (s.length > 0 && s.length < 8) {
+        var space = s.indexOf(" ");
+        if (space > 0) {
+            var year = parseInt(s.substr(0, space));
+            var suffix = s.substr(space + 1);
+            if (suffix.toLowerCase() == "bc") {
+                year = 1 - year;
+            }
+        } else {
+            var year = parseInt(s);
+        }
+            
+        var d = new Date(0);
+        d.setUTCFullYear(year);
+        
+        return d;
+    }
+    
+    try {
+        return new Date(Date.parse(s));
+    } catch (e) {
+        return null;
+    }
+};
+
 SimileAjax.DateTime.roundDownToInterval = function(date, intervalUnit, timeZone, multiple, firstDayOfWeek) {
     var timeShift = timeZone * 
         SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR];
