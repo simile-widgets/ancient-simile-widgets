@@ -319,12 +319,13 @@ SimileAjax.Graphics.createMessageBubble = function(doc) {
  *==================================================
  */
 
-SimileAjax.Graphics.createAnimation = function(f, from, to, duration) {
-    return new SimileAjax.Graphics._Animation(f, from, to, duration);
+SimileAjax.Graphics.createAnimation = function(f, from, to, duration, cont) {
+    return new SimileAjax.Graphics._Animation(f, from, to, duration, cont);
 };
 
-SimileAjax.Graphics._Animation = function(f, from, to, duration) {
+SimileAjax.Graphics._Animation = function(f, from, to, duration, cont) {
     this.f = f;
+    this.cont = (typeof cont == "function") ? cont : function() {};
     
     this.from = from;
     this.to = to;
@@ -357,6 +358,7 @@ SimileAjax.Graphics._Animation.prototype.step = function() {
         this.run();
     } else {
         this.f(this.to, 0);
+        this["cont"]();
     }
 };
 
