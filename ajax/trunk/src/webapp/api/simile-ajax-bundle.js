@@ -2136,14 +2136,6 @@ SimileAjax.NativeDateUnit=new Object();
 
 
 
-SimileAjax.NativeDateUnit.createLabeller=function(locale,timeZone){
-
-return new SimileAjax.GregorianDateLabeller(locale,timeZone);
-
-};
-
-
-
 SimileAjax.NativeDateUnit.makeDefaultValue=function(){
 
 return new Date();
