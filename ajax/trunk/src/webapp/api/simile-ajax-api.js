@@ -177,6 +177,7 @@ if (typeof SimileAjax == "undefined") {
             "string.js",
             "html.js",
             "data-structure.js",
+            "units.js",
             
             "ajax.js",
             "history.js",
