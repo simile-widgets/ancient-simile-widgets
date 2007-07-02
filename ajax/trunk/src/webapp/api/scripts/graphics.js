@@ -86,17 +86,17 @@ SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, 
     function getWindowDims() {
         if (typeof window.innerHeight == 'number') {
             return { w:window.innerWidth, h:window.innerHeight }; // Non-IE
-    	} else if (document.documentElement && document.documentElement.clientHeight) {
-    	    return { // IE6+, in "standards compliant mode"
-        		w:document.documentElement.clientWidth,
-        		h:document.documentElement.clientHeight
-    	    };
-    	} else if (document.body && document.body.clientHeight) {
-    	    return { // IE 4 compatible
-        		w:document.body.clientWidth,
-        		h:document.body.clientHeight
-    	    };
-    	}
+        } else if (document.documentElement && document.documentElement.clientHeight) {
+            return { // IE6+, in "standards compliant mode"
+                w:document.documentElement.clientWidth,
+                h:document.documentElement.clientHeight
+            };
+        } else if (document.body && document.body.clientHeight) {
+            return { // IE 4 compatible
+                w:document.body.clientWidth,
+                h:document.body.clientHeight
+            };
+        }
     }
 
     var close = function() { 

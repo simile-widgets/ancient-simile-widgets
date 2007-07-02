@@ -27,7 +27,7 @@ SimileAjax.WindowManager.initialize = function() {
         return;
     }
     
-    SimileAjax.DOM.registerEvent(document.body, "click",     SimileAjax.WindowManager._onBodyClick);
+    SimileAjax.DOM.registerEvent(document.body, "mousedown", SimileAjax.WindowManager._onBodyMouseDown);
     SimileAjax.DOM.registerEvent(document.body, "mousemove", SimileAjax.WindowManager._onBodyMouseMove);
     SimileAjax.DOM.registerEvent(document.body, "mouseup",   SimileAjax.WindowManager._onBodyMouseUp);
     SimileAjax.DOM.registerEvent(document, "keydown",       SimileAjax.WindowManager._onBodyKeyDown);
@@ -156,7 +156,7 @@ SimileAjax.WindowManager._cancelPopups = function() {
     SimileAjax.WindowManager._popToLayer(i);
 };
 
-SimileAjax.WindowManager._onBodyClick = function(elmt, evt, target) {
+SimileAjax.WindowManager._onBodyMouseDown = function(elmt, evt, target) {
     if (!("eventPhase" in evt) || evt.eventPhase == evt.BUBBLING_PHASE) {
         SimileAjax.WindowManager._cancelPopups();
     }
