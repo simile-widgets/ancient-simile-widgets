@@ -5,7 +5,7 @@
 
 Timegrid.DefaultEventSource = function(eventIndex) {
     Timegrid.DefaultEventSource.superclass.call(this);
-    this._events = (eventIndex instanceof Object) ? eventIndex : new Timegrid.EventIndex();
+    this._events = (eventIndex instanceof Object) ? eventIndex : new SimileAjax.EventIndex();
 };
 $.inherit(Timegrid.DefaultEventSource, Timegrid.ListenerAware);
 
@@ -265,8 +265,8 @@ Timegrid.DefaultEventSource.Event = function(
     this._latestStart = (latestStart != null) ? latestStart : (instant ? this._end : this._start);
     this._earliestEnd = (earliestEnd != null) ? earliestEnd : (instant ? this._start : this._end);
     
-    this._text = Timegrid.HTML.deEntify(text);
-    this._description = Timegrid.HTML.deEntify(description);
+    this._text = SimileAjax.HTML.deEntify(text);
+    this._description = SimileAjax.HTML.deEntify(description);
     this._image = (image != null && image != "") ? image : null;
     this._link = (link != null && link != "") ? link : null;
     

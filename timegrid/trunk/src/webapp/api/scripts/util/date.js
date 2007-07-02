@@ -73,7 +73,7 @@ Date.abbrMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', '
  * @cat Plugins/Methods/Date
  * @author Kelvin Luck
  */
-Date.firstDayOfWeek = 1;
+Date.firstDayOfWeek = 0;
 
 /**
  * The format that string dates should be represented as (e.g. 'dd/mm/yyyy' for UK, 'mm/dd/yyyy' for US, 'yyyy-mm-dd' for Unicode etc).
@@ -232,7 +232,28 @@ Date.format = 'dd/mm/yyyy';
 	 * @cat Plugins/Methods/Date
 	 */
 	add("getWeekOfYear", function() {
-		return Math.ceil(this.getDayOfYear() / 7);
+        dowOffset = Date.firstDayOfWeek;
+        var newYear = new Date(this.getFullYear(),0,1);
+        var day = newYear.getDay() - dowOffset; //the day of week the year begins on
+        day = (day >= 0 ? day : day + 7);
+        var daynum = Math.floor((this.getTime() - newYear.getTime() -
+        (this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
+        var weeknum;
+        //if the year starts before the middle of a week
+        if(day < 4) {
+            weeknum = Math.floor((daynum+day-1)/7) + 1;
+            if(weeknum > 52) {
+                nYear = new Date(this.getFullYear() + 1,0,1);
+                nday = nYear.getDay() - dowOffset;
+                nday = nday >= 0 ? nday : nday + 7;
+                /*if the next year starts before the middle of
+                the week, it is week #1 of that year*/
+                weeknum = nday < 4 ? 1 : 53;
+            }
+        } else {
+            weeknum = Math.floor((daynum+day-1)/7);
+        }
+        return weeknum;
 	});
 
 	/**
