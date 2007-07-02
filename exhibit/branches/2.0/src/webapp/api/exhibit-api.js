@@ -8,6 +8,16 @@
  */
 
 (function() {
+    var useLocalResources = false;
+    if (document.location.search.length > 0) {
+        var params = document.location.search.substr(1).split("&");
+        for (var i = 0; i < params.length; i++) {
+            if (params[i] == "exhibit-use-local-resources") {
+                useLocalResources = true;
+            }
+        }
+    }
+    
     var loadMe = function() {
         if (typeof window.Exhibit != "undefined") {
             return;
@@ -190,10 +200,14 @@
          *  Extensions (for backward compatibility)
          */
         if (includeTimeline) {
-            scriptURLs.push(Exhibit.urlPrefix + "../extensions-2.0/time/time-extension.js");
+            scriptURLs.push(useLocalResources ?
+                "http://127.0.0.1:8888/exhibit/extensions/time/time-extension.js" :
+                "http://static.simile.mit.edu/exhibit/extensions-2.0/time/time-extension.js");
         }
         if (includeMap) {
-            scriptURLs.push(Exhibit.urlPrefix + "../extensions-2.0/map/map-extension.js");
+            scriptURLs.push(useLocalResources ?
+                "http://127.0.0.1:8888/exhibit/extensions/map/map-extension.js" :
+                "http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js");
         }
         
         SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
@@ -207,9 +221,10 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js";
-        var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
-        //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
+        var url = useLocalResources ?
+            "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js" :
+            "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
+            
         var createScriptElement = function() {
             var script = document.createElement("script");
             script.type = "text/javascript";
