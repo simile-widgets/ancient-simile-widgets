@@ -20,12 +20,6 @@ Timegrid.createFromDOM = function(elmt) {
 
 Timegrid.getConfigFromDOM = function(elmt) {
     var config = $(elmt).attrs('tg');
-    if (!('height' in config) && $(elmt).height()) {
-        config.height = $(elmt).height();
-    }
-    if (!('width' in config) && $(elmt).width()) {
-        config.width = $(elmt).width();
-    }
     config.scrollwidth = $.scrollWidth();
     return config;
 };

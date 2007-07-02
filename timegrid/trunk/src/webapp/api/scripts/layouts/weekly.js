@@ -25,13 +25,9 @@ Timegrid.WeekLayout = function(eventSource, params) {
     
     // These are default values that can be overridden in configure
     this.height = 500.0;
-    this.width = 700.0;
     
     this.configure(params);
-    
-    // Compute the cell sizes for the grid
-    this.xCell = this.xCell || 100.0 / this.xSize;
-    this.yCell = this.yCell || (this.gridheight - 1) / this.ySize;
+    this.computeCellSizes();
     
     // Initialize our eventSource
     this.eventSource = eventSource;

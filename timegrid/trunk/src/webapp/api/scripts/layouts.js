@@ -62,6 +62,12 @@ Timegrid.Layout.prototype.configure = function(params) {
     }
 };
 
+Timegrid.Layout.prototype.computeCellSizes = function() {
+    // Compute the cell sizes for the grid
+    this.xCell = this.xCell || 100.0 / this.xSize;
+    this.yCell = this.yCell || (this.gridheight - 1) / this.ySize;
+};
+
 /**
  * Renders out this layout into a DOM object with a wrapping div element as its
  * parent, returning the div.
@@ -75,18 +81,19 @@ Timegrid.Layout.prototype.render = function(container) {
     var gridDiv = $('<div></div>').addClass('timegrid-grid');
     var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
     
-    viewDiv.height(this.height + "px").width(this.width + "px");
+    viewDiv.height(this.height + "px");
+    if (!this.width) { this.width = viewDiv.width(); }
+    viewDiv.width(this.width + "px");
     gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
     
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
     viewDiv.append(gridWindowDiv.append(gridDiv));
-    this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
     this.gridwidth = this.gridwidth || gridWindowDiv.width() - this.scrollwidth;
-    
-    var doc = document; // TODO: Refactor the doc variable out
-    gridDiv.append(this.renderEvents(doc));
-    gridDiv.append(this.renderGridlines(doc));
+    this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
+    this.computeCellSizes();
+    gridDiv.append(this.renderEvents(document));
+    gridDiv.append(this.renderGridlines(document));
     
     var xLabels = this.renderXLabels();
     var yLabels = this.renderYLabels();

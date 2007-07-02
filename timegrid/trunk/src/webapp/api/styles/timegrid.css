@@ -79,6 +79,11 @@ div.timegrid-event {
     padding: 0;
 }
 
+ul.timegrid-event-list {
+    list-style-position: inside;
+    padding-left: .5em;
+}
+
 .timegrid-message-container {
     position:   absolute;
     top:        30%;

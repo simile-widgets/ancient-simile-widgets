@@ -13,14 +13,11 @@ Timegrid.MonthLayout = function(eventSource, params) {
     
     // These are default values that can be overridden in configure
     this.height = 500.0;
-    this.width = 600.0;
     
     this.configure(params);
     
     // Compute the cell sizes for the grid
-    this.gridheight = this.gridheight || this.height - this.scrollwidth;
-    this.xCell = this.xCell || 100.0 / this.xSize;
-    this.yCell = this.yCell || (this.gridheight - 1) / this.ySize;
+    this.computeCellSizes();
 
     // Initialize our eventSource
     this.eventSource = eventSource;
@@ -59,39 +56,26 @@ Timegrid.MonthLayout.prototype.renderEvents = function(doc) {
     for (x = 0; x < this.xSize; x++) {
         for (y = 0; y < this.ySize; y++) {
             var endpoints = this.eventGrid.get(x,y);
-            for (i in endpoints) {
-                var endpoint = endpoints[i];
-                if (endpoint.type == "start") {
-                    // Render the event
-                    var eventDiv = this.renderEvent(endpoint.event, x, y);
-                    eventContainer.appendChild(eventDiv);
-                    // Push the event div onto the current events set
-                    currentEvents[endpoint.event.getID()] = eventDiv;
-                    currentCount++;
-                    // Adjust widths and offsets as necessary
-                    var hIndex = 0;
-                    for (id in currentEvents) {
-                        var eDiv = currentEvents[id];
-                        var newWidth = this.xCell / currentCount;
-                        $(eDiv).css("width", newWidth + "%");
-                        $(eDiv).css("left", this.xCell * x + newWidth * hIndex + "%");
-                        hIndex++;
-                    }
-                } else if (endpoint.type == "end") {
-                    // Pop event from current events set
-                    delete currentEvents[endpoint.event.getID()];
-                    currentCount--;
-                }
+            var events = $.map(endpoints, function(e) { 
+                return e.type == "start" ? e.event : null;
+            });
+            if (events.length) {
+                eventContainer.appendChild(this.renderEventList(events, x, y));
             }
         }
     }
     return eventContainer;
 };
 
-Timegrid.MonthLayout.prototype.renderEvent = function(evt, x, y) {
-    var jediv = $("<div>" + evt.getText() + "</div>");
-    jediv.addClass("timegrid-event");
-    jediv.css("height", this.yCell);
+Timegrid.MonthLayout.prototype.renderEventList = function(evts, x, y) {
+    console.log(evts);
+    var jediv = $("<div></div>").addClass("timegrid-event");
+    var eList = $("<ul></ul>").addClass("timegrid-event-list");
+    for (i in evts) {
+        eList.append($('<li>' + evts[i].getText() + '</li>'));
+    }
+    jediv.append(eList);
+    jediv.css("height", this.yCell).css("width", this.xCell + "%");
     jediv.css("top", this.yCell * y);
     jediv.css("left", this.xCell * x + '%');
     return jediv.get()[0]; // Return the actual DOM element
@@ -102,7 +86,7 @@ Timegrid.MonthLayout.prototype.getXLabels = function() {
 };
 
 Timegrid.MonthLayout.prototype.getYLabels = function() {
-    return [ "1", "2", "3", "4", "5" ];
+    return [ "Week 1", "Week 2", "Week 3", "Week 4", "Week 5" ];
 };
 
 Timegrid.MonthLayout.getEndpoints = function(evt) {
