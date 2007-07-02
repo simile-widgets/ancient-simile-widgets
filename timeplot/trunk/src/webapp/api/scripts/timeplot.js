@@ -206,6 +206,10 @@ Timeplot._Impl.prototype = {
     },
     
     _initialize: function() {
+    	// initialize the window manager (used to handle the popups)
+    	// NOTE: this is a singleton and it's safe to call multiple times
+    	SimileAjax.WindowManager.initialize(); 
+    	
         var containerDiv = this._containerDiv;
         var doc = containerDiv.ownerDocument;
     

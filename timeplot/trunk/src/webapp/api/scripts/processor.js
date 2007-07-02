@@ -13,8 +13,8 @@ Timeplot.Processor = function(dataSource, operator, params) {
     };
 
     this._range = {
-        earliestDate: new Date(),
-        latestDate: new Date(),
+        earliestDate: null,
+        latestDate: null,
         min: 0,
         max: 0
     };

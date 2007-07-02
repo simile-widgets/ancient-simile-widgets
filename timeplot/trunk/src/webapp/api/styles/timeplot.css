@@ -30,9 +30,14 @@
     vertical-align: middle;
 }
 
-.timeplot-label {
+.timeplot-div {
     position: absolute;
+}
+
+.timeplot-grid-label {
     font-size: 9px;
 }
 
-
+.timeplot-event-box {
+    cursor: pointer;
+}

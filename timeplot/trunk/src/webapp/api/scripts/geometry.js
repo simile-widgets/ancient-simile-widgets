@@ -23,10 +23,10 @@ Timeplot.DefaultGeometry.prototype = {
     },
 
     setRange: function(range) {
-        if (!this._earliestDate || (this._earliestDate && range.earliestDate.getTime() < this._earliestDate.getTime())) {
+        if (range.earliestDate && (!this._earliestDate || (this._earliestDate && range.earliestDate.getTime() < this._earliestDate.getTime()))) {
             this._earliestDate = range.earliestDate;
         }
-        if (!this._latestDate || (this._latestDate && range.latestDate.getTime() > this._latestDate.getTime())) {
+        if (range.latestDate && (!this._latestDate || (this._latestDate && range.latestDate.getTime() > this._latestDate.getTime()))) {
             this._latestDate = range.latestDate;
         }
         if (!this._minValue || (this._minValue && range.minValue < this._minValue)) {
@@ -142,12 +142,17 @@ Timeplot.DefaultGeometry.prototype = {
         ctx.stroke();
     },
 
-    putText: function(text,clazz,styles) {
-        var container = this._canvas.parentNode.firstChild; // get the label container
+    putText: function(text,clazz, styles) {
+    	var div = this.putDiv("timeplot-div " + clazz, styles);
+    	div.innerHTML = text;
+        return div;
+    },
+
+    putDiv: function(clazz, styles) {
+        var container = this._canvas.parentNode.firstChild; // get the divs container
         var doc = container.ownerDocument;
         var div = doc.createElement("div");
-        div.setAttribute("class", "timeplot-label " + clazz);
-        div.innerHTML = text;
+        div.setAttribute("class","timeplot-div " + clazz);
         if (styles) {
             for (style in styles) {
                 if (style == "top") {
@@ -163,6 +168,7 @@ Timeplot.DefaultGeometry.prototype = {
             }
         }
         container.appendChild(div);
+        return div;
     }
 
 }

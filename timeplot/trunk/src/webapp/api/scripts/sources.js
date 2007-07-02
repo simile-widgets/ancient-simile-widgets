@@ -111,10 +111,9 @@ Timeplot.DefaultEventSource.prototype._parseText = function (text, separator) {
 Timeplot.DefaultEventSource.prototype.getRange = function() {
 	var earliestDate = this.getEarliestDate();
 	var latestDate = this.getLatestDate();
-	var today = new Date();
     return {
-        earliestDate: (earliestDate) ? earliestDate : today,
-        latestDate: (latestDate) ? latestDate : today,
+        earliestDate: (earliestDate) ? earliestDate : null,
+        latestDate: (latestDate) ? latestDate : null,
         min: 0,
         max: 0
     };
@@ -164,8 +163,8 @@ Timeplot.DataSource.prototype = {
             values: new Array()
         };
         this._range = {
-            earliestDate: new Date(),
-            latestDate: new Date(),
+            earliestDate: null,
+            latestDate: null,
             min: 0,
             max: 0
         };
