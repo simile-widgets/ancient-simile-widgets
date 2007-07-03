@@ -23,8 +23,7 @@ Timegrid.MonthLayout = function(eventSource, params) {
     this.eventSource = eventSource;
     this.startTime = this.eventSource.getEarliestDate();
     this.startTime = Timegrid.MonthLayout.getStartOfMonth(this.startTime);
-    console.log(this.startTime);
-    this.endTime   = Timegrid.MonthLayout.getEndOfMonth(this.startTime); 
+    this.endTime   = Timegrid.MonthLayout.getEndOfMonth(this.startTime);
     
     // Configure our mappers
     if (this.startTime) { var firstWeek = this.startTime.getWeekOfYear(); }
@@ -51,30 +50,30 @@ Timegrid.MonthLayout.prototype.initializeGrid = function() {
 Timegrid.MonthLayout.prototype.renderEvents = function(doc) {
     var eventContainer = doc.createElement("div");
     $(eventContainer).addClass("timegrid-events");
-    var currentEvents = {};
-    var currentCount = 0;
-    for (x = 0; x < this.xSize; x++) {
-        for (y = 0; y < this.ySize; y++) {
+    var i = 0;
+    var dates = this.getDates(this.startTime);
+    for (y = 0; y < this.ySize; y++) {
+        for (x = 0; x < this.xSize; x++) {
             var endpoints = this.eventGrid.get(x,y);
             var events = $.map(endpoints, function(e) { 
                 return e.type == "start" ? e.event : null;
             });
-            if (events.length) {
-                eventContainer.appendChild(this.renderEventList(events, x, y));
-            }
+            var n = dates[i];
+            eventContainer.appendChild(this.renderEventList(events, x, y, n));
+            i++;
         }
     }
     return eventContainer;
 };
 
-Timegrid.MonthLayout.prototype.renderEventList = function(evts, x, y) {
-    console.log(evts);
-    var jediv = $("<div></div>").addClass("timegrid-event");
+Timegrid.MonthLayout.prototype.renderEventList = function(evts, x, y, n) {
+    var jediv = $("<div></div>").addClass("timegrid-month-cell");
     var eList = $("<ul></ul>").addClass("timegrid-event-list");
     for (i in evts) {
-        eList.append($('<li>' + evts[i].getText() + '</li>'));
+        eList.append('<li>' + evts[i].getText() + '</li>');
     }
     jediv.append(eList);
+    jediv.append('<span class="timegrid-month-date-label">' + n + '</span>');
     jediv.css("height", this.yCell).css("width", this.xCell + "%");
     jediv.css("top", this.yCell * y);
     jediv.css("left", this.xCell * x + '%');
@@ -87,6 +86,21 @@ Timegrid.MonthLayout.prototype.getXLabels = function() {
 
 Timegrid.MonthLayout.prototype.getYLabels = function() {
     return [ "Week 1", "Week 2", "Week 3", "Week 4", "Week 5" ];
+};
+
+Timegrid.MonthLayout.prototype.getDates = function(date) {
+    var gridStart = { time: new Date(date) };
+    var dates = [];
+    // Roll back to the first day on the grid
+    while (this.xMapper(gridStart) > 0 && this.yMapper(gridStart) >= 0) {
+        gridStart.time.setHours(-24);
+    }
+    while (this.xMapper(gridStart) < this.xSize && 
+           this.yMapper(gridStart) < this.ySize) {
+        dates.push(gridStart.time.getDate());
+        gridStart.time.setHours(24);
+    }
+    return dates;
 };
 
 Timegrid.MonthLayout.getEndpoints = function(evt) {

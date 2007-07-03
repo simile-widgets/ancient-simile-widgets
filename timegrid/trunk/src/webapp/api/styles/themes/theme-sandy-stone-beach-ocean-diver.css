@@ -55,3 +55,14 @@ div.timegrid-event {
     color: #046380;
     padding: 2px;
 }
+
+/* Monthly View */
+div.timegrid-month-cell {
+    color: #046380;
+    padding: 0px;
+}
+
+ul.timegrid-event-list {
+    list-style-position: inside;
+    padding: .5em;
+}
