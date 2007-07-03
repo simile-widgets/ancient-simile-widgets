@@ -7,9 +7,26 @@
     #046380
     #002f2f
  */
- 
+
+div.timegrid-view {
+    background: #a7a37e;
+    border: 1px solid #a7a37e;
+}
+
 div.timegrid-grid-window {
-    border: 1px solid #a7a37e
+    border: none;
+    background: white;
+}
+
+div.timegrid-xlabels-window {
+    border-left: 1px solid #a7a37e;
+    border-right: 1px solid #a7a37e;
+    border-bottom: 1px solid #a7a37e;
+}
+div.timegrid-ylabels-window {
+    border-top: 1px solid #a7a37e;
+    border-bottom: 1px solid #a7a37e;
+    border-right: 1px solid #a7a37e;
 }
 
 div.timegrid-hline, div.timegrid-vline {
