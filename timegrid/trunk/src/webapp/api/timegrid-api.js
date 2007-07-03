@@ -36,6 +36,7 @@
         ];
         var cssFiles = [
             "timegrid.css",
+            "themes/theme-sandy-stone-beach-ocean-diver.css"
         ];
         
         var locales = [ "en" ];

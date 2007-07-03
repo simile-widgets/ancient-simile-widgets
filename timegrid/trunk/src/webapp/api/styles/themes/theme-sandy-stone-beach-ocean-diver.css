@@ -1,0 +1,40 @@
+/*
+    From Kuler, http://kuler.adobe.com/
+    
+    #e6e2af
+    #a7a37e
+    #efecca
+    #046380
+    #002f2f
+ */
+ 
+div.timegrid-grid-window {
+    border: 1px solid #a7a37e
+}
+
+div.timegrid-hline, div.timegrid-vline {
+    background: #e6e2af;
+}
+
+div.timegrid-xlabels-window, div.timegrid-ylabels-window {
+    background: #efecca;
+}
+
+div.timegrid-label {
+    color: #046380;
+}
+
+.timegrid-xlabels div.timegrid-label {
+    border-left: 1px solid #e6e2af;
+}
+
+.timegrid-ylabels div.timegrid-label {
+    border-top: 1px solid #e6e2af;
+}
+
+div.timegrid-event {
+    border: 1px #a7a37e solid;
+    background-color: #e6e2af;
+    color: #046380;
+    padding: 2px;
+}
