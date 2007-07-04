@@ -41,3 +41,23 @@
 .timeplot-event-box {
     cursor: pointer;
 }
+
+.timeplot-event-box-highlight {
+    border: 1px solid #bbb;
+}
+
+.timeplot-valueflag {
+    display: none;
+    border: 1px solid #FFB02D;
+    padding: 2px 4px;
+    text-align: center;
+    background-color: #FFE57F;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+.timeplot-valueflag-pole {
+    display: none;
+    border-left: 1px solid #FFB02D;
+    z-index: 999;
+}

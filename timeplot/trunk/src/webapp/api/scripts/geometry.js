@@ -68,15 +68,23 @@ Timeplot.DefaultGeometry.prototype = {
     },
 
     _toScreenX: function(time) {
-        var period = this._latestDate.getTime() - this._earliestDate.getTime();
-        var elapsed = time - this._earliestDate.getTime();
-        return (this._canvas.width * elapsed) / period; 
+    	if (this._latestDate) {
+	        var period = this._latestDate.getTime() - this._earliestDate.getTime();
+	        var elapsed = time - this._earliestDate.getTime();
+	        return (this._canvas.width * elapsed) / period;
+    	} else {
+    		return 0;
+    	} 
     },
 
     _toScreenY: function(value) {
-        var range = this._maxValue - this._minValue;
-        var value = value - this._minValue;
-        return (this._canvas.height * value) / range;
+    	if (this._maxValue) {
+	        var range = this._maxValue - this._minValue;
+	        var value = value - this._minValue;
+	        return (this._canvas.height * value) / range;
+    	} else {
+    		return 0;
+    	}
     },
 
     fromScreen: function(x,y) {
@@ -153,6 +161,12 @@ Timeplot.DefaultGeometry.prototype = {
         var doc = container.ownerDocument;
         var div = doc.createElement("div");
         div.setAttribute("class","timeplot-div " + clazz);
+        this.placeDiv(div,styles);
+        container.appendChild(div);
+        return div;
+    },
+    
+    placeDiv: function(div, styles) {
         if (styles) {
             for (style in styles) {
                 if (style == "top") {
@@ -167,8 +181,6 @@ Timeplot.DefaultGeometry.prototype = {
                 div.style[style] = styles[style];
             }
         }
-        container.appendChild(div);
-        return div;
     }
 
 }

@@ -12,6 +12,7 @@ Timeplot.Plot = function(timeplot, plotInfo) {
     this._locale = ("locale" in plotInfo) ? plotInfo.locale : SimileAjax.Platform.getDefaultLocale();
     this._timeZone = ("timeZone" in plotInfo) ? plotInfo.timeZone : 0;
     this._labeller = ("labeller" in plotInfo) ? plotInfo.labeller : timeplot.getUnit().createLabeller(this._locale, this._timeZone);
+    this._showValues = plotInfo.showValues;
     this._theme = new Timeline.getDefaultTheme();
     this._dataSource = plotInfo.dataSource;
     this._eventSource = plotInfo.eventSource;
@@ -19,6 +20,40 @@ Timeplot.Plot = function(timeplot, plotInfo) {
 };
 
 Timeplot.Plot.prototype = {
+    
+    initialize: function() {
+	    if (this._showValues && this._dataSource && this._dataSource.getValue) {
+	        this._valueFlag = this._geometry.putDiv("timeplot-valueflag");
+	        this._valueFlagPole = this._geometry.putDiv("timeplot-valueflag-pole");
+	        var plot = this;
+            var mouseOverHandler = function(elmt, evt, target) {
+                plot._valueFlag.style.display = "block";
+                mouseMoveHandler(elmt, evt, target);
+            }
+	        var mouseMoveHandler = function(elmt, evt, target) {
+	            var coords = SimileAjax.DOM.getEventRelativeCoordinates(evt,elmt);
+	            var t = plot._geometry._fromScreenX(coords.x);
+	            var v = plot._dataSource.getValue(t);
+	            if (v > 0) v = Math.round(v);
+	            plot._valueFlag.innerHTML = new String(v);
+                var y = plot._geometry._toScreenY(v);
+	            plot._geometry.placeDiv(plot._valueFlag,{
+	                left: coords.x,
+	                bottom: y,
+	                display: "block"
+	            });
+	            plot._geometry.placeDiv(plot._valueFlagPole, {
+	            	left: coords.x,
+	            	bottom: 0,
+	            	height: y,
+	            	display: "block"
+	            });
+	        };
+	        
+            SimileAjax.DOM.registerEvent(this._canvas, "mouseover", mouseOverHandler);
+            SimileAjax.DOM.registerEvent(this._canvas, "mousemove", mouseMoveHandler);
+	    }
+    },
     
     dispose: function() {
         if (this._dataSource) {
@@ -74,7 +109,7 @@ Timeplot.Plot.prototype = {
 
             ctx.strokeStyle = gradient;
             ctx.fillStyle = gradient; 
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = this._plotInfo.eventLineWidth;
             ctx.lineJoin = 'miter';
             
             var i = this._eventSource.getAllEventIterator();
@@ -97,27 +132,36 @@ Timeplot.Plot.prototype = {
                 }
 
                 var div = this._geometry.putDiv("timeplot-event-box",{
-                    left: Math.round(start - 2),
-                    width: Math.round(end - start + 4),
+                    left: Math.round(start - 3),
+                    width: Math.round(end - start + 3),
                     top: 0,
                     height: this._canvas.height
                 });
 
                 var plot = this;
-                var handler = function(event) { 
+                var clickHandler = function(event) { 
                     return function(elmt, evt, target) { 
                         var doc = plot._timeplot.getDocument();
                     	plot._closeBubble();
-                        var x = evt.pageX;
-                        var y = evt.pageY;
+                    	var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
                         var width = plot._theme.event.bubble.width;
                         var height = plot._theme.event.bubble.height;
-                        plot._bubble = SimileAjax.Graphics.createBubbleForPoint(x, y, width, height);
+                        plot._bubble = SimileAjax.Graphics.createBubbleForPoint(coords.x, coords.y, width, height);
                         event.fillInfoBubble(plot._bubble.content, plot._theme, plot._labeller);
                     }
                 };
+                var mouseOverHandler = function(elmt, evt, target) {
+                	elmt.oldClass = elmt.className;
+                    elmt.className = elmt.className + " timeplot-event-box-highlight";
+                };
+                var mouseOutHandler = function(elmt, evt, target) {
+                    elmt.className = elmt.oldClass;
+                    elmt.oldClass = null;
+                }
                 
-                SimileAjax.DOM.registerEvent(div, "click", handler(event));
+                SimileAjax.DOM.registerEvent(div, "click", clickHandler(event));
+                SimileAjax.DOM.registerEvent(div, "mouseover", mouseOverHandler);
+                SimileAjax.DOM.registerEvent(div, "mouseout", mouseOutHandler);
             }
         }
     },

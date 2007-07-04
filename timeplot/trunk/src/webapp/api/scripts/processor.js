@@ -65,6 +65,8 @@ Timeplot.Processor.prototype = {
     getData: function() {
         return this._data;
     },
+    
+    getValue: Timeplot.DataSource.prototype.getValue,
 
     addListener: function(listener) {
         this._dataSource.addListener(listener);

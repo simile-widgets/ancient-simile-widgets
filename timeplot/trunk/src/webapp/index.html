@@ -75,7 +75,8 @@
                     id: "web clean avg",
                     dataSource: avgWebTraffic,
                     geometry: webGeometry,
-                    lineColor: loudLine
+                    lineColor: loudLine,
+                    showValues: true
                 }),
                 Timeplot.createPlotInfo({
                     id: "events",
@@ -98,7 +99,8 @@
                     dataSource: new Timeplot.ColumnDiffSource(eventSource,1,2),
                     geometry: crawlersGeometry,
                     lineColor: quietLine,
-                    fillColor: quietLine.lighten(30)
+                    fillColor: quietLine.lighten(30),
+                    showValues: true
                 }),
                 Timeplot.createPlotInfo({
                     id: "events",
@@ -122,7 +124,8 @@
                     id: "cumulative news",
                     dataSource: summedNews,
                     lineColor: loudLine,
-                    fillColor: lightFill
+                    fillColor: lightFill,
+                    showValues: true
                 }),
                 Timeplot.createPlotInfo({ 
                     id: "news",
@@ -134,7 +137,8 @@
                     id: "smoothed news",
                     dataSource: smoothedNews,
                     geometry: newsGeometry,
-                    lineColor: loudLine
+                    lineColor: loudLine,
+                    showValues: true
                 }),
                 Timeplot.createPlotInfo({
                     id: "events",

@@ -177,6 +177,16 @@ Timeplot.DataSource.prototype = {
     getData: function() {
         return this._data;
     },
+    
+    getValue: function(t) {
+    	for (var i = 0; i < this._data.times.length; i++) {
+    		var l = this._data.times[i];
+    		if (l > t) {
+    			return this._data.values[i];
+    		}
+    	}
+    	return 0;
+    },
 
     addListener: function(listener) {
         this._eventSource.addListener(listener);

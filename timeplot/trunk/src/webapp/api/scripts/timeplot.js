@@ -20,7 +20,9 @@ Timeplot.createPlotInfo = function(params) {
         geometry:       ("geometry" in params) ? params.geometry : new Timeplot.DefaultGeometry(),
         timeZone:       ("timeZone" in params) ? params.timeZone : 0,
         fillColor:      ("fillColor" in params) ? params.fillColor : null,
-        lineColor:      ("lineColor" in params) ? params.lineColor : new Timeplot.Color("#606060")
+        lineColor:      ("lineColor" in params) ? params.lineColor : new Timeplot.Color("#606060"),
+        eventLineWidth: ("eventLineWidth" in params) ? params.eventLineWidth : 0.8,
+        showValues:     ("showValues" in params) ? params.showValues : false
     };
 };
 
@@ -255,15 +257,16 @@ Timeplot._Impl.prototype = {
                     if (dataSource) {
                         dataSource.addListener(painter);
                     }
-                    this.addPainter("background", {
+                    this.addPainter("foreground", {
                         context: plot,
                         action: plot.paint
                     });
-                    this.addPainter("foreground", {
+                    this.addPainter("background", {
                         context: plot.getGeometry(),
                         action: plot.getGeometry().paint
                     });
                     this._plots.push(plot);
+                    plot.initialize();
                 }
             }
                 
