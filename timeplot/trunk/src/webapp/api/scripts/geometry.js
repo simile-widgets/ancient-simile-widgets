@@ -11,6 +11,15 @@ Timeplot.DefaultGeometry = function(params) {
     this._range = ("range" in params) ? params.range : 20;
     this._minValue = ("min" in params) ? params.min : null;
     this._maxValue = ("max" in params) ? params.max : null;
+    this._linMap = {
+        direct: function(v) {
+            return v;
+        },
+        inverse: function(y) {
+            return y;
+        }
+    }
+    this._ymap = this._linMap;
 }
 
 Timeplot.DefaultGeometry.prototype = {
@@ -29,10 +38,10 @@ Timeplot.DefaultGeometry.prototype = {
         if (range.latestDate && (!this._latestDate || (this._latestDate && range.latestDate.getTime() > this._latestDate.getTime()))) {
             this._latestDate = range.latestDate;
         }
-        if (!this._minValue || (this._minValue && range.minValue < this._minValue)) {
+        if (!this._minValue || (this._minValue && range.min < this._minValue)) {
             this._minValue = range.min;
         }
-        if (!this._maxValue || (this._maxValue && range.maxValue * 1.05 > this._maxValue)) {
+        if (!this._maxValue || (this._maxValue && range.max * 1.05 > this._maxValue)) {
             this._maxValue = range.max * 1.05; // get a little more head room to avoid hitting the ceiling
         }
         if (this._minValue == 0 && this._maxValue == 0) {
@@ -80,8 +89,8 @@ Timeplot.DefaultGeometry.prototype = {
     _toScreenY: function(value) {
     	if (this._maxValue) {
 	        var range = this._maxValue - this._minValue;
-	        var value = value - this._minValue;
-	        return (this._canvas.height * value) / range;
+	        var v = value - this._minValue;
+	        return (this._canvas.height * this._ymap.direct(v)) / this._ymap.direct(range);
     	} else {
     		return 0;
     	}
@@ -101,7 +110,7 @@ Timeplot.DefaultGeometry.prototype = {
 
     _fromScreenY: function(y) {
         var range = this._maxValue - this._minValue;
-        return (range * y / this._canvas.height) + this._minValue;
+        return this._ymap.inverse((this._ymap.direct(range) * y / this._canvas.height)) + this._minValue;
     },
 
     paint: function() {
@@ -182,5 +191,40 @@ Timeplot.DefaultGeometry.prototype = {
             }
         }
     }
+}
 
+// --------------------------------------------------
+
+Timeplot.LogarithmicGeometry = function(params) {
+    Timeplot.DefaultGeometry.apply(this, arguments);
+    this._logMap = {
+    	direct: function(v) {
+    		return Math.log(v+1);
+    	},
+    	inverse: function(y) {
+    		return Math.exp(y)-1;
+    	}
+    }
+    this._mode = "log";
+    this._ymap = this._logMap;
+};
+
+Object.extend(Timeplot.LogarithmicGeometry.prototype,Timeplot.DefaultGeometry.prototype);
+
+Timeplot.LogarithmicGeometry.prototype.actLinear = function() {
+	this._ymap = this._linMap;
+}
+
+Timeplot.LogarithmicGeometry.prototype.actLogarithmic = function() {
+    this._ymap = this._logMap;
+}
+
+Timeplot.LogarithmicGeometry.prototype.toggle = function() {
+	if (this._mode == "log") {
+		this._mode = "lin";
+		this._ymap = this._linMap;
+	} else {
+		this._mode = "log";
+		this._ymap = this._logMap;
+	}
 }

@@ -179,11 +179,13 @@ Timeplot.DataSource.prototype = {
     },
     
     getValue: function(t) {
-    	for (var i = 0; i < this._data.times.length; i++) {
-    		var l = this._data.times[i];
-    		if (l > t) {
-    			return this._data.values[i];
-    		}
+    	if (this._data) {
+	    	for (var i = 0; i < this._data.times.length; i++) {
+	    		var l = this._data.times[i];
+	    		if (l > t) {
+	    			return this._data.values[i];
+	    		}
+	    	}
     	}
     	return 0;
     },

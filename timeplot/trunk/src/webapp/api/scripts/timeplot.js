@@ -165,7 +165,7 @@ Timeplot._Impl.prototype = {
         this._paint();
     },
     
-    resize: function() {
+    repaint: function() {
         this._prepareCanvas();
         this._paint();
     },

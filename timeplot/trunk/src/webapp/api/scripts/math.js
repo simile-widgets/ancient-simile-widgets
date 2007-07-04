@@ -179,7 +179,8 @@ Timeplot.Math = {
                 var y = round(round(x / d) * d);
                 return y;
             } else {
-                throw "FIXME(SM): still to implement for 0 < abs(x) < 1";
+                log("FIXME(SM): still to implement for 0 < abs(x) < 1");
+                return x;
             }
         }
     }

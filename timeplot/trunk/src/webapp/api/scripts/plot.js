@@ -90,7 +90,11 @@ Timeplot.Plot.prototype = {
 
                 ctx.beginPath();
                 this._plot(function(p) {
-                   ctx.lineTo(p.x,p.y);
+	                try {
+	                    ctx.lineTo(p.x,p.y);
+	                } catch (e) {
+	                    log(p + ": " + e);
+	                }
                 });
                 ctx.lineTo(this._canvas.width, 0);
                 ctx.fill();
@@ -98,7 +102,11 @@ Timeplot.Plot.prototype = {
                     
             ctx.beginPath();
             this._plot(function(p) {
-                ctx.lineTo(p.x,p.y);
+            	try {
+                    ctx.lineTo(p.x,p.y);
+            	} catch (e) {
+                    log(p + ": " + e);
+            	}
             });
             ctx.stroke();
         }

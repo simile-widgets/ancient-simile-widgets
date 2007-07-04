@@ -22,6 +22,17 @@
             font-size: 9px !important;
         }
                 
+        .toggle {
+            padding: 0px 3px;
+            cursor: pointer;
+            text-decoration: underline;
+            color: #666;
+        }
+        
+        .active-toggle {
+            padding: 0px 3px;
+        }
+                    
         #timeplot2 {
             height: 100px;
         }
@@ -32,6 +43,8 @@
         var timeplot1;
         var timeplot2;
         var timeplot3;
+        var timeplot4;
+        var downloadGeometry;
         
         function onLoad() {
             if (document.location.toString().match(/^http\:\/\/simile.mit.edu.*$/)) {
@@ -149,6 +162,73 @@
             ];
             
             timeplot3 = Timeplot.create(document.getElementById("timeplot3"), plotsInfo3);
+            
+            var gadgetDownloads = new Timeplot.ColumnSource(eventSource,9);
+            var smoothedGadgetDownloads = new Timeplot.Processor(gadgetDownloads,Timeplot.Operator.average, { size: 4 });
+            var longwellDownloads = new Timeplot.ColumnSource(eventSource,12);
+            var smoothedLongwellDownloads = new Timeplot.Processor(longwellDownloads,Timeplot.Operator.average, { size: 4 });
+            var welkinDownloads = new Timeplot.ColumnSource(eventSource,15);
+            var smoothedWelkinDownloads = new Timeplot.Processor(welkinDownloads,Timeplot.Operator.average, { size: 4 });
+            var piggybankDownloads = new Timeplot.ColumnSource(eventSource,19);
+            var smoothedPiggybankDownloads = new Timeplot.Processor(piggybankDownloads,Timeplot.Operator.average, { size: 4 });
+            var solventDownloads = new Timeplot.ColumnSource(eventSource,22);
+            var smoothedSolventDownloads = new Timeplot.Processor(solventDownloads,Timeplot.Operator.average, { size: 4 });
+            downloadGeometry = new Timeplot.LogarithmicGeometry({
+                gridColor: gridColor
+            });
+            
+            var blue   = new Timeplot.Color("#455681");
+            var azur   = new Timeplot.Color("#0090FF");
+            var yellow = new Timeplot.Color("#FFBD2C");
+            var orange = new Timeplot.Color("#BB4A1B");
+            var red    = new Timeplot.Color("#701F2B");
+            
+            var plotsInfo4 = [
+                Timeplot.createPlotInfo({
+                    id: "gadget-smoothed",
+                    dataSource: smoothedGadgetDownloads,
+                    geometry: downloadGeometry,
+                    lineColor: blue,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "longwell-smoothed",
+                    dataSource: smoothedLongwellDownloads,
+                    geometry: downloadGeometry,
+                    lineColor: yellow,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "welkin-smoothed",
+                    dataSource: smoothedWelkinDownloads,
+                    geometry: downloadGeometry,
+                    lineColor: azur,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "solvent-smoothed",
+                    dataSource: smoothedSolventDownloads,
+                    geometry: downloadGeometry,
+                    lineColor: orange,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "piggybank-smoothed",
+                    dataSource: smoothedPiggybankDownloads,
+                    geometry: downloadGeometry,
+                    lineColor: red,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    geometry: downloadGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot4 = Timeplot.create(document.getElementById("timeplot4"), plotsInfo4);
+            
         }
         
         var resizeTimerID = null;
@@ -156,12 +236,31 @@
             if (resizeTimerID == null) {
                 resizeTimerID = window.setTimeout(function() {
                     resizeTimerID = null;
-                    if (timeplot1) timeplot1.resize();
-                    if (timeplot2) timeplot2.resize();
-                    if (timeplot3) timeplot3.resize();
+                    if (timeplot1) timeplot1.repaint();
+                    if (timeplot2) timeplot2.repaint();
+                    if (timeplot3) timeplot3.repaint();
+                    if (timeplot4) timeplot4.repaint();
                 }, 0);
             }
-        }    
+        }
+        
+        function linearDownloads() {
+            downloadGeometry.actLinear();
+            timeplot4.repaint();
+            var logToggle = document.getElementById("log-toggle");
+            logToggle.className = "toggle";
+            var linToggle = document.getElementById("lin-toggle");
+            linToggle.className = "active-toggle";
+        }
+        
+        function logarithmicDownloads() {
+            downloadGeometry.actLogarithmic();
+            timeplot4.repaint();
+            var logToggle = document.getElementById("log-toggle");
+            logToggle.className = "active-toggle";
+            var linToggle = document.getElementById("lin-toggle");
+            linToggle.className = "toggle";
+        }
     </script>
 </head>
 <body onload="onLoad();" onresize="onResize();">
@@ -179,6 +278,8 @@
     <div id="timeplot2" class="timeplot"></div>
     <div class="label">Newsfeed Traffic</div>
     <div id="timeplot3" class="timeplot"></div>
+    <div class="label">Downloads (<span id="log-toggle" class="active-toggle" onclick="logarithmicDownloads();">log</span>|<span id="lin-toggle" class="toggle" onclick="linearDownloads();">lin</span>)</div>
+    <div id="timeplot4" class="timeplot"></div>
 </div>
     
 </body>
