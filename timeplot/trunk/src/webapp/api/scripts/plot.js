@@ -168,11 +168,13 @@ Timeplot.Plot.prototype = {
 
     _plot: function(f) {
         var data = this._dataSource.getData();
-        var times = data.times;
-        var values = data.values;
-        var T = times.length;
-        for (var t = 0; t < T; t++) {
-            f(this._geometry.toScreen(times[t], values[t]));
+        if (data) {
+	        var times = data.times;
+	        var values = data.values;
+	        var T = times.length;
+	        for (var t = 0; t < T; t++) {
+	            f(this._geometry.toScreen(times[t], values[t]));
+	        }
         }
     },
     
