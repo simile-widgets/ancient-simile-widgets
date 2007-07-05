@@ -15,11 +15,28 @@ Timegrid.Controls = {};
  * should be easily configurable through the params hash passed in.
  */
 Timegrid.Controls.Panel = function(layouts, params) {
-
+    this._layouts = layouts;
 };
 
 Timegrid.Controls.Panel.prototype.render = function(container) {
-
+    var first = true;
+    var views = $.map(this._layouts, function(l) {
+        var elmt = l.render(container);
+        if (first) { 
+            $(elmt).show(); first = false; 
+        } else {
+            $(elmt).hide();
+        }
+        return { title: l.title, elmt: elmt }; 
+    });
+    var links = $.map(views, function(v) {
+        var callback = function() {
+            $.map(views, function(v) {$(v.elmt).hide();});
+            $(v.elmt).show();
+        };
+        return $('<a href="#">' + v.title + '</a>').click(callback).get(0);
+    });
+    $(container).prepend(links);
 };
 
 /*

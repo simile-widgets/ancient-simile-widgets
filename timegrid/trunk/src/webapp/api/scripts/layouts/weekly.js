@@ -18,6 +18,7 @@ Timegrid.WeekLayout = function(eventSource, params) {
     var self = this;
     
     // Specifications for a week layout
+    this.title = "Week";
     this.xSize = 7;
     this.ySize = 24;
     this.iterable = true;

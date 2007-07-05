@@ -26,6 +26,7 @@
             "util/jquery.corner.js",
             "util/excanvas.js",
             
+            "controls.js",
             "listeners.js",
             "grid.js",
             "sources.js",

@@ -9,7 +9,8 @@ Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
 Timegrid.createFromDOM = function(elmt) {
     var config = Timegrid.getConfigFromDOM(elmt);
     var eventSource = new Timegrid.DefaultEventSource();
-    var tg = Timegrid.create(elmt, eventSource, config.view, config);
+    var layoutNames = config.views.split(",");
+    var tg = Timegrid.create(elmt, eventSource, layoutNames, config);
     if (config.src) {
         tg.loadXML(config.src, function(xml, url) {
             eventSource.loadXML(xml, url);
@@ -48,11 +49,11 @@ Timegrid.loadJSON = function(url, f) {
     SimileAjax.XmlHttp.get(url, fError, fDone);
 };
 
-Timegrid._Impl = function(node, eventSource, layoutName, layoutParams) {
+Timegrid._Impl = function(node, eventSource, layoutNames, layoutParams) {
     var tg = this;
     this._container = node;
     this._eventSource = eventSource;
-    this._layoutName = layoutName;
+    this._layoutNames = layoutNames;
     this._layoutParams = layoutParams;
 
     if (this._eventSource) {
@@ -90,9 +91,12 @@ Timegrid._Impl.prototype.loadXML = function(url, f) {
 };
 
 Timegrid._Impl.prototype._construct = function() {
-    this._layout = Timegrid.LayoutFactory.createLayout(this._layoutName,
-                                                       this._eventSource,
-                                                       this._layoutParams);
+    var self = this;
+    this._layouts = $.map(this._layoutNames, function(s) {
+        return Timegrid.LayoutFactory.createLayout(s, self._eventSource,
+                                                      self._layoutParams);
+    });
+    this._panel = new Timegrid.Controls.Panel(this._layouts);
     var container = this._container;
     var doc = container.ownerDocument;
 
@@ -108,13 +112,11 @@ Timegrid._Impl.prototype._construct = function() {
     message.contentDiv.className = "timegrid-message";
     message.contentDiv.innerHTML = "<img src='" + Timegrid.urlPrefix
         + "images/progress-running.gif' /> Loading...";
-        
-    var self = this;
 
     this.showLoadingMessage = function() { $(message.containerDiv).show(); };
     this.hideLoadingMessage = function() { $(message.containerDiv).hide(); };
 
-    var layoutDiv = this._layout.render(container);
+    this._panel.render(container);
 };
 
 Timegrid._Impl.prototype._onAddMany = function() {

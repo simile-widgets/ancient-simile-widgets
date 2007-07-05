@@ -8,6 +8,7 @@
 
 Timegrid.MonthLayout = function(eventSource, params) {
     Timegrid.MonthLayout.superclass.call(this, eventSource, params);
+    this.title = "Month";
     this.xSize = 7;
     this.ySize = 5;
     this.iterable = true;
