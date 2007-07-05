@@ -10,6 +10,7 @@ Timegrid.MonthLayout = function(eventSource, params) {
     Timegrid.MonthLayout.superclass.call(this, eventSource, params);
     this.xSize = 7;
     this.ySize = 5;
+    this.iterable = true;
     
     // These are default values that can be overridden in configure
     this.height = 500.0;
@@ -95,6 +96,7 @@ Timegrid.MonthLayout.prototype.getDates = function(date) {
     while (this.xMapper(gridStart) > 0 && this.yMapper(gridStart) >= 0) {
         gridStart.time.setHours(-24);
     }
+    // Iterate through and collect the tasty data
     while (this.xMapper(gridStart) < this.xSize && 
            this.yMapper(gridStart) < this.ySize) {
         dates.push(gridStart.time.getDate());

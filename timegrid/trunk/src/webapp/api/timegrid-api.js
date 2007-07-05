@@ -23,6 +23,8 @@
             "util/debug.js",
             "util/date.js",
             "util/jquery.simile.js",
+            "util/jquery.corner.js",
+            "util/excanvas.js",
             
             "listeners.js",
             "grid.js",

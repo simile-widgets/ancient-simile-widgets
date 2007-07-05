@@ -55,6 +55,17 @@ div.timegrid-event {
     color: #046380;
     padding: 2px;
 }
+
+/* Monthly View */
+div.timegrid-month-cell {
+    color: #046380;
+    padding: 0px;
+}
+
+ul.timegrid-event-list {
+    list-style-position: inside;
+    padding: .5em;
+}
 html {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 9pt;
@@ -142,6 +153,7 @@ div.timegrid-label {
     color: #aaa;
 }
 
+/* Weekly View */
 div.timegrid-event {
     position: absolute;
     border: 1px black solid;
@@ -150,11 +162,25 @@ div.timegrid-event {
     padding: 0;
 }
 
+/* Monthly View */
+div.timegrid-month-cell {
+    position: absolute;
+    width: 100px;
+    padding: 0;
+}
+
 ul.timegrid-event-list {
     list-style-position: inside;
     padding-left: .5em;
 }
 
+span.timegrid-month-date-label {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
+/* Message */
 .timegrid-message-container {
     position:   absolute;
     top:        30%;

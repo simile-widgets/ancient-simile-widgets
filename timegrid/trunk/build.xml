@@ -43,11 +43,12 @@
   </target>
   
   <target name="docs">
-    <exec executable="perl">
-        <arg value="C:\Program Files\JSDoc\jsdoc.pl"/>
+    <java jar="tools/jsdoc/app/js.jar" fork="true">
+        <arg value="tools/jsdoc/app/run.js"/>
+        <arg value="-t=tools/jsdoc/templates/htm"/>
         <arg value="-r"/>
         <arg value="-d=docs"/>
         <arg value="src"/>
-    </exec>
+    </java>
   </target>
 </project>

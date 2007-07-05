@@ -20,6 +20,7 @@ Timegrid.WeekLayout = function(eventSource, params) {
     // Specifications for a week layout
     this.xSize = 7;
     this.ySize = 24;
+    this.iterable = true;
     this.xMapper = function(obj) { return obj.time.getDay(); };
     this.yMapper = function(obj) { return obj.time.getHours(); };
     
