@@ -12,6 +12,17 @@ ul, li {
     font-size: 9pt;
 }
 
+div.timegrid-tabs {
+    text-align: right;
+}
+
+span.timegrid-tab {
+    line-height: 1.5em;
+    padding: 1em;
+    margin: .5em;
+    background-color: #bbb;
+}
+
 div.timegrid-view {
     position: relative;
     border: 1px white solid;

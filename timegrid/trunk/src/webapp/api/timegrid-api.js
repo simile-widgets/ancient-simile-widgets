@@ -24,7 +24,6 @@
             "util/date.js",
             "util/jquery.simile.js",
             "util/jquery.corner.js",
-            "util/excanvas.js",
             
             "controls.js",
             "listeners.js",

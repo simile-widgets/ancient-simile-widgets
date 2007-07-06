@@ -8,6 +8,20 @@
     #002f2f
  */
 
+span.timegrid-tab {
+    line-height: 1.5em;
+    padding: 1em;
+    background-color: #efecca;
+}
+
+span.timegrid-tab-active {
+    background-color: #a7a37e;
+}
+
+span.timegrid-tab a {
+    text-decoration: none;
+}
+ 
 div.timegrid-view {
     background: #a7a37e;
     border: 1px solid #a7a37e;

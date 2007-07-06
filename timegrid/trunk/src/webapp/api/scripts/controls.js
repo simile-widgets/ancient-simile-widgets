@@ -20,23 +20,14 @@ Timegrid.Controls.Panel = function(layouts, params) {
 
 Timegrid.Controls.Panel.prototype.render = function(container) {
     var first = true;
+    var titles = [];
     var views = $.map(this._layouts, function(l) {
-        var elmt = l.render(container);
-        if (first) { 
-            $(elmt).show(); first = false; 
-        } else {
-            $(elmt).hide();
-        }
-        return { title: l.title, elmt: elmt }; 
+        titles.push(l.title);
+        return $(l.render(container)).hide();
     });
-    var links = $.map(views, function(v) {
-        var callback = function() {
-            $.map(views, function(v) {$(v.elmt).hide();});
-            $(v.elmt).show();
-        };
-        return $('<a href="#">' + v.title + '</a>').click(callback).get(0);
-    });
-    $(container).prepend(links);
+    var tabSet = new Timegrid.Controls.TabSet(titles, views);
+    tabSet.render(container);
+    tabSet.switchTo(0);
 };
 
 /*
@@ -44,12 +35,36 @@ Timegrid.Controls.Panel.prototype.render = function(container) {
  * be configured to switch between different views, time slices, or data
  * sources.
  */
-Timegrid.Controls.TabSet = function(args) {
-
+Timegrid.Controls.TabSet = function(titles, views) {
+    this._titles = titles;
+    this._views = views;
+    this._tabs = [];
+    this.current = 0;
 };
 
 Timegrid.Controls.TabSet.prototype.render = function(container) {
+    var self = this;
+    var tabDiv = $('<div></div>').addClass('timegrid-tabs');
+    $(container).prepend(tabDiv);
+    var makeCallback = function(index) {
+        return function() { self.switchTo(index); }; 
+    };
+    for (i in this._views) {
+        var tab = $('<span><a href="#">' + this._titles[i] + '</a></span>')
+                    .click(makeCallback(i))
+                    .addClass('timegrid-tab');
+        tabDiv.append(tab);
+        this._tabs.push(tab);
+    }
+    $('.timegrid-tab').corner("30px top");
+};
 
+Timegrid.Controls.TabSet.prototype.switchTo = function(index) {
+    $.map(this._views, function(v) { v.hide(); });
+    $.map(this._tabs, function(t) { t.removeClass('timegrid-tab-active'); });
+    this.current = index;
+    this._views[this.current].show();
+    this._tabs[this.current].addClass('timegrid-tab-active');
 };
 
 /*
