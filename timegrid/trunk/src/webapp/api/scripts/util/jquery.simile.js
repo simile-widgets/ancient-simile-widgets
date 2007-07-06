@@ -63,8 +63,8 @@ jQuery.extend({
         document.body.removeChild(
             document.body.lastChild);
 
-        // Pixel width of the scroller
-        return (wNoScroll - wScroll);
+        // Pixel width of the scroller, with an awful, awful hack
+        return (wNoScroll - wScroll) || 17;
     }
 });
 

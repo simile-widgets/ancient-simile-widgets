@@ -37,8 +37,8 @@ Timegrid.Controls.Panel.prototype.render = function(container) {
  */
 Timegrid.Controls.TabSet = function(titles, views) {
     this._titles = titles;
-    this._views = views;
-    this._tabs = [];
+    this._views  = views;
+    this._tabs   = [];
     this.current = 0;
 };
 

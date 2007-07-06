@@ -83,14 +83,13 @@ Timegrid.Layout.prototype.render = function(container) {
     
     viewDiv.height(this.height + "px");
     if (!this.width) { this.width = viewDiv.width(); }
-    viewDiv.width(this.width + "px");
-    gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
-    
+    viewDiv.width(this.width + "px");  
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
     viewDiv.append(gridWindowDiv.append(gridDiv));
     this.gridwidth = this.gridwidth || gridWindowDiv.width() - this.scrollwidth;
     this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
+    gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
     this.computeCellSizes();
     gridDiv.append(this.renderEvents(document));
     gridDiv.append(this.renderGridlines(document));
@@ -107,7 +106,8 @@ Timegrid.Layout.prototype.render = function(container) {
     };
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
-    viewDiv.append(xLabels).append(yLabels);    
+    viewDiv.append(xLabels).append(yLabels);
+    if (!container.style.width) { $(container).width(this.width + "px"); }
     return viewDiv.get(0);
 };
 

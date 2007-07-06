@@ -59,6 +59,7 @@ div.timegrid-gridlines {
 
 div.timegrid-xlabels {
     position:   absolute;
+    left: 0px;
 }
 
 .timegrid-xlabels div.timegrid-label {

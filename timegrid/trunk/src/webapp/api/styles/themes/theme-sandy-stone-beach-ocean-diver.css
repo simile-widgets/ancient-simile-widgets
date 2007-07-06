@@ -16,6 +16,7 @@ span.timegrid-tab {
 
 span.timegrid-tab-active {
     background-color: #a7a37e;
+    font-weight: bold;
 }
 
 span.timegrid-tab a {
