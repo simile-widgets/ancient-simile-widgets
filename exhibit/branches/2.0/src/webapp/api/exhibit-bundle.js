@@ -5781,6 +5781,7 @@ this._externalIcon=uiContext.getSetting("format/url/external-icon");
 Exhibit.Formatter._URLFormatter.prototype.format=function(value,appender){
 var a=document.createElement("a");
 a.href=value;
+a.innerHTML=value;
 
 if(this._target!=null){
 a.target=this._target;
@@ -9451,7 +9452,7 @@ this._uiContext
 );
 }
 }catch(e){
-SimileAjax.Debug.exception(e,"Failed to create view");
+SimileAjax.Debug.log("Failed to create view "+this._viewLabels[index]);
 }
 this._uiContext.getExhibit().setComponent(this._viewIDs[index],this._view);
 this._dom.setViewIndex(index);

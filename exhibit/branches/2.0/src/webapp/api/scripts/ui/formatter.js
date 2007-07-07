@@ -189,6 +189,7 @@ Exhibit.Formatter._URLFormatter = function(uiContext) {
 Exhibit.Formatter._URLFormatter.prototype.format = function(value, appender) {
     var a = document.createElement("a");
     a.href = value;
+    a.innerHTML = value;
     
     if (this._target != null) {
         a.target = this._target;

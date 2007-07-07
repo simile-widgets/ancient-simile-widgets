@@ -214,7 +214,7 @@ Exhibit.ViewPanel.prototype._createView = function() {
             );
         }
     } catch (e) {
-        SimileAjax.Debug.exception(e, "Failed to create view");
+        SimileAjax.Debug.log("Failed to create view " + this._viewLabels[index]);
     }
     this._uiContext.getExhibit().setComponent(this._viewIDs[index], this._view);
     this._dom.setViewIndex(index);
