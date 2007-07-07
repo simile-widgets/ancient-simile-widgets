@@ -17,7 +17,8 @@ Timeplot.createPlotInfo = function(params) {
         id:             ("id" in params) ? params.id : "p" + Math.round(Math.random() * 1000000),
         dataSource:     ("dataSource" in params) ? params.dataSource : null,
         eventSource:    ("eventSource" in params) ? params.eventSource : null,
-        geometry:       ("geometry" in params) ? params.geometry : new Timeplot.DefaultGeometry(),
+        timeGeometry:   ("timeGeometry" in params) ? params.timeGeometry : new Timeplot.DefaultTimeGeometry(),
+        valueGeometry:  ("valueGeometry" in params) ? params.valueGeometry : new Timeplot.DefaultValueGeometry(),
         timeZone:       ("timeZone" in params) ? params.timeZone : 0,
         fillColor:      ("fillColor" in params) ? params.fillColor : null,
         lineColor:      ("lineColor" in params) ? params.lineColor : new Timeplot.Color("#606060"),
@@ -87,13 +88,21 @@ Timeplot._Impl.prototype = {
         }
     },
     
-    getPixelWidth: function() {
+    getWidth: function() {
+    	return this._containerDiv.clientWidth;
+    },
+
+    getHeight: function() {
+        return this._containerDiv.clientHeight;
+    },
+    
+    getInternalWidth: function() {
         var w = window.getComputedStyle(this._containerDiv, null).getPropertyValue("width");
         w = parseInt(w.replace("px",""));
         return w;
     },
 
-    getPixelHeight: function() {
+    getInternalHeight: function() {
         var h = window.getComputedStyle(this._containerDiv, null).getPropertyValue("height");
         h = parseInt(h.replace("px",""));
         return h;    
@@ -153,13 +162,49 @@ Timeplot._Impl.prototype = {
         window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
     },
     
+    putText: function(text, clazz, styles) {
+        var div = this.putDiv("timeplot-div " + clazz, styles);
+        div.innerHTML = text;
+        return div;
+    },
+
+    putDiv: function(clazz, styles) {
+        var container = this._containerDiv.firstChild; // get the divs container
+        var doc = container.ownerDocument;
+        var div = doc.createElement("div");
+        div.setAttribute("class","timeplot-div " + clazz);
+        this.placeDiv(div,styles);
+        container.appendChild(div);
+        return div;
+    },
+    
+    placeDiv: function(div, styles) {
+        if (styles) {
+            for (style in styles) {
+                if (style == "left") {
+                    styles[style] += this._paddingX;
+                } else if (style == "right") {
+                    styles[style] += this._paddingX;
+                } else if (style == "top") {
+                    styles[style] += this._paddingY;
+                } else if (style == "bottom") {
+                    styles[style] += this._paddingY;
+                }
+                div.style[style] = styles[style];
+            }
+        }
+    },
+    
     update: function() {
         for (var i = 0; i < this._plots.length; i++) {
             var plot = this._plots[i];
             var dataSource = plot.getDataSource();
             if (dataSource) {
                 var range = dataSource.getRange();
-                if (range) plot._geometry.setRange(range);
+                if (range) {
+                	plot._valueGeometry.setRange(range);
+                	plot._timeGeometry.setRange(range);
+                }
             }
         }
         this._paint();
@@ -198,8 +243,11 @@ Timeplot._Impl.prototype = {
     _prepareCanvas: function() {
         var canvas = this.getCanvas();
     
-        canvas.width = this.getPixelWidth();
-        canvas.height = this.getPixelHeight();
+        canvas.width = this.getInternalWidth();
+        canvas.height = this.getInternalHeight();
+        
+        this._paddingX = (this.getWidth() - canvas.width) / 2;
+        this._paddingY = (this.getHeight() - canvas.height) / 2;
     
         var ctx = canvas.getContext('2d');
         ctx.translate(0,canvas.height);
@@ -257,13 +305,17 @@ Timeplot._Impl.prototype = {
                     if (dataSource) {
                         dataSource.addListener(painter);
                     }
+                    this.addPainter("background", {
+                        context: plot.getTimeGeometry(),
+                        action: plot.getTimeGeometry().paint
+                    });
+                    this.addPainter("background", {
+                        context: plot.getValueGeometry(),
+                        action: plot.getValueGeometry().paint
+                    });
                     this.addPainter("foreground", {
                         context: plot,
                         action: plot.paint
-                    });
-                    this.addPainter("background", {
-                        context: plot.getGeometry(),
-                        action: plot.getGeometry().paint
                     });
                     this._plots.push(plot);
                     plot.initialize();
