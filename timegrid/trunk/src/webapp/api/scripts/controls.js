@@ -115,13 +115,16 @@ Timegrid.Controls.Iterator.prototype.render = function(container) {
             self.render();
         };
     };
-    var prevLink = $('<span><a href="#">Previous</a></span>')
-                   .click(makePrevCallback(this._layout))
-                   .addClass('timegrid-iterator-prev');
-    var nextLink = $('<span><a href="#">Next</a></span>')
-                   .click(makeNextCallback(this._layout))
-                   .addClass('timegrid-iterator-next');
-    this._div.append(prevLink).append(nextLink);
+    var prevLink = $('<img alt="Previous" src="' + Timegrid.urlPrefix + '/images/go-previous.png"></img>')
+                   .wrap('<a href="#"></a>').parent()
+                   .addClass('timegrid-iterator-prev')
+                   .click(makePrevCallback(this._layout));
+    var nextLink = $('<img alt="Next" src="' + Timegrid.urlPrefix + '/images/go-next.png"></img>')
+                   .wrap('<a href="#"></a>').parent()
+                   .addClass('timegrid-iterator-next')
+                   .click(makeNextCallback(this._layout));
+    this._div.append(prevLink);
     this._div.append('<span>' + this._layout.getCurrent() + '</span>');
+    this._div.append(nextLink);
     return this._div;
 };

@@ -56,7 +56,7 @@
         
         var url = SimileAjax.findScript(document, "timegrid-api.js");
         if (url == null) {
-            Timeline.error = new Error("Failed to derive URL prefix for Simile Timegrid API code files");
+            Timegrid.error = new Error("Failed to derive URL prefix for Simile Timegrid API code files");
             return;
         }
         Timegrid.urlPrefix = url.substr(0, url.indexOf("timegrid-api.js"));
