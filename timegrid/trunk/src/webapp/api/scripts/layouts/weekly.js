@@ -33,7 +33,7 @@ Timegrid.WeekLayout = function(eventSource, params) {
     
     // Initialize our eventSource
     this.eventSource = eventSource;
-    this.startTime = this.eventSource.getEarliestDate();
+    this.startTime = this.eventSource.getEarliestDate() || new Date();
     this.endTime = Timegrid.WeekLayout.getEndOfWeek(this.startTime); 
     this.initializeGrid();
 };
