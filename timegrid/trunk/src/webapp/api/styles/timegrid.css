@@ -12,6 +12,10 @@ ul, li {
     font-size: 9pt;
 }
 
+div.timegrid-iterator {
+    float: left;
+}
+
 div.timegrid-tabs {
     text-align: right;
 }

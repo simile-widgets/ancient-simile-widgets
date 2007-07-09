@@ -76,17 +76,22 @@ Timegrid.Layout.prototype.computeCellSizes = function() {
  * @return a rendered DOM tree descended from a div element
  */
 Timegrid.Layout.prototype.render = function(container) {
-    var viewDiv = $("<div></div>").addClass('timegrid-view');
-    $(container).append(viewDiv);
+    if (container) {
+        this._container = container;
+        this._viewDiv = $("<div></div>").addClass('timegrid-view');
+        $(this._container).append(this._viewDiv);
+    } else { 
+        this._viewDiv.empty();
+    }
     var gridDiv = $('<div></div>').addClass('timegrid-grid');
     var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
     
-    viewDiv.height(this.height + "px");
-    if (!this.width) { this.width = viewDiv.width(); }
-    viewDiv.width(this.width + "px");  
+    this._viewDiv.height(this.height + "px");
+    if (!this.width) { this.width = this._viewDiv.width(); }
+    this._viewDiv.width(this.width + "px");  
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
-    viewDiv.append(gridWindowDiv.append(gridDiv));
+    this._viewDiv.append(gridWindowDiv.append(gridDiv));
     this.gridwidth = this.gridwidth || gridWindowDiv.width() - this.scrollwidth;
     this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
     gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
@@ -106,9 +111,9 @@ Timegrid.Layout.prototype.render = function(container) {
     };
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
-    viewDiv.append(xLabels).append(yLabels);
-    if (!container.style.width) { $(container).width(this.width + "px"); }
-    return viewDiv.get(0);
+    this._viewDiv.append(xLabels).append(yLabels);
+    if (!this._container.style.width) { $(this._container).width(this.width + "px"); }
+    return this._viewDiv.get(0);
 };
 
 Timegrid.Layout.prototype.renderEvents = Timegrid.abstract("renderEvents");

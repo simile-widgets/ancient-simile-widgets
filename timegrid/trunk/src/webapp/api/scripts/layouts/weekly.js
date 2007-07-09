@@ -109,8 +109,39 @@ Timegrid.WeekLayout.prototype.getYLabels = function() {
              "6pm", "7pm", "8pm", "9pm", "10pm", "11pm" ];
 };
 
+Timegrid.WeekLayout.prototype.goPrevious = function() {
+    this.endTime = this.startTime;
+    this.startTime = Timegrid.WeekLayout.getStartOfWeek(this.endTime);
+    this.initializeGrid();
+    this.render();
+};
+
+Timegrid.WeekLayout.prototype.goNext = function() {
+    this.startTime = this.endTime;
+    this.endTime = Timegrid.WeekLayout.getEndOfWeek(this.startTime);
+    this.initializeGrid();
+    this.render();
+};
+
 Timegrid.WeekLayout.prototype.getCurrent = function() {
-    return this.startTime + " - " + this.endTime;
+    var oldFormat = Date.format;
+    Date.format = "mm/dd";
+    this.endTime.addSeconds(-1);
+    var result = this.startTime.asString() + " - " + this.endTime.asString();
+    this.endTime.addSeconds(1);
+    Date.format = oldFormat;
+    return result;
+};
+
+Timegrid.WeekLayout.getStartOfWeek = function(date) {
+    if (date) {
+        var startTime = new Date(date);
+        startTime.addDays(-1);
+        startTime.setDate(startTime.getDate() - startTime.getDay());
+        startTime.setHours(0);
+        return startTime;
+    }
+    return false;
 };
 
 Timegrid.WeekLayout.getEndOfWeek = function(date) {

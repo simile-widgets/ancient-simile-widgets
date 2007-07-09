@@ -36,8 +36,9 @@ Timegrid.Controls.TabSet = function(titles, layouts) {
     for (i in titles) {
         this._layoutMap[titles[i]] = layouts[i];
     }
-    this._tabs   = {};
+    this._tabs            = {};
     this._renderedLayouts = {};
+    this._iterators       = {};
     this.current = "";
 };
 
@@ -68,8 +69,17 @@ Timegrid.Controls.TabSet.prototype.switchTo = function(title) {
         this._renderedLayouts[title].show();
     } else if (this._layoutMap[title]) {
         this._renderedLayouts[title] = $(this._layoutMap[title].render(this._container)).show();
-    } else {
-        return; // error
+    }
+    if (this._layoutMap[title].iterable) {
+        if (!this._iterators[title]) {
+            console.log(this._iterators);
+            this._iterators[title] = new Timegrid.Controls.Iterator(this._layoutMap[title]);
+            this._iDiv = $(this._iterators[title].render(this._container));
+        } else {
+            this._iDiv = $(this._iterators[title].render());
+        }
+    } else if (this._iDiv) {
+        this._iDiv.empty();
     }
     this.current = title;
     this._tabs[this.current].addClass('timegrid-tab-active');
@@ -85,5 +95,33 @@ Timegrid.Controls.Iterator = function(layout) {
 };
 
 Timegrid.Controls.Iterator.prototype.render = function(container) {
-    $(container).prepend('<div>' + this._layout.getCurrent() + '</div>');
+    if (container) {
+        this._container = container;
+        this._div = $('<div></div>').addClass('timegrid-iterator');
+        $(this._container).prepend(this._div);
+    } else {
+        this._div.empty();
+    }
+    var self = this;
+    var makePrevCallback = function(layout) {
+        return function() {
+            layout.goPrevious();
+            self.render();
+        };
+    };
+    var makeNextCallback = function(layout) {
+        return function() {
+            layout.goNext();
+            self.render();
+        };
+    };
+    var prevLink = $('<span><a href="#">Previous</a></span>')
+                   .click(makePrevCallback(this._layout))
+                   .addClass('timegrid-iterator-prev');
+    var nextLink = $('<span><a href="#">Next</a></span>')
+                   .click(makeNextCallback(this._layout))
+                   .addClass('timegrid-iterator-next');
+    this._div.append(prevLink).append(nextLink);
+    this._div.append('<span>' + this._layout.getCurrent() + '</span>');
+    return this._div;
 };
