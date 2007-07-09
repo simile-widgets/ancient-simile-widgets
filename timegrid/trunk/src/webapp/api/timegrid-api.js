@@ -22,6 +22,7 @@
             "util/util.js",
             "util/debug.js",
             "util/date.js",
+            "util/excanvas.pack.js",
             "util/jquery.simile.js",
             "util/jquery.corner.js",
             

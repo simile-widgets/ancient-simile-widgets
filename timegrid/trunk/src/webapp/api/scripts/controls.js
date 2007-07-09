@@ -20,14 +20,10 @@ Timegrid.Controls.Panel = function(layouts, params) {
 
 Timegrid.Controls.Panel.prototype.render = function(container) {
     var first = true;
-    var titles = [];
-    var views = $.map(this._layouts, function(l) {
-        titles.push(l.title);
-        return $(l.render(container)).hide();
-    });
-    var tabSet = new Timegrid.Controls.TabSet(titles, views);
+    var titles = $.map(this._layouts, function(l) { return l.title; });
+    var tabSet = new Timegrid.Controls.TabSet(titles, this._layouts);
     tabSet.render(container);
-    tabSet.switchTo(0);
+    tabSet.switchTo(titles[0]);
 };
 
 /*
@@ -35,35 +31,47 @@ Timegrid.Controls.Panel.prototype.render = function(container) {
  * be configured to switch between different views, time slices, or data
  * sources.
  */
-Timegrid.Controls.TabSet = function(titles, views) {
-    this._titles = titles;
-    this._views  = views;
-    this._tabs   = [];
-    this.current = 0;
+Timegrid.Controls.TabSet = function(titles, layouts) {
+    this._layoutMap = {};
+    for (i in titles) {
+        this._layoutMap[titles[i]] = layouts[i];
+    }
+    this._tabs   = {};
+    this._renderedLayouts = {};
+    this.current = "";
 };
 
 Timegrid.Controls.TabSet.prototype.render = function(container) {
+    this._container = container;
     var self = this;
     var tabDiv = $('<div></div>').addClass('timegrid-tabs');
     $(container).prepend(tabDiv);
-    var makeCallback = function(index) {
-        return function() { self.switchTo(index); }; 
+    var makeCallback = function(title) {
+        return function() { self.switchTo(title); }; 
     };
-    for (i in this._views) {
-        var tab = $('<span><a href="#">' + this._titles[i] + '</a></span>')
-                    .click(makeCallback(i))
+    for (title in this._layoutMap) {
+        var tab = $('<span><a href="#">' + title + '</a></span>')
+                    .click(makeCallback(title))
                     .addClass('timegrid-tab');
         tabDiv.append(tab);
-        this._tabs.push(tab);
+        this._tabs[title] = tab;
     }
     $('.timegrid-tab').corner("30px top");
 };
 
-Timegrid.Controls.TabSet.prototype.switchTo = function(index) {
-    $.map(this._views, function(v) { v.hide(); });
-    $.map(this._tabs, function(t) { t.removeClass('timegrid-tab-active'); });
-    this.current = index;
-    this._views[this.current].show();
+Timegrid.Controls.TabSet.prototype.switchTo = function(title) {
+    if (this.current) { 
+        this._renderedLayouts[this.current].hide();
+        this._tabs[this.current].removeClass('timegrid-tab-active'); 
+    }
+    if (this._renderedLayouts[title]) {
+        this._renderedLayouts[title].show();
+    } else if (this._layoutMap[title]) {
+        this._renderedLayouts[title] = $(this._layoutMap[title].render(this._container)).show();
+    } else {
+        return; // error
+    }
+    this.current = title;
     this._tabs[this.current].addClass('timegrid-tab-active');
 };
 
@@ -72,10 +80,10 @@ Timegrid.Controls.TabSet.prototype.switchTo = function(index) {
  * current selection and a set of arrows for moving to either the previous
  * or next selection.  Can be used for views, time, or sources.
  */
-Timegrid.Controls.Iterator = function(args) {
-
+Timegrid.Controls.Iterator = function(layout) {
+    this._layout = layout;
 };
 
 Timegrid.Controls.Iterator.prototype.render = function(container) {
-
+    $(container).prepend('<div>' + this._layout.getCurrent() + '</div>');
 };

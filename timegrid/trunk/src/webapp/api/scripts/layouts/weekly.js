@@ -109,6 +109,10 @@ Timegrid.WeekLayout.prototype.getYLabels = function() {
              "6pm", "7pm", "8pm", "9pm", "10pm", "11pm" ];
 };
 
+Timegrid.WeekLayout.prototype.getCurrent = function() {
+    return this.startTime + " - " + this.endTime;
+};
+
 Timegrid.WeekLayout.getEndOfWeek = function(date) {
     if (date) {
         var endTime = new Date(date);
