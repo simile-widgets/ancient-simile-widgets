@@ -100,7 +100,13 @@ Timegrid.WeekLayout.prototype.renderEvent = function(evt, x, y) {
 };
 
 Timegrid.WeekLayout.prototype.getXLabels = function() {
-    return Date.dayNames;
+    var date = new Date(this.startTime);
+    var labels = [];
+    while (date < this.endTime) {
+        labels.push(Date.abbrDayNames[date.getDay()] + " " + this.renderDate(date));
+        date.setHours(24);
+    }
+    return labels;
 };
 
 Timegrid.WeekLayout.prototype.getYLabels = function() {
@@ -124,13 +130,14 @@ Timegrid.WeekLayout.prototype.goNext = function() {
 };
 
 Timegrid.WeekLayout.prototype.getCurrent = function() {
-    var oldFormat = Date.format;
-    Date.format = "mm/dd";
     this.endTime.addSeconds(-1);
-    var result = this.startTime.asString() + " - " + this.endTime.asString();
+    var result = this.renderDate(this.startTime) + " - " + this.renderDate(this.endTime);
     this.endTime.addSeconds(1);
-    Date.format = oldFormat;
     return result;
+};
+
+Timegrid.WeekLayout.prototype.renderDate = function(date) {
+    return (date.getMonth() + 1) + "/" + date.getDate();
 };
 
 Timegrid.WeekLayout.getStartOfWeek = function(date) {
