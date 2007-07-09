@@ -293,6 +293,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             accessors.getEventLabel(itemID, database, function(v) { label = v; return true; });
             
             var evt = new Timeline.DefaultEventSource.Event(
+                itemID,
                 duration.start,
                 duration.end,
                 null,
