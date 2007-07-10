@@ -195,6 +195,13 @@ Timeplot._Impl.prototype = {
         }
     },
     
+    locate: function(div) {
+    	return {
+    		x: div.offsetLeft - this._paddingX,
+    		y: div.offsetTop - this._paddingY
+    	}
+    },
+    
     update: function() {
         for (var i = 0; i < this._plots.length; i++) {
             var plot = this._plots[i];
@@ -207,19 +214,19 @@ Timeplot._Impl.prototype = {
                 }
             }
         }
-        this._paint();
+        this.paint();
     },
     
     repaint: function() {
         this._prepareCanvas();
-        this._paint();
+        this.paint();
     },
     
-    _paint: function() {
+    paint: function() {
         if (this._painter == null) {
             var timeplot = this;
             this._painter = window.setTimeout(function() {
-                timeplot._painter = null;
+                timeplot._clearCanvas();
                 var background = timeplot._painters.background;
                 for (var i = 0; i < background.length; i++) {
                     try {
@@ -236,10 +243,17 @@ Timeplot._Impl.prototype = {
                         SimileAjax.Debug.exception(e);
                     }
                 }
-            }, 10);
+                timeplot._painter = null;
+            }, 20);
         }
     },
 
+    _clearCanvas: function() {
+    	var canvas = this.getCanvas();
+    	var ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+    },
+    
     _prepareCanvas: function() {
         var canvas = this.getCanvas();
     

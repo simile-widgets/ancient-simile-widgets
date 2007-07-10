@@ -8,11 +8,9 @@ Timeplot.Plot = function(timeplot, plotInfo) {
     this._plotInfo = plotInfo;
     this._id = plotInfo.id;
     this._timeGeometry = plotInfo.timeGeometry;
-    this._timeGeometry.setCanvas(this._canvas);
-    this._timeGeometry.setTimeplot(this._timeplot);
+    this._timeGeometry.initialize(timeplot);
     this._valueGeometry = plotInfo.valueGeometry;
-    this._valueGeometry.setCanvas(this._canvas);
-    this._valueGeometry.setTimeplot(this._timeplot);
+    this._valueGeometry.initialize(timeplot);
     this._locale = ("locale" in plotInfo) ? plotInfo.locale : SimileAjax.Platform.getDefaultLocale();
     this._timeZone = ("timeZone" in plotInfo) ? plotInfo.timeZone : 0;
     this._labeller = ("labeller" in plotInfo) ? plotInfo.labeller : timeplot.getUnit().createLabeller(this._locale, this._timeZone);
@@ -97,12 +95,9 @@ Timeplot.Plot.prototype = {
                 ctx.fillStyle = gradient;
 
                 ctx.beginPath();
+                ctx.moveTo(0,0);
 	            this._plot(function(x,y) {
-	                try {
-	                    ctx.lineTo(x,y);
-	                } catch (e) {
-	                    log(x + "," + y + ": " + e);
-	                }
+                    ctx.lineTo(x,y);
 	            });
                 ctx.lineTo(this._canvas.width, 0);
                 ctx.fill();
@@ -110,11 +105,7 @@ Timeplot.Plot.prototype = {
                     
             ctx.beginPath();
             this._plot(function(x,y) {
-            	try {
-                    ctx.lineTo(x,y);
-            	} catch (e) {
-                    log(x + "," + y + ": " + e);
-            	}
+                ctx.lineTo(x,y);
             });
             ctx.stroke();
         }

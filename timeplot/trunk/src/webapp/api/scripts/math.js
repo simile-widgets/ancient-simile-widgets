@@ -183,6 +183,21 @@ Timeplot.Math = {
                 return x;
             }
         }
+    },
+    
+    tanh: function(x) {
+    	if (x > 5) {
+    		return 1;
+    	} else if (x < 5) {
+    		return -1;
+    	} else {
+	    	var expx2 = Math.exp(2 * x);
+	    	return (expx2 - 1) / (expx2 + 1);
+    	}
+    },
+    
+    isClose: function(a,b,value) {
+    	return (a && b && Math.abs(a.x - b.x) < value && Math.abs(a.y - b.y) < value);
     }
 
 }

@@ -1,0 +1,154 @@
+<html>
+<head>
+    <title>SIMILE | Timeplot | US Energy</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+    
+    <style>
+        body {
+            background-color: #fff;
+        }
+         
+        .label {
+            color: #666;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #BBB;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+                
+        .toggle {
+            padding: 0px 3px;
+            cursor: pointer;
+            text-decoration: underline;
+            color: #666;
+        }
+        
+        .active-toggle {
+            padding: 0px 3px;
+        }
+    </style>
+    
+    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <script>
+        var oilTimeplot;
+        var gasTimeplot;
+        var electricityTimeplot;
+
+        var quietLine  = new Timeplot.Color('#82A6A2');
+        var loudLine   = new Timeplot.Color('#284452');
+        var lightFill  = new Timeplot.Color('#DEE5D1');
+        var gridColor  = new Timeplot.Color('#B0B0B0');
+        
+        function onLoad() {
+
+            var zoomingTimeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor
+            });
+
+            var usOilImportsGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                min: 0,
+            });
+
+            var usOilImportEventSource = new Timeplot.DefaultEventSource();
+            var usOilImports = new Timeplot.ColumnSource(usOilImportEventSource,1);
+            
+            var oilPlotInfo = [
+                Timeplot.createPlotInfo({
+                    id: "US Oil Imports",
+                    dataSource: usOilImports,
+                    timeGeometry: zoomingTimeGeometry,
+                    valueGeometry: usOilImportsGeometry,
+                    lineColor: quietLine,
+                    fillColor: lightFill
+                })
+            ];
+            
+            oilTimeplot = Timeplot.create(document.getElementById("oilTimeplot"), oilPlotInfo);
+            oilTimeplot.loadText("us-oil-import.txt", " ", usOilImportEventSource);
+            
+            var gasGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                min: 0,
+            });
+
+            var gasEventSource = new Timeplot.DefaultEventSource();
+            var gas = new Timeplot.ColumnSource(gasEventSource,1);
+            
+            var gasPlotInfo = [
+                Timeplot.createPlotInfo({
+                    id: "US Gasoline Price",
+                    dataSource: gas,
+                    timeGeometry: zoomingTimeGeometry,
+                    valueGeometry: gasGeometry,
+                    lineColor: quietLine,
+                    fillColor: lightFill
+                })
+            ];
+            
+            gasTimeplot = Timeplot.create(document.getElementById("gasTimeplot"), gasPlotInfo);
+            gasTimeplot.loadText("gasoline-price.txt", " ", gasEventSource);
+
+            var electricityGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                min: 0,
+            });
+
+            var electricityEventSource = new Timeplot.DefaultEventSource();
+            var electricity = new Timeplot.ColumnSource(electricityEventSource,1);
+            
+            var electricityPlotInfo = [
+                Timeplot.createPlotInfo({
+                    id: "US Electricity Price",
+                    dataSource: electricity,
+                    timeGeometry: zoomingTimeGeometry,
+                    valueGeometry: electricityGeometry,
+                    lineColor: quietLine,
+                    fillColor: lightFill
+                })
+            ];
+            
+            electricityTimeplot = Timeplot.create(document.getElementById("electricityTimeplot"), electricityPlotInfo);
+            electricityTimeplot.loadText("electricity.txt", " ", electricityEventSource);
+        }
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (oilTimeplot) oilTimeplot.repaint();
+                    if (gasTimeplot) gasTimeplot.repaint(); 
+                    if (electricityTimeplot) electricityTimeplot.repaint(); 
+                }, 0);
+            }
+        }
+    </script>
+</head>
+<body onload="onLoad();" onresize="onResize();">
+<!-- include virtual="sidebar.html" -->
+<ul id="path">
+  <li><a href="./" title="Home">SIMILE</a></li>
+  <li><a href="../../">Timeplot</a></li>
+  <li><a href="../">Examples</a></li>
+  <li><span>Energy</span></li>
+</ul>
+
+<div id="body">
+	<h1>US Energy</h1>
+    <div class="label">Gasoline Price <small>[in $/gallon]</small></div>
+    <div id="gasTimeplot" class="timeplot"></div>
+	<div class="label">US Oil Imports <small>[in B$]</small></div>
+	<div id="oilTimeplot" class="timeplot"></div>
+    <div class="label">Electricity Price <small>[in $/500kwh]</small></div>
+    <div id="electricityTimeplot" class="timeplot"></div>
+</div>
+    
+</body>
+</html>

@@ -24,31 +24,30 @@ Timeplot.DefaultValueGeometry = function(params) {
 
 Timeplot.DefaultValueGeometry.prototype = {
 
-    setTimeplot: function(timeplot) {
+    initialize: function(timeplot) {
         this._timeplot = timeplot;
-    },
-
-    setCanvas: function(canvas) {
-        this._canvas = canvas;
+        this._canvas = timeplot.getCanvas();
     },
 
     setRange: function(range) {
-        if (!this._minValue || (this._minValue && range.min < this._minValue)) {
+        if ((this._minValue == null) || ((this._minValue != null) && (range.min < this._minValue))) {
             this._minValue = range.min;
         }
-        if (!this._maxValue || (this._maxValue && range.max * 1.05 > this._maxValue)) {
+        if ((this._maxValue == null) || ((this._maxValue != null) && (range.max * 1.05 > this._maxValue))) {
             this._maxValue = range.max * 1.05; // get a little more head room to avoid hitting the ceiling
         }
+
+        this._updateMappedValues();
+
         if (this._minValue == 0 && this._maxValue == 0) {
             this._gridSpacing = { y: 0, value: 0 };
         } else { 
         	this._gridSpacing = this._calculateGridSpacing();
         }
-        this._updateMappedValues();
     },
 
     _updateMappedValues: function() {
-    	this._valueRange = this._maxValue - this._minValue
+    	this._valueRange = this._maxValue - this._minValue;
         this._mappedRange = this._map.direct(this._valueRange);
     },
 
@@ -73,7 +72,7 @@ Timeplot.DefaultValueGeometry.prototype = {
     toScreen: function(value) {
     	if (this._maxValue) {
 	        var v = value - this._minValue;
-	        return (this._canvas.height * this._map.direct(v)) / this._mappedRange;
+	        return this._canvas.height * (this._map.direct(v)) / this._mappedRange;
     	} else {
     		return 0;
     	}
@@ -190,34 +189,32 @@ Timeplot.DefaultTimeGeometry = function(params) {
 
 Timeplot.DefaultTimeGeometry.prototype = {
 
-    setTimeplot: function(timeplot) {
-        this._timeplot = timeplot;
-    },
-
-    setCanvas: function(canvas) {
-        this._canvas = canvas;
+    initialize: function(timeplot) {
+    	this._timeplot = timeplot;
+    	this._canvas = timeplot.getCanvas();
     },
 
     setRange: function(range) {
-        if (range.earliestDate && (!this._earliestDate || (this._earliestDate && range.earliestDate.getTime() < this._earliestDate.getTime()))) {
+        if (range.earliestDate && ((this._earliestDate == null) || ((this._earliestDate != null) && (range.earliestDate.getTime() < this._earliestDate.getTime())))) {
             this._earliestDate = range.earliestDate;
         }
-        if (range.latestDate && (!this._latestDate || (this._latestDate && range.latestDate.getTime() > this._latestDate.getTime()))) {
+        if (range.latestDate && ((this._latestDate == null) || ((this._latestDate != null) && (range.latestDate.getTime() > this._latestDate.getTime())))) {
             this._latestDate = range.latestDate;
         }
-        if (this._earliestDate && this._latestDate) {
+
+        if (!this._earliestDate && !this._latestDate) {
             this._gridSpacing = { y: 0, value: 0 };
         } else { 
+            this._updateMappedValues();
             this._gridSpacing = this._calculateGridSpacing();
         }
-        this._updateMappedValues();
     },
 
     _updateMappedValues: function() {
-        this._period = this._latestDate.getTime() - this._earliestDate.getTime();
-        this._mappedPeriod = this._map.direct(this._period);    	
+    	this._period = this._latestDate.getTime() - this._earliestDate.getTime();
+        this._mappedPeriod = this._map.direct(this._period);
     },
-    
+        
     _calculateGridSpacing: function() {
     	// fixme(SM): implement
         return {
@@ -229,14 +226,13 @@ Timeplot.DefaultTimeGeometry.prototype = {
     toScreen: function(time) {
         if (this._latestDate) {
             var t = time - this._earliestDate.getTime();
-            return (this._canvas.width * this._map.direct(t)) / this._mappedPeriod;
+            return this._canvas.width * this._map.direct(t) / this._mappedPeriod;
         } else {
             return 0;
         } 
     },
 
     fromScreen: function(x) {
-        var period = this._latestDate.getTime() - this._earliestDate.getTime();
         return this._map.inverse(this._mappedPeriod * x / this._canvas.width) + this._earliestDate.getTime(); 
     },
 
@@ -249,264 +245,192 @@ Timeplot.DefaultTimeGeometry.prototype = {
 
 // --------------------------------------------------------------
 
-Timeplot.FisheyeTimeGeometry = function(params) {
+Timeplot.MagnifyingTimeGeometry = function(params) {
     Timeplot.DefaultTimeGeometry.apply(this, arguments);
-    this._bsplineLevels = 3;
-    this._center = 0.5;
-    this._aperture = 0.1;
-    this._intensity = 0.4;
-    this.updateBSpline();
-    
-    var geometry = this;
-    this._fisheyeMap = {
-        direct: function(x) {
-        	var y = (x < geometry._center) ? geometry._leftSpline.getY(x) : geometry._rightSpline.getY(x);
-        	//log("x: " + x + " y: " + y);
-        	return y;
+        
+    var g = this;
+    this._MagnifyingMap = {
+        direct: function(t) {
+        	if (t < g._leftTimeMargin) {
+        		var x = t * g._leftRate;
+        	} else if ( g._leftTimeMargin < t && t < g._rightTimeMargin ) {
+        		var x = t * g._expandedRate + g._expandedTimeTranslation;
+        	} else {
+        		var x = t * g._rightRate + g._rightTimeTranslation;
+        	}
+        	return x;
         },
-        inverse: function(y) {
-            var x = (y < geometry._center) ? geometry._leftSpline.getX(y) : geometry._rightSpline.getX(y);
-            //log("y: " + y + " x: " + x);
-            return x;
+        inverse: function(x) {
+            if (x < g._leftScreenMargin) {
+                var t = x / g._leftRate;
+            } else if ( g._leftScreenMargin < x && x < g._rightScreenMargin ) {
+                var t = x / g._expandedRate + g._expandedScreenTranslation;
+            } else {
+                var t = x / g._rightRate + g._rightScreenTranslation;
+            }
+            return t;
         }
     }
-    this._mode = "fisheye";
-    this._map = this._fisheyeMap;
+
+    this._mode = "lin";
+    this._map = this._linMap;
 };
 
-Object.extend(Timeplot.FisheyeTimeGeometry.prototype,Timeplot.DefaultTimeGeometry.prototype);
+Object.extend(Timeplot.MagnifyingTimeGeometry.prototype,Timeplot.DefaultTimeGeometry.prototype);
 
-Timeplot.FisheyeTimeGeometry.prototype.setTimeplot = function(timeplot) {
-	this._timeplot = timeplot;
-	this._centerIndicator = this._timeplot.putDiv("timeplot-valueflag-pole");
-}
+Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
+    Timeplot.DefaultTimeGeometry.prototype.initialize.apply(this, arguments);
 
-Timeplot.FisheyeTimeGeometry.prototype.setCanvas = function(canvas) {
-	this._canvas = canvas;
+    if (!this._lens) {
+        this._lens = this._timeplot.putDiv("timeplot-lens");
+    }
+
+    var period = 1000 * 60 * 60 * 24 * 30; // a month in the magnifying lens
+
     var geometry = this;
+    
+    var magnifyWith = function(lens) {
+        var aperture = lens.clientWidth;
+        var loc = geometry._timeplot.locate(lens);
+        geometry.setMagnifyingParams(loc.x + aperture / 2, aperture, period);
+        geometry.actMagnifying();
+        geometry._timeplot.paint();
+    }
+    
+    var canvasMouseDown = function(elmt, evt, target) {
+        geometry._canvas.startCoords = SimileAjax.DOM.getEventRelativeCoordinates(evt,elmt);
+        geometry._canvas.pressed = true;
+    }
+    
+    var canvasMouseUp = function(elmt, evt, target) {
+        geometry._canvas.pressed = false;
+        var coords = SimileAjax.DOM.getEventRelativeCoordinates(evt,elmt);
+        if (Timeplot.Math.isClose(coords,geometry._canvas.startCoords,5)) {
+            geometry._lens.style.display = "none";
+            geometry.actLinear();
+            geometry._timeplot.paint();
+        } else {
+	        geometry._lens.style.cursor = "move";
+	        magnifyWith(geometry._lens);
+        }
+    }
 
-    var clickHandler = function(elmt, evt, target) {
-        if (geometry._mode == "fisheye") {
+    var canvasMouseMove = function(elmt, evt, target) {
+        if (geometry._canvas.pressed) {
             var coords = SimileAjax.DOM.getEventRelativeCoordinates(evt,elmt);
-            geometry._timeplot.placeDiv(geometry._centerIndicator, {
-                left: coords.x,
+            if (coords.x < 0) coords.x = 0;
+            if (coords.x > geometry._canvas.width) coords.x = geometry._canvas.width;
+            geometry._timeplot.placeDiv(geometry._lens, {
+                left: geometry._canvas.startCoords.x,
+                width: coords.x - geometry._canvas.startCoords.x,
                 bottom: 0,
                 height: geometry._canvas.height,
                 display: "block"
             });
-            geometry.setFisheyeCenter(coords.x);
-            geometry.setFisheyeAperture(0.1);
-            geometry.setFisheyeIntensity(0.4);
-            geometry.updateBSpline();
+            magnifyWith(geometry._lens);
         }
-    };
-            
-    SimileAjax.DOM.registerEvent(this._canvas, "click", clickHandler);
+    }
+
+    var lensMouseDown = function(elmt, evt, target) {
+        geometry._lens.startCoords = SimileAjax.DOM.getEventRelativeCoordinates(evt,elmt);;
+        geometry._lens.pressed = true; 
+    }
+    
+    var lensMouseUp = function(elmt, evt, target) {
+        geometry._lens.pressed = false;
+    }
+    
+    var lensMouseMove = function(elmt, evt, target) {
+        if (geometry._lens.pressed) {
+            var coords = SimileAjax.DOM.getEventRelativeCoordinates(evt,elmt);
+            var lens = geometry._lens;
+            var left = lens.offsetLeft + coords.x - lens.startCoords.x;
+            if (left < geometry._timeplot._paddingX) left = geometry._timeplot._paddingX;
+            if (left + lens.clientWidth > geometry._canvas.width - geometry._timeplot._paddingX) left = geometry._canvas.width - lens.clientWidth + geometry._timeplot._paddingX;
+            lens.style.left = left;
+            magnifyWith(lens);
+        }
+    }
+    
+    if (!this._canvas.instrumented) {
+        SimileAjax.DOM.registerEvent(this._canvas, "mousedown", canvasMouseDown);
+        SimileAjax.DOM.registerEvent(this._canvas, "mousemove", canvasMouseMove);
+        SimileAjax.DOM.registerEvent(this._canvas, "mouseup"  , canvasMouseUp);
+        SimileAjax.DOM.registerEvent(this._canvas, "mouseup"  , lensMouseUp);
+        this._canvas.instrumented = true;
+    }
+    
+    if (!this._lens.instrumented) {
+	    SimileAjax.DOM.registerEvent(this._lens, "mousedown", lensMouseDown);
+	    SimileAjax.DOM.registerEvent(this._lens, "mousemove", lensMouseMove);
+        SimileAjax.DOM.registerEvent(this._lens, "mouseup"  , lensMouseUp);
+    	SimileAjax.DOM.registerEvent(this._lens, "mouseup"  , canvasMouseUp);
+    	this._lens.instrumented = true;
+    }
 }
 
-Timeplot.FisheyeTimeGeometry.prototype.actLinear = function() {
+/**
+ * Set the Magnifying parameters. c is the location in pixels where the Magnifying
+ * center should be located in the timeplot, a is the aperture in pixel of
+ * the Magnifying and b is the time period in milliseconds that the Magnifying 
+ * should span.
+ */
+Timeplot.MagnifyingTimeGeometry.prototype.setMagnifyingParams = function(c,a,b) {
+    var a = a / 2;
+    var b = b / 2;
+
+    var w = this._canvas.width;
+    var d = this._period;
+
+    if (c < 0) c = 0;
+    if (c > w) c = w;
+    
+    if (c - a < 0) a = c;
+    if (c + a > w) a = w - c;
+    
+    var ct = this.fromScreen(c) - this._earliestDate.getTime();
+    if (ct - b < 0) b = ct;
+    if (ct + b > d) b = d - ct;
+
+    this._centerX = c;
+    this._centerTime = ct;
+    this._aperture = a;
+    this._aperturePeriod = b;
+    
+    this._leftScreenMargin = this._centerX - this._aperture;
+    this._rightScreenMargin = this._centerX + this._aperture;
+    this._leftTimeMargin = this._centerTime - this._aperturePeriod;
+    this._rightTimeMargin = this._centerTime + this._aperturePeriod;
+        
+    this._leftRate = (c - a) / (ct - b);
+    this._expandedRate = a / b;
+    this._rightRate = (w - c - a) / (d - ct - b);
+
+    this._expandedTimeTranslation = this._centerX - this._centerTime * this._expandedRate; 
+    this._expandedScreenTranslation = this._centerTime - this._centerX / this._expandedRate;
+    this._rightTimeTranslation = (c + a) - (ct + b) * this._rightRate;
+    this._rightScreenTranslation = (ct + b) - (c + a) / this._rightRate;
+
+    this._updateMappedValues();
+}
+
+Timeplot.MagnifyingTimeGeometry.prototype.actLinear = function() {
     this._mode = "lin";
     this._map = this._linMap;
     this._updateMappedValues();
 }
 
-Timeplot.FisheyeTimeGeometry.prototype.actFisheye = function() {
-    this._mode = "fisheye";
-    this._map = this._fisheyeMap;
+Timeplot.MagnifyingTimeGeometry.prototype.actMagnifying = function() {
+    this._mode = "Magnifying";
+    this._map = this._MagnifyingMap;
     this._updateMappedValues();
 }
 
-Timeplot.FisheyeTimeGeometry.prototype.toggle = function() {
-    if (this._mode == "fisheye") {
+Timeplot.MagnifyingTimeGeometry.prototype.toggle = function() {
+    if (this._mode == "Magnifying") {
         this.actLinear();
     } else {
-        this.actFisheye();
+        this.actMagnifying();
     }
 }
 
-Timeplot.FisheyeTimeGeometry.prototype.setFisheyeCenter = function(x) {
-	this._center = x / this._canvas.width;
-}
-
-Timeplot.FisheyeTimeGeometry.prototype.setFisheyeAperture = function(a) {
-    //this._aperture = a / this._canvas.width;
-    this._aperture = a;
-    while (this._center - this._aperture < 0 || this._center + this._aperture > 1) {
-    	if (this._center - this._aperture < 0) {
-    		this._aperture = this._center;
-    	}
-    	if (this._center + this._aperture > 1) {
-            this._aperture = 1 - this._center;
-    	}
-    }
-}
-
-Timeplot.FisheyeTimeGeometry.prototype.setFisheyeIntensity = function(b) {
-    //this._intensity = b / this._canvas.height;
-    this._intensity = b;
-    while (this._center - this._intensity < 0 || this._center + this._intensity > 1) {
-        if (this._center - this._intensity < 0) {
-            this._intensity = this._center;
-        }
-        if (this._center + this._intensity > 1) {
-            this._intensity = 1 - this._center;
-        }
-    }
-}
-
-Timeplot.FisheyeTimeGeometry.prototype.updateBSpline = function() {
-	var geometry = this;
-	var a = this._aperture;
-	var b = this._intensity;
-	var c = this._center;
-
-    this._leftSpline = new Timeplot.FisheyeTimeGeometry.BTree(); 
-	var leftSpline = function(t) {
-        var tt = 1 - t;
-        var ctt = c*t*t;
-        var ttt = 2*tt*t;
-        var x = ttt*(c-a) + ctt;
-        var y = ttt*(c-b) + ctt;
-        geometry._leftSpline.add(x,y);
-	}
-
-    this._rightSpline = new Timeplot.FisheyeTimeGeometry.BTree(); 
-    var rightSpline = function(t) {
-        var tt = 1 - t;
-        var ttt = 2*t*tt;
-        var tt2 = tt*tt;
-        var t2 = t*t;
-        var x = c*tt2 + ttt*(c + a) + t2;
-        var y = c*tt2 + ttt*(c + b) + t2;
-        geometry._rightSpline.add(x,y);
-    }
-
-    var process = function(f,level,begin,end) {
-    	var t = begin + (end - begin) / 2;
-    	f(t);
-    	if (level < geometry._bsplineLevels) {
-    		level++;
-    		process(f,level,begin,t);
-    		process(f,level,t,end);
-    	}
-    }
-    
-    process(leftSpline,0,0,1);
-    process(rightSpline,0,0,1);
-}
-
-// ---------------------------------------------------------
-
-Timeplot.FisheyeTimeGeometry.BTree = function() {
-}
-
-Timeplot.FisheyeTimeGeometry.BTree.prototype = {
-
-	add: function(x,y) {
-        var v = { x: x, y: y };
-		if (this._xRoot && this._yRoot) {
-			this._addX(this._xRoot, v);
-			this._addY(this._yRoot, v);
-		} else {
-			this._xRoot = v;
-            this._yRoot = v;
-		}
-	},
-    
-    _addX: function(node, v) {
-        if (v.x > node.x) {
-            if (node.bigger) {
-                this._addX(node.bigger,v);
-            } else {
-                node.bigger = v;
-            }
-        } else if (v.x < node.x) {
-            if (node.smaller) {
-                this._addX(node.smaller,v);
-            } else {
-                node.smaller = v;
-            }
-        } else {
-            // do nothing if the X value is already present
-        }
-    },
-
-    _addY: function(node, v) {
-        if (v.y > node.y) {
-            if (node.bigger) {
-                this._addY(node.bigger,v);
-            } else {
-                node.bigger = v;
-            }
-        } else if (v.y < node.y) {
-            if (node.smaller) {
-                this._addY(node.smaller,v);
-            } else {
-                node.smaller = v;
-            }
-        } else {
-            // do nothing if the Y value is already present
-        }
-    },
-    
-	getY: function(x) {
-		if (this._xRoot) {
-            var s = { x: 0, y: 0 };
-            var e = { x: 1, y: 1 };
-            return this._getY(x,this._xRoot,s,e);
-		} else {
-			return 1;
-		}
-	},
-
-    getX: function(y) {
-        if (this._yRoot) {
-        	var s = { x: 0, y: 0 };
-        	var e = { x: 1, y: 1 };
-            return this._getX(y,this._yRoot,s,e);
-        } else {
-            return 1;
-        }
-    },
-
-    _getY: function(x,node,s,e) {
-    	if (x > node.x) {
-    		if (node.bigger) {
-    			return this._getY(x,node.bigger,node,e);
-    		} else {
-    			s = node;
-    		}
-    	} else {
-    		if (node.smaller) {
-                return this._getY(x,node.smaller,s,node);
-    		} else {
-    			e = node;
-    		}
-    	}
-    	var dx = e.x - s.x;
-    	var dy = e.y - s.y;
-    	var y = (dy / dx) * (x - s.x);
-    	//log(x + " -> " + y);
-    	return y;
-    },
-    
-    _getX: function(y,node,s,e) {
-        if (y > node.y) {
-            if (node.bigger) {
-                return this._getX(y,node.bigger,node,e);
-            } else {
-                s = node;
-            }
-        } else {
-            if (node.smaller) {
-                return this._getX(y,node.smaller,s,node);
-            } else {
-                e = node;
-            }
-        }
-        var dx = e.x - s.x;
-        var dy = e.y - s.y;
-        var x = (dx / dy) * (y - s.y);
-        return x;
-    }
-}

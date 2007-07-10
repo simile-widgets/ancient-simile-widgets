@@ -14,7 +14,7 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, 
         return;
     }
 
-    this._events.maxValues = new Array
+    this._events.maxValues = new Array();
     var base = this._getBaseURL(url);
 
     var dateTimeFormat = 'iso8601';
@@ -31,12 +31,14 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, 
     if (data) {
         for (var i = 0; i < data.length; i++){
             var row = data[i];
-            var evt = new Timeplot.DefaultEventSource.NumericEvent(
-                parseDateTimeFunction(row[0]),
-                row.slice(1)
-            );
-            this._events.add(evt);
-            added = true;
+            if (row.length > 1) {
+		        var evt = new Timeplot.DefaultEventSource.NumericEvent(
+		            parseDateTimeFunction(row[0]),
+		            row.slice(1)
+		        );
+		        this._events.add(evt);
+		        added = true;
+            }
         }
     }
 
@@ -263,7 +265,7 @@ Timeplot.ColumnSource.prototype._process = function() {
 }
 
 Timeplot.ColumnSource.prototype._getValue = function(event) {
-    return parseInt(event.getValues()[this._column]);
+    return parseFloat(event.getValues()[this._column]);
 }
 
 // ---------------------------------------------------------------
@@ -280,7 +282,7 @@ Timeplot.ColumnDiffSource = function(eventSource, column1, column2) {
 Object.extend(Timeplot.ColumnDiffSource.prototype,Timeplot.ColumnSource.prototype);
 
 Timeplot.ColumnDiffSource.prototype._getValue = function(event) {
-    var a = parseInt(event.getValues()[this._column]);
-    var b = parseInt(event.getValues()[this._column2])
+    var a = parseFloat(event.getValues()[this._column]);
+    var b = parseFloat(event.getValues()[this._column2])
     return a - b;
 }
