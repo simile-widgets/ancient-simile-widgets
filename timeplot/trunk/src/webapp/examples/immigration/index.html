@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>SIMILE | Timeplot | Energy Pricing</title>
+    <title>SIMILE | Timeplot | Immigration</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
@@ -11,14 +11,14 @@
         }
          
         .label {
-            color: #666;
+            color: #91AA9D;
             margin-top: 0.5em;
             padding: 0.1em;
             font-family: 'verdana', 'helvetica', sans serif;
         }        
         
         .timeplot-grid-label {
-            color: #BBB;
+            color: #193441;
             font-family: 'verdana', 'helvetica', sans serif;
             font-size: 9px !important;
         }
@@ -32,11 +32,11 @@
     <script>
         var timeplot1;
 
-        var color1 = new Timeplot.Color('#FFD176');
-        var color2 = new Timeplot.Color('#FFB43D');
-        var color3 = new Timeplot.Color('#EB800F');
-        var color4 = new Timeplot.Color('#964D1D');
-        var color5 = new Timeplot.Color('#66463E');
+        var color1 = new Timeplot.Color('#FCFFF5');
+        var color2 = new Timeplot.Color('#D1DBBD');
+        var color3 = new Timeplot.Color('#91AA9D');
+        var color4 = new Timeplot.Color('#468966');
+        var color5 = new Timeplot.Color('#193441');
         var gridColor  = new Timeplot.Color('#FFE57F');
         
         function onLoad() {
@@ -46,6 +46,7 @@
             });
 
             var geometry1 = new Timeplot.DefaultValueGeometry({
+                gridColor: color3,
                 min: 0
             });
 
@@ -53,50 +54,32 @@
                 min: 0
             });
 
-            var geometry3 = new Timeplot.DefaultValueGeometry({
-                min: 0
-            });
-
             var eventSource1 = new Timeplot.DefaultEventSource();
             var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
-
-            var eventSource2 = new Timeplot.DefaultEventSource();
-            var dataSource2 = new Timeplot.ColumnSource(eventSource2,1);
-
-            var eventSource3 = new Timeplot.DefaultEventSource();
-            var dataSource3 = new Timeplot.ColumnSource(eventSource3,1);
+            var dataSource2 = new Timeplot.Processor(dataSource1,Timeplot.Operator.sum);
             
             var plotInfo1 = [
                 Timeplot.createPlotInfo({
-                    id: "Oil Imports",
+                    id: "Immigration Totals",
                     dataSource: dataSource2,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry2,
                     lineColor: color4,
+                    fillColor: color2,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
-                    id: "Gas Pricing",
+                    id: "Immigration",
                     dataSource: dataSource1,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry1,
                     lineColor: color5,
                     showValues: true
-                }),
-                Timeplot.createPlotInfo({
-                    id: "Electricity",
-                    dataSource: dataSource3,
-                    timeGeometry: timeGeometry,
-                    valueGeometry: geometry3,
-                    lineColor: color3,
-                    showValues: true
                 })
             ];
             
             timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
-            timeplot1.loadText("us-oil-import.txt", " ", eventSource1);
-            timeplot1.loadText("gasoline-price.txt", " ", eventSource2);
-            timeplot1.loadText("electricity.txt", " ", eventSource3);
+            timeplot1.loadText("immigration.txt", " ", eventSource1);
         }            
         
         var resizeTimerID = null;
@@ -116,15 +99,15 @@
   <li><a href="./" title="Home">SIMILE</a></li>
   <li><a href="../../">Timeplot</a></li>
   <li><a href="../">Examples</a></li>
-  <li><span>Energy Pricing</span></li>
+  <li><span>Immigration</span></li>
 </ul>
 
 <div id="body">
-    <h1>Energy Pricing</h1>
-    <div class="label"><span style="color: #964D1D;">US Oil Imports</span> vs. <span style="color: #66463E;">Gasoline Price</span> vs. <span style="color: #EB800F;">Electricity Price</span></div>
+	<h1>Immigration</h1>
+    <div class="label">Persons Obtaining Legal Permanent Resident Status in the U.S. [<span style="color: #193441;">per year</span> vs. <span style="color: #468966;">total</span>]</div>
     <div id="timeplot1" style="height: 300px" class="timeplot"></div>
-    <p class="sources">Source: <a href="http://www.bls.gov/data/">U.S. Department of Labor</a></p>
-    <p class="note">The indices have different dimensions and scales but here they have been normalized to better expose relationships in trends.
+    <p class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a></p>
+    <p class="note">The plots have different dimensions and scales but here they have been normalized to better expose relationships in trends.
     Move your mouse over the plots to obtain the individual values.</p> 
 </div>
     

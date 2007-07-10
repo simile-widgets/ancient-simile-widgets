@@ -32,11 +32,11 @@
     <script>
         var timeplot1;
 
-        var color1 = new Timeplot.Color('#FFD176');
-        var color2 = new Timeplot.Color('#FFB43D');
-        var color3 = new Timeplot.Color('#EB800F');
-        var color4 = new Timeplot.Color('#964D1D');
-        var color5 = new Timeplot.Color('#66463E');
+        var color1 = new Timeplot.Color('#FCFFF5');
+        var color2 = new Timeplot.Color('#D1DBBD');
+        var color3 = new Timeplot.Color('#91AA9D');
+        var color4 = new Timeplot.Color('#468966');
+        var color5 = new Timeplot.Color('#193441');
         var gridColor  = new Timeplot.Color('#FFE57F');
         
         function onLoad() {
@@ -73,15 +73,7 @@
                     dataSource: dataSource2,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry2,
-                    lineColor: color4,
-                    showValues: true
-                }),
-                Timeplot.createPlotInfo({
-                    id: "House Pricing Index",
-                    dataSource: dataSource1,
-                    timeGeometry: timeGeometry,
-                    valueGeometry: geometry1,
-                    lineColor: color5,
+                    lineColor: color3,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
@@ -89,7 +81,15 @@
                     dataSource: dataSource3,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry3,
-                    lineColor: color3,
+                    lineColor: color5,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "House Pricing Index",
+                    dataSource: dataSource1,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry1,
+                    lineColor: color4,
                     showValues: true
                 })
             ];
@@ -122,13 +122,11 @@
 
 <div id="body">
 	<h1>Housing vs. Stock Market</h1>
-	<p>This timeplot compares the evolution over time of three indices for the United States since 1975: 
-	monetary inflation, house pricing and industrial stock market performance.</p>
-    <div class="label"><span style="color: #964D1D;">Inflation</span> vs. <span style="color: #66463E;">Housing Price Index</span> vs. <span style="color: #EB800F;">Dow Jones Industrial Index</span></div>
+    <div class="label"><span style="color: #91AA9D;">Inflation</span> vs. <span style="color: #468966;">Housing Price Index</span> vs. <span style="color: #193441;">Dow Jones Industrial Index</span></div>
     <div id="timeplot1" style="height: 300px" class="timeplot"></div>
     <p class="sources">Sources: <a href="http://www.bls.gov/data/">U.S. Department of Labor</a>, <a href="">Office of Federal Housing Enterprise Oversight (OFHEO)</a> and <a href="http://www.djindexes.com/mdsidx/index.cfm?event=showavgIndexData">Dow Jones & Company</a></p>
-    <p class="note">The indices have different dimensions and scales but here they have been normalized to better expose relationshis in trends.
-    Move your mouse over the plots to obtain the individual values</p> 
+    <p class="note">The indices have different dimensions and scales but here they have been normalized to better expose relationships in trends.
+    Move your mouse over the plots to obtain the individual values.</p> 
 </div>
     
 </body>
