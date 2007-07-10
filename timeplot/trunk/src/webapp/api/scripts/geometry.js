@@ -327,7 +327,7 @@ Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
                 height: geometry._canvas.height,
                 display: "block"
             });
-            magnifyWith(geometry._lens);
+            //magnifyWith(geometry._lens);
         }
     }
 
