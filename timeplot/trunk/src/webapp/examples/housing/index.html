@@ -1,0 +1,108 @@
+<html>
+<head>
+    <title>SIMILE | Timeplot | US Housing</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+    
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+         
+        .label {
+            color: #666;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #BBB;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+        
+        .sources {
+            font-size: 90%;
+        }
+    </style>
+    
+    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <script>
+        var timeplot1;
+
+        var quietLine  = new Timeplot.Color('#82A6A2');
+        var loudLine   = new Timeplot.Color('#284452');
+        var lightFill  = new Timeplot.Color('#DEE5D1');
+        var gridColor  = new Timeplot.Color('#B0B0B0');
+        
+        function onLoad() {
+
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor,
+                min: "1975-01-01",
+            });
+
+            var geometry1 = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                min: 0
+            });
+
+            var eventSource1 = new Timeplot.DefaultEventSource();
+            var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
+
+            var eventSource2 = new Timeplot.DefaultEventSource();
+            var dataSource2 = new Timeplot.ColumnSource(eventSource2,1);
+            
+            var plotInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "House Pricing Index",
+                    dataSource: dataSource1,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry1,
+                    lineColor: loudLine,
+                }),
+                Timeplot.createPlotInfo({
+                    id: "Inflation",
+                    dataSource: dataSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry1,
+                    lineColor: quietLine,
+                })
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
+            timeplot1.loadText("house_pricing_index.txt", " ", eventSource1);
+            timeplot1.loadText("us-inflation.txt", " ", eventSource2);
+        }            
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                }, 0);
+            }
+        }
+    </script>
+</head>
+<body onload="onLoad();" onresize="onResize();">
+<!-- include virtual="sidebar.html" -->
+<ul id="path">
+  <li><a href="./" title="Home">SIMILE</a></li>
+  <li><a href="../../">Timeplot</a></li>
+  <li><a href="../">Examples</a></li>
+  <li><span>US Housing</span></li>
+</ul>
+
+<div id="body">
+	<h1>US Housing</h1>
+    <div class="label">Housing Price Index vs. Inflation</div>
+    <div id="timeplot1" style="height: 300px" class="timeplot"></div>
+    <p class="sources">Sources: <a href="">Office of Federal Housing Enterprise Oversight (OFHEO)</a> and <a href="http://www.bls.gov/data/">U.S. Department of Labor</a></p>
+</div>
+    
+</body>
+</html>
