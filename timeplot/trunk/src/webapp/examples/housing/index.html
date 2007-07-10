@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>SIMILE | Timeplot | US Housing</title>
+    <title>SIMILE | Timeplot | Houses vs. Stock Market</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
@@ -32,20 +32,29 @@
     <script>
         var timeplot1;
 
-        var quietLine  = new Timeplot.Color('#82A6A2');
-        var loudLine   = new Timeplot.Color('#284452');
-        var lightFill  = new Timeplot.Color('#DEE5D1');
-        var gridColor  = new Timeplot.Color('#B0B0B0');
+        var color1 = new Timeplot.Color('#FFD176');
+        var color2 = new Timeplot.Color('#FFB43D');
+        var color3 = new Timeplot.Color('#EB800F');
+        var color4 = new Timeplot.Color('#964D1D');
+        var color5 = new Timeplot.Color('#66463E');
+        var gridColor  = new Timeplot.Color('#FFE57F');
         
         function onLoad() {
 
             var timeGeometry = new Timeplot.DefaultTimeGeometry({
                 gridColor: gridColor,
-                min: "1975-01-01",
+                min: "1975-01-01"
             });
 
             var geometry1 = new Timeplot.DefaultValueGeometry({
-                gridColor: gridColor,
+                min: 0
+            });
+
+            var geometry2 = new Timeplot.DefaultValueGeometry({
+                min: 0
+            });
+
+            var geometry3 = new Timeplot.DefaultValueGeometry({
                 min: 0
             });
 
@@ -54,27 +63,41 @@
 
             var eventSource2 = new Timeplot.DefaultEventSource();
             var dataSource2 = new Timeplot.ColumnSource(eventSource2,1);
+
+            var eventSource3 = new Timeplot.DefaultEventSource();
+            var dataSource3 = new Timeplot.ColumnSource(eventSource3,1);
             
             var plotInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "Inflation",
+                    dataSource: dataSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry2,
+                    lineColor: color4,
+                    showValues: true
+                }),
                 Timeplot.createPlotInfo({
                     id: "House Pricing Index",
                     dataSource: dataSource1,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry1,
-                    lineColor: loudLine,
+                    lineColor: color5,
+                    showValues: true
                 }),
                 Timeplot.createPlotInfo({
-                    id: "Inflation",
-                    dataSource: dataSource2,
+                    id: "Down Jones Index",
+                    dataSource: dataSource3,
                     timeGeometry: timeGeometry,
-                    valueGeometry: geometry1,
-                    lineColor: quietLine,
+                    valueGeometry: geometry3,
+                    lineColor: color3,
+                    showValues: true
                 })
             ];
             
             timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
             timeplot1.loadText("house_pricing_index.txt", " ", eventSource1);
             timeplot1.loadText("us-inflation.txt", " ", eventSource2);
+            timeplot1.loadText("dow-jones-index.txt", " ", eventSource3);
         }            
         
         var resizeTimerID = null;
@@ -94,14 +117,18 @@
   <li><a href="./" title="Home">SIMILE</a></li>
   <li><a href="../../">Timeplot</a></li>
   <li><a href="../">Examples</a></li>
-  <li><span>US Housing</span></li>
+  <li><span>Houses vs. Stock Market</span></li>
 </ul>
 
 <div id="body">
-	<h1>US Housing</h1>
-    <div class="label">Housing Price Index vs. Inflation</div>
+	<h1>Housing vs. Stock Market</h1>
+	<p>This timeplot compares the evolution over time of three indices for the United States since 1975: 
+	monetary inflation, house pricing and industrial stock market performance.</p>
+    <div class="label"><span style="color: #964D1D;">Inflation</span> vs. <span style="color: #66463E;">Housing Price Index</span> vs. <span style="color: #EB800F;">Dow Jones Industrial Index</span></div>
     <div id="timeplot1" style="height: 300px" class="timeplot"></div>
-    <p class="sources">Sources: <a href="">Office of Federal Housing Enterprise Oversight (OFHEO)</a> and <a href="http://www.bls.gov/data/">U.S. Department of Labor</a></p>
+    <p class="sources">Sources: <a href="http://www.bls.gov/data/">U.S. Department of Labor</a>, <a href="">Office of Federal Housing Enterprise Oversight (OFHEO)</a> and <a href="http://www.djindexes.com/mdsidx/index.cfm?event=showavgIndexData">Dow Jones & Company</a></p>
+    <p class="note">The indices have different dimensions and scales but here they have been normalized to better expose relationshis in trends.
+    Move your mouse over the plots to obtain the individual values</p> 
 </div>
     
 </body>
