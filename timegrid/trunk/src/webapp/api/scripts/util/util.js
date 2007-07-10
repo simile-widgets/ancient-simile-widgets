@@ -9,6 +9,8 @@ Timegrid.abstract = function(name) {
     };
 };
 
+SimileAjax.DateTime.DAYS_CF        = 86400000;
+
 SimileAjax.DateTime.Interval = function(ms) {
     // Conversion factors as varants to eliminate all the multiplication
     var SECONDS_CF     = 1000;
@@ -27,7 +29,7 @@ SimileAjax.DateTime.Interval = function(ms) {
     this.seconds      = Math.round(this.milliseconds / SECONDS_CF); 
     this.minutes      = Math.round(this.milliseconds / MINUTES_CF);
     this.hours        = Math.round(this.milliseconds / HOURS_CF);
-    this.days         = Math.round(this.milliseconds / DAYS_CF);
+    this.days         = Math.floor(this.milliseconds / DAYS_CF);
     this.weeks        = Math.round(this.milliseconds / WEEKS_CF);
     this.fortnights   = Math.round(this.milliseconds / FORTNIGHTS_CF);
     this.months       = Math.round(this.milliseconds / MONTHS_CF);

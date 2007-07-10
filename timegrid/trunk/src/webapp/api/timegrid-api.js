@@ -35,7 +35,8 @@
             "layouts.js",
 
             "layouts/weekly.js",
-            "layouts/monthly.js"
+            "layouts/monthly.js",
+            "layouts/nday.js"
         ];
         var cssFiles = [
             "timegrid.css",

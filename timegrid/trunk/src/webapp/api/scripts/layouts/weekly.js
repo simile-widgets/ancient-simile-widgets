@@ -37,7 +37,7 @@ Timegrid.WeekLayout = function(eventSource, params) {
     this.endTime = Timegrid.WeekLayout.getEndOfWeek(this.startTime); 
     this.initializeGrid();
 };
-$.inherit(Timegrid.WeekLayout, Timegrid.Layout);
+Timegrid.LayoutFactory.registerLayout("week", Timegrid.WeekLayout);
 
 Timegrid.WeekLayout.prototype.initializeGrid = function() {
     this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize, 

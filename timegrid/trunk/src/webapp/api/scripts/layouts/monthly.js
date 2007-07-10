@@ -34,7 +34,7 @@ Timegrid.MonthLayout = function(eventSource, params) {
     
     this.initializeGrid();
 };
-$.inherit(Timegrid.MonthLayout, Timegrid.Layout);
+Timegrid.LayoutFactory.registerLayout("month", Timegrid.MonthLayout);
 
 Timegrid.MonthLayout.prototype.initializeGrid = function() {
     this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize, 

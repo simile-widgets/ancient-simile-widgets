@@ -15,6 +15,13 @@
  */
 Timegrid.LayoutFactory = function() {};
 
+Timegrid.LayoutFactory._constructors = {};
+
+Timegrid.LayoutFactory.registerLayout = function(name, constructor) {
+    $.inherit(constructor, Timegrid.Layout);
+    Timegrid.LayoutFactory._constructors[name] = constructor;
+};
+
 /**
  * Instantiates a Timegrid layout with the given parameter hash.
  *
@@ -24,8 +31,7 @@ Timegrid.LayoutFactory = function() {};
  * @return {Timegrid.Layout} a Timegrid.Layout instance of the specified subclass
  */
 Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
-    var constructor = Timegrid[$.capitalize($.trim(name)) + 'Layout'];
-    var layout;
+    var constructor = Timegrid.LayoutFactory._constructors[name];
     if (typeof constructor == 'function') {
         layout = new constructor(eventSource, params);
         return layout;

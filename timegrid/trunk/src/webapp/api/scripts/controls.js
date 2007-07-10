@@ -70,16 +70,16 @@ Timegrid.Controls.TabSet.prototype.switchTo = function(title) {
     } else if (this._layoutMap[title]) {
         this._renderedLayouts[title] = $(this._layoutMap[title].render(this._container)).show();
     }
+    if (this._iDiv) {
+        this._iDiv.empty();
+    }
     if (this._layoutMap[title].iterable) {
         if (!this._iterators[title]) {
-            console.log(this._iterators);
             this._iterators[title] = new Timegrid.Controls.Iterator(this._layoutMap[title]);
             this._iDiv = $(this._iterators[title].render(this._container));
         } else {
             this._iDiv = $(this._iterators[title].render());
         }
-    } else if (this._iDiv) {
-        this._iDiv.empty();
     }
     this.current = title;
     this._tabs[this.current].addClass('timegrid-tab-active');
