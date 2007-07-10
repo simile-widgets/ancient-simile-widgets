@@ -2652,8 +2652,7 @@ mimetypeToReader:{
 "application/xls":"xls",
 "application/x-xls":"xls",
 
-"application/x-bibtex":"bibtex",
-"text/html":"html"
+"application/x-bibtex":"bibtex"
 }
 };
 
@@ -2666,7 +2665,6 @@ Exhibit.importers["application/x-excel"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/xls"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/x-xls"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/x-bibtex"]=Exhibit.BabelBasedImporter;
-Exhibit.importers["text/html"]=Exhibit.BabelBasedImporter;
 
 Exhibit.BabelBasedImporter.load=function(link,database,cont){
 var url=(typeof link=="string")?
@@ -2684,38 +2682,14 @@ reader=Exhibit.BabelBasedImporter.mimetypeToReader[mimetype];
 if(reader=="bibtex"){
 writer="bibtex-exhibit-jsonp";
 }
-if(reader=="html"){
-var xpath=link.getAttribute('ex:xpath');
-var columns=(link.getAttribute('ex:columns')).split(',');
-var babelURL="http://simile.mit.edu/babel/html-extractor?"+[
-"xpath="+xpath,
-"url="+encodeURIComponent(url)
-].join("&");
-var fConvert=function(string){
-var div=document.createElement("div");
-div.innerHTML=string;
-var table=div.firstChild;
 
-var th,ths=table.getElementsByTagName("th");
-for(col=0;th=ths[col];col++){
-var label=columns[col];
-th.setAttribute('ex:name',label);
-}
-
-Exhibit.HtmlTableImporter.loadTable(table,database);
-return{};
-}
-}else{
 var babelURL="http://simile.mit.edu/babel/translator?"+[
 "reader="+reader,
 "writer="+writer,
 "url="+encodeURIComponent(url)
 ].join("&");
-var fConvert=null;
-}
 
-
-return Exhibit.JSONPImporter.load(babelURL,database,cont,fConvert);
+return Exhibit.JSONPImporter.load(babelURL,database,cont);
 };
 
 
@@ -2771,15 +2745,44 @@ Exhibit.HtmlTableImporter={
 Exhibit.importers["text/html"]=Exhibit.HtmlTableImporter;
 
 Exhibit.HtmlTableImporter.load=function(link,database,cont){
+var url=typeof link=="string"?link:link.href;
+if(url.substr(0,1)=="#"){
 try{
-var id=/#(.*)/.exec(typeof link=="string"?link:link.href)[1];
+var id=/#(.*)/.exec(f)[1];
 var table=document.getElementById(id);
 table.style.display="none";
 
 Exhibit.HtmlTableImporter.loadTable(table,database);
 }catch(e){
-window.console&&console.log&&console.log(e);
+SimileAjax.Debug.exception(e);
 }finally{
+if(cont){
+cont();
+}
+}
+}else if(typeof link!="string"){
+var xpath=link.getAttribute('ex:xpath');
+var columns=(link.getAttribute('ex:columns')).split(',');
+var babelURL="http://simile.mit.edu/babel/html-extractor?"+[
+"xpath="+xpath,
+"url="+encodeURIComponent(url)
+].join("&");
+var fConvert=function(string){
+var div=document.createElement("div");
+div.innerHTML=string;
+var table=div.firstChild;
+
+var th,ths=table.getElementsByTagName("th");
+for(col=0;th=ths[col];col++){
+var label=columns[col];
+th.setAttribute('ex:name',label);
+}
+
+Exhibit.HtmlTableImporter.loadTable(table,database);
+return{};
+}
+return Exhibit.JSONPImporter.load(babelURL,database,cont,fConvert);
+}else{
 if(cont){
 cont();
 }
