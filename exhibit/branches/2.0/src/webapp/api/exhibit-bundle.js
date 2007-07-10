@@ -2652,7 +2652,8 @@ mimetypeToReader:{
 "application/xls":"xls",
 "application/x-xls":"xls",
 
-"application/x-bibtex":"bibtex"
+"application/x-bibtex":"bibtex",
+"text/html":"html"
 }
 };
 
@@ -2665,6 +2666,7 @@ Exhibit.importers["application/x-excel"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/xls"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/x-xls"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/x-bibtex"]=Exhibit.BabelBasedImporter;
+Exhibit.importers["text/html"]=Exhibit.BabelBasedImporter;
 
 Exhibit.BabelBasedImporter.load=function(link,database,cont){
 var url=(typeof link=="string")?
@@ -2682,14 +2684,38 @@ reader=Exhibit.BabelBasedImporter.mimetypeToReader[mimetype];
 if(reader=="bibtex"){
 writer="bibtex-exhibit-jsonp";
 }
+if(reader=="html"){
+var xpath=link.getAttribute('ex:xpath');
+var columns=(link.getAttribute('ex:columns')).split(',');
+var babelURL="http://simile.mit.edu/babel/html-extractor?"+[
+"xpath="+xpath,
+"url="+encodeURIComponent(url)
+].join("&");
+var fConvert=function(string){
+var div=document.createElement("div");
+div.innerHTML=string;
+var table=div.firstChild;
 
+var th,ths=table.getElementsByTagName("th");
+for(col=0;th=ths[col];col++){
+var label=columns[col];
+th.setAttribute('ex:name',label);
+}
+
+Exhibit.HtmlTableImporter.loadTable(table,database);
+return{};
+}
+}else{
 var babelURL="http://simile.mit.edu/babel/translator?"+[
 "reader="+reader,
 "writer="+writer,
 "url="+encodeURIComponent(url)
 ].join("&");
+var fConvert=null;
+}
 
-return Exhibit.JSONPImporter.load(babelURL,database,cont);
+
+return Exhibit.JSONPImporter.load(babelURL,database,cont,fConvert);
 };
 
 
@@ -6762,6 +6788,14 @@ for(var n in settings){
 context._settings[n]=settings[n];
 }
 
+var formats=Exhibit.getAttribute(document.body,"formats");
+if(formats!=null&&formats.length>0){
+Exhibit.FormatParser.parseSeveral(context,formats,0,{});
+}
+
+Exhibit.SettingsUtilities.collectSettingsFromDOM(
+document.body,Exhibit.UIContext._settingSpecs,context._settings);
+
 Exhibit.UIContext._configure(context,configuration);
 
 return context;
@@ -6876,8 +6910,7 @@ return context;
 
 Exhibit.UIContext._settingSpecs={
 "bubbleWidth":{type:"int"},
-"bubbleHeight":{type:"int"},
-"locale":{type:"text"}
+"bubbleHeight":{type:"int"}
 };
 
 Exhibit.UIContext._configure=function(context,configuration,ignoreLenses){

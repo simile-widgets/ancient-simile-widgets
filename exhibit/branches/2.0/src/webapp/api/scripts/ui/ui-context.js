@@ -23,6 +23,14 @@ Exhibit.UIContext.createRootContext = function(configuration, exhibit) {
         context._settings[n] = settings[n];
     }
     
+    var formats = Exhibit.getAttribute(document.body, "formats");
+    if (formats != null && formats.length > 0) {
+        Exhibit.FormatParser.parseSeveral(context, formats, 0, {});
+    }
+    
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(
+        document.body, Exhibit.UIContext._settingSpecs, context._settings);
+        
     Exhibit.UIContext._configure(context, configuration);
     
     return context;
@@ -143,8 +151,7 @@ Exhibit.UIContext._createWithParent = function(parent) {
 
 Exhibit.UIContext._settingSpecs = {
     "bubbleWidth":      { type: "int" },
-    "bubbleHeight":     { type: "int" },
-    "locale":           { type: "text" }
+    "bubbleHeight":     { type: "int" }
 };
 
 Exhibit.UIContext._configure = function(context, configuration, ignoreLenses) {
