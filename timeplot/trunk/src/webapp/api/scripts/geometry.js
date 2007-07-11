@@ -174,8 +174,8 @@ Timeplot.DefaultTimeGeometry = function(params) {
     this._id = ("id" in params) ? params.id : "g" + Math.round(Math.random() * 1000000);
     this._axisColor = ("axisColor" in params) ? params.axisColor : new Timeplot.Color("#606060");
     this._gridColor = ("gridColor" in params) ? params.gridColor : null;
-    this._earliestDate = ("earliestDate" in params) ? params.earliestDate : null;
-    this._latestDate = ("latestDate" in params) ? params.earliestDate : null;
+    this._min = ("min" in params) ? params.min : null;
+    this._max = ("max" in params) ? params.max : null;
     this._linMap = {
         direct: function(t) {
             return t;
@@ -192,13 +192,25 @@ Timeplot.DefaultTimeGeometry.prototype = {
     initialize: function(timeplot) {
     	this._timeplot = timeplot;
     	this._canvas = timeplot.getCanvas();
+        var dateParser = this._timeplot.getUnit().getParser("iso8601");
+	    if (this._min && !this._min.getTime) {
+	    	this._min = dateParser(this._min);
+	    }
+        if (this._max && !this._max.getTime) {
+            this._max = dateParser(this._max);
+        }
     },
 
     setRange: function(range) {
-        if (range.earliestDate && ((this._earliestDate == null) || ((this._earliestDate != null) && (range.earliestDate.getTime() < this._earliestDate.getTime())))) {
+    	if (this._min) {
+    		this._earliestDate = this._min;
+    	} else if (range.earliestDate && ((this._earliestDate == null) || ((this._earliestDate != null) && (range.earliestDate.getTime() < this._earliestDate.getTime())))) {
             this._earliestDate = range.earliestDate;
         }
-        if (range.latestDate && ((this._latestDate == null) || ((this._latestDate != null) && (range.latestDate.getTime() > this._latestDate.getTime())))) {
+        
+        if (this._max) {
+        	this._latestDate = this._max;
+        } else if (range.latestDate && ((this._latestDate == null) || ((this._latestDate != null) && (range.latestDate.getTime() > this._latestDate.getTime())))) {
             this._latestDate = range.latestDate;
         }
 
@@ -327,7 +339,6 @@ Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
                 height: geometry._canvas.height,
                 display: "block"
             });
-            //magnifyWith(geometry._lens);
         }
     }
 
