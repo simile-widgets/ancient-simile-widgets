@@ -1,0 +1,109 @@
+<html>
+<head>
+    <title>SIMILE | Timeplot | George W. Bush Ratings</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+    
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+         
+        .label {
+            color: #91AA9D;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #193441;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+        
+        .sources {
+            font-size: 90%;
+        }
+    </style>
+    
+    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <script>
+        var timeplot1;
+
+        var color1 = new Timeplot.Color('#FCFFF5');
+        var color2 = new Timeplot.Color('#D1DBBD');
+        var color3 = new Timeplot.Color('#91AA9D');
+        var color4 = new Timeplot.Color('#468966');
+        var color5 = new Timeplot.Color('#193441');
+        var gridColor  = new Timeplot.Color('#FFE57F');
+        
+        function onLoad() {
+
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor
+            });
+
+            var geometry1 = new Timeplot.DefaultValueGeometry({
+                gridColor: color3,
+                max: 100,
+                min: 0
+            });
+
+            var eventSource1 = new Timeplot.DefaultEventSource();
+            var eventSource2 = new Timeplot.DefaultEventSource();
+            var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
+            
+            var plotInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "Ratings",
+                    dataSource: dataSource1,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry1,
+                    lineColor: color5,
+                    fillColor: color2,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry1,
+                    lineColor: color5
+                })                
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
+            timeplot1.loadText("bush_ratings.txt", ",", eventSource1);
+            timeplot1.loadXML("bush_events.xml", eventSource2);
+        }            
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                }, 0);
+            }
+        }
+    </script>
+</head>
+<body onload="onLoad();" onresize="onResize();">
+<!-- include virtual="sidebar.html" -->
+<ul id="path">
+  <li><a href="./" title="Home">SIMILE</a></li>
+  <li><a href="../../">Timeplot</a></li>
+  <li><a href="../">Examples</a></li>
+  <li><span>George W. Bush Ratings</span></li>
+</ul>
+
+<div id="body">
+	<h1>George W. Bush Ratings</h1>
+    <div id="timeplot1" style="height: 300px" class="timeplot"></div>
+    <p class="sources">Source: <a href="http://www.pollingreport.com/BushJob1.htm">NBC News/Wall Street Journal</a></p>
+</div>
+    
+</body>
+</html>
