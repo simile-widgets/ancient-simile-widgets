@@ -3,28 +3,167 @@
     <title>SIMILE | Timeplot</title>
     <link rel='stylesheet' href='styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+        
+    <script src="api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <script>
+        var timeplot1;
+
+        var quietLine  = new Timeplot.Color('#82A6A2');
+        var loudLine   = new Timeplot.Color('#284452');
+        var lightFill  = new Timeplot.Color('#DEE5D1');
+        var gridColor  = new Timeplot.Color('#B0B0B0');
+        
+        function onLoad() {
+            if (document.location.toString().match(/^http\:\/\/simile.mit.edu.*$/)) {
+                var dataURL = "http://simile.mit.edu/history/data/webstats.data";
+                var eventsURL = "http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=6";
+            } else {
+                var dataURL = "examples/simile/data.txt";
+                var eventsURL = "examples/simile/events.xml";
+            } 
+        
+            var dataFilter = function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    row[0] = row[0].replace(/\//g,"-");
+                }
+                return data;
+            };
+            
+            var eventSource = new Timeplot.DefaultEventSource();
+            var eventSource2 = new Timeplot.DefaultEventSource();
     
-    <style>
-        body {
-            background-color: #fff;
+            var webTraffic = new Timeplot.ColumnSource(eventSource,2);
+            var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
+            var webGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                min: 0
+            });
+            
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor
+            });
+            
+            var plotsInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "web clean",
+                    dataSource: webTraffic,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: webGeometry,
+                    lineColor: quietLine,
+                    fillColor: lightFill,
+                }),
+                Timeplot.createPlotInfo({
+                    id: "web clean avg",
+                    dataSource: avgWebTraffic,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: webGeometry,
+                    lineColor: loudLine,
+                    showValues: true,
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: webGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotsInfo1);
+            timeplot1.loadText(dataURL, " ", eventSource, dataFilter);
+            timeplot1.loadXML(eventsURL, eventSource2);
         }
-    </style>
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                }, 0);
+            }
+        }
+    </script>
 </head>
-<body>
-<!-- include virtual="sidebar.html" -->
+<body onload="onLoad();" onresize="onResize()">
+<!--#include virtual="sidebar.html" -->
 <ul id="path">
-  <li><a href="./" title="Home">SIMILE</a></li>
+  <li><a href="../" title="Home">SIMILE</a></li>
   <li><span>Timeplot</span></li>
 </ul>
 
 <div id="body">
     <h1>Timeplot</h1>
-    <h2>Examples</h2>
+
+    <p>Timeplot is a DHTML-based AJAXy widget for plotting time series and overlay
+       time-based events (with the same data formats that <a href="http://simile.mit.edu/timeline/">Timeline</a> supports).
+       Below is a live example that shows our web server load over the history of the project with
+       major events overlayed (the data is generated live from our server logs and the events from
+       our blog posts tagged in a special category).
+    </p>
+
+    <div id="timeplot1" class="timeplot" style="height: 200px; margin: 2em;"></div>
+    
+    <p>Just like Timeline or Google Maps, Timeplot can be used with zero software installation,
+       server-side or client-side. You can populate Timeplot with data by pointing it to an 
+       space or comma separated file (here is the <a href="http://simile.mit.edu/history/data/webstats.data">data file</a> for 
+       the timeplot above). Timeplot also supports Timeline's XML format, meaning that you can 
+       reuse the same data file of your Timeline and overlay them over a time series plot
+       (here is the <a href="http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=6">event file</a> for the timeplot above, generated directly out of our WordPress blog
+       in the timeline XML format)
+    </p>
+
+    <h2>Live Examples</h2>
+    
     <ul>
-     <li><a href="./examples/simile/index.html">SIMILE Stats</a></li>
-     <li><a href="./examples/simile/magnify.html">Magnifying Stats</a></li>
-     <li><a href="./examples/energy/index.html">US Energy</a></li>
+     <li><a href="examples/energy/index.html">Energy Prices in the U.S. since 1975</a>: this timeplot shows how the cost of gasoline in the US is strongly correlated with oil import from foreign countries, while the cost of electricity is not as strongly correlated.</li>
+     <li><a href="examples/housing/index.html">Housing vs. Stock Market in the U.S. since 1975</a>: this timeplot shows the trends of growth for two of the biggest investment sectors in the U.S., housing and the stock market, in relationship with monetary inflation.</li>
+     <li><a href="examples/immigration/index.html">Immigration in the U.S. since 1820</a>: this timeplot shows the amount of people that legally obtained permanent residency in the U.S. over almost 200 years.</li>
+     <li><a href="examples/bush/index.html">George W. Bush Approval Ratings</a>: this timeplot shows the sampled approval ratings of George W. Bush's job as president of the U.S. over his 2 terms until until today.</li>
+     <li><a href="examples/simile/index.html">SIMILE Project Statistics</a>: this series of timeplots shows the statistics of the SIMILE project collected by analyzing web server and mail server logs.</li>
+     <li><a href="examples/simile/magnify.html">Magnifying Stats</a>: this example shows how Timeplot can use flexible and interactive geometries to provide zooming capabilities.</li>
     </ul>
+    
+    <h2>Related Projects</h2>
+    <ul>
+        <li><a href="http://simile.mit.edu/timeline/">Timeline</a>: Timeline is a DHTML-based AJAXy widget 
+           for visualizing time-based events. It is like Google Maps for time-based information.
+        </li>
+    </ul>
+        
+    <h2>Feedback / Contribute</h2>
+    <ul>
+        <li>Send questions/comments/ideas/discussions/etc. to our 
+            <a href="mailto:general@simile.mit.edu">mailing list</a>
+            (<a href="http://simile.mit.edu/mailman/listinfo/general">archive/sign-up</a>)
+        </li>
+        <li>Contribute to Timeline's <a href="http://simile.mit.edu/wiki/Timeplot">wiki</a>
+        </li>
+
+        <li>Log bugs/issues in our <a href="http://simile.mit.edu/issues/browse/TIMEPLOT">issue tracker</a> 
+            (<a href="http://simile.mit.edu/issues/secure/Signup!default.jspa">sign-up</a>)
+        </li>
+    </ul>
+    
+    <h2>Documentation</h2>
+    <ul>
+        <li><a href="docs/">How to create a Timeplot (a step-by-step tutorial)</a></li>
+        <li><a href="http://simile.mit.edu/wiki/Timeplot">Wiki</a> docs</li>
+        <li><a href="http://simile.mit.edu/repository/timeplot/">Code on SVN repository</a></li>
+    </ul>
+    
+    <h2>Licensing</h2>
+    <p>Timeplot is open source software and is licensed under the 
+        <a href="http://simile.mit.edu/license.html">BSD license</a>.</p>
+    </p>
+    
+    <h2>Credits</h2>
+    <p>This software was created and its maintained by the SIMILE project, in particular:
+        <ul>
+            <li><a href="http://www.betaversion.org/~stefano/">Stefano Mazzocchi</a>, &lt;stefanom @ mit.edu&gt;</li>
+        </ul>
+    </p>
 </div>
     
 </body>
