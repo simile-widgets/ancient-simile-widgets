@@ -32,10 +32,12 @@
     <script>
         var timeplot1;
 
-        var red = new Timeplot.Color('#8E2800');
+        var red = new Timeplot.Color('#B9121B');
         var blue = new Timeplot.Color('#193441');
         var green = new Timeplot.Color('#468966');
-        var gridColor  = new Timeplot.Color('#FFE57F');
+        var lightGreen = new Timeplot.Color('#5C832F');
+        
+        var gridColor  = new Timeplot.Color('#303030');
         
         function onLoad() {
 
@@ -45,6 +47,7 @@
 
             var geometry1 = new Timeplot.DefaultValueGeometry({
                 gridColor: gridColor,
+                axisLabelsPlacement: "left",
                 min: 0
             });
 
@@ -67,7 +70,8 @@
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry2,
                     lineColor: green,
-                    showValues: true
+                    dotColor: lightGreen,
+                    //showValues: true
                 }),
                 Timeplot.createPlotInfo({
                     id: "Immigration",
@@ -75,6 +79,7 @@
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry1,
                     lineColor: blue,
+                    dotColor: blue,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
