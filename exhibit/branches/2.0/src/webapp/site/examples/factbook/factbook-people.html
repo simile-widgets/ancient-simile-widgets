@@ -1,0 +1,128 @@
+    <html>
+    <head>
+        <title>CIA World Factbook - People</title>
+
+        <link href="countries.js" type="application/json" rel="exhibit/data" />
+        <link href="people.js" type="application/json" rel="exhibit/data" />
+        <link href="government.js" type="application/json" rel="exhibit/data" />
+
+        <script src="../../../api/exhibit-api.js?bundle=false"
+            type="text/javascript"></script>
+        <script src="../../../extensions/chart/chart-extension.js?bundle=false"
+            type="text/javascript"></script>
+        <!--script src="http://dfhuynh.csail.mit.edu:8888/exhibit/api/exhibit-api.js?bundle=false" type="text/javascript"></script-->
+
+        <style>
+            body {
+                font-family:    Tahoma, Arial, sans serif;
+                font-size:      8pt;
+                margin:         0;
+                padding:        0;
+            }
+            table {
+                font-size:      100%;
+            }
+            tr {
+                vertical-align: top;
+            }
+            #title-area {
+                padding:        1em 2em;
+                background:     #BCB79E;
+            }
+            #content-area {
+                margin: 2em;
+            }
+
+            #languages-facet div.exhibit-facet-body {
+                height: 50em;
+            }
+            #members-facet div.exhibit-facet-body {
+                height: 20em;
+            }
+            #population-facet div.exhibit-facet-body {
+                height: 35em;
+            }
+        </style>
+    </head>
+    <body>
+    <div id="title-area">
+        <h1>CIA World Factbook - People</h1>
+    </div>
+    <div id="content-area"><div style="width: 100%;">
+        <table width="100%" cellspacing="10">
+            <tr>
+                <td width="15%">
+                    <div ex:role="exhibit-facet" 
+                        ex:expression=".speaks" 
+                        ex:facetLabel="Languages" 
+                        ex:selection="Arabic;Chinese"
+                        id="languages-facet"></div>
+                </td>
+                <td>
+                    <div ex:role="exhibit-viewPanel">
+                        <div ex:role="exhibit-view"
+                           ex:viewClass="Exhibit.ScatterPlotView"
+                           ex:label="Birthrate vs. Deathrate"
+                           ex:x=".birthrate"
+                           ex:xLabel="Birthrate"
+                           ex:y=".deathrate"
+                           ex:yLabel="Deathrate"
+                           ex:colorKey="contains(.speaks, 'Arabic')">
+                        </div>
+                        <div ex:role="exhibit-view"
+                           ex:viewClass="Exhibit.BarChartView"
+                           ex:label="Literacy vs. Expectancy"
+                           ex:x=".literacy"
+                           ex:xLabel="Literacy"
+                           ex:xAxisMin="0"
+                           ex:xAxisMax="110"
+                           ex:y=".expectancy"
+                           ex:yLabel="Expectancy"
+                           ex:colorKey="contains(.speaks, 'Arabic')"
+                           ex:scroll="true">
+                        </div>
+                        <div ex:role="exhibit-view"
+                           ex:viewClass="Exhibit.ScatterPlotView"
+                           ex:label="Population vs. Growth"
+                           ex:x=".population"
+                           ex:xLabel="Population"
+                           ex:xAxisType="log"
+                           ex:y=".population-growth"
+                           ex:yLabel="Growth"
+                           ex:colorKey="contains(.speaks, 'Arabic')">
+                        </div>
+                        <div ex:role="exhibit-view"
+                           ex:viewClass="Exhibit.PivotTableView"
+                           ex:label="Languages vs. Membership"
+                           ex:row=".speaks"
+                           ex:column=".member-of"
+                           ex:cell="count(value)">
+                        </div>
+                        <div ex:role="exhibit-view"
+                           ex:viewClass="Exhibit.BarChartView"
+                           ex:label="Countries' Populations"
+                           ex:x=".population"
+                           ex:xLabel="Population"
+                           ex:y="value"
+                           ex:yLabel="Country Name"
+                           ex:xAxisType="log">
+                        </div>
+                    </div>
+                </td>
+                <td width="15%">
+                    <div ex:role="exhibit-facet" 
+                        ex:expression=".member-of" 
+                        ex:facetLabel="Members Of" 
+                        id="members-facet"></div>
+                    <div ex:role="exhibit-facet" 
+                        ex:expression=".population" 
+                        ex:facetClass="Exhibit.NumericRangeFacet" 
+                        ex:interval="10000000" 
+                        ex:facetLabel="Population" 
+                        id="population-facet"></div>
+                </td>
+            </tr>
+        </table>
+    </div></div>
+</body>
+</html>
