@@ -22,14 +22,18 @@ Timeplot.createPlotInfo = function(params) {
         timeZone:       ("timeZone" in params) ? params.timeZone : 0,
         fillColor:      ("fillColor" in params) ? params.fillColor : null,
         lineColor:      ("lineColor" in params) ? params.lineColor : new Timeplot.Color("#606060"),
-        eventLineWidth: ("eventLineWidth" in params) ? params.eventLineWidth : 0.8,
-        showValues:     ("showValues" in params) ? params.showValues : false
+        dotRadius:      ("dotRadius" in params) ? params.dotRadius : 2,
+        dotColor:       ("dotColor" in params) ? params.dotColor : null,
+        eventLineWidth: ("eventLineWidth" in params) ? params.eventLineWidth : 1.0,
+        showValues:     ("showValues" in params) ? params.showValues : false,
+        roundValues:    ("roundValues" in params) ? params.roundValues : true,
     };
 };
 
 // -------------------------------------------------------
 
 Timeplot._Impl = function(elmt, plotInfos, unit) {
+	this._id = "t" + Math.round(Math.random() * 1000000);
     this._containerDiv = elmt;
     this._plotInfos = plotInfos;
     this._painters = {
@@ -163,18 +167,22 @@ Timeplot._Impl.prototype = {
     },
     
     putText: function(text, clazz, styles) {
-        var div = this.putDiv("timeplot-div " + clazz, styles);
+        var div = this.putDiv(text, "timeplot-div " + clazz, styles);
         div.innerHTML = text;
         return div;
     },
 
-    putDiv: function(clazz, styles) {
-        var container = this._containerDiv.firstChild; // get the divs container
-        var doc = container.ownerDocument;
-        var div = doc.createElement("div");
+    putDiv: function(id, clazz, styles) {
+    	var tid = this._id + "-" + id;
+    	var div = document.getElementById(tid);
+    	if (!div) {
+	        var container = this._containerDiv.firstChild; // get the divs container
+	        div = document.createElement("div");
+	        div.setAttribute("id",tid);
+	        container.appendChild(div);
+    	}
         div.setAttribute("class","timeplot-div " + clazz);
         this.placeDiv(div,styles);
-        container.appendChild(div);
         return div;
     },
     

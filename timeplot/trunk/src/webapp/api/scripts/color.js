@@ -6,7 +6,7 @@
  */
 
 Timeplot.Color = function(color) {
-    this.toHex(color);
+    this._fromHex(color);
 };
 
 Timeplot.Color.prototype = {
@@ -16,12 +16,85 @@ Timeplot.Color.prototype = {
      * 
      * @param {Number} r,g,b    Red green and blue values (between 0 and 255)
      */
-    set: function (r,g,b) {
+    set: function (r,g,b,a) {
         this.r = r;
         this.g = g;
         this.b = b;
-        
+        this.a = (a) ? a : 1.0;
         return this.check();
+    },
+
+    /**
+     * Set the color transparency
+     * 
+     * @param {integer} level   Transparency value, between 0.0 (fully transparent) and 1.0 (fully opaque).
+     */
+    transparency: function(a) {
+    	this.a = a;
+    	return this.check();
+    },
+    
+    /**
+     * Lightens the color.
+     * 
+     * @param {integer} level   Level to lighten the color with.
+     */
+    lighten: function(level) {
+        var color = new Timeplot.Color();
+        return color.set(
+            this.r += parseInt(level, 10),
+            this.g += parseInt(level, 10),
+            this.b += parseInt(level, 10)
+        );
+    },
+
+    /**
+     * Darkens the color.
+     * 
+     * @param {integer} level   Level to darken the color with.
+     */
+    darken: function(level){
+        var color = new Timeplot.Color();
+        return color.set(
+            this.r -= parseInt(level, 10),
+            this.g -= parseInt(level, 10),
+            this.b -= parseInt(level, 10)
+        );
+    },
+
+    /**
+     * Checks and validates if the hex values r, g and b are
+     * between 0 and 255.
+     */
+    check: function() {
+        if (this.r > 255) { 
+        	this.r = 255;
+        } else if (this.r < 0){
+        	this.r = 0;
+        }
+        if (this.g > 255) {
+        	this.g = 255;
+        } else if (this.g < 0) {
+        	this.g = 0;
+        }
+        if (this.b > 255){
+        	this.b = 255;
+        } else if (this.b < 0){
+        	this.b = 0;
+        }
+        if (this.a > 1.0){
+            this.a = 255;
+        } else if (this.a < 0.0){
+            this.a = 0.0;
+        }
+        return this;
+    },
+
+    /**
+     * Returns a string representation of this color.
+     */
+    toString: function(alpha) {
+        return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + ((alpha) ? alpha : '1.0') + ')';
     },
 
     /**
@@ -29,7 +102,7 @@ Timeplot.Color.prototype = {
      * 
      * @param {String} color    Hex or rgb() css string.
      */
-    toHex: function(color){
+    _fromHex: function(color) {
         if(/^#?([\da-f]{3}|[\da-f]{6})$/i.test(color)){
             color = color.replace(/^#/, '').replace(/^([\da-f])([\da-f])([\da-f])$/i, "$1$1$2$2$3$3");
             this.r = parseInt(color.substr(0,2), 16);
@@ -41,56 +114,8 @@ Timeplot.Color.prototype = {
             this.g = parseInt(color[2], 10);
             this.b = parseInt(color[3], 10);
         }
+        this.a = 1.0;
         return this.check();
-    },
-
-    /**
-     * Lightens the color.
-     * 
-     * @param {integer} level   Level to lighten the color with.
-     */
-    lighten: function(level) {
-        var color = new Timeplot.Color();
-        color.set(
-            this.r += parseInt(level, 10),
-            this.g += parseInt(level, 10),
-            this.b += parseInt(level, 10)
-        );
-        return color.check();
-    },
-
-    /**
-     * Darkens the color.
-     * 
-     * @param {integer} level   Level to darken the color with.
-     */
-    darken: function(level){
-        var color = new Timeplot.Color();
-        color.set(
-            this.r -= parseInt(level, 10),
-            this.g -= parseInt(level, 10),
-            this.b -= parseInt(level, 10)
-        );
-        return color.check();
-    },
-
-    /**
-     * Checks and validates if the hex values r, g and b are
-     * between 0 and 255.
-     */
-    check: function(){
-        if(this.r>255){this.r=255;}else if(this.r<0){this.r=0;}
-        if(this.g>255){this.g=255;}else if(this.g<0){this.g=0;}
-        if(this.b>255){this.b=255;}else if(this.b<0){this.b=0;}
-
-       return this;
-    },
-
-    /**
-     * Returns a string representation of this color.
-     */
-    toString: function(alpha){
-        return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + ((alpha) ? alpha : '1.0') + ')';
     }
 
 };

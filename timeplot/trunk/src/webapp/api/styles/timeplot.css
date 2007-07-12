@@ -43,7 +43,7 @@
 }
 
 .timeplot-event-box-highlight {
-    border: 1px solid #bbb;
+    border: 1px solid #FFB03B;
 }
 
 .timeplot-valueflag {
@@ -53,6 +53,15 @@
     text-align: center;
     background-color: #FFE57F;
     font-weight: bold;
+    z-index: 1000;
+}
+
+.timeplot-timeflag {
+    display: none;
+    border: 1px solid #FFB02D;
+    padding: 2px 4px;
+    text-align: center;
+    background-color: #FFE57F;
     z-index: 1000;
 }
 

@@ -7,6 +7,7 @@ Timeplot.DefaultValueGeometry = function(params) {
     this._id = ("id" in params) ? params.id : "g" + Math.round(Math.random() * 1000000);
     this._axisColor = ("axisColor" in params) ? params.axisColor : new Timeplot.Color("#606060");
     this._gridColor = ("gridColor" in params) ? params.gridColor : null;
+    this._axisLabelsPlacement = ("axisLabelsPlacement" in params) ? params.axisLabelsPlacement : null;
     this._center = ("center" in params) ? params.center : 30;
     this._range = ("range" in params) ? params.range : 20;
     this._minValue = ("min" in params) ? params.min : null;
@@ -86,15 +87,15 @@ Timeplot.DefaultValueGeometry.prototype = {
         var ctx = this._canvas.getContext('2d');
 
         var gradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
-        gradient.addColorStop(1, 'rgba(0,0,0,0)');
 
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 0.2;
+        ctx.lineWidth = 0.5;
         ctx.lineJoin = 'miter';
 
         // paint grid
         if (this._gridColor) {        
             gradient.addColorStop(0, this._gridColor.toString());
+            gradient.addColorStop(1, "rgba(255,255,255,0.5)");
 
             var y = this._gridSpacing.y;
             var value = this._gridSpacing.value;
@@ -105,10 +106,17 @@ Timeplot.DefaultValueGeometry.prototype = {
                 ctx.lineTo(this._canvas.width,y);
                 ctx.stroke();
 
-                this._timeplot.putText(value,"timeplot-grid-label",{
-                    bottom: y,
-                    right: 2
-                });
+                if (this._axisLabelsPlacement == "right") {
+	                this._timeplot.putText(value,"timeplot-grid-label",{
+	                    bottom: y,
+	                    right: 2
+	                });
+                } else if (this._axisLabelsPlacement == "left") {
+                    this._timeplot.putText(value,"timeplot-grid-label",{
+                        bottom: y,
+                        left: 2
+                    });
+                }
 
                 y += this._gridSpacing.y;
                 value += this._gridSpacing.value;
@@ -117,6 +125,9 @@ Timeplot.DefaultValueGeometry.prototype = {
         }
 
         // paint axis
+	    gradient.addColorStop(0, this._axisColor.toString());
+	    gradient.addColorStop(1, "rgba(255,255,255,0.5)");
+        
         ctx.lineWidth = 1;
         gradient.addColorStop(0, this._axisColor.toString());
 
@@ -247,6 +258,10 @@ Timeplot.DefaultTimeGeometry.prototype = {
     fromScreen: function(x) {
         return this._map.inverse(this._mappedPeriod * x / this._canvas.width) + this._earliestDate.getTime(); 
     },
+    
+    getPeriod: function() {
+    	return this._period;
+    },
 
     paint: function() {
         var ctx = this._canvas.getContext('2d');
@@ -294,7 +309,7 @@ Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
     Timeplot.DefaultTimeGeometry.prototype.initialize.apply(this, arguments);
 
     if (!this._lens) {
-        this._lens = this._timeplot.putDiv("timeplot-lens");
+        this._lens = this._timeplot.putDiv("lens","timeplot-lens");
     }
 
     var period = 1000 * 60 * 60 * 24 * 30; // a month in the magnifying lens

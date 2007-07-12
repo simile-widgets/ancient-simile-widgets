@@ -8,7 +8,19 @@
 
 (function() {
 
+    var useLocalResources = false;
+    
+    if (document.location.search.length > 0) {
+        var params = document.location.search.substr(1).split("&");
+        for (var i = 0; i < params.length; i++) {
+            if (params[i] == "local-resources") {
+                useLocalResources = true;
+            }
+        }
+    }
+    
     var loadMe = function() {
+    	
         if (typeof window.Timeplot != "undefined") {
             return;
         }
@@ -52,9 +64,7 @@
         if (typeof Timeplot_urlPrefix == "string") {
             Timeplot.urlPrefix = Timeplot_urlPrefix;
             if ("Timeplot_parameters" in window) {
-                SimileAjax.parseURLParameters(Timeplot_parameters,
-                                              Timeplot.params,
-                                              paramTypes);
+                SimileAjax.parseURLParameters(Timeplot_parameters, Timeplot.params, paramTypes);
             }
         } else {
             var url = SimileAjax.findScript(document, "/timeplot-api.js");
@@ -82,7 +92,9 @@
         var cssURLs = Timeplot.params.css || [];
         
         // External components
-        scriptURLs.push("http://static.simile.mit.edu/timeline/api/timeline-api.js?bundle=true");
+        scriptURLs.push(useLocalResources ?
+                "http://127.0.0.1:8888/timeline/api/timeline-api.js?bundle=false" :
+                "http://static.simile.mit.edu/timeline/api/timeline-api.js?bundle=true");
         
         // Core scripts and styles
         if (Timeplot.params.bundle) {
@@ -113,9 +125,10 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
-        var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js?bundle=true";
-        //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
+        var url = useLocalResources ?
+            "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false" :
+            "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js?bundle=true";
+                
         var createScriptElement = function() {
             var script = document.createElement("script");
             script.type = "text/javascript";
@@ -123,6 +136,7 @@
             script.src = url;
             document.getElementsByTagName("head")[0].appendChild(script);
         }
+        
         if (document.body == null) {
             try {
                 document.write("<script src='" + url + "' type='text/javascript'></script>");
