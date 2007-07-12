@@ -63,7 +63,9 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
     var currentCount = 0;
     for (x = 0; x < this.xSize; x++) {
         for (y = 0; y < this.ySize; y++) {
-            var endpoints = this.eventGrid.get(x,y);
+            var endpoints = this.eventGrid.get(x,y).sort(function(a, b) {
+                return a.time - b.time;
+            });
             for (i in endpoints) {
                 var endpoint = endpoints[i];
                 if (endpoint.type == "start") {
