@@ -71,7 +71,6 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
     var currentCount = 0;
     for (i in this.endpoints) {
         var endpoint = this.endpoints[i];
-        console.log(endpoint);
         var x = this.xMapper(endpoint);
         var y = this.yMapper(endpoint);
         if (endpoint.type == "start") {
@@ -87,7 +86,6 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
                 var eDiv = currentEvents[id];
                 var newWidth = this.xCell / currentCount;
                 var newLeft = this.xCell * x + newWidth * hIndex;
-                console.log(newWidth, newLeft);
                 $(eDiv).css("width", newWidth + "%");
                 $(eDiv).css("left", newLeft + "%");
                 hIndex++;

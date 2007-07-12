@@ -6,3 +6,10 @@ $(document).ready(function() {
         }
     });
 });
+
+$('body').resize(function() {
+    alert("resize!");
+    for (i in window.timegrids) {
+        window.timegrids[i]._construct();
+    }
+});
