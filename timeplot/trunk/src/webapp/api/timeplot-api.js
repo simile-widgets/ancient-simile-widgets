@@ -8,13 +8,13 @@
 
 (function() {
 
-    var useLocalResources = false;
+    var debug = false;
     
     if (document.location.search.length > 0) {
         var params = document.location.search.substr(1).split("&");
         for (var i = 0; i < params.length; i++) {
-            if (params[i] == "local-resources") {
-                useLocalResources = true;
+            if (params[i] == "debug") {
+                debug = true;
             }
         }
     }
@@ -92,8 +92,8 @@
         var cssURLs = Timeplot.params.css || [];
         
         // External components
-        scriptURLs.push(useLocalResources ?
-                "http://127.0.0.1:8888/timeline/api/timeline-api.js?bundle=false" :
+        scriptURLs.push(debug ?
+                "/timeline/api/timeline-api.js?bundle=false" :
                 "http://static.simile.mit.edu/timeline/api/timeline-api.js?bundle=true");
         
         // Core scripts and styles
@@ -125,8 +125,8 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadMe;
         
-        var url = useLocalResources ?
-            "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false" :
+        var url = debug ?
+            "/ajax/api/simile-ajax-api.js?bundle=false" :
             "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js?bundle=true";
                 
         var createScriptElement = function() {
