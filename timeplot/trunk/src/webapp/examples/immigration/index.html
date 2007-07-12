@@ -18,7 +18,7 @@
         }        
         
         .timeplot-grid-label {
-            color: #193441;
+            color: #888;
             font-family: 'verdana', 'helvetica', sans serif;
             font-size: 9px !important;
         }
@@ -32,11 +32,9 @@
     <script>
         var timeplot1;
 
-        var color1 = new Timeplot.Color('#FCFFF5');
-        var color2 = new Timeplot.Color('#D1DBBD');
-        var color3 = new Timeplot.Color('#91AA9D');
-        var color4 = new Timeplot.Color('#468966');
-        var color5 = new Timeplot.Color('#193441');
+        var red = new Timeplot.Color('#8E2800');
+        var blue = new Timeplot.Color('#193441');
+        var green = new Timeplot.Color('#468966');
         var gridColor  = new Timeplot.Color('#FFE57F');
         
         function onLoad() {
@@ -46,7 +44,7 @@
             });
 
             var geometry1 = new Timeplot.DefaultValueGeometry({
-                gridColor: color3,
+                gridColor: gridColor,
                 min: 0
             });
 
@@ -56,16 +54,19 @@
 
             var eventSource1 = new Timeplot.DefaultEventSource();
             var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
-            var dataSource2 = new Timeplot.Processor(dataSource1,Timeplot.Operator.sum);
+
+            var eventSource2 = new Timeplot.DefaultEventSource();
+            var dataSource2 = new Timeplot.ColumnSource(eventSource2,1);
+
+            var eventSource3 = new Timeplot.DefaultEventSource();
             
             var plotInfo1 = [
                 Timeplot.createPlotInfo({
-                    id: "Immigration Totals",
+                    id: "Population",
                     dataSource: dataSource2,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry2,
-                    lineColor: color4,
-                    fillColor: color2,
+                    lineColor: green,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
@@ -73,13 +74,21 @@
                     dataSource: dataSource1,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry1,
-                    lineColor: color5,
+                    lineColor: blue,
                     showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "Events",
+                    eventSource: eventSource3,
+                    timeGeometry: timeGeometry,
+                    lineColor: red
                 })
             ];
             
             timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
             timeplot1.loadText("immigration.txt", " ", eventSource1);
+            timeplot1.loadText("us_population.txt", " ", eventSource2);
+            timeplot1.loadXML("us_history.xml", eventSource3);
         }            
         
         var resizeTimerID = null;
@@ -104,9 +113,9 @@
 
 <div id="body">
 	<h1>Immigration</h1>
-    <div class="label">Persons Obtaining Legal Permanent Resident Status in the U.S. [<span style="color: #193441;">per year</span> vs. <span style="color: #468966;">total</span>]</div>
+    <div class="label"><span style="color: #193441;">Persons Obtaining Legal Permanent Resident Status in the U.S. (per year)</span> vs. <span style="color: #468966;">U.S. Population</span></div>
     <div id="timeplot1" style="height: 300px" class="timeplot"></div>
-    <p class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a></p>
+    <p class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a> and <a href="http://www.census.gov/population/censusdata/table-4.pdf">U.S. Census Bereau</a></p>
     <p class="note">The plots have different dimensions and scales but here they have been normalized to better expose relationships in trends.
     Move your mouse over the plots to obtain the individual values.</p> 
 </div>

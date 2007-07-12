@@ -4,76 +4,87 @@
     <link rel='stylesheet' href='styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
         
+    <style>
+        .label {
+            color: #91AA9D;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #888;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+        
+        .sources {
+            font-size: 90%;
+        }
+    </style>
+    
     <script src="api/timeplot-api.js?bundle=false" type="text/javascript"></script>
     <script>
         var timeplot1;
 
-        var quietLine  = new Timeplot.Color('#82A6A2');
-        var loudLine   = new Timeplot.Color('#284452');
-        var lightFill  = new Timeplot.Color('#DEE5D1');
-        var gridColor  = new Timeplot.Color('#B0B0B0');
+        var red = new Timeplot.Color('#8E2800');
+        var blue = new Timeplot.Color('#193441');
+        var green = new Timeplot.Color('#468966');
+        var gridColor  = new Timeplot.Color('#FFE57F');
         
         function onLoad() {
-            if (document.location.toString().match(/^http\:\/\/simile.mit.edu.*$/)) {
-                var dataURL = "http://simile.mit.edu/history/data/webstats.data";
-                var eventsURL = "http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=6";
-            } else {
-                var dataURL = "examples/simile/data.txt";
-                var eventsURL = "examples/simile/events.xml";
-            } 
-        
-            var dataFilter = function(data) {
-                for (var i = 0; i < data.length; i++) {
-                    var row = data[i];
-                    row[0] = row[0].replace(/\//g,"-");
-                }
-                return data;
-            };
-            
-            var eventSource = new Timeplot.DefaultEventSource();
-            var eventSource2 = new Timeplot.DefaultEventSource();
-    
-            var webTraffic = new Timeplot.ColumnSource(eventSource,2);
-            var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
-            var webGeometry = new Timeplot.DefaultValueGeometry({
-                gridColor: gridColor,
-                min: 0
-            });
-            
+
             var timeGeometry = new Timeplot.DefaultTimeGeometry({
                 gridColor: gridColor
             });
+
+            var geometry1 = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                min: 0
+            });
+
+            var geometry2 = new Timeplot.DefaultValueGeometry({
+                min: 0
+            });
+
+            var eventSource1 = new Timeplot.DefaultEventSource();
+            var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
+
+            var eventSource2 = new Timeplot.DefaultEventSource();
+            var dataSource2 = new Timeplot.ColumnSource(eventSource2,1);
+
+            var eventSource3 = new Timeplot.DefaultEventSource();
             
-            var plotsInfo1 = [
+            var plotInfo1 = [
                 Timeplot.createPlotInfo({
-                    id: "web clean",
-                    dataSource: webTraffic,
+                    id: "Population",
+                    dataSource: dataSource2,
                     timeGeometry: timeGeometry,
-                    valueGeometry: webGeometry,
-                    lineColor: quietLine,
-                    fillColor: lightFill,
+                    valueGeometry: geometry2,
+                    lineColor: green,
+                    showValues: true
                 }),
                 Timeplot.createPlotInfo({
-                    id: "web clean avg",
-                    dataSource: avgWebTraffic,
+                    id: "Immigration",
+                    dataSource: dataSource1,
                     timeGeometry: timeGeometry,
-                    valueGeometry: webGeometry,
-                    lineColor: loudLine,
-                    showValues: true,
+                    valueGeometry: geometry1,
+                    lineColor: blue,
+                    showValues: true
                 }),
                 Timeplot.createPlotInfo({
-                    id: "events",
-                    eventSource: eventSource2,
+                    id: "Events",
+                    eventSource: eventSource3,
                     timeGeometry: timeGeometry,
-                    valueGeometry: webGeometry,
-                    lineColor: loudLine
+                    lineColor: red
                 })
             ];
             
-            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotsInfo1);
-            timeplot1.loadText(dataURL, " ", eventSource, dataFilter);
-            timeplot1.loadXML(eventsURL, eventSource2);
-        }
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
+            timeplot1.loadText("examples/immigration/immigration.txt", " ", eventSource1);
+            timeplot1.loadText("examples/immigration/us_population.txt", " ", eventSource2);
+            timeplot1.loadXML("examples/immigration/us_history.xml", eventSource3);
+        }            
         
         var resizeTimerID = null;
         function onResize() {
@@ -98,12 +109,14 @@
 
     <p>Timeplot is a DHTML-based AJAXy widget for plotting time series and overlay
        time-based events (with the same data formats that <a href="http://simile.mit.edu/timeline/">Timeline</a> supports).
-       Below is a live example that shows our web server load over the history of the project with
-       major events overlayed (the data is generated live from our server logs and the events from
-       our blog posts tagged in a special category).
+       See a live example below.
     </p>
 
-    <div id="timeplot1" class="timeplot" style="height: 200px; margin: 2em;"></div>
+    <div style="margin: 2em;">
+      <div class="label"><span style="color: #193441;">Persons Obtaining Legal Permanent Resident Status in the U.S. (per year)</span> vs. <span style="color: #468966;">U.S. Population</span></div>
+      <div id="timeplot1" style="height: 200px" class="timeplot"></div>
+      <div class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a> and <a href="http://www.census.gov/population/censusdata/table-4.pdf">U.S. Census Bereau</a></div>
+    </div>
     
     <p>Just like Timeline or Google Maps, Timeplot can be used with zero software installation,
        server-side or client-side. You can populate Timeplot with data by pointing it to an 
