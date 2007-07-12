@@ -9,8 +9,6 @@ Timegrid.abstract = function(name) {
     };
 };
 
-SimileAjax.DateTime.DAYS_CF        = 86400000;
-
 SimileAjax.DateTime.Interval = function(ms) {
     // Conversion factors as varants to eliminate all the multiplication
     var SECONDS_CF     = 1000;

@@ -122,6 +122,7 @@ div.timegrid-event {
     width: 100px;
     background-color: #aaf;
     padding: 0;
+    overflow: hidden;
 }
 
 /* Monthly View */

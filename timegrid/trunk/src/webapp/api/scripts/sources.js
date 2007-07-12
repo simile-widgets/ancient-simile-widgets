@@ -71,6 +71,10 @@ Timegrid.DefaultEventSource.prototype.loadJSON = function(data, url) {
        
         for (var i=0; i < data.events.length; i++){
             var event = data.events[i];
+            if (!(event.start || event.end || 
+                  event.latestStart || event.earliestEnd)) {
+                continue; 
+            }
             var evt = new Timegrid.DefaultEventSource.Event(
                 parseDateTimeFunction(event.start),
                 parseDateTimeFunction(event.end),
@@ -90,12 +94,10 @@ Timegrid.DefaultEventSource.prototype.loadJSON = function(data, url) {
                 return this._obj[name];
             };
             evt.setWikiInfo(wikiURL, wikiSection);
-
             this._events.add(evt);
             added = true;
         }
     }
-   
     if (added) {
         this._fire("onAddMany", []);
     }
