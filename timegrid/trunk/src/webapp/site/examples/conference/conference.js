@@ -47,9 +47,9 @@
 		},
 		{
 			"id" :          "http-//simile.mit.edu/2005/11/iswc2005/PaperTalk#Web-Service-Composition-with-Volatile-Information",
-			"start" :       "2005-11-08T14:14:00Z",
+			"start" :       "2005-11-08T14:00:00Z",
 			"uri" :         "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Web-Service-Composition-with-Volatile-Information",
-			"end" :         "2005-11-08T14:36:00Z",
+			"end" :         "2005-11-08T14:30:00Z",
 			"type" :        "Item",
 			"title" :       "Web Service Composition with Volatile Information",
 			"label" :       "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Web-Service-Composition-with-Volatile-Information",
@@ -206,10 +206,10 @@
 		},
 		{
 			"id" :          "http-//simile.mit.edu/2005/11/iswc2005/PaperTalk#Rapid-Benchmarking-for-Semantic-Web-Knowledge-Base-Systems",
-			"start" :       "2005-11-08T13:52:00Z",
+			"start" :       "2005-11-08T13:30:00Z",
 			"uri" :         "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Rapid-Benchmarking-for-Semantic-Web-Knowledge-Base-Systems",
 			"contributor" : "karger",
-			"end" :         "2005-11-08T14:14:00Z",
+			"end" :         "2005-11-08T14:00:00Z",
 			"type" :        "Item",
 			"title" :       "Rapid Benchmarking for Semantic Web Knowledge Base Systems",
 			"label" :       "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Rapid-Benchmarking-for-Semantic-Web-Knowledge-Base-Systems",
@@ -541,13 +541,13 @@
 		},
 		{
 			"id" :          "http-//simile.mit.edu/2005/11/iswc2005/PaperTalk#Automatic-Evaluation-of-Ontologies-(AEON)",
-			"start" :       "2005-11-08T14:14:00Z",
+			"start" :       "2005-11-08T14:00:00Z",
 			"uri" :         "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Automatic-Evaluation-of-Ontologies-(AEON)",
 			"contributor" : [
 				"karger",
 				"cte"
 			],
-			"end" :         "2005-11-08T14:36:00Z",
+			"end" :         "2005-11-08T14:30:00Z",
 			"type" :        "Item",
 			"title" :       "Automatic Evaluation of Ontologies (AEON)",
 			"label" :       "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Automatic-Evaluation-of-Ontologies-(AEON)",
@@ -778,7 +778,7 @@
 		},
 		{
 			"id" :          "http-//simile.mit.edu/2005/11/iswc2005/PaperTalk#Towards-a-Formal-Verification-of-OWL-S-Process-Models",
-			"start" :       "2005-11-08T14:36:00Z",
+			"start" :       "2005-11-08T14:30:00Z",
 			"uri" :         "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Towards-a-Formal-Verification-of-OWL-S-Process-Models",
 			"contributor" : "johanna",
 			"end" :         "2005-11-08T15:00:00Z",
@@ -942,10 +942,10 @@
 		},
 		{
 			"id" :          "http-//simile.mit.edu/2005/11/iswc2005/PaperTalk#Choreography-in-IRS-III-%E2%80%93-Coping-with-Heterogeneous-Interaction-Patterns-in-Web-Services",
-			"start" :       "2005-11-08T13:52:00Z",
+			"start" :       "2005-11-08T13:30:00Z",
 			"uri" :         "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Choreography-in-IRS-III-%E2%80%93-Coping-with-Heterogeneous-Interaction-Patterns-in-Web-Services",
 			"contributor" : "dallemang",
-			"end" :         "2005-11-08T14:14:00Z",
+			"end" :         "2005-11-08T14:00:00Z",
 			"type" :        "Item",
 			"title" :       "Choreography in IRS-III \u00C3\u00A2\u00C2\u0080\u00C2\u0093 Coping with Heterogeneous Interaction Patterns in Web Services",
 			"label" :       "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Choreography-in-IRS-III-%E2%80%93-Coping-with-Heterogeneous-Interaction-Patterns-in-Web-Services",
@@ -1108,7 +1108,7 @@
 		},
 		{
 			"id" :          "http-//simile.mit.edu/2005/11/iswc2005/PaperTalk#Guidelines-for-Evaluating-the-Performance-of-Ontology-Management-APIs",
-			"start" :       "2005-11-08T14:36:00Z",
+			"start" :       "2005-11-08T14:30:00Z",
 			"uri" :         "http://simile.mit.edu/2005/11/iswc2005/PaperTalk#Guidelines-for-Evaluating-the-Performance-of-Ontology-Management-APIs",
 			"end" :         "2005-11-08T15:00:00Z",
 			"type" :        "Item",

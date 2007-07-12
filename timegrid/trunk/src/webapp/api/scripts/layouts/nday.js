@@ -22,7 +22,8 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.ySize = 24;
     this.iterable = true;
     this.xMapper = function(obj) { return (new SimileAjax.DateTime.Interval(obj.time - self.startTime)).days; };
-    this.yMapper = function(obj) { return obj.time.getHours(); };
+    this.yMapper = function(obj) { return obj.time.getHours() +
+                                          obj.time.getMinutes() / 60; };
     
     // These are default values that can be overridden in configure
     this.height = 500.0;
@@ -43,17 +44,24 @@ Timegrid.NDayLayout = function(eventSource, params) {
 Timegrid.LayoutFactory.registerLayout("n-day", Timegrid.NDayLayout);
 
 Timegrid.NDayLayout.prototype.initializeGrid = function() {
-    this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize, 
-                                       this.xMapper, this.yMapper);
+    this.endpoints = [];
     if (this.startTime) {
         var iterator = this.eventSource.getEventIterator(this.startTime,
                                                          this.endTime);
-        console.log(this.startTime, this.endTime);
         while (iterator.hasNext()) {
-            var endpoints = Timegrid.NDayLayout.getEndpoints(iterator.next());
-            this.eventGrid.addAll(endpoints);
+            var ends = Timegrid.NDayLayout.getEndpoints(iterator.next());
+            this.endpoints.push(ends[0]);
+            this.endpoints.push(ends[1]);
         }
     }
+    this.endpoints.sort(function(a, b) { 
+        var diff = a.time - b.time;
+        if (!diff) {
+            return a.type == "start" ? 1 : -1;
+        } else {
+            return diff;
+        }
+    });
 };
 
 Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
@@ -61,35 +69,33 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
     $(eventContainer).addClass("timegrid-events");
     var currentEvents = {};
     var currentCount = 0;
-    for (x = 0; x < this.xSize; x++) {
-        for (y = 0; y < this.ySize; y++) {
-            var endpoints = this.eventGrid.get(x,y).sort(function(a, b) {
-                return a.time - b.time;
-            });
-            for (i in endpoints) {
-                var endpoint = endpoints[i];
-                if (endpoint.type == "start") {
-                    // Render the event
-                    var eventDiv = this.renderEvent(endpoint.event, x, y);
-                    eventContainer.appendChild(eventDiv);
-                    // Push the event div onto the current events set
-                    currentEvents[endpoint.event.getID()] = eventDiv;
-                    currentCount++;
-                    // Adjust widths and offsets as necessary
-                    var hIndex = 0;
-                    for (id in currentEvents) {
-                        var eDiv = currentEvents[id];
-                        var newWidth = this.xCell / currentCount;
-                        $(eDiv).css("width", newWidth + "%");
-                        $(eDiv).css("left", this.xCell * x + newWidth * hIndex + "%");
-                        hIndex++;
-                    }
-                } else if (endpoint.type == "end") {
-                    // Pop event from current events set
-                    delete currentEvents[endpoint.event.getID()];
-                    currentCount--;
-                }
+    for (i in this.endpoints) {
+        var endpoint = this.endpoints[i];
+        console.log(endpoint);
+        var x = this.xMapper(endpoint);
+        var y = this.yMapper(endpoint);
+        if (endpoint.type == "start") {
+            // Render the event
+            var eventDiv = this.renderEvent(endpoint.event, x, y);
+            eventContainer.appendChild(eventDiv);
+            // Push the event div onto the current events set
+            currentEvents[endpoint.event.getID()] = eventDiv;
+            currentCount++;
+            // Adjust widths and offsets as necessary
+            var hIndex = 0;
+            for (id in currentEvents) {
+                var eDiv = currentEvents[id];
+                var newWidth = this.xCell / currentCount;
+                var newLeft = this.xCell * x + newWidth * hIndex;
+                console.log(newWidth, newLeft);
+                $(eDiv).css("width", newWidth + "%");
+                $(eDiv).css("left", newLeft + "%");
+                hIndex++;
             }
+        } else if (endpoint.type == "end") {
+            // Pop event from current events set
+            delete currentEvents[endpoint.event.getID()];
+            currentCount--;
         }
     }
     return eventContainer;
@@ -97,8 +103,9 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
 
 Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
     var jediv = $("<div>" + evt.getText() + "</div>");
+    var length = (evt.getEnd() - evt.getStart()) / (1000 * 60 * 60.0);
     jediv.addClass("timegrid-event");
-    jediv.css("height", this.yCell * evt.getInterval().hours);
+    jediv.css("height", this.yCell * length);
     jediv.css("top", this.yCell * y);
     jediv.css("left", this.xCell * x + '%');
     return jediv.get()[0]; // Return the actual DOM element
