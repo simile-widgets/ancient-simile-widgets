@@ -28,37 +28,14 @@
         }
     </style>
     
+    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
     <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
     <script>
-            
-        // ---------------------------------------------------------------------------------------
-        
-        var getTimeplotURL = function() {
-            var url = window.location.toString();
-            if (url.match('127.0.0.1')) {
-                return "/timeplot/api/timeplot-api.js?bundle=true";
-            } else if (url.match('simile.mit.edu/repository')) {
-                return "http://simile.mit.edu/repository/timeplot/trunk/src/webapp/api/timeplot-api.js?bundle=false";
-            } else {
-                return "http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"
-            }
-        }
                         
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.language = "JavaScript";
-        script.src = getTimeplotURL();
-        console.log(script.src);
-        document.getElementsByTagName("head")[0].appendChild(script);
-
-        // ---------------------------------------------------------------------------------------
-            
         var timeplot1;
 
         function onLoad() {
 
-            console.log("onLoad called");
-            
 	        var red = new Timeplot.Color('#B9121B');
 	        var blue = new Timeplot.Color('#193441');
 	        var green = new Timeplot.Color('#468966');
