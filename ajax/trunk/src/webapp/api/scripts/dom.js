@@ -61,6 +61,22 @@ SimileAjax.DOM.getPageCoordinates = function(elmt) {
     return { left: left, top: top };
 };
 
+SimileAjax.DOM.getSize = function(elmt) {
+	if (window.getComputedStyle) {
+	    var cs = window.getComputedStyle(elmt, null);
+	    return {
+	    	w: parseInt(cs.getPropertyValue("width").replace(/px/,'')),
+	    	h: parseInt(cs.getPropertyValue("height").replace(/px/,''))
+	    }
+	} else {
+		SimileAjax.Debug.log("window.getComputedStyle is not supported");
+		return {
+			w: 0,
+			h: 0
+		}
+	}
+}
+
 SimileAjax.DOM.getEventRelativeCoordinates = function(evt, elmt) {
     if (SimileAjax.Platform.browser.isIE) {
         return {
