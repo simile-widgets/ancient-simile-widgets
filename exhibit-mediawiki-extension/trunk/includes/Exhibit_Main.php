@@ -9,7 +9,7 @@
  * Note: The output is not interpreted as WikiText but directly
  * included in the HTML output. So Wiki markup is not supported.
  * To activate the extension, include it from your LocalSettings.php
- * with: include("extensions/gflash.php");
+ * with: include("extensions/ExhibitExtension/trunk/includes/Exhibit_Main.php");
  * http://junkchest.blogspot.com/2005/03/wiki-adding-extensions-to-mediawiki.html
  * @fileoverview
  */
@@ -61,13 +61,20 @@ function wfExhibitAddHTMLHeader(&$out) {
 function Exhibit_getHTMLResult( $input ) {
 	$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
 	$xml = new SimpleXMLElement($xmlstr);
-	$data = $xml->data;
-	$columns = $xml->columns;
+	$dataSource = $xml->data->source;
+	$columns = $xml->data->source['columns'];	
+	$hideTable = "false";
+	if ($xml->data->source['hideTable']) {
+		$hideTable = "true";
+	}
+	
+	//$facets = foreach ($xml->config as $config)
 	
 	$output = <<<OUTPUT
 	<script type="text/javascript">
-	var data = "$data";
+	var data = "$dataSource";
 	var columns = "$columns".split(',');
+	var hideTable = $hideTable;
 	</script>
 OUTPUT;
 	

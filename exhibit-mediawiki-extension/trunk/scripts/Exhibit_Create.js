@@ -6,13 +6,11 @@ function createExhibit() {
 
 	var dataTable = document.getElementById(data);	
 	var th, ths = dataTable.getElementsByTagName("th");
-	for( col = 0; th = ths[col]; col++ ) {
+	for( var col = 0; th = ths[col]; col++ ) {
 		var label = columns[col];
 		th.setAttribute('ex:name', label);
 	}
 
-	var viewClass = $('div.view').attr('viewClass');	
-	var lens = $('div.lens').get();	
 	var facets = [];
 
 	window.database = Exhibit.Database.create();
@@ -42,6 +40,10 @@ function createExhibit() {
 	window.exhibit.configure({
 		components: configurationComponents
 	});
+	
+	if (hideTable) {
+		dataTable.setAttribute("style", "display:none");
+	}
 }
 
 addOnloadHook(createExhibit);
