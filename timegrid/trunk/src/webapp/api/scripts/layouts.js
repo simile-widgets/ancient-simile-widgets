@@ -99,14 +99,17 @@ Timegrid.Layout.prototype.render = function(container) {
     $(this._container).height(this.height + "px");
     $(this._container).width(this.width + "px");  
     $(this._container).css('position', 'relative');
+
+    // FIXME: Edge positioning breaks horribly in IE
     this._viewDiv.css('top', "1.5em");
     this._viewDiv.css('bottom', '0px');
-    this._viewDiv.width("100%");
+    this._viewDiv.width('100%');
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
     this._viewDiv.append(gridWindowDiv.append(gridDiv));
     this.gridwidth = this.gridwidth || gridWindowDiv.width() - this.scrollwidth;
     this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
+    alert(this.gridwidth + ", " + this.gridheight);
     gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
     this.computeCellSizes();
     gridDiv.append(this.renderEvents(document));
