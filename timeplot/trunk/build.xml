@@ -17,7 +17,7 @@
   </target>
   	
   <target name="bundle" depends="tasks">
-    <jsmin output="src/webapp/api/bundle.js">
+    <jsmin output="src/webapp/api/timeplot-bundle.js">
         <fileset dir="src/webapp/api/scripts">
         	<include name="timeplot.js" />
         </fileset>
@@ -27,7 +27,7 @@
         </fileset>
   	</jsmin>
   	
-    <concat destfile="src/webapp/api/bundle.css">
+    <concat destfile="src/webapp/api/timeplot-bundle.css">
         <fileset dir="src/webapp/api/styles">
         	<include name="**/*.css" />
         </fileset>

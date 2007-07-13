@@ -98,8 +98,8 @@
         
         // Core scripts and styles
         if (Timeplot.params.bundle) {
-            scriptURLs.push(Timeplot.urlPrefix + "bundle.js");
-            cssURLs.push(Timeplot.urlPrefix + "bundle.css");
+            scriptURLs.push(Timeplot.urlPrefix + "timeplot-bundle.js");
+            cssURLs.push(Timeplot.urlPrefix + "timeplot-bundle.css");
         } else {
             SimileAjax.prefixURLs(scriptURLs, Timeplot.urlPrefix + "scripts/", javascriptFiles);
             SimileAjax.prefixURLs(cssURLs, Timeplot.urlPrefix + "styles/", cssFiles);

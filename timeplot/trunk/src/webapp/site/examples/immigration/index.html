@@ -28,18 +28,39 @@
         }
     </style>
     
-    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
     <script>
+
+        // ---------------------------------------------------------------------------------------
+        
+        var getTimeplotURL = function() {
+            var url = window.location.toString();
+            if (url.match('127.0.0.1')) {
+                return "/timeplot/api/timeplot-api.js?bundle=false";
+            } else if (url.match('simile.mit.edu/repository')) {
+                return "http://simile.mit.edu/repository/timeplot/trunk/src/webapp/api/timeplot-api.js?bundle=false";
+            } else {
+                return "http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"
+            }
+        }
+                        
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.language = "JavaScript";
+        script.src = getTimeplotURL();
+        document.getElementsByTagName("head")[0].appendChild(script);
+
+        // --------------------------------------------------------------------------------------
+            
         var timeplot1;
 
-        var red = new Timeplot.Color('#B9121B');
-        var blue = new Timeplot.Color('#193441');
-        var green = new Timeplot.Color('#468966');
-        var lightGreen = new Timeplot.Color('#5C832F');
-        
-        var gridColor  = new Timeplot.Color('#303030');
-        
         function onLoad() {
+
+	        var red = new Timeplot.Color('#B9121B');
+	        var blue = new Timeplot.Color('#193441');
+	        var green = new Timeplot.Color('#468966');
+	        var lightGreen = new Timeplot.Color('#5C832F');
+	        
+	        var gridColor  = new Timeplot.Color('#303030');
 
             var timeGeometry = new Timeplot.DefaultTimeGeometry({
                 gridColor: gridColor
