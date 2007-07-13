@@ -93,7 +93,7 @@
         </Item>
         <Item>
           <New id="aContext" class="org.mortbay.jetty.handler.ContextHandler">
-            <Set name="contextPath">/timeplot/api</Set>
+            <Set name="contextPath">/timeplot/api/1.0</Set>
             <Set name="resourceBase">./src/webapp/api</Set>
             <Set name="handler">
               <New id="javadocServletHandler" class="org.mortbay.jetty.servlet.ServletHandler">
