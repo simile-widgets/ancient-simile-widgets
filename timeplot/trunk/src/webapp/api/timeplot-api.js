@@ -33,7 +33,6 @@
         };
     
         var javascriptFiles = [
-            "oop.js",
             "timeplot.js",
             "plot.js",
             "sources.js",

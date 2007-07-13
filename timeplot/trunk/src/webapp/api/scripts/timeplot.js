@@ -6,6 +6,13 @@
 Timeline.Debug = SimileAjax.Debug; // timeline uses it's own debug system which is not as advanced
 log = SimileAjax.Debug.log; // shorter name is more usable
 
+Object.extend = function(destination, source) {
+    for (var property in source) {
+        destination[property] = source[property];
+    }
+    return destination;
+}
+
 // ---------------------------------------------
 
 Timeplot.create = function(elmt, plotInfos) {

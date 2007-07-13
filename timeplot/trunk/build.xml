@@ -22,8 +22,22 @@
         	<include name="timeplot.js" />
         </fileset>
         <fileset dir="src/webapp/api/scripts">
-        	<include name="*.js" />
-        	<exclude name="timeplot.js" />
+            <include name="plot.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="sources.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="geometry.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="color.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="math.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="processor.js" />
         </fileset>
   	</jsmin>
   	

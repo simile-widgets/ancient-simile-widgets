@@ -232,7 +232,6 @@ Timeplot.Plot.prototype = {
 	                SimileAjax.DOM.registerEvent(div, "click"    , clickHandler(event));
 	                SimileAjax.DOM.registerEvent(div, "mouseover", mouseOverHandler);
 	                SimileAjax.DOM.registerEvent(div, "mouseout" , mouseOutHandler);
-	                SimileAjax.DOM.registerEvent(div, "mousemove", mouseMoveHandler);
 		            div.instrumented = true;
                 }
             }
