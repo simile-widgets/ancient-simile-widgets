@@ -21,14 +21,6 @@
         <fileset dir="src/webapp/api/scripts">
         	<include name="timeplot.js" />
         </fileset>
-        <fileset dir="src/webapp/api/scripts/util">
-        	<include name="platform.js" />
-        </fileset>
-    	
-        <fileset dir="src/webapp/api/scripts/util">
-        	<include name="*.js" />
-        	<exclude name="platform.js" />
-        </fileset>
         <fileset dir="src/webapp/api/scripts">
         	<include name="*.js" />
         	<exclude name="timeplot.js" />
