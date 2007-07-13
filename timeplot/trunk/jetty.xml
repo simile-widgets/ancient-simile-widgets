@@ -124,7 +124,7 @@
         </Item>
         <Item>
           <New id="aContext" class="org.mortbay.jetty.handler.ContextHandler">
-            <Set name="contextPath">/ajax/api</Set>
+            <Set name="contextPath">/ajax/api-2.0</Set>
             <Set name="resourceBase">../ajax/src/webapp/api</Set>
             <Set name="handler">
               <New id="javadocServletHandler" class="org.mortbay.jetty.servlet.ServletHandler">
