@@ -42,7 +42,7 @@ function wfExhibitAddHTMLHeader(&$out) {
 	global $wgScriptPath;
 	
 	$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false"></script><script>SimileAjax.History.enabled = false;</script>';
-	$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/Skins/Exhibit_Create.js"></script>';
+	$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';
 	
 	$out->addScript($ExhibitScript);
 	$out->addScript($WExhibitScript);
@@ -59,9 +59,19 @@ function wfExhibitAddHTMLHeader(&$out) {
  
  
 function Exhibit_getHTMLResult( $input ) {
-	$xml = new SimpleXMLElement($input);
-	$data = $xml->data[0];
-	return '<div class="exhibit" ex:data="' . $data . '"></div>';
+	$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
+	$xml = new SimpleXMLElement($xmlstr);
+	$data = $xml->data;
+	$columns = $xml->columns;
+	
+	$output = <<<OUTPUT
+	<script type="text/javascript">
+	var data = "$data";
+	var columns = "$columns".split(',');
+	</script>
+OUTPUT;
+	
+	return $output;
 }
 
 
