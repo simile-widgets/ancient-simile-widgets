@@ -1,4 +1,4 @@
-console.log("timeplot bundle loaded");
+
 
 /* timeplot.js */
 
