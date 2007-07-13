@@ -1,0 +1,41 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns="http://usefulinc.com/ns/doap#">
+<Project>
+    <name xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Timeplot</name>
+    <homepage rdf:resource="http://simile.mit.edu/timeplot/" />
+    <created>2007-06-19</created>
+    <shortdesc xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Timeplot is a cross-browser DHTML (canvas-based) time series plotting widget.</shortdesc>
+    <description xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Timeplot is a cross-browser DHTML (canvas-based) time series plotting widget.</description>
+
+    <mailing-list rdf:resource="http://simile.mit.edu/mail.html" />
+
+    <maintainer>
+        <foaf:Person rdf:about="http://simile.mit.edu/~stefano/#me">
+            <foaf:name xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stefano Mazzocchi</foaf:name>
+            <foaf:homepage rdf:resource="http://www.betaversion.org/~stefano/" />
+            <foaf:mbox rdf:resource="mailto:stefanom@mit.edu" />
+        </foaf:Person>
+    </maintainer>
+
+    <release>
+        <Version>
+            <created>2006-06-19</created>
+            <revision>1.0</revision>
+        </Version>
+    </release>
+
+    <license rdf:resource="http://usefulinc.com/doap/licenses/bsd" />
+
+    <repository>
+        <SVNRepository>
+            <location rdf:resource="http://simile.mit.edu/repository/timeplot/" />
+            <browse rdf:resource="http://simile.mit.edu/viewsvn/timeplot/" />
+        </SVNRepository>
+    </repository>
+
+    <wiki rdf:resource="http://simile.mit.edu/wiki/" />
+    <bug-database rdf:resource="http://simile.mit.edu/issues/" />
+    <programming-language xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Javascript</programming-language>
+</Project>
+</rdf:RDF>
