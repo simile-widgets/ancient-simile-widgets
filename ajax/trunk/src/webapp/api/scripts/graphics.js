@@ -82,7 +82,8 @@ SimileAjax.Graphics._bubblePadding = 15;
 SimileAjax.Graphics._bubblePointOffset = 6;
 SimileAjax.Graphics._halfArrowWidth = 18;
 
-SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, contentHeight) {
+SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, contentHeight, orientation) {
+
     function getWindowDims() {
         if (typeof window.innerHeight == 'number') {
             return { w:window.innerWidth, h:window.innerHeight }; // Non-IE
@@ -108,6 +109,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, 
             bubble._closed = true;
         }
     }
+    
     var layer = SimileAjax.WindowManager.pushLayer(close, true);
     var bubble = {
         _closed:   false,
@@ -197,7 +199,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, 
                 Math.max(left, -(margins.left - SimileAjax.Graphics._bubblePadding)) : 
                 Math.min(left, docWidth + (margins.right - SimileAjax.Graphics._bubblePadding) - bubbleWidth);
                 
-            if (pageY - SimileAjax.Graphics._bubblePointOffset - bubbleHeight > 0) { // top
+            if ((orientation && orientation == "top") || (!orientation && (pageY - SimileAjax.Graphics._bubblePointOffset - bubbleHeight > 0))) { // top
                 var divImg = document.createElement("div");
                 
                 divImg.style.left = (pageX - SimileAjax.Graphics._halfArrowWidth - left) + "px";
@@ -210,7 +212,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, 
                     SimileAjax.Graphics._arrowOffsets.bottom) + "px";
                 
                 return;
-            } else if (pageY + SimileAjax.Graphics._bubblePointOffset + bubbleHeight < docHeight) { // bottom
+            } else if ((orientation && orientation == "bottom") || (!orientation && (pageY + SimileAjax.Graphics._bubblePointOffset + bubbleHeight < docHeight))) { // bottom
                 var divImg = document.createElement("div");
                 
                 divImg.style.left = (pageX - SimileAjax.Graphics._halfArrowWidth - left) + "px";
@@ -231,7 +233,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, 
             Math.max(top, -(margins.top - SimileAjax.Graphics._bubblePadding)) : 
             Math.min(top, docHeight + (margins.bottom - SimileAjax.Graphics._bubblePadding) - bubbleHeight);
                 
-        if (pageX - SimileAjax.Graphics._bubblePointOffset - bubbleWidth > 0) { // left
+        if ((orientation && orientation == "left") || (!orientation && (pageX - SimileAjax.Graphics._bubblePointOffset - bubbleWidth > 0))) { // left
             var divImg = document.createElement("div");
             
             divImg.style.left = (margins.left + contentWidth) + "px";
@@ -242,7 +244,7 @@ SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, 
             div.style.left = (pageX - SimileAjax.Graphics._bubblePointOffset - bubbleWidth +
                 SimileAjax.Graphics._arrowOffsets.right) + "px";
             div.style.top = top + "px";
-        } else { // right
+        } else if ((orientation && orientation == "right") || (!orientation && (pageX - SimileAjax.Graphics._bubblePointOffset - bubbleWidth < docWidth))) { // right
             var divImg = document.createElement("div");
             
             divImg.style.left = "0px";
