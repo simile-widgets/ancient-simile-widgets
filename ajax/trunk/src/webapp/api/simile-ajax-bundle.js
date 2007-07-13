@@ -874,6 +874,22 @@ elmt=elmt.parentNode;
 return{left:left,top:top};
 };
 
+SimileAjax.DOM.getSize=function(elmt){
+if(window.getComputedStyle){
+var cs=window.getComputedStyle(elmt,null);
+return{
+w:parseInt(cs.getPropertyValue("width").replace(/px/,'')),
+h:parseInt(cs.getPropertyValue("height").replace(/px/,''))
+}
+}else{
+SimileAjax.Debug.log("window.getComputedStyle is not supported");
+return{
+w:0,
+h:0
+}
+}
+}
+
 SimileAjax.DOM.getEventRelativeCoordinates=function(evt,elmt){
 if(SimileAjax.Platform.browser.isIE){
 return{
@@ -1181,7 +1197,8 @@ SimileAjax.Graphics._bubblePadding=15;
 SimileAjax.Graphics._bubblePointOffset=6;
 SimileAjax.Graphics._halfArrowWidth=18;
 
-SimileAjax.Graphics.createBubbleForPoint=function(pageX,pageY,contentWidth,contentHeight){
+SimileAjax.Graphics.createBubbleForPoint=function(pageX,pageY,contentWidth,contentHeight,orientation){
+
 function getWindowDims(){
 if(typeof window.innerHeight=='number'){
 return{w:window.innerWidth,h:window.innerHeight};
@@ -1207,6 +1224,7 @@ bubble._content=null;
 bubble._closed=true;
 }
 }
+
 var layer=SimileAjax.WindowManager.pushLayer(close,true);
 var bubble={
 _closed:false,
@@ -1296,7 +1314,7 @@ left=pageX<(docWidth/2)?
 Math.max(left,-(margins.left-SimileAjax.Graphics._bubblePadding)):
 Math.min(left,docWidth+(margins.right-SimileAjax.Graphics._bubblePadding)-bubbleWidth);
 
-if(pageY-SimileAjax.Graphics._bubblePointOffset-bubbleHeight>0){
+if((orientation&&orientation=="top")||(!orientation&&(pageY-SimileAjax.Graphics._bubblePointOffset-bubbleHeight>0))){
 var divImg=document.createElement("div");
 
 divImg.style.left=(pageX-SimileAjax.Graphics._halfArrowWidth-left)+"px";
@@ -1309,7 +1327,7 @@ div.style.top=(pageY-SimileAjax.Graphics._bubblePointOffset-bubbleHeight+
 SimileAjax.Graphics._arrowOffsets.bottom)+"px";
 
 return;
-}else if(pageY+SimileAjax.Graphics._bubblePointOffset+bubbleHeight<docHeight){
+}else if((orientation&&orientation=="bottom")||(!orientation&&(pageY+SimileAjax.Graphics._bubblePointOffset+bubbleHeight<docHeight))){
 var divImg=document.createElement("div");
 
 divImg.style.left=(pageX-SimileAjax.Graphics._halfArrowWidth-left)+"px";
@@ -1330,7 +1348,7 @@ top=pageY<(docHeight/2)?
 Math.max(top,-(margins.top-SimileAjax.Graphics._bubblePadding)):
 Math.min(top,docHeight+(margins.bottom-SimileAjax.Graphics._bubblePadding)-bubbleHeight);
 
-if(pageX-SimileAjax.Graphics._bubblePointOffset-bubbleWidth>0){
+if((orientation&&orientation=="left")||(!orientation&&(pageX-SimileAjax.Graphics._bubblePointOffset-bubbleWidth>0))){
 var divImg=document.createElement("div");
 
 divImg.style.left=(margins.left+contentWidth)+"px";
@@ -1341,7 +1359,7 @@ divInner.appendChild(divImg);
 div.style.left=(pageX-SimileAjax.Graphics._bubblePointOffset-bubbleWidth+
 SimileAjax.Graphics._arrowOffsets.right)+"px";
 div.style.top=top+"px";
-}else{
+}else if((orientation&&orientation=="right")||(!orientation&&(pageX-SimileAjax.Graphics._bubblePointOffset-bubbleWidth<docWidth))){
 var divImg=document.createElement("div");
 
 divImg.style.left="0px";
