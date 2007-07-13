@@ -7,6 +7,7 @@ Timeplot.DefaultValueGeometry = function(params) {
     this._id = ("id" in params) ? params.id : "g" + Math.round(Math.random() * 1000000);
     this._axisColor = ("axisColor" in params) ? params.axisColor : new Timeplot.Color("#606060");
     this._gridColor = ("gridColor" in params) ? params.gridColor : null;
+    this._gridLineWidth = ("gridLineWidth" in params) ? params.gridLineWidth : 0.5;
     this._axisLabelsPlacement = ("axisLabelsPlacement" in params) ? params.axisLabelsPlacement : null;
     this._center = ("center" in params) ? params.center : 30;
     this._range = ("range" in params) ? params.range : 20;
@@ -89,7 +90,7 @@ Timeplot.DefaultValueGeometry.prototype = {
         var gradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
 
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 0.5;
+        ctx.lineWidth = this._gridLineWidth;
         ctx.lineJoin = 'miter';
 
         // paint grid

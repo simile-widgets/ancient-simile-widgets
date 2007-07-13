@@ -56,13 +56,30 @@
     z-index: 1000;
 }
 
+.timeplot-valueflag-line {
+    display: none;
+    width: 14px;
+    height: 7px;
+    background-image:url(../images/line.png); 
+    z-index: 1000;
+}
+
 .timeplot-timeflag {
     display: none;
     border: 1px solid #FFB02D;
     padding: 2px 4px;
     text-align: center;
     background-color: #FFE57F;
+    font-weight: bold;
     z-index: 1000;
+}
+
+.timeplot-timeflag-triangle {
+    display: none;
+    width: 9px;
+    height: 5px;
+    background-image:url(../images/triangle.png); 
+    z-index: 1001;
 }
 
 .timeplot-valueflag-pole {

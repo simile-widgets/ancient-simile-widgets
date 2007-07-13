@@ -25,9 +25,11 @@ Timeplot.Plot.prototype = {
     
     initialize: function() {
 	    if (this._showValues && this._dataSource && this._dataSource.getValue) {
-	        this._valueFlag = this._timeplot.putDiv("valueflag","timeplot-valueflag");
             this._timeFlag = this._timeplot.putDiv("timeflag","timeplot-timeflag");
-	        this._valueFlagPole = this._timeplot.putDiv("valuepole","timeplot-valueflag-pole");
+            this._timeFlagTriangle = this._timeplot.putDiv("timeflagTriangle","timeplot-timeflag-triangle");
+	        this._valueFlag = this._timeplot.putDiv(this._id + "valueflag","timeplot-valueflag");
+	        this._valueFlagLine = this._timeplot.putDiv(this._id + "valueflagLine","timeplot-valueflag-line");
+	        this._valueFlagPole = this._timeplot.putDiv(this._id + "valuepole","timeplot-valueflag-pole");
 
             var plot = this;
             
@@ -41,7 +43,9 @@ Timeplot.Plot.prototype = {
 		    
 		    var mouseMoveHandler = function(elmt, evt, target) {
 		    	if (typeof SimileAjax != "undefined") {
-			        var coords = SimileAjax.DOM.getEventRelativeCoordinates(evt,elmt);
+			        var coords = SimileAjax.DOM.getEventRelativeCoordinates(evt,plot._canvas);
+			        if (coords.x > plot._canvas.width) coords.x = plot._canvas.width;
+			        if (coords.x < 0) coords.x = 0;
 			        var t = plot._timeGeometry.fromScreen(coords.x);
 			        var v = plot._dataSource.getValue(t);
 			        if (plot._plotInfo.roundValues) v = Math.round(v);
@@ -55,17 +59,31 @@ Timeplot.Plot.prototype = {
 			        } else {
                         plot._timeFlag.innerHTML = d.toLocaleString();
 			        }
+			        var s = SimileAjax.DOM.getSize(plot._timeFlag);
+			        var c = plot._canvas;
 			        var y = plot._valueGeometry.toScreen(v);
+			        var dh = Math.round(s.h / 2);
+			        var dw = Math.round(s.w / 2);
 			        plot._timeplot.placeDiv(plot._valueFlag,{
-			            left: coords.x,
-			            bottom: y,
+			            left: coords.x + 13,
+			            bottom: y + 6,
 			            display: "block"
 			        });
+                    plot._timeplot.placeDiv(plot._valueFlagLine,{
+                        left: coords.x,
+                        bottom: y,
+                        display: "block"
+                    });
 			        plot._timeplot.placeDiv(plot._timeFlag,{
-			            left: coords.x,
-			            top: plot._canvas.height,
+			            left: coords.x - dw,
+			            top: plot._canvas.height + 4,
 			            display: "block"
 			        });
+                    plot._timeplot.placeDiv(plot._timeFlagTriangle,{
+                        left: coords.x - 4,
+                        top: plot._canvas.height,
+                        display: "block"
+                    });
 			        plot._timeplot.placeDiv(plot._valueFlagPole, {
 			            left: coords.x,
 			            bottom: 0,
@@ -75,8 +93,9 @@ Timeplot.Plot.prototype = {
 		    	}
 		    }
 
-            SimileAjax.DOM.registerEvent(this._canvas, "mouseover", mouseOverHandler);
-            SimileAjax.DOM.registerEvent(this._canvas, "mousemove", mouseMoveHandler);
+            var timeplotElement = this._timeplot.getElement();
+            SimileAjax.DOM.registerEvent(timeplotElement, "mouseover", mouseOverHandler);
+            SimileAjax.DOM.registerEvent(timeplotElement, "mousemove", mouseMoveHandler);
 	    }
     },
 
@@ -104,7 +123,7 @@ Timeplot.Plot.prototype = {
     paint: function() {
         var ctx = this._canvas.getContext('2d');
 
-        ctx.lineWidth = 1;
+        ctx.lineWidth = this._plotInfo.lineWidth;
         ctx.lineJoin = 'miter';
 
         if (this._dataSource) {     
@@ -196,9 +215,7 @@ Timeplot.Plot.prototype = {
                     	plot._closeBubble();
                     	var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
                     	var elmtCoords = SimileAjax.DOM.getPageCoordinates(elmt);
-                        var width = plot._theme.event.bubble.width;
-                        var height = plot._theme.event.bubble.height;
-                        plot._bubble = SimileAjax.Graphics.createBubbleForPoint(coords.x, elmtCoords.top, width, height);
+                        plot._bubble = SimileAjax.Graphics.createBubbleForPoint(coords.x, elmtCoords.top + plot._canvas.height, plot._plotInfo.bubbleWidth, plot._plotInfo.bubbleHeight, "bottom");
                         event.fillInfoBubble(plot._bubble.content, plot._theme, plot._labeller);
                     }
                 };
@@ -215,6 +232,7 @@ Timeplot.Plot.prototype = {
 	                SimileAjax.DOM.registerEvent(div, "click"    , clickHandler(event));
 	                SimileAjax.DOM.registerEvent(div, "mouseover", mouseOverHandler);
 	                SimileAjax.DOM.registerEvent(div, "mouseout" , mouseOutHandler);
+	                SimileAjax.DOM.registerEvent(div, "mousemove", mouseMoveHandler);
 		            div.instrumented = true;
                 }
             }

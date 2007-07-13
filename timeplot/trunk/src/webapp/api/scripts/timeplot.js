@@ -22,11 +22,14 @@ Timeplot.createPlotInfo = function(params) {
         timeZone:       ("timeZone" in params) ? params.timeZone : 0,
         fillColor:      ("fillColor" in params) ? params.fillColor : null,
         lineColor:      ("lineColor" in params) ? params.lineColor : new Timeplot.Color("#606060"),
-        dotRadius:      ("dotRadius" in params) ? params.dotRadius : 2,
+        lineWidth:      ("lineWidth" in params) ? params.lineWidth : 1.0,
+        dotRadius:      ("dotRadius" in params) ? params.dotRadius : 2.0,
         dotColor:       ("dotColor" in params) ? params.dotColor : null,
         eventLineWidth: ("eventLineWidth" in params) ? params.eventLineWidth : 1.0,
         showValues:     ("showValues" in params) ? params.showValues : false,
         roundValues:    ("roundValues" in params) ? params.roundValues : true,
+        bubbleWidth:    ("bubbleWidth" in params) ? params.bubbleWidth : 300,
+        bubbleHeight:   ("bubbleHeight" in params) ? params.bubbleHeight : 200,
     };
 };
 
@@ -56,6 +59,10 @@ Timeplot._Impl.prototype = {
         this._containerDiv.innerHTML = "";
     },
 
+    getElement: function() {
+    	return this._containerDiv;
+    },
+    
     getDocument: function() {
         return this._containerDiv.ownerDocument;
     },
