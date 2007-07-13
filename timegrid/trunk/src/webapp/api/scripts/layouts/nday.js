@@ -26,7 +26,6 @@ Timegrid.NDayLayout = function(eventSource, params) {
                                           obj.time.getMinutes() / 60; };
     
     // These are default values that can be overridden in configure
-    this.height = 500.0;
     this.n      = 3;
     
     this.configure(params);

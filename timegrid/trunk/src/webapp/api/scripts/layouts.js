@@ -92,9 +92,16 @@ Timegrid.Layout.prototype.render = function(container) {
     var gridDiv = $('<div></div>').addClass('timegrid-grid');
     var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
     
-    this._viewDiv.height(this.height + "px");
-    if (!this.width) { this.width = this._viewDiv.width(); }
-    this._viewDiv.width(this.width + "px");  
+    if (!this.width) { this.width = $(this._container).width(); }
+    if (!this.height && $(this._container).height()) { 
+        this.height = $(this._container).height(); 
+    }
+    $(this._container).height(this.height + "px");
+    $(this._container).width(this.width + "px");  
+    $(this._container).css('position', 'relative');
+    this._viewDiv.css('top', "1.5em");
+    this._viewDiv.css('bottom', '0px');
+    this._viewDiv.width("100%");
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
     this._viewDiv.append(gridWindowDiv.append(gridDiv));
@@ -118,7 +125,6 @@ Timegrid.Layout.prototype.render = function(container) {
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
     this._viewDiv.append(xLabels).append(yLabels);
-    //if (!this._container.style.width) { $(this._container).width(this.width + "px"); }
     return this._viewDiv.get(0);
 };
 

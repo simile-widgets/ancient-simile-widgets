@@ -25,6 +25,7 @@
             "util/excanvas.pack.js",
             "util/jquery.simile.js",
             "util/jquery.corner.js",
+            "util/position.js",
             
             "controls.js",
             "listeners.js",

@@ -3,6 +3,7 @@
     <title>SIMILE | Timegrid</title>
     <link rel='stylesheet' href='styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+    <script type="text/javascript" src="../api/timegrid-api.js"></script>
 </head>
 <body onload="onLoad();" onresize="onResize();">
 <!--#include virtual="sidebar.html" -->
@@ -13,21 +14,22 @@
 
 <div id="body">
     <h1>Timegrid</h1>
-    <p>Timeline is a DHTML-based AJAXy widget for visualizing time-based events.
-        It is like <a href="http://maps.google.com/">Google Maps</a> for time-based information.
-        Below is a live example that you can play with. Pan the timeline by
-        dragging it horizontally.
+    <p>
+      Timegrid is a DHTML-based AJAXy widget for visualizing time-based events.
+      It is capable of rendering dynamic, calendar-style views of event data
+      from multiple sources of different formats (XML, JSON).  Below is a live
+      example that you can play with.
     </p>
 
-    <div id="tl" class="timeline-default" style="height: 400px; margin: 2em;">
+    <div id="tl" tg:role="grid" tg:src="examples/month/month.xml"
+         tg:views="week,month" style="height: 500px; margin: 2em;">
     </div>
     
-    <p>Just like Google Maps, Timeline can be used with zero software installation,
-        server-side or client-side. And like Google Maps, you can populate Timeline
-        with data by pointing it to an XML file (here is the 
-        <a href="examples/jfk/jfk.xml">data file</a> for the timeline above).
-        But Timeline is not limited to only that means of loading data; for instance,
-        we have just added <a href="examples/cubism/cubism.html">JSON support</a>.
+    <p>
+      Just like Google Calendar, Timegrid can be used with zero software installation,
+      server-side or client-side.  Timegrid, however, does not depend on any server
+      for its data backend; instead, it can import events from simple XML or JSON
+      files, or optionally be configured to display Google Calendar feeds.
     </p>
     
     <h2>Live Examples</h2>

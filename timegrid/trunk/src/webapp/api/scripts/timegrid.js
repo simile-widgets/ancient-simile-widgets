@@ -121,7 +121,6 @@ Timegrid._Impl.prototype.loadJSON = function(url, f) {
 
 Timegrid._Impl.prototype._construct = function() {
     var self = this;
-    console.log(this._layoutParams);
     this._layouts = $.map(this._layoutNames, function(s) {
         return Timegrid.LayoutFactory.createLayout(s, self._eventSource,
                                                       self._layoutParams);

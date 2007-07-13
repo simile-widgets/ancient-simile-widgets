@@ -26,7 +26,6 @@ Timegrid.WeekLayout = function(eventSource, params) {
     this.yMapper = function(obj) { return obj.time.getHours(); };
     
     // These are default values that can be overridden in configure
-    this.height = 500.0;
     
     this.configure(params);
     this.computeCellSizes();

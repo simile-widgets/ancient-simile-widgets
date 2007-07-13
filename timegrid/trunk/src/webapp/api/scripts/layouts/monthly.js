@@ -13,9 +13,6 @@ Timegrid.MonthLayout = function(eventSource, params) {
     this.ySize = 5;
     this.iterable = false;
     
-    // These are default values that can be overridden in configure
-    this.height = 500.0;
-    
     this.configure(params);
     
     // Compute the cell sizes for the grid

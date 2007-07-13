@@ -42,7 +42,7 @@ span.timegrid-tab-active {
 }
 
 div.timegrid-view {
-    position: relative;
+    position: absolute;
     border: 1px white solid;
 }
 
