@@ -125,7 +125,7 @@
         window.SimileAjax_onLoad = loadMe;
         
         var url = debug ?
-            "/ajax/api/simile-ajax-api.js?bundle=false" :
+            "/ajax/api-2.0/simile-ajax-api.js?bundle=false" :
             "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js?bundle=true";
                 
         var createScriptElement = function() {
