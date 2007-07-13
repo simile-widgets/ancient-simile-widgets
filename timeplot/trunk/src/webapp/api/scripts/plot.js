@@ -27,8 +27,10 @@ Timeplot.Plot.prototype = {
 	    if (this._showValues && this._dataSource && this._dataSource.getValue) {
             this._timeFlag = this._timeplot.putDiv("timeflag","timeplot-timeflag");
             this._timeFlagTriangle = this._timeplot.putDiv("timeflagTriangle","timeplot-timeflag-triangle");
+            if (!this._timeFlagTriangle.firstChild) this._timeFlagTriangle.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/triangle.png"));
 	        this._valueFlag = this._timeplot.putDiv(this._id + "valueflag","timeplot-valueflag");
 	        this._valueFlagLine = this._timeplot.putDiv(this._id + "valueflagLine","timeplot-valueflag-line");
+            if (!this._valueFlagLine.firstChild) this._valueFlagLine.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/line.png"));
 	        this._valueFlagPole = this._timeplot.putDiv(this._id + "valuepole","timeplot-valueflag-pole");
 
             var plot = this;
