@@ -60,7 +60,6 @@
     display: none;
     width: 14px;
     height: 7px;
-    background-image:url(../images/line.png); 
     z-index: 1000;
 }
 
@@ -78,7 +77,6 @@
     display: none;
     width: 9px;
     height: 5px;
-    background-image:url(../images/triangle.png); 
     z-index: 1001;
 }
 
