@@ -2,11 +2,11 @@
 <head>
     <title>SIMILE | Timeplot | Magnifying Stats</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
-    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
     <style>
         body {
             background-color: #fff;
+            background-image: none;
         }
          
         .label {
@@ -38,7 +38,9 @@
         }
     </style>
     
-    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
+    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+
     <script>
         var timeplot1;
 
@@ -70,6 +72,8 @@
             var webTraffic = new Timeplot.ColumnSource(eventSource,2);
             var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
             var webGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
                 min: 0
             });
             
@@ -92,13 +96,14 @@
                     timeGeometry: timeGeometry,
                     valueGeometry: webGeometry,
                     lineColor: loudLine,
-//                }),
-//                Timeplot.createPlotInfo({
-//                    id: "events",
-//                    eventSource: eventSource2,
-//                    timeGeometry: timeGeometry,
-//                    valueGeometry: webGeometry,
-//                    lineColor: loudLine
+                    showValues: true,
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: webGeometry,
+                    lineColor: loudLine
                 })
             ];
             

@@ -23,16 +23,20 @@
         }
     </style>
     
-    <script src="api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
+    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+    
     <script>
         var timeplot1;
 
-        var red = new Timeplot.Color('#8E2800');
-        var blue = new Timeplot.Color('#193441');
-        var green = new Timeplot.Color('#468966');
-        var gridColor  = new Timeplot.Color('#FFE57F');
-        
         function onLoad() {
+
+            var red = new Timeplot.Color('#B9121B');
+            var blue = new Timeplot.Color('#193441');
+            var green = new Timeplot.Color('#468966');
+            var lightGreen = new Timeplot.Color('#5C832F');
+            
+            var gridColor  = new Timeplot.Color('#303030');
 
             var timeGeometry = new Timeplot.DefaultTimeGeometry({
                 gridColor: gridColor
@@ -40,6 +44,7 @@
 
             var geometry1 = new Timeplot.DefaultValueGeometry({
                 gridColor: gridColor,
+                axisLabelsPlacement: "left",
                 min: 0
             });
 
@@ -62,6 +67,7 @@
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry2,
                     lineColor: green,
+                    dotColor: lightGreen,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
@@ -70,6 +76,7 @@
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry1,
                     lineColor: blue,
+                    dotColor: blue,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
@@ -108,23 +115,22 @@
     <h1>Timeplot</h1>
 
     <p>Timeplot is a DHTML-based AJAXy widget for plotting time series and overlay
-       time-based events (with the same data formats that <a href="http://simile.mit.edu/timeline/">Timeline</a> supports).
-       See a live example below.
-    </p>
+       time-based events over them (with the same data formats that <a href="http://simile.mit.edu/timeline/">Timeline</a> supports).</p>
+
+    <p>Here is a live example:</p>
 
     <div style="margin: 2em;">
-      <div class="label"><span style="color: #193441;">Persons Obtaining Legal Permanent Resident Status in the U.S. (per year)</span> vs. <span style="color: #468966;">U.S. Population</span></div>
+      <div class="label"><span style="color: #193441;">New Legal Permanent Residents in the U.S. (per year)</span> vs. <span style="color: #468966;">U.S. Population</span> vs. <span style="color: #B9121B;">U.S. History</span></div>
       <div id="timeplot1" style="height: 200px" class="timeplot"></div>
-      <div class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a> and <a href="http://www.census.gov/population/censusdata/table-4.pdf">U.S. Census Bereau</a></div>
+      <div class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a>, <a href="http://www.census.gov/population/censusdata/table-4.pdf">U.S. Census Bereau</a> and <a href="http://en.wikipedia.org/wiki/Timeline_of_United_States_history">Wikipedia</a></div>
     </div>
     
     <p>Just like Timeline or Google Maps, Timeplot can be used with zero software installation,
        server-side or client-side. You can populate Timeplot with data by pointing it to an 
-       space or comma separated file (here is the <a href="http://simile.mit.edu/history/data/webstats.data">data file</a> for 
+       space or comma separated file (here is one of the <a href="http://simile.mit.edu/timeplot/examples/immigration/immigration.txt">data file</a> for 
        the timeplot above). Timeplot also supports Timeline's XML format, meaning that you can 
        reuse the same data file of your Timeline and overlay them over a time series plot
-       (here is the <a href="http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=6">event file</a> for the timeplot above, generated directly out of our WordPress blog
-       in the timeline XML format)
+       (here is the <a href="http://simile.mit.edu/timeplot/examples/immigration/us_history.xml">event file</a> for the timeplot above).
     </p>
 
     <h2>Live Examples</h2>
@@ -134,7 +140,8 @@
      <li><a href="examples/housing/index.html">Housing vs. Stock Market in the U.S. since 1975</a>: this timeplot shows the trends of growth for two of the biggest investment sectors in the U.S., housing and the stock market, in relationship with monetary inflation.</li>
      <li><a href="examples/immigration/index.html">Immigration in the U.S. since 1820</a>: this timeplot shows the amount of people that legally obtained permanent residency in the U.S. over almost 200 years.</li>
      <li><a href="examples/bush/index.html">George W. Bush Approval Ratings</a>: this timeplot shows the sampled approval ratings of George W. Bush's job as president of the U.S. over his 2 terms until until today.</li>
-     <li><a href="examples/simile/index.html">SIMILE Project Statistics</a>: this series of timeplots shows the statistics of the SIMILE project collected by analyzing web server and mail server logs.</li>
+     <li><a href="examples/simile/index.html">SIMILE Project Statistics</a>: this series of timeplots shows the statistics of the SIMILE project collected by analyzing web server and mail server logs. This example shows how Timeplot is able to post-process the data
+     to plot things like differences between two columns or the moving average of a time series on the fly.</li>
      <li><a href="examples/simile/magnify.html">Magnifying Stats</a>: this example shows how Timeplot can use flexible and interactive geometries to provide zooming capabilities.</li>
     </ul>
 
@@ -174,7 +181,7 @@
     <h2>Credits</h2>
     <p>This software was created and its maintained by the SIMILE project, in particular:
         <ul>
-            <li><a href="http://www.betaversion.org/~stefano/">Stefano Mazzocchi</a>, &lt;stefanom @ mit.edu&gt;</li>
+            <li><a href="http://www.betaversion.org/~stefano/">Stefano Mazzocchi</a>, &lt;stefanom@mit.edu&gt;</li>
         </ul>
     </p>
 </div>

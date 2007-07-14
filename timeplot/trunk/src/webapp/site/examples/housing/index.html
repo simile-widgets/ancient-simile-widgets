@@ -2,7 +2,6 @@
 <head>
     <title>SIMILE | Timeplot | Houses vs. Stock Market</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
-    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
     <style>
         body {
@@ -28,7 +27,9 @@
         }
     </style>
     
-    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
+    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+
     <script>
         var timeplot1;
 
@@ -121,7 +122,7 @@
 
 <div id="body">
 	<h1>Housing vs. Stock Market</h1>
-    <div class="label"><span style="color: #91AA9D;">Inflation</span> vs. <span style="color: #468966;">Housing Price Index</span> vs. <span style="color: #193441;">Dow Jones Industrial Index</span></div>
+    <div class="label"><span style="color: #91AA9D;">Inflation</span> vs. <span style="color: #468966;">Housing Price Index</span> vs. <span style="color: #193441;">Dow Jones Industrial Average</span></div>
     <div id="timeplot1" style="height: 300px" class="timeplot"></div>
     <p class="sources">Sources: <a href="http://www.bls.gov/data/">U.S. Department of Labor</a>, <a href="">Office of Federal Housing Enterprise Oversight (OFHEO)</a> and <a href="http://www.djindexes.com/mdsidx/index.cfm?event=showavgIndexData">Dow Jones & Company</a></p>
     <p class="note">The indices have different dimensions and scales but here they have been normalized to better expose relationships in trends.

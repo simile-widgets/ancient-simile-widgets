@@ -2,7 +2,6 @@
 <head>
     <title>SIMILE | Timeplot | George W. Bush Ratings</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
-    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
     <style>
         body {
@@ -28,16 +27,17 @@
         }
     </style>
     
-    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
+    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+
     <script>
         var timeplot1;
 
-        var color1 = new Timeplot.Color('#FCFFF5');
-        var color2 = new Timeplot.Color('#D1DBBD');
-        var color3 = new Timeplot.Color('#91AA9D');
-        var color4 = new Timeplot.Color('#468966');
-        var color5 = new Timeplot.Color('#193441');
-        var gridColor  = new Timeplot.Color('#FFE57F');
+        var fill = new Timeplot.Color('#D1DBBD');
+        var line = new Timeplot.Color('#193441');
+
+        var gridColor  = new Timeplot.Color('#303030');
+
         
         function onLoad() {
 
@@ -45,9 +45,10 @@
                 gridColor: gridColor
             });
 
-            var geometry1 = new Timeplot.DefaultValueGeometry({
-                gridColor: color3,
-                max: 100,
+            var geometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
+                max: 110,
                 min: 0
             });
 
@@ -60,17 +61,18 @@
                     id: "Ratings",
                     dataSource: dataSource1,
                     timeGeometry: timeGeometry,
-                    valueGeometry: geometry1,
-                    lineColor: color5,
-                    fillColor: color2,
+                    valueGeometry: geometry,
+                    lineColor: line,
+                    dotColor: line,
+                    fillColor: fill,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
                     id: "events",
                     eventSource: eventSource2,
                     timeGeometry: timeGeometry,
-                    valueGeometry: geometry1,
-                    lineColor: color5
+                    valueGeometry: geometry,
+                    lineColor: line
                 })                
             ];
             

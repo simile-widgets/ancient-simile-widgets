@@ -2,11 +2,11 @@
 <head>
     <title>SIMILE | Timeplot | SIMILE Stats</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
-    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     
     <style>
         body {
             background-color: #fff;
+            background-image: none;
         }
          
         .label {
@@ -38,7 +38,9 @@
         }
     </style>
     
-    <script src="../../api/timeplot-api.js?bundle=false" type="text/javascript"></script>
+    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
+    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+
     <script>
         var timeplot1;
         var timeplot2;
@@ -285,6 +287,7 @@
     <div id="timeplot3" class="timeplot"></div>
     <div class="label">Downloads (<span id="log-toggle" class="active-toggle" onclick="logarithmicDownloads();">log</span>|<span id="lin-toggle" class="toggle" onclick="linearDownloads();">lin</span>)</div>
     <div id="timeplot4" class="timeplot"></div>
+    <p class="note" style="margin-top: 3em">This <a href="http://simile.mit.edu/history/data/webstats.data">data</a> is produced live by scripts that analyze our servers logs. The <a href="http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=6">events</a> are generated directly out of our <a href="http://wordpress.org/">Wordpress</a> <a href="http://simile.mit.edu/blog/">blog</a> from all the posts tagged with the <em>timeplot</em> category, using the <a href="http://www.freshlabs.de/journal/archives/2006/10/wordpress-plugin-simile-timeline/">Timeline plugin for Wordpress</a>.</p>
 </div>
     
 </body>
