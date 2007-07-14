@@ -60,7 +60,7 @@
 .timeplot-valueflag-line {
     display: none;
     width: 14px;
-    height: 7px;
+    height: 14px;
     z-index: 1000;
 }
 
@@ -76,8 +76,8 @@
 
 .timeplot-timeflag-triangle {
     display: none;
-    width: 9px;
-    height: 5px;
+    width: 11px;
+    height: 6px;
     z-index: 1001;
 }
 

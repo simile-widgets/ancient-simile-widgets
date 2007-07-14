@@ -26,12 +26,22 @@ Timeplot.Plot.prototype = {
     initialize: function() {
 	    if (this._showValues && this._dataSource && this._dataSource.getValue) {
             this._timeFlag = this._timeplot.putDiv("timeflag","timeplot-timeflag");
-            this._timeFlagTriangle = this._timeplot.putDiv("timeflagTriangle","timeplot-timeflag-triangle");
-            if (!this._timeFlagTriangle.firstChild) this._timeFlagTriangle.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/triangle.png"));
 	        this._valueFlag = this._timeplot.putDiv(this._id + "valueflag","timeplot-valueflag");
-	        this._valueFlagLine = this._timeplot.putDiv(this._id + "valueflagLine","timeplot-valueflag-line");
-            if (!this._valueFlagLine.firstChild) this._valueFlagLine.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/line.png"));
+	        this._valueFlagLineLeft = this._timeplot.putDiv(this._id + "valueflagLineLeft","timeplot-valueflag-line");
+            this._valueFlagLineRight = this._timeplot.putDiv(this._id + "valueflagLineRight","timeplot-valueflag-line");
+            if (!this._valueFlagLineLeft.firstChild) {
+            	this._valueFlagLineLeft.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/line_left.png"));
+                this._valueFlagLineRight.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/line_right.png"));
+            }
 	        this._valueFlagPole = this._timeplot.putDiv(this._id + "valuepole","timeplot-valueflag-pole");
+
+            var opacity = this._plotInfo.valuesOpacity;
+            
+            SimileAjax.Graphics.setOpacity(this._timeFlag, opacity);
+            SimileAjax.Graphics.setOpacity(this._valueFlag, opacity);
+            SimileAjax.Graphics.setOpacity(this._valueFlagLineLeft, opacity);
+            SimileAjax.Graphics.setOpacity(this._valueFlagLineRight, opacity);
+            SimileAjax.Graphics.setOpacity(this._valueFlagPole, opacity);
 
             var plot = this;
             
@@ -45,10 +55,11 @@ Timeplot.Plot.prototype = {
 		    
 		    var mouseMoveHandler = function(elmt, evt, target) {
 		    	if (typeof SimileAjax != "undefined") {
-			        var coords = SimileAjax.DOM.getEventRelativeCoordinates(evt,plot._canvas);
-			        if (coords.x > plot._canvas.width) coords.x = plot._canvas.width;
-			        if (coords.x < 0) coords.x = 0;
-			        var t = plot._timeGeometry.fromScreen(coords.x);
+                    var c = plot._canvas;
+			        var x = Math.round(SimileAjax.DOM.getEventRelativeCoordinates(evt,plot._canvas).x);
+			        if (x > c.width) x = c.width;
+			        if (isNaN(x) || x < 0) x = 0;
+			        var t = plot._timeGeometry.fromScreen(x);
 			        var v = plot._dataSource.getValue(t);
 			        if (plot._plotInfo.roundValues) v = Math.round(v);
 			        plot._valueFlag.innerHTML = new String(v);
@@ -61,37 +72,97 @@ Timeplot.Plot.prototype = {
 			        } else {
                         plot._timeFlag.innerHTML = d.toLocaleString();
 			        }
-			        var s = SimileAjax.DOM.getSize(plot._timeFlag);
-			        var c = plot._canvas;
+			        
+			        var tw = plot._timeFlag.clientWidth;
+                    var th = plot._timeFlag.clientHeight;
+                    var tdw = Math.round(tw / 2);
+                    var vw = plot._valueFlag.clientWidth;
+                    var vh = plot._valueFlag.clientHeight;
 			        var y = plot._valueGeometry.toScreen(v);
-			        var dh = Math.round(s.h / 2);
-			        var dw = Math.round(s.w / 2);
-			        plot._timeplot.placeDiv(plot._valueFlag,{
-			            left: coords.x + 13,
-			            bottom: y + 6,
-			            display: "block"
-			        });
-                    plot._timeplot.placeDiv(plot._valueFlagLine,{
-                        left: coords.x,
-                        bottom: y,
-                        display: "block"
-                    });
-			        plot._timeplot.placeDiv(plot._timeFlag,{
-			            left: coords.x - dw,
-			            top: plot._canvas.height + 4,
-			            display: "block"
-			        });
-                    plot._timeplot.placeDiv(plot._timeFlagTriangle,{
-                        left: coords.x - 4,
-                        top: plot._canvas.height,
-                        display: "block"
-                    });
-			        plot._timeplot.placeDiv(plot._valueFlagPole, {
-			            left: coords.x,
-			            bottom: 0,
-			            height: y,
-			            display: "block"
-			        });
+
+                    if (x + tdw > c.width) {
+                        var tx = c.width - tdw;
+                    } else if (x - tdw < 0) {
+                        var tx = tdw;
+                    } else {
+                    	var tx = x;
+                    }
+
+			        if (plot._timeGeometry._timeValuePosition == "top") {
+                        plot._timeplot.placeDiv(plot._valueFlagPole, {
+                            left: x,
+                            top: th - 5,
+                            height: c.height - y - th + 6,
+                            display: "block"
+                        });
+				        plot._timeplot.placeDiv(plot._timeFlag,{
+				            left: tx - tdw,
+				            top: -6,
+				            display: "block"
+				        });
+			        } else {
+                        plot._timeplot.placeDiv(plot._valueFlagPole, {
+                            left: x,
+                            bottom: th - 5,
+                            height: y - th + 6,
+                            display: "block"
+                        });
+                        plot._timeplot.placeDiv(plot._timeFlag,{
+                            left: tx - tdw,
+                            bottom: -6,
+                            display: "block"
+                        });
+			        }
+			        
+			        if (x + vw + 14 > c.width && y + vh + 4 > c.height) {
+                        plot._valueFlagLineLeft.style.display = "none";
+	                    plot._timeplot.placeDiv(plot._valueFlagLineRight,{
+	                        left: x - 14,
+	                        bottom: y - 14,
+	                        display: "block"
+	                    });
+	                    plot._timeplot.placeDiv(plot._valueFlag,{
+	                        left: x - vw - 13,
+	                        bottom: y - vh - 13,
+	                        display: "block"
+	                    });
+			        } else if (x + vw + 14 > c.width && y + vh + 4 < c.height) {
+                        plot._valueFlagLineRight.style.display = "none";
+                        plot._timeplot.placeDiv(plot._valueFlagLineLeft,{
+                            left: x - 14,
+                            bottom: y,
+                            display: "block"
+                        });
+                        plot._timeplot.placeDiv(plot._valueFlag,{
+                            left: x - vw - 13,
+                            bottom: y + 13,
+                            display: "block"
+                        });
+                    } else if (x + vw + 14 < c.width && y + vh + 4 > c.height) {
+                        plot._valueFlagLineRight.style.display = "none";
+                        plot._timeplot.placeDiv(plot._valueFlagLineLeft,{
+                            left: x,
+                            bottom: y - 13,
+                            display: "block"
+                        });
+                        plot._timeplot.placeDiv(plot._valueFlag,{
+                            left: x + 13,
+                            bottom: y - 13,
+                            display: "block"
+                        });
+			        } else {
+                        plot._valueFlagLineLeft.style.display = "none";
+                        plot._timeplot.placeDiv(plot._valueFlagLineRight,{
+                            left: x,
+                            bottom: y,
+                            display: "block"
+                        });
+                        plot._timeplot.placeDiv(plot._valueFlag,{
+                            left: x + 13,
+                            bottom: y + 13,
+                            display: "block"
+                        });
+			        }
 		    	}
 		    }
 

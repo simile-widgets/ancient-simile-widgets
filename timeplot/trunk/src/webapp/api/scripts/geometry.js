@@ -188,6 +188,7 @@ Timeplot.DefaultTimeGeometry = function(params) {
     this._gridColor = ("gridColor" in params) ? params.gridColor : null;
     this._min = ("min" in params) ? params.min : null;
     this._max = ("max" in params) ? params.max : null;
+    this._timeValuePosition =("timeValuePosition" in params) ? params.timeValuePosition : "bottom";
     this._linMap = {
         direct: function(t) {
             return t;

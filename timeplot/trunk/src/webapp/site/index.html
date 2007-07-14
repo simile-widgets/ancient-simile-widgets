@@ -39,7 +39,8 @@
             var gridColor  = new Timeplot.Color('#303030');
 
             var timeGeometry = new Timeplot.DefaultTimeGeometry({
-                gridColor: gridColor
+                gridColor: gridColor,
+                timeValuePosition: "top" 
             });
 
             var geometry1 = new Timeplot.DefaultValueGeometry({
@@ -68,7 +69,7 @@
                     valueGeometry: geometry2,
                     lineColor: green,
                     dotColor: lightGreen,
-                    showValues: true
+                    showValues: true,
                 }),
                 Timeplot.createPlotInfo({
                     id: "Immigration",
@@ -106,6 +107,23 @@
 </head>
 <body onload="onLoad();" onresize="onResize()">
 <!--#include virtual="sidebar.html" -->
+
+    <div id="sidebar">
+      <div class="logo"><a title="The SIMILE Project" href="http://simile.mit.edu/"><img src="http://simile.mit.edu/images/logo.png" alt="Simile"/></a></div>
+      <center><img src="/timeplot/images/timeplot_logo.png"/></center>
+      <h2>Links</h2>
+      <ul>
+        <li><a title="Tutorial" href="docs/">Tutorial</a></li>
+        <li><a title="Documentation" href="http://simile.mit.edu/wiki/timeplot">Documentation</a></li>
+        <li><a title="Timeplot SVN Repository" href="http://simile.mit.edu/repository/timeplot/trunk/">Browse the Code</a></li>
+        <li><a title="Timeplot's Issue Tracker" href="http://simile.mit.edu/issues/browse/TIMEPLOT">Issue Tracker</a></li>
+      </ul>
+      <h2>Related Projects</h2>
+      <ul>
+        <li><a title="Timeline" href="/timeline/">Timeline</a></li>
+      </ul>
+    </div>
+    
 <ul id="path">
   <li><a href="../" title="Home">SIMILE</a></li>
   <li><span>Timeplot</span></li>
