@@ -20,7 +20,7 @@
             "continent" : "Africa",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Algeria"
 		},
-		{	"label" : "American%20Samoa",
+		{	"label" : "American Samoa",
 			"type" :  "Country",
             "continent" : "South Pacific Ocean",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#American%20Samoa"
@@ -45,12 +45,12 @@
             "continent" : "Antarctica",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Antarctica"
 		},
-		{	"label" : "Antigua%20and%20Barbuda",
+		{	"label" : "Antigua and Barbuda",
 			"type" :  "Country",
             "continent" : "The Caribbean",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Antigua%20and%20Barbuda"
 		},
-		{	"label" : "Arctic%20Ocean",
+		{	"label" : "Arctic Ocean",
 			"type" :  "Country",
             "continent" : "Arctic",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Arctic%20Ocean"
@@ -70,12 +70,12 @@
             "continent" : "The Caribbean",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Aruba"
 		},
-		{	"label" : "Ashmore%20and%20Cartier%20Islands",
+		{	"label" : "Ashmore and Cartier Islands",
 			"type" :  "Country",
             "continent" : "Asia",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Ashmore%20and%20Cartier%20Islands"
 		},
-		{	"label" : "Atlantic%20Ocean",
+		{	"label" : "Atlantic Ocean",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Atlantic%20Ocean"
 		},
@@ -93,7 +93,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Azerbaijan"
 		},
-		{	"label" : "Bahamas,%20The",
+		{	"label" : "Bahamas, The",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Bahamas,%20The"
 		},
@@ -101,7 +101,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Bahrain"
 		},
-		{	"label" : "Baker%20Island",
+		{	"label" : "Baker Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Baker%20Island"
 		},
@@ -113,7 +113,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Barbados"
 		},
-		{	"label" : "Bassas%20da%20India",
+		{	"label" : "Bassas da India",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Bassas%20da%20India"
 		},
@@ -145,7 +145,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Bolivia"
 		},
-		{	"label" : "Bosnia%20and%20Herzegovina",
+		{	"label" : "Bosnia and Herzegovina",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Bosnia%20and%20Herzegovina"
 		},
@@ -153,7 +153,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Botswana"
 		},
-		{	"label" : "Bouvet%20Island",
+		{	"label" : "Bouvet Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Bouvet%20Island"
 		},
@@ -161,11 +161,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Brazil"
 		},
-		{	"label" : "British%20Indian%20Ocean%20Territory",
+		{	"label" : "British Indian Ocean Territory",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#British%20Indian%20Ocean%20Territory"
 		},
-		{	"label" : "British%20Virgin%20Islands",
+		{	"label" : "British Virgin Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#British%20Virgin%20Islands"
 		},
@@ -177,7 +177,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Bulgaria"
 		},
-		{	"label" : "Burkina%20Faso",
+		{	"label" : "Burkina Faso",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Burkina%20Faso"
 		},
@@ -201,15 +201,15 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Canada"
 		},
-		{	"label" : "Cape%20Verde",
+		{	"label" : "Cape Verde",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Cape%20Verde"
 		},
-		{	"label" : "Cayman%20Islands",
+		{	"label" : "Cayman Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Cayman%20Islands"
 		},
-		{	"label" : "Central%20African%20Republic",
+		{	"label" : "Central African Republic",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Central%20African%20Republic"
 		},
@@ -225,15 +225,15 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#China"
 		},
-		{	"label" : "Christmas%20Island",
+		{	"label" : "Christmas Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Christmas%20Island"
 		},
-		{	"label" : "Clipperton%20Island",
+		{	"label" : "Clipperton Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Clipperton%20Island"
 		},
-		{	"label" : "Cocos%20(Keeling)%20Islands",
+		{	"label" : "Cocos (Keeling) Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Cocos%20(Keeling)%20Islands"
 		},
@@ -245,27 +245,27 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Comoros"
 		},
-		{	"label" : "Congo,%20Democratic%20Republic%20of%20the",
+		{	"label" : "Congo, Democratic Republic of the",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Congo,%20Democratic%20Republic%20of%20the"
 		},
-		{	"label" : "Congo,%20Republic%20of%20the",
+		{	"label" : "Congo, Republic of the",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Congo,%20Republic%20of%20the"
 		},
-		{	"label" : "Cook%20Islands",
+		{	"label" : "Cook Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Cook%20Islands"
 		},
-		{	"label" : "Coral%20Sea%20Islands",
+		{	"label" : "Coral Sea Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Coral%20Sea%20Islands"
 		},
-		{	"label" : "Costa%20Rica",
+		{	"label" : "Costa Rica",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Costa%20Rica"
 		},
-		{	"label" : "Cote%20d\'Ivoire",
+		{	"label" : "Cote d\'Ivoire",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Cote%20d\'Ivoire"
 		},
@@ -281,7 +281,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Cyprus"
 		},
-		{	"label" : "Czech%20Republic",
+		{	"label" : "Czech Republic",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Czech%20Republic"
 		},
@@ -301,11 +301,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Dominica"
 		},
-		{	"label" : "Dominican%20Republic",
+		{	"label" : "Dominican Republic",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Dominican%20Republic"
 		},
-		{	"label" : "East%20Timor",
+		{	"label" : "East Timor",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#East%20Timor"
 		},
@@ -317,11 +317,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Egypt"
 		},
-		{	"label" : "El%20Salvador",
+		{	"label" : "El Salvador",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#El%20Salvador"
 		},
-		{	"label" : "Equatorial%20Guinea",
+		{	"label" : "Equatorial Guinea",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Equatorial%20Guinea"
 		},
@@ -337,19 +337,19 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Ethiopia"
 		},
-		{	"label" : "Europa%20Island",
+		{	"label" : "Europa Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Europa%20Island"
 		},
-		{	"label" : "European%20Union",
+		{	"label" : "European Union",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#European%20Union"
 		},
-		{	"label" : "Falkland%20Islands%20(Islas%20Malvinas)",
+		{	"label" : "Falkland Islands (Islas Malvinas)",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Falkland%20Islands%20(Islas%20Malvinas)"
 		},
-		{	"label" : "Faroe%20Islands",
+		{	"label" : "Faroe Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Faroe%20Islands"
 		},
@@ -365,11 +365,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#France"
 		},
-		{	"label" : "French%20Polynesia",
+		{	"label" : "French Polynesia",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#French%20Polynesia"
 		},
-		{	"label" : "French%20Southern%20and%20Antarctic%20Lands",
+		{	"label" : "French Southern and Antarctic Lands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#French%20Southern%20and%20Antarctic%20Lands"
 		},
@@ -377,11 +377,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Gabon"
 		},
-		{	"label" : "Gambia,%20The",
+		{	"label" : "Gambia, The",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Gambia,%20The"
 		},
-		{	"label" : "Gaza%20Strip",
+		{	"label" : "Gaza Strip",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Gaza%20Strip"
 		},
@@ -401,7 +401,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Gibraltar"
 		},
-		{	"label" : "Glorioso%20Islands",
+		{	"label" : "Glorioso Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Glorioso%20Islands"
 		},
@@ -445,11 +445,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Haiti"
 		},
-		{	"label" : "Heard%20Island%20and%20McDonald%20Islands",
+		{	"label" : "Heard Island and McDonald Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Heard%20Island%20and%20McDonald%20Islands"
 		},
-		{	"label" : "Holy%20See%20(Vatican%20City)",
+		{	"label" : "Holy See (Vatican City)",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Holy%20See%20(Vatican%20City)"
 		},
@@ -457,11 +457,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Honduras"
 		},
-		{	"label" : "Hong%20Kong",
+		{	"label" : "Hong Kong",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Hong%20Kong"
 		},
-		{	"label" : "Howland%20Island",
+		{	"label" : "Howland Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Howland%20Island"
 		},
@@ -473,7 +473,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Iceland"
 		},
-		{	"label" : "Iles%20Eparses",
+		{	"label" : "Iles Eparses",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Iles%20Eparses"
 		},
@@ -481,7 +481,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#India"
 		},
-		{	"label" : "Indian%20Ocean",
+		{	"label" : "Indian Ocean",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Indian%20Ocean"
 		},
@@ -513,7 +513,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Jamaica"
 		},
-		{	"label" : "Jan%20Mayen",
+		{	"label" : "Jan Mayen",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Jan%20Mayen"
 		},
@@ -521,7 +521,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Japan"
 		},
-		{	"label" : "Jarvis%20Island",
+		{	"label" : "Jarvis Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Jarvis%20Island"
 		},
@@ -529,7 +529,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Jersey"
 		},
-		{	"label" : "Johnston%20Atoll",
+		{	"label" : "Johnston Atoll",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Johnston%20Atoll"
 		},
@@ -537,7 +537,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Jordan"
 		},
-		{	"label" : "Juan%20de%20Nova%20Island",
+		{	"label" : "Juan de Nova Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Juan%20de%20Nova%20Island"
 		},
@@ -549,7 +549,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Kenya"
 		},
-		{	"label" : "Kingman%20Reef",
+		{	"label" : "Kingman Reef",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Kingman%20Reef"
 		},
@@ -557,11 +557,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Kiribati"
 		},
-		{	"label" : "Korea,%20North",
+		{	"label" : "Korea, North",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Korea,%20North"
 		},
-		{	"label" : "Korea,%20South",
+		{	"label" : "Korea, South",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Korea,%20South"
 		},
@@ -641,11 +641,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Malta"
 		},
-		{	"label" : "Man,%20Isle%20of",
+		{	"label" : "Man, Isle of",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Man,%20Isle%20of"
 		},
-		{	"label" : "Marshall%20Islands",
+		{	"label" : "Marshall Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Marshall%20Islands"
 		},
@@ -665,11 +665,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Mexico"
 		},
-		{	"label" : "Micronesia,%20Federated%20States%20of",
+		{	"label" : "Micronesia, Federated States of",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Micronesia,%20Federated%20States%20of"
 		},
-		{	"label" : "Midway%20Islands",
+		{	"label" : "Midway Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Midway%20Islands"
 		},
@@ -709,7 +709,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Nauru"
 		},
-		{	"label" : "Navassa%20Island",
+		{	"label" : "Navassa Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Navassa%20Island"
 		},
@@ -721,15 +721,15 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Netherlands"
 		},
-		{	"label" : "Netherlands%20Antilles",
+		{	"label" : "Netherlands Antilles",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Netherlands%20Antilles"
 		},
-		{	"label" : "New%20Caledonia",
+		{	"label" : "New Caledonia",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#New%20Caledonia"
 		},
-		{	"label" : "New%20Zealand",
+		{	"label" : "New Zealand",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#New%20Zealand"
 		},
@@ -749,11 +749,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Niue"
 		},
-		{	"label" : "Norfolk%20Island",
+		{	"label" : "Norfolk Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Norfolk%20Island"
 		},
-		{	"label" : "Northern%20Mariana%20Islands",
+		{	"label" : "Northern Mariana Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Northern%20Mariana%20Islands"
 		},
@@ -765,7 +765,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Oman"
 		},
-		{	"label" : "Pacific%20Ocean",
+		{	"label" : "Pacific Ocean",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Pacific%20Ocean"
 		},
@@ -777,7 +777,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Palau"
 		},
-		{	"label" : "Palmyra%20Atoll",
+		{	"label" : "Palmyra Atoll",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Palmyra%20Atoll"
 		},
@@ -785,11 +785,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Panama"
 		},
-		{	"label" : "Papua%20New%20Guinea",
+		{	"label" : "Papua New Guinea",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Papua%20New%20Guinea"
 		},
-		{	"label" : "Paracel%20Islands",
+		{	"label" : "Paracel Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Paracel%20Islands"
 		},
@@ -805,7 +805,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Philippines"
 		},
-		{	"label" : "Pitcairn%20Islands",
+		{	"label" : "Pitcairn Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Pitcairn%20Islands"
 		},
@@ -817,7 +817,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Portugal"
 		},
-		{	"label" : "Puerto%20Rico",
+		{	"label" : "Puerto Rico",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Puerto%20Rico"
 		},
@@ -837,23 +837,23 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Rwanda"
 		},
-		{	"label" : "Saint%20Helena",
+		{	"label" : "Saint Helena",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Saint%20Helena"
 		},
-		{	"label" : "Saint%20Kitts%20and%20Nevis",
+		{	"label" : "Saint Kitts and Nevis",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Saint%20Kitts%20and%20Nevis"
 		},
-		{	"label" : "Saint%20Lucia",
+		{	"label" : "Saint Lucia",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Saint%20Lucia"
 		},
-		{	"label" : "Saint%20Pierre%20and%20Miquelon",
+		{	"label" : "Saint Pierre and Miquelon",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Saint%20Pierre%20and%20Miquelon"
 		},
-		{	"label" : "Saint%20Vincent%20and%20the%20Grenadines",
+		{	"label" : "Saint Vincent and the Grenadines",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Saint%20Vincent%20and%20the%20Grenadines"
 		},
@@ -861,15 +861,15 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Samoa"
 		},
-		{	"label" : "San%20Marino",
+		{	"label" : "San Marino",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#San%20Marino"
 		},
-		{	"label" : "Sao%20Tome%20and%20Principe",
+		{	"label" : "Sao Tome and Principe",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Sao%20Tome%20and%20Principe"
 		},
-		{	"label" : "Saudi%20Arabia",
+		{	"label" : "Saudi Arabia",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Saudi%20Arabia"
 		},
@@ -885,7 +885,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Seychelles"
 		},
-		{	"label" : "Sierra%20Leone",
+		{	"label" : "Sierra Leone",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Sierra%20Leone"
 		},
@@ -901,7 +901,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Slovenia"
 		},
-		{	"label" : "Solomon%20Islands",
+		{	"label" : "Solomon Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Solomon%20Islands"
 		},
@@ -909,15 +909,15 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Somalia"
 		},
-		{	"label" : "South%20Africa",
+		{	"label" : "South Africa",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#South%20Africa"
 		},
-		{	"label" : "South%20Georgia%20and%20the%20South%20Sandwich%20Islands",
+		{	"label" : "South Georgia and the South Sandwich Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#South%20Georgia%20and%20the%20South%20Sandwich%20Islands"
 		},
-		{	"label" : "Southern%20Ocean",
+		{	"label" : "Southern Ocean",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Southern%20Ocean"
 		},
@@ -925,11 +925,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Spain"
 		},
-		{	"label" : "Spratly%20Islands",
+		{	"label" : "Spratly Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Spratly%20Islands"
 		},
-		{	"label" : "Sri%20Lanka",
+		{	"label" : "Sri Lanka",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Sri%20Lanka"
 		},
@@ -989,11 +989,11 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Tonga"
 		},
-		{	"label" : "Trinidad%20and%20Tobago",
+		{	"label" : "Trinidad and Tobago",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Trinidad%20and%20Tobago"
 		},
-		{	"label" : "Tromelin%20Island",
+		{	"label" : "Tromelin Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Tromelin%20Island"
 		},
@@ -1009,7 +1009,7 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Turkmenistan"
 		},
-		{	"label" : "Turks%20and%20Caicos%20Islands",
+		{	"label" : "Turks and Caicos Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Turks%20and%20Caicos%20Islands"
 		},
@@ -1025,19 +1025,19 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Ukraine"
 		},
-		{	"label" : "United%20Arab%20Emirates",
+		{	"label" : "United Arab Emirates",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#United%20Arab%20Emirates"
 		},
-		{	"label" : "United%20Kingdom",
+		{	"label" : "United Kingdom",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#United%20Kingdom"
 		},
-		{	"label" : "United%20States",
+		{	"label" : "United States",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#United%20States"
 		},
-		{	"label" : "United%20States%20Pacific%20Island%20Wildlife%20Refuges",
+		{	"label" : "United States Pacific Island Wildlife Refuges",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#United%20States%20Pacific%20Island%20Wildlife%20Refuges"
 		},
@@ -1061,23 +1061,23 @@
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Vietnam"
 		},
-		{	"label" : "Virgin%20Islands",
+		{	"label" : "Virgin Islands",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Virgin%20Islands"
 		},
-		{	"label" : "Wake%20Island",
+		{	"label" : "Wake Island",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Wake%20Island"
 		},
-		{	"label" : "Wallis%20and%20Futuna",
+		{	"label" : "Wallis and Futuna",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Wallis%20and%20Futuna"
 		},
-		{	"label" : "West%20Bank",
+		{	"label" : "West Bank",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#West%20Bank"
 		},
-		{	"label" : "Western%20Sahara",
+		{	"label" : "Western Sahara",
 			"type" :  "Country",
 			"uri" :   "https://www.cia.gov/cia/publications/factbook/country#Western%20Sahara"
 		},

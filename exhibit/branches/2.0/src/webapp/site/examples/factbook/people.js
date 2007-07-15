@@ -88,7 +88,7 @@
 			"median-age" :         "23.2",
 			"type" :               "Country",
 			"population-density" : "290.42",
-			"id" :                 "American%20Samoa",
+			"id" :                 "American Samoa",
 			"infant" :             "9.07",
 			"migration" :          "-21.11",
 			"deathrate" :          "3.27",
@@ -160,14 +160,14 @@
 			"median-age" :         "30",
 			"type" :               "Country",
 			"population-density" : "156.14",
-			"id" :                 "Antigua%20and%20Barbuda",
+			"id" :                 "Antigua and Barbuda",
 			"infant" :             "18.86",
 			"migration" :          "-6.08",
 			"deathrate" :          "5.37",
 			"literacy" :           "85.8"
 		},
 		{
-			"id" :    "Arctic%20Ocean",
+			"id" :    "Arctic Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -234,12 +234,12 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Ashmore%20and%20Cartier%20Islands",
+			"id" :                 "Ashmore and Cartier Islands",
 			"population" :         "0",
 			"type" :               "Country"
 		},
 		{
-			"id" :    "Atlantic%20Ocean",
+			"id" :    "Atlantic Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -318,7 +318,7 @@
 			"median-age" :         "27.8",
 			"type" :               "Country",
 			"population-density" : "30.17",
-			"id" :                 "Bahamas,%20The",
+			"id" :                 "Bahamas, The",
 			"infant" :             "24.68",
 			"migration" :          "-2.17",
 			"deathrate" :          "9.05",
@@ -347,7 +347,7 @@
 			"literacy" :           "89.1"
 		},
 		{
-			"id" :    "Baker%20Island",
+			"id" :    "Baker Island",
 			"type" :  "Country"
 		},
 		{
@@ -384,7 +384,7 @@
 			"literacy" :           "99.7"
 		},
 		{
-			"id" :    "Bassas%20da%20India",
+			"id" :    "Bassas da India",
 			"type" :  "Country"
 		},
 		{
@@ -532,7 +532,7 @@
 			"median-age" :         "38.4",
 			"type" :               "Country",
 			"population-density" : "87.99",
-			"id" :                 "Bosnia%20and%20Herzegovina",
+			"id" :                 "Bosnia and Herzegovina",
 			"infant" :             "9.82",
 			"migration" :          "13.01",
 			"deathrate" :          "8.27",
@@ -560,7 +560,7 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Bouvet%20Island",
+			"id" :                 "Bouvet Island",
 			"population" :         "0",
 			"type" :               "Country"
 		},
@@ -587,7 +587,7 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "British%20Indian%20Ocean%20Territory",
+			"id" :                 "British Indian Ocean Territory",
 			"population" :         "0",
 			"type" :               "Country"
 		},
@@ -600,7 +600,7 @@
 			"median-age" :         "31.4",
 			"type" :               "Country",
 			"population-density" : "150.97",
-			"id" :                 "British%20Virgin%20Islands",
+			"id" :                 "British Virgin Islands",
 			"infant" :             "16.72",
 			"migration" :          "9.22",
 			"deathrate" :          "4.42",
@@ -660,7 +660,7 @@
 			"median-age" :         "16.5",
 			"type" :               "Country",
 			"population-density" : "50.78",
-			"id" :                 "Burkina%20Faso",
+			"id" :                 "Burkina Faso",
 			"infant" :             "91.35",
 			"migration" :          "0",
 			"deathrate" :          "15.6",
@@ -767,7 +767,7 @@
 			"median-age" :         "19.8",
 			"type" :               "Country",
 			"population-density" : "104.38",
-			"id" :                 "Cape%20Verde",
+			"id" :                 "Cape Verde",
 			"infant" :             "46.52",
 			"migration" :          "-11.91",
 			"deathrate" :          "6.55",
@@ -782,7 +782,7 @@
 			"median-age" :         "37.2",
 			"type" :               "Country",
 			"population-density" : "173.42",
-			"id" :                 "Cayman%20Islands",
+			"id" :                 "Cayman Islands",
 			"infant" :             "8",
 			"migration" :          "17.78",
 			"deathrate" :          "4.89",
@@ -800,7 +800,7 @@
 			"median-age" :         "18.4",
 			"type" :               "Country",
 			"population-density" : "6.91",
-			"id" :                 "Central%20African%20Republic",
+			"id" :                 "Central African Republic",
 			"infant" :             "85.63",
 			"migration" :          "0",
 			"deathrate" :          "18.65",
@@ -874,7 +874,7 @@
 		},
 		{
 			"population-density" : "11.06",
-			"id" :                 "Christmas%20Island",
+			"id" :                 "Christmas Island",
 			"population" :         "1493",
 			"type" :               "Country",
 			"population-growth" :  "0",
@@ -891,13 +891,13 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Clipperton%20Island",
+			"id" :                 "Clipperton Island",
 			"population" :         "0",
 			"type" :               "Country"
 		},
 		{
 			"population-density" : "41",
-			"id" :                 "Cocos%20(Keeling)%20Islands",
+			"id" :                 "Cocos (Keeling) Islands",
 			"population" :         "574",
 			"type" :               "Country",
 			"population-growth" :  "0",
@@ -962,7 +962,7 @@
 			"median-age" :         "16.2",
 			"type" :               "Country",
 			"population-density" : "27.63",
-			"id" :                 "Congo,%20Democratic%20Republic%20of%20the",
+			"id" :                 "Congo, Democratic Republic of the",
 			"infant" :             "88.62",
 			"migration" :          "0.23",
 			"deathrate" :          "13.27",
@@ -982,7 +982,7 @@
 			"median-age" :         "16.6",
 			"type" :               "Country",
 			"population-density" : "10.84",
-			"id" :                 "Congo,%20Republic%20of%20the",
+			"id" :                 "Congo, Republic of the",
 			"infant" :             "85.29",
 			"migration" :          "-3.62",
 			"deathrate" :          "12.93",
@@ -999,12 +999,12 @@
 			"median-age" :         "25.3",
 			"type" :               "Country",
 			"population-density" : "90.36",
-			"id" :                 "Cook%20Islands",
+			"id" :                 "Cook Islands",
 			"literacy" :           "95"
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Coral%20Sea%20Islands",
+			"id" :                 "Coral Sea Islands",
 			"population" :         "0",
 			"type" :               "Country"
 		},
@@ -1021,7 +1021,7 @@
 			"median-age" :         "26.4",
 			"type" :               "Country",
 			"population-density" : "80.44",
-			"id" :                 "Costa%20Rica",
+			"id" :                 "Costa Rica",
 			"infant" :             "9.7",
 			"migration" :          "0.49",
 			"deathrate" :          "4.36",
@@ -1039,7 +1039,7 @@
 			"median-age" :         "19.2",
 			"type" :               "Country",
 			"population-density" : "55.52",
-			"id" :                 "Cote%20d\'Ivoire",
+			"id" :                 "Cote d\'Ivoire",
 			"infant" :             "89.11",
 			"migration" :          "0",
 			"deathrate" :          "14.84",
@@ -1113,7 +1113,7 @@
 			"median-age" :         "39.3",
 			"type" :               "Country",
 			"population-density" : "132.45",
-			"id" :                 "Czech%20Republic",
+			"id" :                 "Czech Republic",
 			"infant" :             "3.89",
 			"migration" :          "0.97",
 			"deathrate" :          "10.59",
@@ -1201,7 +1201,7 @@
 			"median-age" :         "24.1",
 			"type" :               "Country",
 			"population-density" : "189.83",
-			"id" :                 "Dominican%20Republic",
+			"id" :                 "Dominican Republic",
 			"infant" :             "28.25",
 			"migration" :          "-2.79",
 			"deathrate" :          "5.73",
@@ -1222,7 +1222,7 @@
 			"birthrate" :         "26.99",
 			"median-age" :        "20.8",
 			"type" :              "Country",
-			"id" :                "East%20Timor",
+			"id" :                "East Timor",
 			"infant" :            "45.89",
 			"migration" :         "0",
 			"deathrate" :         "6.24",
@@ -1282,7 +1282,7 @@
 			"median-age" :         "21.8",
 			"type" :               "Country",
 			"population-density" : "329.27",
-			"id" :                 "El%20Salvador",
+			"id" :                 "El Salvador",
 			"infant" :             "24.39",
 			"migration" :          "-3.61",
 			"deathrate" :          "5.78",
@@ -1305,7 +1305,7 @@
 			"median-age" :         "18.8",
 			"type" :               "Country",
 			"population-density" : "19.25",
-			"id" :                 "Equatorial%20Guinea",
+			"id" :                 "Equatorial Guinea",
 			"infant" :             "89.21",
 			"migration" :          "0",
 			"deathrate" :          "15.06",
@@ -1379,16 +1379,16 @@
 			"literacy" :           "42.7"
 		},
 		{
-			"id" :    "Europa%20Island",
+			"id" :    "Europa Island",
 			"type" :  "Country"
 		},
 		{
-			"id" :    "European%20Union",
+			"id" :    "European Union",
 			"type" :  "Country"
 		},
 		{
 			"population-density" : "0.24",
-			"id" :                 "Falkland%20Islands%20(Islas%20Malvinas)",
+			"id" :                 "Falkland Islands (Islas Malvinas)",
 			"population" :         "2967",
 			"type" :               "Country",
 			"population-growth" :  "2.44",
@@ -1407,7 +1407,7 @@
 			"median-age" :         "35",
 			"type" :               "Country",
 			"population-density" : "33.77",
-			"id" :                 "Faroe%20Islands",
+			"id" :                 "Faroe Islands",
 			"infant" :             "6.12",
 			"migration" :          "0.47",
 			"deathrate" :          "8.7"
@@ -1487,7 +1487,7 @@
 			"median-age" :         "27.9",
 			"type" :               "Country",
 			"population-density" : "75.02",
-			"id" :                 "French%20Polynesia",
+			"id" :                 "French Polynesia",
 			"infant" :             "8.29",
 			"migration" :          "2.85",
 			"deathrate" :          "4.69",
@@ -1495,7 +1495,7 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "French%20Southern%20and%20Antarctic%20Lands",
+			"id" :                 "French Southern and Antarctic Lands",
 			"population" :         "0",
 			"type" :               "Country"
 		},
@@ -1537,7 +1537,7 @@
 			"median-age" :         "17.7",
 			"type" :               "Country",
 			"population-density" : "164.16",
-			"id" :                 "Gambia,%20The",
+			"id" :                 "Gambia, The",
 			"infant" :             "71.58",
 			"migration" :          "1.29",
 			"deathrate" :          "12.25",
@@ -1558,7 +1558,7 @@
 			"median-age" :         "15.8",
 			"type" :               "Country",
 			"population-density" : "3968.77",
-			"id" :                 "Gaza%20Strip",
+			"id" :                 "Gaza Strip",
 			"infant" :             "22.4",
 			"migration" :          "1.48",
 			"deathrate" :          "3.8",
@@ -1644,7 +1644,7 @@
 			"literacy" :           "80"
 		},
 		{
-			"id" :    "Glorioso%20Islands",
+			"id" :    "Glorioso Islands",
 			"type" :  "Country"
 		},
 		{
@@ -1839,13 +1839,13 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Heard%20Island%20and%20McDonald%20Islands",
+			"id" :                 "Heard Island and McDonald Islands",
 			"population" :         "0",
 			"type" :               "Country"
 		},
 		{
 			"population-density" : "2118.18",
-			"id" :                 "Holy%20See%20(Vatican%20City)",
+			"id" :                 "Holy See (Vatican City)",
 			"population" :         "932",
 			"type" :               "Country",
 			"literacy" :           "100",
@@ -1892,14 +1892,14 @@
 			"median-age" :         "40.7",
 			"type" :               "Country",
 			"population-density" : "6660.68",
-			"id" :                 "Hong%20Kong",
+			"id" :                 "Hong Kong",
 			"infant" :             "2.95",
 			"migration" :          "4.89",
 			"deathrate" :          "6.29",
 			"literacy" :           "93.5"
 		},
 		{
-			"id" :    "Howland%20Island",
+			"id" :    "Howland Island",
 			"type" :  "Country"
 		},
 		{
@@ -1937,7 +1937,7 @@
 			"literacy" :           "99"
 		},
 		{
-			"id" :    "Iles%20Eparses",
+			"id" :    "Iles Eparses",
 			"type" :  "Country"
 		},
 		{
@@ -1975,7 +1975,7 @@
 			"literacy" :           "59.5"
 		},
 		{
-			"id" :    "Indian%20Ocean",
+			"id" :    "Indian Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -2124,7 +2124,7 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Jan%20Mayen",
+			"id" :                 "Jan Mayen",
 			"population" :         "0",
 			"type" :               "Country"
 		},
@@ -2144,7 +2144,7 @@
 			"literacy" :           "99"
 		},
 		{
-			"id" :    "Jarvis%20Island",
+			"id" :    "Jarvis Island",
 			"type" :  "Country"
 		},
 		{
@@ -2165,7 +2165,7 @@
 			"deathrate" :          "9.28"
 		},
 		{
-			"id" :    "Johnston%20Atoll",
+			"id" :    "Johnston Atoll",
 			"type" :  "Country"
 		},
 		{
@@ -2189,7 +2189,7 @@
 			"literacy" :           "91.3"
 		},
 		{
-			"id" :    "Juan%20de%20Nova%20Island",
+			"id" :    "Juan de Nova Island",
 			"type" :  "Country"
 		},
 		{
@@ -2229,7 +2229,7 @@
 			"literacy" :           "85.1"
 		},
 		{
-			"id" :    "Kingman%20Reef",
+			"id" :    "Kingman Reef",
 			"type" :  "Country"
 		},
 		{
@@ -2255,7 +2255,7 @@
 			"median-age" :         "32",
 			"type" :               "Country",
 			"population-density" : "191.95",
-			"id" :                 "Korea,%20North",
+			"id" :                 "Korea, North",
 			"infant" :             "23.29",
 			"migration" :          "0",
 			"deathrate" :          "7.13",
@@ -2273,7 +2273,7 @@
 			"median-age" :         "35.2",
 			"type" :               "Country",
 			"population-density" : "497.47",
-			"id" :                 "Korea,%20South",
+			"id" :                 "Korea, South",
 			"infant" :             "6.16",
 			"migration" :          "0",
 			"deathrate" :          "5.85",
@@ -2663,7 +2663,7 @@
 			"literacy" :           "92.8"
 		},
 		{
-			"uri" :                "https://www.cia.gov/cia/publications/factbook/country#Man,%20Isle%20of",
+			"uri" :                "https://www.cia.gov/cia/publications/factbook/country#Man, Isle of",
 			"expectancy" :         "78.49",
 			"population-growth" :  "0.52",
 			"population" :         "75441",
@@ -2671,7 +2671,7 @@
 			"median-age" :         "39.6",
 			"type" :               "Country",
 			"population-density" : "131.89",
-			"id" :                 "Man,%20Isle%20of",
+			"id" :                 "Man, Isle of",
 			"infant" :             "5.82",
 			"migration" :          "5.3",
 			"deathrate" :          "11.19"
@@ -2688,7 +2688,7 @@
 			"median-age" :         "20.3",
 			"type" :               "Country",
 			"population-density" : "333.27",
-			"id" :                 "Marshall%20Islands",
+			"id" :                 "Marshall Islands",
 			"infant" :             "28.43",
 			"migration" :          "-5.78",
 			"deathrate" :          "4.78",
@@ -2793,14 +2793,14 @@
 			"median-age" :         "20.9",
 			"type" :               "Country",
 			"population-density" : "153.85",
-			"id" :                 "Micronesia,%20Federated%20States%20of",
+			"id" :                 "Micronesia, Federated States of",
 			"infant" :             "29.16",
 			"migration" :          "-21.03",
 			"deathrate" :          "4.75",
 			"literacy" :           "89"
 		},
 		{
-			"id" :    "Midway%20Islands",
+			"id" :    "Midway Islands",
 			"type" :  "Country"
 		},
 		{
@@ -2971,7 +2971,7 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Navassa%20Island",
+			"id" :                 "Navassa Island",
 			"population" :         "0",
 			"type" :               "Country"
 		},
@@ -3028,7 +3028,7 @@
 			"median-age" :         "32.8",
 			"type" :               "Country",
 			"population-density" : "230.98",
-			"id" :                 "Netherlands%20Antilles",
+			"id" :                 "Netherlands Antilles",
 			"infant" :             "9.76",
 			"migration" :          "-0.4",
 			"deathrate" :          "6.45",
@@ -3048,7 +3048,7 @@
 			"median-age" :         "27.8",
 			"type" :               "Country",
 			"population-density" : "11.8",
-			"id" :                 "New%20Caledonia",
+			"id" :                 "New Caledonia",
 			"infant" :             "7.57",
 			"migration" :          "0",
 			"deathrate" :          "5.69",
@@ -3066,7 +3066,7 @@
 			"median-age" :         "33.9",
 			"type" :               "Country",
 			"population-density" : "15.21",
-			"id" :                 "New%20Zealand",
+			"id" :                 "New Zealand",
 			"infant" :             "5.76",
 			"migration" :          "3.63",
 			"deathrate" :          "7.53",
@@ -3149,7 +3149,7 @@
 		},
 		{
 			"population-density" : "52.83",
-			"id" :                 "Norfolk%20Island",
+			"id" :                 "Norfolk Island",
 			"population" :         "1828",
 			"type" :               "Country",
 			"population-growth" :  "-0.01",
@@ -3176,7 +3176,7 @@
 			"median-age" :         "29.5",
 			"type" :               "Country",
 			"population-density" : "172.87",
-			"id" :                 "Northern%20Mariana%20Islands",
+			"id" :                 "Northern Mariana Islands",
 			"infant" :             "6.98",
 			"migration" :          "8.26",
 			"deathrate" :          "2.29",
@@ -3224,7 +3224,7 @@
 			"literacy" :           "75.8"
 		},
 		{
-			"id" :    "Pacific%20Ocean",
+			"id" :    "Pacific Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -3284,7 +3284,7 @@
 			"literacy" :           "92"
 		},
 		{
-			"id" :    "Palmyra%20Atoll",
+			"id" :    "Palmyra Atoll",
 			"type" :  "Country"
 		},
 		{
@@ -3320,14 +3320,14 @@
 			"median-age" :         "21.2",
 			"type" :               "Country",
 			"population-density" : "12.52",
-			"id" :                 "Papua%20New%20Guinea",
+			"id" :                 "Papua New Guinea",
 			"infant" :             "49.96",
 			"migration" :          "0",
 			"deathrate" :          "7.25",
 			"literacy" :           "64.6"
 		},
 		{
-			"id" :    "Paracel%20Islands",
+			"id" :    "Paracel Islands",
 			"type" :  "Country"
 		},
 		{
@@ -3395,7 +3395,7 @@
 		},
 		{
 			"population-density" : "0.96",
-			"id" :                 "Pitcairn%20Islands",
+			"id" :                 "Pitcairn Islands",
 			"population" :         "45",
 			"type" :               "Country",
 			"population-growth" :  "-0.01",
@@ -3448,7 +3448,7 @@
 			"median-age" :         "34.7",
 			"type" :               "Country",
 			"population-density" : "442.75",
-			"id" :                 "Puerto%20Rico",
+			"id" :                 "Puerto Rico",
 			"infant" :             "9.14",
 			"migration" :          "-1.14",
 			"deathrate" :          "7.65",
@@ -3538,7 +3538,7 @@
 			"median-age" :         "36",
 			"type" :               "Country",
 			"population-density" : "0",
-			"id" :                 "Saint%20Helena",
+			"id" :                 "Saint Helena",
 			"infant" :             "18.34",
 			"migration" :          "0",
 			"deathrate" :          "6.53",
@@ -3553,7 +3553,7 @@
 			"median-age" :         "27.8",
 			"type" :               "Country",
 			"population-density" : "149.92",
-			"id" :                 "Saint%20Kitts%20and%20Nevis",
+			"id" :                 "Saint Kitts and Nevis",
 			"infant" :             "14.12",
 			"migration" :          "-4.7",
 			"deathrate" :          "8.33",
@@ -3571,7 +3571,7 @@
 			"median-age" :         "25.2",
 			"type" :               "Country",
 			"population-density" : "277.98",
-			"id" :                 "Saint%20Lucia",
+			"id" :                 "Saint Lucia",
 			"infant" :             "13.17",
 			"migration" :          "-1.73",
 			"deathrate" :          "5.08",
@@ -3586,7 +3586,7 @@
 			"median-age" :         "34.1",
 			"type" :               "Country",
 			"population-density" : "29.03",
-			"id" :                 "Saint%20Pierre%20and%20Miquelon",
+			"id" :                 "Saint Pierre and Miquelon",
 			"infant" :             "7.38",
 			"migration" :          "-4.98",
 			"deathrate" :          "6.83",
@@ -3604,7 +3604,7 @@
 			"median-age" :         "26.9",
 			"type" :               "Country",
 			"population-density" : "302.95",
-			"id" :                 "Saint%20Vincent%20and%20the%20Grenadines",
+			"id" :                 "Saint Vincent and the Grenadines",
 			"infant" :             "14.4",
 			"migration" :          "-7.59",
 			"deathrate" :          "5.98",
@@ -3638,7 +3638,7 @@
 			"median-age" :         "40.6",
 			"type" :               "Country",
 			"population-density" : "477.96",
-			"id" :                 "San%20Marino",
+			"id" :                 "San Marino",
 			"infant" :             "5.63",
 			"migration" :          "10.7",
 			"deathrate" :          "8.17",
@@ -3653,7 +3653,7 @@
 			"median-age" :         "16.2",
 			"type" :               "Country",
 			"population-density" : "193.22",
-			"id" :                 "Sao%20Tome%20and%20Principe",
+			"id" :                 "Sao Tome and Principe",
 			"infant" :             "41.83",
 			"migration" :          "-2.32",
 			"deathrate" :          "6.47",
@@ -3672,7 +3672,7 @@
 			"median-age" :         "21.4",
 			"type" :               "Country",
 			"population-density" : "12.57",
-			"id" :                 "Saudi%20Arabia",
+			"id" :                 "Saudi Arabia",
 			"infant" :             "12.81",
 			"migration" :          "-4.94",
 			"deathrate" :          "2.58",
@@ -3749,7 +3749,7 @@
 			"median-age" :         "17.4",
 			"type" :               "Country",
 			"population-density" : "83.85",
-			"id" :                 "Sierra%20Leone",
+			"id" :                 "Sierra Leone",
 			"infant" :             "160.39",
 			"migration" :          "0.23",
 			"deathrate" :          "23.03",
@@ -3830,7 +3830,7 @@
 			"median-age" :         "18.9",
 			"type" :               "Country",
 			"population-density" : "20.06",
-			"id" :                 "Solomon%20Islands",
+			"id" :                 "Solomon Islands",
 			"infant" :             "20.63",
 			"migration" :          "0",
 			"deathrate" :          "3.92"
@@ -3877,7 +3877,7 @@
 			"median-age" :         "24.1",
 			"type" :               "Country",
 			"population-density" : "36.22",
-			"id" :                 "South%20Africa",
+			"id" :                 "South Africa",
 			"infant" :             "60.66",
 			"migration" :          "-0.16",
 			"deathrate" :          "22",
@@ -3885,12 +3885,12 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "South%20Georgia%20and%20the%20South%20Sandwich%20Islands",
+			"id" :                 "South Georgia and the South Sandwich Islands",
 			"population" :         "0",
 			"type" :               "Country"
 		},
 		{
-			"id" :    "Southern%20Ocean",
+			"id" :    "Southern Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -3917,7 +3917,7 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Spratly%20Islands",
+			"id" :                 "Spratly Islands",
 			"population" :         "0",
 			"type" :               "Country"
 		},
@@ -3934,7 +3934,7 @@
 			"median-age" :         "29.8",
 			"type" :               "Country",
 			"population-density" : "312.36",
-			"id" :                 "Sri%20Lanka",
+			"id" :                 "Sri Lanka",
 			"infant" :             "13.97",
 			"migration" :          "-1.23",
 			"deathrate" :          "6.52",
@@ -4242,14 +4242,14 @@
 			"median-age" :         "31.2",
 			"type" :               "Country",
 			"population-density" : "207.85",
-			"id" :                 "Trinidad%20and%20Tobago",
+			"id" :                 "Trinidad and Tobago",
 			"infant" :             "25.05",
 			"migration" :          "-11.07",
 			"deathrate" :          "10.57",
 			"literacy" :           "98.6"
 		},
 		{
-			"id" :    "Tromelin%20Island",
+			"id" :    "Tromelin Island",
 			"type" :  "Country"
 		},
 		{
@@ -4320,7 +4320,7 @@
 			"median-age" :         "27.5",
 			"type" :               "Country",
 			"population-density" : "49.19",
-			"id" :                 "Turks%20and%20Caicos%20Islands",
+			"id" :                 "Turks and Caicos Islands",
 			"infant" :             "15.18",
 			"migration" :          "10.54",
 			"deathrate" :          "4.21",
@@ -4405,7 +4405,7 @@
 			"median-age" :         "28.1",
 			"type" :               "Country",
 			"population-density" : "31.13",
-			"id" :                 "United%20Arab%20Emirates",
+			"id" :                 "United Arab Emirates",
 			"infant" :             "14.09",
 			"migration" :          "0.66",
 			"deathrate" :          "4.4",
@@ -4425,7 +4425,7 @@
 			"median-age" :         "39.3",
 			"type" :               "Country",
 			"population-density" : "250.88",
-			"id" :                 "United%20Kingdom",
+			"id" :                 "United Kingdom",
 			"infant" :             "5.08",
 			"migration" :          "2.18",
 			"deathrate" :          "10.13",
@@ -4445,14 +4445,14 @@
 			"median-age" :         "36.5",
 			"type" :               "Country",
 			"population-density" : "32.57",
-			"id" :                 "United%20States",
+			"id" :                 "United States",
 			"infant" :             "6.43",
 			"migration" :          "3.18",
 			"deathrate" :          "8.26",
 			"literacy" :           "99"
 		},
 		{
-			"id" :    "United%20States%20Pacific%20Island%20Wildlife%20Refuges",
+			"id" :    "United States Pacific Island Wildlife Refuges",
 			"type" :  "Country"
 		},
 		{
@@ -4576,7 +4576,7 @@
 			"median-age" :         "37.1",
 			"type" :               "Country",
 			"population-density" : "313.89",
-			"id" :                 "Virgin%20Islands",
+			"id" :                 "Virgin Islands",
 			"infant" :             "7.86",
 			"migration" :          "-8.73",
 			"deathrate" :          "6.43",
@@ -4584,13 +4584,13 @@
 		},
 		{
 			"population-density" : "0",
-			"id" :                 "Wake%20Island",
+			"id" :                 "Wake Island",
 			"population" :         "0",
 			"type" :               "Country"
 		},
 		{
 			"population-density" : "58.49",
-			"id" :                 "Wallis%20and%20Futuna",
+			"id" :                 "Wallis and Futuna",
 			"population" :         "16025",
 			"type" :               "Country",
 			"literacy" :           "50",
@@ -4615,7 +4615,7 @@
 			"median-age" :         "18.3",
 			"type" :               "Country",
 			"population-density" : "436.26",
-			"id" :                 "West%20Bank",
+			"id" :                 "West Bank",
 			"infant" :             "19.15",
 			"migration" :          "2.8",
 			"deathrate" :          "3.92",
@@ -4623,7 +4623,7 @@
 		},
 		{
 			"population-density" : "1.03",
-			"id" :                 "Western%20Sahara",
+			"id" :                 "Western Sahara",
 			"population" :         "273008",
 			"type" :               "Country",
 			"speaks" :             [

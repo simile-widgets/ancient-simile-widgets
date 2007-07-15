@@ -57,7 +57,7 @@
 			]
 		},
 		{
-			"id" :        "American%20Samoa",
+			"id" :        "American Samoa",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -96,7 +96,7 @@
 			"type" :  "Country"
 		},
 		{
-			"id" :        "Antigua%20and%20Barbuda",
+			"id" :        "Antigua and Barbuda",
 			"type" :      "Country",
 			"member-of" : [
 				"ISA",
@@ -109,7 +109,7 @@
 			]
 		},
 		{
-			"id" :    "Arctic%20Ocean",
+			"id" :    "Arctic Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -156,7 +156,7 @@
 			]
 		},
 		{
-			"id" :        "Ashmore%20and%20Cartier%20Islands",
+			"id" :        "Ashmore and Cartier Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -164,7 +164,7 @@
 			]
 		},
 		{
-			"id" :    "Atlantic%20Ocean",
+			"id" :    "Atlantic Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -222,7 +222,7 @@
 			]
 		},
 		{
-			"id" :        "Bahamas,%20The",
+			"id" :        "Bahamas, The",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -252,7 +252,7 @@
 			]
 		},
 		{
-			"id" :        "Baker%20Island",
+			"id" :        "Baker Island",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -286,7 +286,7 @@
 			]
 		},
 		{
-			"id" :        "Bassas%20da%20India",
+			"id" :        "Bassas da India",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
@@ -397,7 +397,7 @@
 			]
 		},
 		{
-			"id" :        "Bosnia%20and%20Herzegovina",
+			"id" :        "Bosnia and Herzegovina",
 			"type" :      "Country",
 			"member-of" : [
 				"EUROPE",
@@ -429,7 +429,7 @@
 			]
 		},
 		{
-			"id" :        "Bouvet%20Island",
+			"id" :        "Bouvet Island",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
@@ -451,7 +451,7 @@
 			]
 		},
 		{
-			"id" :        "British%20Indian%20Ocean%20Territory",
+			"id" :        "British Indian Ocean Territory",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -459,7 +459,7 @@
 			]
 		},
 		{
-			"id" :        "British%20Virgin%20Islands",
+			"id" :        "British Virgin Islands",
 			"type" :      "Country",
 			"member-of" : "CARIBBEAN"
 		},
@@ -498,7 +498,7 @@
 			]
 		},
 		{
-			"id" :        "Burkina%20Faso",
+			"id" :        "Burkina Faso",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -592,7 +592,7 @@
 			]
 		},
 		{
-			"id" :        "Cape%20Verde",
+			"id" :        "Cape Verde",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -607,12 +607,12 @@
 			]
 		},
 		{
-			"id" :        "Cayman%20Islands",
+			"id" :        "Cayman Islands",
 			"type" :      "Country",
 			"member-of" : "CARIBBEAN"
 		},
 		{
-			"id" :        "Central%20African%20Republic",
+			"id" :        "Central African Republic",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -676,7 +676,7 @@
 			]
 		},
 		{
-			"id" :        "Christmas%20Island",
+			"id" :        "Christmas Island",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -684,11 +684,11 @@
 			]
 		},
 		{
-			"id" :    "Clipperton%20Island",
+			"id" :    "Clipperton Island",
 			"type" :  "Country"
 		},
 		{
-			"id" :        "Cocos%20(Keeling)%20Islands",
+			"id" :        "Cocos (Keeling) Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -725,7 +725,7 @@
 			]
 		},
 		{
-			"id" :        "Congo,%20Democratic%20Republic%20of%20the",
+			"id" :        "Congo, Democratic Republic of the",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -736,7 +736,7 @@
 			]
 		},
 		{
-			"id" :        "Congo,%20Republic%20of%20the",
+			"id" :        "Congo, Republic of the",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -746,7 +746,7 @@
 			]
 		},
 		{
-			"id" :        "Cook%20Islands",
+			"id" :        "Cook Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"ISA",
@@ -756,12 +756,12 @@
 			]
 		},
 		{
-			"id" :        "Coral%20Sea%20Islands",
+			"id" :        "Coral Sea Islands",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
 		{
-			"id" :        "Costa%20Rica",
+			"id" :        "Costa Rica",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -778,7 +778,7 @@
 			]
 		},
 		{
-			"id" :    "Cote%20d\'Ivoire",
+			"id" :    "Cote d\'Ivoire",
 			"type" :  "Country"
 		},
 		{
@@ -834,7 +834,7 @@
 			]
 		},
 		{
-			"id" :        "Czech%20Republic",
+			"id" :        "Czech Republic",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -909,7 +909,7 @@
 			]
 		},
 		{
-			"id" :        "Dominican%20Republic",
+			"id" :        "Dominican Republic",
 			"type" :      "Country",
 			"member-of" : [
 				"CARIBBEAN",
@@ -924,7 +924,7 @@
 			]
 		},
 		{
-			"id" :        "East%20Timor",
+			"id" :        "East Timor",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -967,7 +967,7 @@
 			]
 		},
 		{
-			"id" :        "El%20Salvador",
+			"id" :        "El Salvador",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -983,7 +983,7 @@
 			]
 		},
 		{
-			"id" :        "Equatorial%20Guinea",
+			"id" :        "Equatorial Guinea",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -1044,21 +1044,21 @@
 			]
 		},
 		{
-			"id" :        "Europa%20Island",
+			"id" :        "Europa Island",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
 		{
-			"id" :    "European%20Union",
+			"id" :    "European Union",
 			"type" :  "Country"
 		},
 		{
-			"id" :        "Falkland%20Islands%20(Islas%20Malvinas)",
+			"id" :        "Falkland Islands (Islas Malvinas)",
 			"type" :      "Country",
 			"member-of" : "SOUTH AMERICA"
 		},
 		{
-			"id" :        "Faroe%20Islands",
+			"id" :        "Faroe Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"EUROPE",
@@ -1125,12 +1125,12 @@
 			]
 		},
 		{
-			"id" :        "French%20Polynesia",
+			"id" :        "French Polynesia",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
 		{
-			"id" :        "French%20Southern%20and%20Antarctic%20Lands",
+			"id" :        "French Southern and Antarctic Lands",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
@@ -1151,7 +1151,7 @@
 			]
 		},
 		{
-			"id" :        "Gambia,%20The",
+			"id" :        "Gambia, The",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -1162,7 +1162,7 @@
 			]
 		},
 		{
-			"id" :        "Gaza%20Strip",
+			"id" :        "Gaza Strip",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -1233,7 +1233,7 @@
 			]
 		},
 		{
-			"id" :        "Glorioso%20Islands",
+			"id" :        "Glorioso Islands",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
@@ -1366,12 +1366,12 @@
 			]
 		},
 		{
-			"id" :        "Heard%20Island%20and%20McDonald%20Islands",
+			"id" :        "Heard Island and McDonald Islands",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
 		{
-			"id" :        "Holy%20See%20(Vatican%20City)",
+			"id" :        "Holy See (Vatican City)",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -1398,7 +1398,7 @@
 			]
 		},
 		{
-			"id" :        "Hong%20Kong",
+			"id" :        "Hong Kong",
 			"type" :      "Country",
 			"member-of" : [
 				"IMF",
@@ -1407,7 +1407,7 @@
 			]
 		},
 		{
-			"id" :        "Howland%20Island",
+			"id" :        "Howland Island",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -1453,7 +1453,7 @@
 			]
 		},
 		{
-			"id" :    "Iles%20Eparses",
+			"id" :    "Iles Eparses",
 			"type" :  "Country"
 		},
 		{
@@ -1473,7 +1473,7 @@
 			]
 		},
 		{
-			"id" :    "Indian%20Ocean",
+			"id" :    "Indian Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -1604,7 +1604,7 @@
 			]
 		},
 		{
-			"id" :        "Jan%20Mayen",
+			"id" :        "Jan Mayen",
 			"type" :      "Country",
 			"member-of" : [
 				"EUROPE",
@@ -1632,7 +1632,7 @@
 			]
 		},
 		{
-			"id" :        "Jarvis%20Island",
+			"id" :        "Jarvis Island",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -1645,7 +1645,7 @@
 			]
 		},
 		{
-			"id" :        "Johnston%20Atoll",
+			"id" :        "Johnston Atoll",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -1668,7 +1668,7 @@
 			]
 		},
 		{
-			"id" :        "Juan%20de%20Nova%20Island",
+			"id" :        "Juan de Nova Island",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
@@ -1704,7 +1704,7 @@
 			]
 		},
 		{
-			"id" :        "Kingman%20Reef",
+			"id" :        "Kingman Reef",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -1720,7 +1720,7 @@
 			]
 		},
 		{
-			"id" :        "Korea,%20North",
+			"id" :        "Korea, North",
 			"type" :      "Country",
 			"member-of" : [
 				"BWC",
@@ -1730,7 +1730,7 @@
 			]
 		},
 		{
-			"id" :        "Korea,%20South",
+			"id" :        "Korea, South",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -2042,7 +2042,7 @@
 			]
 		},
 		{
-			"id" :        "Man,%20Isle%20of",
+			"id" :        "Man, Isle of",
 			"type" :      "Country",
 			"member-of" : [
 				"EUROPE",
@@ -2050,7 +2050,7 @@
 			]
 		},
 		{
-			"id" :        "Marshall%20Islands",
+			"id" :        "Marshall Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -2120,7 +2120,7 @@
 			]
 		},
 		{
-			"id" :        "Micronesia,%20Federated%20States%20of",
+			"id" :        "Micronesia, Federated States of",
 			"type" :      "Country",
 			"member-of" : [
 				"OCEANIA",
@@ -2130,7 +2130,7 @@
 			]
 		},
 		{
-			"id" :        "Midway%20Islands",
+			"id" :        "Midway Islands",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -2258,7 +2258,7 @@
 			]
 		},
 		{
-			"id" :        "Navassa%20Island",
+			"id" :        "Navassa Island",
 			"type" :      "Country",
 			"member-of" : "CARIBBEAN"
 		},
@@ -2301,7 +2301,7 @@
 			]
 		},
 		{
-			"id" :        "Netherlands%20Antilles",
+			"id" :        "Netherlands Antilles",
 			"type" :      "Country",
 			"member-of" : [
 				"INTERPOL",
@@ -2310,12 +2310,12 @@
 			]
 		},
 		{
-			"id" :        "New%20Caledonia",
+			"id" :        "New Caledonia",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
 		{
-			"id" :        "New%20Zealand",
+			"id" :        "New Zealand",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -2389,12 +2389,12 @@
 			]
 		},
 		{
-			"id" :        "Norfolk%20Island",
+			"id" :        "Norfolk Island",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
 		{
-			"id" :        "Northern%20Mariana%20Islands",
+			"id" :        "Northern Mariana Islands",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -2438,7 +2438,7 @@
 			]
 		},
 		{
-			"id" :    "Pacific%20Ocean",
+			"id" :    "Pacific Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -2471,7 +2471,7 @@
 			]
 		},
 		{
-			"id" :        "Palmyra%20Atoll",
+			"id" :        "Palmyra Atoll",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -2493,7 +2493,7 @@
 			]
 		},
 		{
-			"id" :        "Papua%20New%20Guinea",
+			"id" :        "Papua New Guinea",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -2507,7 +2507,7 @@
 			]
 		},
 		{
-			"id" :        "Paracel%20Islands",
+			"id" :        "Paracel Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -2565,7 +2565,7 @@
 			]
 		},
 		{
-			"id" :        "Pitcairn%20Islands",
+			"id" :        "Pitcairn Islands",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
@@ -2612,7 +2612,7 @@
 			]
 		},
 		{
-			"id" :        "Puerto%20Rico",
+			"id" :        "Puerto Rico",
 			"type" :      "Country",
 			"member-of" : [
 				"LATIN AMERICA",
@@ -2691,12 +2691,12 @@
 			]
 		},
 		{
-			"id" :        "Saint%20Helena",
+			"id" :        "Saint Helena",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
 		{
-			"id" :        "Saint%20Kitts%20and%20Nevis",
+			"id" :        "Saint Kitts and Nevis",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -2711,7 +2711,7 @@
 			]
 		},
 		{
-			"id" :        "Saint%20Lucia",
+			"id" :        "Saint Lucia",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -2726,12 +2726,12 @@
 			]
 		},
 		{
-			"id" :        "Saint%20Pierre%20and%20Miquelon",
+			"id" :        "Saint Pierre and Miquelon",
 			"type" :      "Country",
 			"member-of" : "NORTH AMERICA"
 		},
 		{
-			"id" :        "Saint%20Vincent%20and%20the%20Grenadines",
+			"id" :        "Saint Vincent and the Grenadines",
 			"type" :      "Country",
 			"member-of" : [
 				"INTERPOL",
@@ -2758,7 +2758,7 @@
 			]
 		},
 		{
-			"id" :        "San%20Marino",
+			"id" :        "San Marino",
 			"type" :      "Country",
 			"member-of" : [
 				"IMF",
@@ -2773,7 +2773,7 @@
 			]
 		},
 		{
-			"id" :        "Sao%20Tome%20and%20Principe",
+			"id" :        "Sao Tome and Principe",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -2787,7 +2787,7 @@
 			]
 		},
 		{
-			"id" :        "Saudi%20Arabia",
+			"id" :        "Saudi Arabia",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -2851,7 +2851,7 @@
 			]
 		},
 		{
-			"id" :        "Sierra%20Leone",
+			"id" :        "Sierra Leone",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -2925,7 +2925,7 @@
 			]
 		},
 		{
-			"id" :        "Solomon%20Islands",
+			"id" :        "Solomon Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -2952,7 +2952,7 @@
 			]
 		},
 		{
-			"id" :        "South%20Africa",
+			"id" :        "South Africa",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -2969,12 +2969,12 @@
 			]
 		},
 		{
-			"id" :        "South%20Georgia%20and%20the%20South%20Sandwich%20Islands",
+			"id" :        "South Georgia and the South Sandwich Islands",
 			"type" :      "Country",
 			"member-of" : "SOUTH AMERICA"
 		},
 		{
-			"id" :    "Southern%20Ocean",
+			"id" :    "Southern Ocean",
 			"type" :  "Country"
 		},
 		{
@@ -3001,7 +3001,7 @@
 			]
 		},
 		{
-			"id" :        "Spratly%20Islands",
+			"id" :        "Spratly Islands",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -3009,7 +3009,7 @@
 			]
 		},
 		{
-			"id" :        "Sri%20Lanka",
+			"id" :        "Sri Lanka",
 			"type" :      "Country",
 			"member-of" : [
 				"NPT",
@@ -3226,7 +3226,7 @@
 			]
 		},
 		{
-			"id" :        "Trinidad%20and%20Tobago",
+			"id" :        "Trinidad and Tobago",
 			"type" :      "Country",
 			"member-of" : [
 				"UN",
@@ -3241,7 +3241,7 @@
 			]
 		},
 		{
-			"id" :        "Tromelin%20Island",
+			"id" :        "Tromelin Island",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
@@ -3299,7 +3299,7 @@
 			]
 		},
 		{
-			"id" :        "Turks%20and%20Caicos%20Islands",
+			"id" :        "Turks and Caicos Islands",
 			"type" :      "Country",
 			"member-of" : "CARIBBEAN"
 		},
@@ -3346,7 +3346,7 @@
 			]
 		},
 		{
-			"id" :        "United%20Arab%20Emirates",
+			"id" :        "United Arab Emirates",
 			"type" :      "Country",
 			"member-of" : [
 				"CWC",
@@ -3366,7 +3366,7 @@
 			]
 		},
 		{
-			"id" :        "United%20Kingdom",
+			"id" :        "United Kingdom",
 			"type" :      "Country",
 			"member-of" : [
 				"UNSC",
@@ -3389,7 +3389,7 @@
 			]
 		},
 		{
-			"id" :        "United%20States",
+			"id" :        "United States",
 			"type" :      "Country",
 			"member-of" : [
 				"UNSC",
@@ -3409,7 +3409,7 @@
 			]
 		},
 		{
-			"id" :    "United%20States%20Pacific%20Island%20Wildlife%20Refuges",
+			"id" :    "United States Pacific Island Wildlife Refuges",
 			"type" :  "Country"
 		},
 		{
@@ -3491,22 +3491,22 @@
 			]
 		},
 		{
-			"id" :        "Virgin%20Islands",
+			"id" :        "Virgin Islands",
 			"type" :      "Country",
 			"member-of" : "CARIBBEAN"
 		},
 		{
-			"id" :        "Wake%20Island",
+			"id" :        "Wake Island",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
 		{
-			"id" :        "Wallis%20and%20Futuna",
+			"id" :        "Wallis and Futuna",
 			"type" :      "Country",
 			"member-of" : "OCEANIA"
 		},
 		{
-			"id" :        "West%20Bank",
+			"id" :        "West Bank",
 			"type" :      "Country",
 			"member-of" : [
 				"EURASIA",
@@ -3514,7 +3514,7 @@
 			]
 		},
 		{
-			"id" :        "Western%20Sahara",
+			"id" :        "Western Sahara",
 			"type" :      "Country",
 			"member-of" : "AFRICA"
 		},
