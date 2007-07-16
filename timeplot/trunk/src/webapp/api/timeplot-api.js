@@ -2,7 +2,7 @@
  *  Simile Timeplot API
  *
  *  Include Timeplot in your HTML file as follows:
- *    <script src="http://static.simile.mit.edu/timeplot/api/timeplot-api.js" type="text/javascript"></script>
+ *    <script src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js" type="text/javascript"></script>
  *
  *==================================================*/
 
