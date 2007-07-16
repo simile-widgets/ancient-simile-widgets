@@ -35,6 +35,8 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
     if (typeof constructor == 'function') {
         layout = new constructor(eventSource, params);
         return layout;
+    } else {
+        throw "No such layout!";   
     };
     return;
 };
@@ -92,11 +94,14 @@ Timegrid.Layout.prototype.render = function(container) {
     var gridDiv = $('<div></div>').addClass('timegrid-grid');
     var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
     
-    if (!this.width) { this.width = $(this._container).width(); }
-    if (!this.height && $(this._container).height()) { 
-        this.height = $(this._container).height(); 
+    if (!this.height) { 
+        this.height = this._container.style.height ? 
+            $(this._container).height() : 500; 
     }
     $(this._container).height(this.height + "px");
+    if (!this.width) { 
+        this.width = $(this._container).width(); 
+    }
     $(this._container).width(this.width + "px");  
     $(this._container).css('position', 'relative');
 
@@ -109,7 +114,6 @@ Timegrid.Layout.prototype.render = function(container) {
     this._viewDiv.append(gridWindowDiv.append(gridDiv));
     this.gridwidth = this.gridwidth || gridWindowDiv.width() - this.scrollwidth;
     this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
-    alert(this.gridwidth + ", " + this.gridheight);
     gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
     this.computeCellSizes();
     gridDiv.append(this.renderEvents(document));

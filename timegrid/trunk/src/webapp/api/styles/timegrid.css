@@ -72,7 +72,7 @@ div.timegrid-events {
 
 div.timegrid-gridlines {
     position: relative;
-    z-index: 1;
+    z-index: 3;
 }
 
 div.timegrid-xlabels {
@@ -130,6 +130,10 @@ div.timegrid-month-cell {
     position: absolute;
     width: 100px;
     padding: 0;
+}
+
+div.timegrid-month-cell-odd {
+    background-color: #eee;
 }
 
 ul.timegrid-event-list {

@@ -37,6 +37,7 @@
 
             "layouts/weekly.js",
             "layouts/monthly.js",
+            "layouts/nmonth.js",
             "layouts/nday.js"
         ];
         var cssFiles = [
