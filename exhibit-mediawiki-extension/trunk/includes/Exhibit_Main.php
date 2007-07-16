@@ -10,7 +10,7 @@
  * included in the HTML output. So Wiki markup is not supported.
  * To activate the extension, include it from your LocalSettings.php
  * with: include("extensions/ExhibitExtension/trunk/includes/Exhibit_Main.php");
- * http://junkchest.blogspot.com/2005/03/wiki-adding-extensions-to-mediawiki.html
+ * http://www.mediawiki.org/wiki/Extending_wiki_markup
  * @fileoverview
  */
 
@@ -30,11 +30,7 @@ function wfExhibitSetup() {
 }
 
 /**
- * This function is in charge of inserting additional CSS, JavaScript, and meta tags
- * into the html header of each page. It is either called after initializing wgout
- * (requiring a patch in MediaWiki), or during parsing. Calling it during parsing,
- * however, is not sufficient to get the header modifications into every page that
- * is shipped to a reader, since the parser cache can make parsing obsolete.
+ * This function inserts Exhibit scripts into the header of the page.
  * @param $out This is the modified OutputPage.
  * @return true Always return true, in order not to stop MW's hook processing.
  */
@@ -56,30 +52,47 @@ function wfExhibitAddHTMLHeader(&$out) {
  * This is the callback function for converting the input text to HTML output.
  * @param {String} $input This is the text the user enters into the wikitext input box.
  */
- 
- 
-function Exhibit_getHTMLResult( $input ) {
+function Exhibit_getHTMLResult( $input, $argv ) {
+	$disabled = "false";
+	if ($argv["disabled"]) {
+		$disabled = "true";
+	}
+
+	// use SimpleXML parser
 	$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
 	$xml = new SimpleXMLElement($xmlstr);
-	$dataSource = $xml->data->source;
-	$columns = $xml->data->source['columns'];	
-	$facets = $xml->config->facets;
-	$hideTable = "false";
-	if ($xml->data->source['hideTable']) {
-		$hideTable = "true";
-	}
 	
+	// <data>
+	$dataSource = array();
+	$columns = array();
+	$hideTable = array();
+	foreach ($xml->data->source as $source) {
+		array_push($dataSource, $source);
+		array_push($columns, $source['columns']);
+		$hide = "true";
+		if ($source['hideTable']) {
+			$hide = "false";
+		}
+		array_push($hideTable, $hide);
+	}	
+	$dataSource = implode(',', $dataSource);
+	$columns = implode(';', $columns);
+	$hideTable = implode(',', $hideTable);
+	
+	// <config>
+	$facets = $xml->config->facets;
+
 	$output = <<<OUTPUT
 	<script type="text/javascript">
-	var data = "$dataSource";
-	var columns = "$columns".split(',');
+	var disabled = $disabled;
+	var dataSource = "$dataSource".split(',');
+	var columns = "$columns".split(';');
+	var hideTable = "$hideTable".split(',');
 	var facets = "$facets".split(',');
-	var hideTable = $hideTable;
 	</script>
 OUTPUT;
 	
 	return $output;
 }
-
 
 ?>
