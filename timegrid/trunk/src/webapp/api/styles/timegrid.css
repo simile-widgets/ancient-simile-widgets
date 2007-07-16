@@ -1,14 +1,14 @@
-html {
+div.timegrid-default {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 9pt;
 }
 
-ul, li, p, h3 {
+div.timegrid-default * {
     margin: 0;
     padding: 0;
 }
 
-ul, li {
+div.timegrid-default ul, li {
     font-size: 9pt;
 }
 

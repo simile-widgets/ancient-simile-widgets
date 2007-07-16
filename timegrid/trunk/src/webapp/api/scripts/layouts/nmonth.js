@@ -9,13 +9,14 @@
 Timegrid.NMonthLayout = function(eventSource, params) {
     Timegrid.NMonthLayout.superclass.call(this, eventSource, params);
 
-    this.title = "Month";
     this.xSize = 7;
     this.ySize = 0; // This is re-calculated later based on n
     this.n     = 3;
     this.iterable = false;
 
     this.configure(params);
+    this.title = this.n + "-Month";
+    
     
     // Initialize our eventSource
     this.eventSource = eventSource;
@@ -142,6 +143,8 @@ Timegrid.NMonthLayout.prototype.computeLabels = function(date) {
     this.cellLabels = [];
     this.months = [];
     this.yLabels = [];
+
+    gridStart.time = this.computeStartTime(gridStart.time);
     
     // Iterate through and collect the tasty data
     while (this.xMapper(gridStart) < this.xSize && 
