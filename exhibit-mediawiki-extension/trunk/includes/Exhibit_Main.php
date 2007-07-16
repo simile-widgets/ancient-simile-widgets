@@ -63,17 +63,17 @@ function Exhibit_getHTMLResult( $input ) {
 	$xml = new SimpleXMLElement($xmlstr);
 	$dataSource = $xml->data->source;
 	$columns = $xml->data->source['columns'];	
+	$facets = $xml->config->facets;
 	$hideTable = "false";
 	if ($xml->data->source['hideTable']) {
 		$hideTable = "true";
 	}
 	
-	//$facets = foreach ($xml->config as $config)
-	
 	$output = <<<OUTPUT
 	<script type="text/javascript">
 	var data = "$dataSource";
 	var columns = "$columns".split(',');
+	var facets = "$facets".split(',');
 	var hideTable = $hideTable;
 	</script>
 OUTPUT;
