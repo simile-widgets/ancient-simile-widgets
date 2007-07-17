@@ -1,12 +1,26 @@
-/*==================================================
- *  Default Geometry
- *==================================================*/
+/**
+ * Geometries
+ * 
+ * @fileOverview Geometries
+ * @name Geometries
+ */
 
+/**
+ * This is the constructor for the default value geometry.
+ * A value geometry is what regulates mapping of the plot values to the screen y coordinate.
+ * If two plots share the same value geometry, they will be drawn using the same scale.
+ * If "min" and "max" parameters are not set, the geometry will stretch itself automatically
+ * so that the entire plot will be drawn without overflowing. The stretching happens also
+ * when a geometry is shared between multiple plots, the one with the biggest range will
+ * win over the others.
+ * 
+ * @constructor
+ */
 Timeplot.DefaultValueGeometry = function(params) {
     if (!params) params = {};
     this._id = ("id" in params) ? params.id : "g" + Math.round(Math.random() * 1000000);
-    this._axisColor = ("axisColor" in params) ? params.axisColor : new Timeplot.Color("#606060");
-    this._gridColor = ("gridColor" in params) ? params.gridColor : null;
+    this._axisColor = ("axisColor" in params) ? ((params.axisColor == "string") ? new Timeplot.Color(params.axisColor) : params.axisColor) : new Timeplot.Color("#606060"),
+    this._gridColor = ("gridColor" in params) ? ((params.gridColor == "string") ? new Timeplot.Color(params.gridColor) : params.gridColor) : null,
     this._gridLineWidth = ("gridLineWidth" in params) ? params.gridLineWidth : 0.5;
     this._axisLabelsPlacement = ("axisLabelsPlacement" in params) ? params.axisLabelsPlacement : null;
     this._center = ("center" in params) ? params.center : 30;
@@ -26,11 +40,19 @@ Timeplot.DefaultValueGeometry = function(params) {
 
 Timeplot.DefaultValueGeometry.prototype = {
 
+    /**
+     * Initialize this geometry associating it with the given timeplot.
+     */
     initialize: function(timeplot) {
         this._timeplot = timeplot;
         this._canvas = timeplot.getCanvas();
     },
 
+    /**
+     * Called by all the plot layers this geometry is associated with
+     * to update the value range. Unless min/max values are specified
+     * in the parameters, the biggest value range will be used.
+     */
     setRange: function(range) {
         if ((this._minValue == null) || ((this._minValue != null) && (range.min < this._minValue))) {
             this._minValue = range.min;
@@ -48,29 +70,9 @@ Timeplot.DefaultValueGeometry.prototype = {
         }
     },
 
-    _updateMappedValues: function() {
-    	this._valueRange = this._maxValue - this._minValue;
-        this._mappedRange = this._map.direct(this._valueRange);
-    },
-
-    _calculateGridSpacing: function() {
-        var v = this.fromScreen(this._center);
-        for (var i = 1; i < 10; i++) { // 10 iterations should be enough to converge
-            var r = Timeplot.Math.round(v,i);
-            var y = this.toScreen(r);
-            if (this._center - this._range < y && y < this._center + this._range) {
-               return {
-                   y: y,
-                   value: r
-               }
-            }
-        }
-        return {
-            y: v,
-            value: this._center
-        }
-    },
-
+    /**
+     * Map the given value to a y screen coordinate.
+     */
     toScreen: function(value) {
     	if (this._maxValue) {
 	        var v = value - this._minValue;
@@ -80,10 +82,16 @@ Timeplot.DefaultValueGeometry.prototype = {
     	}
     },
 
+    /**
+     * Map the given y screen coordinate to a value
+     */
     fromScreen: function(y) {
         return this._map.inverse(this._mappedRange * y / this._canvas.height) + this._minValue;
     },
 
+    /**
+     * Each geometry is also a painter and paints the value grid and grid labels.
+     */
     paint: function() {
         var ctx = this._canvas.getContext('2d');
 
@@ -138,11 +146,55 @@ Timeplot.DefaultValueGeometry.prototype = {
         ctx.lineTo(this._canvas.width,0);
         ctx.lineTo(this._canvas.width,this._canvas.height);
         ctx.stroke();
+    },
+    
+    /*
+     * This function calculates the grid spacing that it will be used 
+     * by this geometry to draw the grid in order to reduce clutter. 
+     */
+    _calculateGridSpacing: function() {
+        var v = this.fromScreen(this._center);
+        for (var i = 1; i < 10; i++) { // 10 iterations should be enough to converge
+            var r = Timeplot.Math.round(v,i);
+            var y = this.toScreen(r);
+            if (this._center - this._range < y && y < this._center + this._range) {
+               return {
+                   y: y,
+                   value: r
+               }
+            }
+        }
+        return {
+            y: v,
+            value: this._center
+        }
+    },
+
+    /*
+     * Update the values that are used by the paint function so that
+     * we don't have to calculate them at every repaint.
+     */
+    _updateMappedValues: function() {
+        this._valueRange = this._maxValue - this._minValue;
+        this._mappedRange = this._map.direct(this._valueRange);
     }
+    
 }
 
 // --------------------------------------------------
 
+/**
+ * This is the constructor for a Logarithmic value geometry, which
+ * is useful when plots have values in different magnitudes but 
+ * exhibit similar trends and such trends want to be shown on the same
+ * plot (here a cartesian geometry would make the small magnitudes 
+ * disappear).
+ * 
+ * NOTE: this class extends Timeplot.DefaultValueGeometry and inherits
+ * all of the methods of that class. So refer to that class. 
+ * 
+ * @constructor
+ */
 Timeplot.LogarithmicValueGeometry = function(params) {
     Timeplot.DefaultValueGeometry.apply(this, arguments);
     this._logMap = {
@@ -159,18 +211,27 @@ Timeplot.LogarithmicValueGeometry = function(params) {
 
 Object.extend(Timeplot.LogarithmicValueGeometry.prototype,Timeplot.DefaultValueGeometry.prototype);
 
+/**
+ * Turn the logarithmic scaling off. 
+ */
 Timeplot.LogarithmicValueGeometry.prototype.actLinear = function() {
     this._mode = "lin";
     this._map = this._linMap;
 	this._updateMappedValues();
 }
 
+/**
+ * Turn the logarithmic scaling on. 
+ */
 Timeplot.LogarithmicValueGeometry.prototype.actLogarithmic = function() {
     this._mode = "log";
     this._map = this._logMap;
     this._updateMappedValues();
 }
 
+/**
+ * Toggle logarithmic scaling seeting it to on if off and viceversa. 
+ */
 Timeplot.LogarithmicValueGeometry.prototype.toggle = function() {
 	if (this._mode == "log") {
 		this.actLinear();
@@ -181,6 +242,11 @@ Timeplot.LogarithmicValueGeometry.prototype.toggle = function() {
 
 // -----------------------------------------------------
 
+/**
+ * This is the constructor for the default time geometry.
+ * 
+ * @constructor
+ */
 Timeplot.DefaultTimeGeometry = function(params) {
     if (!params) params = {};
     this._id = ("id" in params) ? params.id : "g" + Math.round(Math.random() * 1000000);
@@ -202,6 +268,9 @@ Timeplot.DefaultTimeGeometry = function(params) {
 
 Timeplot.DefaultTimeGeometry.prototype = {
 
+    /**
+     * Initialize this geometry associating it with the given timeplot.
+     */
     initialize: function(timeplot) {
     	this._timeplot = timeplot;
     	this._canvas = timeplot.getCanvas();
@@ -214,6 +283,11 @@ Timeplot.DefaultTimeGeometry.prototype = {
         }
     },
 
+    /**
+     * Called by all the plot layers this geometry is associated with
+     * to update the time range. Unless min/max values are specified
+     * in the parameters, the biggest range will be used.
+     */
     setRange: function(range) {
     	if (this._min) {
     		this._earliestDate = this._min;
@@ -235,19 +309,9 @@ Timeplot.DefaultTimeGeometry.prototype = {
         }
     },
 
-    _updateMappedValues: function() {
-    	this._period = this._latestDate.getTime() - this._earliestDate.getTime();
-        this._mappedPeriod = this._map.direct(this._period);
-    },
-        
-    _calculateGridSpacing: function() {
-    	// fixme(SM): implement
-        return {
-            y: 0,
-            value: 0
-        }
-    },
-
+    /**
+     * Map the given date to a x screen coordinate.
+     */
     toScreen: function(time) {
         if (this._latestDate) {
             var t = time - this._earliestDate.getTime();
@@ -257,23 +321,62 @@ Timeplot.DefaultTimeGeometry.prototype = {
         } 
     },
 
+    /**
+     * Map the given x screen coordinate to a date.
+     */
     fromScreen: function(x) {
         return this._map.inverse(this._mappedPeriod * x / this._canvas.width) + this._earliestDate.getTime(); 
     },
     
+    /**
+     * Get a period (in milliseconds) this time geometry spans.
+     */
     getPeriod: function() {
     	return this._period;
     },
 
+   /**
+    * Each geometry is also a painter and paints the value grid and grid labels.
+    */
     paint: function() {
         var ctx = this._canvas.getContext('2d');
 
         // fixme(SM): implement
+    },
+    
+    /*
+     * This function calculates the grid spacing that it will be used 
+     * by this geometry to draw the grid in order to reduce clutter. 
+     */
+    _calculateGridSpacing: function() {
+        // fixme(SM): implement
+        return {
+            y: 0,
+            value: 0
+        }
+    },
+
+    /*
+     * Update the values that are used by the paint function so that
+     * we don't have to calculate them at every repaint.
+     */
+    _updateMappedValues: function() {
+        this._period = this._latestDate.getTime() - this._earliestDate.getTime();
+        this._mappedPeriod = this._map.direct(this._period);
     }
+    
 }
 
 // --------------------------------------------------------------
 
+/**
+ * This is the constructor for the magnifying time geometry.
+ * Users can interact with this geometry and 'magnify' certain areas of the
+ * plot to see the plot enlarged and resolve details that would otherwise
+ * get lost or cluttered with a linear time geometry.
+ * 
+ * @constructor
+ */
 Timeplot.MagnifyingTimeGeometry = function(params) {
     Timeplot.DefaultTimeGeometry.apply(this, arguments);
         
@@ -307,6 +410,11 @@ Timeplot.MagnifyingTimeGeometry = function(params) {
 
 Object.extend(Timeplot.MagnifyingTimeGeometry.prototype,Timeplot.DefaultTimeGeometry.prototype);
 
+/**
+ * Initialize this geometry associating it with the given timeplot and 
+ * register the geometry event handlers to the timeplot so that it can
+ * interact with the user.
+ */
 Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
     Timeplot.DefaultTimeGeometry.prototype.initialize.apply(this, arguments);
 
@@ -442,18 +550,27 @@ Timeplot.MagnifyingTimeGeometry.prototype.setMagnifyingParams = function(c,a,b) 
     this._updateMappedValues();
 }
 
+/*
+ * Turn magnification off.
+ */
 Timeplot.MagnifyingTimeGeometry.prototype.actLinear = function() {
     this._mode = "lin";
     this._map = this._linMap;
     this._updateMappedValues();
 }
 
+/*
+ * Turn magnification on.
+ */
 Timeplot.MagnifyingTimeGeometry.prototype.actMagnifying = function() {
     this._mode = "Magnifying";
     this._map = this._MagnifyingMap;
     this._updateMappedValues();
 }
 
+/*
+ * Toggle magnification.
+ */
 Timeplot.MagnifyingTimeGeometry.prototype.toggle = function() {
     if (this._mode == "Magnifying") {
         this.actLinear();

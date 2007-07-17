@@ -1,13 +1,26 @@
-/*==================================================
- *  Default Data Source
- *==================================================*/
+/**
+ * Sources
+ * 
+ * @fileOverview Sources
+ * @name Sources
+ */
 
+/**
+ * Timeplot.DefaultEventSource is an extension of Timeline.DefaultEventSource
+ * and therefore reuses the exact same event loading subsystem that
+ * Timeline uses.
+ * 
+ * @constructor
+ */
 Timeplot.DefaultEventSource = function(eventIndex) {
 	Timeline.DefaultEventSource.apply(this, arguments);
 };
 
 Object.extend(Timeplot.DefaultEventSource.prototype, Timeline.DefaultEventSource.prototype);
 
+/**
+ * Function used by Timeplot to load time series data from a text file.
+ */
 Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, filter) {
 
     if (text == null) {
@@ -48,6 +61,8 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, 
 }
 
 /*
+ * Parse the data file.
+ * 
  * Adapted from http://www.kawa.net/works/js/jkl/js/jkl-parsexml.js by Yusuke Kawasaki
  */
 Timeplot.DefaultEventSource.prototype._parseText = function (text, separator) {
@@ -110,6 +125,9 @@ Timeplot.DefaultEventSource.prototype._parseText = function (text, separator) {
     return table;
 }
 
+/**
+ * Return the range of the loaded data
+ */
 Timeplot.DefaultEventSource.prototype.getRange = function() {
 	var earliestDate = this.getEarliestDate();
 	var latestDate = this.getLatestDate();
@@ -123,6 +141,12 @@ Timeplot.DefaultEventSource.prototype.getRange = function() {
 
 // -----------------------------------------------------------------------
 
+/**
+ * A NumericEvent is an Event that also contains an array of values, 
+ * one for each columns in the loaded data file.
+ * 
+ * @constructor
+ */
 Timeplot.DefaultEventSource.NumericEvent = function(time, values) {
     this._id = "e" + Math.round(Math.random() * 1000000);
     this._time = time;
@@ -141,6 +165,11 @@ Timeplot.DefaultEventSource.NumericEvent.prototype = {
 
 // -----------------------------------------------------------------------
 
+/**
+ * A DataSource represent an abstract class that represents a monodimensional time series.
+ * 
+ * @constructor
+ */
 Timeplot.DataSource = function(eventSource) {
     this._eventSource = eventSource;
     var source = this;
@@ -172,14 +201,24 @@ Timeplot.DataSource.prototype = {
         };
     },
 
+    /**
+     * Return the range of this data source
+     */
     getRange: function() {
         return this._range;
     },
 
+    /**
+     * Return the actual data that this data source represents.
+     * NOTE: _data = { times: [], values: [] }
+     */
     getData: function() {
         return this._data;
     },
     
+    /**
+     * Return the value associate with the given time in this time series
+     */
     getValue: function(t) {
     	if (this._data) {
 	    	for (var i = 0; i < this._data.times.length; i++) {
@@ -192,14 +231,23 @@ Timeplot.DataSource.prototype = {
     	return 0;
     },
 
+    /**
+     * Add a listener to the underlying event source
+     */
     addListener: function(listener) {
         this._eventSource.addListener(listener);
     },
 
+    /**
+     * Remove a listener from the underlying event source
+     */
     removeListener: function(listener) {
         this._eventSource.removeListener(listener);
     },
 
+    /**
+     * Replace a listener from the underlying event source
+     */
     replaceListener: function(oldListener, newListener) {
         this.removeListener(oldListener);
         this.addListener(newListener);
@@ -210,8 +258,10 @@ Timeplot.DataSource.prototype = {
 // -----------------------------------------------------------------------
 
 /**
- * Data Source that extracts the time series out of a single column 
- * from the events
+ * Implementation of a DataSource that extracts the time series out of a 
+ * single column from the events
+ * 
+ * @constructor
  */
 Timeplot.ColumnSource = function(eventSource, column) {
     Timeplot.DataSource.apply(this, arguments);
@@ -273,6 +323,8 @@ Timeplot.ColumnSource.prototype._getValue = function(event) {
 /**
  * Data Source that generates the time series out of the difference
  * between the first and the second column
+ * 
+ * @constructor
  */
 Timeplot.ColumnDiffSource = function(eventSource, column1, column2) {
     Timeplot.ColumnSource.apply(this, arguments);

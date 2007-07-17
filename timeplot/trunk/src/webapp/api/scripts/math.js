@@ -1,25 +1,9 @@
-/* -----------------------------------------------------------------------------
- * Operators
- * 
- * These are functions that can be used directly as Timeplot.Processor operators
- * ----------------------------------------------------------------------------- */
-
-Timeplot.Operator = { 
-
-    sum: function(data, params) {
-        return Timeplot.Math.integral(data.values);
-    },
-
-    average: function(data, params) {
-        var size = ("size" in params) ? params.size : 30;
-        var result = Timeplot.Math.movingAverage(data.values, size);
-        return result;
-    }
-}
-
-/* -----------------------------------------------------------------------------
+/**
  * Math Utility functions
- * ----------------------------------------------------------------------------- */
+ * 
+ * @fileOverview Math Utility functions
+ * @name Math
+ */
 
 Timeplot.Math = { 
 
@@ -185,6 +169,9 @@ Timeplot.Math = {
         }
     },
     
+    /**
+     * Return the hyperbolic tangent of x
+     */
     tanh: function(x) {
     	if (x > 5) {
     		return 1;
@@ -196,6 +183,9 @@ Timeplot.Math = {
     	}
     },
     
+    /** 
+     * Returns true if |a.x - b.x| < value && | a.y - b.y | < value
+     */
     isClose: function(a,b,value) {
     	return (a && b && Math.abs(a.x - b.x) < value && Math.abs(a.y - b.y) < value);
     }

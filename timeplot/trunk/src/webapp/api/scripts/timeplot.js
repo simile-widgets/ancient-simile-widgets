@@ -1,11 +1,17 @@
-/*==================================================
- *  Timeplot
- *==================================================
+/**
+ * Timeplot
+ * 
+ * @fileOverview Timeplot
+ * @name Timeplot
  */
 
 Timeline.Debug = SimileAjax.Debug; // timeline uses it's own debug system which is not as advanced
-log = SimileAjax.Debug.log; // shorter name is more usable
+log = SimileAjax.Debug.log; // shorter name is easier to use
 
+/*
+ * This function is used to implement a raw but effective OOP-like inheritance
+ * in various Timeplot classes.
+ */
 Object.extend = function(destination, source) {
     for (var property in source) {
         destination[property] = source[property];
@@ -15,10 +21,16 @@ Object.extend = function(destination, source) {
 
 // ---------------------------------------------
 
+/**
+ * Create a timeplot attached to the given element and using the configuration from the given array of PlotInfos
+ */
 Timeplot.create = function(elmt, plotInfos) {
     return new Timeplot._Impl(elmt, plotInfos);
 };
 
+/**
+ * Create a PlotInfo configuration from the given map of params
+ */
 Timeplot.createPlotInfo = function(params) {
     return {   
         id:                ("id" in params) ? params.id : "p" + Math.round(Math.random() * 1000000),
@@ -27,8 +39,8 @@ Timeplot.createPlotInfo = function(params) {
         timeGeometry:      ("timeGeometry" in params) ? params.timeGeometry : new Timeplot.DefaultTimeGeometry(),
         valueGeometry:     ("valueGeometry" in params) ? params.valueGeometry : new Timeplot.DefaultValueGeometry(),
         timeZone:          ("timeZone" in params) ? params.timeZone : 0,
-        fillColor:         ("fillColor" in params) ? params.fillColor : null,
-        lineColor:         ("lineColor" in params) ? params.lineColor : new Timeplot.Color("#606060"),
+        fillColor:         ("fillColor" in params) ? ((params.fillColor == "string") ? new Timeplot.Color(params.fillColor) : params.fillColor) : null,
+        lineColor:         ("lineColor" in params) ? ((params.lineColor == "string") ? new Timeplot.Color(params.lineColor) : params.lineColor) : new Timeplot.Color("#606060"),
         lineWidth:         ("lineWidth" in params) ? params.lineWidth : 1.0,
         dotRadius:         ("dotRadius" in params) ? params.dotRadius : 2.0,
         dotColor:          ("dotColor" in params) ? params.dotColor : null,
@@ -43,6 +55,11 @@ Timeplot.createPlotInfo = function(params) {
 
 // -------------------------------------------------------
 
+/**
+ * This is the implementation of the Timeplot object.
+ *  
+ * @constructor 
+ */
 Timeplot._Impl = function(elmt, plotInfos, unit) {
 	this._id = "t" + Math.round(Math.random() * 1000000);
     this._containerDiv = elmt;
@@ -67,22 +84,37 @@ Timeplot._Impl.prototype = {
         this._containerDiv.innerHTML = "";
     },
 
+    /**
+     * Returns the main container div this timeplot is operating on.
+     */
     getElement: function() {
     	return this._containerDiv;
     },
     
+    /**
+     * Returns document this timeplot belongs to.
+     */
     getDocument: function() {
         return this._containerDiv.ownerDocument;
     },
 
+    /**
+     * Append the given element to the timeplot DOM
+     */
     add: function(div) {
         this._containerDiv.appendChild(div);
     },
 
+    /**
+     * Remove the given element to the timeplot DOM
+     */
     remove: function(div) {
         this._containerDiv.removeChild(div);
     },
 
+    /**
+     * Add a painter to the timeplot
+     */
     addPainter: function(layerName, painter) {
         var layer = this._painters[layerName];
         if (layer) {
@@ -95,6 +127,9 @@ Timeplot._Impl.prototype = {
         }
     },
     
+    /**
+     * Remove a painter from the timeplot
+     */
     removePainter: function(layerName, painter) {
         var layer = this._painters[layerName];
         if (layer) {
@@ -107,34 +142,69 @@ Timeplot._Impl.prototype = {
         }
     },
     
+    /**
+     * Get the width in pixels of the area occupied by the entire timeplot in the page
+     */
     getWidth: function() {
     	return this._containerDiv.clientWidth;
     },
 
+    /**
+     * Get the height in pixels of the area occupied by the entire timeplot in the page
+     */
     getHeight: function() {
         return this._containerDiv.clientHeight;
     },
     
+    /**
+     * Get the width in pixels of the area available inside the timeplot container
+     */
     getInternalWidth: function() {
         var w = window.getComputedStyle(this._containerDiv, null).getPropertyValue("width");
         w = parseInt(w.replace("px",""));
         return w;
     },
 
+    /**
+     * Get the height in pixels of the area available inside the timeplot container
+     */
     getInternalHeight: function() {
         var h = window.getComputedStyle(this._containerDiv, null).getPropertyValue("height");
         h = parseInt(h.replace("px",""));
         return h;    
     },
 
+    /**
+     * Get the the time unit associated with this timeplot
+     */
     getUnit: function() {
         return this._unit;
     },
     
+    /**
+     * Get the drawing canvas associated with this timeplot
+     */
     getCanvas: function() {
         return this._canvas;
     },
     
+    /**
+     * <p>Load the data from the given url into the given eventSource, using
+     * the given separator to parse the columns and preprocess it before parsing
+     * thru the optional filter function. The filter is useful for when 
+     * the data is row-oriented but the format is not compatible with the
+     * one that Timeplot expects.</p> 
+     * 
+     * <p>Here is an example of a filter that changes dates in the form 'yyyy/mm/dd'
+     * in the required 'yyyy-mm-dd' format:
+     * <pre>var dataFilter = function(data) {
+     *     for (var i = 0; i < data.length; i++) {
+     *         var row = data[i];
+     *         row[0] = row[0].replace(/\//g,"-");
+     *     }
+     *     return data;
+     * };</pre></p>
+     */
     loadText: function(url, separator, eventSource, filter) {
         var tp = this;
         
@@ -157,6 +227,10 @@ Timeplot._Impl.prototype = {
         window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
     },
 
+    /**
+     * Load event data from the given url into the given eventSource, using
+     * the Timeline XML event format.
+     */
     loadXML: function(url, eventSource) {
         var tl = this;
         
@@ -181,12 +255,20 @@ Timeplot._Impl.prototype = {
         window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
     },
     
+    /**
+     * Overlay a 'div' element filled with the given text and styles to this timeplot
+     * This is used to implement labels since canvas does not support drawing text.
+     */
     putText: function(text, clazz, styles) {
         var div = this.putDiv(text, "timeplot-div " + clazz, styles);
         div.innerHTML = text;
         return div;
     },
 
+    /**
+     * Overlay a 'div' element, with the given class and the given styles to this timeplot.
+     * This is used for labels and horizontal and vertical grids. 
+     */
     putDiv: function(id, clazz, styles) {
     	var tid = this._id + "-" + id;
     	var div = document.getElementById(tid);
@@ -201,6 +283,12 @@ Timeplot._Impl.prototype = {
         return div;
     },
     
+    /**
+     * Associate the given map of styles to the given element. 
+     * In case such styles indicate position (left,right,top,bottom) correct them
+     * with the padding information so that they align to the 'internal' area
+     * of the timeplot.
+     */
     placeDiv: function(div, styles) {
         if (styles) {
             for (style in styles) {
@@ -218,6 +306,10 @@ Timeplot._Impl.prototype = {
         }
     },
     
+    /**
+     * return a {x,y} map with the location of the given element relative to the 'internal' area of the timeplot
+     * (that is, without the container padding)
+     */
     locate: function(div) {
     	return {
     		x: div.offsetLeft - this._paddingX,
@@ -225,6 +317,12 @@ Timeplot._Impl.prototype = {
     	}
     },
     
+    /**
+     * Forces timeplot to re-evaluate the various value and time geometries
+     * associated with its plot layers and repaint accordingly. This should
+     * be invoked after the data in any of the data sources has been
+     * modified.
+     */
     update: function() {
         for (var i = 0; i < this._plots.length; i++) {
             var plot = this._plots[i];
@@ -240,11 +338,23 @@ Timeplot._Impl.prototype = {
         this.paint();
     },
     
+    /**
+     * Forces timeplot to re-evaluate its own geometry, clear itself and paint.
+     * This should be used instead of paint() when you're not sure if the 
+     * geometry of the page has changed or not. 
+     */
     repaint: function() {
         this._prepareCanvas();
         this.paint();
     },
     
+    /**
+     * Calls all the painters that were registered to this timeplot and makes them
+     * paint the timeplot. This should be used only when you're sure that the geometry
+     * of the page hasn't changed.
+     * NOTE: painting is performed by a different thread and it's safe to call this
+     * function in bursts (as in mousemove or during window resizing
+     */
     paint: function() {
         if (this._painter == null) {
             var timeplot = this;

@@ -7,6 +7,7 @@
 Timeline.Debug=SimileAjax.Debug;
 log=SimileAjax.Debug.log;
 
+
 Object.extend=function(destination,source){
 for(var property in source){
 destination[property]=source[property];
@@ -16,9 +17,11 @@ return destination;
 
 
 
+
 Timeplot.create=function(elmt,plotInfos){
 return new Timeplot._Impl(elmt,plotInfos);
 };
+
 
 Timeplot.createPlotInfo=function(params){
 return{
@@ -28,8 +31,8 @@ eventSource:("eventSource"in params)?params.eventSource:null,
 timeGeometry:("timeGeometry"in params)?params.timeGeometry:new Timeplot.DefaultTimeGeometry(),
 valueGeometry:("valueGeometry"in params)?params.valueGeometry:new Timeplot.DefaultValueGeometry(),
 timeZone:("timeZone"in params)?params.timeZone:0,
-fillColor:("fillColor"in params)?params.fillColor:null,
-lineColor:("lineColor"in params)?params.lineColor:new Timeplot.Color("#606060"),
+fillColor:("fillColor"in params)?((params.fillColor=="string")?new Timeplot.Color(params.fillColor):params.fillColor):null,
+lineColor:("lineColor"in params)?((params.lineColor=="string")?new Timeplot.Color(params.lineColor):params.lineColor):new Timeplot.Color("#606060"),
 lineWidth:("lineWidth"in params)?params.lineWidth:1.0,
 dotRadius:("dotRadius"in params)?params.dotRadius:2.0,
 dotColor:("dotColor"in params)?params.dotColor:null,
@@ -41,6 +44,7 @@ bubbleWidth:("bubbleWidth"in params)?params.bubbleWidth:300,
 bubbleHeight:("bubbleHeight"in params)?params.bubbleHeight:200,
 };
 };
+
 
 
 
@@ -68,21 +72,26 @@ this._plotsInfos=null;
 this._containerDiv.innerHTML="";
 },
 
+
 getElement:function(){
 return this._containerDiv;
 },
+
 
 getDocument:function(){
 return this._containerDiv.ownerDocument;
 },
 
+
 add:function(div){
 this._containerDiv.appendChild(div);
 },
 
+
 remove:function(div){
 this._containerDiv.removeChild(div);
 },
+
 
 addPainter:function(layerName,painter){
 var layer=this._painters[layerName];
@@ -96,6 +105,7 @@ layer.push(painter);
 }
 },
 
+
 removePainter:function(layerName,painter){
 var layer=this._painters[layerName];
 if(layer){
@@ -108,13 +118,16 @@ break;
 }
 },
 
+
 getWidth:function(){
 return this._containerDiv.clientWidth;
 },
 
+
 getHeight:function(){
 return this._containerDiv.clientHeight;
 },
+
 
 getInternalWidth:function(){
 var w=window.getComputedStyle(this._containerDiv,null).getPropertyValue("width");
@@ -122,19 +135,23 @@ w=parseInt(w.replace("px",""));
 return w;
 },
 
+
 getInternalHeight:function(){
 var h=window.getComputedStyle(this._containerDiv,null).getPropertyValue("height");
 h=parseInt(h.replace("px",""));
 return h;
 },
 
+
 getUnit:function(){
 return this._unit;
 },
 
+
 getCanvas:function(){
 return this._canvas;
 },
+
 
 loadText:function(url,separator,eventSource,filter){
 var tp=this;
@@ -157,6 +174,7 @@ tp.hideLoadingMessage();
 this.showLoadingMessage();
 window.setTimeout(function(){SimileAjax.XmlHttp.get(url,fError,fDone);},0);
 },
+
 
 loadXML:function(url,eventSource){
 var tl=this;
@@ -182,11 +200,13 @@ this.showLoadingMessage();
 window.setTimeout(function(){SimileAjax.XmlHttp.get(url,fError,fDone);},0);
 },
 
+
 putText:function(text,clazz,styles){
 var div=this.putDiv(text,"timeplot-div "+clazz,styles);
 div.innerHTML=text;
 return div;
 },
+
 
 putDiv:function(id,clazz,styles){
 var tid=this._id+"-"+id;
@@ -201,6 +221,7 @@ div.setAttribute("class","timeplot-div "+clazz);
 this.placeDiv(div,styles);
 return div;
 },
+
 
 placeDiv:function(div,styles){
 if(styles){
@@ -219,12 +240,14 @@ div.style[style]=styles[style];
 }
 },
 
+
 locate:function(div){
 return{
 x:div.offsetLeft-this._paddingX,
 y:div.offsetTop-this._paddingY
 }
 },
+
 
 update:function(){
 for(var i=0;i<this._plots.length;i++){
@@ -241,10 +264,12 @@ plot._timeGeometry.setRange(range);
 this.paint();
 },
 
+
 repaint:function(){
 this._prepareCanvas();
 this.paint();
 },
+
 
 paint:function(){
 if(this._painter==null){
@@ -389,6 +414,7 @@ this._message.containerDiv.style.display="block";
 
 
 
+
 Timeplot.Plot=function(timeplot,plotInfo){
 this._timeplot=timeplot;
 this._canvas=timeplot.getCanvas();
@@ -409,6 +435,7 @@ this._bubble=null;
 };
 
 Timeplot.Plot.prototype={
+
 
 initialize:function(){
 if(this._showValues&&this._dataSource&&this._dataSource.getValue){
@@ -559,6 +586,7 @@ SimileAjax.DOM.registerEvent(timeplotElement,"mousemove",mouseMoveHandler);
 }
 },
 
+
 dispose:function(){
 if(this._dataSource){
 this._dataSource.removeListener(this._paintingListener);
@@ -568,17 +596,21 @@ this._dataSource=null;
 }
 },
 
+
 getDataSource:function(){
 return(this._dataSource)?this._dataSource:this._eventSource;
 },
+
 
 getTimeGeometry:function(){
 return this._timeGeometry;
 },
 
+
 getValueGeometry:function(){
 return this._valueGeometry;
 },
+
 
 paint:function(){
 var ctx=this._canvas.getContext('2d');
@@ -723,11 +755,13 @@ this._bubble=null;
 
 
 
+
 Timeplot.DefaultEventSource=function(eventIndex){
 Timeline.DefaultEventSource.apply(this,arguments);
 };
 
 Object.extend(Timeplot.DefaultEventSource.prototype,Timeline.DefaultEventSource.prototype);
+
 
 Timeplot.DefaultEventSource.prototype.loadText=function(text,separator,url,filter){
 
@@ -829,6 +863,7 @@ if(table.length<0)return;
 return table;
 }
 
+
 Timeplot.DefaultEventSource.prototype.getRange=function(){
 var earliestDate=this.getEarliestDate();
 var latestDate=this.getLatestDate();
@@ -839,6 +874,7 @@ min:0,
 max:0
 };
 }
+
 
 
 
@@ -857,6 +893,7 @@ getValues:function(){return this._values;},
 getStart:function(){return this._time;},
 getEnd:function(){return this._time;}
 };
+
 
 
 
@@ -891,13 +928,16 @@ max:0
 };
 },
 
+
 getRange:function(){
 return this._range;
 },
 
+
 getData:function(){
 return this._data;
 },
+
 
 getValue:function(t){
 if(this._data){
@@ -911,13 +951,16 @@ return this._data.values[i];
 return 0;
 },
 
+
 addListener:function(listener){
 this._eventSource.addListener(listener);
 },
 
+
 removeListener:function(listener){
 this._eventSource.removeListener(listener);
 },
+
 
 replaceListener:function(oldListener,newListener){
 this.removeListener(oldListener);
@@ -1005,11 +1048,12 @@ return a-b;
 
 
 
+
 Timeplot.DefaultValueGeometry=function(params){
 if(!params)params={};
 this._id=("id"in params)?params.id:"g"+Math.round(Math.random()*1000000);
-this._axisColor=("axisColor"in params)?params.axisColor:new Timeplot.Color("#606060");
-this._gridColor=("gridColor"in params)?params.gridColor:null;
+this._axisColor=("axisColor"in params)?((params.axisColor=="string")?new Timeplot.Color(params.axisColor):params.axisColor):new Timeplot.Color("#606060"),
+this._gridColor=("gridColor"in params)?((params.gridColor=="string")?new Timeplot.Color(params.gridColor):params.gridColor):null,
 this._gridLineWidth=("gridLineWidth"in params)?params.gridLineWidth:0.5;
 this._axisLabelsPlacement=("axisLabelsPlacement"in params)?params.axisLabelsPlacement:null;
 this._center=("center"in params)?params.center:30;
@@ -1029,10 +1073,12 @@ this._map=this._linMap;
 
 Timeplot.DefaultValueGeometry.prototype={
 
+
 initialize:function(timeplot){
 this._timeplot=timeplot;
 this._canvas=timeplot.getCanvas();
 },
+
 
 setRange:function(range){
 if((this._minValue==null)||((this._minValue!=null)&&(range.min<this._minValue))){
@@ -1051,28 +1097,6 @@ this._gridSpacing=this._calculateGridSpacing();
 }
 },
 
-_updateMappedValues:function(){
-this._valueRange=this._maxValue-this._minValue;
-this._mappedRange=this._map.direct(this._valueRange);
-},
-
-_calculateGridSpacing:function(){
-var v=this.fromScreen(this._center);
-for(var i=1;i<10;i++){
-var r=Timeplot.Math.round(v,i);
-var y=this.toScreen(r);
-if(this._center-this._range<y&&y<this._center+this._range){
-return{
-y:y,
-value:r
-}
-}
-}
-return{
-y:v,
-value:this._center
-}
-},
 
 toScreen:function(value){
 if(this._maxValue){
@@ -1083,9 +1107,11 @@ return 0;
 }
 },
 
+
 fromScreen:function(y){
 return this._map.inverse(this._mappedRange*y/this._canvas.height)+this._minValue;
 },
+
 
 paint:function(){
 var ctx=this._canvas.getContext('2d');
@@ -1141,8 +1167,35 @@ ctx.lineTo(0,0);
 ctx.lineTo(this._canvas.width,0);
 ctx.lineTo(this._canvas.width,this._canvas.height);
 ctx.stroke();
+},
+
+
+_calculateGridSpacing:function(){
+var v=this.fromScreen(this._center);
+for(var i=1;i<10;i++){
+var r=Timeplot.Math.round(v,i);
+var y=this.toScreen(r);
+if(this._center-this._range<y&&y<this._center+this._range){
+return{
+y:y,
+value:r
 }
 }
+}
+return{
+y:v,
+value:this._center
+}
+},
+
+
+_updateMappedValues:function(){
+this._valueRange=this._maxValue-this._minValue;
+this._mappedRange=this._map.direct(this._valueRange);
+}
+
+}
+
 
 
 
@@ -1162,17 +1215,20 @@ this._map=this._logMap;
 
 Object.extend(Timeplot.LogarithmicValueGeometry.prototype,Timeplot.DefaultValueGeometry.prototype);
 
+
 Timeplot.LogarithmicValueGeometry.prototype.actLinear=function(){
 this._mode="lin";
 this._map=this._linMap;
 this._updateMappedValues();
 }
 
+
 Timeplot.LogarithmicValueGeometry.prototype.actLogarithmic=function(){
 this._mode="log";
 this._map=this._logMap;
 this._updateMappedValues();
 }
+
 
 Timeplot.LogarithmicValueGeometry.prototype.toggle=function(){
 if(this._mode=="log"){
@@ -1181,6 +1237,7 @@ this.actLinear();
 this.actLogarithmic();
 }
 }
+
 
 
 
@@ -1205,6 +1262,7 @@ this._map=this._linMap;
 
 Timeplot.DefaultTimeGeometry.prototype={
 
+
 initialize:function(timeplot){
 this._timeplot=timeplot;
 this._canvas=timeplot.getCanvas();
@@ -1216,6 +1274,7 @@ if(this._max&&!this._max.getTime){
 this._max=dateParser(this._max);
 }
 },
+
 
 setRange:function(range){
 if(this._min){
@@ -1238,18 +1297,6 @@ this._gridSpacing=this._calculateGridSpacing();
 }
 },
 
-_updateMappedValues:function(){
-this._period=this._latestDate.getTime()-this._earliestDate.getTime();
-this._mappedPeriod=this._map.direct(this._period);
-},
-
-_calculateGridSpacing:function(){
-
-return{
-y:0,
-value:0
-}
-},
 
 toScreen:function(time){
 if(this._latestDate){
@@ -1260,20 +1307,40 @@ return 0;
 }
 },
 
+
 fromScreen:function(x){
 return this._map.inverse(this._mappedPeriod*x/this._canvas.width)+this._earliestDate.getTime();
 },
+
 
 getPeriod:function(){
 return this._period;
 },
 
+
 paint:function(){
 var ctx=this._canvas.getContext('2d');
 
 
+},
+
+
+_calculateGridSpacing:function(){
+
+return{
+y:0,
+value:0
 }
+},
+
+
+_updateMappedValues:function(){
+this._period=this._latestDate.getTime()-this._earliestDate.getTime();
+this._mappedPeriod=this._map.direct(this._period);
 }
+
+}
+
 
 
 
@@ -1309,6 +1376,7 @@ this._map=this._linMap;
 };
 
 Object.extend(Timeplot.MagnifyingTimeGeometry.prototype,Timeplot.DefaultTimeGeometry.prototype);
+
 
 Timeplot.MagnifyingTimeGeometry.prototype.initialize=function(timeplot){
 Timeplot.DefaultTimeGeometry.prototype.initialize.apply(this,arguments);
@@ -1440,17 +1508,20 @@ this._rightScreenTranslation=(ct+b)-(c+a)/this._rightRate;
 this._updateMappedValues();
 }
 
+
 Timeplot.MagnifyingTimeGeometry.prototype.actLinear=function(){
 this._mode="lin";
 this._map=this._linMap;
 this._updateMappedValues();
 }
 
+
 Timeplot.MagnifyingTimeGeometry.prototype.actMagnifying=function(){
 this._mode="Magnifying";
 this._map=this._MagnifyingMap;
 this._updateMappedValues();
 }
+
 
 Timeplot.MagnifyingTimeGeometry.prototype.toggle=function(){
 if(this._mode=="Magnifying"){
@@ -1463,6 +1534,9 @@ this.actMagnifying();
 
 
 /* color.js */
+
+
+
 
 
 
@@ -1557,21 +1631,6 @@ return this.check();
 };
 
 /* math.js */
-
-
-
-Timeplot.Operator={
-
-sum:function(data,params){
-return Timeplot.Math.integral(data.values);
-},
-
-average:function(data,params){
-var size=("size"in params)?params.size:30;
-var result=Timeplot.Math.movingAverage(data.values,size);
-return result;
-}
-}
 
 
 
@@ -1719,6 +1778,7 @@ return x;
 }
 },
 
+
 tanh:function(x){
 if(x>5){
 return 1;
@@ -1730,6 +1790,7 @@ return(expx2-1)/(expx2+1);
 }
 },
 
+
 isClose:function(a,b,value){
 return(a&&b&&Math.abs(a.x-b.x)<value&&Math.abs(a.y-b.y)<value);
 }
@@ -1737,6 +1798,26 @@ return(a&&b&&Math.abs(a.x-b.x)<value&&Math.abs(a.y-b.y)<value);
 }
 
 /* processor.js */
+
+
+
+
+
+Timeplot.Operator={
+
+
+sum:function(data,params){
+return Timeplot.Math.integral(data.values);
+},
+
+
+average:function(data,params){
+var size=("size"in params)?params.size:30;
+var result=Timeplot.Math.movingAverage(data.values,size);
+return result;
+}
+}
+
 
 
 

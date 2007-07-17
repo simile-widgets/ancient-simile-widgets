@@ -1,7 +1,49 @@
+/**
+ * Processing Data Source
+ * 
+ * @fileOverview Processing Data Source and Operators
+ * @name Processor
+ */
+
+/* -----------------------------------------------------------------------------
+ * Operators
+ * 
+ * These are functions that can be used directly as Timeplot.Processor operators
+ * ----------------------------------------------------------------------------- */
+
+Timeplot.Operator = { 
+
+    /**
+     * This is the operator used when you want to draw the cumulative sum
+     * of a time series and not, for example, their daily values.
+     */
+    sum: function(data, params) {
+        return Timeplot.Math.integral(data.values);
+    },
+
+    /**
+     * This is the operator that is used to 'smooth' a given time series
+     * by taking the average value of a moving window centered around
+     * each value. The size of the moving window is influenced by the 'size'
+     * parameters in the params map.
+     */
+    average: function(data, params) {
+        var size = ("size" in params) ? params.size : 30;
+        var result = Timeplot.Math.movingAverage(data.values, size);
+        return result;
+    }
+}
+
 /*==================================================
  *  Processing Data Source
  *==================================================*/
 
+/**
+ * A Processor is a special DataSource that can apply an Operator
+ * to the DataSource values and thus return a different one.
+ * 
+ * @constructor
+ */
 Timeplot.Processor = function(dataSource, operator, params) {
     this._dataSource = dataSource;
     this._operator = operator;

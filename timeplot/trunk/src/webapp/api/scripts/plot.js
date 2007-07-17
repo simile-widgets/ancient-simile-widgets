@@ -1,7 +1,20 @@
-/*==================================================
- *  Layer
- *==================================================*/
+/**
+ * Plot Layer
+ * 
+ * @fileOverview Plot Layer
+ * @name Plot
+ */
  
+/**
+ * A plot layer is the main building block for timeplots and it's the object
+ * that is responsible for painting the plot itself. Each plot needs to have
+ * a time geometry, either a DataSource (for time series
+ * plots) or an EventSource (for event plots) and a value geometry in case 
+ * of time series plots. Such parameters are passed along
+ * in the 'plotInfo' map.
+ * 
+ * @constructor
+ */
 Timeplot.Plot = function(timeplot, plotInfo) {
 	this._timeplot = timeplot;
     this._canvas = timeplot.getCanvas();
@@ -23,6 +36,9 @@ Timeplot.Plot = function(timeplot, plotInfo) {
 
 Timeplot.Plot.prototype = {
     
+    /**
+     * Initialize the plot layer
+     */
     initialize: function() {
 	    if (this._showValues && this._dataSource && this._dataSource.getValue) {
             this._timeFlag = this._timeplot.putDiv("timeflag","timeplot-timeflag");
@@ -172,6 +188,9 @@ Timeplot.Plot.prototype = {
 	    }
     },
 
+    /**
+     * Dispose the plot layer and all the data sources and listeners associated to it
+     */
     dispose: function() {
         if (this._dataSource) {
             this._dataSource.removeListener(this._paintingListener);
@@ -181,18 +200,30 @@ Timeplot.Plot.prototype = {
         }
     },
 
+    /**
+     * Return the data source of this plot layer (it could be either a DataSource or an EventSource)
+     */
     getDataSource: function() {
         return (this._dataSource) ? this._dataSource : this._eventSource;
     },
 
+    /**
+     * Return the time geometry associated with this plot layer
+     */
     getTimeGeometry: function() {
         return this._timeGeometry;
     },
 
+    /**
+     * Return the value geometry associated with this plot layer
+     */
     getValueGeometry: function() {
         return this._valueGeometry;
     },
 
+    /**
+     * Paint this plot layer
+     */
     paint: function() {
         var ctx = this._canvas.getContext('2d');
 

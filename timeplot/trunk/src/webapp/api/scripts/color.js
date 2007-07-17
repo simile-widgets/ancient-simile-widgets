@@ -1,10 +1,19 @@
-/*
- *   Inspired by Plotr
+/**
+ * Color
  *
- *   Copyright 2007 (c) Bas Wenneker <sabmann[a]gmail[d]com>
- *   For use under the BSD license. <http://www.solutoire.com/plotr>
+ * @fileOverview Color
+ * @name Colol
  */
 
+/*
+ * Inspired by Plotr
+ * Copyright 2007 (c) Bas Wenneker <sabmann[a]gmail[d]com>
+ * For use under the BSD license. <http://www.solutoire.com/plotr>
+ */
+
+/**
+ * Create a Color object that can be used to manipulate colors programmatically.
+ */
 Timeplot.Color = function(color) {
     this._fromHex(color);
 };
@@ -27,7 +36,7 @@ Timeplot.Color.prototype = {
     /**
      * Set the color transparency
      * 
-     * @param {integer} level   Transparency value, between 0.0 (fully transparent) and 1.0 (fully opaque).
+     * @param {float} a   Transparency value, between 0.0 (fully transparent) and 1.0 (fully opaque).
      */
     transparency: function(a) {
     	this.a = a;
@@ -92,12 +101,14 @@ Timeplot.Color.prototype = {
 
     /**
      * Returns a string representation of this color.
+     * 
+     * @param {float} alpha   (optional) Transparency value, between 0.0 (fully transparent) and 1.0 (fully opaque).
      */
     toString: function(alpha) {
         return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + ((alpha) ? alpha : '1.0') + ')';
     },
 
-    /**
+    /*
      * Parses and stores the hex values of the input color string.
      * 
      * @param {String} color    Hex or rgb() css string.
