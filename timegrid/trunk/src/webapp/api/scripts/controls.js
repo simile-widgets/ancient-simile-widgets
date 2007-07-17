@@ -51,13 +51,13 @@ Timegrid.Controls.TabSet.prototype.render = function(container) {
         return function() { self.switchTo(title); }; 
     };
     for (title in this._layoutMap) {
-        var tab = $('<span><a href="#">' + title + '</a></span>')
+        var tab = $('<span><a href="javascript:void">' + title + '</a></span>')
                     .click(makeCallback(title))
                     .addClass('timegrid-tab');
         tabDiv.append(tab);
         this._tabs[title] = tab;
     }
-    $('.timegrid-tab').corner("30px top");
+    if (!$.browser.msie) { $('.timegrid-tab').corner("30px top"); }
 };
 
 Timegrid.Controls.TabSet.prototype.switchTo = function(title) {
@@ -116,11 +116,11 @@ Timegrid.Controls.Iterator.prototype.render = function(container) {
         };
     };
     var prevLink = $('<img alt="Previous" src="' + Timegrid.urlPrefix + '/images/go-previous.png"></img>')
-                   .wrap('<a href="#"></a>').parent()
+                   .wrap('<a href="javascript:void"></a>').parent()
                    .addClass('timegrid-iterator-prev')
                    .click(makePrevCallback(this._layout));
     var nextLink = $('<img alt="Next" src="' + Timegrid.urlPrefix + '/images/go-next.png"></img>')
-                   .wrap('<a href="#"></a>').parent()
+                   .wrap('<a href="javascript:void"></a>').parent()
                    .addClass('timegrid-iterator-next')
                    .click(makeNextCallback(this._layout));
     this._div.append(prevLink);

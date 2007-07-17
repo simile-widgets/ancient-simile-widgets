@@ -15,7 +15,7 @@ div.timegrid-default ul, li {
 div.timegrid-iterator {
     float: left;
     font-weight: bold;
-    height: 2em;
+    height: 1.5em;
 }
 
 .timegrid-iterator-prev, .timegrid-iterator-next {
@@ -27,7 +27,8 @@ div.timegrid-iterator {
 }
 
 div.timegrid-tabs {
-    text-align: right;
+    float: right;
+    height: 1.5em;
 }
 
 span.timegrid-tab {
@@ -43,6 +44,10 @@ span.timegrid-tab-active {
 
 div.timegrid-view {
     position: absolute;
+    top: 1.5em;
+    bottom: 0px;
+    width: 100%;
+    left: 0px;
     border: 1px white solid;
 }
 
@@ -72,7 +77,7 @@ div.timegrid-events {
 
 div.timegrid-gridlines {
     position: relative;
-    z-index: 3;
+    z-index: 1;
 }
 
 div.timegrid-xlabels {
@@ -123,6 +128,7 @@ div.timegrid-event {
     background-color: #aaf;
     padding: 0;
     overflow: hidden;
+    z-index: 5;
 }
 
 /* Monthly View */

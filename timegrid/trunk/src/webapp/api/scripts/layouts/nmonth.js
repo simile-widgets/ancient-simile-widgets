@@ -90,6 +90,16 @@ Timegrid.NMonthLayout.prototype.renderEventList = function(evts, x, y, n, m) {
     return jediv.get()[0]; // Return the actual DOM element
 };
 
+Timegrid.NMonthLayout.prototype.renderMonthLabels = function() {
+    for (i in this.monthStarts) {
+        var monthStart = this.monthStarts[i];
+        var monthString = monthStart.date.getMonthName() + " " + monthStart.date.getFullYear();
+        var mDiv = $('<div>' + monthString + '</div>');
+        mDiv.addClass('timegrid-month-month-label');
+        mDiv.css('top', this.yCell * monthStart.i);
+    }
+};
+
 Timegrid.NMonthLayout.prototype.getXLabels = function() {
     return Date.dayNames;
 };
@@ -129,10 +139,12 @@ Timegrid.NMonthLayout.prototype.computeYSize = function(date) {
         gridStart.time.setHours(-24);
     }
     gridStart.time.addDays(7);
-    for (var months = 0; months < this.n; gridStart.time.addDays(7)) {
+    for (this.monthStarts = []; this.monthStarts.length < this.n;
+                                 gridStart.time.addDays(7)) {
         if (gridStart.time.getMonth() != month) { 
             month = gridStart.time.getMonth();
-            months++;
+            var year = gridStart.time.getFullYear();
+            this.monthStarts.push({i: this.ySize, date: new Date(gridStart)});
         }
         this.ySize++;
     }
