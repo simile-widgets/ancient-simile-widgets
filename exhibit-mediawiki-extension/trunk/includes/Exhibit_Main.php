@@ -37,6 +37,7 @@ function wfExhibitSetup() {
 function wfExhibitAddHTMLHeader(&$out) {
 	global $wgScriptPath;
 	
+	//$ExhibitScript = '<script type="text/javascript" src="http://128.30.5.47:8888/exhibit/api/exhibit-api.js?bundle=false&autoCreate=false"></script><script>SimileAjax.History.enabled = false;</script>';
 	$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false"></script><script>SimileAjax.History.enabled = false;</script>';
 	$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';
 	
@@ -63,32 +64,40 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	$xml = new SimpleXMLElement($xmlstr);
 	
 	// <data>
-	$dataSource = array();
-	$columns = array();
-	$hideTable = array();
+	$sourceData = array();
+	$sourceColumns = array();
+	$sourceHideTable = array();
 	foreach ($xml->data->source as $source) {
-		array_push($dataSource, $source);
-		array_push($columns, $source['columns']);
-		$hide = "true";
-		if ($source['hideTable']) {
-			$hide = "false";
-		}
-		array_push($hideTable, $hide);
+		array_push($sourceData, $source);
+		array_push($sourceColumns, $source['columns']);
+		array_push($sourceHideTable, $source['hideTable']);
 	}	
-	$dataSource = implode(',', $dataSource);
-	$columns = implode(';', $columns);
-	$hideTable = implode(',', $hideTable);
+	$sourceData = implode(',', $sourceData);
+	$sourceColumns = implode(';', $sourceColumns);
+	$sourceHideTable = implode(',', $sourceHideTable);
 	
 	// <config>
-	$facets = $xml->config->facets;
+	$facetExpressions = array();
+	$facetLabels = array();
+	$facetClasses = array();
+	foreach ($xml->config->facet as $facet) {
+		array_push($facetExpressions, $facet['expression']);
+		array_push($facetLabels, $facet['facetLabel']);
+		array_push($facetClasses, $facet['facetClass']);
+	}
+	$facetExpressions = implode(',', $facetExpressions);
+	$facetLabels = implode(',', $facetLabels);
+	$facetClasses = implode(',', $facetClasses);
 
 	$output = <<<OUTPUT
 	<script type="text/javascript">
 	var disabled = $disabled;
-	var dataSource = "$dataSource".split(',');
-	var columns = "$columns".split(';');
-	var hideTable = "$hideTable".split(',');
-	var facets = "$facets".split(',');
+	var sourceData = "$sourceData".split(',');
+	var sourceColumns = "$sourceColumns".split(';');
+	var sourceHideTable = "$sourceHideTable".split(',');
+	var facetExpressions = "$facetExpressions".split(',');
+	var facetLabels = "$facetLabels".split(',');
+	var facetClasses = "$facetClasses".split(',');
 	</script>
 OUTPUT;
 	
