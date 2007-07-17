@@ -2,7 +2,7 @@
  * Color
  *
  * @fileOverview Color
- * @name Colol
+ * @name Color
  */
 
 /*
