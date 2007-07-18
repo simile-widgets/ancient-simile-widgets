@@ -10,6 +10,13 @@
     <link rel='stylesheet' href='styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     <script type="text/javascript" src="http://static.simile.mit.edu/timegrid/api/timegrid-api.js"></script>
+    <script type="text/javascript">
+    onResize = function() {
+        for (i in window.timegrids) {
+            window.timegrids[i]._construct();
+        }
+    };
+    </script>    
 </head>
 <body onload="onLoad();" onresize="onResize();">
 <!--#include virtual="sidebar.html" -->

@@ -156,7 +156,8 @@ div.timegrid-month-label {
 div.timegrid-month-label span {
     margin-top: 25%;
     display: block;
-    font-size: 5em;
+    font-size: 12em;
+    font-weight: bold;
     color: #ccc;
 }
 

@@ -27,6 +27,12 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     if (this.startTime) { var firstWeek = this.startTime.getWeekOfYear(); }
     this.xMapper = function(obj) { return obj.time.getDay(); };
     this.yMapper = function(obj) { return obj.time.getWeekOfYear() - firstWeek; };
+    
+    this.initializeGrid();
+};
+Timegrid.LayoutFactory.registerLayout("n-month", Timegrid.NMonthLayout);
+
+Timegrid.NMonthLayout.prototype.initializeGrid = function() {
     // Use a method to compute cell and y-labels (non-trivial).  This method
     // will also compute ySize based on n, an unfortunate grouping.
     this.computeYSize(this.startTime);
@@ -36,12 +42,7 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     
     // Compute the cell sizes for the grid
     this.computeCellSizes();
-    
-    this.initializeGrid();
-};
-Timegrid.LayoutFactory.registerLayout("n-month", Timegrid.NMonthLayout);
 
-Timegrid.NMonthLayout.prototype.initializeGrid = function() {
     this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize, 
                                        this.xMapper, this.yMapper);
     if (this.startTime) {
@@ -108,7 +109,7 @@ Timegrid.NMonthLayout.prototype.renderCellColor = function(x, y, m) {
 Timegrid.NMonthLayout.prototype.renderMonthLabels = function() {
     var self = this;
     return $.map(this.monthStarts, function(monthStart) {
-        var monthString = monthStart.date.getMonthName() + " " + monthStart.date.getFullYear();
+        var monthString = monthStart.date.getMonthName();
         var mDiv = $('<div><span>' + monthString + '</span></div>');
         mDiv.addClass('timegrid-month-label');
         mDiv.css('top', self.yCell * monthStart.i + "px");
@@ -123,6 +124,27 @@ Timegrid.NMonthLayout.prototype.getXLabels = function() {
 
 Timegrid.NMonthLayout.prototype.getYLabels = function() {
     return this.yLabels;
+};
+
+Timegrid.NMonthLayout.prototype.goPrevious = function() {
+    this.endTime = this.startTime;
+    this.startTime = this.computeStartTime(this.endTime);
+    this.initializeGrid();
+    this.render();
+};
+
+Timegrid.NMonthLayout.prototype.goNext = function() {
+    this.startTime = this.endTime;
+    this.endTime = this.computeEndTime(this.startTime);
+    this.initializeGrid();
+    this.render();
+};
+
+Timegrid.NMonthLayout.prototype.getCurrent = function() {
+    var start = this.monthStarts[0].date;
+    var end   = this.monthStarts[this.monthStarts.length - 1].date;
+    return start.getMonthName() + " " + start.getFullYear() + " - " +
+           end.getMonthName()   + " " + end.getFullYear();
 };
 
 Timegrid.NMonthLayout.prototype.computeStartTime = function(date) {

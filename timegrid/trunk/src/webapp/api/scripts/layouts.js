@@ -47,6 +47,7 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
  * @constructor
  */
 Timegrid.Layout = function(eventSource, params) {
+    this.params = params;
     /**
      * The number of columns in the grid.
      * @type int
@@ -94,15 +95,16 @@ Timegrid.Layout.prototype.render = function(container) {
     var gridDiv = $('<div></div>').addClass('timegrid-grid');
     var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
     
-    if (!this.height) { 
+    if (!this.params.height) { 
         this.height = this._container.style.height ? 
             $(this._container).height() : 500; 
     }
     $(this._container).height(this.height + "px");
-    if (!this.width) { 
+    if (!this.params.width) { 
         this.width = $(this._container).width(); 
+    } else {
+        $(this._container).width(this.width + "px");
     }
-    $(this._container).width(this.width + "px");  
     $(this._container).css('position', 'relative');
 
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
