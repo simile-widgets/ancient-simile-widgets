@@ -24,9 +24,6 @@ Timeplot.Plot = function(timeplot, plotInfo) {
     this._timeGeometry.initialize(timeplot);
     this._valueGeometry = plotInfo.valueGeometry;
     this._valueGeometry.initialize(timeplot);
-    this._locale = ("locale" in plotInfo) ? plotInfo.locale : SimileAjax.Platform.getDefaultLocale();
-    this._timeZone = ("timeZone" in plotInfo) ? plotInfo.timeZone : 0;
-    this._labeller = ("labeller" in plotInfo) ? plotInfo.labeller : timeplot.getUnit().createLabeller(this._locale, this._timeZone);
     this._showValues = plotInfo.showValues;
     this._theme = new Timeline.getDefaultTheme();
     this._dataSource = plotInfo.dataSource;

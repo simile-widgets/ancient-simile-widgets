@@ -24,8 +24,8 @@ Object.extend = function(destination, source) {
 /**
  * Create a timeplot attached to the given element and using the configuration from the given array of PlotInfos
  */
-Timeplot.create = function(elmt, plotInfos) {
-    return new Timeplot._Impl(elmt, plotInfos);
+Timeplot.create = function(elmt, plotInfos, unit) {
+    return new Timeplot._Impl(elmt, plotInfos, unit);
 };
 
 /**
@@ -307,6 +307,14 @@ Timeplot._Impl.prototype = {
     },
     
     /**
+     * Remove the given element from the DOM
+     */
+    removeDiv: function(div) {
+    	var parent = div.parentNode;
+    	parent.removeChild(div);
+    },
+    
+    /**
      * return a {x,y} map with the location of the given element relative to the 'internal' area of the timeplot
      * (that is, without the container padding)
      */
@@ -345,6 +353,11 @@ Timeplot._Impl.prototype = {
      */
     repaint: function() {
         this._prepareCanvas();
+        for (var i = 0; i < this._plots.length; i++) {
+            var plot = this._plots[i];
+            if (plot._timeGeometry) plot._timeGeometry.reset();
+            if (plot._valueGeometry) plot._valueGeometry.reset();
+        }
         this.paint();
     },
     

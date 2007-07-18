@@ -22,9 +22,9 @@ Timeplot.DefaultValueGeometry = function(params) {
     this._axisColor = ("axisColor" in params) ? ((params.axisColor == "string") ? new Timeplot.Color(params.axisColor) : params.axisColor) : new Timeplot.Color("#606060"),
     this._gridColor = ("gridColor" in params) ? ((params.gridColor == "string") ? new Timeplot.Color(params.gridColor) : params.gridColor) : null,
     this._gridLineWidth = ("gridLineWidth" in params) ? params.gridLineWidth : 0.5;
-    this._axisLabelsPlacement = ("axisLabelsPlacement" in params) ? params.axisLabelsPlacement : null;
-    this._center = ("center" in params) ? params.center : 30;
-    this._range = ("range" in params) ? params.range : 20;
+    this._axisLabelsPlacement = ("axisLabelsPlacement" in params) ? params.axisLabelsPlacement : "right";
+    this._gridStep = ("gridStep" in params) ? params.gridStep : 30;
+    this._gridStepRange = ("gridStepRange" in params) ? params.gridStepRange : 20;
     this._minValue = ("min" in params) ? params.min : null;
     this._maxValue = ("max" in params) ? params.max : null;
     this._linMap = {
@@ -36,6 +36,7 @@ Timeplot.DefaultValueGeometry = function(params) {
         }
     }
     this._map = this._linMap;
+    this._labels = [];
 }
 
 Timeplot.DefaultValueGeometry.prototype = {
@@ -66,8 +67,20 @@ Timeplot.DefaultValueGeometry.prototype = {
         if (this._minValue == 0 && this._maxValue == 0) {
             this._gridSpacing = { y: 0, value: 0 };
         } else { 
-        	this._gridSpacing = this._calculateGridSpacing();
+            this._gridSpacing = this._calculateGridSpacing();
         }
+    },
+
+    /**
+     * Called after changing ranges or canvas size to reset the grid values
+     */
+    reset: function() {
+        this._updateMappedValues();
+        this._gridSpacing = this._calculateGridSpacing();
+        for (var i = 0; i < this._labels.length; i++) {
+            this._timeplot.removeDiv(this._labels[i]);
+        }
+        this._labels = [];
     },
 
     /**
@@ -116,16 +129,17 @@ Timeplot.DefaultValueGeometry.prototype = {
                 ctx.stroke();
 
                 if (this._axisLabelsPlacement == "right") {
-	                this._timeplot.putText(value,"timeplot-grid-label",{
+	                var div = this._timeplot.putText(value,"timeplot-grid-label",{
 	                    bottom: y,
 	                    right: 2
 	                });
                 } else if (this._axisLabelsPlacement == "left") {
-                    this._timeplot.putText(value,"timeplot-grid-label",{
+                    var div = this._timeplot.putText(value,"timeplot-grid-label",{
                         bottom: y,
                         left: 2
                     });
                 }
+                this._labels.push(div);
 
                 y += this._gridSpacing.y;
                 value += this._gridSpacing.value;
@@ -140,10 +154,15 @@ Timeplot.DefaultValueGeometry.prototype = {
         ctx.lineWidth = 1;
         gradient.addColorStop(0, this._axisColor.toString());
 
+        // left axis
         ctx.beginPath();
         ctx.moveTo(0,this._canvas.height);
         ctx.lineTo(0,0);
-        ctx.lineTo(this._canvas.width,0);
+        ctx.stroke();
+        
+        // right axis
+        ctx.beginPath();
+        ctx.moveTo(this._canvas.width,0);
         ctx.lineTo(this._canvas.width,this._canvas.height);
         ctx.stroke();
     },
@@ -153,11 +172,13 @@ Timeplot.DefaultValueGeometry.prototype = {
      * by this geometry to draw the grid in order to reduce clutter. 
      */
     _calculateGridSpacing: function() {
-        var v = this.fromScreen(this._center);
+    	var step = this._gridStep;
+    	var range = this._gridStepRange;
+        var v = this.fromScreen(step);
         for (var i = 1; i < 10; i++) { // 10 iterations should be enough to converge
             var r = Timeplot.Math.round(v,i);
             var y = this.toScreen(r);
-            if (this._center - this._range < y && y < this._center + this._range) {
+            if (step - range < y && y < step + range) {
                return {
                    y: y,
                    value: r
@@ -165,8 +186,8 @@ Timeplot.DefaultValueGeometry.prototype = {
             }
         }
         return {
-            y: v,
-            value: this._center
+            y: step,
+            value: v
         }
     },
 
@@ -217,7 +238,7 @@ Object.extend(Timeplot.LogarithmicValueGeometry.prototype,Timeplot.DefaultValueG
 Timeplot.LogarithmicValueGeometry.prototype.actLinear = function() {
     this._mode = "lin";
     this._map = this._linMap;
-	this._updateMappedValues();
+	this.reset();
 }
 
 /**
@@ -226,7 +247,7 @@ Timeplot.LogarithmicValueGeometry.prototype.actLinear = function() {
 Timeplot.LogarithmicValueGeometry.prototype.actLogarithmic = function() {
     this._mode = "log";
     this._map = this._logMap;
-    this._updateMappedValues();
+    this.reset();
 }
 
 /**
@@ -250,8 +271,15 @@ Timeplot.LogarithmicValueGeometry.prototype.toggle = function() {
 Timeplot.DefaultTimeGeometry = function(params) {
     if (!params) params = {};
     this._id = ("id" in params) ? params.id : "g" + Math.round(Math.random() * 1000000);
-    this._axisColor = ("axisColor" in params) ? params.axisColor : new Timeplot.Color("#606060");
-    this._gridColor = ("gridColor" in params) ? params.gridColor : null;
+    this._locale = ("locale" in params) ? params.locale : SimileAjax.Platform.getDefaultLocale();
+    this._timeZone = ("timeZone" in params) ? plotInfo.params : 0;
+    this._labeller = ("labeller" in params) ? plotInfo.params : null;
+    this._axisColor = ("axisColor" in params) ? ((params.axisColor == "string") ? new Timeplot.Color(params.axisColor) : params.axisColor) : new Timeplot.Color("#606060"),
+    this._gridColor = ("gridColor" in params) ? ((params.gridColor == "string") ? new Timeplot.Color(params.gridColor) : params.gridColor) : null,
+    this._gridLineWidth = ("gridLineWidth" in params) ? params.gridLineWidth : 0.5;
+    this._axisLabelsPlacement = ("axisLabelsPlacement" in params) ? params.axisLabelsPlacement : "bottom";
+    this._gridStep = ("gridStep" in params) ? params.gridStep : 100;
+    this._gridStepRange = ("gridStepRange" in params) ? params.gridStepRange : 20;
     this._min = ("min" in params) ? params.min : null;
     this._max = ("max" in params) ? params.max : null;
     this._timeValuePosition =("timeValuePosition" in params) ? params.timeValuePosition : "bottom";
@@ -264,6 +292,7 @@ Timeplot.DefaultTimeGeometry = function(params) {
         }
     }
     this._map = this._linMap;
+    this._labels = [];
 }
 
 Timeplot.DefaultTimeGeometry.prototype = {
@@ -273,6 +302,7 @@ Timeplot.DefaultTimeGeometry.prototype = {
      */
     initialize: function(timeplot) {
     	this._timeplot = timeplot;
+    	if (this._labeler == null) this._labeler = timeplot.getUnit().createLabeller(this._locale, this._timeZone);
     	this._canvas = timeplot.getCanvas();
         var dateParser = this._timeplot.getUnit().getParser("iso8601");
 	    if (this._min && !this._min.getTime) {
@@ -302,13 +332,24 @@ Timeplot.DefaultTimeGeometry.prototype = {
         }
 
         if (!this._earliestDate && !this._latestDate) {
-            this._gridSpacing = { y: 0, value: 0 };
-        } else { 
-            this._updateMappedValues();
-            this._gridSpacing = this._calculateGridSpacing();
+            this._gridSpacing = { x: 0, unit: 0, value: 0 };
+        } else {
+        	this.reset(); 
         }
     },
 
+    /**
+     * Called after changing ranges or canvas size to reset the grid values
+     */
+    reset: function() {
+        this._updateMappedValues();
+        this._gridSpacing = this._calculateGridSpacing();
+        for (var i = 0; i < this._labels.length; i++) {
+        	this._timeplot.removeDiv(this._labels[i]);
+        }
+        this._labels = [];
+    },
+    
     /**
      * Map the given date to a x screen coordinate.
      */
@@ -339,9 +380,66 @@ Timeplot.DefaultTimeGeometry.prototype = {
     * Each geometry is also a painter and paints the value grid and grid labels.
     */
     paint: function() {
+    	var unit = this._timeplot.getUnit();
         var ctx = this._canvas.getContext('2d');
 
-        // fixme(SM): implement
+        var gradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = this._gridLineWidth;
+        ctx.lineJoin = 'miter';
+
+        // paint grid
+        if (this._gridColor) {        
+            gradient.addColorStop(0, this._gridColor.toString());
+            gradient.addColorStop(1, "rgba(255,255,255,0.9)");
+
+            var x = this._gridSpacing.x;
+            var value = unit.toNumber(this._earliestDate) + this._gridSpacing.value;
+            var counter = 1;
+            while (x < this._canvas.width) {
+                var _label = this._labeler.labelInterval(unit.fromNumber(value),this._gridSpacing.unit).text;
+                if (this._axisLabelsPlacement == "top") {
+                    var div = this._timeplot.putText(_label,"timeplot-grid-label",{
+                        left: x + 2,
+                        top: 2,
+                        visibility: "hidden"
+                    });
+                } else if (this._axisLabelsPlacement == "bottom") {
+                    var div = this._timeplot.putText(_label,"timeplot-grid-label",{
+                        left: x + 2,
+                        bottom: 2,
+                        visibility: "hidden"
+                    });
+                }
+                this._labels.push(div);
+                if (x + div.clientWidth < this._canvas.width + 10) {
+                	div.style.visibility = "visible"; // avoid the labels that would overflow
+                }
+
+                // draw separator
+                ctx.beginPath();
+                ctx.moveTo(x,0);
+                ctx.lineTo(x,this._canvas.height);
+                ctx.stroke();
+
+                x += this._gridSpacing.x;
+                value += this._gridSpacing.value;
+                counter++;
+            }
+        }
+
+        // paint axis
+        gradient.addColorStop(0, this._axisColor.toString());
+        gradient.addColorStop(1, "rgba(255,255,255,0.5)");
+        
+        ctx.lineWidth = 1;
+        gradient.addColorStop(0, this._axisColor.toString());
+
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.lineTo(this._canvas.width,0);
+        ctx.stroke();
     },
     
     /*
@@ -349,13 +447,32 @@ Timeplot.DefaultTimeGeometry.prototype = {
      * by this geometry to draw the grid in order to reduce clutter. 
      */
     _calculateGridSpacing: function() {
-        // fixme(SM): implement
+    	var u = this._timeplot.getUnit();
+        var lib = SimileAjax.DateTime;
+        var step = this._gridStep;
+        var range = this._gridStepRange;
+        var t = this.fromScreen(step);
+        var date = u.fromNumber(t);
+        for (var unit = lib.MILLENNIUM; unit > 0; unit--) {
+            var d = u.cloneValue(date);
+	        lib.roundDownToInterval(d, unit, this._timeZone, 1, 0);
+	        var t2 = u.toNumber(d);
+            var x = this.toScreen(t2);
+            if (step - range < x && x < step + range) {
+               return {
+                   x: x,
+                   unit: unit,
+                   value: t2 - u.toNumber(this._earliestDate),
+               }
+            }
+        }
         return {
-            y: 0,
-            value: 0
+            x: step,
+            unit: lib.MILLISECOND,
+            value: t - u.toNumber(this._earliestDate)
         }
     },
-
+    
     /*
      * Update the values that are used by the paint function so that
      * we don't have to calculate them at every repaint.
@@ -556,7 +673,7 @@ Timeplot.MagnifyingTimeGeometry.prototype.setMagnifyingParams = function(c,a,b) 
 Timeplot.MagnifyingTimeGeometry.prototype.actLinear = function() {
     this._mode = "lin";
     this._map = this._linMap;
-    this._updateMappedValues();
+    this.reset();
 }
 
 /*
@@ -565,7 +682,7 @@ Timeplot.MagnifyingTimeGeometry.prototype.actLinear = function() {
 Timeplot.MagnifyingTimeGeometry.prototype.actMagnifying = function() {
     this._mode = "Magnifying";
     this._map = this._MagnifyingMap;
-    this._updateMappedValues();
+    this.reset();
 }
 
 /*
