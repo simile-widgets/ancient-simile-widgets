@@ -15,6 +15,7 @@
  */
 
 $wgExtensionFunctions[] = "wfExhibitSetup";
+$exhibitEnabled = false;
 
 function wfExhibitSetup() {
 	global $wgParser;
@@ -25,8 +26,6 @@ function wfExhibitSetup() {
  	 * The second parameter is the callback function for processing the text between the tags.
   	 */
 	$wgParser->setHook( "exhibit", "Exhibit_getHTMLResult" );
-
-	$wgHooks['BeforePageDisplay'][]='wfExhibitAddHTMLHeader';
 }
 
 /**
@@ -36,15 +35,16 @@ function wfExhibitSetup() {
  */
 function wfExhibitAddHTMLHeader(&$out) {
 	global $wgScriptPath;
+	global $exhibitEnabled;
 	
-	//$ExhibitScript = '<script type="text/javascript" src="http://128.30.5.47:8888/exhibit/api/exhibit-api.js?bundle=false&autoCreate=false"></script><script>SimileAjax.History.enabled = false;</script>';
-	$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false"></script><script>SimileAjax.History.enabled = false;</script>';
-	$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';
-	
-	$out->addScript($ExhibitScript);
-	$out->addScript($WExhibitScript);
-
-	// Custom CSS file?
+	if ($exhibitEnabled) {	
+		//$ExhibitScript = '<script type="text/javascript" src="http://128.30.5.47:8888/exhibit/api/exhibit-api.js?bundle=false&autoCreate=false"></script><script>SimileAjax.History.enabled = false;</script>';
+		$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false"></script><script>SimileAjax.History.enabled = false;</script>';
+		$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';
+		
+		$out->addScript($ExhibitScript);
+		$out->addScript($WExhibitScript);
+	}
 
 	return true;
 }
@@ -54,9 +54,11 @@ function wfExhibitAddHTMLHeader(&$out) {
  * @param {String} $input This is the text the user enters into the wikitext input box.
  */
 function Exhibit_getHTMLResult( $input, $argv ) {
-	$disabled = "false";
+	global $exhibitEnabled;
+	$exhibitEnabled = true;
+
 	if ($argv["disabled"]) {
-		$disabled = "true";
+		$exhibitEnabled = false;
 	}
 
 	// use SimpleXML parser
@@ -91,7 +93,6 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 
 	$output = <<<OUTPUT
 	<script type="text/javascript">
-	var disabled = $disabled;
 	var sourceData = "$sourceData".split(',');
 	var sourceColumns = "$sourceColumns".split(';');
 	var sourceHideTable = "$sourceHideTable".split(',');
