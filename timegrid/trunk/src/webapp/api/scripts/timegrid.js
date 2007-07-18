@@ -6,6 +6,12 @@ Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
     return new Timegrid._Impl(node, eventSource, layoutName, layoutParams);
 };
 
+Timegrid.resize = function() {
+    for (i in window.timegrids) {
+        window.timegrids[i]._construct();
+    }
+};
+
 Timegrid.createFromDOM = function(elmt) {
     var config = Timegrid.getConfigFromDOM(elmt);
     var eventSource = new Timegrid.DefaultEventSource();
