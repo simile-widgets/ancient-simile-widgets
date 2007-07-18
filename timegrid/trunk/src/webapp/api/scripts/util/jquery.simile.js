@@ -64,6 +64,7 @@ jQuery.extend({
             document.body.lastChild);
 
         // Pixel width of the scroller, with an awful, awful hack
+        // FIXME: Fix hardcoded scrollwidth
         return (wNoScroll - wScroll) || 17;
     }
 });

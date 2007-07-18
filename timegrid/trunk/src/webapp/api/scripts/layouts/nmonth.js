@@ -56,7 +56,11 @@ Timegrid.NMonthLayout.prototype.initializeGrid = function() {
 
 Timegrid.NMonthLayout.prototype.renderEvents = function(doc) {
     var eventContainer = doc.createElement("div");
+    var labelContainer = doc.createElement("div");
+    var colorContainer = doc.createElement("div");
     $(eventContainer).addClass("timegrid-events");
+    $(labelContainer).addClass("timegrid-month-labels");
+    $(colorContainer).addClass("timegrid-month-colors");
     var i = 0;
     var dates = this.cellLabels;
     for (y = 0; y < this.ySize; y++) {
@@ -69,15 +73,16 @@ Timegrid.NMonthLayout.prototype.renderEvents = function(doc) {
             var m = this.months[i];
             eventContainer.appendChild(this.renderEventList(events, x, y,
                                                                     n, m));
+            colorContainer.appendChild(this.renderCellColor(x, y, m));
             i++;
         }
     }
-    return eventContainer;
+    $(labelContainer).append($(this.renderMonthLabels()));
+    return $([eventContainer, labelContainer, colorContainer]);
 };
 
 Timegrid.NMonthLayout.prototype.renderEventList = function(evts, x, y, n, m) {
     var jediv = $("<div></div>").addClass("timegrid-month-cell");
-    jediv.addClass("timegrid-month-cell-" + (m % 2 ? "odd" : "even"));
     var eList = $("<ul></ul>").addClass("timegrid-event-list");
     for (i in evts) {
         eList.append('<li>' + evts[i].getText() + '</li>');
@@ -90,14 +95,26 @@ Timegrid.NMonthLayout.prototype.renderEventList = function(evts, x, y, n, m) {
     return jediv.get()[0]; // Return the actual DOM element
 };
 
+Timegrid.NMonthLayout.prototype.renderCellColor = function(x, y, m) {
+    var jcdiv = $("<div></div>").addClass("timegrid-month-cell");
+    jcdiv.addClass("timegrid-month-cell-" + (m % 2 ? "odd" : "even"));
+    jcdiv.css("height", this.yCell).css("width", this.xCell + "%");
+    jcdiv.css("top", this.yCell * y);
+    jcdiv.css("left", this.xCell * x + "%");
+    return jcdiv.get()[0];
+
+};
+
 Timegrid.NMonthLayout.prototype.renderMonthLabels = function() {
-    for (i in this.monthStarts) {
-        var monthStart = this.monthStarts[i];
+    var self = this;
+    return $.map(this.monthStarts, function(monthStart) {
         var monthString = monthStart.date.getMonthName() + " " + monthStart.date.getFullYear();
-        var mDiv = $('<div>' + monthString + '</div>');
-        mDiv.addClass('timegrid-month-month-label');
-        mDiv.css('top', this.yCell * monthStart.i);
-    }
+        var mDiv = $('<div><span>' + monthString + '</span></div>');
+        mDiv.addClass('timegrid-month-label');
+        mDiv.css('top', self.yCell * monthStart.i + "px");
+        mDiv.height(monthStart.height * self.yCell + "px");
+        return mDiv.get(0);
+    });
 };
 
 Timegrid.NMonthLayout.prototype.getXLabels = function() {
@@ -135,19 +152,22 @@ Timegrid.NMonthLayout.prototype.computeYSize = function(date) {
     var gridStart = { time: new Date(date) };
     var month = date.getMonth();
     this.ySize = 0;
+    this.monthStarts = [ { i: this.ySize, date: new Date(date) } ]; 
     while (this.xMapper(gridStart) > 0 && this.yMapper(gridStart) >= 0) {
         gridStart.time.setHours(-24);
     }
     gridStart.time.addDays(7);
-    for (this.monthStarts = []; this.monthStarts.length < this.n;
-                                 gridStart.time.addDays(7)) {
+    for (; this.monthStarts.length <= this.n; gridStart.time.addDays(7)) {
         if (gridStart.time.getMonth() != month) { 
             month = gridStart.time.getMonth();
             var year = gridStart.time.getFullYear();
-            this.monthStarts.push({i: this.ySize, date: new Date(gridStart)});
+            this.monthStarts.push({i: this.ySize, date: new Date(gridStart.time)});
+            var old = this.monthStarts[this.monthStarts.length - 2];
+            old.height = this.ySize - old.i + 1;
         }
         this.ySize++;
     }
+    this.monthStarts.pop();
 };
 
 Timegrid.NMonthLayout.prototype.computeLabels = function(date) {

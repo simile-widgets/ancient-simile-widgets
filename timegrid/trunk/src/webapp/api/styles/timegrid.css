@@ -134,7 +134,6 @@ div.timegrid-event {
 /* Monthly View */
 div.timegrid-month-cell {
     position: absolute;
-    width: 100px;
     padding: 0;
 }
 
@@ -145,6 +144,20 @@ div.timegrid-month-cell-odd {
 ul.timegrid-event-list {
     list-style-position: inside;
     padding-left: .5em;
+}
+
+div.timegrid-month-label {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+div.timegrid-month-label span {
+    margin-top: 25%;
+    display: block;
+    font-size: 5em;
+    color: #aaa;
 }
 
 span.timegrid-month-date-label {
