@@ -7,7 +7,7 @@ Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
 };
 
 Timegrid.resize = function() {
-    for (i in window.timegrids) {
+    for (var i in window.timegrids) {
         window.timegrids[i]._construct();
     }
 };
