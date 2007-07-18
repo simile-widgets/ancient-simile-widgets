@@ -3,7 +3,10 @@
  */
 
 function createExhibit() {
-	// loading data and creating exhibit
+	/*
+	 * <data>
+	 * We're using the HTML table importer to get the data for the exhibit.
+	 */
 	window.database = Exhibit.Database.create();
 	window.exhibit = Exhibit.create(window.database);			
 	for(var i = 0; sourceData[i]; i++) {
@@ -12,7 +15,6 @@ function createExhibit() {
 		var columns = sourceColumns[i].split(',');
 		for(var c = 0; th = ths[c]; c++) {
 			var label = columns[c];
-			console.log(label);
 			th.setAttribute('ex:name', label);
 		}
 		if (sourceHideTable[i] == "false") { // BUG: hideTable[i] is a string, not a boolean
@@ -20,39 +22,47 @@ function createExhibit() {
 		Exhibit.HtmlTableImporter.loadTable(dataTable, window.database); 
 	}
 
-	// configuring exhibit
 	var topTable = document.getElementById(sourceData[0]);
 	var exhibitDiv = document.createElement('div');
 	exhibitDiv.innerHTML = "<table width='100%'><tr valign='top'><td><div id='view'></div></div></td><td width='20%' id='facets'></td></tr></table>";
 	topTable.parentNode.insertBefore(exhibitDiv, topTable);		
-	var configurationComponents = [];
-	configurationComponents.push(
-		{   elmt:    document.getElementById("view"),
-			role:    "view",
-			viewClass: Exhibit.TileView
-			/*columns: [
-				{	expression: ".degree",
-					uiContext:  Exhibit.UIContext.create({}, view._uiContext, true),
-					styler:     null,
-					label:      "Degree",
-					format:     "list"
-				}
-			]*/
-		});
-	if (facetExpressions) {
-		for ( var i = 0; expression = facetExpressions[i]; i++) {
-			var facetDiv = document.createElement("div"); 
-			document.getElementById("facets").appendChild(facetDiv);
-			configurationComponents.push(
-				{   elmt:		facetDiv,
-					role:		"facet",
-					expression: "." + expression
-				});
+
+	/*
+	 * <configuration>
+	 * We're creating HTML strings that specify the configurations, formatted in the 
+	 * same form as specifications in the HTML of a regular exhibit.
+	 */
+
+	if (facets) {
+		var facetHTML = "";
+		for (var i = 0; facet = facets[i]; i++) {
+			var attrs = facet.split(';');
+			var attrHTML = "";
+			for (var j = 0; j < attrs.length; j++) {
+				attrHTML = attrHTML + ' ex:' + attrs[j];
+			}
+			facetHTML = facetHTML + '<div ex:role="facet" ' + attrHTML + ' ></div>';
 		}
+		//console.log(facetHTML);
+		document.getElementById("facets").innerHTML = facetHTML;
 	}
-	window.exhibit.configure({
-		components: configurationComponents
-	});
+	
+	console.log(views);
+	if (views) {
+		var viewHTML = "";
+		for (var i = 0; view = views[i]; i++) {
+			var attrs = view.split(';');
+			var attrHTML = "";
+			for (var j = 0; j < attrs.length; j++) {
+				attrHTML = attrHTML + ' ex:' + attrs[j];
+			}
+			viewHTML = viewHTML + '<div ex:role="view" ' + attrHTML + ' ></div>';
+		}
+		console.log(viewHTML);
+		document.getElementById("view").innerHTML = viewHTML;
+	}
+	
+	window.exhibit.configureFromDOM();
 }
 
 addOnloadHook(createExhibit);

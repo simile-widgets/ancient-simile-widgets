@@ -56,7 +56,6 @@ function wfExhibitAddHTMLHeader(&$out) {
 function Exhibit_getHTMLResult( $input, $argv ) {
 	global $exhibitEnabled;
 	$exhibitEnabled = true;
-
 	if ($argv["disabled"]) {
 		$exhibitEnabled = false;
 	}
@@ -78,27 +77,36 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	$sourceColumns = implode(';', $sourceColumns);
 	$sourceHideTable = implode(',', $sourceHideTable);
 	
-	// <config>
-	$facetExpressions = array();
-	$facetLabels = array();
-	$facetClasses = array();
-	foreach ($xml->config->facet as $facet) {
-		array_push($facetExpressions, $facet['expression']);
-		array_push($facetLabels, $facet['facetLabel']);
-		array_push($facetClasses, $facet['facetClass']);
+	// <configuration>	
+	$facets = array();
+	foreach ($xml->configuration->facet as $facet) {
+		$attributes = array();
+		foreach ($facet->attributes() as $a => $b) {
+			$attr = $a."='".$b."'";
+    		array_push( $attributes, $attr);
+    	}
+    	array_push( $facets, implode(',', $attributes));
 	}
-	$facetExpressions = implode(',', $facetExpressions);
-	$facetLabels = implode(',', $facetLabels);
-	$facetClasses = implode(',', $facetClasses);
+	$facets = implode(';', $facets);
+	
+	$views = array();
+	foreach ($xml->configuration->view as $view) {
+		$attributes = array();
+		foreach ($view->attributes() as $a => $b) {
+			$attr = $a."='".$b."'";
+    		array_push( $attributes, $attr);
+    	}
+    	array_push( $views, implode(';', $attributes));
+	}
+	$views = implode('/', $views);
 
 	$output = <<<OUTPUT
 	<script type="text/javascript">
 	var sourceData = "$sourceData".split(',');
 	var sourceColumns = "$sourceColumns".split(';');
 	var sourceHideTable = "$sourceHideTable".split(',');
-	var facetExpressions = "$facetExpressions".split(',');
-	var facetLabels = "$facetLabels".split(',');
-	var facetClasses = "$facetClasses".split(',');
+	var facets = "$facets".split(';');
+	var views = "$views".split('/');
 	</script>
 OUTPUT;
 	
