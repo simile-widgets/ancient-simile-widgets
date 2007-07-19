@@ -132,8 +132,7 @@ SimileAjax.DateTime.setIso8601 = function (dateObject, string){
      *  http://dojotoolkit.org/.
      */
      
-    var offset = SimileAjax.DateTime.timezoneOffset; // local time if no tz info
-    
+    var offset = null;
     var comps = (string.indexOf("T") == -1) ? string.split(" ") : string.split("T");
     
     SimileAjax.DateTime.setIso8601Date(dateObject, comps[0]);
@@ -151,6 +150,9 @@ SimileAjax.DateTime.setIso8601 = function (dateObject, string){
         }
 
         SimileAjax.DateTime.setIso8601Time(dateObject, comps[1]); 
+    }
+    if (offset == null) {
+        offset = dateObject.getTimezoneOffset(); // local time zone if no tz info
     }
     dateObject.setTime(dateObject.getTime() + offset * 60000);
     

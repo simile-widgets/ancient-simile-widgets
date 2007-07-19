@@ -512,29 +512,56 @@ SimileAjax.DateTime.timezoneOffset=new Date().getTimezoneOffset();
 SimileAjax.DateTime.setIso8601=function(dateObject,string){
 
 
-var offset=SimileAjax.DateTime.timezoneOffset;
+var offset=null;
 
 var comps=(string.indexOf("T")==-1)?string.split(" "):string.split("T");
 
+
+
 SimileAjax.DateTime.setIso8601Date(dateObject,comps[0]);
+
 if(comps.length==2){
 
+
+
 var d=comps[1].match(SimileAjax.DateTime._timezoneRegexp);
+
 if(d){
+
 if(d[0]=='Z'){
+
 offset=0;
+
 }else{
+
 offset=(Number(d[3])*60)+Number(d[5]);
+
 offset*=((d[2]=='-')?1:-1);
+
 }
+
 comps[1]=comps[1].substr(0,comps[1].length-d[0].length);
+
 }
+
+
 
 SimileAjax.DateTime.setIso8601Time(dateObject,comps[1]);
+
 }
+
+if(offset==null){
+
+offset=dateObject.getTimezoneOffset();
+
+}
+
 dateObject.setTime(dateObject.getTime()+offset*60000);
 
+
+
 return dateObject;
+
 };
 
 SimileAjax.DateTime.parseIso8601DateTime=function(string){
