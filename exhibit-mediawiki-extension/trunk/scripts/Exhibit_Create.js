@@ -9,13 +9,13 @@ function createExhibit() {
 	 */
 	window.database = Exhibit.Database.create();
 	window.exhibit = Exhibit.create(window.database);			
-	for(var i = 0; sourceData[i]; i++) {
+	for(var i = 0; i < sourceData.length; i++) {
 		var dataTable = document.getElementById(sourceData[i]);	
 		var th, ths = dataTable.getElementsByTagName("th");
 		var columns = sourceColumns[i].split(',');
-		for(var c = 0; th = ths[c]; c++) {
+		for(var c = 0; c < ths.length; c++) {
 			var label = columns[c];
-			th.setAttribute('ex:name', label);
+			ths[c].setAttribute('ex:name', label);
 		}
 		if (sourceHideTable[i] == "false") { // BUG: hideTable[i] is a string, not a boolean
 		} else { dataTable.setAttribute("style", "display:none");}
@@ -35,30 +35,27 @@ function createExhibit() {
 
 	if (facets) {
 		var facetHTML = "";
-		for (var i = 0; facet = facets[i]; i++) {
-			var attrs = facet.split(';');
+		for (var i = 0; i < facets.length; i++) {
+			var attrs = facets[i].split(';');
 			var attrHTML = "";
 			for (var j = 0; j < attrs.length; j++) {
 				attrHTML = attrHTML + ' ex:' + attrs[j];
 			}
 			facetHTML = facetHTML + '<div ex:role="facet" ' + attrHTML + ' ></div>';
 		}
-		//console.log(facetHTML);
 		document.getElementById("facets").innerHTML = facetHTML;
 	}
-	
-	console.log(views);
+
 	if (views) {
 		var viewHTML = "";
-		for (var i = 0; view = views[i]; i++) {
-			var attrs = view.split(';');
+		for (var i = 0; i < views.length; i++) {
+			var attrs = views[i].split(';');
 			var attrHTML = "";
 			for (var j = 0; j < attrs.length; j++) {
 				attrHTML = attrHTML + ' ex:' + attrs[j];
 			}
 			viewHTML = viewHTML + '<div ex:role="view" ' + attrHTML + ' ></div>';
 		}
-		console.log(viewHTML);
 		document.getElementById("view").innerHTML = viewHTML;
 	}
 	
