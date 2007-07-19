@@ -4,7 +4,7 @@
  */
 
 String.prototype.trim = function() {
-    return this.replace(/^\s+|\s+$/, '');
+    return this.replace(/^\s+|\s+$/g, '');
 };
 
 String.prototype.startsWith = function(prefix) {
