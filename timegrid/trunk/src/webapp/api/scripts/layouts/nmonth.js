@@ -8,6 +8,7 @@
 
 Timegrid.NMonthLayout = function(eventSource, params) {
     Timegrid.NMonthLayout.superclass.call(this, eventSource, params);
+    var self = this;
 
     this.xSize = 7;
     this.ySize = 0; // This is re-calculated later based on n
@@ -21,18 +22,23 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     // Initialize our eventSource
     this.eventSource = eventSource;
     this.startTime   = this.eventSource.getEarliestDate() || new Date();
-    this.startTime   = this.computeStartTime(this.startTime);
+
+    var roundToWeeks = function(date) {
+        return Math.floor(date / (1000 * 60 * 60 * 24 * 7.0));
+    };
     
     // Configure our mappers
-    if (this.startTime) { var firstWeek = this.startTime.getWeekOfYear(); }
     this.xMapper = function(obj) { return obj.time.getDay(); };
-    this.yMapper = function(obj) { return obj.time.getWeekOfYear() - firstWeek; };
+    this.yMapper = function(obj) { return roundToWeeks(obj.time - self.startTime); };
+
+    this.startTime   = this.computeStartTime(this.startTime);
     
     this.initializeGrid();
 };
 Timegrid.LayoutFactory.registerLayout("n-month", Timegrid.NMonthLayout);
 
 Timegrid.NMonthLayout.prototype.initializeGrid = function() {
+    this.dataStartTime = this.eventSource.getEarliestDate() || new Date();
     // Use a method to compute cell and y-labels (non-trivial).  This method
     // will also compute ySize based on n, an unfortunate grouping.
     this.computeYSize(this.startTime);
@@ -113,7 +119,9 @@ Timegrid.NMonthLayout.prototype.renderMonthLabels = function() {
         var mDiv = $('<div><span>' + monthString + '</span></div>');
         mDiv.addClass('timegrid-month-label');
         mDiv.css('top', self.yCell * monthStart.i + "px");
-        mDiv.height(monthStart.height * self.yCell + "px");
+        var height = monthStart.height * self.yCell;
+        mDiv.height(height + "px");
+        mDiv.children().css('line-height', height + "px");
         return mDiv.get(0);
     });
 };
@@ -153,8 +161,7 @@ Timegrid.NMonthLayout.prototype.computeStartTime = function(date) {
         startTime.setDate(1);
         startTime.setHours(0);
         // Roll back to the first day on the grid
-        while (this.xMapper({ time: startTime }) > 0 &&
-               this.yMapper({ time: startTime }) >= 0) {
+        while (this.xMapper({ time: startTime }) > 0) {
             startTime.setHours(-24);
         }
         return startTime;
@@ -172,9 +179,9 @@ Timegrid.NMonthLayout.prototype.computeEndTime = function(date) {
 
 Timegrid.NMonthLayout.prototype.computeYSize = function(date) {
     var gridStart = { time: new Date(date) };
-    var month = date.getMonth();
+    var month = this.dataStartTime.getMonth();
     this.ySize = 0;
-    this.monthStarts = [ { i: this.ySize, date: new Date(date) } ]; 
+    this.monthStarts = [{ i: this.ySize, date: new Date(this.dataStartTime) }]; 
     while (this.xMapper(gridStart) > 0 && this.yMapper(gridStart) >= 0) {
         gridStart.time.setHours(-24);
     }
@@ -198,8 +205,6 @@ Timegrid.NMonthLayout.prototype.computeLabels = function(date) {
     this.months = [];
     this.yLabels = [];
 
-    gridStart.time = this.computeStartTime(gridStart.time);
-    
     // Iterate through and collect the tasty data
     while (this.xMapper(gridStart) < this.xSize && 
            this.yMapper(gridStart) < this.ySize) {

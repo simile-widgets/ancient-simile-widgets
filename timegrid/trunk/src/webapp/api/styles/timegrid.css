@@ -135,6 +135,7 @@ div.timegrid-event {
 div.timegrid-month-cell {
     position: absolute;
     padding: 0;
+    overflow: hidden;
 }
 
 div.timegrid-month-cell-odd {
@@ -154,7 +155,6 @@ div.timegrid-month-label {
 }
 
 div.timegrid-month-label span {
-    margin-top: 25%;
     display: block;
     font-size: 12em;
     font-weight: bold;
