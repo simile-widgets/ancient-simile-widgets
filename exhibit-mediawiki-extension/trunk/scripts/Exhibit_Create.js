@@ -13,9 +13,17 @@ function createExhibit() {
 		var dataTable = document.getElementById(sourceData[i]);	
 		var th, ths = dataTable.getElementsByTagName("th");
 		var columns = sourceColumns[i].split(',');
-		for(var c = 0; c < ths.length; c++) {
-			var label = columns[c];
-			ths[c].setAttribute('ex:name', label);
+		if (columns[0] == "") {
+			ths[0].setAttribute('ex:name', 'label');
+			for (var c = 1; c < ths.length; c++) {
+				var label = "column" + c;
+				ths[c].setAttribute('ex:name', label);
+			}
+		} else {
+			for(var c = 0; c < ths.length; c++) {
+				var label = columns[c];
+				ths[c].setAttribute('ex:name', label);
+			}
 		}
 		if (sourceHideTable[i] == "false") { // BUG: hideTable[i] is a string, not a boolean
 		} else { dataTable.setAttribute("style", "display:none");}
@@ -32,8 +40,7 @@ function createExhibit() {
 	 * We're creating HTML strings that specify the configurations, formatted in the 
 	 * same form as specifications in the HTML of a regular exhibit.
 	 */
-
-	if (facets) {
+	if (facets && (facets[0] !== "")) {
 		var facetHTML = "";
 		for (var i = 0; i < facets.length; i++) {
 			var attrs = facets[i].split(';');
@@ -45,8 +52,7 @@ function createExhibit() {
 		}
 		document.getElementById("facets").innerHTML = facetHTML;
 	}
-
-	if (views) {
+	if (views && (views[0] !== "")) {
 		var viewHTML = "";
 		for (var i = 0; i < views.length; i++) {
 			var attrs = views[i].split(';');
@@ -57,6 +63,9 @@ function createExhibit() {
 			viewHTML = viewHTML + '<div ex:role="view" ' + attrHTML + ' ></div>';
 		}
 		document.getElementById("view").innerHTML = viewHTML;
+		console.log(viewHTML);
+	} else {
+		document.getElementById("view").innerHTML = '<div ex:role="view"></div>';
 	}
 	
 	window.exhibit.configureFromDOM();
