@@ -8,7 +8,7 @@ WHEREAMI=http://simile.mit.edu/exhibit/demos/senate/
 PORT=10000
 
 # Scrape Senate committee data
-curl -s --data "mode=scrape&url=http://www.senate.gov/general/committee_assignments/assignments.htm&delay=1000&scraper=http://simile.mit.edu/~ryanlee/assignment-scraper.js" http://127.0.0.1:$PORT/ > scraped.rdf
+curl -s --get --data "mode=scrape&url=http://www.senate.gov/general/committee_assignments/assignments.htm&delay=1000&scraper=http://simile.mit.edu/~ryanlee/assignment-scraper.js" http://127.0.0.1:$PORT/ > scraped.rdf
 
 # Ask Babel for JSON
 curl http://simile.mit.edu/babel/translator?reader=rdf-xml&writer=exhibit-json&url=$WHEREAMI/scraped.rdf > senate-committees.js
