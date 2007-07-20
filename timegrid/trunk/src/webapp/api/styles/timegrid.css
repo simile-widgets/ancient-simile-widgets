@@ -1,6 +1,7 @@
 div.timegrid-default {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 9pt;
+    overflow: hidden; /* Gets it to flow around floated divs, weird... */
 }
 
 div.timegrid-default * {

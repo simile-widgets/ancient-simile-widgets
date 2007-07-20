@@ -9,16 +9,11 @@
     <title>SIMILE | Timegrid</title>
     <link rel='stylesheet' href='styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
-    <script type="text/javascript" src="http://static.simile.mit.edu/timegrid/api/timegrid-api.js"></script>
-    <script type="text/javascript">
-    onResize = function() {
-        for (i in window.timegrids) {
-            window.timegrids[i]._construct();
-        }
-    };
-    </script>    
+    <script type="text/javascript" 
+        src="http://static.simile.mit.edu/timegrid/api/timegrid-api.js">
+    </script>
 </head>
-<body onload="onLoad();" onresize="onResize();">
+<body onresize="Timegrid.resize();">
 <!--#include virtual="sidebar.html" -->
 <ul id="path">
   <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
@@ -35,8 +30,12 @@
     </p>
 
     <div id="tg" tg:role="grid" tg:src="examples/month/month.xml"
-         tg:views="week,month" style="height: 500px; margin: 2em;">
+        tg:views="week,month" style="height: 400px; margin: 2em;">
     </div>
+
+    <p style="margin: 2em;">The data file for this Timegrid:
+      <a href="examples/month/month.xml">month.xml</a>
+    </p>
     
     <p>
       Just like Google Calendar, Timegrid can be used with zero software installation,
@@ -55,6 +54,11 @@
           A 3-day schedule of events at a conference, taken from ISWC 2005.
         </li>
 
+        <li><a href="examples/academic/academic.html">MIT Academic Calendar</a>:
+          A 9-month view of the 2007-2008 academic calendar, as taken from the
+          Registrar's website.
+        </li>
+
         <li>... and <a href="examples/">more</a> ...</li>
     </ul>
 
@@ -66,6 +70,9 @@
         </li>
         <li><a href="http://simile.mit.edu/timeline/">Timeline</a>: a DHTML-based AJAXy widget for
             visualizing time-based events. It is like Google Maps for time-based information.
+        </li>
+        <li><a href="http://simile.mit.edu/timeplot/">Timeplot</a>: a DHTML-based AJAXy widget for
+            visualizing time data as time series graphs.
         </li>
     </ul>
         
@@ -81,9 +88,9 @@
     
     <h2>Documentation</h2>
     <ul>
-        <li><a href="docs/">Static documentation</a>, for now...</li>
-        <li>... but we really wish to transfer it over to the <a href="http://simile.mit.edu/wiki/Timeline">wiki</a> so that it can be better maintained</li>
-        <li><a href="http://simile.mit.edu/repository/timeline/">Code on SVN repository</a></li>
+        <li><a href="docs/">Generated API Documentation</a></li>
+        <li><a href="http://simile.mit.edu/wiki/Timegrid">Wiki</a></li>
+        <li><a href="http://simile.mit.edu/repository/timegrid/">Code on SVN Repository</a></li>
     </ul>
     
     <h2>Licensing</h2>
