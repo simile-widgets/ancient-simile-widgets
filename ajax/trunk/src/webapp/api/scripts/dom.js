@@ -50,7 +50,7 @@ SimileAjax.DOM.getPageCoordinates = function(elmt) {
     }
     
     var body = document.body;
-    while (elmt != body) {
+    while (elmt != null && elmt != body) {
         if ("scrollLeft" in elmt) {
             left -= elmt.scrollLeft;
             top -= elmt.scrollTop;

@@ -93,8 +93,8 @@ SimileAjax.WindowManager.registerEvent = function(elmt, eventName, handler, laye
     SimileAjax.DOM.registerEvent(elmt, eventName, handler2);
 };
 
-SimileAjax.WindowManager.pushLayer = function(f, ephemeral) {
-    var layer = { onPop: f, index: SimileAjax.WindowManager._layers.length, ephemeral: (ephemeral) };
+SimileAjax.WindowManager.pushLayer = function(f, ephemeral, elmt) {
+    var layer = { onPop: f, index: SimileAjax.WindowManager._layers.length, ephemeral: (ephemeral), elmt: elmt };
     SimileAjax.WindowManager._layers.push(layer);
     
     return layer;
@@ -148,9 +148,20 @@ SimileAjax.WindowManager._canProcessEventAtLayer = function(layer) {
     return true;
 };
 
-SimileAjax.WindowManager._cancelPopups = function() {
+SimileAjax.WindowManager._cancelPopups = function(evt) {
+    var evtCoords = (evt) ? SimileAjax.DOM.getEventPageCoordinates(evt) : { x: -1, y: -1 };
+    
     var i = SimileAjax.WindowManager._layers.length - 1;
     while (i > 0 && SimileAjax.WindowManager._layers[i].ephemeral) {
+        var layer = SimileAjax.WindowManager._layers[i];
+        if (layer.elmt != null) { // if event falls within main element of layer then don't cancel
+            var elmt = layer.elmt;
+            var elmtCoords = SimileAjax.DOM.getPageCoordinates(elmt);
+            if (evtCoords.x >= elmtCoords.left && evtCoords.x < (elmtCoords.left + elmt.offsetWidth) &&
+                evtCoords.y >= elmtCoords.top && evtCoords.y < (elmtCoords.top + elmt.offsetHeight)) {
+                break;
+            }
+        }
         i--;
     }
     SimileAjax.WindowManager._popToLayer(i);
@@ -158,7 +169,7 @@ SimileAjax.WindowManager._cancelPopups = function() {
 
 SimileAjax.WindowManager._onBodyMouseDown = function(elmt, evt, target) {
     if (!("eventPhase" in evt) || evt.eventPhase == evt.BUBBLING_PHASE) {
-        SimileAjax.WindowManager._cancelPopups();
+        SimileAjax.WindowManager._cancelPopups(evt);
     }
 };
 
