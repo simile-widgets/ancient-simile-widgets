@@ -2686,7 +2686,7 @@ SimileAjax.WindowManager._dragging=false;
 
 SimileAjax.WindowManager._findDropTarget=function(elmt){
 while(elmt!=null){
-if("ondrop"in elmt){
+if("ondrop"in elmt&&(typeof elmt.ondrop)=="function"){
 break;
 }
 elmt=elmt.parentNode;

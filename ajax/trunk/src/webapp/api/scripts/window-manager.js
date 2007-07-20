@@ -392,7 +392,7 @@ SimileAjax.WindowManager._cancelDragging = function() {
 
 SimileAjax.WindowManager._findDropTarget = function(elmt) {
     while (elmt != null) {
-        if ("ondrop" in elmt) {
+        if ("ondrop" in elmt && (typeof elmt.ondrop) == "function") {
             break;
         }
         elmt = elmt.parentNode;
