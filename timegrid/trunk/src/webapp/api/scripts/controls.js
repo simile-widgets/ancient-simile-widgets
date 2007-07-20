@@ -24,6 +24,7 @@ Timegrid.Controls.Panel.prototype.render = function(container) {
     var tabSet = new Timegrid.Controls.TabSet(titles, this._layouts);
     tabSet.render(container);
     tabSet.switchTo(titles[0]);
+    $('.timegrid-rounded-shadow').prettybox(4,7,1,0.7);
 };
 
 /*
@@ -53,7 +54,7 @@ Timegrid.Controls.TabSet.prototype.render = function(container) {
     for (title in this._layoutMap) {
         var tab = $('<span><a href="javascript:void">' + title + '</a></span>')
                     .click(makeCallback(title))
-                    .addClass('timegrid-tab');
+                    .addClass('timegrid-tab').addClass('timegrid-rounded');
         tabDiv.append(tab);
         this._tabs[title] = tab;
     }

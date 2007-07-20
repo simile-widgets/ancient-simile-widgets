@@ -25,7 +25,8 @@
             "util/excanvas.pack.js",
             "util/jquery.simile.js",
             "util/jquery.corner.js",
-            "util/position.js",
+            "util/jquery.dimensions.js",
+            "util/jquery.prettybox.js",
             
             "controls.js",
             "listeners.js",
@@ -35,10 +36,10 @@
             "labellers.js",
             "layouts.js",
 
-            "layouts/weekly.js",
-            "layouts/monthly.js",
             "layouts/nmonth.js",
-            "layouts/nday.js"
+            "layouts/nday.js",
+            "layouts/weekly.js",
+            "layouts/monthly.js"
         ];
         var cssFiles = [
             "timegrid.css",

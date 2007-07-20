@@ -1,7 +1,6 @@
 div.timegrid-default {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 9pt;
-    overflow: hidden; /* Gets it to flow around floated divs, weird... */
 }
 
 div.timegrid-default * {
@@ -34,7 +33,10 @@ div.timegrid-tabs {
 
 span.timegrid-tab {
     line-height: 1.5em;
-    padding: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
     margin: .5em;
     background-color: #bbb;
 }
@@ -124,12 +126,15 @@ div.timegrid-label {
 /* Weekly View */
 div.timegrid-event {
     position: absolute;
-    border: 1px black solid;
     width: 100px;
     background-color: #aaf;
     padding: 0;
     overflow: hidden;
     z-index: 5;
+}
+
+.timegrid-event div {
+    padding: 2px;
 }
 
 /* Monthly View */

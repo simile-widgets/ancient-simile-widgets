@@ -9,8 +9,6 @@
  */
 
 span.timegrid-tab {
-    line-height: 1.5em;
-    padding: 1em;
     background-color: #efecca;
 }
 
@@ -65,10 +63,8 @@ div.timegrid-label {
 }
 
 div.timegrid-event {
-    border: 1px #a7a37e solid;
     background-color: #e6e2af;
     color: #046380;
-    padding: 2px;
 }
 
 /* Monthly View */

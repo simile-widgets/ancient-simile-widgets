@@ -99,9 +99,9 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
 };
 
 Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
-    var jediv = $("<div>" + evt.getText() + "</div>");
+    var jediv = $("<div><div>" + evt.getText() + "</div></div>");
     var length = (evt.getEnd() - evt.getStart()) / (1000 * 60 * 60.0);
-    jediv.addClass("timegrid-event");
+    jediv.addClass("timegrid-event").addClass('timegrid-rounded-shadow');
     jediv.css("height", this.yCell * length);
     jediv.css("top", this.yCell * y);
     jediv.css("left", this.xCell * x + '%');
