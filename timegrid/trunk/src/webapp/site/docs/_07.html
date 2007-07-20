@@ -1,0 +1,348 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="generator" content="JsDoc Toolkit 1.0">
+	<title>JsDoc: layouts.js</title>
+	<link rel=stylesheet href="default.css" type="text/css" media=screen>
+</head>
+
+<body>
+	<div class="content">
+		<div class="docs">
+		
+			<div class="sectionHead">Library: layouts.js</div>
+			<div class="section overview">
+				<div class="itemTitle">
+					Overview
+				</div>
+				<div>	
+					<div class="desc">No overview provided.</div>
+					<div class="itemTags">
+					
+					</div>
+				</div>
+			</div>
+			
+			<div class="sectionHead">Constructors</div>
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timegrid.LayoutFactory"></a>
+					
+					
+					Timegrid.LayoutFactory(<span class="signature"></span>)
+					
+				</div>
+				
+				
+					<div class="desc">Constructs a LayoutFactory object.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout"></a>
+					
+					
+					Timegrid.Layout(<span class="signature">eventSource, params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Instantiates a Layout object. This constructor should always be overridden.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.render">render</a></li>
+					</ul>
+				
+				
+				
+				
+				<div class="detailHead">properties</div>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.xSize">xSize</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.ySize">ySize</a></li>
+					</ul>
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="sectionHead">Functions</div>
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.LayoutFactory.createLayout"></a>
+					
+					
+					Timegrid.LayoutFactory.createLayout(<span class="signature">name, eventSource, params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Instantiates a Timegrid layout with the given parameter hash.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							String
+						</td>
+						<td>
+							name
+						</td>
+						<td>
+							the name of the layout
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							Timegrid.DefaultEventSource
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							an EventSource object to layout and render
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							a hash of parameters to be passed into the desired layout
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Timegrid.Layout
+						</td>
+						<td>
+							a Timegrid.Layout instance of the specified subclass
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.render"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>render(<span class="signature">the</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Renders out this layout into a DOM object with a wrapping div element as its
+parent, returning the div.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							the
+						</td>
+						<td>
+							parent element
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							a rendered DOM tree descended from a div element
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="sectionHead">Objects</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.xSize"></a>
+					
+					<span class="type">int</span>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>xSize
+					
+					
+				</div>
+				
+				
+					<div class="desc">The number of columns in the grid.</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.ySize"></a>
+					
+					<span class="type">int</span>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>ySize
+					
+					
+				</div>
+				
+				
+					<div class="desc">The number of rows in the grid.</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+		</div>
+	</div>
+	<div class="finePrint">
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Fri, 20 Jul 2007 18:29:54 GMT
+	</div>
+</body>
+</html>

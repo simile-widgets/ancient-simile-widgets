@@ -10,6 +10,13 @@
 
 <project default="bundle" basedir="." name="Timegrid">
 
+  <property name="webapp.dir"  value="src/webapp"/>
+  <property name="api.dir"     value="${webapp.dir}/api"/>
+  <property name="site.dir"    value="${webapp.dir}/site"/>
+  <property name="scripts.dir" value="${api.dir}/scripts"/>
+  <property name="docs.dir"    value="${site.dir}/docs"/>
+  <property name="jsdoc.dir"   value="tools/jsdoc"/>
+
   <target name="tasks">
     <taskdef name="jsmin"
         classname="edu.mit.simile.jsminTask.JSMinTask"
@@ -17,9 +24,9 @@
   </target>
   	
   <target name="bundle" depends="tasks">
-    <jsmin output="src/webapp/api/bundle.js">
+    <jsmin output="${api.dir}/bundle.js">
         <fileset dir="src/webapp/api/scripts">
-        	<include name="timeline.js" />
+        	<include name="timegrid.js" />
         </fileset>
         <fileset dir="src/webapp/api/scripts/util">
         	<include name="platform.js" />
@@ -31,7 +38,7 @@
         </fileset>
         <fileset dir="src/webapp/api/scripts">
         	<include name="*.js" />
-        	<exclude name="timeline.js" />
+        	<exclude name="timegrid.js" />
         </fileset>
   	</jsmin>
   	
@@ -43,12 +50,12 @@
   </target>
   
   <target name="docs">
-    <java jar="tools/jsdoc/app/js.jar" fork="true">
-        <arg value="tools/jsdoc/app/run.js"/>
-        <arg value="-t=tools/jsdoc/templates/htm"/>
+    <java jar="${jsdoc.dir}/app/js.jar" fork="true" dir="${jsdoc.dir}">
+        <arg value="app/run.js"/>
+        <arg value="-t=templates/html"/>
         <arg value="-r"/>
-        <arg value="-d=docs"/>
-        <arg value="src"/>
+        <arg value="-d=../../${docs.dir}"/>
+        <arg value="../../src"/>
     </java>
   </target>
 </project>

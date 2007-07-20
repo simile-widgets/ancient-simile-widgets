@@ -8,6 +8,21 @@
     #002f2f
  */
 
+span.timegrid-tab {
+    line-height: 1.5em;
+    padding: 1em;
+    background-color: #efecca;
+}
+
+span.timegrid-tab-active {
+    background-color: #a7a37e;
+    font-weight: bold;
+}
+
+span.timegrid-tab a {
+    text-decoration: none;
+}
+ 
 div.timegrid-view {
     background: #a7a37e;
     border: 1px solid #a7a37e;
@@ -66,22 +81,57 @@ ul.timegrid-event-list {
     list-style-position: inside;
     padding: .5em;
 }
-html {
+div.timegrid-default {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 9pt;
+    overflow: hidden; /* Gets it to flow around floated divs, weird... */
 }
 
-ul, li, p, h3 {
+div.timegrid-default * {
     margin: 0;
     padding: 0;
 }
 
-ul, li {
+div.timegrid-default ul, li {
     font-size: 9pt;
 }
 
+div.timegrid-iterator {
+    float: left;
+    font-weight: bold;
+    height: 1.5em;
+}
+
+.timegrid-iterator-prev, .timegrid-iterator-next {
+    margin: .5em;
+}
+
+.timegrid-iterator img {
+    border: none;
+}
+
+div.timegrid-tabs {
+    float: right;
+    height: 1.5em;
+}
+
+span.timegrid-tab {
+    line-height: 1.5em;
+    padding: 1em;
+    margin: .5em;
+    background-color: #bbb;
+}
+
+span.timegrid-tab-active {
+    font-weight: bold;
+}
+
 div.timegrid-view {
-    position: relative;
+    position: absolute;
+    top: 1.5em;
+    bottom: 0px;
+    width: 100%;
+    left: 0px;
     border: 1px white solid;
 }
 
@@ -116,6 +166,7 @@ div.timegrid-gridlines {
 
 div.timegrid-xlabels {
     position:   absolute;
+    left: 0px;
 }
 
 .timegrid-xlabels div.timegrid-label {
@@ -160,18 +211,38 @@ div.timegrid-event {
     width: 100px;
     background-color: #aaf;
     padding: 0;
+    overflow: hidden;
+    z-index: 5;
 }
 
 /* Monthly View */
 div.timegrid-month-cell {
     position: absolute;
-    width: 100px;
     padding: 0;
+    overflow: hidden;
+}
+
+div.timegrid-month-cell-odd {
+    background-color: #eee;
 }
 
 ul.timegrid-event-list {
     list-style-position: inside;
     padding-left: .5em;
+}
+
+div.timegrid-month-label {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+div.timegrid-month-label span {
+    display: block;
+    font-size: 12em;
+    font-weight: bold;
+    color: #ccc;
 }
 
 span.timegrid-month-date-label {

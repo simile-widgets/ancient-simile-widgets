@@ -1,5 +1,171 @@
 
 
+/* timegrid.js */
+
+
+
+Timegrid.create=function(node,eventSource,layoutName,layoutParams){
+return new Timegrid._Impl(node,eventSource,layoutName,layoutParams);
+};
+
+Timegrid.resize=function(){
+for(var i in window.timegrids){
+window.timegrids[i]._construct();
+}
+};
+
+Timegrid.createFromDOM=function(elmt){
+var config=Timegrid.getConfigFromDOM(elmt);
+var eventSource=new Timegrid.DefaultEventSource();
+var layoutNames=config.views.split(",");
+var tg=Timegrid.create(elmt,eventSource,layoutNames,config);
+var getExtension=function(s){
+return s.split('.').pop().toLowerCase();
+};
+if(config.src){
+switch(getExtension(config.src)){
+case'xml':
+tg.loadXML(config.src,function(xml,url){
+eventSource.loadXML(xml,url);
+});
+break;
+case'js':
+tg.loadJSON(config.src,function(json,url){
+eventSource.loadJSON(json,url);
+});
+break;
+}
+}
+return tg;
+};
+
+Timegrid.getConfigFromDOM=function(elmt){
+var config=$(elmt).attrs('tg');
+config.scrollwidth=$.scrollWidth();
+return config;
+};
+
+Timegrid.loadXML=function(url,f){
+var fError=function(statusText,status,xmlhttp){
+alert("Failed to load data XML from "+url+"\n"+statusText);
+};
+var fDone=function(xmlhttp){
+var xml=xmlhttp.responseXML;
+if(!xml.documentElement&&xmlhttp.responseStream){
+xml.load(xmlhttp.responseStream);
+}
+f(xml,url);
+};
+SimileAjax.XmlHttp.get(url,fError,fDone);
+};
+
+Timegrid.loadJSON=function(url,f){
+var fError=function(statusText,status,xmlhttp){
+alert("Failed to load JSON data from "+url+"\n"+statusText);
+};
+var fDone=function(xmlhttp){
+f(eval('('+xmlhttp.responseText+')'),url);
+};
+SimileAjax.XmlHttp.get(url,fError,fDone);
+};
+
+Timegrid._Impl=function(node,eventSource,layoutNames,layoutParams){
+var tg=this;
+this._container=node;
+this._eventSource=eventSource;
+this._layoutNames=layoutNames;
+this._layoutParams=layoutParams;
+
+if(this._eventSource){
+this._eventListener={
+onAddMany:function(){tg._onAddMany();},
+onClear:function(){tg._onClear();}
+}
+this._eventSource.addListener(this._eventListener);
+}
+this._construct();
+};
+
+Timegrid._Impl.prototype.loadXML=function(url,f){
+var tg=this;
+
+var fError=function(statusText,status,xmlhttp){
+alert("Failed to load data xml from "+url+"\n"+statusText);
+tg.hideLoadingMessage();
+};
+var fDone=function(xmlhttp){
+try{
+var xml=xmlhttp.responseXML;
+if(!xml.documentElement&&xmlhttp.responseStream){
+xml.load(xmlhttp.responseStream);
+}
+f(xml,url);
+}finally{
+tg.hideLoadingMessage();
+}
+};
+this.showLoadingMessage();
+window.setTimeout(function(){
+SimileAjax.XmlHttp.get(url,fError,fDone);
+},0);
+};
+
+Timegrid._Impl.prototype.loadJSON=function(url,f){
+var tg=this;
+var fError=function(statusText,status,xmlhttp){
+alert("Failed to load json data from "+url+"\n"+statusText);
+tg.hideLoadingMessage();
+};
+var fDone=function(xmlhttp){
+try{
+f(eval('('+xmlhttp.responseText+')'),url);
+}finally{
+tg.hideLoadingMessage();
+}
+};
+this.showLoadingMessage();
+window.setTimeout(function(){SimileAjax.XmlHttp.get(url,fError,fDone);},0);
+};
+
+Timegrid._Impl.prototype._construct=function(){
+var self=this;
+this._layouts=$.map(this._layoutNames,function(s){
+return Timegrid.LayoutFactory.createLayout(s,self._eventSource,
+self._layoutParams);
+});
+this._panel=new Timegrid.Controls.Panel(this._layouts);
+var container=this._container;
+var doc=container.ownerDocument;
+
+while(container.firstChild){
+container.removeChild(container.firstChild);
+}
+$(container).addClass('timegrid-default');
+
+var message=SimileAjax.Graphics.createMessageBubble(doc);
+message.containerDiv.className="timegrid-message-container";
+container.appendChild(message.containerDiv);
+
+message.contentDiv.className="timegrid-message";
+message.contentDiv.innerHTML="<img src='"+Timegrid.urlPrefix
++"images/progress-running.gif' /> Loading...";
+
+this.showLoadingMessage=function(){$(message.containerDiv).show();};
+this.hideLoadingMessage=function(){$(message.containerDiv).hide();};
+
+this._panel.render(container);
+};
+
+Timegrid._Impl.prototype._onAddMany=function(){
+this._construct();
+};
+
+Timegrid._Impl.prototype._onClear=function(){
+this._construct();
+};
+
+
+
 /* date.js */
 
 
@@ -218,7 +384,7 @@ alert("Caught exception: "+(SimileAjax.Platform.isIE?e.message:e));
 
 
 
-/* excanvas.js */
+/* excanvas.pack.js */
 
 if(!window.CanvasRenderingContext2D){(function(){var I=Math,i=I.round,L=I.sin,M=I.cos,m=10,A=m/2,Q={init:function(a){var b=a||document;if(/MSIE/.test(navigator.userAgent)&&!window.opera){var c=this;b.attachEvent("onreadystatechange",function(){c.r(b)})}},r:function(a){if(a.readyState=="complete"){if(!a.namespaces["s"]){a.namespaces.add("g_vml_","urn:schemas-microsoft-com:vml")}var b=a.createStyleSheet();b.cssText="canvas{display:inline-block;overflow:hidden;text-align:left;width:300px;height:150px}g_vml_\\:*{behavior:url(#default#VML)}";
 var c=a.getElementsByTagName("canvas");for(var d=0;d<c.length;d++){if(!c[d].getContext){this.initElement(c[d])}}}},q:function(a){var b=a.outerHTML,c=a.ownerDocument.createElement(b);if(b.slice(-2)!="/>"){var d="/"+a.tagName,e;while((e=a.nextSibling)&&e.tagName!=d){e.removeNode()}if(e){e.removeNode()}}a.parentNode.replaceChild(c,a);return c},initElement:function(a){a=this.q(a);a.getContext=function(){if(this.l){return this.l}return this.l=new K(this)};a.attachEvent("onpropertychange",V);a.attachEvent("onresize",
@@ -243,12 +409,513 @@ this.k.push(a);this.m.push(this.a);this.a=G(J(),this.a)};j.restore=function(){N(
 
 /* jquery.corner.js */
 
-eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('(x($){e 1o=x(19){e 2l=N.1X("M");g(1c 16==\'X\'&&$.11.Z){E r.1n(x(){})}e 1L=x(a,b){E a-b};e 1k=x(a){e b=a.2n();E b.2k(1L)[0]};e G=x(12,1v){E J($.t(12.1t?12[0]:12,1v))||0};e Q=x(M,c,A,D,F,1P){e 1M=/^1l\\((\\d{1,3}),\\s*(\\d{1,3}),\\s*(\\d{1,3}),\\s*(\\d{1,3})\\)$/;e P=1M.2p(D);g(P){17=n m(J(P[1]),J(P[2]),J(P[3]));D=\'2h(\'+17[0]+\', \'+17[1]+\', \'+17[2]+\')\'}e F=J(F);e q=M.1y(\'2d\');g(c==1){q.1x=D;q.2e(0,0,1,1);E}g(A==\'y\'){e k=n m(0,0,c,0,c,0,0,c,0,0)}C g(A==\'w\'){e k=n m(c,0,c,c,c,0,0,0,0,0)}C g(A==\'v\'){e k=n m(0,c,c,c,0,c,0,0,0,c)}C g(A==\'u\'){e k=n m(c,c,c,0,c,0,0,c,c,c)}q.1x=D;q.1u();q.1w(k[0],k[1]);q.1W(k[2],k[3]);g(A==\'u\')q.1r(k[4],k[5],c,c,k[6],k[7]);C q.1r(k[4],k[5],0,0,k[6],k[7]);q.1W(k[8],k[9]);q.2Q();g(F>0&&F<c){e h=F/2;g(A==\'y\'){e k=n m(c-h,h,c-h,h,h,c-h);e K=n m(0,0)}C g(A==\'w\'){e k=n m(c-h,c-h,c-h,h,h,h);e K=n m(0,0)}C g(A==\'v\'){e k=n m(c-h,c-h,h,c-h,h,h,h,c-h);e K=n m(0,0)}C g(A==\'u\'){e k=n m(c-h,h,c-h,h,h,c-h,c-h,c-h);e K=n m(c,c)}q.2J=1P;q.2I=F;q.1u();q.1w(k[0],k[1]);q.1r(k[2],k[3],K[0],K[1],k[4],k[5]);q.2F()}};e R=x(p,c){e j=N.1X(\'M\');j.1I("1H",c);j.1I("1G",c);j.18.2w="2v";j.18.W="1E";j.2r="1D";j=p.2o(j);g(!j.1y&&1c 16!=\'X\'){e j=16.2m(j)}E j};e o=(19||"").1C();e c=J((o.1B(/(\\d+)2j/)||[])[1])||15;e D=((o.1B(/(#[0-2i-f]+)/)||[])[1]);g(c==15){c="1z"}e 2g={T:0,B:1};e l={y:/14|y/.13(o),w:/14|w/.13(o),v:/1b|v/.13(o),u:/1b|u/.13(o)};g(!l.y&&!l.w&&!l.v&&!l.u){l={y:1,w:1,v:1,u:1}}E r.1n(x(){e j=$(r);g($.11.Z){r.18.2f=1}e 1a=1k(n m(G(r,\'1H\'),G(r,\'1G\')));g(c=="1z"){c=1a/4;g(c>10){c=10}}g(1a<c){c=(1a/2)}j.2c("M.1D").2b();g(j.t(\'W\')==\'2a\'){j.t(\'W\',\'29\')}C g(j.t(\'W\')==\'28\'&&$.11.Z&&!(N.27==\'26\'&&1c N.25.18.24!="X")){j.t(\'W\',\'1E\')}j.t(\'23\',\'22\');e 1g=G(r,\'21\');e 1e=G(r,\'20\');e 1f=G(r,\'1Z\');e 1s=G(r,\'2R\');e L=n m();g(l.y||l.w){L.1d(1g)}g(l.u||l.w){L.1d(1e)}g(l.u||l.v){L.1d(1f)}g(l.v||l.y){L.1d(1s)}O=1k(L);e 1q=0-1g;e 1i=0-1e;e 1h=0-1f;e 1p=0-1s;g(l.y){e y=$(R(r,c)).t({1V:1p,14:1q}).V(0)}g(l.w){e w=$(R(r,c)).t({1A:1i,14:1q}).V(0)}g(l.v){e v=$(R(r,c)).t({1V:1p,1b:1h}).V(0)}g(l.u){e u=$(R(r,c)).t({1A:1i,1b:1h}).V(0)}g(D==X){e H=j.1U();e z=H.t(\'1T-1S\');2P((z=="1R"||z=="1l(0, 0, 0, 0)")&&H.V(0).2N.1C()!="2M"){z=H.t(\'1T-1S\');H=H.1U()}}C{z=D}g(z=="1R"||z=="1l(0, 0, 0, 0)"){z="#2L"}g(l.y){Q(y,c,\'y\',z,O,j.t(\'1O\'))}g(l.w){Q(w,c,\'w\',z,O,j.t(\'1O\'))}g(l.v){Q(v,c,\'v\',z,O,j.t(\'1F\'))}g(l.u){Q(u,c,\'u\',z,O,j.t(\'1F\'))}j.2H(\'2G\')})};g($.11.Z&&1c 16==\'X\'){e I=n m();e U=n m();$.1m.S=x(19){I[I.Y]=r;U[U.Y]=19;E r.1n(x(){})};N.2E("2D",2C,2B);e j=$("2A[@1J*=1t.S.]");g(j.Y==1){e 1Y=j.2z(\'1J\');e 1j=1Y.2y(\'/\');1j.2x();e 1K=1j.2K(\'/\')||\'.\';e 1N=1K+\'/2u.2t.2O\';$.2s(1N,x(){1Q()})}e 1Q=x(){$.1m.S=1o;2q(e i=0;i<I.Y;i++){I[i].S(U[i])}I=15;U=15}}C{$.1m.S=1o}})(2S);',62,179,'||||||||||||radius||var||if|offset||elm|steps|opts|Array|new|||ctx|this||css|br|bl|tr|function|tl|bg|r_type||else|bg_color|return|border_width|getCSSint|current_p|corner_buffer|parseInt|curve_to|bordersWidth|canvas|document|borderswidth_smallest|bits|drawRoundCornerCanvasShape|creatCanvas|corner||corner_buffer_args|get|position|undefined|length|msie||browser|el|test|top|null|G_vmlCanvasManager|channels|style|options|widthheight_smallest|bottom|typeof|push|border_r|border_b|border_t|p_bottom|p_right|pathArray|getMin|rgba|fn|each|_corner|p_left|p_top|bezierCurveTo|border_l|jquery|beginPath|prop|moveTo|fillStyle|getContext|auto|right|match|toLowerCase|cornercanvas|absolute|borderBottomColor|width|height|setAttribute|src|base|asNum|reg|excanvasjs|borderTopColor|border_color|execbuffer|transparent|color|background|parent|left|lineTo|createElement|jc_src|borderBottomWidth|borderRightWidth|borderTopWidth|visible|overflow|maxHeight|body|CSS1Compat|compatMode|fixed|relative|static|remove|children||fillRect|zoom|edges|rgb|9a|px|sort|testcanvas|initElement|concat|appendChild|exec|for|className|getScript|pack|excanvas|block|display|pop|split|attr|script|true|false|BackgroundImageCache|execCommand|stroke|roundCornersParent|addClass|lineWidth|strokeStyle|join|ffffff|html|tagName|js|while|fill|borderLeftWidth|jQuery'.split('|'),0,{}))
-
-/* jquery.history_remote.pack.js */
 
 
-eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('(2($){$.D=16 2(){4 c=\'15\';4 k=7.6;4 d=z;4 g;5.o=2(){};4 h=2(){$(\'.x-R\').1i()};$(8).K(c,h);3($.v.19){4 e,p=q;$(2(){e=$(\'<H 13="12: Z;"></H>\').E(8.U).1o(0);4 a=e.C.8;a.P();a.M();3(k&&k!=\'#\'){a.7.6=k.B(\'#\',\'\')}});5.o=2(a){k=a;4 b=e.C.8;b.P();b.M();b.7.6=a.B(\'#\',\'\')};g=2(){4 a=e.C.8;4 b=a.7.6;3(b!=k){k=b;3(b&&b!=\'#\'){$(\'a[@l$="\'+b+\'"]\').m();7.6=b}n 3(p){7.6=\'\';$(8).u(c)}}p=A}}n 3($.v.18||$.v.17){5.o=2(a){k=a};g=2(){3(7.6){3(k!=7.6){k=7.6;$(\'a[@l$="\'+k+\'"]\').m()}}n 3(k){k=\'\';$(8).u(c)}}}n 3($.v.14){4 f,r,t;$(2(){f=[];f.9=y.9;r=[]});4 j=q,p=q;t=2(a){f.G(a);r.9=0;j=q};5.o=2(a){k=a;t(k)};g=2(){4 b=y.9-f.9;3(b){j=q;3(b<0){F(4 i=0;i<11.10(b);i++)r.Y(f.X())}n{F(4 i=0;i<b;i++)f.G(r.W())}4 a=f[f.9-1];$(\'a[@l$="\'+a+\'"]\').m();k=7.6}n 3(f[f.9-1]==T&&!j){3(8.S.1n(\'#\')>=0){$(\'a[@l$="\'+\'#\'+8.S.1m(\'#\')[1]+\'"]\').m()}n 3(p){$(8).u(c)}j=A}p=A}}5.1l=2(a){3(w a==\'2\'){$(8).1k(c,h).K(c,a)}3(7.6&&w t==\'T\'){$(\'a[@l$="\'+7.6+\'"]\').u(\'m\')}3(g&&d==z){d=1j(g,1h)}}};$.Q.x=2(g,f,c){c=c||2(){};3(w f==\'2\'){c=f}f=$.1g({O:\'x-\'},f||{});4 d=$(g).1f()&&$(g)||$(\'<I></I>\').E(\'U\');d.1e(\'x-R\');L 5.1d(2(i){4 a=5.l;4 b=\'#\'+(5.N&&5.N.B(/\\s/g,\'1c\')||f.O+(i+1));5.l=b;$(5).m(2(e){3(!d[\'J\']){3(e.V){$.D.o(b)}d.1b(a,2(){d[\'J\']=z;c()})}})})};$.Q.y=2(a){L 5.m(2(e){3(e.V){$.D.o(5.6)}w a==\'2\'&&a()})}})(1a);',62,87,'||function|if|var|this|hash|location|document|length||||||||||||href|click|else|update|initialized|false|_forwardStack||_addHistory|trigger|browser|typeof|remote|history|null|true|replace|contentWindow|ajaxHistory|appendTo|for|push|iframe|div|locked|bind|return|close|title|hashPrefix|open|fn|output|URL|undefined|body|clientX|shift|pop|unshift|none|abs|Math|display|style|safari|historyReset|new|opera|mozilla|msie|jQuery|load|_|each|addClass|size|extend|200|empty|setInterval|unbind|initialize|split|indexOf|get'.split('|'),0,{}))
+
+
+
+
+(function($){
+
+
+
+var _corner=function(options){
+
+
+
+
+
+var testcanvas=document.createElement("canvas");
+
+if(typeof G_vmlCanvasManager=='undefined'&&$.browser.msie){
+
+return this.each(function(){});
+
+}
+
+
+
+
+
+var asNum=function(a,b){return a-b;};
+
+var getMin=function(a){
+
+var b=a.concat();
+
+return b.sort(asNum)[0];
+
+};
+
+
+
+
+
+var getCSSint=function(el,prop){
+
+return parseInt($.css(el.jquery?el[0]:el,prop))||0;
+
+};
+
+
+
+
+
+var drawRoundCornerCanvasShape=function(canvas,radius,r_type,bg_color,border_width,border_color){
+
+
+
+
+
+var reg=/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/;
+
+var bits=reg.exec(bg_color);
+
+if(bits){
+
+channels=new Array(parseInt(bits[1]),parseInt(bits[2]),parseInt(bits[3]));
+
+bg_color='rgb('+channels[0]+', '+channels[1]+', '+channels[2]+')';
+
+}
+
+
+
+var border_width=parseInt(border_width);
+
+
+
+var ctx=canvas.getContext('2d');
+
+
+
+if(radius==1){
+
+ctx.fillStyle=bg_color;
+
+ctx.fillRect(0,0,1,1);
+
+return;
+
+}
+
+
+
+if(r_type=='tl'){
+
+var steps=new Array(0,0,radius,0,radius,0,0,radius,0,0);
+
+}else if(r_type=='tr'){
+
+var steps=new Array(radius,0,radius,radius,radius,0,0,0,0,0);
+
+}else if(r_type=='bl'){
+
+var steps=new Array(0,radius,radius,radius,0,radius,0,0,0,radius);
+
+}else if(r_type=='br'){
+
+var steps=new Array(radius,radius,radius,0,radius,0,0,radius,radius,radius);
+
+}
+
+
+
+ctx.fillStyle=bg_color;
+
+ctx.beginPath();
+
+ctx.moveTo(steps[0],steps[1]);
+
+ctx.lineTo(steps[2],steps[3]);
+
+if(r_type=='br')ctx.bezierCurveTo(steps[4],steps[5],radius,radius,steps[6],steps[7]);
+
+else ctx.bezierCurveTo(steps[4],steps[5],0,0,steps[6],steps[7]);
+
+ctx.lineTo(steps[8],steps[9]);
+
+ctx.fill();
+
+
+
+
+
+if(border_width>0&&border_width<radius){
+
+
+
+
+
+var offset=border_width/2;
+
+
+
+if(r_type=='tl'){
+
+var steps=new Array(radius-offset,offset,radius-offset,offset,offset,radius-offset);
+
+var curve_to=new Array(0,0);
+
+}else if(r_type=='tr'){
+
+var steps=new Array(radius-offset,radius-offset,radius-offset,offset,offset,offset);
+
+var curve_to=new Array(0,0);
+
+}else if(r_type=='bl'){
+
+var steps=new Array(radius-offset,radius-offset,offset,radius-offset,offset,offset,offset,radius-offset);
+
+var curve_to=new Array(0,0);
+
+}else if(r_type=='br'){
+
+var steps=new Array(radius-offset,offset,radius-offset,offset,offset,radius-offset,radius-offset,radius-offset);
+
+var curve_to=new Array(radius,radius);
+
+}
+
+
+
+ctx.strokeStyle=border_color;
+
+ctx.lineWidth=border_width;
+
+ctx.beginPath();
+
+
+
+ctx.moveTo(steps[0],steps[1]);
+
+
+
+ctx.bezierCurveTo(steps[2],steps[3],curve_to[0],curve_to[1],steps[4],steps[5]);
+
+ctx.stroke();
+
+
+
+}
+
+};
+
+
+
+var creatCanvas=function(p,radius){
+
+var elm=document.createElement('canvas');
+
+elm.setAttribute("height",radius);
+
+elm.setAttribute("width",radius);
+
+elm.style.display="block";
+
+elm.style.position="absolute";
+
+elm.className="cornercanvas";
+
+elm=p.appendChild(elm);
+
+
+
+if(!elm.getContext&&typeof G_vmlCanvasManager!='undefined'){
+
+var elm=G_vmlCanvasManager.initElement(elm);
+
+}
+
+return elm;
+
+};
+
+
+
+
+
+var o=(options||"").toLowerCase();
+
+var radius=parseInt((o.match(/(\d+)px/)||[])[1])||null;
+
+var bg_color=((o.match(/(#[0-9a-f]+)/)||[])[1]);
+
+if(radius==null){radius="auto";}
+
+
+
+var edges={T:0,B:1};
+
+var opts={
+
+tl:/top|tl/.test(o),
+
+tr:/top|tr/.test(o),
+
+bl:/bottom|bl/.test(o),
+
+br:/bottom|br/.test(o)
+
+};
+
+if(!opts.tl&&!opts.tr&&!opts.bl&&!opts.br){
+
+opts={tl:1,tr:1,bl:1,br:1};
+
+}
+
+
+
+return this.each(function(){
+
+
+
+var elm=$(this);
+
+
+
+
+
+if($.browser.msie){this.style.zoom=1;}
+
+
+
+
+
+var widthheight_smallest=getMin(new Array(getCSSint(this,'height'),getCSSint(this,'width')));
+
+if(radius=="auto"){
+
+radius=widthheight_smallest/4;
+
+if(radius>10){radius=10;}
+
+}
+
+
+
+
+
+if(widthheight_smallest<radius){
+
+radius=(widthheight_smallest/2);
+
+}
+
+
+
+
+
+elm.children("canvas.cornercanvas").remove();
+
+
+
+
+
+if(elm.css('position')=='static'){
+
+elm.css('position','relative');
+
+
+
+}else if(elm.css('position')=='fixed'&&$.browser.msie&&!(document.compatMode=='CSS1Compat'&&typeof document.body.style.maxHeight!="undefined")){
+
+elm.css('position','absolute');
+
+}
+
+elm.css('overflow','visible');
+
+
+
+
+
+var border_t=getCSSint(this,'borderTopWidth');
+
+var border_r=getCSSint(this,'borderRightWidth');
+
+var border_b=getCSSint(this,'borderBottomWidth');
+
+var border_l=getCSSint(this,'borderLeftWidth');
+
+
+
+
+
+var bordersWidth=new Array();
+
+if(opts.tl||opts.tr){bordersWidth.push(border_t);}
+
+if(opts.br||opts.tr){bordersWidth.push(border_r);}
+
+if(opts.br||opts.bl){bordersWidth.push(border_b);}
+
+if(opts.bl||opts.tl){bordersWidth.push(border_l);}
+
+
+
+borderswidth_smallest=getMin(bordersWidth);
+
+
+
+
+
+var p_top=0-border_t;
+
+var p_right=0-border_r;
+
+var p_bottom=0-border_b;
+
+var p_left=0-border_l;
+
+
+
+if(opts.tl){var tl=$(creatCanvas(this,radius)).css({left:p_left,top:p_top}).get(0);}
+
+if(opts.tr){var tr=$(creatCanvas(this,radius)).css({right:p_right,top:p_top}).get(0);}
+
+if(opts.bl){var bl=$(creatCanvas(this,radius)).css({left:p_left,bottom:p_bottom}).get(0);}
+
+if(opts.br){var br=$(creatCanvas(this,radius)).css({right:p_right,bottom:p_bottom}).get(0);}
+
+
+
+
+
+
+
+if(bg_color==undefined){
+
+
+
+var current_p=elm.parent();
+
+var bg=current_p.css('background-color');
+
+while((bg=="transparent"||bg=="rgba(0, 0, 0, 0)")&&current_p.get(0).tagName.toLowerCase()!="html"){
+
+bg=current_p.css('background-color');
+
+current_p=current_p.parent();
+
+}
+
+}else{
+
+bg=bg_color;
+
+}
+
+
+
+if(bg=="transparent"||bg=="rgba(0, 0, 0, 0)"){bg="#ffffff";}
+
+
+
+if(opts.tl){drawRoundCornerCanvasShape(tl,radius,'tl',bg,borderswidth_smallest,elm.css('borderTopColor'));}
+
+if(opts.tr){drawRoundCornerCanvasShape(tr,radius,'tr',bg,borderswidth_smallest,elm.css('borderTopColor'));}
+
+if(opts.bl){drawRoundCornerCanvasShape(bl,radius,'bl',bg,borderswidth_smallest,elm.css('borderBottomColor'));}
+
+if(opts.br){drawRoundCornerCanvasShape(br,radius,'br',bg,borderswidth_smallest,elm.css('borderBottomColor'));}
+
+
+
+elm.addClass('roundCornersParent');
+
+
+
+});
+
+};
+
+
+
+if($.browser.msie&&typeof G_vmlCanvasManager=='undefined'){
+
+
+
+var corner_buffer=new Array();
+
+var corner_buffer_args=new Array();
+
+
+
+$.fn.corner=function(options){
+
+corner_buffer[corner_buffer.length]=this;
+
+corner_buffer_args[corner_buffer_args.length]=options;
+
+return this.each(function(){});
+
+};
+
+
+
+
+
+document.execCommand("BackgroundImageCache",false,true);
+
+var elm=$("script[@src*=jquery.corner.]");
+
+if(elm.length==1){
+
+var jc_src=elm.attr('src');
+
+var pathArray=jc_src.split('/');
+
+pathArray.pop();
+
+var base=pathArray.join('/')||'.';
+
+var excanvasjs=base+'/excanvas.pack.js';
+
+$.getScript(excanvasjs,function(){
+
+execbuffer();
+
+});
+
+}
+
+
+
+var execbuffer=function(){
+
+
+
+$.fn.corner=_corner;
+
+
+
+for(var i=0;i<corner_buffer.length;i++){
+
+corner_buffer[i].corner(corner_buffer_args[i]);
+
+}
+
+corner_buffer=null;
+
+corner_buffer_args=null;
+
+}
+
+
+
+}else{
+
+$.fn.corner=_corner;
+
+}
+
+
+
+})(jQuery);
+
+
 
 /* jquery.simile.js */
 
@@ -362,7 +1029,9 @@ document.body.lastChild);
 
 
 
-return(wNoScroll-wScroll);
+
+
+return(wNoScroll-wScroll)||17;
 
 }
 
@@ -420,10 +1089,7 @@ return result;
 
 });
 
-/* jquery.tabs.pack.js */
 
-
-eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('(4($){$.2k({A:{2r:0}});$.1E.A=4(x,w){2(V x==\'2V\')w=x;w=$.2k({K:(x&&V x==\'1Z\'&&x>0)?--x:0,13:C,I:$.1e?2i:O,1b:O,1o:\'2U&#2O;\',22:\'1b-2D-\',1s:C,1l:C,1i:C,1y:C,1x:\'2t\',2q:C,2n:C,2l:O,2j:C,1f:C,1c:C,1u:\'A-1O\',L:\'A-2a\',18:\'A-13\',19:\'A-24\',1q:\'A-1H\',1K:\'A-2J\',20:\'Z\'},w||{});$.8.1C=$.8.Q&&($.8.1Y&&$.8.1Y<7||/6.0/.2z(2x.2w));4 1F(){1V(0,0)}F 5.S(4(){3 p=5;3 r=$(\'10.\'+w.1u,p);r=r.W()&&r||$(\'>10:9(0)\',p);3 j=$(\'a\',r);2(w.1b){j.S(4(){3 c=w.22+(++$.A.2r),B=\'#\'+c,2g=5.1P;5.1P=B;$(\'<Z P="\'+c+\'" 33="\'+w.19+\'"></Z>\').2e(p);$(5).14(\'1N\',4(e,a){3 b=$(5).J(w.1K),Y=$(\'Y\',5)[0],27=Y.1J;2(w.1o){Y.1J=\'<26>\'+w.1o+\'</26>\'}1p(4(){$(B).2S(2g,4(){2(w.1o){Y.1J=27}b.1a(w.1K);a&&a()})},0)})})}3 n=$(\'Z.\'+w.19,p);n=n.W()&&n||$(\'>\'+w.20,p);r.T(\'.\'+w.1u)||r.J(w.1u);n.S(4(){3 a=$(5);a.T(\'.\'+w.19)||a.J(w.19)});3 s=$(\'z\',r).21($(\'z.\'+w.L,r)[0]);2(s>=0){w.K=s}2(1d.B){j.S(4(i){2(5.B==1d.B){w.K=i;2(($.8.Q||$.8.2E)&&!w.1b){3 a=$(1d.B);3 b=a.17(\'P\');a.17(\'P\',\'\');1p(4(){a.17(\'P\',b)},2C)}1F();F O}})}2($.8.Q){1F()}n.16(\':9(\'+w.K+\')\').1D().1m().2B(\':9(\'+w.K+\')\').J(w.1q);$(\'z\',r).1a(w.L).9(w.K).J(w.L);j.9(w.K).N(\'1N\').1m();2(w.2l){3 l=4(d){3 c=$.2A(n.1k(),4(a){3 h,1A=$(a);2(d){2($.8.1C){a.11.2y(\'1X\');a.11.G=\'\';a.1j=C}h=1A.H({\'1h-G\':\'\'}).G()}E{h=1A.G()}F h}).2v(4(a,b){F b-a});2($.8.1C){n.S(4(){5.1j=c[0]+\'1W\';5.11.2u(\'1X\',\'5.11.G = 5.1j ? 5.1j : "2s"\')})}E{n.H({\'1h-G\':c[0]+\'1W\'})}};l();3 q=p.1U;3 m=p.1v;3 v=$(\'#A-2p-2o-W\').1k(0)||$(\'<Y P="A-2p-2o-W">M</Y>\').H({1T:\'2m\',39:\'38\',37:\'36\'}).2e(U.1S).1k(0);3 o=v.1v;35(4(){3 b=p.1U;3 a=p.1v;3 c=v.1v;2(a>m||b!=q||c!=o){l((b>q||c<o));q=b;m=a;o=c}},34)}3 u={},12={},1R=w.2q||w.1x,1Q=w.2n||w.1x;2(w.1l||w.1s){2(w.1l){u[\'G\']=\'1D\';12[\'G\']=\'1H\'}2(w.1s){u[\'X\']=\'1D\';12[\'X\']=\'1H\'}}E{2(w.1i){u=w.1i}E{u[\'1h-2h\']=0;1R=1}2(w.1y){12=w.1y}E{12[\'1h-2h\']=0;1Q=1}}3 t=w.2j,1f=w.1f,1c=w.1c;j.14(\'2f\',4(){3 c=$(5).15(\'z:9(0)\');2(p.1t||c.T(\'.\'+w.L)||c.T(\'.\'+w.18)){F O}3 a=5.B;2($.8.Q){$(5).N(\'1g\');2(w.I){$.1e.1w(a);1d.B=a.1B(\'#\',\'\')}}E 2($.8.1z){3 b=$(\'<2d 32="\'+a+\'"><Z><31 30="2c" 2Z="h" /></Z></2d>\').1k(0);b.2c();$(5).N(\'1g\');2(w.I){$.1e.1w(a)}}E{2(w.I){1d.B=a.1B(\'#\',\'\')}E{$(5).N(\'1g\')}}});j.14(\'1M\',4(){3 a=$(5).15(\'z:9(0)\');2($.8.1z){a.1n({X:0},1,4(){a.H({X:\'\'})})}a.J(w.18)});2(w.13&&w.13.1L){29(3 i=0,k=w.13.1L;i<k;i++){j.9(--w.13[i]).N(\'1M\').1m()}};j.14(\'28\',4(){3 a=$(5).15(\'z:9(0)\');a.1a(w.18);2($.8.1z){a.1n({X:1},1,4(){a.H({X:\'\'})})}});j.14(\'1g\',4(e){3 g=e.2Y;3 d=5,z=$(5).15(\'z:9(0)\'),D=$(5.B),R=n.16(\':2X\');2(p[\'1t\']||z.T(\'.\'+w.L)||z.T(\'.\'+w.18)||V t==\'4\'&&t(5,D[0],R[0])===O){5.25();F O}p[\'1t\']=2i;2(D.W()){2($.8.Q&&w.I){3 c=5.B.1B(\'#\',\'\');D.17(\'P\',\'\');1p(4(){D.17(\'P\',c)},0)}3 f={1T:\'\',2T:\'\',G:\'\'};2(!$.8.Q){f[\'X\']=\'\'}4 1I(){2(w.I&&g){$.1e.1w(d.B)}R.1n(12,1Q,4(){$(d).15(\'z:9(0)\').J(w.L).2R().1a(w.L);R.J(w.1q).H(f);2(V 1f==\'4\'){1f(d,D[0],R[0])}2(!(w.1l||w.1s||w.1i)){D.H(\'1T\',\'2m\')}D.1n(u,1R,4(){D.1a(w.1q).H(f);2($.8.Q){R[0].11.16=\'\';D[0].11.16=\'\'}2(V 1c==\'4\'){1c(d,D[0],R[0])}p[\'1t\']=C})})}2(!w.1b){1I()}E{$(d).N(\'1N\',[1I])}}E{2Q(\'2P T 2W 2N 24.\')}3 a=1G.2M||U.1r&&U.1r.23||U.1S.23||0;3 b=1G.2L||U.1r&&U.1r.2b||U.1S.2b||0;1p(4(){1G.1V(a,b)},0);5.25();F w.I&&!!g});2(w.I){$.1e.2K(4(){j.9(w.K).N(\'1g\').1m()})}})};3 y=[\'2f\',\'1M\',\'28\'];29(3 i=0;i<y.1L;i++){$.1E[y[i]]=(4(d){F 4(c){F 5.S(4(){3 b=$(\'10.A-1O\',5);b=b.W()&&b||$(\'>10:9(0)\',5);3 a;2(!c||V c==\'1Z\'){a=$(\'z a\',b).9((c&&c>0&&c-1||0))}E 2(V c==\'2I\'){a=$(\'z a[@1P$="#\'+c+\'"]\',b)}a.N(d)})}})(y[i])}$.1E.2H=4(){3 c=[];5.S(4(){3 a=$(\'10.A-1O\',5);a=a.W()&&a||$(\'>10:9(0)\',5);3 b=$(\'z\',a);c.2G(b.21(b.16(\'.A-2a\')[0])+1)});F c[0]}})(2F);',62,196,'||if|var|function|this|||browser|eq||||||||||||||||||||||||||li|tabs|hash|null|toShow|else|return|height|css|bookmarkable|addClass|initial|selectedClass||trigger|false|id|msie|toHide|each|is|document|typeof|size|opacity|span|div|ul|style|hideAnim|disabled|bind|parents|filter|attr|disabledClass|containerClass|removeClass|remote|onShow|location|ajaxHistory|onHide|click|min|fxShow|minHeight|get|fxSlide|end|animate|spinner|setTimeout|hideClass|documentElement|fxFade|locked|navClass|offsetHeight|update|fxSpeed|fxHide|safari|jq|replace|msie6|show|fn|unFocus|window|hide|switchTab|innerHTML|loadingClass|length|disableTab|loadRemoteTab|nav|href|hideSpeed|showSpeed|body|display|offsetWidth|scrollTo|px|behaviour|version|number|tabStruct|index|hashPrefix|scrollLeft|container|blur|em|tabTitle|enableTab|for|selected|scrollTop|submit|form|appendTo|triggerTab|url|width|true|onClick|extend|fxAutoHeight|block|fxHideSpeed|font|watch|fxShowSpeed|remoteCount|1px|normal|setExpression|sort|userAgent|navigator|removeExpression|test|map|not|500|tab|opera|jQuery|push|activeTab|string|loading|initialize|pageYOffset|pageXOffset|such|8230|There|alert|siblings|load|overflow|Loading|object|no|visible|clientX|value|type|input|action|class|50|setInterval|hidden|visibility|absolute|position'.split('|'),0,{}))
 
 /* util.js */
 
@@ -481,7 +1147,7 @@ this.minutes=Math.round(this.milliseconds/MINUTES_CF);
 
 this.hours=Math.round(this.milliseconds/HOURS_CF);
 
-this.days=Math.round(this.milliseconds/DAYS_CF);
+this.days=Math.floor(this.milliseconds/DAYS_CF);
 
 this.weeks=Math.round(this.milliseconds/WEEKS_CF);
 
@@ -537,7 +1203,7 @@ Timegrid.Controls={};
 
 Timegrid.Controls.Panel=function(layouts,params){
 
-
+this._layouts=layouts;
 
 };
 
@@ -545,7 +1211,15 @@ Timegrid.Controls.Panel=function(layouts,params){
 
 Timegrid.Controls.Panel.prototype.render=function(container){
 
+var first=true;
 
+var titles=$.map(this._layouts,function(l){return l.title;});
+
+var tabSet=new Timegrid.Controls.TabSet(titles,this._layouts);
+
+tabSet.render(container);
+
+tabSet.switchTo(titles[0]);
 
 };
 
@@ -553,9 +1227,23 @@ Timegrid.Controls.Panel.prototype.render=function(container){
 
 
 
-Timegrid.Controls.TabSet=function(args){
+Timegrid.Controls.TabSet=function(titles,layouts){
 
+this._layoutMap={};
 
+for(i in titles){
+
+this._layoutMap[titles[i]]=layouts[i];
+
+}
+
+this._tabs={};
+
+this._renderedLayouts={};
+
+this._iterators={};
+
+this.current="";
 
 };
 
@@ -563,7 +1251,85 @@ Timegrid.Controls.TabSet=function(args){
 
 Timegrid.Controls.TabSet.prototype.render=function(container){
 
+this._container=container;
 
+var self=this;
+
+var tabDiv=$('<div></div>').addClass('timegrid-tabs');
+
+$(container).prepend(tabDiv);
+
+var makeCallback=function(title){
+
+return function(){self.switchTo(title);};
+
+};
+
+for(title in this._layoutMap){
+
+var tab=$('<span><a href="javascript:void">'+title+'</a></span>')
+
+.click(makeCallback(title))
+
+.addClass('timegrid-tab');
+
+tabDiv.append(tab);
+
+this._tabs[title]=tab;
+
+}
+
+if(!$.browser.msie){$('.timegrid-tab').corner("30px top");}
+
+};
+
+
+
+Timegrid.Controls.TabSet.prototype.switchTo=function(title){
+
+if(this.current){
+
+this._renderedLayouts[this.current].hide();
+
+this._tabs[this.current].removeClass('timegrid-tab-active');
+
+}
+
+if(this._renderedLayouts[title]){
+
+this._renderedLayouts[title].show();
+
+}else if(this._layoutMap[title]){
+
+this._renderedLayouts[title]=$(this._layoutMap[title].render(this._container)).show();
+
+}
+
+if(this._iDiv){
+
+this._iDiv.empty();
+
+}
+
+if(this._layoutMap[title].iterable){
+
+if(!this._iterators[title]){
+
+this._iterators[title]=new Timegrid.Controls.Iterator(this._layoutMap[title]);
+
+this._iDiv=$(this._iterators[title].render(this._container));
+
+}else{
+
+this._iDiv=$(this._iterators[title].render());
+
+}
+
+}
+
+this.current=title;
+
+this._tabs[this.current].addClass('timegrid-tab-active');
 
 };
 
@@ -571,9 +1337,9 @@ Timegrid.Controls.TabSet.prototype.render=function(container){
 
 
 
-Timegrid.Controls.Iterator=function(args){
+Timegrid.Controls.Iterator=function(layout){
 
-
+this._layout=layout;
 
 };
 
@@ -581,9 +1347,73 @@ Timegrid.Controls.Iterator=function(args){
 
 Timegrid.Controls.Iterator.prototype.render=function(container){
 
+if(container){
 
+this._container=container;
+
+this._div=$('<div></div>').addClass('timegrid-iterator');
+
+$(this._container).prepend(this._div);
+
+}else{
+
+this._div.empty();
+
+}
+
+var self=this;
+
+var makePrevCallback=function(layout){
+
+return function(){
+
+layout.goPrevious();
+
+self.render();
 
 };
+
+};
+
+var makeNextCallback=function(layout){
+
+return function(){
+
+layout.goNext();
+
+self.render();
+
+};
+
+};
+
+var prevLink=$('<img alt="Previous" src="'+Timegrid.urlPrefix+'/images/go-previous.png"></img>')
+
+.wrap('<a href="javascript:void"></a>').parent()
+
+.addClass('timegrid-iterator-prev')
+
+.click(makePrevCallback(this._layout));
+
+var nextLink=$('<img alt="Next" src="'+Timegrid.urlPrefix+'/images/go-next.png"></img>')
+
+.wrap('<a href="javascript:void"></a>').parent()
+
+.addClass('timegrid-iterator-next')
+
+.click(makeNextCallback(this._layout));
+
+this._div.append(prevLink);
+
+this._div.append('<span>'+this._layout.getCurrent()+'</span>');
+
+this._div.append(nextLink);
+
+return this._div;
+
+};
+
+
 
 /* create.js */
 
@@ -758,19 +1588,28 @@ return{text:text,emphasized:emphasized};
 
 Timegrid.LayoutFactory=function(){};
 
+Timegrid.LayoutFactory._constructors={};
+
+Timegrid.LayoutFactory.registerLayout=function(name,constructor){
+$.inherit(constructor,Timegrid.Layout);
+Timegrid.LayoutFactory._constructors[name]=constructor;
+};
+
 
 Timegrid.LayoutFactory.createLayout=function(name,eventSource,params){
-var constructor=Timegrid[$.capitalize($.trim(name))+'Layout'];
-var layout;
+var constructor=Timegrid.LayoutFactory._constructors[name];
 if(typeof constructor=='function'){
 layout=new constructor(eventSource,params);
 return layout;
+}else{
+throw"No such layout!";
 };
 return;
 };
 
 
 Timegrid.Layout=function(eventSource,params){
+this.params=params;
 
 this.xSize=0;
 
@@ -790,27 +1629,40 @@ this[attr]=params[attr];
 
 Timegrid.Layout.prototype.computeCellSizes=function(){
 
-this.xCell=this.xCell||100.0/this.xSize;
-this.yCell=this.yCell||(this.gridheight-1)/this.ySize;
+this.xCell=this.xCell||this.xcell||100.0/this.xSize;
+this.yCell=this.yCell||this.ycell||(this.gridheight-1)/this.ySize;
 };
 
 
 Timegrid.Layout.prototype.render=function(container){
-var viewDiv=$("<div></div>").addClass('timegrid-view');
-$(container).append(viewDiv);
+if(container){
+this._container=container;
+this._viewDiv=$("<div></div>").addClass('timegrid-view');
+$(this._container).append(this._viewDiv);
+}else{
+this._viewDiv.empty();
+}
 var gridDiv=$('<div></div>').addClass('timegrid-grid');
 var gridWindowDiv=$('<div></div>').addClass('timegrid-grid-window');
 
-viewDiv.height(this.height+"px");
-if(!this.width){this.width=viewDiv.width();}
-viewDiv.width(this.width+"px");
-gridDiv.height(this.gridheight+"px").width(this.gridwidth+"px");
+if(!this.params.height){
+this.height=this._container.style.height?
+$(this._container).height():500;
+}
+$(this._container).height(this.height+"px");
+if(!this.params.width){
+this.width=$(this._container).width();
+}else{
+$(this._container).width(this.width+"px");
+}
+$(this._container).css('position','relative');
 
 gridWindowDiv.css("top",this.xLabelHeight).css("left",this.yLabelWidth)
 .css("right","0px").css("bottom","0px");
-viewDiv.append(gridWindowDiv.append(gridDiv));
+this._viewDiv.append(gridWindowDiv.append(gridDiv));
 this.gridwidth=this.gridwidth||gridWindowDiv.width()-this.scrollwidth;
 this.gridheight=this.gridheight||gridWindowDiv.height()-this.scrollwidth;
+gridDiv.height(this.gridheight+"px").width(this.gridwidth+"px");
 this.computeCellSizes();
 gridDiv.append(this.renderEvents(document));
 gridDiv.append(this.renderGridlines(document));
@@ -827,8 +1679,8 @@ $(b).scroll(function(){a.scrollTop=b.scrollTop;});
 };
 syncVerticalScroll(yLabels,gridWindowDiv.get(0));
 syncHorizontalScroll(xLabels,gridWindowDiv.get(0));
-viewDiv.append(xLabels).append(yLabels);
-return viewDiv.get(0);
+this._viewDiv.append(xLabels).append(yLabels);
+return this._viewDiv.get(0);
 };
 
 Timegrid.Layout.prototype.renderEvents=Timegrid.abstract("renderEvents");
@@ -889,6 +1741,7 @@ return yLabelContainer.get(0);
 Timegrid.Layout.prototype.getXLabels=Timegrid.abstract("getXLabels");
 
 Timegrid.Layout.prototype.getYLabels=Timegrid.abstract("getYLabels");
+
 
 /* listeners.js */
 
@@ -1023,6 +1876,10 @@ var parseDateTimeFunction=this._events.getUnit().getParser(dateTimeFormat);
 
 for(var i=0;i<data.events.length;i++){
 var event=data.events[i];
+if(!(event.start||event.end||
+event.latestStart||event.earliestEnd)){
+continue;
+}
 var evt=new Timegrid.DefaultEventSource.Event(
 parseDateTimeFunction(event.start),
 parseDateTimeFunction(event.end),
@@ -1042,12 +1899,10 @@ evt.getProperty=function(name){
 return this._obj[name];
 };
 evt.setWikiInfo(wikiURL,wikiSection);
-
 this._events.add(evt);
 added=true;
 }
 }
-
 if(added){
 this._fire("onAddMany",[]);
 }
@@ -1479,131 +2334,3 @@ elmt.className="timeline-event-bubble-time";
 }
 };
 };
-
-/* timegrid.js */
-
-
-
-Timegrid.create=function(node,eventSource,layoutName,layoutParams){
-return new Timegrid._Impl(node,eventSource,layoutName,layoutParams);
-};
-
-Timegrid.createFromDOM=function(elmt){
-var config=Timegrid.getConfigFromDOM(elmt);
-var eventSource=new Timegrid.DefaultEventSource();
-var tg=Timegrid.create(elmt,eventSource,config.view,config);
-if(config.src){
-tg.loadXML(config.src,function(xml,url){
-eventSource.loadXML(xml,url);
-});
-}
-return tg;
-};
-
-Timegrid.getConfigFromDOM=function(elmt){
-var config=$(elmt).attrs('tg');
-config.scrollwidth=$.scrollWidth();
-return config;
-};
-
-Timegrid.loadXML=function(url,f){
-var fError=function(statusText,status,xmlhttp){
-alert("Failed to load data XML from "+url+"\n"+statusText);
-};
-var fDone=function(xmlhttp){
-var xml=xmlhttp.responseXML;
-if(!xml.documentElement&&xmlhttp.responseStream){
-xml.load(xmlhttp.responseStream);
-}
-f(xml,url);
-};
-SimileAjax.XmlHttp.get(url,fError,fDone);
-};
-
-Timegrid.loadJSON=function(url,f){
-var fError=function(statusText,status,xmlhttp){
-alert("Failed to load JSON data from "+url+"\n"+statusText);
-};
-var fDone=function(xmlhttp){
-f(eval('('+xmlhttp.responseText+')'),url);
-};
-SimileAjax.XmlHttp.get(url,fError,fDone);
-};
-
-Timegrid._Impl=function(node,eventSource,layoutName,layoutParams){
-var tg=this;
-this._container=node;
-this._eventSource=eventSource;
-this._layoutName=layoutName;
-this._layoutParams=layoutParams;
-
-if(this._eventSource){
-this._eventListener={
-onAddMany:function(){tg._onAddMany();},
-onClear:function(){tg._onClear();}
-}
-this._eventSource.addListener(this._eventListener);
-}
-this._construct();
-};
-
-Timegrid._Impl.prototype.loadXML=function(url,f){
-var tg=this;
-
-var fError=function(statusText,status,xmlhttp){
-alert("Failed to load data xml from "+url+"\n"+statusText);
-tg.hideLoadingMessage();
-};
-var fDone=function(xmlhttp){
-try{
-var xml=xmlhttp.responseXML;
-if(!xml.documentElement&&xmlhttp.responseStream){
-xml.load(xmlhttp.responseStream);
-}
-f(xml,url);
-}finally{
-tg.hideLoadingMessage();
-}
-};
-this.showLoadingMessage();
-window.setTimeout(function(){
-SimileAjax.XmlHttp.get(url,fError,fDone);
-},0);
-};
-
-Timegrid._Impl.prototype._construct=function(){
-this._layout=Timegrid.LayoutFactory.createLayout(this._layoutName,
-this._eventSource,
-this._layoutParams);
-var container=this._container;
-var doc=container.ownerDocument;
-
-while(container.firstChild){
-container.removeChild(container.firstChild);
-}
-$(container).addClass('timegrid-default');
-
-var message=SimileAjax.Graphics.createMessageBubble(doc);
-message.containerDiv.className="timegrid-message-container";
-container.appendChild(message.containerDiv);
-
-message.contentDiv.className="timegrid-message";
-message.contentDiv.innerHTML="<img src='"+Timegrid.urlPrefix
-+"images/progress-running.gif' /> Loading...";
-
-var self=this;
-
-this.showLoadingMessage=function(){$(message.containerDiv).show();};
-this.hideLoadingMessage=function(){$(message.containerDiv).hide();};
-
-var layoutDiv=this._layout.render(container);
-};
-
-Timegrid._Impl.prototype._onAddMany=function(){
-this._construct();
-};
-
-Timegrid._Impl.prototype._onClear=function(){
-this._construct();
-};
-
