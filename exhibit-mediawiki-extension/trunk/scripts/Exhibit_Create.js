@@ -4,24 +4,24 @@
 
 function createExhibit() {
 	/*
-	 * <data>
-	 * We're using the HTML table importer to get the data for the exhibit.
+	 * Data: We're using the HTML table importer to get the data for the exhibit.
 	 */
 	window.database = Exhibit.Database.create();
 	window.exhibit = Exhibit.create(window.database);			
 	for(var i = 0; i < sourceData.length; i++) {
 		var dataTable = document.getElementById(sourceData[i]);	
 		var th, ths = dataTable.getElementsByTagName("th");
-		var columns = sourceColumns[i].split(',');
-		if (columns[0] == "") {
-			ths[0].setAttribute('ex:name', 'label');
-			for (var c = 1; c < ths.length; c++) {
-				var label = "column" + c;
-				ths[c].setAttribute('ex:name', label);
-			}
-		} else {
+		var columns = sourceColumns[i].split(',');	
+		if (columns[0] !== "") {                   //TODO: make more thorough test--look for label
 			for(var c = 0; c < ths.length; c++) {
 				var label = columns[c];
+				ths[c].setAttribute('ex:name', label);
+			}	
+		} else {
+			ths[0].setAttribute('ex:name', 'label');
+			for (var c = 1; c < ths.length; c++) {
+				var label = ths[c].textContent.toLowerCase();
+				label = label.replace(/\s/g,'');
 				ths[c].setAttribute('ex:name', label);
 			}
 		}
@@ -30,15 +30,12 @@ function createExhibit() {
 		Exhibit.HtmlTableImporter.loadTable(dataTable, window.database); 
 	}
 
-	var topTable = document.getElementById(sourceData[0]);
-	var exhibitDiv = document.createElement('div');
-	exhibitDiv.innerHTML = "<table width='100%'><tr valign='top'><td><div id='view'></div></div></td><td width='20%' id='facets'></td></tr></table>";
-	topTable.parentNode.insertBefore(exhibitDiv, topTable);		
+	var exhibitDiv = document.getElementById('exhibitLocation');
+	exhibitDiv.innerHTML = "<table width='100%'><tr valign='top'><td><div id='view'></div></div></td><td width='20%' id='facets'></td></tr></table>";		
 
 	/*
-	 * <configuration>
-	 * We're creating HTML strings that specify the configurations, formatted in the 
-	 * same form as specifications in the HTML of a regular exhibit.
+	 * Configuration: We're creating HTML strings that specify the configurations, 
+	 * formatted in the same form as specifications in the HTML of a regular exhibit.
 	 */
 	if (facets && (facets[0] !== "")) {
 		var facetHTML = "";
@@ -63,7 +60,6 @@ function createExhibit() {
 			viewHTML = viewHTML + '<div ex:role="view" ' + attrHTML + ' ></div>';
 		}
 		document.getElementById("view").innerHTML = viewHTML;
-		console.log(viewHTML);
 	} else {
 		document.getElementById("view").innerHTML = '<div ex:role="view"></div>';
 	}
