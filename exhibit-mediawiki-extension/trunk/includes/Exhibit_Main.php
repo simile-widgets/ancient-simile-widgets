@@ -39,7 +39,7 @@ function wfExhibitAddHTMLHeader(&$out) {
 	
 	if ($exhibitEnabled) {	
 		$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false&gmapkey=ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg"></script><script>SimileAjax.History.enabled = false;</script>';
-		$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtensionTest/scripts/Exhibit_Create.js"></script>';		
+		$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';		
 		$out->addScript($ExhibitScript);
 		$out->addScript($WExhibitScript);
 	}
