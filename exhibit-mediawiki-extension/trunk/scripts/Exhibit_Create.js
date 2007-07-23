@@ -31,7 +31,7 @@ function createExhibit() {
 	}
 
 	var exhibitDiv = document.getElementById('exhibitLocation');
-	exhibitDiv.innerHTML = "<table width='100%'><tr valign='top'><td><div id='view'></div></div></td><td width='20%' id='facets'></td></tr></table>";		
+	exhibitDiv.innerHTML = "<table width='100%'><tr valign='top'><td><div id='view'></div></td><td width='20%' id='facets'></td></tr></table>";		
 
 	/*
 	 * Configuration: We're creating HTML strings that specify the configurations, 
@@ -59,7 +59,8 @@ function createExhibit() {
 			}
 			viewHTML = viewHTML + '<div ex:role="view" ' + attrHTML + ' ></div>';
 		}
-		document.getElementById("view").innerHTML = viewHTML;
+		var returnHTML = '<div id="exhibit-view-panel" ex:role="viewPanel">' + viewHTML + '</div>';
+		document.getElementById("view").innerHTML = returnHTML;
 	} else {
 		document.getElementById("view").innerHTML = '<div ex:role="view"></div>';
 	}
