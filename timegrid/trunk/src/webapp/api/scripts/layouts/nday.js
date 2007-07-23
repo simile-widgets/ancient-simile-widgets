@@ -13,24 +13,28 @@
   * @extends Timegrid.Layout
   * @constructor
   */
-Timegrid.NDayLayout = function(eventSource, params) {
-    Timegrid.NDayLayout.superclass.call(this, eventSource, params);
+Timegrid.NDayLayout = function(eventSource, config) {
+    Timegrid.NDayLayout.superclass.call(this, eventSource, config);
     var self = this;
+    var defaults = config.getParent();
+        
+    this.iterable = true;
     
     // Specifications for a week layout
-    this.xSize = 7;
-    this.ySize = 24;
-    this.iterable = true;
-    this.xMapper = function(obj) { return (new SimileAjax.DateTime.Interval(obj.time - self.startTime)).days; };
-    this.yMapper = function(obj) { return obj.time.getHours() +
-                                          obj.time.getMinutes() / 60; };
+    config.set('xSize', 7);
+    config.set('ySize', 24);
+    config.set('xMapper', function(obj) { 
+        return (new SimileAjax.DateTime.Interval(obj.time - self.startTime)).days;
+    });
+    config.set('yMapper', function(obj) { 
+        return obj.time.getHours() + obj.time.getMinutes() / 60; 
+    });
     
     // These are default values that can be overridden in configure
-    this.n      = 3;
+    defaults.set('n', 3);
     
-    this.configure(params);
-    this.title = this.n + "-Day";
-    this.xSize = this.n;
+    defaults.set('title', config.get('n') + "-Day");
+    defaults.set('xSize', config.get('n'));
     this.computeCellSizes();
     
     // Initialize our eventSource
@@ -64,14 +68,15 @@ Timegrid.NDayLayout.prototype.initializeGrid = function() {
 };
 
 Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
+    var config = this.config;
     var eventContainer = doc.createElement("div");
     $(eventContainer).addClass("timegrid-events");
     var currentEvents = {};
     var currentCount = 0;
-    for (i in this.endpoints) {
+    for (var i in this.endpoints) {
         var endpoint = this.endpoints[i];
-        var x = this.xMapper(endpoint);
-        var y = this.yMapper(endpoint);
+        var x = config.get('xMapper')(endpoint);
+        var y = config.get('yMapper')(endpoint);
         if (endpoint.type == "start") {
             // Render the event
             var eventDiv = this.renderEvent(endpoint.event, x, y);
@@ -81,10 +86,10 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
             currentCount++;
             // Adjust widths and offsets as necessary
             var hIndex = 0;
-            for (id in currentEvents) {
+            for (var id in currentEvents) {
                 var eDiv = currentEvents[id];
-                var newWidth = this.xCell / currentCount;
-                var newLeft = this.xCell * x + newWidth * hIndex;
+                var newWidth = config.get('xCell') / currentCount;
+                var newLeft = config.get('xCell') * x + newWidth * hIndex;
                 $(eDiv).css("width", newWidth + "%");
                 $(eDiv).css("left", newLeft + "%");
                 hIndex++;
@@ -102,9 +107,9 @@ Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
     var jediv = $("<div><div>" + evt.getText() + "</div></div>");
     var length = (evt.getEnd() - evt.getStart()) / (1000 * 60 * 60.0);
     jediv.addClass("timegrid-event").addClass('timegrid-rounded-shadow');
-    jediv.css("height", this.yCell * length);
-    jediv.css("top", this.yCell * y);
-    jediv.css("left", this.xCell * x + '%');
+    jediv.css("height", config.get('yCell') * length);
+    jediv.css("top", config.get('yCell') * y);
+    jediv.css("left", config.get('xCell') * x + '%');
     return jediv.get()[0]; // Return the actual DOM element
 };
 
@@ -112,7 +117,8 @@ Timegrid.NDayLayout.prototype.getXLabels = function() {
     var date = new Date(this.startTime);
     var labels = [];
     while (date < this.endTime) {
-        labels.push(Date.abbrDayNames[date.getDay()] + " " + this.renderDate(date));
+        labels.push(Date.abbrDayNames[date.getDay()] + " " + 
+                    this.renderDate(date));
         date.setHours(24);
     }
     return labels;

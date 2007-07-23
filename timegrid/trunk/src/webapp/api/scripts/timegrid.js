@@ -2,8 +2,8 @@
  * Timegrid
  *****************************************************************************/
 
-Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
-    return new Timegrid._Impl(node, eventSource, layoutName, layoutParams);
+Timegrid.create = function(node, eventSource, rootConfig, layoutConfigs) {
+    return new Timegrid._Impl(node, eventSource, rootConfig, layoutConfigs);
 };
 
 Timegrid.resize = function() {
@@ -15,20 +15,25 @@ Timegrid.resize = function() {
 Timegrid.createFromDOM = function(elmt) {
     var config = Timegrid.getConfigFromDOM(elmt);
     var eventSource = new Timegrid.DefaultEventSource();
-    var layoutNames = config.views.split(",");
-    var tg = Timegrid.create(elmt, eventSource, layoutNames, config);
+    var layoutNames = config.get('views').split(",");
+    var layoutConfigs = {};
+    $.map(layoutNames, function(s) {
+        layoutConfigs[s] = Timegrid.getLayoutConfigFromDOM(elmt, name, config);
+    });
+    var tg = Timegrid.create(elmt, eventSource, config, layoutConfigs);
     var getExtension = function(s) {
         return s.split('.').pop().toLowerCase();
     };
-    if (config.src) {
-        switch (getExtension(config.src)) {
+    var src = config.get('src');
+    if (src) {
+        switch (getExtension(src)) {
             case 'xml':
-            tg.loadXML(config.src, function(xml, url) {
+            tg.loadXML(src, function(xml, url) {
                 eventSource.loadXML(xml, url);
             });
             break;
             case 'js':
-            tg.loadJSON(config.src, function(json, url) {
+            tg.loadJSON(src, function(json, url) {
                 eventSource.loadJSON(json, url);
             });
             break;
@@ -38,9 +43,20 @@ Timegrid.createFromDOM = function(elmt) {
 };
 
 Timegrid.getConfigFromDOM = function(elmt) {
-    var config = $(elmt).attrs('tg');
-    config.scrollwidth = $.scrollWidth();
-    return config;
+    var params = $(elmt).attrs('tg');
+    params.scrollwidth = $.scrollWidth();
+    return new Timegrid.Configuration(params);
+};
+
+Timegrid.getLayoutConfigFromDOM = function(elmt, name, parent) {
+    var children = $(elmt).children();
+    children.each(function() {
+        var attrs = $(this).attrs('tg');
+        if (attrs.role == "view" && attrs.name == name) {
+            var config = new Timegrid.Configuration({}, parent);
+            return new Timegrid.Configuration(attrs, config);
+        }
+    });
 };
 
 Timegrid.loadXML = function(url, f) {
@@ -67,12 +83,12 @@ Timegrid.loadJSON = function(url, f) {
     SimileAjax.XmlHttp.get(url, fError, fDone);
 };
 
-Timegrid._Impl = function(node, eventSource, layoutNames, layoutParams) {
+Timegrid._Impl = function(node, eventSource, rootConfig, layoutConfigs) {
     var tg = this;
     this._container = node;
     this._eventSource = eventSource;
-    this._layoutNames = layoutNames;
-    this._layoutParams = layoutParams;
+    this._layoutConfigs= layoutConfigs;
+    this._config = rootConfig;
 
     if (this._eventSource) {
         this._eventListener = {
@@ -127,10 +143,14 @@ Timegrid._Impl.prototype.loadJSON = function(url, f) {
 
 Timegrid._Impl.prototype._construct = function() {
     var self = this;
-    this._layouts = $.map(this._layoutNames, function(s) {
-        return Timegrid.LayoutFactory.createLayout(s, self._eventSource,
-                                                      self._layoutParams);
-    });
+    this._layouts = [];
+    for (name in this._layoutConfigs) {
+        var config = this._layoutConfigs[name];
+        var layout = Timegrid.LayoutFactory.createLayout(name, 
+                                                         self._eventSource, 
+                                                         config);
+        this._layouts.push(layout);
+    }
     this._panel = new Timegrid.Controls.Panel(this._layouts);
     var container = this._container;
     var doc = container.ownerDocument;

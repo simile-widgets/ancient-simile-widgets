@@ -24,6 +24,23 @@ jQuery.extend({
         subclass.superproto = superclass.prototype;
     },
     /**
+     * Recursively deep-copies the given object.
+     */
+    clone: function(obj, deep) {
+        if (deep == null) { deep = true; }
+        var objectClone = new obj.constructor();
+        for (var property in obj) {
+            if (!deep) {
+                objectClone[property] = obj[property];
+            } else if (typeof obj[property] == 'object') {
+                objectClone[property] = obj[property].clone(deep);
+            } else {
+                objectClone[property] = obj[property];
+            }
+        }
+        return objectClone;
+    },
+    /**
      * Returns the width of the scrollbar.
      */
     scrollWidth: function() {

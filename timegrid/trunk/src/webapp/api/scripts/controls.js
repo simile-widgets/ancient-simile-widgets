@@ -24,7 +24,6 @@ Timegrid.Controls.Panel.prototype.render = function(container) {
     var tabSet = new Timegrid.Controls.TabSet(titles, this._layouts);
     tabSet.render(container);
     tabSet.switchTo(titles[0]);
-    $('.timegrid-rounded-shadow').prettybox(4,7,1,0.7);
 };
 
 /*

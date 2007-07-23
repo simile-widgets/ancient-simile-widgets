@@ -13,10 +13,10 @@
   * @extends Timegrid.Layout
   * @constructor
   */
-Timegrid.WeekLayout = function(eventSource, params) {
-    params.n = 7;
-    // params.title = params.title || "Week";
-    Timegrid.WeekLayout.superclass.call(this, eventSource, params);
+Timegrid.WeekLayout = function(eventSource, config) {
+    config.set('n', 7);
+    config.set('title', "Week");
+    Timegrid.WeekLayout.superclass.call(this, eventSource, config);
 };
 Timegrid.LayoutFactory.registerLayout("week", Timegrid.WeekLayout);
 $.inherit(Timegrid.WeekLayout, Timegrid.NDayLayout);
