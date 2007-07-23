@@ -57,6 +57,7 @@ Timegrid.getLayoutConfigFromDOM = function(elmt, name, parent) {
             return new Timegrid.Configuration(attrs, config);
         }
     });
+    return new Timegrid.Configuration({}, config);
 };
 
 Timegrid.loadXML = function(url, f) {
