@@ -185,7 +185,7 @@ Exhibit.SettingsUtilities._internalCreateAccessors = function(f, specs, accessor
         } else {
             accessor = createOneAccessor(spec);
         }
-        
+		
         if (accessor != null) {
             if (isTuple) {
                 accessors[accessorName] = function(value, database, visitor) {

@@ -14,17 +14,22 @@ Exhibit.LegendGradientWidget.create = function (containerElmt, uiContext) {
 };
 
 Exhibit.LegendGradientWidget.prototype.addGradient = function(configuration) {
-	var gradientArray = [];
-	var gradientArray = configuration;
+
+console.log(configuration);
+	var gradientPoints = [];
+	var gradientPoints = configuration;
+console.log(gradientPoints);
 	var sortObj = function(a, b) {
 		return a.value - b.value;
 	};
-	gradientArray.sort(sortObj);
+	gradientPoints.sort(sortObj);
+	
 	var theTable = document.createElement("table");
 	var tableBody = document.createElement("tbody");
 	var theRow1 = document.createElement("tr");
 	var theRow2 = document.createElement("tr");
 	var theRow3 = document.createElement("tr");
+	
 	theRow1.style.height="2em";
 	theRow2.style.height="2em";
 	theRow3.style.height="2em";
@@ -38,37 +43,44 @@ Exhibit.LegendGradientWidget.prototype.addGradient = function(configuration) {
 	tableBody.appendChild(theRow3);
 	theTable.appendChild(tableBody);
 	
-	this._row1 = theRow1;
-	this._row2 = theRow2;
-	this._row3 = theRow3;
+	this._theRow1 = theRow1;
+	this._theRow2 = theRow2;
+	this._theRow3 = theRow3;
 
-	var globLowPoint = gradientArray[0].value;
-	var globHighPoint = gradientArray[gradientArray.length - 1].value;
+	var globLowPoint = gradientPoints[0].value;
+	var globHighPoint = gradientPoints[gradientPoints.length - 1].value;
 	var stepSize = (globHighPoint - globLowPoint) / 50;
 	var counter = 0;
 	
-	for(var i = 0; i < gradientArray.length-1; i++) {
-		var lowPoint = gradientArray[i].value;
-		var highPoint = gradientArray[i+1].value;
+	for(var i = 0; i < gradientPoints.length-1; i++) {
+		var lowPoint = gradientPoints[i].value;
+		var highPoint = gradientPoints[i+1].value;
 		
 		var colorRect = document.createElement("td");
-		colorRect.style.backgroundColor = "rgb(" + gradientArray[i].red + "," + gradientArray[i].green + "," + gradientArray[i].blue + ")";
-		//colorRect.style.width="0.2em";
+		colorRect.style.backgroundColor = "rgb(" + gradientPoints[i].red + "," + gradientPoints[i].green + "," + gradientPoints[i].blue + ")";
 		var numberRect = document.createElement("td");
 		var textDiv = document.createElement("div");
-		var theText = document.createTextNode(gradientArray[i].value);
+		var theText = document.createTextNode(gradientPoints[i].value);
 		textDiv.appendChild(theText);
 		numberRect.appendChild(textDiv);
 		theRow1.appendChild(document.createElement("td"));
 		theRow2.appendChild(colorRect);
 		theRow3.appendChild(numberRect);
+		
+		colorRect.onmouseover = function() {
+			this.style.border="solid 1.2px";
+		};
+		colorRect.onmouseout = function() {
+			this.style.border="none";	
+		};
+		
 		counter++;
 		
 		for(var j = lowPoint + stepSize; j < highPoint; j += stepSize) {
 			var fraction = (j - lowPoint)/(highPoint - lowPoint);
-			var newRed = Math.floor(gradientArray[i].red + fraction*(gradientArray[i+1].red - gradientArray[i].red));
-			var newGreen = Math.floor(gradientArray[i].green + fraction*(gradientArray[i+1].green - gradientArray[i].green));
-			var newBlue = Math.floor(gradientArray[i].blue + fraction*(gradientArray[i+1].blue - gradientArray[i].blue));
+			var newRed = Math.floor(gradientPoints[i].red + fraction*(gradientPoints[i+1].red - gradientPoints[i].red));
+			var newGreen = Math.floor(gradientPoints[i].green + fraction*(gradientPoints[i+1].green - gradientPoints[i].green));
+			var newBlue = Math.floor(gradientPoints[i].blue + fraction*(gradientPoints[i+1].blue - gradientPoints[i].blue));
 			
 			var colorRect = document.createElement("td");
 			colorRect.count = counter;
@@ -89,21 +101,19 @@ Exhibit.LegendGradientWidget.prototype.addGradient = function(configuration) {
 			colorRect.onmouseover = function() {
 				this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.visibility="visible";
 				this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.overflow="visible";
-				this.style.border="solid 1px";
+				this.style.border="solid 1.2px";
 			};
 			colorRect.onmouseout = function() {
 				this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.visibility="hidden";
 				this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.overflow="hidden";
-				this.style.border="none";
-				
-				
+				this.style.border="none";	
 			};
 		};
 	};
 	
-	var high = gradientArray.length - 1
+	var high = gradientPoints.length - 1
 	var colorRect = document.createElement("td");
-	colorRect.style.backgroundColor = "rgb(" + gradientArray[high].red + "," + gradientArray[high].green + "," + gradientArray[high].blue + ")";
+	colorRect.style.backgroundColor = "rgb(" + gradientPoints[high].red + "," + gradientPoints[high].green + "," + gradientPoints[high].blue + ")";
 	var numberRect = document.createElement("td");
 	var textDiv = document.createElement("div");
 	var theText = document.createTextNode(globHighPoint);
@@ -114,27 +124,37 @@ Exhibit.LegendGradientWidget.prototype.addGradient = function(configuration) {
 	theRow3.appendChild(numberRect);
 	counter++;
 	
+	colorRect.onmouseover = function() {
+		this.style.border="solid 1.2px";
+	};
+	colorRect.onmouseout = function() {
+		this.style.border="none";	
+	};
+	
 	this._div.appendChild(theTable);
 };
 
 Exhibit.LegendGradientWidget.prototype.addEntry = function(color, label) {
 	var cell = document.createElement("td");
+	
 	cell.style.width="1.5em";
 	cell.style.height="2em";
-	this._row1.appendChild(cell);
-	this._row1.appendChild(document.createElement("td"));
-	this._row2.appendChild(document.createElement("td"));
-	this._row3.appendChild(document.createElement("td"));
+	this._theRow1.appendChild(cell);
+	this._theRow1.appendChild(document.createElement("td"));
+	this._theRow2.appendChild(document.createElement("td"));
+	this._theRow3.appendChild(document.createElement("td"));
 	
 	var colorCell = document.createElement("td");
+	
 	colorCell.style.backgroundColor = color;
-	this._row2.appendChild(colorCell);
+	this._theRow2.appendChild(colorCell);
 	
 	var labelCell = document.createElement("td");
 	var labelDiv = document.createElement("div");
+	
 	labelDiv.appendChild(document.createTextNode(label));
 	labelCell.appendChild(labelDiv);
-	this._row3.appendChild(labelCell);
+	this._theRow3.appendChild(labelCell);
 }	
 
 Exhibit.LegendGradientWidget.prototype.dispose = function() {

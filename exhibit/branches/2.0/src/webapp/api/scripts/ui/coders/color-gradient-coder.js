@@ -105,13 +105,11 @@ Exhibit.ColorGradientCoder.prototype.translate = function(key, flags) {
 					var newRed = Math.floor(gradientPoints[j].red + fraction*(gradientPoints[j+1].red - gradientPoints[j].red));
 					var newGreen = Math.floor(gradientPoints[j].green + fraction*(gradientPoints[j+1].green - gradientPoints[j].green));
 					var newBlue = Math.floor(gradientPoints[j].blue + fraction*(gradientPoints[j+1].blue - gradientPoints[j].blue));
-					return rgbToHex(newRed, newGreen, newBlue);
+					return rgbToHex(newRed, newGreen, newBlue)
 				}
 			}
 		}
 	}
-			
-	// rgb --> hex
 
 	var rgbToHex = function(r, g, b) {
 		var decToHex = function(n) {

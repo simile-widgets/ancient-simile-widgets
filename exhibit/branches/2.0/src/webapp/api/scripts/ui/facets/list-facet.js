@@ -11,6 +11,7 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     this._valueSet = new Exhibit.Set();
     
     this._settings = {};
+	this._height = Exhibit.getAttribute(containerElmt, "height");
     this._dom = null;
     
     var self = this;
@@ -52,7 +53,7 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
     );
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.ListFacet._settingSpecs, facet._settings);
-    
+	
     try {
         var expressionString = Exhibit.getAttribute(configElmt, "expression");
         if (expressionString != null && expressionString.length > 0) {
@@ -262,6 +263,10 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     var containerDiv = this._dom.valuesContainer;
     
     containerDiv.style.display = "none";
+	if (this._height) {
+		containerDiv.style.height = this._height;
+	}	
+	
         var facetHasSelection = this._valueSet.size() > 0;
         var constructValue = function(entry) {
             var onSelect = function(elmt, evt, target) {
