@@ -45,6 +45,8 @@ Timegrid.NMonthLayout.prototype.initializeGrid = function() {
 
     this.endTime = this.computeEndTime(this.startTime);
     
+    console.log(this.startTime, this.endTime);
+    
     // Compute the cell sizes for the grid
     this.computeCellSizes();
 
@@ -63,6 +65,7 @@ Timegrid.NMonthLayout.prototype.initializeGrid = function() {
 };
 
 Timegrid.NMonthLayout.prototype.renderEvents = function(doc) {
+    var config = this.config;
     var eventContainer = doc.createElement("div");
     var labelContainer = doc.createElement("div");
     var colorContainer = doc.createElement("div");
@@ -177,7 +180,7 @@ Timegrid.NMonthLayout.prototype.computeStartTime = function(date) {
 Timegrid.NMonthLayout.prototype.computeEndTime = function(date) {
     if (date) {
         var endTime = new Date(date);
-        endTime.addDays(this.ySize * 7);
+        endTime.addDays(this.config.get('ySize') * 7);
         return endTime;
     }
     return false;
@@ -220,8 +223,8 @@ Timegrid.NMonthLayout.prototype.computeLabels = function(date) {
     this.yLabels = [];
 
     // Iterate through and collect the tasty data
-    while (this.xMapper(gridStart) < config.get('xSize') && 
-           this.yMapper(gridStart) < config.get('ySize')) {
+    while (config.get('xMapper')(gridStart) < config.get('xSize') && 
+           config.get('yMapper')(gridStart) < config.get('ySize')) {
         var d = gridStart.time;
         this.cellLabels.push(d.getDate());
         this.months.push(d.getMonth());

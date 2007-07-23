@@ -28,7 +28,7 @@ Timegrid.Configuration = function(params, parent) {
     };
     
     this.get = function(name) {
-        if (this.contains(name)) {
+        if (this.containsInThis(name)) {
             return this.getInThis(name);
         } else if (this.getParent()) {
             return this.getParent().get(name);

@@ -104,6 +104,7 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
 };
 
 Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
+    var config = this.config;
     var jediv = $("<div><div>" + evt.getText() + "</div></div>");
     var length = (evt.getEnd() - evt.getStart()) / (1000 * 60 * 60.0);
     jediv.addClass("timegrid-event").addClass('timegrid-rounded-shadow');
@@ -158,7 +159,7 @@ Timegrid.NDayLayout.prototype.renderDate = function(date) {
 Timegrid.NDayLayout.prototype.computeStartTime = function(date) {
     if (date) {
         var startTime = new Date(date);
-        startTime.addDays(0 - this.n);
+        startTime.addDays(0 - this.config.get('n'));
         startTime.setHours(0);
         return startTime;
     }
@@ -168,7 +169,7 @@ Timegrid.NDayLayout.prototype.computeStartTime = function(date) {
 Timegrid.NDayLayout.prototype.computeEndTime = function(date) {
     if (date) {
         var endTime = new Date(date);
-        endTime.addDays(this.n);
+        endTime.addDays(this.config.get('n'));
         endTime.setHours(0);
         return endTime;
     }

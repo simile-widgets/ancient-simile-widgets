@@ -113,7 +113,6 @@ Timegrid.Layout.prototype.render = function(container) {
         $(this._container).width(config.get('width') + "px");
     }
     $(this._container).css('position', 'relative');
-
     gridWindowDiv.css("top", config.get('xLabelHeight'))
                  .css("left", config.get('yLabelWidth'))
                  .css("right", "0px").css("bottom", "0px");
@@ -139,7 +138,7 @@ Timegrid.Layout.prototype.render = function(container) {
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
     this._viewDiv.append(xLabels).append(yLabels);
-    $('.timegrid-rounded-shadow').prettybox(4,7,1,0.7);
+    $('.timegrid-view:visible .timegrid-rounded-shadow').prettybox(4,7,1,0.7);
     return this._viewDiv.get(0);
 };
 

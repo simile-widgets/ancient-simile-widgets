@@ -50,10 +50,10 @@ Timegrid.getConfigFromDOM = function(elmt) {
 
 Timegrid.getLayoutConfigFromDOM = function(elmt, name, parent) {
     var children = $(elmt).children();
+    var config = new Timegrid.Configuration({}, parent);
     children.each(function() {
         var attrs = $(this).attrs('tg');
         if (attrs.role == "view" && attrs.name == name) {
-            var config = new Timegrid.Configuration({}, parent);
             return new Timegrid.Configuration(attrs, config);
         }
     });
