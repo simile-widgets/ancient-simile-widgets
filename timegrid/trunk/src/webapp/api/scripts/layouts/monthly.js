@@ -8,7 +8,7 @@
 
 Timegrid.MonthLayout = function(eventSource, params) {
     params.n = 1;
-    params.title = 'Month';
+    params.title = params.title || 'Month';
     Timegrid.MonthLayout.superclass.call(this, eventSource, params);
 };
 Timegrid.LayoutFactory.registerLayout("month", Timegrid.MonthLayout);

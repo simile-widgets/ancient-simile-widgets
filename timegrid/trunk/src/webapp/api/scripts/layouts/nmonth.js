@@ -18,37 +18,25 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     this.configure(params);
     this.title = this.title || this.n + "-Month";
     
-    
     // Initialize our eventSource
     this.eventSource = eventSource;
     this.startTime   = this.eventSource.getEarliestDate() || new Date();
 
-    var roundToWeeks = function(date) {
-        return Math.floor(date / (1000 * 60 * 60 * 24 * 7.0));
-    };
-    
     // Configure our mappers
-    this.xMapper = function(obj) { return obj.time.getDay(); };
-    this.yMapper = function(obj) { return roundToWeeks(obj.time - self.startTime); };
-
-    this.startTime   = this.computeStartTime(this.startTime);
+    this.xMapper = function(obj) {
+        return obj.time.getDay();
+    };
+    this.yMapper = function(obj) { 
+        return Math.floor((obj.time - self.startTime) / 
+                          (1000 * 60 * 60 * 24 * 7.0)); 
+    };
     
     this.initializeGrid();
 };
 Timegrid.LayoutFactory.registerLayout("n-month", Timegrid.NMonthLayout);
 
 Timegrid.NMonthLayout.prototype.initializeGrid = function() {
-    this.dataStartTime = this.eventSource.getEarliestDate() || new Date();
-    // Use a method to compute cell and y-labels (non-trivial).  This method
-    // will also compute ySize based on n, an unfortunate grouping.
-    this.computeYSize(this.startTime);
-    this.computeLabels(this.startTime);
-
-    this.endTime = this.computeEndTime(this.startTime);
-    
-    // Compute the cell sizes for the grid
-    this.computeCellSizes();
-
+    this.computeDimensions();
     this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize, 
                                        this.xMapper, this.yMapper);
     if (this.startTime) {
@@ -59,6 +47,21 @@ Timegrid.NMonthLayout.prototype.initializeGrid = function() {
             this.eventGrid.addAll(endpoints);
         }
     }
+};
+
+Timegrid.NMonthLayout.prototype.computeDimensions = function() {
+    this.startTime = this.computeStartTime(this.startTime);
+    this.dataStartTime = this.eventSource.getEarliestDate() || new Date();
+    
+    // Use a method to compute cell and y-labels (non-trivial).  This method
+    // will also compute ySize based on n, an unfortunate grouping.
+    this.computeYSize(this.startTime);
+    this.computeLabels(this.startTime);
+
+    this.endTime = this.computeEndTime(this.startTime);
+    
+    // Compute the cell sizes for the grid
+    this.computeCellSizes();
 };
 
 Timegrid.NMonthLayout.prototype.renderEvents = function(doc) {
