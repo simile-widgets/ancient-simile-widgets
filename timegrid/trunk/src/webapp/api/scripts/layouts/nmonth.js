@@ -16,7 +16,7 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     this.iterable = false;
 
     this.configure(params);
-    this.title = this.n + "-Month";
+    this.title = this.title || this.n + "-Month";
     
     
     // Initialize our eventSource
