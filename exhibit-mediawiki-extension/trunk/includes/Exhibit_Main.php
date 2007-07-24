@@ -16,6 +16,8 @@
 
 $wgExtensionFunctions[] = "wfExhibitSetup";
 $exhibitEnabled = false;
+$includeMap = false;
+$includeTimeline = false;
 
 function wfExhibitSetup() {
 	global $wgParser;
@@ -36,10 +38,21 @@ function wfExhibitSetup() {
 function wfExhibitAddHTMLHeader(&$out) {
 	global $wgScriptPath;
 	global $exhibitEnabled;
+	global $includeMap;
+	global $includeTimeline;
+	
+	/*
+	 * Change this key to the one you get when you register for a Google Maps key here: 
+	 * http://www.google.com/apis/maps/signup.html
+	 */
+	$gmapkey = 'ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg';
 	
 	if ($exhibitEnabled) {	
-		$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false&gmapkey=ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg"></script><script>SimileAjax.History.enabled = false;</script>';
-		$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';		
+		$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false';
+		$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';				
+		if ($includeTimeline) { $ExhibitScript = $ExhibitScript . '&views=timeline'; }
+		if ($includeMap) { $ExhibitScript = $ExhibitScript . '&gmapkey=' . $gmapkey; }	
+		$ExhibitScript = $ExhibitScript . '" ></script><script>SimileAjax.History.enabled = false;</script>';
 		$out->addScript($ExhibitScript);
 		$out->addScript($WExhibitScript);
 	}
@@ -53,63 +66,70 @@ function wfExhibitAddHTMLHeader(&$out) {
  */
 function Exhibit_getHTMLResult( $input, $argv ) {
 	global $exhibitEnabled;
+	global $includeMap;
+	global $includeTimeline;
 	$exhibitEnabled = true;
 	if ($argv["disabled"]) {
 		$exhibitEnabled = false;
 	}
+	if ($argv["map"]) {
+		$includeMap = true;
+	}
+	if ($argv["timeline"]) {
+		$includeTimeline = true;
+	}
 
 	// use SimpleXML parser
 	$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
-	try {
-		$xml = new SimpleXMLElement($xmlstr);
-		
-		// <data>
-		$sourceData = array();
-		$sourceColumns = array();
-		$sourceHideTable = array();
-		foreach ($xml->source as $source) {
-			array_push($sourceData, $source);
-			array_push($sourceColumns, $source['columns']);
-			array_push($sourceHideTable, $source['hideTable']);
-		}	
-		$sourceData = implode(',', $sourceData);
-		$sourceColumns = implode(';', $sourceColumns);
-		$sourceHideTable = implode(',', $sourceHideTable);
-		
-		// <configuration>	
-		$facets = array();
-		foreach ($xml->facet as $facet) {
-			$attributes = array();
-			foreach ($facet->attributes() as $a => $b) {
-				$attr = $a."='".$b."'";
-			array_push( $attributes, $attr);
-		}
-		array_push( $facets, implode(',', $attributes));
-		}
-		$facets = implode(';', $facets);
-		
-		$views = array();
-		foreach ($xml->view as $view) {
-			$attributes = array();
-			foreach ($view->attributes() as $a => $b) {
-				$attr = $a."='".$b."'";
-			array_push( $attributes, $attr);
-		}
-		array_push( $views, implode(';', $attributes));
-		}
-		$views = implode('/', $views);
+	$xml = new SimpleXMLElement($xmlstr);
+	
+	// <data>
+	$sourceData = array();
+	$sourceColumns = array();
+	$sourceHideTable = array();
+	foreach ($xml->source as $source) {
+		array_push($sourceData, $source);
+		array_push($sourceColumns, $source['columns']);
+		array_push($sourceHideTable, $source['hideTable']);
+	}	
+	$sourceData = implode(',', $sourceData);
+	$sourceColumns = implode(';', $sourceColumns);
+	$sourceHideTable = implode(',', $sourceHideTable);
+	
+	// <configuration>	
+	$facets = array();
+	foreach ($xml->facet as $facet) {
+		$attributes = array();
+		foreach ($facet->attributes() as $a => $b) {
+			$attr = $a."='".$b."'";
+    		array_push( $attributes, $attr);
+    	}
+    	array_push( $facets, implode(',', $attributes));
+	}
+	$facets = implode(';', $facets);
+	
+	$views = array();
+	foreach ($xml->view as $view) {
+		$attributes = array();
+		foreach ($view->attributes() as $a => $b) {
+			$attr = $a."='".$b."'";
+    		array_push( $attributes, $attr);
+    	}
+    	array_push( $views, implode(';', $attributes));
+	}
+	$views = implode('/', $views);
 
-		$output = <<<OUTPUT
-		<script type="text/javascript">
-		var sourceData = "$sourceData".split(',');
-		var sourceColumns = "$sourceColumns".split(';');
-		var sourceHideTable = "$sourceHideTable".split(',');
-		var facets = "$facets".split(';');
-		var views = "$views".split('/');
-		</script>
-		<div id="exhibitLocation"></div>
+	$output = <<<OUTPUT
+	<script type="text/javascript">
+	var sourceData = "$sourceData".split(',');
+	var sourceColumns = "$sourceColumns".split(';');
+	var sourceHideTable = "$sourceHideTable".split(',');
+	var facets = "$facets".split(';');
+	var views = "$views".split('/');
+	</script>
+	<div id="exhibitLocation"></div>
 OUTPUT;
-	} catch( Exception $e) { $output = "<p>Something is wrong with the exhibit tags, sorry.</p>"; }	
+	
 	return $output;
 }
 
