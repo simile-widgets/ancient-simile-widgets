@@ -72,6 +72,10 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	if ($argv["disabled"]) {
 		$exhibitEnabled = false;
 	}
+
+	// use SimpleXML parser
+	$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
+	$xml = new SimpleXMLElement($xmlstr);
 	
 	foreach ($xml->view as $view) {
 		switch ((string) $view['viewClass']) {
@@ -82,10 +86,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			break;
 		}
 	}
-
-	// use SimpleXML parser
-	$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
-	$xml = new SimpleXMLElement($xmlstr);
+	
 	
 	// <data>
 	$sourceData = array();
