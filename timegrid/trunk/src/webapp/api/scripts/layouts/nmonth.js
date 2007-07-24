@@ -23,8 +23,8 @@ Timegrid.NMonthLayout = function(eventSource, config) {
     this.startTime   = this.eventSource.getEarliestDate() || new Date();
     
     // Configure our mappers
-    defaults.set('xMapper', function(obj) { return obj.time.getDay(); });
-    defaults.set('yMapper', function(obj) { 
+    this.config.set('xMapper', function(obj) { return obj.time.getDay(); });
+    this.config.set('yMapper', function(obj) { 
         return Math.floor((obj.time - self.startTime) /
                           (1000 * 60 * 60 * 24 * 7.0)); 
     });

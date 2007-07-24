@@ -48,6 +48,7 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, config) {
  */
 Timegrid.Layout = function(eventSource, config) {
     this.config = config;
+    this.config.setRoot(new Timegrid.Configuration({}));
     var defaults = this.config.getRoot();
     /**
      * The number of columns in the grid.

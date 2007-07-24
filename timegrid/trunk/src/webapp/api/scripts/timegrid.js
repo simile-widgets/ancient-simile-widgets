@@ -53,8 +53,7 @@ Timegrid.getLayoutConfigFromDOM = function(elmt, name, parent) {
     children.each(function() {
         var attrs = $(this).attrs('tg');
         if (attrs.role == "view" && attrs.name == name) {
-            return (new Timegrid.Configuration(attrs, parent))
-                   .setRoot(new Timegrid.Configuration({}));
+            return new Timegrid.Configuration(attrs, parent);
         }
     });
     return new Timegrid.Configuration({}, parent);
