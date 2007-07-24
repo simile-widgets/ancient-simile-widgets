@@ -30,10 +30,10 @@ Timegrid.LayoutFactory.registerLayout = function(name, constructor) {
  * @param params a hash of parameters to be passed into the desired layout
  * @return {Timegrid.Layout} a Timegrid.Layout instance of the specified subclass
  */
-Timegrid.LayoutFactory.createLayout = function(name, eventSource, config) {
+Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
     var constructor = Timegrid.LayoutFactory._constructors[name];
     if (typeof constructor == 'function') {
-        layout = new constructor(eventSource, config);
+        layout = new constructor(eventSource, params);
         return layout;
     } else {
         throw "No such layout!";   
@@ -46,27 +46,23 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, config) {
  * @class Layout is the base class for all layouts that Timegrid supports.
  * @constructor
  */
-Timegrid.Layout = function(eventSource, config) {
-    this.config = config;
-    var defaults = this.config.getRoot();
-    
+Timegrid.Layout = function(eventSource, params) {
+    this.params = params;
     /**
      * The number of columns in the grid.
      * @type int
      */
-    defaults.set('xSize', 0);
+    this.xSize = 0;
     /**
      * The number of rows in the grid.
      * @type int
      */
-    defaults.set('ySize', 0);
-    defaults.set('xMapper', function(obj) { return 0; });
-    defaults.set('yMapper', function(obj) { return 0; });
+    this.ySize = 0;
+    this.xMapper = function(obj) { return 0; };
+    this.yMapper = function(obj) { return 0; };
     
-    defaults.set('xLabelHeight', "2em");
-    defaults.set('yLabelWidth', "4em");
-    
-    defaults.set('height', 500);
+    this.xLabelHeight = "2em";
+    this.yLabelWidth = "4em";
 };
 
 Timegrid.Layout.prototype.configure = function(params) {
@@ -76,14 +72,9 @@ Timegrid.Layout.prototype.configure = function(params) {
 };
 
 Timegrid.Layout.prototype.computeCellSizes = function() {
-    var xSize = this.config.get('xSize');
-    var ySize = this.config.get('ySize');
-    var gridheight = this.config.get('gridheight');
-    console.log(xSize, ySize, gridheight);
     // Compute the cell sizes for the grid
-    var defaults = this.config.getRoot();
-    defaults.set('xCell', 100.0 / xSize);
-    defaults.set('yCell', (gridheight - 1) / ySize);
+    this.xCell = this.xCell || this.xcell || 100.0 / this.xSize;
+    this.yCell = this.yCell || this.ycell || (this.gridheight - 1) / this.ySize;
 };
 
 /**
@@ -94,8 +85,6 @@ Timegrid.Layout.prototype.computeCellSizes = function() {
  * @return a rendered DOM tree descended from a div element
  */
 Timegrid.Layout.prototype.render = function(container) {
-    var config = this.config;
-    var defaults = config.getRoot();
     if (container) {
         this._container = container;
         this._viewDiv = $("<div></div>").addClass('timegrid-view');
@@ -106,23 +95,24 @@ Timegrid.Layout.prototype.render = function(container) {
     var gridDiv = $('<div></div>').addClass('timegrid-grid');
     var gridWindowDiv = $('<div></div>').addClass('timegrid-grid-window');
     
-    if (this._container.style.height) { 
-        defaults.set('height', $(this._container).height()); 
+    if (!this.params.height) { 
+        this.height = this._container.style.height ? 
+            $(this._container).height() : 500; 
     }
-    $(this._container).height(config.get('height') + "px");
-    defaults.set('width', $(this._container).width()); 
-    if (config.containsInThis('width')) {
-        $(this._container).width(config.get('width') + "px");
+    $(this._container).height(this.height + "px");
+    if (!this.params.width) { 
+        this.width = $(this._container).width(); 
+    } else {
+        $(this._container).width(this.width + "px");
     }
     $(this._container).css('position', 'relative');
-    gridWindowDiv.css("top", config.get('xLabelHeight'))
-                 .css("left", config.get('yLabelWidth'))
+
+    gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
     this._viewDiv.append(gridWindowDiv.append(gridDiv));
-    defaults.set('gridwidth', gridWindowDiv.width() - config.get('scrollwidth'));
-    defaults.set('gridheight', gridWindowDiv.height() - config.get('scrollwidth'));
-    gridDiv.height(config.get('gridheight') + "px")
-           .width(config.get('gridwidth') + "px");
+    this.gridwidth = this.gridwidth || gridWindowDiv.width() - this.scrollwidth;
+    this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
+    gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
     this.computeCellSizes();
     gridDiv.append(this.renderEvents(document));
     gridDiv.append(this.renderGridlines(document));
@@ -140,65 +130,60 @@ Timegrid.Layout.prototype.render = function(container) {
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
     this._viewDiv.append(xLabels).append(yLabels);
-    $('.timegrid-view:visible .timegrid-rounded-shadow').prettybox(4,7,1,0.7);
+    $('.timegrid-view:visible .timegrid-rounded-shadow').prettybox(4,7,1,0.7); 
     return this._viewDiv.get(0);
 };
 
 Timegrid.Layout.prototype.renderEvents = Timegrid.abstract("renderEvents");
 
 Timegrid.Layout.prototype.renderGridlines = function(doc) {
-    var config = this.config;
     var gridlineContainer = doc.createElement("div");
     $(gridlineContainer).addClass("timegrid-gridlines");
-    for (var x = 0; x < config.get('xSize'); x++) { // Vertical lines
+    for (var x = 0; x < this.xSize; x++) { // Vertical lines
         var vlineDiv = $("<div></div>").addClass("timegrid-vline");
-        vlineDiv.css("height", config.get('gridheight') + "px");
-        vlineDiv.css("left", x * config.get('xCell') + "%");
+        vlineDiv.css("height", this.gridheight + "px");
+        vlineDiv.css("left", x * this.xCell + "%");
         $(gridlineContainer).append(vlineDiv);
     }
-    for (var y = 0; y <= config.get('ySize'); y++) { // Horizontal lines
+    for (var y = 0; y <= this.ySize; y++) { // Horizontal lines
         var hlineDiv = $("<div></div>").addClass("timegrid-hline");
         hlineDiv.css("width", "100%");
-        hlineDiv.css("top", y * config.get('yCell'));
+        hlineDiv.css("top", y * this.yCell);
         $(gridlineContainer).append(hlineDiv);
     }
     return gridlineContainer;
 };
 
 Timegrid.Layout.prototype.renderXLabels = function() {
-    var config = this.config;
     var xLabelContainer = $('<div></div>').addClass('timegrid-xlabels-window');
-    var xLabelsDiv = $('<div></div>').width(config.get('width'));
-    xLabelsDiv.height(config.get('xLabelHeight')).css("top", "0px");
-    xLabelsDiv.width(config.get('gridwidth') + "px");
+    var xLabelsDiv = $('<div></div>').width(this.width);
+    xLabelsDiv.height(this.xLabelHeight).css("top", "0px");
+    xLabelsDiv.width(this.gridwidth + "px");
     xLabelContainer.append(xLabelsDiv.addClass('timegrid-xlabels'));
-    xLabelContainer.height(config.get('xLabelHeight'));
-    xLabelContainer.css("right", config.get('scrollwidth') + "px");
-    xLabelContainer.css("left", config.get('yLabelWidth'));
+    xLabelContainer.height(this.xLabelHeight);
+    xLabelContainer.css("right", this.scrollwidth + "px");
+    xLabelContainer.css("left", this.yLabelWidth);
     var labels = this.getXLabels();
     for (i in labels) {
         var label = $('<div class="timegrid-label">' + labels[i] + '</div>');
-        label.width(config.get('xCell') + '%')
-             .css('left', i * config.get('xCell') + '%');
+        label.width(this.xCell + '%').css('left', i * this.xCell + '%');
         xLabelsDiv.append(label);
     }    
     return xLabelContainer.get(0);
 };
 
 Timegrid.Layout.prototype.renderYLabels = function() {
-    var config = this.config;
     var yLabelContainer = $('<div></div>').addClass('timegrid-ylabels-window');
-    var yLabelsDiv = $('<div></div>').height(config.get('gridheight') + "px");
-    yLabelsDiv.width(config.get('yLabelWidth')).css("left", "0px");
+    var yLabelsDiv = $('<div></div>').height(this.gridheight + "px");
+    yLabelsDiv.width(this.yLabelWidth).css("left", "0px");
     yLabelContainer.append(yLabelsDiv.addClass('timegrid-ylabels'));
-    yLabelContainer.width(config.get('yLabelWidth'));
-    yLabelContainer.css("top", config.get('xLabelHeight'));
-    yLabelContainer.css("bottom", config.get('scrollwidth') + "px");
+    yLabelContainer.width(this.yLabelWidth);
+    yLabelContainer.css("top", this.xLabelHeight);
+    yLabelContainer.css("bottom", this.scrollwidth + "px");
     var labels = this.getYLabels();
     for (i in labels) {
         var label = $('<div class="timegrid-label">' + labels[i] + '</div>');
-        label.height(config.get('yCell') + 'px')
-             .css('top', i * config.get('yCell') + 'px');
+        label.height(this.yCell + 'px').css('top', i * this.yCell + 'px');
         yLabelsDiv.append(label);
     }
     return yLabelContainer.get(0);

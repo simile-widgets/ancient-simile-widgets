@@ -13,28 +13,24 @@
   * @extends Timegrid.Layout
   * @constructor
   */
-Timegrid.NDayLayout = function(eventSource, config) {
-    Timegrid.NDayLayout.superclass.call(this, eventSource, config);
+Timegrid.NDayLayout = function(eventSource, params) {
+    Timegrid.NDayLayout.superclass.call(this, eventSource, params);
     var self = this;
-    var defaults = config.getRoot();
-        
-    this.iterable = true;
     
     // Specifications for a week layout
-    config.set('xSize', 7);
-    config.set('ySize', 24);
-    config.set('xMapper', function(obj) { 
-        return (new SimileAjax.DateTime.Interval(obj.time - self.startTime)).days;
-    });
-    config.set('yMapper', function(obj) { 
-        return obj.time.getHours() + obj.time.getMinutes() / 60; 
-    });
+    this.xSize = 7;
+    this.ySize = 24;
+    this.iterable = true;
+    this.xMapper = function(obj) { return (new SimileAjax.DateTime.Interval(obj.time - self.startTime)).days; };
+    this.yMapper = function(obj) { return obj.time.getHours() +
+                                          obj.time.getMinutes() / 60; };
     
     // These are default values that can be overridden in configure
-    defaults.set('n', 3);
+    this.n      = 3;
     
-    defaults.set('title', config.get('n') + "-Day");
-    defaults.set('xSize', config.get('n'));
+    this.configure(params);
+    this.title = this.n + "-Day";
+    this.xSize = this.n;
     this.computeCellSizes();
     
     // Initialize our eventSource
@@ -68,15 +64,14 @@ Timegrid.NDayLayout.prototype.initializeGrid = function() {
 };
 
 Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
-    var config = this.config;
     var eventContainer = doc.createElement("div");
     $(eventContainer).addClass("timegrid-events");
     var currentEvents = {};
     var currentCount = 0;
-    for (var i in this.endpoints) {
+    for (i in this.endpoints) {
         var endpoint = this.endpoints[i];
-        var x = config.get('xMapper')(endpoint);
-        var y = config.get('yMapper')(endpoint);
+        var x = this.xMapper(endpoint);
+        var y = this.yMapper(endpoint);
         if (endpoint.type == "start") {
             // Render the event
             var eventDiv = this.renderEvent(endpoint.event, x, y);
@@ -86,10 +81,10 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
             currentCount++;
             // Adjust widths and offsets as necessary
             var hIndex = 0;
-            for (var id in currentEvents) {
+            for (id in currentEvents) {
                 var eDiv = currentEvents[id];
-                var newWidth = config.get('xCell') / currentCount;
-                var newLeft = config.get('xCell') * x + newWidth * hIndex;
+                var newWidth = this.xCell / currentCount;
+                var newLeft = this.xCell * x + newWidth * hIndex;
                 $(eDiv).css("width", newWidth + "%");
                 $(eDiv).css("left", newLeft + "%");
                 hIndex++;
@@ -104,13 +99,12 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
 };
 
 Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
-    var config = this.config;
     var jediv = $("<div><div>" + evt.getText() + "</div></div>");
     var length = (evt.getEnd() - evt.getStart()) / (1000 * 60 * 60.0);
     jediv.addClass("timegrid-event").addClass('timegrid-rounded-shadow');
-    jediv.css("height", config.get('yCell') * length);
-    jediv.css("top", config.get('yCell') * y);
-    jediv.css("left", config.get('xCell') * x + '%');
+    jediv.css("height", this.yCell * length);
+    jediv.css("top", this.yCell * y);
+    jediv.css("left", this.xCell * x + '%');
     return jediv.get()[0]; // Return the actual DOM element
 };
 
@@ -118,8 +112,7 @@ Timegrid.NDayLayout.prototype.getXLabels = function() {
     var date = new Date(this.startTime);
     var labels = [];
     while (date < this.endTime) {
-        labels.push(Date.abbrDayNames[date.getDay()] + " " + 
-                    this.renderDate(date));
+        labels.push(Date.abbrDayNames[date.getDay()] + " " + this.renderDate(date));
         date.setHours(24);
     }
     return labels;
@@ -159,7 +152,7 @@ Timegrid.NDayLayout.prototype.renderDate = function(date) {
 Timegrid.NDayLayout.prototype.computeStartTime = function(date) {
     if (date) {
         var startTime = new Date(date);
-        startTime.addDays(0 - this.config.get('n'));
+        startTime.addDays(0 - this.n);
         startTime.setHours(0);
         return startTime;
     }
@@ -169,7 +162,7 @@ Timegrid.NDayLayout.prototype.computeStartTime = function(date) {
 Timegrid.NDayLayout.prototype.computeEndTime = function(date) {
     if (date) {
         var endTime = new Date(date);
-        endTime.addDays(this.config.get('n'));
+        endTime.addDays(this.n);
         endTime.setHours(0);
         return endTime;
     }

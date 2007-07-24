@@ -28,7 +28,6 @@
             "util/jquery.dimensions.js",
             "util/jquery.prettybox.js",
             
-            "config.js",
             "controls.js",
             "listeners.js",
             "grid.js",

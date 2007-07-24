@@ -20,10 +20,10 @@ Timegrid.Controls.Panel = function(layouts, params) {
 
 Timegrid.Controls.Panel.prototype.render = function(container) {
     var first = true;
-    var titles = $.map(this._layouts, function(l) { return l.config.get('title'); });
+    var titles = $.map(this._layouts, function(l) { return l.title; });
     var tabSet = new Timegrid.Controls.TabSet(titles, this._layouts);
     tabSet.render(container);
-    tabSet.switchTo(tabSet.current || titles[0]);
+    tabSet.switchTo(titles[0]);
 };
 
 /*
