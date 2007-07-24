@@ -41,8 +41,20 @@ Timegrid.Configuration = function(params, parent) {
         return parent;
     };
     
+    this.setParent = function(config) {
+        parent = config;
+    };
+    
     this.isRoot = function() {
         return parent == null;
+    };
+    
+    this.getRoot = function() {
+        return this.getParent() ? this.getParent().getRoot() : this;
+    };
+    
+    this.setRoot = function(config) {
+        this.getRoot().setParent(config);
     };
     
 };

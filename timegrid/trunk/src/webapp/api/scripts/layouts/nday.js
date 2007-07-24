@@ -16,7 +16,7 @@
 Timegrid.NDayLayout = function(eventSource, config) {
     Timegrid.NDayLayout.superclass.call(this, eventSource, config);
     var self = this;
-    var defaults = config.getParent();
+    var defaults = config.getRoot();
         
     this.iterable = true;
     

@@ -50,14 +50,14 @@ Timegrid.getConfigFromDOM = function(elmt) {
 
 Timegrid.getLayoutConfigFromDOM = function(elmt, name, parent) {
     var children = $(elmt).children();
-    var config = new Timegrid.Configuration({}, parent);
     children.each(function() {
         var attrs = $(this).attrs('tg');
         if (attrs.role == "view" && attrs.name == name) {
-            return new Timegrid.Configuration(attrs, config);
+            return (new Timegrid.Configuration(attrs, parent))
+                   .setRoot(new Timegrid.Configuration({}));
         }
     });
-    return new Timegrid.Configuration({}, config);
+    return new Timegrid.Configuration({}, parent);
 };
 
 Timegrid.loadXML = function(url, f) {

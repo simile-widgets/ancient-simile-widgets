@@ -9,7 +9,7 @@
 Timegrid.NMonthLayout = function(eventSource, config) {
     Timegrid.NMonthLayout.superclass.call(this, eventSource, config);
     var self = this;
-    var defaults = config.getParent();
+    var defaults = config.getRoot();
     
     this.iterable = false; // TODO: Implement n-month iterating
 
@@ -44,8 +44,6 @@ Timegrid.NMonthLayout.prototype.initializeGrid = function() {
     this.computeLabels(this.startTime);
 
     this.endTime = this.computeEndTime(this.startTime);
-    
-    console.log(this.startTime, this.endTime);
     
     // Compute the cell sizes for the grid
     this.computeCellSizes();

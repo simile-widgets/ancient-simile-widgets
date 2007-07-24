@@ -48,7 +48,7 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, config) {
  */
 Timegrid.Layout = function(eventSource, config) {
     this.config = config;
-    var defaults = this.config.getParent();
+    var defaults = this.config.getRoot();
     /**
      * The number of columns in the grid.
      * @type int
@@ -79,7 +79,7 @@ Timegrid.Layout.prototype.computeCellSizes = function() {
     var ySize = this.config.get('ySize');
     var gridheight = this.config.get('gridheight');
     // Compute the cell sizes for the grid
-    var defaults = this.config.getParent();
+    var defaults = this.config.getRoot();
     defaults.set('xCell', 100.0 / xSize);
     defaults.set('yCell', (gridheight - 1) / ySize);
 };
@@ -93,7 +93,7 @@ Timegrid.Layout.prototype.computeCellSizes = function() {
  */
 Timegrid.Layout.prototype.render = function(container) {
     var config = this.config;
-    var defaults = config.getParent();
+    var defaults = config.getRoot();
     if (container) {
         this._container = container;
         this._viewDiv = $("<div></div>").addClass('timegrid-view');
