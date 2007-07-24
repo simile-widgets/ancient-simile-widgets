@@ -93,7 +93,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	$sourceColumns = array();
 	$sourceHideTable = array();
 	foreach ($xml->source as $source) {
-		array_push($sourceData, $source);
+		array_push($sourceData, $source['id']);
 		array_push($sourceColumns, $source['columns']);
 		array_push($sourceHideTable, $source['hideTable']);
 	}	
