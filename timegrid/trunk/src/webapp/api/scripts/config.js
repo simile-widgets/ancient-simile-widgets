@@ -8,7 +8,6 @@
  */
 Timegrid.Configuration = function(params, parent) {
     var params = $.clone(params);
-    var parent = parent;
     
     this.containsInThis = function(name) {
         return name in params;
@@ -55,6 +54,15 @@ Timegrid.Configuration = function(params, parent) {
     
     this.setRoot = function(config) {
         this.getRoot().setParent(config);
+        console.log("setRoot called.");
+        this.printTree();
+        console.log("with");
+        config.printTree();
+    };
+    
+    this.printTree = function() {
+        console.log(params);
+        if (this.getParent()) { this.getParent().printTree(); }
     };
     
 };
