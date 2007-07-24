@@ -72,11 +72,15 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	if ($argv["disabled"]) {
 		$exhibitEnabled = false;
 	}
-	if ($argv["map"]) {
-		$includeMap = true;
-	}
-	if ($argv["timeline"]) {
-		$includeTimeline = true;
+	
+	foreach ($xml->view as $view) {
+		switch ((string) $view['viewClass']) {
+		case 'Map':
+			$includeMap = true;
+		case 'Timeline':
+			$includeTimeline = true;
+			break;
+		}
 	}
 
 	// use SimpleXML parser
