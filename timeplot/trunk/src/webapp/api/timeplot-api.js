@@ -90,7 +90,7 @@
         var scriptURLs = Timeplot.params.js || [];
         var cssURLs = Timeplot.params.css || [];
         
-        var timelineURL = (debug) ? "/timeline/api/" : "http://static.simile.mit.edu/timeline/api/";
+        var timelineURL = (debug) ? "/timeline/api/" : "http://static.simile.mit.edu/timeline/api-2.0/";
 
         // External components
         scriptURLs.push(timelineURL + "timeline-api.js?bundle=" + ((debug) ? "false" : "true"));
