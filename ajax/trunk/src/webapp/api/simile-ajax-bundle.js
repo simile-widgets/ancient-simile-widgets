@@ -742,7 +742,20 @@ return new Date(date.getTime()+
 timeZone*SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR]);
 };
 
-
+SimileAjax.DateTime.getTimezone=function(){
+var d=new Date();
+var utcHours=d.getUTCHours();
+var utcDay=d.getUTCDate();
+var localHours=d.getHours();
+var localDay=d.getDate();
+if(utcDay==localDay){
+return localHours-utcHours;
+}else if(utcHours>12){
+return 24-utcHours+localHours;
+}else{
+return-(utcHours+24-localHours);
+}
+};
 
 /* debug.js */
 
