@@ -72,6 +72,12 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	if ($argv["disabled"]) {
 		$exhibitEnabled = false;
 	}
+	if ($argv["map"]) {
+		$includeMap = true;
+	}
+	if ($argv["timeline"]) {
+		$includeTimeline = true;
+	}
 
 	// use SimpleXML parser
 	$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
@@ -109,9 +115,9 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			$attr = $a."='".$b."'";
     		array_push( $attributes, $attr);
     	}
-    	array_push( $facets, implode(',', $attributes));
+    	array_push( $facets, implode(';', $attributes));
 	}
-	$facets = implode(';', $facets);
+	$facets = implode('/', $facets);
 	
 	$views = array();
 	foreach ($xml->view as $view) {
@@ -129,7 +135,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	var sourceData = "$sourceData".split(',');
 	var sourceColumns = "$sourceColumns".split(';');
 	var sourceHideTable = "$sourceHideTable".split(',');
-	var facets = "$facets".split(';');
+	var facets = "$facets".split('/');
 	var views = "$views".split('/');
 	</script>
 	<div id="exhibitLocation"></div>
