@@ -41,7 +41,7 @@ showValues:("showValues"in params)?params.showValues:false,
 roundValues:("roundValues"in params)?params.roundValues:true,
 valuesOpacity:("valuesOpacity"in params)?params.valuesOpacity:75,
 bubbleWidth:("bubbleWidth"in params)?params.bubbleWidth:300,
-bubbleHeight:("bubbleHeight"in params)?params.bubbleHeight:200,
+bubbleHeight:("bubbleHeight"in params)?params.bubbleHeight:200
 };
 };
 
@@ -57,6 +57,7 @@ background:[],
 foreground:[]
 };
 this._painter=null;
+this._active=false;
 this._initialize();
 };
 
@@ -128,26 +129,13 @@ return this._containerDiv.clientHeight;
 },
 
 
-getInternalWidth:function(){
-var w=window.getComputedStyle(this._containerDiv,null).getPropertyValue("width");
-w=parseInt(w.replace("px",""));
-return w;
-},
-
-
-getInternalHeight:function(){
-var h=window.getComputedStyle(this._containerDiv,null).getPropertyValue("height");
-h=parseInt(h.replace("px",""));
-return h;
-},
-
-
 getCanvas:function(){
 return this._canvas;
 },
 
 
 loadText:function(url,separator,eventSource,filter){
+if(this._active){
 var tp=this;
 
 var fError=function(statusText,status,xmlhttp){
@@ -167,10 +155,12 @@ tp.hideLoadingMessage();
 
 this.showLoadingMessage();
 window.setTimeout(function(){SimileAjax.XmlHttp.get(url,fError,fDone);},0);
+}
 },
 
 
 loadXML:function(url,eventSource){
+if(this._active){
 var tl=this;
 
 var fError=function(statusText,status,xmlhttp){
@@ -192,6 +182,7 @@ tl.hideLoadingMessage();
 
 this.showLoadingMessage();
 window.setTimeout(function(){SimileAjax.XmlHttp.get(url,fError,fDone);},0);
+}
 },
 
 
@@ -308,8 +299,10 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 _prepareCanvas:function(){
 var canvas=this.getCanvas();
 
-canvas.width=this.getInternalWidth();
-canvas.height=this.getInternalHeight();
+var s=SimileAjax.DOM.getSize(this._containerDiv);
+
+canvas.width=s.w;
+canvas.height=s.h;
 
 this._paddingX=(this.getWidth()-canvas.width)/2;
 this._paddingY=(this.getHeight()-canvas.height)/2;
@@ -320,7 +313,17 @@ ctx.scale(1,-1);
 ctx.globalCompositeOperation='source-over';
 },
 
+_isBrowserSupported:function(canvas){
+var browser=SimileAjax.Platform.browser;
+if(canvas.getContext&&window.getComputedStyle){
+return true;
+}else{
+return false;
+}
+},
+
 _initialize:function(){
+
 
 
 SimileAjax.WindowManager.initialize();
@@ -336,13 +339,13 @@ while(containerDiv.firstChild){
 containerDiv.removeChild(containerDiv.firstChild);
 }
 
+var canvas=doc.createElement("canvas");
+
+if(this._isBrowserSupported(canvas)){
 
 var labels=doc.createElement("div");
 containerDiv.appendChild(labels);
 
-var canvas=doc.createElement("canvas");
-
-if(canvas.getContext){
 this._canvas=canvas;
 canvas.className="timeplot-canvas";
 this._prepareCanvas();
@@ -398,14 +401,20 @@ message.contentDiv.innerHTML="<img src='http://static.simile.mit.edu/timeline/ap
 this.showLoadingMessage=function(){message.containerDiv.style.display="block";};
 this.hideLoadingMessage=function(){message.containerDiv.style.display="none";};
 
+this._active=true;
+
 }else{
 
 this._message=SimileAjax.Graphics.createMessageBubble(doc);
 this._message.containerDiv.className="timeplot-message-container";
+this._message.containerDiv.style.top="15%";
+this._message.containerDiv.style.left="28%";
+this._message.containerDiv.style.right="28%";
 this._message.contentDiv.className="timeplot-message";
-this._message.contentDiv.innerHTML="We're sorry, but your web browser is not currently supported by Timeplot.";
-this.appendChild(this._message.containerDiv);
+this._message.contentDiv.innerHTML="We're terribly sorry, but your browser is not currently supported by <a href='http://simile.mit.edu/timeplot/'>Timeplot</a>.<br><br> We are working on supporting it in the near future but, for now, see the <a href='http://simile.mit.edu/wiki/Timeplot_Limitations'>list of currently supported browsers</a>.";
 this._message.containerDiv.style.display="block";
+
+containerDiv.appendChild(this._message.containerDiv);
 
 }
 }
@@ -1041,7 +1050,7 @@ Object.extend(Timeplot.ColumnDiffSource.prototype,Timeplot.ColumnSource.prototyp
 
 Timeplot.ColumnDiffSource.prototype._getValue=function(event){
 var a=parseFloat(event.getValues()[this._column]);
-var b=parseFloat(event.getValues()[this._column2])
+var b=parseFloat(event.getValues()[this._column2]);
 return a-b;
 }
 
