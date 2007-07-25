@@ -38,6 +38,10 @@ function createExhibit() {
 	 * formatted in the same form as specifications in the HTML of a regular exhibit.
 	 */
 	if (facets && (facets[0] !== "")) {
+		var leftFacets = [];
+		var rightFacets = [];
+		var topFacets = [];
+		var bottomFacets = [];
 		var facetHTML = "";
 		for (var i = 0; i < facets.length; i++) {
 			var attrs = facets[i].split(';');
@@ -45,10 +49,37 @@ function createExhibit() {
 			for (var j = 0; j < attrs.length; j++) {
 				attrHTML = attrHTML + ' ex:' + attrs[j];
 			}
-			facetHTML = facetHTML + '<div ex:role="facet" ' + attrHTML + ' ></div>';
+			
+			var facetDiv = document.createElement('div');
+			facetDiv.innerHTML = '<div ex:role="facet" ' + attrHTML + ' ></div>';
+			
+			var facetPosition = 'right';			
+			if (facetDiv.lastChild.getAttribute('ex:position')) { facetPosition = facetDiv.lastChild.getAttribute('ex:position'); }			
+			if (facetPosition == 'left') { leftFacets.push(facetDiv.lastChild); }
+			if (facetPosition == 'right') { rightFacets.push(facetDiv.lastChild); }
+			if (facetPosition == 'top') { topFacets.push(facetDiv); }
+			if (facetPosition == 'bottom') { bottomFacets.push(facetDiv); }
 		}
-		document.getElementById("facets").innerHTML = facetHTML;
+		for (var i = 0; i < topFacets.length; i++) {
+			document.getElementById('top-facets').appendChild(topFacets[i]);
+			topFacets[i].lastChild.setAttribute('style', 'padding: 2px; float: left; width: 15em');
+		}
+		for (var i = 0; i < bottomFacets.length; i++) {
+			document.getElementById('bottom-facets').appendChild(bottomFacets[i]);
+			bottomFacets[i].lastChild.setAttribute('style', 'padding: 2px; float: left; width: 15em');
+		}
+		for (var i = 0; i < leftFacets.length; i++) { 
+			var leftFacetTd = document.getElementById('left-facets');
+			leftFacetTd.setAttribute('width', '20%');
+			leftFacetTd.appendChild(leftFacets[i]);
+		}	
+		for (var i = 0; i < rightFacets.length; i++) { 
+			var rightFacetTd = document.getElementById('right-facets');
+			rightFacetTd.setAttribute('width', '20%');
+			rightFacetTd.appendChild(rightFacets[i]);
+		}
 	}
+	
 	if (views && (views[0] !== "")) {
 		var viewHTML = "";
 		for (var i = 0; i < views.length; i++) {
