@@ -155,7 +155,7 @@
         </Item>
         <Item>
           <New id="aContext" class="org.mortbay.jetty.handler.ContextHandler">
-            <Set name="contextPath">/timeline/api</Set>
+            <Set name="contextPath">/timeline/api-2.0</Set>
             <Set name="resourceBase">../timeline/src/webapp/api</Set>
             <Set name="handler">
               <New id="javadocServletHandler" class="org.mortbay.jetty.servlet.ServletHandler">

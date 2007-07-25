@@ -19,7 +19,8 @@
         }
     }
     
-    var loadMe = function() {
+    // Load Timeplot if it's not already loaded (after SimileAjax and Timeline)
+    var loadTimeplot = function() {
     	
         if (typeof window.Timeplot != "undefined") {
             return;
@@ -89,12 +90,7 @@
 
         var scriptURLs = Timeplot.params.js || [];
         var cssURLs = Timeplot.params.css || [];
-        
-        var timelineURL = (debug) ? "/timeline/api/" : "http://static.simile.mit.edu/timeline/api-2.0/";
 
-        // External components
-        scriptURLs.push(timelineURL + "timeline-api.js?bundle=" + ((debug) ? "false" : "true"));
-        
         // Core scripts and styles
         if (Timeplot.params.bundle) {
             scriptURLs.push(Timeplot.urlPrefix + "timeplot-bundle.js");
@@ -105,10 +101,9 @@
         }
         
         // Localization
-        for (var i = 0; i < locales.length; i++) {
-            scriptURLs.push(Timeplot.urlPrefix + "locales/" + locales[i] + "/locale.js");
-            scriptURLs.push(timelineURL + "scripts/l10n/" + locales[i] + "/labellers.js");
-        };
+        //for (var i = 0; i < locales.length; i++) {
+        //    scriptURLs.push(Timeplot.urlPrefix + "locales/" + locales[i] + "/locale.js");
+        //};
         
         if (Timeplot.params.callback) {
             window.SimileAjax_onLoad = function() {
@@ -121,9 +116,20 @@
         Timeplot.loaded = true;
     };
 
+    // Load Timeline if it's not already loaded (after SimileAjax and before Timeplot)
+    var loadTimeline = function() {
+        if (typeof Timeline != "undefined") {
+            loadTimeplot();
+        } else {
+            var timelineURL = (debug) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
+            window.SimileAjax_onLoad = loadTimeplot;
+            SimileAjax.includeJavascriptFile(document, timelineURL);
+        }
+    };
+    
     // Load SimileAjax if it's not already loaded
     if (typeof SimileAjax == "undefined") {
-        window.SimileAjax_onLoad = loadMe;
+        window.SimileAjax_onLoad = loadTimeline;
         
         var url = debug ?
             "/ajax/api-2.0/simile-ajax-api.js?bundle=false" :
@@ -147,6 +153,6 @@
             createScriptElement();
         }
     } else {
-        loadMe();
+        loadTimeline();
     }
 })();
