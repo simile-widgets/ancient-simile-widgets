@@ -17,7 +17,7 @@
         }        
         
         .timeplot-grid-label {
-            color: #BBB;
+            color: #666;
             font-family: 'verdana', 'helvetica', sans serif;
             font-size: 9px !important;
         }
@@ -71,12 +71,19 @@
             var quietLine  = new Timeplot.Color('#82A6A2');
             var loudLine   = new Timeplot.Color('#284452');
             var lightFill  = new Timeplot.Color('#DEE5D1');
-            var gridColor  = new Timeplot.Color('#B0B0B0');
+            var gridColor  = new Timeplot.Color('#888888');
+
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "top",
+                min: 0
+            });
     
             var webTraffic = new Timeplot.ColumnSource(eventSource,2);
             var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
             var webGeometry = new Timeplot.DefaultValueGeometry({
                 gridColor: gridColor,
+                axisLabelsPlacement: "left",
                 min: 0
             });
             
@@ -85,12 +92,14 @@
                     id: "web clean",
                     dataSource: webTraffic,
                     valueGeometry: webGeometry,
+                    timeGeometry: timeGeometry,
                     lineColor: quietLine,
                 }),
                 Timeplot.createPlotInfo({
                     id: "web clean avg",
                     dataSource: avgWebTraffic,
                     valueGeometry: webGeometry,
+                    timeGeometry: timeGeometry,
                     lineColor: loudLine,
                     showValues: true
                 }),
@@ -98,6 +107,7 @@
                     id: "events",
                     eventSource: eventSource2,
                     valueGeometry: webGeometry,
+                    timeGeometry: timeGeometry,
                     lineColor: loudLine
                 })
             ];
@@ -108,6 +118,7 @@
 
             var crawlersGeometry = new Timeplot.DefaultValueGeometry({
                 gridColor: gridColor,
+                axisLabelsPlacement: "left",
                 min: 0,
             });
             var plotsInfo2 = [
@@ -115,6 +126,7 @@
                     id: "crawlers",
                     dataSource: new Timeplot.ColumnDiffSource(eventSource,1,2),
                     valueGeometry: crawlersGeometry,
+                    timeGeometry: timeGeometry,
                     lineColor: quietLine,
                     fillColor: quietLine.lighten(30),
                     showValues: true
@@ -122,7 +134,7 @@
                 Timeplot.createPlotInfo({
                     id: "events",
                     eventSource: eventSource2,
-                    valueGeometry: crawlersGeometry,
+                    timeGeometry: timeGeometry,
                     lineColor: loudLine
                 })
             ];
@@ -134,6 +146,7 @@
             var summedNews = new Timeplot.Processor(news,Timeplot.Operator.sum);
             var newsGeometry = new Timeplot.DefaultValueGeometry({
                 gridColor: gridColor,
+                axisLabelsPlacement: "left",
                 min: 0,
             });
             
@@ -141,6 +154,7 @@
                 Timeplot.createPlotInfo({ 
                     id: "cumulative news",
                     dataSource: summedNews,
+                    timeGeometry: timeGeometry,
                     lineColor: loudLine,
                     fillColor: lightFill,
                     showValues: true
@@ -148,12 +162,14 @@
                 Timeplot.createPlotInfo({ 
                     id: "news",
                     dataSource: news,
+                    timeGeometry: timeGeometry,
                     valueGeometry: newsGeometry,
                     lineColor: quietLine
                 }),
                 Timeplot.createPlotInfo({ 
                     id: "smoothed news",
                     dataSource: smoothedNews,
+                    timeGeometry: timeGeometry,
                     valueGeometry: newsGeometry,
                     lineColor: loudLine,
                     showValues: true
@@ -161,6 +177,7 @@
                 Timeplot.createPlotInfo({
                     id: "events",
                     eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
                     valueGeometry: newsGeometry,
                     lineColor: loudLine
                 })
@@ -180,6 +197,7 @@
             var smoothedSolventDownloads = new Timeplot.Processor(solventDownloads,Timeplot.Operator.average, { size: 4 });
             downloadGeometry = new Timeplot.LogarithmicValueGeometry({
                 gridColor: gridColor,
+                axisLabelsPlacement: "left",
                 min: 0,
             });
             
@@ -193,6 +211,7 @@
                 Timeplot.createPlotInfo({
                     id: "gadget-smoothed",
                     dataSource: smoothedGadgetDownloads,
+                    timeGeometry: timeGeometry,
                     valueGeometry: downloadGeometry,
                     lineColor: blue,
                     showValues: true
@@ -200,6 +219,7 @@
                 Timeplot.createPlotInfo({
                     id: "longwell-smoothed",
                     dataSource: smoothedLongwellDownloads,
+                    timeGeometry: timeGeometry,
                     valueGeometry: downloadGeometry,
                     lineColor: yellow,
                     showValues: true
@@ -207,6 +227,7 @@
                 Timeplot.createPlotInfo({
                     id: "welkin-smoothed",
                     dataSource: smoothedWelkinDownloads,
+                    timeGeometry: timeGeometry,
                     valueGeometry: downloadGeometry,
                     lineColor: azur,
                     showValues: true
@@ -221,6 +242,7 @@
                 Timeplot.createPlotInfo({
                     id: "piggybank-smoothed",
                     dataSource: smoothedPiggybankDownloads,
+                    timeGeometry: timeGeometry,
                     valueGeometry: downloadGeometry,
                     lineColor: red,
                     showValues: true
@@ -228,7 +250,7 @@
                 Timeplot.createPlotInfo({
                     id: "events",
                     eventSource: eventSource2,
-                    valueGeometry: downloadGeometry,
+                    timeGeometry: timeGeometry,
                     lineColor: loudLine
                 })
             ];

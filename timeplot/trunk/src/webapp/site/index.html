@@ -13,7 +13,7 @@
         }        
         
         .timeplot-grid-label {
-            color: #888;
+            color: #333;
             font-family: 'verdana', 'helvetica', sans serif;
             font-size: 9px !important;
         }
@@ -36,11 +36,11 @@
             var green = new Timeplot.Color('#468966');
             var lightGreen = new Timeplot.Color('#5C832F');
             
-            var gridColor  = new Timeplot.Color('#303030');
+            var gridColor  = new Timeplot.Color('#000000');
 
             var timeGeometry = new Timeplot.DefaultTimeGeometry({
                 gridColor: gridColor,
-                timeValuePosition: "top" 
+                axisLabelsPlacement: "top"
             });
 
             var geometry1 = new Timeplot.DefaultValueGeometry({

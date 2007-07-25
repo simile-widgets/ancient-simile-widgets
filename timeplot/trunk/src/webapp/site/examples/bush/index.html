@@ -17,7 +17,7 @@
         }        
         
         .timeplot-grid-label {
-            color: #193441;
+            color: #333;
             font-family: 'verdana', 'helvetica', sans serif;
             font-size: 9px !important;
         }
@@ -35,14 +35,15 @@
 
         var fill = new Timeplot.Color('#D1DBBD');
         var line = new Timeplot.Color('#193441');
+        var event = new Timeplot.Color('#cc0000');
 
-        var gridColor  = new Timeplot.Color('#303030');
+        var gridColor  = new Timeplot.Color('#000000');
 
-        
         function onLoad() {
 
             var timeGeometry = new Timeplot.DefaultTimeGeometry({
-                gridColor: gridColor
+                gridColor: gridColor,
+                axisLabelsPlacement: "top"
             });
 
             var geometry = new Timeplot.DefaultValueGeometry({
@@ -72,7 +73,7 @@
                     eventSource: eventSource2,
                     timeGeometry: timeGeometry,
                     valueGeometry: geometry,
-                    lineColor: line
+                    lineColor: event
                 })                
             ];
             
