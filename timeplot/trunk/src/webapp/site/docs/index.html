@@ -35,7 +35,8 @@
 <pre>&lt;html&gt;
   &lt;head&gt;
     ...
-    <span class="highlight">&lt;script src="<a href="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js">http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js</a>" type="text/javascript"&gt;&lt;/script&gt;</span>
+    <span class="highlight">&lt;script src="<a href="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js">http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js</a>" 
+       type="text/javascript"&gt;&lt;/script&gt;</span>
     ...
   &lt;/head&gt;
   &lt;body&gt;
@@ -174,7 +175,34 @@ function onResize() {
     
     <p><div id="timeplot3" class="timeplot" style="height: 150px"></div></p>
 
-    <h3>Step 7. Change the plot colors</h3>
+    <h3>Step 7. Add labels to the time axis</h3>
+    
+    <p>You can tell Timeplot to add labels to the time axis by configuring the <span class="code">TimeGeometry</span>
+    just like we just did for the <span class="code">ValueGeometry</span>:
+<pre>
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+      valueGeometry: new Timeplot.DefaultValueGeometry({
+        gridColor: "#000000",
+        axisLabelsPlacement: "left",
+        min: 0,
+        max: 100
+      }),
+<span class="highlight">      timeGeometry: new Timeplot.DefaultTimeGeometry({
+        gridColor: "#000000",
+        axisLabelsPlacement: "top"
+      })</span>
+    })
+  ];
+</pre>
+    
+     which results in:</p>
+     
+     <p><div id="timeplot4" class="timeplot" style="height: 150px"></div></p>
+
+    <h3>Step 8. Change the plot colors</h3>
     
     <p>You can configure the stroke and fill color of your plot by setting
     parameters of the <span class="code">PlotInfo</span>:
@@ -189,6 +217,10 @@ function onResize() {
         min: 0,
         max: 100
       }),
+      timeGeometry: new Timeplot.DefaultTimeGeometry({
+        gridColor: new Timeplot.Color("#000000"),
+        axisLabelsPlacement: "top"
+      }),      
 <span class="highlight">      lineColor: "#ff0000",
       fillColor: "#cc8080"</span>
     })
@@ -197,9 +229,9 @@ function onResize() {
     
      which results in:</p>
      
-     <p><div id="timeplot4" class="timeplot" style="height: 150px"></div></p>
+     <p><div id="timeplot5" class="timeplot" style="height: 150px"></div></p>
              
-    <h3>Step 8. Show Plot values on Mouse over</h3>
+    <h3>Step 9. Show Plot values on Mouse over</h3>
     
     <p>You can configure the plot so that going over it with your mouse will visualize
     the actual time represented by that location in the plot and the value of the plot 
@@ -215,6 +247,10 @@ function onResize() {
         min: 0,
         max: 100
       }),
+      timeGeometry: new Timeplot.DefaultTimeGeometry({
+        gridColor: new Timeplot.Color("#000000"),
+        axisLabelsPlacement: "top"
+      }),
       lineColor: "#ff0000",
       fillColor: "#cc8080",
       <span class="highlight">showValues: true</span>
@@ -224,9 +260,9 @@ function onResize() {
     
      which results in:</p>
      
-     <p><div id="timeplot5" class="timeplot" style="height: 150px"></div></p>
+     <p><div id="timeplot6" class="timeplot" style="height: 150px"></div></p>
     
-    <h3>Step 9. Adding another plot over the current one</h3>
+    <h3>Step 10. Adding another plot over the current one</h3>
     
     <p>You can draw multiple plots in the same timeplot, either using the same <em>geometry</em> 
     of another one or not, depending on what you want to achieve. If two plots share the same geometry
@@ -234,7 +270,10 @@ function onResize() {
     own scale. Here we want to plot another column from the same data source, using the same geometries
     for both time and values so that they all overlap:
 <pre>
-  <span class="highlight">var timeGeometry = new Timeplot.DefaultTimeGeometry();
+  <span class="highlight">var timeGeometry = new Timeplot.DefaultTimeGeometry({
+    gridColor: new Timeplot.Color("#000000"),
+    axisLabelsPlacement: "top"
+  });
 
   var valueGeometry = new Timeplot.DefaultValueGeometry({
     gridColor: "#000000",
@@ -265,9 +304,9 @@ function onResize() {
     
      which results in:</p>
      
-     <p><div id="timeplot6" class="timeplot" style="height: 150px"></div></p>
+     <p><div id="timeplot7" class="timeplot" style="height: 150px"></div></p>
 
-    <h3>Step 10. Overlaying events over the plots</h3>
+    <h3>Step 11. Overlaying events over the plots</h3>
     
     <p>Timeplot can load <a href="http://simile.mit.edu/timeline/">Timeline</a> events and overlay
     the over plots. Here is how to do it and note how we keep using the same geometries for both
@@ -297,7 +336,7 @@ function onResize() {
       id: "plot3",
       timeGeometry: timeGeometry,
       eventSource: eventSource2,
-      lineColor: "#85DB18"
+      lineColor: "#03212E"
     </span>
   ];
   
@@ -308,7 +347,7 @@ function onResize() {
     
      which results in:</p>
      
-     <p><div id="timeplot7" class="timeplot" style="height: 150px"></div></p>
+     <p><div id="timeplot8" class="timeplot" style="height: 150px"></div></p>
         
 </div>
 </body>

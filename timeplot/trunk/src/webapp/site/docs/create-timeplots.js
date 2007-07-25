@@ -39,22 +39,24 @@ function onLoad() {
           })
        })
     ];
-    
+
     var plotInfo4 = [
        Timeplot.createPlotInfo({
           id: "plot1",
           dataSource: new Timeplot.ColumnSource(eventSource,1),
           valueGeometry: new Timeplot.DefaultValueGeometry({
-            gridColor: "#000000",
+            gridColor: new Timeplot.Color("#000000"),
             axisLabelsPlacement: "left",
             max: 100,
             min: 0
           }),
-          lineColor: "#ff0000",
-          fillColor: "#cc8080",
+          timeGeometry: new Timeplot.DefaultTimeGeometry({
+            gridColor: new Timeplot.Color("#000000"),
+            axisLabelsPlacement: "top"
+          })
        })
     ];
-
+    
     var plotInfo5 = [
        Timeplot.createPlotInfo({
           id: "plot1",
@@ -65,13 +67,39 @@ function onLoad() {
             max: 100,
             min: 0
           }),
+          timeGeometry: new Timeplot.DefaultTimeGeometry({
+            gridColor: new Timeplot.Color("#000000"),
+            axisLabelsPlacement: "top"
+          }),
+          lineColor: "#ff0000",
+          fillColor: "#cc8080",
+       })
+    ];
+
+    var plotInfo6 = [
+       Timeplot.createPlotInfo({
+          id: "plot1",
+          dataSource: new Timeplot.ColumnSource(eventSource,1),
+          valueGeometry: new Timeplot.DefaultValueGeometry({
+            gridColor: "#000000",
+            axisLabelsPlacement: "left",
+            max: 100,
+            min: 0
+          }),
+          timeGeometry: new Timeplot.DefaultTimeGeometry({
+            gridColor: new Timeplot.Color("#000000"),
+            axisLabelsPlacement: "top"
+          }),
           lineColor: "#ff0000",
           fillColor: "#cc8080",
           showValues: true
        })
     ];
 
-    var timeGeometry1 = new Timeplot.DefaultTimeGeometry();
+    var timeGeometry1 = new Timeplot.DefaultTimeGeometry({
+        gridColor: new Timeplot.Color("#000000"),
+        axisLabelsPlacement: "top"
+    });
 
     var valueGeometry = new Timeplot.DefaultValueGeometry({
         gridColor: "#000000",
@@ -79,7 +107,7 @@ function onLoad() {
         max: 100
     });
       
-    var plotInfo6 = [
+    var plotInfo7 = [
 	    Timeplot.createPlotInfo({
 		  id: "plot1",
 		  dataSource: new Timeplot.ColumnSource(eventSource,1),
@@ -101,9 +129,12 @@ function onLoad() {
 
     var eventSource2 = new Timeplot.DefaultEventSource();
 
-    var timeGeometry2 = new Timeplot.DefaultTimeGeometry();
+    var timeGeometry2 = new Timeplot.DefaultTimeGeometry({
+        gridColor: new Timeplot.Color("#000000"),
+        axisLabelsPlacement: "top"
+    });
 
-    var plotInfo7 = [
+    var plotInfo8 = [
         Timeplot.createPlotInfo({
           id: "plot1",
           dataSource: new Timeplot.ColumnSource(eventSource,1),
@@ -125,7 +156,7 @@ function onLoad() {
           id: "plot3",
           timeGeometry: timeGeometry2,
           eventSource: eventSource2,
-          lineColor: "#85DB18",
+          lineColor: "#03212E",
         })
     ];
                   
@@ -137,6 +168,7 @@ function onLoad() {
     timeplots[5] = Timeplot.create(document.getElementById("timeplot5"), plotInfo5);
     timeplots[6] = Timeplot.create(document.getElementById("timeplot6"), plotInfo6);
     timeplots[7] = Timeplot.create(document.getElementById("timeplot7"), plotInfo7);
+    timeplots[8] = Timeplot.create(document.getElementById("timeplot8"), plotInfo8);
 
     timeplots[1].loadText("../examples/bush/bush_ratings.txt", ",", eventSource);
     timeplots[1].loadXML("../examples/bush/bush_events.xml", eventSource2);
