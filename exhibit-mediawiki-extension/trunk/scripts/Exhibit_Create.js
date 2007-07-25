@@ -20,7 +20,9 @@ function createExhibit() {
 		} else {
 			ths[0].setAttribute('ex:name', 'label');
 			for (var c = 1; c < ths.length; c++) {
-				var label = ths[c].textContent.toLowerCase();
+				//Safari uses innerText instead of textContent, so:
+				var thetext = ths[c].textContent || ths[c].innerText;
+				var label = thetext.toLowerCase();
 				label = label.replace(/\s/g,'');
 				ths[c].setAttribute('ex:name', label);
 			}
