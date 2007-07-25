@@ -31,7 +31,7 @@ function createExhibit() {
 	}
 
 	var exhibitDiv = document.getElementById('exhibitLocation');
-	exhibitDiv.innerHTML = "<table width='100%'><tr valign='top'><td><div id='view'></div></td><td width='20%' id='facets'></td></tr></table>";		
+	exhibitDiv.innerHTML = "<table width='100%'><tr><td><div id='top-facets'></div></td></tr><tr id='exhibit-content' valign='top'><td id='left-facets' width='0%'></td><td id='view-content'><div id='view'></div></td><td id='right-facets' width='0%'></td></tr></table><div id='bottom-facets'></div>";		
 
 	/*
 	 * Configuration: We're creating HTML strings that specify the configurations, 
