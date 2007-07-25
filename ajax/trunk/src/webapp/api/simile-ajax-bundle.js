@@ -915,19 +915,25 @@ return{left:left,top:top};
 };
 
 SimileAjax.DOM.getSize=function(elmt){
-if(window.getComputedStyle){
-var cs=window.getComputedStyle(elmt,null);
+var w=this.getStyle(elmt,"width");
+var h=this.getStyle(elmt,"height");
+if(w.indexOf("px")>-1)w=w.replace("px","");
+if(h.indexOf("px")>-1)h=h.replace("px","");
 return{
-w:parseInt(cs.getPropertyValue("width").replace(/px/,'')),
-h:parseInt(cs.getPropertyValue("height").replace(/px/,''))
+w:w,
+h:h
 }
+}
+
+SimileAjax.DOM.getStyle=function(elmt,styleProp){
+if(elmt.currentStyle){
+var style=elmt.currentStyle[styleProp];
+}else if(window.getComputedStyle){
+var style=document.defaultView.getComputedStyle(elmt,null).getPropertyValue(styleProp);
 }else{
-SimileAjax.Debug.log("window.getComputedStyle is not supported");
-return{
-w:0,
-h:0
+var style="";
 }
-}
+return style;
 }
 
 SimileAjax.DOM.getEventRelativeCoordinates=function(evt,elmt){
