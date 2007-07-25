@@ -335,6 +335,6 @@ Object.extend(Timeplot.ColumnDiffSource.prototype,Timeplot.ColumnSource.prototyp
 
 Timeplot.ColumnDiffSource.prototype._getValue = function(event) {
     var a = parseFloat(event.getValues()[this._column]);
-    var b = parseFloat(event.getValues()[this._column2])
+    var b = parseFloat(event.getValues()[this._column2]);
     return a - b;
 }
