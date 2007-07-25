@@ -21,9 +21,7 @@ Timeplot.Plot = function(timeplot, plotInfo) {
     this._plotInfo = plotInfo;
     this._id = plotInfo.id;
     this._timeGeometry = plotInfo.timeGeometry;
-    this._timeGeometry.initialize(timeplot);
     this._valueGeometry = plotInfo.valueGeometry;
-    this._valueGeometry.initialize(timeplot);
     this._showValues = plotInfo.showValues;
     this._theme = new Timeline.getDefaultTheme();
     this._dataSource = plotInfo.dataSource;
@@ -73,6 +71,11 @@ Timeplot.Plot.prototype = {
 			        if (x > c.width) x = c.width;
 			        if (isNaN(x) || x < 0) x = 0;
 			        var t = plot._timeGeometry.fromScreen(x);
+			        if (t == 0) { // something is wrong
+                        plot._valueFlag.style.display = "none";
+			        	return;
+			        }
+			        
 			        var v = plot._dataSource.getValue(t);
 			        if (plot._plotInfo.roundValues) v = Math.round(v);
 			        plot._valueFlag.innerHTML = new String(v);
@@ -317,7 +320,7 @@ Timeplot.Plot.prototype = {
                     	var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
                     	var elmtCoords = SimileAjax.DOM.getPageCoordinates(elmt);
                         plot._bubble = SimileAjax.Graphics.createBubbleForPoint(coords.x, elmtCoords.top + plot._canvas.height, plot._plotInfo.bubbleWidth, plot._plotInfo.bubbleHeight, "bottom");
-                        event.fillInfoBubble(plot._bubble.content, plot._theme, plot._labeller);
+                        event.fillInfoBubble(plot._bubble.content, plot._theme, plot._timeGeometry.getLabeler());
                     }
                 };
                 var mouseOverHandler = function(elmt, evt, target) {

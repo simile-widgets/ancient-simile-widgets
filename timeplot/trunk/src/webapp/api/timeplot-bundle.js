@@ -18,8 +18,8 @@ return destination;
 
 
 
-Timeplot.create=function(elmt,plotInfos,unit){
-return new Timeplot._Impl(elmt,plotInfos,unit);
+Timeplot.create=function(elmt,plotInfos){
+return new Timeplot._Impl(elmt,plotInfos);
 };
 
 
@@ -48,7 +48,7 @@ bubbleHeight:("bubbleHeight"in params)?params.bubbleHeight:200,
 
 
 
-Timeplot._Impl=function(elmt,plotInfos,unit){
+Timeplot._Impl=function(elmt,plotInfos){
 this._id="t"+Math.round(Math.random()*1000000);
 this._containerDiv=elmt;
 this._plotInfos=plotInfos;
@@ -57,7 +57,6 @@ background:[],
 foreground:[]
 };
 this._painter=null;
-this._unit=(unit!=null)?unit:Timeline.NativeDateUnit;
 this._initialize();
 };
 
@@ -143,11 +142,6 @@ return h;
 },
 
 
-getUnit:function(){
-return this._unit;
-},
-
-
 getCanvas:function(){
 return this._canvas;
 },
@@ -201,8 +195,8 @@ window.setTimeout(function(){SimileAjax.XmlHttp.get(url,fError,fDone);},0);
 },
 
 
-putText:function(text,clazz,styles){
-var div=this.putDiv(text,"timeplot-div "+clazz,styles);
+putText:function(id,text,clazz,styles){
+var div=this.putDiv(id,"timeplot-div "+clazz,styles);
 div.innerHTML=text;
 return div;
 },
@@ -238,12 +232,6 @@ styles[style]+=this._paddingY;
 div.style[style]=styles[style];
 }
 }
-},
-
-
-removeDiv:function(div){
-var parent=div.parentNode;
-parent.removeChild(div);
 },
 
 
@@ -287,22 +275,25 @@ if(this._painter==null){
 var timeplot=this;
 this._painter=window.setTimeout(function(){
 timeplot._clearCanvas();
-var background=timeplot._painters.background;
-for(var i=0;i<background.length;i++){
+
+var run=function(action,context){
 try{
-background[i].action.apply(background[i].context,[]);
+if(context.setTimeplot)context.setTimeplot(timeplot);
+action.apply(context,[]);
 }catch(e){
 SimileAjax.Debug.exception(e);
 }
+}
+
+var background=timeplot._painters.background;
+for(var i=0;i<background.length;i++){
+run(background[i].action,background[i].context);
 }
 var foreground=timeplot._painters.foreground;
 for(var i=0;i<foreground.length;i++){
-try{
-foreground[i].action.apply(foreground[i].context,[]);
-}catch(e){
-SimileAjax.Debug.exception(e);
+run(foreground[i].action,foreground[i].context);
 }
-}
+
 timeplot._painter=null;
 },20);
 }
@@ -432,9 +423,7 @@ this._canvas=timeplot.getCanvas();
 this._plotInfo=plotInfo;
 this._id=plotInfo.id;
 this._timeGeometry=plotInfo.timeGeometry;
-this._timeGeometry.initialize(timeplot);
 this._valueGeometry=plotInfo.valueGeometry;
-this._valueGeometry.initialize(timeplot);
 this._showValues=plotInfo.showValues;
 this._theme=new Timeline.getDefaultTheme();
 this._dataSource=plotInfo.dataSource;
@@ -482,6 +471,11 @@ var x=Math.round(SimileAjax.DOM.getEventRelativeCoordinates(evt,plot._canvas).x)
 if(x>c.width)x=c.width;
 if(isNaN(x)||x<0)x=0;
 var t=plot._timeGeometry.fromScreen(x);
+if(t==0){
+plot._valueFlag.style.display="none";
+return;
+}
+
 var v=plot._dataSource.getValue(t);
 if(plot._plotInfo.roundValues)v=Math.round(v);
 plot._valueFlag.innerHTML=new String(v);
@@ -716,7 +710,7 @@ plot._closeBubble();
 var coords=SimileAjax.DOM.getEventPageCoordinates(evt);
 var elmtCoords=SimileAjax.DOM.getPageCoordinates(elmt);
 plot._bubble=SimileAjax.Graphics.createBubbleForPoint(coords.x,elmtCoords.top+plot._canvas.height,plot._plotInfo.bubbleWidth,plot._plotInfo.bubbleHeight,"bottom");
-event.fillInfoBubble(plot._bubble.content,plot._theme,plot._labeller);
+event.fillInfoBubble(plot._bubble.content,plot._theme,plot._timeGeometry.getLabeler());
 }
 };
 var mouseOverHandler=function(elmt,evt,target){
@@ -1083,9 +1077,10 @@ this._labels=[];
 Timeplot.DefaultValueGeometry.prototype={
 
 
-initialize:function(timeplot){
+setTimeplot:function(timeplot){
 this._timeplot=timeplot;
 this._canvas=timeplot.getCanvas();
+this.reset();
 },
 
 
@@ -1110,29 +1105,30 @@ this._gridSpacing=this._calculateGridSpacing();
 reset:function(){
 this._updateMappedValues();
 this._gridSpacing=this._calculateGridSpacing();
-for(var i=0;i<this._labels.length;i++){
-this._timeplot.removeDiv(this._labels[i]);
-}
-this._labels=[];
 },
 
 
 toScreen:function(value){
-if(this._maxValue){
+if(this._canvas&&this._maxValue){
 var v=value-this._minValue;
 return this._canvas.height*(this._map.direct(v))/this._mappedRange;
+}else{
+return-50;
+}
+},
+
+
+fromScreen:function(y){
+if(this._canvas){
+return this._map.inverse(this._mappedRange*y/this._canvas.height)+this._minValue;
 }else{
 return 0;
 }
 },
 
 
-fromScreen:function(y){
-return this._map.inverse(this._mappedRange*y/this._canvas.height)+this._minValue;
-},
-
-
 paint:function(){
+if(this._timeplot){
 var ctx=this._canvas.getContext('2d');
 
 var gradient=ctx.createLinearGradient(0,0,0,this._canvas.height);
@@ -1156,12 +1152,12 @@ ctx.lineTo(this._canvas.width,y);
 ctx.stroke();
 
 if(this._axisLabelsPlacement=="right"){
-var div=this._timeplot.putText(value,"timeplot-grid-label",{
+var div=this._timeplot.putText(this._id+"-"+counter,value,"timeplot-grid-label",{
 bottom:y,
 right:2
 });
 }else if(this._axisLabelsPlacement=="left"){
-var div=this._timeplot.putText(value,"timeplot-grid-label",{
+var div=this._timeplot.putText(this._id+"-"+counter,value,"timeplot-grid-label",{
 bottom:y,
 left:2
 });
@@ -1192,6 +1188,7 @@ ctx.beginPath();
 ctx.moveTo(this._canvas.width,0);
 ctx.lineTo(this._canvas.width,this._canvas.height);
 ctx.stroke();
+}
 },
 
 
@@ -1271,9 +1268,9 @@ this.actLogarithmic();
 Timeplot.DefaultTimeGeometry=function(params){
 if(!params)params={};
 this._id=("id"in params)?params.id:"g"+Math.round(Math.random()*1000000);
-this._locale=("locale"in params)?params.locale:SimileAjax.Platform.getDefaultLocale();
-this._timeZone=("timeZone"in params)?plotInfo.params:0;
-this._labeller=("labeller"in params)?plotInfo.params:null;
+this._locale=("locale"in params)?params.locale:"en";
+this._timeZone=("timeZone"in params)?params.timeZone:SimileAjax.DateTime.getTimezone();
+this._labeller=("labeller"in params)?params.labeller:null;
 this._axisColor=("axisColor"in params)?((params.axisColor=="string")?new Timeplot.Color(params.axisColor):params.axisColor):new Timeplot.Color("#606060"),
 this._gridColor=("gridColor"in params)?((params.gridColor=="string")?new Timeplot.Color(params.gridColor):params.gridColor):null,
 this._gridLineWidth=("gridLineWidth"in params)?params.gridLineWidth:0.5;
@@ -1283,6 +1280,7 @@ this._gridStepRange=("gridStepRange"in params)?params.gridStepRange:20;
 this._min=("min"in params)?params.min:null;
 this._max=("max"in params)?params.max:null;
 this._timeValuePosition=("timeValuePosition"in params)?params.timeValuePosition:"bottom";
+this._unit=("unit"in params)?params.unit:Timeline.NativeDateUnit;
 this._linMap={
 direct:function(t){
 return t;
@@ -1292,23 +1290,24 @@ return x;
 }
 }
 this._map=this._linMap;
-this._labels=[];
-}
-
-Timeplot.DefaultTimeGeometry.prototype={
-
-
-initialize:function(timeplot){
-this._timeplot=timeplot;
-if(this._labeler==null)this._labeler=timeplot.getUnit().createLabeller(this._locale,this._timeZone);
-this._canvas=timeplot.getCanvas();
-var dateParser=this._timeplot.getUnit().getParser("iso8601");
+this._labeler=this._unit.createLabeller(this._locale,this._timeZone);
+var dateParser=this._unit.getParser("iso8601");
 if(this._min&&!this._min.getTime){
 this._min=dateParser(this._min);
 }
 if(this._max&&!this._max.getTime){
 this._max=dateParser(this._max);
 }
+this._grid=[];
+}
+
+Timeplot.DefaultTimeGeometry.prototype={
+
+
+setTimeplot:function(timeplot){
+this._timeplot=timeplot;
+this._canvas=timeplot.getCanvas();
+this.reset();
 },
 
 
@@ -1326,7 +1325,7 @@ this._latestDate=range.latestDate;
 }
 
 if(!this._earliestDate&&!this._latestDate){
-this._gridSpacing={x:0,unit:0,value:0};
+this._grid=[];
 }else{
 this.reset();
 }
@@ -1335,26 +1334,26 @@ this.reset();
 
 reset:function(){
 this._updateMappedValues();
-this._gridSpacing=this._calculateGridSpacing();
-for(var i=0;i<this._labels.length;i++){
-this._timeplot.removeDiv(this._labels[i]);
-}
-this._labels=[];
+if(this._canvas)this._grid=this._calculateGrid();
 },
 
 
 toScreen:function(time){
-if(this._latestDate){
+if(this._canvas&&this._latestDate){
 var t=time-this._earliestDate.getTime();
 return this._canvas.width*this._map.direct(t)/this._mappedPeriod;
 }else{
-return 0;
+return-50;
 }
 },
 
 
 fromScreen:function(x){
+if(this._canvas){
 return this._map.inverse(this._mappedPeriod*x/this._canvas.width)+this._earliestDate.getTime();
+}else{
+return 0;
+}
 },
 
 
@@ -1363,8 +1362,19 @@ return this._period;
 },
 
 
+getLabeler:function(){
+return this._labeler;
+},
+
+
+getUnit:function(){
+return this._unit;
+},
+
+
 paint:function(){
-var unit=this._timeplot.getUnit();
+if(this._canvas){
+var unit=this._unit;
 var ctx=this._canvas.getContext('2d');
 
 var gradient=ctx.createLinearGradient(0,0,0,this._canvas.height);
@@ -1378,38 +1388,30 @@ if(this._gridColor){
 gradient.addColorStop(0,this._gridColor.toString());
 gradient.addColorStop(1,"rgba(255,255,255,0.9)");
 
-var x=this._gridSpacing.x;
-var value=unit.toNumber(this._earliestDate)+this._gridSpacing.value;
-var counter=1;
-while(x<this._canvas.width){
-var _label=this._labeler.labelInterval(unit.fromNumber(value),this._gridSpacing.unit).text;
+for(var i=0;i<this._grid.length;i++){
+var tick=this._grid[i];
 if(this._axisLabelsPlacement=="top"){
-var div=this._timeplot.putText(_label,"timeplot-grid-label",{
-left:x+2,
+var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
+left:tick.x+4,
 top:2,
 visibility:"hidden"
 });
 }else if(this._axisLabelsPlacement=="bottom"){
-var div=this._timeplot.putText(_label,"timeplot-grid-label",{
-left:x+2,
+var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
+left:tick.x+4,
 bottom:2,
 visibility:"hidden"
 });
 }
-this._labels.push(div);
-if(x+div.clientWidth<this._canvas.width+10){
+if(tick.x+div.clientWidth<this._canvas.width+10){
 div.style.visibility="visible";
 }
 
 
 ctx.beginPath();
-ctx.moveTo(x,0);
-ctx.lineTo(x,this._canvas.height);
+ctx.moveTo(tick.x,0);
+ctx.lineTo(tick.x,this._canvas.height);
 ctx.stroke();
-
-x+=this._gridSpacing.x;
-value+=this._gridSpacing.value;
-counter++;
 }
 }
 
@@ -1424,34 +1426,66 @@ ctx.beginPath();
 ctx.moveTo(0,0);
 ctx.lineTo(this._canvas.width,0);
 ctx.stroke();
+}
 },
 
 
-_calculateGridSpacing:function(){
-var u=this._timeplot.getUnit();
-var lib=SimileAjax.DateTime;
-var step=this._gridStep;
-var range=this._gridStepRange;
-var t=this.fromScreen(step);
-var date=u.fromNumber(t);
-for(var unit=lib.MILLENNIUM;unit>0;unit--){
-var d=u.cloneValue(date);
-lib.roundDownToInterval(d,unit,this._timeZone,1,0);
-var t2=u.toNumber(d);
-var x=this.toScreen(t2);
-if(step-range<x&&x<step+range){
-return{
-x:x,
-unit:unit,
-value:t2-u.toNumber(this._earliestDate),
+_calculateGrid:function(){
+var grid=[];
+
+var time=SimileAjax.DateTime;
+var u=this._unit;
+var p=this._period;
+
+if(p==0)return grid;
+
+
+if(p>time.gregorianUnitLengths[time.MILLENNIUM]){
+unit=time.MILLENNIUM;
+}else{
+for(var unit=time.MILLENNIUM;unit>0;unit--){
+if(time.gregorianUnitLengths[unit-1]<=p&&p<time.gregorianUnitLengths[unit]){
+unit--;
+break;
 }
 }
 }
-return{
-x:step,
-unit:lib.MILLISECOND,
-value:t-u.toNumber(this._earliestDate)
+
+var t=u.cloneValue(this._earliestDate);
+
+do{
+time.roundDownToInterval(t,unit,this._timeZone,1,0);
+var x=this.toScreen(u.toNumber(t));
+switch(unit){
+case time.SECOND:
+var l=t.toLocaleTimeString();
+break;
+case time.MINUTE:
+var m=t.getMinutes();
+var l=t.getHours()+":"+((m<10)?"0":"")+m;
+break;
+case time.HOUR:
+var l=t.getHours()+":00";
+break;
+case time.DAY:
+case time.WEEK:
+case time.MONTH:
+var l=t.toLocaleDateString();
+break;
+case time.YEAR:
+case time.DECADE:
+case time.CENTURY:
+case time.MILLENNIUM:
+var l=t.getUTCFullYear();
+break;
 }
+if(x>0){
+grid.push({x:x,label:l});
+}
+time.incrementByInterval(t,unit);
+}while(t.getTime()<this._latestDate.getTime());
+
+return grid;
 },
 
 

@@ -90,10 +90,10 @@
         var scriptURLs = Timeplot.params.js || [];
         var cssURLs = Timeplot.params.css || [];
         
+        var timelineURL = (debug) ? "/timeline/api/" : "http://static.simile.mit.edu/timeline/api/";
+
         // External components
-        scriptURLs.push(debug ?
-                "/timeline/api/timeline-api.js?bundle=false" :
-                "http://static.simile.mit.edu/timeline/api/timeline-api.js?bundle=true");
+        scriptURLs.push(timelineURL + "timeline-api.js?bundle=" + ((debug) ? "false" : "true"));
         
         // Core scripts and styles
         if (Timeplot.params.bundle) {
@@ -107,6 +107,7 @@
         // Localization
         for (var i = 0; i < locales.length; i++) {
             scriptURLs.push(Timeplot.urlPrefix + "locales/" + locales[i] + "/locale.js");
+            scriptURLs.push(timelineURL + "scripts/l10n/" + locales[i] + "/labellers.js");
         };
         
         if (Timeplot.params.callback) {

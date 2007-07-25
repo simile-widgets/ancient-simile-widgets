@@ -24,8 +24,8 @@ Object.extend = function(destination, source) {
 /**
  * Create a timeplot attached to the given element and using the configuration from the given array of PlotInfos
  */
-Timeplot.create = function(elmt, plotInfos, unit) {
-    return new Timeplot._Impl(elmt, plotInfos, unit);
+Timeplot.create = function(elmt, plotInfos) {
+    return new Timeplot._Impl(elmt, plotInfos);
 };
 
 /**
@@ -60,7 +60,7 @@ Timeplot.createPlotInfo = function(params) {
  *  
  * @constructor 
  */
-Timeplot._Impl = function(elmt, plotInfos, unit) {
+Timeplot._Impl = function(elmt, plotInfos) {
 	this._id = "t" + Math.round(Math.random() * 1000000);
     this._containerDiv = elmt;
     this._plotInfos = plotInfos;
@@ -69,7 +69,6 @@ Timeplot._Impl = function(elmt, plotInfos, unit) {
         foreground: []
     };
     this._painter = null;
-    this._unit = (unit != null) ? unit : Timeline.NativeDateUnit;
     this._initialize();
 };
 
@@ -173,13 +172,6 @@ Timeplot._Impl.prototype = {
         h = parseInt(h.replace("px",""));
         return h;    
     },
-
-    /**
-     * Get the the time unit associated with this timeplot
-     */
-    getUnit: function() {
-        return this._unit;
-    },
     
     /**
      * Get the drawing canvas associated with this timeplot
@@ -259,8 +251,8 @@ Timeplot._Impl.prototype = {
      * Overlay a 'div' element filled with the given text and styles to this timeplot
      * This is used to implement labels since canvas does not support drawing text.
      */
-    putText: function(text, clazz, styles) {
-        var div = this.putDiv(text, "timeplot-div " + clazz, styles);
+    putText: function(id, text, clazz, styles) {
+        var div = this.putDiv(id, "timeplot-div " + clazz, styles);
         div.innerHTML = text;
         return div;
     },
@@ -304,14 +296,6 @@ Timeplot._Impl.prototype = {
                 div.style[style] = styles[style];
             }
         }
-    },
-    
-    /**
-     * Remove the given element from the DOM
-     */
-    removeDiv: function(div) {
-    	var parent = div.parentNode;
-    	parent.removeChild(div);
     },
     
     /**
@@ -373,22 +357,25 @@ Timeplot._Impl.prototype = {
             var timeplot = this;
             this._painter = window.setTimeout(function() {
                 timeplot._clearCanvas();
-                var background = timeplot._painters.background;
-                for (var i = 0; i < background.length; i++) {
+                
+                var run = function(action,context) {
                     try {
-                        background[i].action.apply(background[i].context,[]);
+                        if (context.setTimeplot) context.setTimeplot(timeplot);
+                        action.apply(context,[]);
                     } catch (e) {
                         SimileAjax.Debug.exception(e);
                     }
+                }
+                
+                var background = timeplot._painters.background;
+                for (var i = 0; i < background.length; i++) {
+                    run(background[i].action, background[i].context); 
                 }
                 var foreground = timeplot._painters.foreground;
                 for (var i = 0; i < foreground.length; i++) {
-                    try {
-                        foreground[i].action.apply(foreground[i].context,[]);
-                    } catch (e) {
-                        SimileAjax.Debug.exception(e);
-                    }
+                    run(foreground[i].action, foreground[i].context); 
                 }
+                
                 timeplot._painter = null;
             }, 20);
         }
