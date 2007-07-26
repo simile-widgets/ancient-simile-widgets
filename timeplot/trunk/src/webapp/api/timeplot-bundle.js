@@ -692,6 +692,7 @@ if(eventStart==eventEnd){
 var c=color.toString();
 gradient.addColorStop(0,c);
 var start=this._timeGeometry.toScreen(eventStart);
+start=Math.floor(start)+0.5;
 var end=start;
 ctx.beginPath();
 ctx.moveTo(start,0);
@@ -703,7 +704,9 @@ var w=7;
 var c=color.toString(0.5);
 gradient.addColorStop(0,c);
 var start=this._timeGeometry.toScreen(eventStart);
+start=Math.floor(start)+0.5;
 var end=this._timeGeometry.toScreen(eventEnd);
+end=Math.floor(end)+0.5;
 ctx.fillRect(start,0,end-start,this._canvas.height);
 var x=start;
 var w=end-start-1;
@@ -753,7 +756,9 @@ var times=data.times;
 var values=data.values;
 var T=times.length;
 for(var t=0;t<T;t++){
-f(this._timeGeometry.toScreen(times[t]),this._valueGeometry.toScreen(values[t]));
+var x=this._timeGeometry.toScreen(times[t]);
+var y=this._valueGeometry.toScreen(values[t]);
+f(x,y);
 }
 }
 },
@@ -1073,7 +1078,7 @@ this._gridColor=("gridColor"in params)?((params.gridColor=="string")?new Timeplo
 this._gridLineWidth=("gridLineWidth"in params)?params.gridLineWidth:0.5;
 this._axisLabelsPlacement=("axisLabelsPlacement"in params)?params.axisLabelsPlacement:"right";
 this._gridSpacing=("gridSpacing"in params)?params.gridStep:50;
-this._gridType=("gridType"in params)?params.gridType:"long";
+this._gridType=("gridType"in params)?params.gridType:"short";
 this._gridShortSize=("gridShortSize"in params)?params.gridShortSize:10;
 this._minValue=("min"in params)?params.min:null;
 this._maxValue=("max"in params)?params.max:null;
@@ -1161,19 +1166,19 @@ ctx.strokeStyle=gridGradient;
 for(var i=0;i<this._grid.length;i++){
 var tick=this._grid[i];
 var y=Math.floor(tick.y)+0.5;
-if(tick.label){
+if(typeof tick.label!="undefined"){
 if(this._axisLabelsPlacement=="left"){
 var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
 left:4,
 bottom:y+2,
-color:this._gridColor.toString(),
+color:this._gridColor.toHexString(),
 visibility:"hidden"
 });
 }else if(this._axisLabelsPlacement=="right"){
 var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
 right:4,
 bottom:y+2,
-color:this._gridColor.toString(),
+color:this._gridColor.toHexString(),
 visibility:"hidden"
 });
 }
@@ -1184,7 +1189,7 @@ div.style.visibility="visible";
 
 
 ctx.beginPath();
-if(this._gridType=="long"){
+if(this._gridType=="long"||tick.label==0){
 ctx.moveTo(0,y);
 ctx.lineTo(this._canvas.width,y);
 }else if(this._gridType=="short"){
@@ -1236,13 +1241,7 @@ if(parent)parent.removeChild(l);
 _calculateGrid:function(){
 var grid=[];
 
-if(!this._canvas)return grid;
-
-if(this._minValue<=0&&this._maxValue>0){
-grid.push({y:this.toScreen(0),label:"0"});
-}
-
-log("--------------- valueRange: "+this._valueRange);
+if(!this._canvas||this._valueRange==0)return grid;
 
 var power=0;
 if(this._valueRange>1){
@@ -1251,10 +1250,8 @@ power++;
 }
 power--;
 }else{
-log("power: "+power);
 while(Math.pow(10,power)>this._valueRange){
 power--;
-log("power: "+power);
 }
 }
 
@@ -1262,7 +1259,6 @@ var unit=Math.pow(10,power);
 var inc=unit;
 while(true){
 dy=this.toScreen(this._minValue+inc);
-log("inc: "+inc+" dy: "+dy);
 
 while(dy<this._gridSpacing){
 inc+=unit;
@@ -1288,6 +1284,14 @@ v+=inc;
 y=this.toScreen(v);
 }
 }else if(this._maxValue<=0){
+while(y>0){
+if(y<this._canvas.height){
+grid.push({y:y,label:v});
+}
+v-=inc;
+y=this.toScreen(v);
+}
+}else{
 while(y<this._canvas.height){
 if(y>0){
 grid.push({y:y,label:v});
@@ -1295,8 +1299,15 @@ grid.push({y:y,label:v});
 v+=inc;
 y=this.toScreen(v);
 }
-}else{
-log("not drawn yet");
+v=-inc;
+y=this.toScreen(v);
+while(y>0){
+if(y<this._canvas.height){
+grid.push({y:y,label:v});
+}
+v-=inc;
+y=this.toScreen(v);
+}
 }
 
 return grid;
@@ -1304,7 +1315,7 @@ return grid;
 
 
 _updateMappedValues:function(){
-this._valueRange=Math.abs(Math.abs(this._maxValue)-Math.abs(this._minValue));
+this._valueRange=Math.abs(this._maxValue-this._minValue);
 this._mappedRange=this._map.direct(this._valueRange);
 }
 
@@ -1480,27 +1491,28 @@ gradient.addColorStop(1,"rgba(255,255,255,0.9)");
 
 for(var i=0;i<this._grid.length;i++){
 var tick=this._grid[i];
+var x=Math.floor(tick.x)+0.5;
 if(this._axisLabelsPlacement=="top"){
 var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
-left:tick.x+4,
+left:x+4,
 top:2,
 visibility:"hidden"
 });
 }else if(this._axisLabelsPlacement=="bottom"){
 var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
-left:tick.x+4,
+left:x+4,
 bottom:2,
 visibility:"hidden"
 });
 }
-if(tick.x+div.clientWidth<this._canvas.width+10){
+if(x+div.clientWidth<this._canvas.width+10){
 div.style.visibility="visible";
 }
 
 
 ctx.beginPath();
-ctx.moveTo(tick.x,0);
-ctx.lineTo(tick.x,this._canvas.height);
+ctx.moveTo(x,0);
+ctx.lineTo(x,this._canvas.height);
 ctx.stroke();
 }
 }
@@ -1862,6 +1874,11 @@ return'rgba('+this.r+','+this.g+','+this.b+','+((alpha)?alpha:'1.0')+')';
 },
 
 
+toHexString:function(){
+return"#"+this._toHex(this.r)+this._toHex(this.g)+this._toHex(this.b);
+},
+
+
 _fromHex:function(color){
 if(/^#?([\da-f]{3}|[\da-f]{6})$/i.test(color)){
 color=color.replace(/^#/,'').replace(/^([\da-f])([\da-f])([\da-f])$/i,"$1$1$2$2$3$3");
@@ -1876,6 +1893,16 @@ this.b=parseInt(color[3],10);
 }
 this.a=1.0;
 return this.check();
+},
+
+
+_toHex:function(dec){
+var hex="0123456789ABCDEF"
+if(dec<0)return"00";
+if(dec>255)return"FF";
+var i=Math.floor(dec/16);
+var j=dec%16;
+return hex.charAt(i)+hex.charAt(j);
 }
 
 };

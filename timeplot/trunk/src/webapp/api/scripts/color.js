@@ -108,6 +108,13 @@ Timeplot.Color.prototype = {
         return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + ((alpha) ? alpha : '1.0') + ')';
     },
 
+    /**
+     * Returns the hexadecimal representation of this color (without the alpha channel as hex colors don't support it)
+     */
+    toHexString: function() {
+    	return "#" + this._toHex(this.r) + this._toHex(this.g) + this._toHex(this.b); 
+    },
+    
     /*
      * Parses and stores the hex values of the input color string.
      * 
@@ -127,6 +134,18 @@ Timeplot.Color.prototype = {
         }
         this.a = 1.0;
         return this.check();
+    },
+    
+    /*
+     * Returns an hexadecimal representation of a 8 bit integer 
+     */
+    _toHex: function(dec) {
+        var hex = "0123456789ABCDEF"
+        if (dec < 0) return "00";
+        if (dec > 255) return "FF";
+        var i = Math.floor(dec / 16);
+        var j = dec % 16;
+        return hex.charAt(i) + hex.charAt(j);
     }
 
 };

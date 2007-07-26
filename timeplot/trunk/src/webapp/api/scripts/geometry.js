@@ -24,7 +24,7 @@ Timeplot.DefaultValueGeometry = function(params) {
     this._gridLineWidth = ("gridLineWidth" in params) ? params.gridLineWidth : 0.5;
     this._axisLabelsPlacement = ("axisLabelsPlacement" in params) ? params.axisLabelsPlacement : "right";
     this._gridSpacing = ("gridSpacing" in params) ? params.gridStep : 50;
-    this._gridType = ("gridType" in params) ? params.gridType : "long";
+    this._gridType = ("gridType" in params) ? params.gridType : "short";
     this._gridShortSize = ("gridShortSize" in params) ? params.gridShortSize : 10;
     this._minValue = ("min" in params) ? params.min : null;
     this._maxValue = ("max" in params) ? params.max : null;
@@ -127,19 +127,19 @@ Timeplot.DefaultValueGeometry.prototype = {
                 for (var i = 0; i < this._grid.length; i++) {
                     var tick = this._grid[i];
                     var y = Math.floor(tick.y) + 0.5;
-                    if (tick.label) {
+                    if (typeof tick.label != "undefined") {
 	                    if (this._axisLabelsPlacement == "left") {
 	                        var div = this._timeplot.putText(this._id + "-" + i, tick.label,"timeplot-grid-label",{
 	                            left: 4,
 	                            bottom: y + 2,
-	                            color: this._gridColor.toString(),
+	                            color: this._gridColor.toHexString(),
 	                            visibility: "hidden"
 	                        });
 	                    } else if (this._axisLabelsPlacement == "right") {
 	                        var div = this._timeplot.putText(this._id + "-" + i, tick.label, "timeplot-grid-label",{
 	                            right: 4,
 	                            bottom: y + 2,
-	                            color: this._gridColor.toString(),
+	                            color: this._gridColor.toHexString(),
 	                            visibility: "hidden"
 	                        });
 	                    }
@@ -150,7 +150,7 @@ Timeplot.DefaultValueGeometry.prototype = {
 
                     // draw grid
                     ctx.beginPath();
-                    if (this._gridType == "long") {
+                    if (this._gridType == "long" || tick.label == 0) {
 	                    ctx.moveTo(0, y);
 	                    ctx.lineTo(this._canvas.width, y);
                     } else if (this._gridType == "short") {
@@ -207,14 +207,8 @@ Timeplot.DefaultValueGeometry.prototype = {
     _calculateGrid: function() {
         var grid = [];
         
-        if (!this._canvas) return grid;
+        if (!this._canvas || this._valueRange == 0) return grid;
                 
-    	if (this._minValue <= 0 && this._maxValue > 0) {
-    		grid.push({ y: this.toScreen(0), label: "0"});
-    	}
-    	
-    	log("--------------- valueRange: " + this._valueRange);
-    	 
         var power = 0;
     	if (this._valueRange > 1) {
     		while (Math.pow(10,power) < this._valueRange) {
@@ -222,10 +216,8 @@ Timeplot.DefaultValueGeometry.prototype = {
     		}
     		power--;
     	} else {
-    		log("power: " + power);
             while (Math.pow(10,power) > this._valueRange) {
                 power--;
-                log("power: " + power);
             }
     	}
 
@@ -233,7 +225,6 @@ Timeplot.DefaultValueGeometry.prototype = {
         var inc = unit;
         while (true) {
             dy = this.toScreen(this._minValue + inc);
-            log("inc: " + inc + " dy: " + dy);
 
 	        while (dy < this._gridSpacing) {
 	        	inc += unit;
@@ -259,6 +250,14 @@ Timeplot.DefaultValueGeometry.prototype = {
         		y = this.toScreen(v);
         	}
         } else if (this._maxValue <= 0) {
+            while (y > 0) {
+                if (y < this._canvas.height) {
+                    grid.push({ y: y, label: v });
+                }
+                v -= inc;
+                y = this.toScreen(v);
+            }
+        } else {
             while (y < this._canvas.height) {
                 if (y > 0) {
                     grid.push({ y: y, label: v });
@@ -266,8 +265,15 @@ Timeplot.DefaultValueGeometry.prototype = {
                 v += inc;
                 y = this.toScreen(v);
             }
-        } else {
-        	log ("not drawn yet");
+            v = -inc;
+            y = this.toScreen(v);
+            while (y > 0) {
+                if (y < this._canvas.height) {
+                    grid.push({ y: y, label: v });
+                }
+                v -= inc;
+                y = this.toScreen(v);
+            }
         }
         
         return grid;
@@ -278,7 +284,7 @@ Timeplot.DefaultValueGeometry.prototype = {
      * we don't have to calculate them at every repaint.
      */
     _updateMappedValues: function() {
-        this._valueRange = Math.abs(Math.abs(this._maxValue) - Math.abs(this._minValue));
+        this._valueRange = Math.abs(this._maxValue - this._minValue);
         this._mappedRange = this._map.direct(this._valueRange);
     }
     
@@ -496,27 +502,28 @@ Timeplot.DefaultTimeGeometry.prototype = {
 	
 	            for (var i = 0; i < this._grid.length; i++) {
 	            	var tick = this._grid[i];
+	            	var x = Math.floor(tick.x) + 0.5;
                     if (this._axisLabelsPlacement == "top") {
                         var div = this._timeplot.putText(this._id + "-" + i, tick.label,"timeplot-grid-label",{
-                            left: tick.x + 4,
+                            left: x + 4,
                             top: 2,
                             visibility: "hidden"
                         });
                     } else if (this._axisLabelsPlacement == "bottom") {
                         var div = this._timeplot.putText(this._id + "-" + i, tick.label, "timeplot-grid-label",{
-                            left: tick.x + 4,
+                            left: x + 4,
                             bottom: 2,
                             visibility: "hidden"
                         });
                     }
-                    if (tick.x + div.clientWidth < this._canvas.width + 10) {
+                    if (x + div.clientWidth < this._canvas.width + 10) {
                         div.style.visibility = "visible"; // avoid the labels that would overflow
                     }
 
                     // draw separator
                     ctx.beginPath();
-                    ctx.moveTo(tick.x,0);
-                    ctx.lineTo(tick.x,this._canvas.height);
+                    ctx.moveTo(x,0);
+                    ctx.lineTo(x,this._canvas.height);
                     ctx.stroke();
 	            }
 	        }

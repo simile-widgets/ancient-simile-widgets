@@ -288,6 +288,7 @@ Timeplot.Plot.prototype = {
                     var c = color.toString();
                     gradient.addColorStop(0, c);
                     var start = this._timeGeometry.toScreen(eventStart);
+                    start = Math.floor(start) + 0.5; // center it between two pixels (makes the rendering nicer)
                     var end = start;
                     ctx.beginPath();
                     ctx.moveTo(start,0);
@@ -299,7 +300,9 @@ Timeplot.Plot.prototype = {
                 	var c = color.toString(0.5);
                     gradient.addColorStop(0, c);
                     var start = this._timeGeometry.toScreen(eventStart);
+                    start = Math.floor(start) + 0.5; // center it between two pixels (makes the rendering nicer)
                     var end = this._timeGeometry.toScreen(eventEnd);
+                    end = Math.floor(end) + 0.5; // center it between two pixels (makes the rendering nicer)
                     ctx.fillRect(start,0,end - start, this._canvas.height);
                     var x = start;
                     var w = end - start - 1;
@@ -349,7 +352,9 @@ Timeplot.Plot.prototype = {
 	        var values = data.values;
 	        var T = times.length;
 	        for (var t = 0; t < T; t++) {
-	            f(this._timeGeometry.toScreen(times[t]),this._valueGeometry.toScreen(values[t]));
+	        	var x = this._timeGeometry.toScreen(times[t]);
+	        	var y = this._valueGeometry.toScreen(values[t]);
+	            f(x, y);
 	        }
         }
     },
