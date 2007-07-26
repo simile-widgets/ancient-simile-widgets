@@ -38,7 +38,6 @@
         }
     </style>
     
-    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
     <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
 
     <script>
@@ -93,7 +92,7 @@
                     dataSource: webTraffic,
                     valueGeometry: webGeometry,
                     timeGeometry: timeGeometry,
-                    lineColor: quietLine,
+                    lineColor: quietLine
                 }),
                 Timeplot.createPlotInfo({
                     id: "web clean avg",
@@ -119,7 +118,7 @@
             var crawlersGeometry = new Timeplot.DefaultValueGeometry({
                 gridColor: gridColor,
                 axisLabelsPlacement: "left",
-                min: 0,
+                min: 0
             });
             var plotsInfo2 = [
                 Timeplot.createPlotInfo({
@@ -147,7 +146,7 @@
             var newsGeometry = new Timeplot.DefaultValueGeometry({
                 gridColor: gridColor,
                 axisLabelsPlacement: "left",
-                min: 0,
+                min: 0
             });
             
             var plotsInfo3 = [
@@ -198,7 +197,7 @@
             downloadGeometry = new Timeplot.LogarithmicValueGeometry({
                 gridColor: gridColor,
                 axisLabelsPlacement: "left",
-                min: 0,
+                min: 0
             });
             
             var blue   = new Timeplot.Color("#455681");
