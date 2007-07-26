@@ -123,7 +123,7 @@
         if (typeof Timeline != "undefined") {
             loadTimeplot();
         } else {
-            var timelineURL = (local) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
+            var timelineURL = (debug) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
             window.SimileAjax_onLoad = loadTimeplot;
             SimileAjax.includeJavascriptFile(document, timelineURL);
         }
