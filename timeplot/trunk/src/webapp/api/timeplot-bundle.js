@@ -235,6 +235,7 @@ y:div.offsetTop-this._paddingY
 
 
 update:function(){
+if(this._active){
 for(var i=0;i<this._plots.length;i++){
 var plot=this._plots[i];
 var dataSource=plot.getDataSource();
@@ -247,10 +248,12 @@ plot._timeGeometry.setRange(range);
 }
 }
 this.paint();
+}
 },
 
 
 repaint:function(){
+if(this._active){
 this._prepareCanvas();
 for(var i=0;i<this._plots.length;i++){
 var plot=this._plots[i];
@@ -258,11 +261,12 @@ if(plot._timeGeometry)plot._timeGeometry.reset();
 if(plot._valueGeometry)plot._valueGeometry.reset();
 }
 this.paint();
+}
 },
 
 
 paint:function(){
-if(this._painter==null){
+if(this._active&&this._painter==null){
 var timeplot=this;
 this._painter=window.setTimeout(function(){
 timeplot._clearCanvas();
@@ -408,8 +412,9 @@ this._active=true;
 this._message=SimileAjax.Graphics.createMessageBubble(doc);
 this._message.containerDiv.className="timeplot-message-container";
 this._message.containerDiv.style.top="15%";
-this._message.containerDiv.style.left="28%";
-this._message.containerDiv.style.right="28%";
+this._message.containerDiv.style.left="20%";
+this._message.containerDiv.style.right="20%";
+this._message.containerDiv.style.minWidth="20em";
 this._message.contentDiv.className="timeplot-message";
 this._message.contentDiv.innerHTML="We're terribly sorry, but your browser is not currently supported by <a href='http://simile.mit.edu/timeplot/'>Timeplot</a>.<br><br> We are working on supporting it in the near future but, for now, see the <a href='http://simile.mit.edu/wiki/Timeplot_Limitations'>list of currently supported browsers</a>.";
 this._message.containerDiv.style.display="block";
@@ -1067,8 +1072,9 @@ this._axisColor=("axisColor"in params)?((params.axisColor=="string")?new Timeplo
 this._gridColor=("gridColor"in params)?((params.gridColor=="string")?new Timeplot.Color(params.gridColor):params.gridColor):null,
 this._gridLineWidth=("gridLineWidth"in params)?params.gridLineWidth:0.5;
 this._axisLabelsPlacement=("axisLabelsPlacement"in params)?params.axisLabelsPlacement:"right";
-this._gridStep=("gridStep"in params)?params.gridStep:30;
-this._gridStepRange=("gridStepRange"in params)?params.gridStepRange:20;
+this._gridSpacing=("gridSpacing"in params)?params.gridStep:50;
+this._gridType=("gridType"in params)?params.gridType:"long";
+this._gridShortSize=("gridShortSize"in params)?params.gridShortSize:10;
 this._minValue=("min"in params)?params.min:null;
 this._maxValue=("max"in params)?params.max:null;
 this._linMap={
@@ -1081,6 +1087,7 @@ return y;
 }
 this._map=this._linMap;
 this._labels=[];
+this._grid=[];
 }
 
 Timeplot.DefaultValueGeometry.prototype={
@@ -1103,17 +1110,16 @@ this._maxValue=range.max*1.05;
 
 this._updateMappedValues();
 
-if(this._minValue==0&&this._maxValue==0){
-this._gridSpacing={y:0,value:0};
-}else{
-this._gridSpacing=this._calculateGridSpacing();
+if(!(this._minValue==0&&this._maxValue==0)){
+this._grid=this._calculateGrid();
 }
 },
 
 
 reset:function(){
+this._clearLabels();
 this._updateMappedValues();
-this._gridSpacing=this._calculateGridSpacing();
+this._grid=this._calculateGrid();
 },
 
 
@@ -1140,51 +1146,68 @@ paint:function(){
 if(this._timeplot){
 var ctx=this._canvas.getContext('2d');
 
-var gradient=ctx.createLinearGradient(0,0,0,this._canvas.height);
-
-ctx.strokeStyle=gradient;
-ctx.lineWidth=this._gridLineWidth;
 ctx.lineJoin='miter';
 
 
 if(this._gridColor){
-gradient.addColorStop(0,this._gridColor.toString());
-gradient.addColorStop(1,"rgba(255,255,255,0.5)");
+var gridGradient=ctx.createLinearGradient(0,0,0,this._canvas.height);
+gridGradient.addColorStop(0,this._gridColor.toString());
+gridGradient.addColorStop(0.3,this._gridColor.toString());
+gridGradient.addColorStop(1,"rgba(255,255,255,0.5)");
 
-var y=this._gridSpacing.y;
-var value=this._gridSpacing.value;
-var counter=1;
-while(y<this._canvas.height){
+ctx.lineWidth=this._gridLineWidth;
+ctx.strokeStyle=gridGradient;
+
+for(var i=0;i<this._grid.length;i++){
+var tick=this._grid[i];
+var y=Math.floor(tick.y)+0.5;
+if(tick.label){
+if(this._axisLabelsPlacement=="left"){
+var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
+left:4,
+bottom:y+2,
+color:this._gridColor.toString(),
+visibility:"hidden"
+});
+}else if(this._axisLabelsPlacement=="right"){
+var div=this._timeplot.putText(this._id+"-"+i,tick.label,"timeplot-grid-label",{
+right:4,
+bottom:y+2,
+color:this._gridColor.toString(),
+visibility:"hidden"
+});
+}
+if(y+div.clientHeight<this._canvas.height+10){
+div.style.visibility="visible";
+}
+}
+
+
 ctx.beginPath();
+if(this._gridType=="long"){
 ctx.moveTo(0,y);
 ctx.lineTo(this._canvas.width,y);
+}else if(this._gridType=="short"){
+if(this._axisLabelsPlacement=="left"){
+ctx.moveTo(0,y);
+ctx.lineTo(this._gridShortSize,y);
+}else if(this._axisLabelsPlacement=="right"){
+ctx.moveTo(this._canvas.width,y);
+ctx.lineTo(this._canvas.width-this._gridShortSize,y);
+}
+}
 ctx.stroke();
-
-if(this._axisLabelsPlacement=="right"){
-var div=this._timeplot.putText(this._id+"-"+counter,value,"timeplot-grid-label",{
-bottom:y,
-right:2
-});
-}else if(this._axisLabelsPlacement=="left"){
-var div=this._timeplot.putText(this._id+"-"+counter,value,"timeplot-grid-label",{
-bottom:y,
-left:2
-});
-}
-this._labels.push(div);
-
-y+=this._gridSpacing.y;
-value+=this._gridSpacing.value;
-counter++;
 }
 }
 
 
-gradient.addColorStop(0,this._axisColor.toString());
-gradient.addColorStop(1,"rgba(255,255,255,0.5)");
+var axisGradient=ctx.createLinearGradient(0,0,0,this._canvas.height);
+axisGradient.addColorStop(0,this._axisColor.toString());
+axisGradient.addColorStop(0.5,this._axisColor.toString());
+axisGradient.addColorStop(1,"rgba(255,255,255,0.5)");
 
 ctx.lineWidth=1;
-gradient.addColorStop(0,this._axisColor.toString());
+ctx.strokeStyle=axisGradient;
 
 
 ctx.beginPath();
@@ -1201,29 +1224,87 @@ ctx.stroke();
 },
 
 
-_calculateGridSpacing:function(){
-var step=this._gridStep;
-var range=this._gridStepRange;
-var v=this.fromScreen(step);
-for(var i=1;i<10;i++){
-var r=Timeplot.Math.round(v,i);
-var y=this.toScreen(r);
-if(step-range<y&&y<step+range){
-return{
-y:y,
-value:r
-}
-}
-}
-return{
-y:step,
-value:v
+_clearLabels:function(){
+for(var i=0;i<this._labels.length;i++){
+var l=this._labels[i];
+var parent=l.parentNode;
+if(parent)parent.removeChild(l);
 }
 },
 
 
+_calculateGrid:function(){
+var grid=[];
+
+if(!this._canvas)return grid;
+
+if(this._minValue<=0&&this._maxValue>0){
+grid.push({y:this.toScreen(0),label:"0"});
+}
+
+log("--------------- valueRange: "+this._valueRange);
+
+var power=0;
+if(this._valueRange>1){
+while(Math.pow(10,power)<this._valueRange){
+power++;
+}
+power--;
+}else{
+log("power: "+power);
+while(Math.pow(10,power)>this._valueRange){
+power--;
+log("power: "+power);
+}
+}
+
+var unit=Math.pow(10,power);
+var inc=unit;
+while(true){
+dy=this.toScreen(this._minValue+inc);
+log("inc: "+inc+" dy: "+dy);
+
+while(dy<this._gridSpacing){
+inc+=unit;
+dy=this.toScreen(this._minValue+inc);
+}
+
+if(dy>2*this._gridSpacing){
+unit/=10;
+inc=unit;
+}else{
+break;
+}
+}
+
+var v=0;
+var y=this.toScreen(v);
+if(this._minValue>=0){
+while(y<this._canvas.height){
+if(y>0){
+grid.push({y:y,label:v});
+}
+v+=inc;
+y=this.toScreen(v);
+}
+}else if(this._maxValue<=0){
+while(y<this._canvas.height){
+if(y>0){
+grid.push({y:y,label:v});
+}
+v+=inc;
+y=this.toScreen(v);
+}
+}else{
+log("not drawn yet");
+}
+
+return grid;
+},
+
+
 _updateMappedValues:function(){
-this._valueRange=this._maxValue-this._minValue;
+this._valueRange=Math.abs(Math.abs(this._maxValue)-Math.abs(this._minValue));
 this._mappedRange=this._map.direct(this._valueRange);
 }
 
@@ -1499,8 +1580,13 @@ return grid;
 
 
 _updateMappedValues:function(){
+if(this._latestDate&&this._earliestDate){
 this._period=this._latestDate.getTime()-this._earliestDate.getTime();
 this._mappedPeriod=this._map.direct(this._period);
+}else{
+this._period=0;
+this._mappedPeriod=0;
+}
 }
 
 }

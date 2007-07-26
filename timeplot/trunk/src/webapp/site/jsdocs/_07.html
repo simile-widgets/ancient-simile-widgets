@@ -41,7 +41,7 @@
 					<a name="Timeplot._Impl"></a>
 					
 					
-					Timeplot._Impl(<span class="signature">elmt, plotInfos, unit</span>)
+					Timeplot._Impl(<span class="signature">elmt, plotInfos</span>)
 					
 				</div>
 				
@@ -73,18 +73,6 @@
 						</td>
 						<td>
 							plotInfos
-						</td>
-						<td>
-							
-						</td> 
-					</tr>
-				
-					<tr>
-						<td class="type">
-							
-						</td>
-						<td>
-							unit
 						</td>
 						<td>
 							
@@ -130,18 +118,6 @@
 					</ul>
 				
 					<ul class="details">
-						<li><a href="#Timeplot._Impl.getInternalWidth">getInternalWidth</a></li>
-					</ul>
-				
-					<ul class="details">
-						<li><a href="#Timeplot._Impl.getInternalHeight">getInternalHeight</a></li>
-					</ul>
-				
-					<ul class="details">
-						<li><a href="#Timeplot._Impl.getUnit">getUnit</a></li>
-					</ul>
-				
-					<ul class="details">
 						<li><a href="#Timeplot._Impl.getCanvas">getCanvas</a></li>
 					</ul>
 				
@@ -163,10 +139,6 @@
 				
 					<ul class="details">
 						<li><a href="#Timeplot._Impl.placeDiv">placeDiv</a></li>
-					</ul>
-				
-					<ul class="details">
-						<li><a href="#Timeplot._Impl.removeDiv">removeDiv</a></li>
 					</ul>
 				
 					<ul class="details">
@@ -230,14 +202,6 @@
 			
 			
 			
-			
-			
-			
-			
-			
-			
-			
-			
 			<div class="sectionHead">Functions</div>
 			
 			
@@ -246,7 +210,7 @@
 					<a name="Timeplot.create"></a>
 					
 					
-					Timeplot.create(<span class="signature">elmt, plotInfos, unit</span>)
+					Timeplot.create(<span class="signature">elmt, plotInfos</span>)
 					
 				</div>
 				
@@ -278,18 +242,6 @@
 						</td>
 						<td>
 							plotInfos
-						</td>
-						<td>
-							
-						</td> 
-					</tr>
-				
-					<tr>
-						<td class="type">
-							
-						</td>
-						<td>
-							unit
 						</td>
 						<td>
 							
@@ -635,78 +587,6 @@
 			
 			<div class="section function">
 				<div class="itemTitle">
-					<a name="Timeplot._Impl.getInternalWidth"></a>
-					
-						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getInternalWidth(<span class="signature"></span>)
-					
-					
-				</div>
-				
-				
-					<div class="desc">Get the width in pixels of the area available inside the timeplot container</div>
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			</div>
-			
-			
-			
-			<div class="section function">
-				<div class="itemTitle">
-					<a name="Timeplot._Impl.getInternalHeight"></a>
-					
-						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getInternalHeight(<span class="signature"></span>)
-					
-					
-				</div>
-				
-				
-					<div class="desc">Get the height in pixels of the area available inside the timeplot container</div>
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			</div>
-			
-			
-			
-			<div class="section function">
-				<div class="itemTitle">
-					<a name="Timeplot._Impl.getUnit"></a>
-					
-						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getUnit(<span class="signature"></span>)
-					
-					
-				</div>
-				
-				
-					<div class="desc">Get the the time unit associated with this timeplot</div>
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			</div>
-			
-			
-			
-			<div class="section function">
-				<div class="itemTitle">
 					<a name="Timeplot._Impl.getCanvas"></a>
 					
 						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getCanvas(<span class="signature"></span>)
@@ -878,7 +758,7 @@ the Timeline XML event format.</div>
 				<div class="itemTitle">
 					<a name="Timeplot._Impl.putText"></a>
 					
-						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>putText(<span class="signature">text, clazz, styles</span>)
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>putText(<span class="signature">id, text, clazz, styles</span>)
 					
 					
 				</div>
@@ -893,6 +773,18 @@ This is used to implement labels since canvas does not support drawing text.</di
 				
 				<div class="detailHead">parameters</div>
 				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							id
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
 				
 					<tr>
 						<td class="type">
@@ -1046,47 +938,6 @@ of the timeplot.</div>
 						</td>
 						<td>
 							styles
-						</td>
-						<td>
-							
-						</td> 
-					</tr>
-				
-				</table>
-				
-				
-				
-				
-				
-			</div>
-			
-			
-			
-			<div class="section function">
-				<div class="itemTitle">
-					<a name="Timeplot._Impl.removeDiv"></a>
-					
-						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>removeDiv(<span class="signature">div</span>)
-					
-					
-				</div>
-				
-				
-					<div class="desc">Remove the given element from the DOM</div>
-				
-				
-				
-				
-				
-				<div class="detailHead">parameters</div>
-				<table class="params">
-				
-					<tr>
-						<td class="type">
-							
-						</td>
-						<td>
-							div
 						</td>
 						<td>
 							
@@ -1291,22 +1142,10 @@ function in bursts (as in mousemove or during window resizing</div>
 			
 			
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 		</div>
 	</div>
 	<div class="finePrint">
-	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Wed, 18 Jul 2007 02:31:37 GMT
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Thu, 26 Jul 2007 18:54:09 GMT
 	</div>
 </body>
 </html>

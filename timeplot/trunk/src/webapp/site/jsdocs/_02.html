@@ -76,7 +76,7 @@ win over the others.</div>
 				<div class="detailHead">methods</div>
 				
 					<ul class="details">
-						<li><a href="#Timeplot.DefaultValueGeometry.initialize">initialize</a></li>
+						<li><a href="#Timeplot.DefaultValueGeometry.setTimeplot">setTimeplot</a></li>
 					</ul>
 				
 					<ul class="details">
@@ -99,12 +99,18 @@ win over the others.</div>
 						<li><a href="#Timeplot.DefaultValueGeometry.paint">paint</a></li>
 					</ul>
 				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry._clearLabels">_clearLabels</a></li>
+					</ul>
+				
 				
 				
 				
 				
 				
 			</div>
+			
+			
 			
 			
 			
@@ -229,7 +235,7 @@ all of the methods of that class. So refer to that class.</div>
 				<div class="detailHead">methods</div>
 				
 					<ul class="details">
-						<li><a href="#Timeplot.DefaultTimeGeometry.initialize">initialize</a></li>
+						<li><a href="#Timeplot.DefaultTimeGeometry.setTimeplot">setTimeplot</a></li>
 					</ul>
 				
 					<ul class="details">
@@ -253,6 +259,14 @@ all of the methods of that class. So refer to that class.</div>
 					</ul>
 				
 					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.getLabeler">getLabeler</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.getUnit">getUnit</a></li>
+					</ul>
+				
+					<ul class="details">
 						<li><a href="#Timeplot.DefaultTimeGeometry.paint">paint</a></li>
 					</ul>
 				
@@ -262,6 +276,10 @@ all of the methods of that class. So refer to that class.</div>
 				
 				
 			</div>
+			
+			
+			
+			
 			
 			
 			
@@ -347,15 +365,16 @@ get lost or cluttered with a linear time geometry.</div>
 			
 			<div class="section function">
 				<div class="itemTitle">
-					<a name="Timeplot.DefaultValueGeometry.initialize"></a>
+					<a name="Timeplot.DefaultValueGeometry.setTimeplot"></a>
 					
-						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>initialize(<span class="signature">timeplot</span>)
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>setTimeplot(<span class="signature">timeplot</span>)
 					
 					
 				</div>
 				
 				
-					<div class="desc">Initialize this geometry associating it with the given timeplot.</div>
+					<div class="desc">Since geometries can be reused across timeplots, we need to call this function
+before we can paint using this geometry.</div>
 				
 				
 				
@@ -559,6 +578,30 @@ in the parameters, the biggest value range will be used.</div>
 			
 			
 			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry._clearLabels"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>_clearLabels(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Removes all the labels that were added by this geometry</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
 			
 			
 			<div class="section function">
@@ -637,15 +680,16 @@ in the parameters, the biggest value range will be used.</div>
 			
 			<div class="section function">
 				<div class="itemTitle">
-					<a name="Timeplot.DefaultTimeGeometry.initialize"></a>
+					<a name="Timeplot.DefaultTimeGeometry.setTimeplot"></a>
 					
-						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>initialize(<span class="signature">timeplot</span>)
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>setTimeplot(<span class="signature">timeplot</span>)
 					
 					
 				</div>
 				
 				
-					<div class="desc">Initialize this geometry associating it with the given timeplot.</div>
+					<div class="desc">Since geometries can be reused across timeplots, we need to call this function
+before we can paint using this geometry.</div>
 				
 				
 				
@@ -836,6 +880,54 @@ in the parameters, the biggest range will be used.</div>
 				
 				
 					<div class="desc">Get a period (in milliseconds) this time geometry spans.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.getLabeler"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>getLabeler(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the labeler that has been associated with this time geometry</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.getUnit"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>getUnit(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the time unit associated with this time geometry</div>
 				
 				
 				
@@ -1054,10 +1146,19 @@ should span.</div>
 			
 			
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		</div>
 	</div>
 	<div class="finePrint">
-	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Wed, 18 Jul 2007 02:31:37 GMT
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Thu, 26 Jul 2007 18:54:09 GMT
 	</div>
 </body>
 </html>
