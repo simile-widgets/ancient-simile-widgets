@@ -490,8 +490,9 @@ Timeplot._Impl.prototype = {
             this._message = SimileAjax.Graphics.createMessageBubble(doc);
             this._message.containerDiv.className = "timeplot-message-container";
             this._message.containerDiv.style.top = "15%";
-            this._message.containerDiv.style.left = "28%";
-            this._message.containerDiv.style.right = "28%";
+            this._message.containerDiv.style.left = "20%";
+            this._message.containerDiv.style.right = "20%";
+            this._message.containerDiv.style.minWidth = "20em";
             this._message.contentDiv.className = "timeplot-message";
             this._message.contentDiv.innerHTML = "We're terribly sorry, but your browser is not currently supported by <a href='http://simile.mit.edu/timeplot/'>Timeplot</a>.<br><br> We are working on supporting it in the near future but, for now, see the <a href='http://simile.mit.edu/wiki/Timeplot_Limitations'>list of currently supported browsers</a>.";
             this._message.containerDiv.style.display = "block";

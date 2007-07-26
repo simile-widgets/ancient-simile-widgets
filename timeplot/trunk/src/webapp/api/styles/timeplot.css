@@ -19,6 +19,7 @@
     top:        30%;
     left:       35%;
     right:      35%;
+    max-width:  400px;
     z-index:    1000;
     display:    none;
 }
