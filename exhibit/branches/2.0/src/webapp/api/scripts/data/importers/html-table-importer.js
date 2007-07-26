@@ -53,6 +53,7 @@ Exhibit.HtmlTableImporter.load = function(link, database, cont) {
 }
 
 Exhibit.HtmlTableImporter.loadTable = function(table, database) {
+
     var textOf = function( n ) { return n.textContent || n.innerText || ""; };
     var readAttributes = function( node, attributes ) {
         var result = {}, found = false, attr, value, i;
@@ -143,6 +144,22 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
                 }
             } else {
                 item[fields[col]] = data;
+                
+               //Check for link to extract as well. If td cell has an A tag in
+               //it, take the link from that and store it also. If the textContent
+               //is stored in the "name" field, for example, then the link 
+               // in the cell is stored in the "name-link" field. Only the first
+               // url is stored.  
+                for (var i=0; i < td.childNodes.length; i++) {
+                    if (td.childNodes[i].tagName === "A") {
+               	        var thehref = td.childNodes[i].getAttribute("href");
+               	        if (thehref) {
+	       	            fieldname = fields[col] + "-link";
+    	                    item[fieldname] = thehref;
+    	                    break;
+		        }
+                    }
+                }
             }
         }
 
