@@ -88,16 +88,18 @@
             }
         }
 
+        var timeplotURLPrefix = (debug) ? "/timeplot/api/1.0/" : Timeplot.urlPrefix;
+        
         var scriptURLs = Timeplot.params.js || [];
         var cssURLs = Timeplot.params.css || [];
 
         // Core scripts and styles
-        if (Timeplot.params.bundle) {
-            scriptURLs.push(Timeplot.urlPrefix + "timeplot-bundle.js");
-            cssURLs.push(Timeplot.urlPrefix + "timeplot-bundle.css");
+        if (Timeplot.params.bundle && !debug) {
+            scriptURLs.push(timeplotURLPrefix + "timeplot-bundle.js");
+            cssURLs.push(timeplotURLPrefix + "timeplot-bundle.css");
         } else {
-            SimileAjax.prefixURLs(scriptURLs, Timeplot.urlPrefix + "scripts/", javascriptFiles);
-            SimileAjax.prefixURLs(cssURLs, Timeplot.urlPrefix + "styles/", cssFiles);
+            SimileAjax.prefixURLs(scriptURLs, timeplotURLPrefix + "scripts/", javascriptFiles);
+            SimileAjax.prefixURLs(cssURLs, timeplotURLPrefix + "styles/", cssFiles);
         }
         
         // Localization
@@ -121,7 +123,7 @@
         if (typeof Timeline != "undefined") {
             loadTimeplot();
         } else {
-            var timelineURL = (debug) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
+            var timelineURL = (local) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
             window.SimileAjax_onLoad = loadTimeplot;
             SimileAjax.includeJavascriptFile(document, timelineURL);
         }
