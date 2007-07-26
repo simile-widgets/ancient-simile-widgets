@@ -16,7 +16,7 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     this.iterable = false;
 
     this.configure(params);
-    this.title = this.title || this.n + "-Month";
+    this.title = this.title || Timegrid.NMonthLayout.l10n.makeTitle(this.n);
     
     // Initialize our eventSource
     this.eventSource = eventSource;
@@ -130,7 +130,7 @@ Timegrid.NMonthLayout.prototype.renderMonthLabels = function() {
 };
 
 Timegrid.NMonthLayout.prototype.getXLabels = function() {
-    return Date.dayNames;
+    return Date.l10n.dayNames;
 };
 
 Timegrid.NMonthLayout.prototype.getYLabels = function() {
@@ -154,8 +154,7 @@ Timegrid.NMonthLayout.prototype.goNext = function() {
 Timegrid.NMonthLayout.prototype.getCurrent = function() {
     var start = this.monthStarts[0].date;
     var end   = this.monthStarts[this.monthStarts.length - 1].date;
-    return start.getMonthName() + " " + start.getFullYear() + " - " +
-           end.getMonthName()   + " " + end.getFullYear();
+    return Timegrid.NMonthLayout.l10n.makeRange(start, end);
 };
 
 Timegrid.NMonthLayout.prototype.computeStartTime = function(date) {
@@ -174,7 +173,7 @@ Timegrid.NMonthLayout.prototype.computeStartTime = function(date) {
 Timegrid.NMonthLayout.prototype.computeEndTime = function(date) {
     if (date) {
         var endTime = new Date(date);
-        endTime.addDays(this.ySize * 7);
+        endTime.add('d', this.ySize * 7);
         return endTime;
     }
     return false;
@@ -188,8 +187,8 @@ Timegrid.NMonthLayout.prototype.computeYSize = function(date) {
     while (this.xMapper(gridStart) > 0 && this.yMapper(gridStart) >= 0) {
         gridStart.time.setHours(-24);
     }
-    gridStart.time.addDays(7);
-    for (; this.monthStarts.length <= this.n; gridStart.time.addDays(7)) {
+    gridStart.time.add('d', 7);
+    for (; this.monthStarts.length <= this.n; gridStart.time.add('d', 7)) {
         if (gridStart.time.getMonth() != month) { 
             month = gridStart.time.getMonth();
             var year = gridStart.time.getFullYear();
@@ -215,7 +214,7 @@ Timegrid.NMonthLayout.prototype.computeLabels = function(date) {
         this.cellLabels.push(d.getDate());
         this.months.push(d.getMonth());
         if (d.getDay() == 0) { 
-            this.yLabels.push("W" + d.getWeekOfYear()); 
+            this.yLabels.push(d.format(Timegrid.NMonthLayout.l10n.yLabelFormat)); 
         }
         d.setHours(24);
     }

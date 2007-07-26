@@ -146,7 +146,7 @@ Timegrid._Impl.prototype._construct = function() {
 
     message.contentDiv.className = "timegrid-message";
     message.contentDiv.innerHTML = "<img src='" + Timegrid.urlPrefix
-        + "images/progress-running.gif' /> Loading...";
+        + "images/progress-running.gif' /> " + Timegrid.l10n.loadingMessage;
 
     this.showLoadingMessage = function() { $(message.containerDiv).show(); };
     this.hideLoadingMessage = function() { $(message.containerDiv).hide(); };

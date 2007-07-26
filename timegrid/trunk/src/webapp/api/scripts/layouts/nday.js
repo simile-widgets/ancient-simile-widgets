@@ -29,7 +29,7 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.n      = 3;
     
     this.configure(params);
-    this.title = this.n + "-Day";
+    this.title = Timegrid.NDayLayout.l10n.makeTitle(this.n);
     this.xSize = this.n;
     this.computeCellSizes();
     
@@ -112,7 +112,7 @@ Timegrid.NDayLayout.prototype.getXLabels = function() {
     var date = new Date(this.startTime);
     var labels = [];
     while (date < this.endTime) {
-        labels.push(Date.abbrDayNames[date.getDay()] + " " + this.renderDate(date));
+        labels.push(date.format(Timegrid.NDayLayout.l10n.xLabelFormat));
         date.setHours(24);
     }
     return labels;
@@ -139,20 +139,17 @@ Timegrid.NDayLayout.prototype.goNext = function() {
 };
 
 Timegrid.NDayLayout.prototype.getCurrent = function() {
-    this.endTime.addSeconds(-1);
-    var result = this.renderDate(this.startTime) + " - " + this.renderDate(this.endTime);
-    this.endTime.addSeconds(1);
+    this.endTime.add('s', -1);
+    var result = Timegrid.NDayLayout.l10n.makeRange(this.startTime,
+                                                    this.endTime);
+    this.endTime.add('s', 1);
     return result;
-};
-
-Timegrid.NDayLayout.prototype.renderDate = function(date) {
-    return (date.getMonth() + 1) + "/" + date.getDate();
 };
 
 Timegrid.NDayLayout.prototype.computeStartTime = function(date) {
     if (date) {
         var startTime = new Date(date);
-        startTime.addDays(0 - this.n);
+        startTime.add('d', 0 - this.n);
         startTime.setHours(0);
         return startTime;
     }
@@ -162,7 +159,7 @@ Timegrid.NDayLayout.prototype.computeStartTime = function(date) {
 Timegrid.NDayLayout.prototype.computeEndTime = function(date) {
     if (date) {
         var endTime = new Date(date);
-        endTime.addDays(this.n);
+        endTime.add('d', this.n);
         endTime.setHours(0);
         return endTime;
     }

@@ -1,95 +1,29 @@
+/**
+ * Copyright (c)2005-2007 Matt Kruse (javascripttoolbox.com)
+ * 
+ * Dual licensed under the MIT and GPL licenses. 
+ * This basically means you can use this code however you want for
+ * free, but don't claim to have written it yourself!
+ * Donations always accepted: http://www.JavascriptToolbox.com/donate/
+ * 
+ * Please do not link to the .js files on javascripttoolbox.com from
+ * your site. Copy the files locally to your server instead.
+ * 
+ * Modified by Mason Tang, SIMILE Project, 2007
+ */
 /*
- * Date prototype extensions. Doesn't depend on any
- * other code. Doens't overwrite existing methods.
- *
- * Adds dayNames, abbrDayNames, monthNames and abbrMonthNames static properties and isLeapYear,
- * isWeekend, isWeekDay, getDaysInMonth, getDayName, getMonthName, getDayOfYear, getWeekOfYear,
- * setDayOfYear, addYears, addMonths, addDays, addHours, addMinutes, addSeconds methods
- *
- * Copyright (c) 2006 Jörn Zaefferer and Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
- *
- * Additional methods and properties added by Kelvin Luck: firstDayOfWeek, dateFormat, zeroTime, asString, fromString -
- * I've added my name to these methods so you know who to blame if they are broken!
- * 
- * Dual licensed under the MIT and GPL licenses:
- *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
- *
- */
+Date functions
 
-/**
- * An Array of day names starting with Sunday.
- * 
- * @example dayNames[0]
- * @result 'Sunday'
- *
- * @name dayNames
- * @type Array
- * @cat Plugins/Methods/Date
- */
-Date.dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+These functions are used to parse, format, and manipulate Date objects.
+See documentation and examples at http://www.JavascriptToolbox.com/lib/date/
 
-/**
- * An Array of abbreviated day names starting with Sun.
- * 
- * @example abbrDayNames[0]
- * @result 'Sun'
- *
- * @name abbrDayNames
- * @type Array
- * @cat Plugins/Methods/Date
- */
-Date.abbrDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+*/
+Date.$VERSION = 1.02;
 
-/**
- * An Array of month names starting with Janurary.
- * 
- * @example monthNames[0]
- * @result 'January'
- *
- * @name monthNames
- * @type Array
- * @cat Plugins/Methods/Date
- */
-Date.monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-/**
- * An Array of abbreviated month names starting with Jan.
- * 
- * @example abbrMonthNames[0]
- * @result 'Jan'
- *
- * @name monthNames
- * @type Array
- * @cat Plugins/Methods/Date
- */
-Date.abbrMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-/**
- * The first day of the week for this locale.
- *
- * @name firstDayOfWeek
- * @type Number
- * @cat Plugins/Methods/Date
- * @author Kelvin Luck
- */
-Date.firstDayOfWeek = 0;
-
-/**
- * The format that string dates should be represented as (e.g. 'dd/mm/yyyy' for UK, 'mm/dd/yyyy' for US, 'yyyy-mm-dd' for Unicode etc).
- *
- * @name format
- * @type String
- * @cat Plugins/Methods/Date
- * @author Kelvin Luck
- */
-Date.format = 'dd/mm/yyyy';
-//Date.format = 'mm/dd/yyyy';
-//Date.format = 'yyyy-mm-dd';
-//Date.format = 'dd mmm yy';
+// Utility function to append a 0 to single-digit numbers
+Date.LZ = function(x) {return(x<0||x>9?"":"0")+x};
 
 (function() {
-
 	/**
 	 * Adds a given method under the given name 
 	 * to the Date prototype if it doesn't
@@ -102,124 +36,395 @@ Date.format = 'dd/mm/yyyy';
 			Date.prototype[name] = method;
 		}
 	};
-	
-	/**
-	 * Checks if the year is a leap year.
-	 *
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.isLeapYear();
-	 * @result true
-	 *
-	 * @name isLeapYear
-	 * @type Boolean
-	 * @cat Plugins/Methods/Date
-	 */
-	add("isLeapYear", function() {
-		var y = this.getFullYear();
-		return (y%4==0 && y%100!=0) || y%400==0;
-	});
-	
-	/**
-	 * Checks if the day is a weekend day (Sat or Sun).
-	 *
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.isWeekend();
-	 * @result false
-	 *
-	 * @name isWeekend
-	 * @type Boolean
-	 * @cat Plugins/Methods/Date
-	 */
-	add("isWeekend", function() {
-		return this.getDay()==0 || this.getDay()==6;
-	});
-	
-	/**
-	 * Check if the day is a day of the week (Mon-Fri)
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.isWeekDay();
-	 * @result false
-	 * 
-	 * @name isWeekDay
-	 * @type Boolean
-	 * @cat Plugins/Methods/Date
-	 */
-	add("isWeekDay", function() {
-		return !this.isWeekend();
-	});
-	
-	/**
-	 * Gets the number of days in the month.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.getDaysInMonth();
-	 * @result 31
-	 * 
-	 * @name getDaysInMonth
-	 * @type Number
-	 * @cat Plugins/Methods/Date
-	 */
-	add("getDaysInMonth", function() {
-		return [31,(this.isLeapYear() ? 29:28),31,30,31,30,31,31,30,31,30,31][this.getMonth()];
-	});
-	
-	/**
-	 * Gets the name of the day.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.getDayName();
-	 * @result 'Saturday'
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.getDayName(true);
-	 * @result 'Sat'
-	 * 
-	 * @param abbreviated Boolean When set to true the name will be abbreviated.
-	 * @name getDayName
-	 * @type String
-	 * @cat Plugins/Methods/Date
-	 */
-	add("getDayName", function(abbreviated) {
-		return abbreviated ? Date.abbrDayNames[this.getDay()] : Date.dayNames[this.getDay()];
-	});
+    
+    add('getFullYear', function() { 
+        var yy=this.getYear(); 
+        return (yy<1900?yy+1900:yy);
+    });
+    
+    /**
+     * Parse a string and convert it to a Date object.
+     * If no format is passed, try a list of common formats.
+     * If string cannot be parsed, return null.
+     * Avoids regular expressions to be more portable.
+     */
+    add('parseString', function(val, format) {
+    	// If no format is specified, try a few common formats
+    	if (typeof(format)=="undefined" || format==null || format=="") {
+    		var generalFormats=new Array('y-M-d','MMM d, y','MMM d,y','y-MMM-d','d-MMM-y','MMM d','MMM-d','d-MMM');
+    		var monthFirst=new Array('M/d/y','M-d-y','M.d.y','M/d','M-d');
+    		var dateFirst =new Array('d/M/y','d-M-y','d.M.y','d/M','d-M');
+    		var checkList=new Array(generalFormats,Date.preferAmericanFormat?monthFirst:dateFirst,Date.preferAmericanFormat?dateFirst:monthFirst);
+    		for (var i=0; i<checkList.length; i++) {
+    			var l=checkList[i];
+    			for (var j=0; j<l.length; j++) {
+    				var d=Date.parseString(val,l[j]);
+    				if (d!=null) { 
+    					return d; 
+    				}
+    			}
+    		}
+    		return null;
+    	};
 
-	/**
-	 * Gets the name of the month.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.getMonthName();
-	 * @result 'Janurary'
-	 *
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.getMonthName(true);
-	 * @result 'Jan'
-	 * 
-	 * @param abbreviated Boolean When set to true the name will be abbreviated.
-	 * @name getDayName
-	 * @type String
-	 * @cat Plugins/Methods/Date
-	 */
-	add("getMonthName", function(abbreviated) {
-		return abbreviated ? Date.abbrMonthNames[this.getMonth()] : Date.monthNames[this.getMonth()];
-	});
-
-	/**
-	 * Get the number of the day of the year.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.getDayOfYear();
-	 * @result 11
-	 * 
-	 * @name getDayOfYear
-	 * @type Number
-	 * @cat Plugins/Methods/Date
-	 */
-	add("getDayOfYear", function() {
-		var tmpdtm = new Date("1/1/" + this.getFullYear());
-		return Math.floor((this.getTime() - tmpdtm.getTime()) / 86400000);
-	});
-	
+    	this.isInteger = function(val) {
+    		for (var i=0; i < val.length; i++) {
+    			if ("1234567890".indexOf(val.charAt(i))==-1) { 
+    				return false; 
+    			}
+    		}
+    		return true;
+    	};
+    	this.getInt = function(str,i,minlength,maxlength) {
+    		for (var x=maxlength; x>=minlength; x--) {
+    			var token=str.substring(i,i+x);
+    			if (token.length < minlength) { 
+    				return null; 
+    			}
+    			if (this.isInteger(token)) { 
+    				return token; 
+    			}
+    		}
+    	return null;
+    	};
+    	val=val+"";
+    	format=format+"";
+    	var i_val=0;
+    	var i_format=0;
+    	var c="";
+    	var token="";
+    	var token2="";
+    	var x,y;
+    	var year=new Date().getFullYear();
+    	var month=1;
+    	var date=1;
+    	var hh=0;
+    	var mm=0;
+    	var ss=0;
+    	var ampm="";
+    	while (i_format < format.length) {
+    		// Get next token from format string
+    		c=format.charAt(i_format);
+    		token="";
+    		while ((format.charAt(i_format)==c) && (i_format < format.length)) {
+    			token += format.charAt(i_format++);
+    		}
+    		// Extract contents of value based on format token
+    		if (token=="yyyy" || token=="yy" || token=="y") {
+    			if (token=="yyyy") { 
+    				x=4;y=4; 
+    			}
+    			if (token=="yy") { 
+    				x=2;y=2; 
+    			}
+    			if (token=="y") { 
+    				x=2;y=4; 
+    			}
+    			year=this.getInt(val,i_val,x,y);
+    			if (year==null) { 
+    				return null; 
+    			}
+    			i_val += year.length;
+    			if (year.length==2) {
+    				if (year > 70) { 
+    					year=1900+(year-0); 
+    				}
+    				else { 
+    					year=2000+(year-0); 
+    				}
+    			}
+    		}
+    		else if (token=="MMM" || token=="NNN"){
+    			month=0;
+    			var names = (token=="MMM"?(Date.l10n.monthNames.concat(Date.l10n.monthAbbreviations)):Date.l10n.monthAbbreviations);
+    			for (var i=0; i<names.length; i++) {
+    				var month_name=names[i];
+    				if (val.substring(i_val,i_val+month_name.length).toLowerCase()==month_name.toLowerCase()) {
+    					month=(i%12)+1;
+    					i_val += month_name.length;
+    					break;
+    				}
+    			}
+    			if ((month < 1)||(month>12)){
+    				return null;
+    			}
+    		}
+    		else if (token=="EE"||token=="E"){
+    			var names = (token=="EE"?Date.l10n.dayNames:Date.l10n.dayAbbreviations);
+    			for (var i=0; i<names.length; i++) {
+    				var day_name=names[i];
+    				if (val.substring(i_val,i_val+day_name.length).toLowerCase()==day_name.toLowerCase()) {
+    					i_val += day_name.length;
+    					break;
+    				}
+    			}
+    		}
+    		else if (token=="MM"||token=="M") {
+    			month=this.getInt(val,i_val,token.length,2);
+    			if(month==null||(month<1)||(month>12)){
+    				return null;
+    			}
+    			i_val+=month.length;
+    		}
+    		else if (token=="dd"||token=="d") {
+    			date=this.getInt(val,i_val,token.length,2);
+    			if(date==null||(date<1)||(date>31)){
+    				return null;
+    			}
+    			i_val+=date.length;
+    		}
+    		else if (token=="hh"||token=="h") {
+    			hh=this.getInt(val,i_val,token.length,2);
+    			if(hh==null||(hh<1)||(hh>12)){
+    				return null;
+    			}
+    			i_val+=hh.length;
+    		}
+    		else if (token=="HH"||token=="H") {
+    			hh=this.getInt(val,i_val,token.length,2);
+    			if(hh==null||(hh<0)||(hh>23)){
+    				return null;
+    			}
+    			i_val+=hh.length;
+    		}
+    		else if (token=="KK"||token=="K") {
+    			hh=this.getInt(val,i_val,token.length,2);
+    			if(hh==null||(hh<0)||(hh>11)){
+    				return null;
+    			}
+    			i_val+=hh.length;
+    			hh++;
+    		}
+    		else if (token=="kk"||token=="k") {
+    			hh=this.getInt(val,i_val,token.length,2);
+    			if(hh==null||(hh<1)||(hh>24)){
+    				return null;
+    			}
+    			i_val+=hh.length;
+    			hh--;
+    		}
+    		else if (token=="mm"||token=="m") {
+    			mm=this.getInt(val,i_val,token.length,2);
+    			if(mm==null||(mm<0)||(mm>59)){
+    				return null;
+    			}
+    			i_val+=mm.length;
+    		}
+    		else if (token=="ss"||token=="s") {
+    			ss=this.getInt(val,i_val,token.length,2);
+    			if(ss==null||(ss<0)||(ss>59)){
+    				return null;
+    			}
+    			i_val+=ss.length;
+    		}
+    		else if (token=="a") {
+    			if (val.substring(i_val,i_val+2).toLowerCase()=="am") {
+    				ampm="AM";
+    			}
+    			else if (val.substring(i_val,i_val+2).toLowerCase()=="pm") {
+    				ampm="PM";
+    			}
+    			else {
+    				return null;
+    			}
+    			i_val+=2;
+    		}
+    		else {
+    			if (val.substring(i_val,i_val+token.length)!=token) {
+    				return null;
+    			}
+    			else {
+    				i_val+=token.length;
+    			}
+    		}
+    	}
+    	// If there are any trailing characters left in the value, it doesn't match
+    	if (i_val != val.length) { 
+    		return null; 
+    	}
+    	// Is date valid for month?
+    	if (month==2) {
+    		// Check for leap year
+    		if ( ( (year%4==0)&&(year%100 != 0) ) || (year%400==0) ) { // leap year
+    			if (date > 29){ 
+    				return null; 
+    			}
+    		}
+    		else { 
+    			if (date > 28) { 
+    				return null; 
+    			} 
+    		}
+    	}
+    	if ((month==4)||(month==6)||(month==9)||(month==11)) {
+    		if (date > 30) { 
+    			return null; 
+    		}
+    	}
+    	// Correct hours value
+    	if (hh<12 && ampm=="PM") {
+    		hh=hh-0+12; 
+    	}
+    	else if (hh>11 && ampm=="AM") { 
+    		hh-=12; 
+    	}
+    	return new Date(year,month-1,date,hh,mm,ss);
+    });
+    
+    /**
+     * Check if a date string is valid
+     */
+    add('isValid', function(val, format) {
+        return (Date.parseString(val,format) != null);
+    });
+    
+    /**
+     * Check if a date object is before another date object
+     */
+    add('isBefore', function(date2) {
+    	if (date2==null) { 
+    		return false; 
+    	}
+    	return (this.getTime()<date2.getTime());
+    });
+    
+    /**
+     * Check if a date object is after another date object
+     */
+    add('isAfter', function(date2) {
+    	if (date2==null) { 
+    		return false; 
+    	}
+    	return (this.getTime()>date2.getTime());
+    });
+    
+    /**
+     * Check if two date objects have equal dates and times
+     */
+    add('equals', function(date2) {
+    	if (date2==null) { 
+    		return false; 
+    	}
+    	return (this.getTime()==date2.getTime());
+    });
+    
+    /**
+     * Check if two date objects have equal dates, disregarding times
+     */
+    add('equalsIgnoreTime', function(date2) {
+    	if (date2==null) { 
+    		return false; 
+    	}
+    	var d1 = new Date(this.getTime()).clearTime();
+    	var d2 = new Date(date2.getTime()).clearTime();
+    	return (d1.getTime()==d2.getTime());
+    });
+    
+    /**
+     * Format a date into a string using a given format string
+     */
+     add('format', function(format) {
+    	format=format+"";
+    	var result="";
+    	var i_format=0;
+    	var c="";
+    	var token="";
+    	var y=this.getYear()+"";
+    	var M=this.getMonth()+1;
+    	var d=this.getDate();
+    	var E=this.getDay();
+    	var H=this.getHours();
+    	var m=this.getMinutes();
+    	var s=this.getSeconds();
+        var w=this.getWeekOfYear();
+    	var yyyy,yy,MMM,MM,dd,hh,h,mm,ss,ampm,HH,H,KK,K,kk,k;
+    	// Convert real date parts into formatted versions
+    	var value=new Object();
+    	if (y.length < 4) {
+    		y=""+(+y+1900);
+    	}
+    	value["y"]=""+y;
+    	value["yyyy"]=y;
+    	value["yy"]=y.substring(2,4);
+    	value["M"]=M;
+    	value["MM"]=Date.LZ(M);
+    	value["MMM"]=Date.l10n.monthNames[M-1];
+    	value["NNN"]=Date.l10n.monthAbbreviations[M-1];
+    	value["d"]=d;
+    	value["dd"]=Date.LZ(d);
+    	value["E"]=Date.l10n.dayAbbreviations[E];
+    	value["EE"]=Date.l10n.dayNames[E];
+    	value["H"]=H;
+    	value["HH"]=Date.LZ(H);
+    	if (H==0){
+    		value["h"]=12;
+    	}
+    	else if (H>12){
+    		value["h"]=H-12;
+    	}
+    	else {
+    		value["h"]=H;
+    	}
+    	value["hh"]=Date.LZ(value["h"]);
+    	value["K"]=value["h"]-1;
+    	value["k"]=value["H"]+1;
+    	value["KK"]=Date.LZ(value["K"]);
+    	value["kk"]=Date.LZ(value["k"]);
+    	if (H > 11) { 
+    		value["a"]="PM"; 
+    	}
+    	else { 
+    		value["a"]="AM"; 
+    	}
+    	value["m"]=m;
+    	value["mm"]=Date.LZ(m);
+    	value["s"]=s;
+    	value["ss"]=Date.LZ(s);
+        value["w"]=w;
+    	while (i_format < format.length) {
+    		c=format.charAt(i_format);
+    		token="";
+    		while ((format.charAt(i_format)==c) && (i_format < format.length)) {
+    			token += format.charAt(i_format++);
+    		}
+    		if (typeof(value[token])!="undefined") { 
+    			result=result + value[token]; 
+    		}
+    		else { 
+    			result=result + token; 
+    		}
+    	}
+    	return result;
+    });
+    
+    /**
+     * Get the full name of the day for a date
+     */
+    add('getDayName', function() { 
+        return Date.l10n.dayNames[this.getDay()];
+    });
+    
+    /**
+     * Get the abbreviation of the day for a date
+     */
+    add('getDayAbbreviation', function() { 
+        return Date.l10n.dayAbbreviations[this.getDay()];
+    });
+    
+    /**
+     * Get the full name of the month for a date
+     */
+    add('getMonthName', function() {
+        return Date.l10n.monthNames[this.getMonth()];
+    });
+    
+    /**
+     * Get the abbreviation of the month for a date
+     */
+    add('getMonthAbbreviation',  function() { 
+        return Date.l10n.monthAbbreviations[this.getMonth()];
+    });
+    
 	/**
 	 * Get the number of the week of the year.
 	 * 
@@ -232,7 +437,7 @@ Date.format = 'dd/mm/yyyy';
 	 * @cat Plugins/Methods/Date
 	 */
 	add("getWeekOfYear", function() {
-        dowOffset = Date.firstDayOfWeek;
+        dowOffset = Date.l10n.firstDayOfWeek;
         var newYear = new Date(this.getFullYear(),0,1);
         var day = newYear.getDay() - dowOffset; //the day of week the year begins on
         day = (day >= 0 ? day : day + 7);
@@ -255,223 +460,56 @@ Date.format = 'dd/mm/yyyy';
         }
         return weeknum;
 	});
-
-	/**
-	 * Set the day of the year.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.setDayOfYear(1);
-	 * dtm.toString();
-	 * @result 'Tue Jan 01 2008 00:00:00'
-	 * 
-	 * @name setDayOfYear
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 */
-	add("setDayOfYear", function(day) {
-		this.setMonth(0);
-		this.setDate(day);
-		return this;
-	});
-	
-	/**
-	 * Add a number of years to the date object.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.addYears(1);
-	 * dtm.toString();
-	 * @result 'Mon Jan 12 2009 00:00:00'
-	 * 
-	 * @name addYears
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 */
-	add("addYears", function(num) {
-		this.setFullYear(this.getFullYear() + num);
-		return this;
-	});
-	
-	/**
-	 * Add a number of months to the date object.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.addMonths(1);
-	 * dtm.toString();
-	 * @result 'Tue Feb 12 2008 00:00:00'
-	 * 
-	 * @name addMonths
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 */
-	add("addMonths", function(num) {
-		var tmpdtm = this.getDate();
-		
-		this.setMonth(this.getMonth() + num);
-		
-		if (tmpdtm > this.getDate())
-			this.addDays(-this.getDate());
-		
-		return this;
-	});
-	
-	/**
-	 * Add a number of days to the date object.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.addDays(1);
-	 * dtm.toString();
-	 * @result 'Sun Jan 13 2008 00:00:00'
-	 * 
-	 * @name addDays
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 */
-	add("addDays", function(num) {
-		this.setDate(this.getDate() + num);
-		return this;
-	});
-	
-	/**
-	 * Add a number of hours to the date object.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.addHours(24);
-	 * dtm.toString();
-	 * @result 'Sun Jan 13 2008 00:00:00'
-	 * 
-	 * @name addHours
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 */
-	add("addHours", function(num) {
-		this.setHours(this.getHours() + num);
-		return this;
-	});
-
-	/**
-	 * Add a number of minutes to the date object.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.addMinutes(60);
-	 * dtm.toString();
-	 * @result 'Sat Jan 12 2008 01:00:00'
-	 * 
-	 * @name addMinutes
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 */
-	add("addMinutes", function(num) {
-		this.setMinutes(this.getMinutes() + num);
-		return this;
-	});
-	
-	/**
-	 * Add a number of seconds to the date object.
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.addSeconds(60);
-	 * dtm.toString();
-	 * @result 'Sat Jan 12 2008 00:01:00'
-	 * 
-	 * @name addSeconds
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 */
-	add("addSeconds", function(num) {
-		this.setSeconds(this.getSeconds() + num);
-		return this;
-	});
     
+    /**
+     * Clear all time information in a date object
+     */
+    add('clearTime', function() {
+        this.setHours(0); 
+        this.setMinutes(0);
+        this.setSeconds(0); 
+        this.setMilliseconds(0);
+        return this;
+    });
     
-	
-	/**
-	 * Sets the time component of this Date to zero for cleaner, easier comparison of dates where time is not relevant.
-	 * 
-	 * @example var dtm = new Date();
-	 * dtm.zeroTime();
-	 * dtm.toString();
-	 * @result 'Sat Jan 12 2008 00:01:00'
-	 * 
-	 * @name zeroTime
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 * @author Kelvin Luck
-	 */
-	add("zeroTime", function() {
-		this.setMilliseconds(0);
-		this.setSeconds(0);
-		this.setMinutes(0);
-		this.setHours(0);
-		return this;
-	});
-	
-	/**
-	 * Returns a string representation of the date object according to Date.format.
-	 * (Date.toString may be used in other places so I purposefully didn't overwrite it)
-	 * 
-	 * @example var dtm = new Date("01/12/2008");
-	 * dtm.asString();
-	 * @result '12/01/2008' // (where Date.format == 'dd/mm/yyyy'
-	 * 
-	 * @name asString
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 * @author Kelvin Luck
-	 */
-	add("asString", function() {
-		var r = Date.format;
-		return r
-			.split('yyyy').join(this.getFullYear())
-			.split('yy').join(this.getYear())
-			.split('mmm').join(this.getMonthName(true))
-			.split('mm').join(_zeroPad(this.getMonth()+1))
-			.split('dd').join(_zeroPad(this.getDate()));
-	});
-	
-	/**
-	 * Returns a new date object created from the passed String according to Date.format or false if the attempt to do this results in an invalid date object
-	 * (We can't simple use Date.parse as it's not aware of locale and I chose not to overwrite it incase it's functionality is being relied on elsewhere)
-	 *
-	 * @example var dtm = Date.fromString("12/01/2008");
-	 * dtm.toString();
-	 * @result 'Sat Jan 12 2008 00:00:00' // (where Date.format == 'dd/mm/yyyy'
-	 * 
-	 * @name fromString
-	 * @type Date
-	 * @cat Plugins/Methods/Date
-	 * @author Kelvin Luck
-	 */
-	Date.fromString = function(s)
-	{
-		var f = Date.format;
-		var d = new Date('01/01/1977');
-		var iY = f.indexOf('yyyy');
-		if (iY > -1) {
-			d.setFullYear(Number(s.substr(iY, 4)));
-		} else {
-			// TODO - this doesn't work very well - are there any rules for what is meant by a two digit year?
-			d.setYear(Number(s.substr(f.indexOf('yy'), 2)));
-		}
-		var iM = f.indexOf('mmm');
-		if (iM > -1) {
-			var mStr = s.substr(iM, 3);
-			for (var i=0; i<Date.abbrMonthNames.length; i++) {
-				if (Date.abbrMonthNames[i] == mStr) break;
-			}
-			d.setMonth(i);
-		} else {
-			d.setMonth(Number(s.substr(f.indexOf('mm'), 2)) - 1);
-		}
-		d.setDate(Number(s.substr(f.indexOf('dd'), 2)));
-		if (isNaN(d.getTime())) return false;
-		return d;
-	}
-	
-	// utility method
-	var _zeroPad = function(num) {
-		var s = '0'+num;
-		return s.substring(s.length-2)
-		//return ('0'+num).substring(-2); // doesn't work on IE :(
-	};
-	
+    /**
+     * Add an amount of time to a date. Negative numbers can be passed to 
+     * subtract time.
+     */
+    add('add', function(interval, number) {
+    	if (typeof(interval)=="undefined" || interval==null || typeof(number)=="undefined" || number==null) { 
+    		return this; 
+    	}
+    	number = +number;
+    	if (interval=='y') { // year
+    		this.setFullYear(this.getFullYear()+number);
+    	}
+    	else if (interval=='M') { // Month
+    		this.setMonth(this.getMonth()+number);
+    	}
+    	else if (interval=='d') { // Day
+    		this.setDate(this.getDate()+number);
+    	}
+    	else if (interval=='w') { // Weekday
+    		var step = (number>0)?1:-1;
+    		while (number!=0) {
+    			this.add('d',step);
+    			while(this.getDay()==0 || this.getDay()==6) { 
+    				this.add('d',step);
+    			}
+    			number -= step;
+    		}
+    	}
+    	else if (interval=='h') { // Hour
+    		this.setHours(this.getHours() + number);
+    	}
+    	else if (interval=='m') { // Minute
+    		this.setMinutes(this.getMinutes() + number);
+    	}
+    	else if (interval=='s') { // Second
+    		this.setSeconds(this.getSeconds() + number);
+    	}
+    	return this;
+    });
+    
 })();
