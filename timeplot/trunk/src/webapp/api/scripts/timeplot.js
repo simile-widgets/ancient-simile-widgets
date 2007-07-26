@@ -303,18 +303,20 @@ Timeplot._Impl.prototype = {
      * modified.
      */
     update: function() {
-        for (var i = 0; i < this._plots.length; i++) {
-            var plot = this._plots[i];
-            var dataSource = plot.getDataSource();
-            if (dataSource) {
-                var range = dataSource.getRange();
-                if (range) {
-                	plot._valueGeometry.setRange(range);
-                	plot._timeGeometry.setRange(range);
-                }
-            }
-        }
-        this.paint();
+    	if (this._active) {
+	        for (var i = 0; i < this._plots.length; i++) {
+	            var plot = this._plots[i];
+	            var dataSource = plot.getDataSource();
+	            if (dataSource) {
+	                var range = dataSource.getRange();
+	                if (range) {
+	                	plot._valueGeometry.setRange(range);
+	                	plot._timeGeometry.setRange(range);
+	                }
+	            }
+	        }
+	        this.paint();
+    	}
     },
     
     /**
@@ -323,13 +325,15 @@ Timeplot._Impl.prototype = {
      * geometry of the page has changed or not. 
      */
     repaint: function() {
-        this._prepareCanvas();
-        for (var i = 0; i < this._plots.length; i++) {
-            var plot = this._plots[i];
-            if (plot._timeGeometry) plot._timeGeometry.reset();
-            if (plot._valueGeometry) plot._valueGeometry.reset();
-        }
-        this.paint();
+    	if (this._active) {
+	        this._prepareCanvas();
+	        for (var i = 0; i < this._plots.length; i++) {
+	            var plot = this._plots[i];
+	            if (plot._timeGeometry) plot._timeGeometry.reset();
+	            if (plot._valueGeometry) plot._valueGeometry.reset();
+	        }
+	        this.paint();
+    	}
     },
     
     /**
@@ -340,7 +344,7 @@ Timeplot._Impl.prototype = {
      * function in bursts (as in mousemove or during window resizing
      */
     paint: function() {
-        if (this._painter == null) {
+        if (this._active && this._painter == null) {
             var timeplot = this;
             this._painter = window.setTimeout(function() {
                 timeplot._clearCanvas();
