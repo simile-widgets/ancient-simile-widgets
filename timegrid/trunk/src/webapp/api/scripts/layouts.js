@@ -130,9 +130,8 @@ Timegrid.Layout.prototype.render = function(container) {
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
     this._viewDiv.append(xLabels).append(yLabels);
-    $(this._container).children('.timegrid-view:visible')
-                      .children('.timegrid-rounded-shadow')
-                      .prettybox(4,7,1,0.7); 
+    $('.timegrid-view:visible .timegrid-rounded-shadow', 
+      this._container).prettybox(4,7,1,0.7); 
     return this._viewDiv.get(0);
 };
 
