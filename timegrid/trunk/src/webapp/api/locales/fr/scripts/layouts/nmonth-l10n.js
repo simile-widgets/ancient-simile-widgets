@@ -1,5 +1,5 @@
 /******************************************************************************
- *  Timegrid NMonthLayout English localization
+ *  Timegrid NMonthLayout French localization
  *****************************************************************************/
  
 if (!("l10n" in Timegrid.NMonthLayout)) {
@@ -7,7 +7,7 @@ if (!("l10n" in Timegrid.NMonthLayout)) {
 }
 
 /** Function to create a title string from an n-value */
-Timegrid.NMonthLayout.l10n.makeTitle = function(n) { return n + "-Month"; }
+Timegrid.NMonthLayout.l10n.makeTitle = function(n) { return n + "-Mois"; }
 
 /** Function to combine two dates into a string describing the grid's range */
 Timegrid.NMonthLayout.l10n.makeRange = function(d1, d2) {
@@ -22,7 +22,7 @@ Timegrid.NMonthLayout.l10n.xLabelFormat = "";
 Timegrid.NMonthLayout.l10n.yLabelFormat = "Ww";
 
 /** Format for displaying the grid's starting date, e.g. "6/12/2007" */
-Timegrid.NMonthLayout.l10n.startFormat = "M/d/yyyy";
+Timegrid.NMonthLayout.l10n.startFormat = "d/M/yyyy";
 
 /** Format for displaying the grid's ending date, e.g. "6/15/2007" */
-Timegrid.NMonthLayout.l10n.endFormat = "M/d/yyyy";
+Timegrid.NMonthLayout.l10n.endFormat = "d/M/yyyy";

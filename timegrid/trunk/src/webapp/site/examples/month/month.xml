@@ -14,12 +14,12 @@
     </event>
     <event start="Mon Apr 23 2007 09:00:00 GMT-0400"
         end="Mon Apr 23 2007 10:00:00 GMT-0400" isDuration="true"
-        title="18.03 Lecture">
+        title="18.03 Lecture" color="green" textColor="white">
         Differential equations are fun!
     </event>
     <event start="Mon Apr 23 2007 10:00:00 GMT-0400"
         end="Mon Apr 23 2007 12:00:00 GMT-0400" isDuration="true"
-        title="8.02 TEAL">
+        title="8.02 TEAL" color="teal" textColor="white">
         Electricity and magnetism, anyone?
     </event>
     <event start="Tue Apr 24 2007 08:00:00 GMT-0400"

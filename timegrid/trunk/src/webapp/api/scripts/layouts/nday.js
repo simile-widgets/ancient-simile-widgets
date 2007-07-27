@@ -105,6 +105,8 @@ Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
     jediv.css("height", this.yCell * length);
     jediv.css("top", this.yCell * y);
     jediv.css("left", this.xCell * x + '%');
+    if (evt.getColor()) { jediv.css('background-color', evt.getColor()); }
+    if (evt.getTextColor()) { jediv.css('color', evt.getTextColor()); }
     return jediv.get()[0]; // Return the actual DOM element
 };
 
