@@ -15,7 +15,7 @@
   */
 Timegrid.WeekLayout = function(eventSource, params) {
     params.n = 7;
-    params.title = params.title || "Week";
+    params.title = params.title || Timegrid.WeekLayout.l10n.makeTitle();
     Timegrid.WeekLayout.superclass.call(this, eventSource, params);
 };
 Timegrid.LayoutFactory.registerLayout("week", Timegrid.WeekLayout);

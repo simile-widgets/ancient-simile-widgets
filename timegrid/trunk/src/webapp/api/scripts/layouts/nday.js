@@ -29,7 +29,7 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.n      = 3;
     
     this.configure(params);
-    this.title = Timegrid.NDayLayout.l10n.makeTitle(this.n);
+    this.title = params.title || Timegrid.NDayLayout.l10n.makeTitle(this.n);
     this.xSize = this.n;
     this.computeCellSizes();
     

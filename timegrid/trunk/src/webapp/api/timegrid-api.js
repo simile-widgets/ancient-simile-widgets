@@ -46,7 +46,7 @@
             "themes/theme-sandy-stone-beach-ocean-diver.css"
         ];
         
-        var locales = [ "en" ];
+        var locales = [ "en", "fr" ];
         
         var defaultClientLocales = ("language" in navigator ? navigator.language : navigator.browserLanguage).split(";");
         for (var l = 0; l < defaultClientLocales.length; l++) {

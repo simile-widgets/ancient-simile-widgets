@@ -10,7 +10,9 @@
         "util/date-l10n.js",
         
         "layouts/nday-l10n.js",
-        "layouts/nmonth-l10n.js"
+        "layouts/nmonth-l10n.js",
+        "layouts/weekly-l10n.js",
+        "layouts/monthly-l10n.js"
     ];
     var cssFiles = [
     ];

@@ -15,15 +15,15 @@ Timegrid.NDayLayout.l10n.makeRange = function(d1, d2) {
            d2.format(Timegrid.NDayLayout.l10n.endFormat);
 };
 
-/** Format for horizontal "Mon 5/24" style labels */
+/** Format for horizontal "Mon 24/5" style labels */
 Timegrid.NDayLayout.l10n.xLabelFormat = "E d/M";
 
-/** Format for vertical "12am" style labels */
-Timegrid.NDayLayout.l10n.yLabelFormat = "ha";
+/** Format for vertical "13h" style labels */
+Timegrid.NDayLayout.l10n.yLabelFormat = "H";
 
-/** Format for displaying the grid's starting date, e.g. "6/12/2007" */
+/** Format for displaying the grid's starting date, e.g. "16/6/2007" */
 Timegrid.NDayLayout.l10n.startFormat = "d/M/yyyy";
 
-/** Format for displaying the grid's ending date, e.g. "6/15/2007" */
+/** Format for displaying the grid's ending date, e.g. "17/6/2007" */
 Timegrid.NDayLayout.l10n.endFormat = "d/M/yyyy";
 
