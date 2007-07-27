@@ -1073,8 +1073,8 @@ return a-b;
 Timeplot.DefaultValueGeometry=function(params){
 if(!params)params={};
 this._id=("id"in params)?params.id:"g"+Math.round(Math.random()*1000000);
-this._axisColor=("axisColor"in params)?((params.axisColor=="string")?new Timeplot.Color(params.axisColor):params.axisColor):new Timeplot.Color("#606060"),
-this._gridColor=("gridColor"in params)?((params.gridColor=="string")?new Timeplot.Color(params.gridColor):params.gridColor):null,
+this._axisColor=("axisColor"in params)?((typeof params.axisColor=="string")?new Timeplot.Color(params.axisColor):params.axisColor):new Timeplot.Color("#606060"),
+this._gridColor=("gridColor"in params)?((typeof params.gridColor=="string")?new Timeplot.Color(params.gridColor):params.gridColor):null,
 this._gridLineWidth=("gridLineWidth"in params)?params.gridLineWidth:0.5;
 this._axisLabelsPlacement=("axisLabelsPlacement"in params)?params.axisLabelsPlacement:"right";
 this._gridSpacing=("gridSpacing"in params)?params.gridStep:50;
@@ -1156,8 +1156,8 @@ ctx.lineJoin='miter';
 
 if(this._gridColor){
 var gridGradient=ctx.createLinearGradient(0,0,0,this._canvas.height);
-gridGradient.addColorStop(0,this._gridColor.toString());
-gridGradient.addColorStop(0.3,this._gridColor.toString());
+gridGradient.addColorStop(0,this._gridColor.toHexString());
+gridGradient.addColorStop(0.3,this._gridColor.toHexString());
 gridGradient.addColorStop(1,"rgba(255,255,255,0.5)");
 
 ctx.lineWidth=this._gridLineWidth;
@@ -1328,22 +1328,45 @@ Timeplot.LogarithmicValueGeometry=function(params){
 Timeplot.DefaultValueGeometry.apply(this,arguments);
 this._logMap={
 direct:function(v){
-return Math.log(v+1);
+return Math.log(v+1)/Math.log(10);
 },
 inverse:function(y){
-return Math.exp(y)-1;
+return Math.exp(Math.log(10)*y)-1;
 }
 }
 this._mode="log";
 this._map=this._logMap;
+this._calculateGrid=this._logarithmicCalculateGrid;
 };
 
+Timeplot.LogarithmicValueGeometry.prototype._linearCalculateGrid=Timeplot.DefaultValueGeometry.prototype._calculateGrid;
+
 Object.extend(Timeplot.LogarithmicValueGeometry.prototype,Timeplot.DefaultValueGeometry.prototype);
+
+
+Timeplot.LogarithmicValueGeometry.prototype._logarithmicCalculateGrid=function(){
+var grid=[];
+
+if(!this._canvas||this._valueRange==0)return grid;
+
+var v=1;
+var y=this.toScreen(v);
+while(y<this._canvas.height||isNaN(y)){
+if(y>0){
+grid.push({y:y,label:v});
+}
+v*=10;
+y=this.toScreen(v);
+}
+
+return grid;
+};
 
 
 Timeplot.LogarithmicValueGeometry.prototype.actLinear=function(){
 this._mode="lin";
 this._map=this._linMap;
+this._calculateGrid=this._linearCalculateGrid;
 this.reset();
 }
 
@@ -1351,6 +1374,7 @@ this.reset();
 Timeplot.LogarithmicValueGeometry.prototype.actLogarithmic=function(){
 this._mode="log";
 this._map=this._logMap;
+this._calculateGrid=this._logarithmicCalculateGrid;
 this.reset();
 }
 
