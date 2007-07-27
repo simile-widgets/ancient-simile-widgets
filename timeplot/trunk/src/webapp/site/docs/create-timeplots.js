@@ -72,7 +72,7 @@ function onLoad() {
             axisLabelsPlacement: "top"
           }),
           lineColor: "#ff0000",
-          fillColor: "#cc8080",
+          fillColor: "#cc8080"
        })
     ];
 
@@ -156,7 +156,7 @@ function onLoad() {
           id: "plot3",
           timeGeometry: timeGeometry2,
           eventSource: eventSource2,
-          lineColor: "#03212E",
+          lineColor: "#03212E"
         })
     ];
                   
