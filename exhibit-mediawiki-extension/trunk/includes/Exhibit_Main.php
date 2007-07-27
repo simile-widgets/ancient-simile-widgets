@@ -134,6 +134,28 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		}
 		$views = implode('/', $views);
 
+		//create coder divs and spans right here.
+		$coders = "";
+		foreach ($xml->coder as $coder) {
+			$coders .= '<div ex:role="coder"';
+			foreach ($coder->attributes() as $a => $b) {
+				if ($a == "id" ) {
+					$coders .= " id=\"$b\"";
+				} else {
+					$coders .= " ex:$a=\"$b\"";
+				}
+			}
+			$coders .=">";
+			foreach ($coder->code as $code) {
+				$coders .= "<span";
+				foreach($code->attributes() as $a => $b) {
+					$coders .= " ex:$a=\"$b\"";
+				}
+				$coders .= ">$code</span>";
+			}
+			$coders .= "</div>";
+		}
+		
 		$output = <<<OUTPUT
 		<script type="text/javascript">
 		var sourceData = "$sourceData".split(',');
@@ -142,6 +164,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		var facets = "$facets".split('/');
 		var views = "$views".split('/');
 		</script>
+		$coders
 		<div id="exhibitLocation"></div>
 OUTPUT;
 	}
