@@ -92,7 +92,11 @@ Exhibit.ExpressionParser._internalParse = function(scanner, several) {
                 if (token != null && token.type == Scanner.DELIMITER && token.value == "(") {
                     next();
                     
-                    result = new Exhibit.Expression._FunctionCall(identifier, parseExpressionList());
+                    var args = (token != null && token.type == Scanner.DELIMITER && token.value == ")") ? 
+                        [] :
+                        parseExpressionList();
+                        
+                    result = new Exhibit.Expression._FunctionCall(identifier, args);
                     
                     if (token != null && token.type == Scanner.DELIMITER && token.value == ")") {
                         next();
@@ -161,30 +165,19 @@ Exhibit.ExpressionParser._internalParse = function(scanner, several) {
         return expression;
     };
     var parseExpressionList = function() {
-
         var expressions = [ parseExpression() ];
-
         while (token != null && token.type == Scanner.DELIMITER && token.value == ",") {
-
             next();
-
             expressions.push(parseExpression());
-
         }
-
         return expressions;
-
     }
     
     if (several) {
         var roots = parseExpressionList();
-
         var expressions = [];
-
         for (var r = 0; r < roots.length; r++) {
-
             expressions.push(new Exhibit.Expression._Impl(roots[r]));
-
         }
         return expressions;
     } else {
@@ -223,7 +216,6 @@ Exhibit.ExpressionScanner.prototype.next = function() {
     
     while (this._index < this._maxIndex &&
         " \t\r\n".indexOf(this._text.charAt(this._index)) >= 0) {
-        
         this._index++;
     }
     

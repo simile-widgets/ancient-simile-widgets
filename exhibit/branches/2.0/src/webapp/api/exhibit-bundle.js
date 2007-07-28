@@ -1615,7 +1615,11 @@ throw new Error("Missing ( to start "+identifier+" at position "+makePosition())
 if(token!=null&&token.type==Scanner.DELIMITER&&token.value=="("){
 next();
 
-result=new Exhibit.Expression._FunctionCall(identifier,parseExpressionList());
+var args=(token!=null&&token.type==Scanner.DELIMITER&&token.value==")")?
+[]:
+parseExpressionList();
+
+result=new Exhibit.Expression._FunctionCall(identifier,args);
 
 if(token!=null&&token.type==Scanner.DELIMITER&&token.value==")"){
 next();
@@ -1684,30 +1688,19 @@ expression=new Exhibit.Expression._Operator(operator,[expression,parseSubExpress
 return expression;
 };
 var parseExpressionList=function(){
-
 var expressions=[parseExpression()];
-
 while(token!=null&&token.type==Scanner.DELIMITER&&token.value==","){
-
 next();
-
 expressions.push(parseExpression());
-
 }
-
 return expressions;
-
 }
 
 if(several){
 var roots=parseExpressionList();
-
 var expressions=[];
-
 for(var r=0;r<roots.length;r++){
-
 expressions.push(new Exhibit.Expression._Impl(roots[r]));
-
 }
 return expressions;
 }else{
@@ -1743,7 +1736,6 @@ this._token=null;
 
 while(this._index<this._maxIndex&&
 " \t\r\n".indexOf(this._text.charAt(this._index))>=0){
-
 this._index++;
 }
 
@@ -2631,6 +2623,75 @@ var to=new GLatLng(data.lat,data.lng);
 
 var range=this._computeDistance(from,to,data.unit,data.round);
 return new Exhibit.Expression._Collection(range!=null?[range]:[],"number");
+}
+};
+
+Exhibit.Functions["min"]={
+f:function(args){
+var returnMe=function(val){return val;};
+var min=Number.POSITIVE_INFINITY;
+var valueType=null;
+
+for(var i=0;i<args.length;i++){
+var arg=args[i];
+var currentValueType=arg.valueType?arg.valueType:'text';
+var parser=Exhibit.SettingsUtilities._typeToParser(currentValueType);
+
+arg.forEachValue(function(v){
+parsedV=parser(v,returnMe);
+if(parsedV<min||min==Number.POSITIVE_INFINITY){
+min=parsedV;
+valueType=(valueType==null)?currentValueType:
+(valueType==currentValueType?valueType:"text");
+}
+});
+}
+
+return new Exhibit.Expression._Collection([min],valueType!=null?valueType:"text");
+}
+};
+
+Exhibit.Functions["max"]={
+f:function(args){
+var returnMe=function(val){return val;};
+var max=Number.NEGATIVE_INFINITY;
+var valueType=null;
+
+for(var i=0;i<args.length;i++){
+var arg=args[i];
+var currentValueType=arg.valueType?arg.valueType:'text';
+var parser=Exhibit.SettingsUtilities._typeToParser(currentValueType);
+
+arg.forEachValue(function(v){
+parsedV=parser(v,returnMe);
+if(parsedV>max||max==Number.NEGATIVE_INFINITY){
+max=parsedV;
+valueType=(valueType==null)?currentValueType:
+(valueType==currentValueType?valueType:"text");
+}
+});
+}
+return new Exhibit.Expression._Collection([max],valueType!=null?valueType:"text");
+}
+};
+
+Exhibit.Functions["remove"]={
+f:function(args){
+var set=args[0].getSet();
+var valueType=args[0].valueType;
+for(var i=1;i<args.length;i++){
+var arg=args[i];
+if(arg.size>0){
+set.removeSet(arg.getSet());
+}
+}
+return new Exhibit.Expression._Collection(set,valueType);
+}
+};
+
+Exhibit.Functions["now"]={
+f:function(args){
+return new Exhibit.Expression._Collection([new Date()],"date");
 }
 };
 

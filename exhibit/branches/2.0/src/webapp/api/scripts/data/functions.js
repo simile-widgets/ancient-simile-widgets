@@ -211,3 +211,72 @@ Exhibit.Functions["distance"] = {
         return new Exhibit.Expression._Collection(range != null ? [ range ] : [], "number");
     }
 };
+
+Exhibit.Functions["min"] = {
+    f: function(args) {
+        var returnMe = function (val) { return val; };
+        var min = Number.POSITIVE_INFINITY;
+        var valueType = null;
+        
+        for (var i = 0; i < args.length; i++) {
+            var arg = args[i];
+            var currentValueType = arg.valueType ? arg.valueType : 'text';
+            var parser = Exhibit.SettingsUtilities._typeToParser(currentValueType);
+                
+            arg.forEachValue(function(v) {
+                parsedV = parser(v, returnMe);
+                if (parsedV < min || min == Number.POSITIVE_INFINITY) {
+                    min = parsedV;
+                    valueType = (valueType == null) ? currentValueType : 
+                        (valueType == currentValueType ? valueType : "text") ;
+                }
+            });
+        }
+        
+        return new Exhibit.Expression._Collection([ min ], valueType != null ? valueType : "text");
+    }
+};
+
+Exhibit.Functions["max"] = {
+    f: function(args) {
+        var returnMe = function (val) { return val; };
+        var max = Number.NEGATIVE_INFINITY;
+        var valueType = null;
+        
+        for (var i = 0; i < args.length; i++) {
+            var arg = args[i];
+            var currentValueType = arg.valueType ? arg.valueType : 'text';
+            var parser = Exhibit.SettingsUtilities._typeToParser(currentValueType);
+            
+            arg.forEachValue(function(v) {
+                parsedV = parser(v, returnMe);
+                if (parsedV > max || max == Number.NEGATIVE_INFINITY) {
+                    max = parsedV;
+                    valueType = (valueType == null) ? currentValueType : 
+                        (valueType == currentValueType ? valueType : "text") ;
+               }
+            });
+        }
+        return new Exhibit.Expression._Collection([ max ],  valueType != null ? valueType : "text");
+    }
+};
+
+Exhibit.Functions["remove"] = {
+    f: function(args) {
+        var set = args[0].getSet();
+        var valueType = args[0].valueType;
+        for (var i = 1; i < args.length; i++) {
+            var arg = args[i];
+            if (arg.size > 0) {
+                set.removeSet(arg.getSet());
+            }
+        }
+        return new Exhibit.Expression._Collection(set, valueType);
+    }
+};
+
+Exhibit.Functions["now"] = {
+    f: function(args) {
+        return new Exhibit.Expression._Collection([ new Date() ], "date");
+    }
+};
