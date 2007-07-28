@@ -518,54 +518,5 @@ Exhibit.Expression._ControlCall.prototype.evaluate = function(
     defaultRootName, 
     database
 ) {
-    var self = this;
-    if (this._name == "foreach") {
-        var collection = this._args[0].evaluate(roots, rootValueTypes, defaultRootName, database);
-        
-        var oldValue = roots["value"];
-        var oldValueType = rootValueTypes["value"];
-        rootValueTypes["value"] = collection.valueType;
-        
-        var results = [];
-        var valueType = "text";
-        
-        collection.forEachValue(function(element) {
-            roots["value"] = element;
-            
-            var collection2 = self._args[1].evaluate(roots, rootValueTypes, defaultRootName, database);
-            valueType = collection2.valueType;
-            
-            collection2.forEachValue(function(result) {
-                results.push(result);
-            });
-        });
-        
-        roots["value"] = oldValue;
-        rootValueTypes["value"] = oldValueType;
-        
-        return new Exhibit.Expression._Collection(results, valueType);
-    } else if (this._name == "if") {
-        var conditionCollection = this._args[0].evaluate(roots, rootValueTypes, defaultRootName, database);
-        var condition = false;
-        conditionCollection.forEachValue(function(v) {
-            if (v) {
-                condition = true;
-                return true;
-            }
-        });
-        
-        if (condition) {
-            return this._args[1].evaluate(roots, rootValueTypes, defaultRootName, database);
-        } else {
-            return this._args[2].evaluate(roots, rootValueTypes, defaultRootName, database);
-        }
-    } else if (this._name == "default") {
-        for (var i = 0; i < this._args.length; i++) {
-            var collection = this._args[i].evaluate(roots, rootValueTypes, defaultRootName, database);
-            if (collection.size > 0) {
-                return collection;
-            }
-        }
-        return new Exhibit.Expression._Collection([], "text");
-    }
+    return Exhibit.Controls[this._name].f(this._args, roots, rootValueTypes, defaultRootName, database);
 };

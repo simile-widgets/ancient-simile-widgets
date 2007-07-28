@@ -74,11 +74,15 @@ Exhibit.ExpressionParser._internalParse = function(scanner, several) {
             var identifier = token.value;
             next();
             
-            if ("foreach" == identifier || "if" == identifier || "default" == identifier) {
+            if (identifier in Exhibit.Controls) {
                 if (token != null && token.type == Scanner.DELIMITER && token.value == "(") {
                     next();
                     
-                    result = new Exhibit.Expression._ControlCall(identifier, parseExpressionList());
+                    var args = (token != null && token.type == Scanner.DELIMITER && token.value == ")") ? 
+                        [] :
+                        parseExpressionList();
+                        
+                    result = new Exhibit.Expression._ControlCall(identifier, args);
                     
                     if (token != null && token.type == Scanner.DELIMITER && token.value == ")") {
                         next();

@@ -45,6 +45,7 @@
             "data/expression.js",
             "data/expression-parser.js",
             "data/functions.js",
+            "data/controls.js",
             "data/collection.js",
             
             "data/importers/exhibit-json-importer.js",
