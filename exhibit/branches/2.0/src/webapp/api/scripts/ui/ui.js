@@ -335,7 +335,7 @@ Exhibit.UI.createPopupMenuDom = function(element) {
         },
         open: function() {
             var self = this;
-            this.layer = SimileAjax.WindowManager.pushLayer(function() { self.close(); }, true);
+            this.layer = SimileAjax.WindowManager.pushLayer(function() { self.close(); }, true, div);
                 
             var docWidth = document.body.offsetWidth;
             var docHeight = document.body.offsetHeight;

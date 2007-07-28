@@ -2790,6 +2790,7 @@ cont();
 }
 
 Exhibit.HtmlTableImporter.loadTable=function(table,database){
+
 var textOf=function(n){return n.textContent||n.innerText||"";};
 var readAttributes=function(node,attributes){
 var result={},found=false,attr,value,i;
@@ -2880,6 +2881,22 @@ item[property]=data[property];
 }
 }else{
 item[fields[col]]=data;
+
+
+
+
+
+
+for(var i=0;i<td.childNodes.length;i++){
+if(td.childNodes[i].tagName==="A"){
+var thehref=td.childNodes[i].getAttribute("href");
+if(thehref){
+fieldname=fields[col]+"-link";
+item[fieldname]=thehref;
+break;
+}
+}
+}
 }
 }
 
@@ -3953,7 +3970,7 @@ var newGreen=Math.floor(gradientPoints[j].green+fraction*(gradientPoints[j+1].gr
 
 var newBlue=Math.floor(gradientPoints[j].blue+fraction*(gradientPoints[j+1].blue-gradientPoints[j].blue));
 
-return rgbToHex(newRed,newGreen,newBlue);
+return rgbToHex(newRed,newGreen,newBlue)
 
 }
 
@@ -3962,10 +3979,6 @@ return rgbToHex(newRed,newGreen,newBlue);
 }
 
 }
-
-
-
-
 
 
 
@@ -4196,6 +4209,7 @@ this._expression=null;
 this._valueSet=new Exhibit.Set();
 
 this._settings={};
+this._height=Exhibit.getAttribute(containerElmt,"height");
 this._dom=null;
 
 var self=this;
@@ -4447,6 +4461,10 @@ var self=this;
 var containerDiv=this._dom.valuesContainer;
 
 containerDiv.style.display="none";
+if(this._height){
+containerDiv.style.height=this._height;
+}
+
 var facetHasSelection=this._valueSet.size()>0;
 var constructValue=function(entry){
 var onSelect=function(elmt,evt,target){
@@ -7360,7 +7378,7 @@ document.body.removeChild(this.elmt);
 },
 open:function(){
 var self=this;
-this.layer=SimileAjax.WindowManager.pushLayer(function(){self.close();},true);
+this.layer=SimileAjax.WindowManager.pushLayer(function(){self.close();},true,div);
 
 var docWidth=document.body.offsetWidth;
 var docHeight=document.body.offsetHeight;
@@ -9779,9 +9797,15 @@ return new Exhibit.LegendGradientWidget(containerElmt,uiContext);
 
 Exhibit.LegendGradientWidget.prototype.addGradient=function(configuration){
 
-var gradientArray=[];
 
-var gradientArray=configuration;
+
+console.log(configuration);
+
+var gradientPoints=[];
+
+var gradientPoints=configuration;
+
+console.log(gradientPoints);
 
 var sortObj=function(a,b){
 
@@ -9789,7 +9813,9 @@ return a.value-b.value;
 
 };
 
-gradientArray.sort(sortObj);
+gradientPoints.sort(sortObj);
+
+
 
 var theTable=document.createElement("table");
 
@@ -9800,6 +9826,8 @@ var theRow1=document.createElement("tr");
 var theRow2=document.createElement("tr");
 
 var theRow3=document.createElement("tr");
+
+
 
 theRow1.style.height="2em";
 
@@ -9827,17 +9855,17 @@ theTable.appendChild(tableBody);
 
 
 
-this._row1=theRow1;
+this._theRow1=theRow1;
 
-this._row2=theRow2;
+this._theRow2=theRow2;
 
-this._row3=theRow3;
+this._theRow3=theRow3;
 
 
 
-var globLowPoint=gradientArray[0].value;
+var globLowPoint=gradientPoints[0].value;
 
-var globHighPoint=gradientArray[gradientArray.length-1].value;
+var globHighPoint=gradientPoints[gradientPoints.length-1].value;
 
 var stepSize=(globHighPoint-globLowPoint)/50;
 
@@ -9845,25 +9873,23 @@ var counter=0;
 
 
 
-for(var i=0;i<gradientArray.length-1;i++){
+for(var i=0;i<gradientPoints.length-1;i++){
 
-var lowPoint=gradientArray[i].value;
+var lowPoint=gradientPoints[i].value;
 
-var highPoint=gradientArray[i+1].value;
+var highPoint=gradientPoints[i+1].value;
 
 
 
 var colorRect=document.createElement("td");
 
-colorRect.style.backgroundColor="rgb("+gradientArray[i].red+","+gradientArray[i].green+","+gradientArray[i].blue+")";
-
-
+colorRect.style.backgroundColor="rgb("+gradientPoints[i].red+","+gradientPoints[i].green+","+gradientPoints[i].blue+")";
 
 var numberRect=document.createElement("td");
 
 var textDiv=document.createElement("div");
 
-var theText=document.createTextNode(gradientArray[i].value);
+var theText=document.createTextNode(gradientPoints[i].value);
 
 textDiv.appendChild(theText);
 
@@ -9875,6 +9901,22 @@ theRow2.appendChild(colorRect);
 
 theRow3.appendChild(numberRect);
 
+
+
+colorRect.onmouseover=function(){
+
+this.style.border="solid 1.2px";
+
+};
+
+colorRect.onmouseout=function(){
+
+this.style.border="none";
+
+};
+
+
+
 counter++;
 
 
@@ -9883,11 +9925,11 @@ for(var j=lowPoint+stepSize;j<highPoint;j+=stepSize){
 
 var fraction=(j-lowPoint)/(highPoint-lowPoint);
 
-var newRed=Math.floor(gradientArray[i].red+fraction*(gradientArray[i+1].red-gradientArray[i].red));
+var newRed=Math.floor(gradientPoints[i].red+fraction*(gradientPoints[i+1].red-gradientPoints[i].red));
 
-var newGreen=Math.floor(gradientArray[i].green+fraction*(gradientArray[i+1].green-gradientArray[i].green));
+var newGreen=Math.floor(gradientPoints[i].green+fraction*(gradientPoints[i+1].green-gradientPoints[i].green));
 
-var newBlue=Math.floor(gradientArray[i].blue+fraction*(gradientArray[i+1].blue-gradientArray[i].blue));
+var newBlue=Math.floor(gradientPoints[i].blue+fraction*(gradientPoints[i+1].blue-gradientPoints[i].blue));
 
 
 
@@ -9929,7 +9971,7 @@ this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].st
 
 this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].style.overflow="visible";
 
-this.style.border="solid 1px";
+this.style.border="solid 1.2px";
 
 };
 
@@ -9941,10 +9983,6 @@ this.parentNode.parentNode.childNodes[0].childNodes[this.count].childNodes[0].st
 
 this.style.border="none";
 
-
-
-
-
 };
 
 };
@@ -9953,11 +9991,11 @@ this.style.border="none";
 
 
 
-var high=gradientArray.length-1
+var high=gradientPoints.length-1
 
 var colorRect=document.createElement("td");
 
-colorRect.style.backgroundColor="rgb("+gradientArray[high].red+","+gradientArray[high].green+","+gradientArray[high].blue+")";
+colorRect.style.backgroundColor="rgb("+gradientPoints[high].red+","+gradientPoints[high].green+","+gradientPoints[high].blue+")";
 
 var numberRect=document.createElement("td");
 
@@ -9979,6 +10017,20 @@ counter++;
 
 
 
+colorRect.onmouseover=function(){
+
+this.style.border="solid 1.2px";
+
+};
+
+colorRect.onmouseout=function(){
+
+this.style.border="none";
+
+};
+
+
+
 this._div.appendChild(theTable);
 
 };
@@ -9989,25 +10041,29 @@ Exhibit.LegendGradientWidget.prototype.addEntry=function(color,label){
 
 var cell=document.createElement("td");
 
+
+
 cell.style.width="1.5em";
 
 cell.style.height="2em";
 
-this._row1.appendChild(cell);
+this._theRow1.appendChild(cell);
 
-this._row1.appendChild(document.createElement("td"));
+this._theRow1.appendChild(document.createElement("td"));
 
-this._row2.appendChild(document.createElement("td"));
+this._theRow2.appendChild(document.createElement("td"));
 
-this._row3.appendChild(document.createElement("td"));
+this._theRow3.appendChild(document.createElement("td"));
 
 
 
 var colorCell=document.createElement("td");
 
+
+
 colorCell.style.backgroundColor=color;
 
-this._row2.appendChild(colorCell);
+this._theRow2.appendChild(colorCell);
 
 
 
@@ -10015,11 +10071,13 @@ var labelCell=document.createElement("td");
 
 var labelDiv=document.createElement("div");
 
+
+
 labelDiv.appendChild(document.createTextNode(label));
 
 labelCell.appendChild(labelDiv);
 
-this._row3.appendChild(labelCell);
+this._theRow3.appendChild(labelCell);
 
 }
 
