@@ -10,6 +10,13 @@
 
 <project default="bundle" basedir="." name="SimileAjax">
 
+  <property name="webapp.dir"  value="src/webapp"/>
+  <property name="api.dir"     value="${webapp.dir}/api"/>
+  <property name="site.dir"    value="${webapp.dir}/site"/>
+  <property name="scripts.dir" value="${api.dir}/scripts"/>
+  <property name="docs.dir"    value="${site.dir}/docs"/>
+  <property name="jsdoc.dir"   value="tools/jsdoc"/>
+  
   <target name="tasks">
     <taskdef name="jsmin"
         classname="edu.mit.simile.jsminTask.JSMinTask"
@@ -27,5 +34,15 @@
             <exclude name="platform.js" />
         </fileset>
     </jsmin>
+  </target>
+  
+  <target name="docs">
+    <java jar="${jsdoc.dir}/app/js.jar" fork="true" dir="${jsdoc.dir}">
+        <arg value="app/run.js"/>
+        <arg value="-t=templates/html"/>
+        <arg value="-r"/>
+        <arg value="-d=../../${docs.dir}"/>
+        <arg value="../../src"/>
+    </java>
   </target>
 </project>

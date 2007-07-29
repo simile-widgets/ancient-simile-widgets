@@ -1,6 +1,6 @@
-/*==================================================
- *  Date/Time Utility Functions
- *==================================================
+/**
+ * @fileOverview A collection of date/time utility functions
+ * @name SimileAjax.DateTime
  */
 
 SimileAjax.DateTime = new Object();
@@ -20,6 +20,12 @@ SimileAjax.DateTime.MILLENNIUM     = 10;
 SimileAjax.DateTime.EPOCH          = -1;
 SimileAjax.DateTime.ERA            = -2;
 
+/**
+ * An array of unit lengths, expressed in milliseconds, of various lengths of
+ * time.  The array indices are predefined and stored as properties of the
+ * SimileAjax.DateTime object, e.g. SimileAjax.DateTime.YEAR.
+ * @type Array
+ */
 SimileAjax.DateTime.gregorianUnitLengths = [];
     (function() {
         var d = SimileAjax.DateTime;
@@ -52,6 +58,15 @@ SimileAjax.DateTime._timeRegexp = new RegExp(
     "^([0-9]{2})(:?([0-9]{2})(:?([0-9]{2})(\.([0-9]+))?)?)?$"
 );
 
+/**
+ * Takes a date object and a string containing an ISO 8601 date and sets the
+ * the date using information parsed from the string.  Note that this method
+ * does not parse any time information.
+ *
+ * @param {Date} dateObject the date object to modify
+ * @param {String} string an ISO 8601 string to parse
+ * @return {Date} the modified date object
+ */
 SimileAjax.DateTime.setIso8601Date = function(dateObject, string) {
     /*
      *  This function has been adapted from dojo.date, v.0.3.0
@@ -100,6 +115,15 @@ SimileAjax.DateTime.setIso8601Date = function(dateObject, string) {
     return dateObject;
 };
 
+/**
+ * Takes a date object and a string containing an ISO 8601 time and sets the
+ * the time using information parsed from the string.  Note that this method
+ * does not parse any date information.
+ *
+ * @param {Date} dateObject the date object to modify
+ * @param {String} string an ISO 8601 string to parse
+ * @return {Date} the modified date object
+ */
 SimileAjax.DateTime.setIso8601Time = function (dateObject, string) {
     /*
      *  This function has been adapted from dojo.date, v.0.3.0
@@ -124,8 +148,20 @@ SimileAjax.DateTime.setIso8601Time = function (dateObject, string) {
     return dateObject;
 };
 
+/**
+ * The timezone offset in minutes in the user's browser.
+ * @type Integer
+ */
 SimileAjax.DateTime.timezoneOffset = new Date().getTimezoneOffset();
 
+/**
+ * Takes a date object and a string containing an ISO 8601 date and time and 
+ * sets the date object using information parsed from the string.
+ *
+ * @param {Date} dateObject the date object to modify
+ * @param {String} string an ISO 8601 string to parse
+ * @return {Date} the modified date object
+ */
 SimileAjax.DateTime.setIso8601 = function (dateObject, string){
     /*
      *  This function has been adapted from dojo.date, v.0.3.0
@@ -159,6 +195,13 @@ SimileAjax.DateTime.setIso8601 = function (dateObject, string){
     return dateObject;
 };
 
+/**
+ * Takes a string containing an ISO 8601 date and returns a newly instantiated
+ * date object with the parsed date and time information from the string.
+ *
+ * @param {String} string an ISO 8601 string to parse
+ * @return {Date} a new date object created from the string
+ */
 SimileAjax.DateTime.parseIso8601DateTime = function (string) {
     try {
         return SimileAjax.DateTime.setIso8601(new Date(0), string);
@@ -167,6 +210,15 @@ SimileAjax.DateTime.parseIso8601DateTime = function (string) {
     }
 };
 
+/**
+ * Takes a string containing a Gregorian date and time and returns a newly
+ * instantiated date object with the parsed date and time information from the
+ * string.  If the param is actually an instance of Date instead of a string, 
+ * simply returns the given date instead.
+ *
+ * @param {Object} o an object, to either return or parse as a string
+ * @return {Date} the date object
+ */
 SimileAjax.DateTime.parseGregorianDateTime = function(o) {
     if (o == null) {
         return null;
@@ -200,6 +252,19 @@ SimileAjax.DateTime.parseGregorianDateTime = function(o) {
     }
 };
 
+/**
+ * Rounds date objects down to the nearest interval or multiple of an interval.
+ * This method modifies the given date object, converting it to the given
+ * timezone if specified.
+ * 
+ * @param {Date} date the date object to round
+ * @param {Integer} intervalUnit a constant index specifying an interval, 
+ *   e.g. SimileAjax.DateTime.HOUR
+ * @param {Integer} timeZone a timezone shift, given in hours
+ * @param {Integer} multiple a multiple of the interval to round by
+ * @param {Integer} firstDayOfWeek an integer specifying the first day of the
+ *   week, 0 corresponds to Sunday, 1 to Monday, etc.
+ */
 SimileAjax.DateTime.roundDownToInterval = function(date, intervalUnit, timeZone, multiple, firstDayOfWeek) {
     var timeShift = timeZone * 
         SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR];
@@ -283,6 +348,20 @@ SimileAjax.DateTime.roundDownToInterval = function(date, intervalUnit, timeZone,
     date.setTime(date2.getTime() - timeShift);
 };
 
+/**
+ * Rounds date objects up to the nearest interval or multiple of an interval.
+ * This method modifies the given date object, converting it to the given
+ * timezone if specified.
+ * 
+ * @param {Date} date the date object to round
+ * @param {Integer} intervalUnit a constant index specifying an interval, 
+ *   e.g. SimileAjax.DateTime.HOUR
+ * @param {Integer} timeZone a timezone shift, given in hours
+ * @param {Integer} multiple a multiple of the interval to round by
+ * @param {Integer} firstDayOfWeek an integer specifying the first day of the
+ *   week, 0 corresponds to Sunday, 1 to Monday, etc.
+ * @see SimileAjax.DateTime.roundDownToInterval
+ */
 SimileAjax.DateTime.roundUpToInterval = function(date, intervalUnit, timeZone, multiple, firstDayOfWeek) {
     var originalTime = date.getTime();
     SimileAjax.DateTime.roundDownToInterval(date, intervalUnit, timeZone, multiple, firstDayOfWeek);
@@ -292,6 +371,13 @@ SimileAjax.DateTime.roundUpToInterval = function(date, intervalUnit, timeZone, m
     }
 };
 
+/**
+ * Increments a date object by a specified interval.
+ *
+ * @param {Date} date the date object to increment
+ * @param {Integer} intervalUnit a constant index specifying an interval, 
+ *   e.g. SimileAjax.DateTime.HOUR
+ */
 SimileAjax.DateTime.incrementByInterval = function(date, intervalUnit) {
     switch(intervalUnit) {
     case SimileAjax.DateTime.MILLISECOND:
@@ -332,11 +418,23 @@ SimileAjax.DateTime.incrementByInterval = function(date, intervalUnit) {
     }
 };
 
+/**
+ * Returns a new date object with the given time offset removed.
+ *
+ * @param {Date} date the starting date
+ * @param {Integer} timeZone a timezone specified in an hour offset to remove
+ * @return {Date} a new date object with the offset removed
+ */
 SimileAjax.DateTime.removeTimeZoneOffset = function(date, timeZone) {
     return new Date(date.getTime() + 
         timeZone * SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR]);
 };
 
+/**
+ * Returns the timezone offset of the user's browser.
+ *
+ * @return {Integer} the timezone offset in the user's locale in hours
+ */
 SimileAjax.DateTime.getTimezone = function() {
     var d = new Date();
     var utcHours = d.getUTCHours();

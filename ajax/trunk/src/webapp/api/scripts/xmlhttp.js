@@ -1,6 +1,6 @@
-/*==================================================
- *  XmlHttp Utility Functions
- *==================================================
+/**
+ * @fileOverview XmlHttp utility functions
+ * @name SimileAjax.XmlHttp
  */
 
 SimileAjax.XmlHttp = new Object();
@@ -95,9 +95,11 @@ SimileAjax.XmlHttp._createRequest = function() {
 };
 
 /**
- *  Performs an asynchronous HTTP GET.
- *  fError is of the form function(statusText, statusCode, xmlhttp).
- *  fDone is of the form function(xmlhttp).
+ * Performs an asynchronous HTTP GET.
+ *  
+ * @param {Function} fError a function of the form 
+     function(statusText, statusCode, xmlhttp)
+ * @param {Function} fDone a function of the form function(xmlhttp)
  */
 SimileAjax.XmlHttp.get = function(url, fError, fDone) {
     var xmlhttp = SimileAjax.XmlHttp._createRequest();
@@ -110,9 +112,11 @@ SimileAjax.XmlHttp.get = function(url, fError, fDone) {
 };
 
 /**
- *  Performs an asynchronous HTTP POST.
- *  fError is of the form function(statusText, statusCode, xmlhttp).
- *  fDone is of the form function(xmlhttp).
+ * Performs an asynchronous HTTP POST.
+ *  
+ * @param {Function} fError a function of the form 
+     function(statusText, statusCode, xmlhttp)
+ * @param {Function} fDone a function of the form function(xmlhttp)
  */
 SimileAjax.XmlHttp.post = function(url, body, fError, fDone) {
     var xmlhttp = SimileAjax.XmlHttp._createRequest();
