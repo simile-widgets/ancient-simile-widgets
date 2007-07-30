@@ -70,7 +70,7 @@ Timegrid.Controls.TabSet.prototype.switchTo = function(title) {
     } else if (this._layoutMap[title]) {
         this._renderedLayouts[title] = $(this._layoutMap[title].render(this._container)).show();
     }
-    $('.timegrid-iterator').empty();
+    $('.timegrid-iterator', this._container).empty();
     if (this._layoutMap[title].iterable) {
         if (!this._iterators[title]) {
             this._iterators[title] = new Timegrid.Controls.Iterator(this._layoutMap[title]);
