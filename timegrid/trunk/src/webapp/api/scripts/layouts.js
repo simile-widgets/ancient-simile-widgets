@@ -110,6 +110,10 @@ Timegrid.Layout.prototype.render = function(container) {
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
     this._viewDiv.append(gridWindowDiv.append(gridDiv));
+    var windowHeight = this._viewDiv.height() - gridWindowDiv.position().top - 2;
+    var windowWidth = this._viewDiv.width() - gridWindowDiv.position().left;
+    gridWindowDiv.height(windowHeight).width(windowWidth);
+    
     this.gridwidth = this.gridwidth || gridWindowDiv.width() - this.scrollwidth;
     this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
     gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");

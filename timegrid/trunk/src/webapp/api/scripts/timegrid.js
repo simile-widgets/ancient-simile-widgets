@@ -8,8 +8,9 @@ Timegrid.create = function(node, eventSource, layoutName, layoutParams) {
 
 Timegrid.resize = function() {
     for (var i in window.timegrids) {
-        window.timegrids[i]._construct();
+        window.timegrids[i]._resize();
     }
+    return false;
 };
 
 Timegrid.createFromDOM = function(elmt) {
@@ -81,6 +82,7 @@ Timegrid._Impl = function(node, eventSource, layoutNames, layoutParams) {
         }
         this._eventSource.addListener(this._eventListener);
     }
+
     this._construct();
 };
 
@@ -152,6 +154,17 @@ Timegrid._Impl.prototype._construct = function() {
     this.hideLoadingMessage = function() { $(message.containerDiv).hide(); };
 
     this._panel.render(container);
+};
+
+Timegrid._Impl.prototype._resize = function() {
+    var newHeight = $(this._container).height();
+    var newWidth = $(this._container).width();
+    
+    if (!(newHeight == this._oldHeight && newWidth == this._oldWidth)) {
+        this._construct();           
+        this._oldHeight = newHeight;
+        this._oldWidth = newWidth;
+    }
 };
 
 Timegrid._Impl.prototype._onAddMany = function() {
