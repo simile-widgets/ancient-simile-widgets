@@ -128,6 +128,7 @@ Timegrid._Impl.prototype.loadJSON = function(url, f) {
 };
 
 Timegrid._Impl.prototype._construct = function() {
+    this.rendering = true;
     var self = this;
     this._layouts = $.map(this._layoutNames, function(s) {
         return Timegrid.LayoutFactory.createLayout(s, self._eventSource,
@@ -154,6 +155,7 @@ Timegrid._Impl.prototype._construct = function() {
     this.hideLoadingMessage = function() { $(message.containerDiv).hide(); };
 
     this._panel.render(container);
+    this.rendering = false;
 };
 
 Timegrid._Impl.prototype._resize = function() {
@@ -161,7 +163,7 @@ Timegrid._Impl.prototype._resize = function() {
     var newWidth = $(this._container).width();
     
     if (!(newHeight == this._oldHeight && newWidth == this._oldWidth)) {
-        this._construct();           
+        if (!this.rendering) { this._construct(); }       
         this._oldHeight = newHeight;
         this._oldWidth = newWidth;
     }
