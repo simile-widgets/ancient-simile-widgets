@@ -150,7 +150,7 @@ SimileAjax.DateTime.setIso8601Time = function (dateObject, string) {
 
 /**
  * The timezone offset in minutes in the user's browser.
- * @type Integer
+ * @type Number
  */
 SimileAjax.DateTime.timezoneOffset = new Date().getTimezoneOffset();
 
@@ -258,11 +258,11 @@ SimileAjax.DateTime.parseGregorianDateTime = function(o) {
  * timezone if specified.
  * 
  * @param {Date} date the date object to round
- * @param {Integer} intervalUnit a constant index specifying an interval, 
- *   e.g. SimileAjax.DateTime.HOUR
- * @param {Integer} timeZone a timezone shift, given in hours
- * @param {Integer} multiple a multiple of the interval to round by
- * @param {Integer} firstDayOfWeek an integer specifying the first day of the
+ * @param {Number} intervalUnit a constant, integer index specifying an 
+ *   interval, e.g. SimileAjax.DateTime.HOUR
+ * @param {Number} timeZone a timezone shift, given in hours
+ * @param {Number} multiple a multiple of the interval to round by
+ * @param {Number} firstDayOfWeek an integer specifying the first day of the
  *   week, 0 corresponds to Sunday, 1 to Monday, etc.
  */
 SimileAjax.DateTime.roundDownToInterval = function(date, intervalUnit, timeZone, multiple, firstDayOfWeek) {
@@ -354,11 +354,11 @@ SimileAjax.DateTime.roundDownToInterval = function(date, intervalUnit, timeZone,
  * timezone if specified.
  * 
  * @param {Date} date the date object to round
- * @param {Integer} intervalUnit a constant index specifying an interval, 
- *   e.g. SimileAjax.DateTime.HOUR
- * @param {Integer} timeZone a timezone shift, given in hours
- * @param {Integer} multiple a multiple of the interval to round by
- * @param {Integer} firstDayOfWeek an integer specifying the first day of the
+ * @param {Number} intervalUnit a constant, integer index specifying an 
+ *   interval, e.g. SimileAjax.DateTime.HOUR
+ * @param {Number} timeZone a timezone shift, given in hours
+ * @param {Number} multiple a multiple of the interval to round by
+ * @param {Number} firstDayOfWeek an integer specifying the first day of the
  *   week, 0 corresponds to Sunday, 1 to Monday, etc.
  * @see SimileAjax.DateTime.roundDownToInterval
  */
@@ -375,8 +375,8 @@ SimileAjax.DateTime.roundUpToInterval = function(date, intervalUnit, timeZone, m
  * Increments a date object by a specified interval.
  *
  * @param {Date} date the date object to increment
- * @param {Integer} intervalUnit a constant index specifying an interval, 
- *   e.g. SimileAjax.DateTime.HOUR
+ * @param {Number} intervalUnit a constant, integer index specifying an 
+ *   interval, e.g. SimileAjax.DateTime.HOUR
  */
 SimileAjax.DateTime.incrementByInterval = function(date, intervalUnit) {
     switch(intervalUnit) {
@@ -422,7 +422,7 @@ SimileAjax.DateTime.incrementByInterval = function(date, intervalUnit) {
  * Returns a new date object with the given time offset removed.
  *
  * @param {Date} date the starting date
- * @param {Integer} timeZone a timezone specified in an hour offset to remove
+ * @param {Number} timeZone a timezone specified in an hour offset to remove
  * @return {Date} a new date object with the offset removed
  */
 SimileAjax.DateTime.removeTimeZoneOffset = function(date, timeZone) {
@@ -433,7 +433,7 @@ SimileAjax.DateTime.removeTimeZoneOffset = function(date, timeZone) {
 /**
  * Returns the timezone offset of the user's browser.
  *
- * @return {Integer} the timezone offset in the user's locale in hours
+ * @return {Number} the timezone offset in the user's locale in hours
  */
 SimileAjax.DateTime.getTimezone = function() {
     var d = new Date();

@@ -1,12 +1,14 @@
-/*======================================================================
- *  WindowManager
- *
+/**
+ * @fileOverview UI layers and window-wide dragging
+ * @name SimileAjax.WindowManager
+ */
+
+/**
  *  This is a singleton that keeps track of UI layers (modal and 
  *  modeless) and enables/disables UI elements based on which layers
  *  they belong to. It also provides window-wide dragging 
  *  implementation.
- */
- 
+ */ 
 SimileAjax.WindowManager = {
     _initialized:       false,
     _listeners:         [],

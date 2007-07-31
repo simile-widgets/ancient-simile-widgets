@@ -1,9 +1,16 @@
-/*==================================================
- *  Graphics Utility Functions and Constants
- *==================================================
+/**
+ * @fileOverview Graphics utility functions and constants
+ * @name SimileAjax.Graphics
  */
 
 SimileAjax.Graphics = new Object();
+
+/**
+ * A boolean value indicating whether PNG translucency is supported on the
+ * user's browser or not.
+ *
+ * @type Boolean
+ */
 SimileAjax.Graphics.pngIsTranslucent = (!SimileAjax.Platform.browser.isIE) || (SimileAjax.Platform.browser.majorVersion > 6);
 
 /*==================================================
@@ -27,6 +34,16 @@ SimileAjax.Graphics._createTranslucentImage2 = function(url, verticalAlign) {
     return elmt;
 };
 
+/**
+ * Creates a DOM element for an <code>img</code> tag using the URL given. This
+ * is a convenience method that automatically includes the necessary CSS to
+ * allow for translucency, even on IE.
+ * 
+ * @function
+ * @param {String} url the URL to the image
+ * @param {String} verticalAlign the CSS value for the image's vertical-align
+ * @return {Element} a DOM element containing the <code>img</code> tag
+ */
 SimileAjax.Graphics.createTranslucentImage = SimileAjax.Graphics.pngIsTranslucent ?
     SimileAjax.Graphics._createTranslucentImage1 :
     SimileAjax.Graphics._createTranslucentImage2;
@@ -45,10 +62,26 @@ SimileAjax.Graphics._createTranslucentImageHTML2 = function(url, verticalAlign) 
     return "<img src='" + url + "' style=\"" + style + "\" />";
 };
 
+/**
+ * Creates an HTML string for an <code>img</code> tag using the URL given.
+ * This is a convenience method that automatically includes the necessary CSS
+ * to allow for translucency, even on IE.
+ * 
+ * @function
+ * @param {String} url the URL to the image
+ * @param {String} verticalAlign the CSS value for the image's vertical-align
+ * @return {String} a string containing the <code>img</code> tag
+ */
 SimileAjax.Graphics.createTranslucentImageHTML = SimileAjax.Graphics.pngIsTranslucent ?
     SimileAjax.Graphics._createTranslucentImageHTML1 :
     SimileAjax.Graphics._createTranslucentImageHTML2;
 
+/**
+ * Sets the opacity on the given DOM element.
+ *
+ * @param {Element} elmt the DOM element to set the opacity on
+ * @param {Number} opacity an integer from 0 to 100 specifying the opacity
+ */
 SimileAjax.Graphics.setOpacity = function(elmt, opacity) {
     if (SimileAjax.Platform.browser.isIE) {
         elmt.style.filter = "progid:DXImageTransform.Microsoft.Alpha(Style=0,Opacity=" + opacity + ")";
@@ -82,8 +115,21 @@ SimileAjax.Graphics._bubblePadding = 15;
 SimileAjax.Graphics._bubblePointOffset = 6;
 SimileAjax.Graphics._halfArrowWidth = 18;
 
+/**
+ * Creates a nice, rounded bubble popup with the given page coordinates and
+ * content dimensions.  The bubble will point to the location on the page
+ * as described by pageX and pageY.  All measurements should be given in
+ * pixels.
+ *
+ * @param {Number} pageX the x coordinate of the point to point to
+ * @param {Number} pageY the y coordinate of the point to point to
+ * @param {Number} contentWidth the width of the content box in the bubble
+ * @param {Number} contentHeight the height of the content box in the bubble
+ * @param {String} orientation a string ("top", "bottom", "left", or "right")
+ *   that describes the orientation of the arrow on the bubble
+ * @return {Element} a DOM element for the newly created bubble
+ */
 SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, contentHeight, orientation) {
-
     function getWindowDims() {
         if (typeof window.innerHeight == 'number') {
             return { w:window.innerWidth, h:window.innerHeight }; // Non-IE
@@ -263,6 +309,14 @@ SimileAjax.Graphics.createBubbleForPoint = function(pageX, pageY, contentWidth, 
     return bubble;
 };
 
+/**
+ * Creates a floating, rounded message bubble in the center of the window for
+ * displaying modal information, e.g. "Loading..."
+ *
+ * @param {Document} doc the root document for the page to render on
+ * @param {Object} an object with two properties, contentDiv and containerDiv,
+ *   consisting of the newly created DOM elements
+ */
 SimileAjax.Graphics.createMessageBubble = function(doc) {
     var containerDiv = doc.createElement("div");
     if (SimileAjax.Graphics.pngIsTranslucent) {
@@ -321,6 +375,21 @@ SimileAjax.Graphics.createMessageBubble = function(doc) {
  *==================================================
  */
 
+/**
+ * Creates an animation for a function, and an interval of values.  The word
+ * "animation" here is used in the sense of repeatedly calling a function with
+ * a current value from within an interval, and a delta value.
+ *
+ * @param {Function} f a function to be called every 50 milliseconds throughout
+ *   the animation duration, of the form f(current, delta), where current is
+ *   the current value within the range and delta is the current change.
+ * @param {Number} from a starting value
+ * @param {Number} to an ending value
+ * @param {Number} duration the duration of the animation in milliseconds
+ * @param {Function} [cont] an optional function that is called at the end of
+ *   the animation, i.e. a continuation.
+ * @return {SimileAjax.Graphics._Animation} a new animation object
+ */
 SimileAjax.Graphics.createAnimation = function(f, from, to, duration, cont) {
     return new SimileAjax.Graphics._Animation(f, from, to, duration, cont);
 };
@@ -338,11 +407,18 @@ SimileAjax.Graphics._Animation = function(f, from, to, duration, cont) {
     this.timePassed = 0;
 };
 
+/**
+ * Runs this animation.
+ */
 SimileAjax.Graphics._Animation.prototype.run = function() {
     var a = this;
     window.setTimeout(function() { a.step(); }, 50);
 };
 
+/**
+ * Increments this animation by one step, and then continues the animation with
+ * <code>run()</code>.
+ */
 SimileAjax.Graphics._Animation.prototype.step = function() {
     this.timePassed += 50;
     
@@ -371,6 +447,19 @@ SimileAjax.Graphics._Animation.prototype.step = function() {
  *==================================================
  */
 
+/**
+ * Creates a button and textarea for displaying structured data and copying it
+ * to the clipboard.  The data is dynamically generated by the given 
+ * createDataFunction parameter.
+ *
+ * @param {String} image an image URL to use as the background for the 
+ *   generated box
+ * @param {Number} width the width in pixels of the generated box
+ * @param {Number} height the height in pixels of the generated box
+ * @param {Function} createDataFunction a function that is called with no
+ *   arguments to generate the structured data
+ * @return a new DOM element
+ */
 SimileAjax.Graphics.createStructuredDataCopyButton = function(image, width, height, createDataFunction) {
     var div = document.createElement("div");
     div.style.position = "relative";
