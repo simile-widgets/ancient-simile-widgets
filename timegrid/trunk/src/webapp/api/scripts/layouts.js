@@ -85,6 +85,7 @@ Timegrid.Layout.prototype.configure = function(params) {
     for (attr in params) {
         this[attr] = params[attr];
     }
+    this.timezoneOffset = params.timezoneoffset;
 };
 
 Timegrid.Layout.prototype.computeCellSizes = function() {
