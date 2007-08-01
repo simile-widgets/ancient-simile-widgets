@@ -477,7 +477,7 @@ Date.LZ = function(x) {return(x<0||x>9?"":"0")+x};
      * @param {Number} timezoneOffset the timezone offset in hours
      * @return {Date} a new Date object
      */
-    add('toTimezone' function(timezoneOffset) {
+    add('toTimezone', function(timezoneOffset) {
         var minutesToMs = 60000; var hoursToMs = 60 * minutesToMs;
         var utcMs    = this.getTime() + (d.getTimezoneOffset() * minutesToMs);
         var offsetMs = hoursToMs * timezoneOffset;
