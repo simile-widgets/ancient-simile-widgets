@@ -59,13 +59,14 @@ Timegrid.Layout = function(eventSource, params) {
      * @type int
      */
     this.ySize = 0;
-    this.timezoneOffset = SimileAjax.DateTime.getTimezone();
-    var timezoneMapper = function(obj) { 
-        obj.time = obj.time.toTimezone(self.timezoneOffset);
-        return obj;
+    this.timezoneMapper = function(date) { 
+        if (typeof self.timezoneoffset != "undefined") {
+            return date.toTimezone(self.timezoneoffset);
+        }
+        return date;
     };
-    this.xMapper = timezoneMapper;
-    this.yMapper = timezoneMapper;
+    this.xMapper = function(obj) { return self.timezoneMapper(obj.time); };
+    this.yMapper = function(obj) { return self.timezoneMapper(obj.time); };
     
     this.xLabelHeight = "2em";
     this.yLabelWidth = "4em";
@@ -84,9 +85,6 @@ Timegrid.Layout.prototype.addYMapper = function(f) {
 Timegrid.Layout.prototype.configure = function(params) {
     for (attr in params) {
         this[attr] = params[attr];
-    }
-    if ('timezoneoffset' in params) { 
-        this.timezoneOffset = params.timezoneoffset;
     }
 };
 

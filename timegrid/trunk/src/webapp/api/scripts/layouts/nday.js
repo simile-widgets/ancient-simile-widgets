@@ -21,13 +21,17 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.xSize = 7;
     this.ySize = 24;
     this.iterable = true;
-    this.addXMapper(function(obj) { 
-        var ivl = new SimileAjax.DateTime.Interval(obj.time - self.startTime); 
+
+    this.xMapper = function(obj) { 
+        var time = self.timezoneMapper(obj.time);
+        var start = self.timezoneMapper(self.startTime);
+        var ivl = new SimileAjax.DateTime.Interval(time - start); 
         return ivl.days; 
-    });
-    this.addYMapper(function(obj) { 
-        return obj.time.getHours() + obj.time.getMinutes() / 60;
-    });
+    };
+    this.yMapper = function(obj) { 
+        var time = self.timezoneMapper(obj.time);
+        return time.getHours() + time.getMinutes() / 60.0;
+    };
     
     // These are default values that can be overridden in configure
     this.n = 3;

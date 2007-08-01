@@ -24,14 +24,15 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     this.startTime   = this.eventSource.getEarliestDate() || new Date();
 
     // Configure our mappers
-    this.addXMapper(function(obj) {
-        return obj.time.getDay();
-    });
-    this.addYMapper(function(obj) { 
+    this.xMapper = function(obj) {
+        return self.timezoneMapper(obj.time).getDay();
+    };
+    this.yMapper = function(obj) { 
+        var time = self.timezoneMapper(obj.time);
+        var start = self.timezoneMapper(self.startTime);
         // Simply divide by the number of milliseconds in a week
-        return Math.floor((obj.time - self.startTime) / 
-                          (1000 * 60 * 60 * 24 * 7.0)); 
-    });
+        return Math.floor((time - start) / (1000 * 60 * 60 * 24 * 7.0)); 
+    };
     
     this.initializeGrid();
 };
