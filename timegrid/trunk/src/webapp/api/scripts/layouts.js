@@ -58,11 +58,26 @@ Timegrid.Layout = function(eventSource, params) {
      * @type int
      */
     this.ySize = 0;
-    this.xMapper = function(obj) { return 0; };
-    this.yMapper = function(obj) { return 0; };
+    this.timezoneOffset = SimileAjax.DateTime.getTimezone();
+    var timezoneMapper = function(obj) { 
+        obj.time = obj.time.toTimezone(this.timezoneOffset);
+        return obj;
+    };
+    this.xMapper = timezoneMapper;
+    this.yMapper = timezoneMapper;
     
     this.xLabelHeight = "2em";
     this.yLabelWidth = "4em";
+};
+
+Timegrid.Layout.prototype.addXMapper = function(f) {
+    var old = this.xMapper;
+    this.xMapper = function(obj) { f(old(obj)); };
+};
+
+Timegrid.Layout.prototype.addYMapper = function(f) {
+    var old = this.yMapper;
+    this.yMapper = function(obj) { f(old(obj)); };
 };
 
 Timegrid.Layout.prototype.configure = function(params) {
@@ -134,8 +149,13 @@ Timegrid.Layout.prototype.render = function(container) {
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
     this._viewDiv.append(xLabels).append(yLabels);
-    $('.timegrid-view:visible .timegrid-rounded-shadow', 
-      this._container).prettybox(4,7,1,0.7); 
+    if ($.browser.msie) {
+        $('.timegrid-view:visible .timegrid-rounded-shadow', 
+          this._container).prettybox(4,0,0,1);
+    } else {
+        $('.timegrid-view:visible .timegrid-rounded-shadow', 
+          this._container).prettybox(4,7,1,0.7);
+    }
     return this._viewDiv.get(0);
 };
 

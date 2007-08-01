@@ -9,7 +9,7 @@
  /**
   * Constructs an NDayLayout object.
   * @class NDayLayout is a subclass of Layout that implements an n-day event
-  *     calendar, modeled off of the weekly view found in Google Calendar.
+  *   calendar, modeled off of the weekly view found in Google Calendar.
   * @extends Timegrid.Layout
   * @constructor
   */
@@ -21,12 +21,17 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.xSize = 7;
     this.ySize = 24;
     this.iterable = true;
-    this.xMapper = function(obj) { return (new SimileAjax.DateTime.Interval(obj.time - self.startTime)).days; };
-    this.yMapper = function(obj) { return obj.time.getHours() +
-                                          obj.time.getMinutes() / 60; };
+    
+    this.addXMapper(function(obj) { 
+        var ivl = new SimileAjax.DateTime.Interval(obj.time - self.startTime) 
+        return ivl.days; 
+    });
+    this.addYMapper(function(obj) { 
+        return obj.time.getHours() + obj.time.getMinutes() / 60;
+    });
     
     // These are default values that can be overridden in configure
-    this.n      = 3;
+    this.n = 3;
     
     this.configure(params);
     this.title = params.title || Timegrid.NDayLayout.l10n.makeTitle(this.n);
@@ -43,6 +48,9 @@ Timegrid.NDayLayout = function(eventSource, params) {
 Timegrid.LayoutFactory.registerLayout("n-day", Timegrid.NDayLayout);
 
 Timegrid.NDayLayout.prototype.initializeGrid = function() {
+    var now = new Date();
+    if (now.isBetween(this.startTime, this.endTime)) { this.now = now; }
+    
     this.endpoints = [];
     if (this.startTime) {
         var iterator = this.eventSource.getEventIterator(this.startTime,
@@ -121,6 +129,7 @@ Timegrid.NDayLayout.prototype.getXLabels = function() {
 };
 
 Timegrid.NDayLayout.prototype.getYLabels = function() {
+    // FIXME: Change this to proper localized label rendering
     return [ "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am",
              "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm",
              "6pm", "7pm", "8pm", "9pm", "10pm", "11pm" ];

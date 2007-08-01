@@ -148,6 +148,10 @@ div.timegrid-month-cell-odd {
     background-color: #eee;
 }
 
+div.timegrid-month-cell-now {
+    background-color: #aaa;
+}
+
 ul.timegrid-event-list {
     list-style-position: inside;
     padding-left: .5em;

@@ -16,6 +16,7 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     this.iterable = false;
 
     this.configure(params);
+    // We put title here because it depends on this.n
     this.title = this.title || Timegrid.NMonthLayout.l10n.makeTitle(this.n);
     
     // Initialize our eventSource
@@ -23,13 +24,14 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     this.startTime   = this.eventSource.getEarliestDate() || new Date();
 
     // Configure our mappers
-    this.xMapper = function(obj) {
+    this.addXMapper(function(obj) {
         return obj.time.getDay();
-    };
-    this.yMapper = function(obj) { 
+    });
+    this.addYMapper(function(obj) { 
+        // Simply divide by the number of milliseconds in a week
         return Math.floor((obj.time - self.startTime) / 
                           (1000 * 60 * 60 * 24 * 7.0)); 
-    };
+    });
     
     this.initializeGrid();
 };
@@ -37,6 +39,10 @@ Timegrid.LayoutFactory.registerLayout("n-month", Timegrid.NMonthLayout);
 
 Timegrid.NMonthLayout.prototype.initializeGrid = function() {
     this.computeDimensions();
+    
+    var now = new Date();
+    if (now.isBetween(this.startTime, this.endTime)) { this.now = now; }
+    
     this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize, 
                                        this.xMapper, this.yMapper);
     if (this.startTime) {
@@ -111,6 +117,15 @@ Timegrid.NMonthLayout.prototype.renderCellColor = function(x, y, m) {
     jcdiv.css("height", this.yCell).css("width", this.xCell + "%");
     jcdiv.css("top", this.yCell * y);
     jcdiv.css("left", this.xCell * x + "%");
+    
+    if (this.now) {
+        var nowX = this.xMapper({ time: this.now });
+        var nowY = this.yMapper({ time: this.now });
+        if (x == nowX && y == nowY) { 
+            jcdiv.addClass("timegrid-month-cell-now"); 
+        }
+    }
+    
     return jcdiv.get()[0];
 
 };
@@ -127,6 +142,12 @@ Timegrid.NMonthLayout.prototype.renderMonthLabels = function() {
         mDiv.children().css('line-height', height + "px");
         return mDiv.get(0);
     });
+};
+
+Timegrid.NMonthLayout.prototype.highlightNow = function() {
+    var now = new Date();
+    var x = this.xMapper({ time: now });
+    var y = this.yMapper({ time: now });
 };
 
 Timegrid.NMonthLayout.prototype.getXLabels = function() {

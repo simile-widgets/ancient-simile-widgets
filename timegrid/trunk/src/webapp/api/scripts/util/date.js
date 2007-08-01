@@ -299,6 +299,13 @@ Date.LZ = function(x) {return(x<0||x>9?"":"0")+x};
     });
     
     /**
+     * Check if a date object is between two dates
+     */
+    add('isBetween', function(date1, date2) {
+        return this.isAfter(date1) && this.isBefore(date2);
+    });
+    
+    /**
      * Check if two date objects have equal dates and times
      */
     add('equals', function(date2) {
@@ -460,6 +467,22 @@ Date.LZ = function(x) {return(x<0||x>9?"":"0")+x};
         }
         return weeknum;
 	});
+    
+    /**
+     * Given a timezone offset in hours, returns a new Date object that has
+     * been adjusted to that timezone.
+     *
+     * @function
+     * @memberOf Date
+     * @param {Number} timezoneOffset the timezone offset in hours
+     * @return {Date} a new Date object
+     */
+    add('toTimezone' function(timezoneOffset) {
+        var minutesToMs = 60000; var hoursToMs = 60 * minutesToMs;
+        var utcMs    = this.getTime() + (d.getTimezoneOffset() * minutesToMs);
+        var offsetMs = hoursToMs * timezoneOffset;
+        return new Date(utcMs + offsetMs);
+    });
     
     /**
      * Clear all time information in a date object
