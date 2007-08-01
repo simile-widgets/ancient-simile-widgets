@@ -47,6 +47,7 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
  * @constructor
  */
 Timegrid.Layout = function(eventSource, params) {
+    var self = this;
     this.params = params;
     /**
      * The number of columns in the grid.
@@ -60,7 +61,7 @@ Timegrid.Layout = function(eventSource, params) {
     this.ySize = 0;
     this.timezoneOffset = SimileAjax.DateTime.getTimezone();
     var timezoneMapper = function(obj) { 
-        obj.time = obj.time.toTimezone(this.timezoneOffset);
+        obj.time = obj.time.toTimezone(self.timezoneOffset);
         return obj;
     };
     this.xMapper = timezoneMapper;
@@ -72,12 +73,12 @@ Timegrid.Layout = function(eventSource, params) {
 
 Timegrid.Layout.prototype.addXMapper = function(f) {
     var old = this.xMapper;
-    this.xMapper = function(obj) { f(old(obj)); };
+    this.xMapper = function(obj) { return f(old(obj)); };
 };
 
 Timegrid.Layout.prototype.addYMapper = function(f) {
     var old = this.yMapper;
-    this.yMapper = function(obj) { f(old(obj)); };
+    this.yMapper = function(obj) { return f(old(obj)); };
 };
 
 Timegrid.Layout.prototype.configure = function(params) {

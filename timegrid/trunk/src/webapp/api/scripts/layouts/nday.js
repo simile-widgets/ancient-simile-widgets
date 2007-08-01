@@ -21,9 +21,8 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.xSize = 7;
     this.ySize = 24;
     this.iterable = true;
-    
     this.addXMapper(function(obj) { 
-        var ivl = new SimileAjax.DateTime.Interval(obj.time - self.startTime) 
+        var ivl = new SimileAjax.DateTime.Interval(obj.time - self.startTime); 
         return ivl.days; 
     });
     this.addYMapper(function(obj) { 
