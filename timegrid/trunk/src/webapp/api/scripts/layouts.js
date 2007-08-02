@@ -90,8 +90,15 @@ Timegrid.Layout.prototype.configure = function(params) {
 
 Timegrid.Layout.prototype.computeCellSizes = function() {
     // Compute the cell sizes for the grid
-    this.xCell = this.xCell || this.xcell || 100.0 / this.xSize;
-    this.yCell = this.params.yCell || this.params.ycell || (this.gridheight - 1) / this.ySize;
+    this.xCell = this.params.xCell || this.params.xcell || 100.0 / this.xSize;
+    this.yCell = this.params.yCell || this.params.ycell ||
+                 (this.gridheight - 1) / this.ySize;
+    if (this.params.yCell || this.params.ycell) {
+        this.gridheight = this.yCell * this.ySize;
+    }
+    if (this.params.xCell || this.params.xcell) {
+        this.gridwidth = this.xCell * this.xSize;
+    }
 };
 
 /**
@@ -114,11 +121,11 @@ Timegrid.Layout.prototype.render = function(container) {
     
     if (!this.params.height) { 
         this.height = this._container.style.height ? 
-            $(this._container).height() : 500; 
+            $(this._container).height() : (this.gridheight || 500); 
     }
     $(this._container).height(this.height + "px");
     if (!this.params.width) { 
-        this.width = $(this._container).width(); 
+        this.width = this.gridwidth || $(this._container).width(); 
     } else {
         $(this._container).width(this.width + "px");
     }
