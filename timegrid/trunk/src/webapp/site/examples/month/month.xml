@@ -42,4 +42,9 @@
         title="Sunday Brunch">
         A delicious Sunday brunch filled with eggs and other warm yummy things.
     </event>
+    <event start="Thu Aug 2 2007 17:00:00 GMT-0400"
+        end="Thu Aug 2 2007 19:00:00 GMT-0400" isDuration="true"
+        title="Dinner">
+        It's dinner time.
+    </event>
 </data>

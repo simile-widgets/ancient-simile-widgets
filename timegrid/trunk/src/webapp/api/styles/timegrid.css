@@ -133,6 +133,11 @@ div.timegrid-event {
     z-index: 5;
 }
 
+.timegrid-week-highlight {
+    position: absolute;
+    background-color: #eee;
+}
+
 .timegrid-event div {
     padding: 2px;
 }

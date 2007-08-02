@@ -106,7 +106,12 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
             currentCount--;
         }
     }
-    return eventContainer;
+    var nowDiv = this.renderNow();
+    if (nowDiv) { 
+        return $([eventContainer, nowDiv]); 
+    } else {
+        return eventContainer;
+    }
 };
 
 Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
@@ -119,6 +124,26 @@ Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
     if (evt.getColor()) { jediv.css('background-color', evt.getColor()); }
     if (evt.getTextColor()) { jediv.css('color', evt.getTextColor()); }
     return jediv.get()[0]; // Return the actual DOM element
+};
+
+Timegrid.NDayLayout.prototype.renderNow = function() {
+    // If we aren't looking at the current time, return
+    if (!this.now) { return; }
+    
+    var nowX = this.xMapper({ time: this.now });
+    var nowY = Math.floor(this.yMapper({ time: this.now }));
+    
+    var rectDiv = $('<div></div>').addClass('timegrid-week-highlights');
+    var yRect = $('<div></div>').height(this.yCell + "px")
+                                .width(this.xCell * this.xSize + "%")
+                                .css('top', nowY * this.yCell + "px")
+                                .addClass('timegrid-week-highlight');
+    var xRect = $('<div></div>').height(this.yCell * this.ySize + "px")
+                                .width(this.xCell + "%")
+                                .css('left', nowX * this.xCell + "%")
+                                .addClass('timegrid-week-highlight');
+    rectDiv.append(xRect).append(yRect);
+    return rectDiv.get(0);
 };
 
 Timegrid.NDayLayout.prototype.getXLabels = function() {

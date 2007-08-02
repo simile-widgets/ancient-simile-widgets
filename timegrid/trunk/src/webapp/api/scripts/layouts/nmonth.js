@@ -1,10 +1,10 @@
-/******************************************************************************
+/**
  * NMonthLayout
  * @fileoverview
  *   This is where the monthly layout is defined.  The layout is designed to 
  *   resemble the equivalent Google Calendar view.
  * @author masont
- *****************************************************************************/
+ */
 
 Timegrid.NMonthLayout = function(eventSource, params) {
     Timegrid.NMonthLayout.superclass.call(this, eventSource, params);
