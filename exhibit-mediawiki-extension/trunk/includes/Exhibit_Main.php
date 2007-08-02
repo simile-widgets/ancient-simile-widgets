@@ -28,6 +28,7 @@ function wfExhibitSetup() {
  	 * The second parameter is the callback function for processing the text between the tags.
   	 */
 	$wgParser->setHook( "exhibit", "Exhibit_getHTMLResult" );
+	$wgParser->setHook( "bibtex", "bibtexToHTMLTable" );
 }
 
 /**
@@ -58,6 +59,87 @@ function wfExhibitAddHTMLHeader(&$out) {
 	}
 
 	return true;
+}
+
+/**
+  * Callback function that converts BibTeX text pasted into wiki into
+  * an HTML table, which can then be imported by Exhibit using the 
+  * Exhibit Extension for Mediawiki. See Parse_Entries.php for proper credit to author.
+  * @param {String} $input This is the text the user enters ino the wikitext input box.
+  */
+
+function bibtexToHTMLTable( $input, $argv ) {
+	
+	include("Parse_Entries.php");
+	
+	try {
+		//Use the bibtex parser to get arrays from the bibtex in the <bibtex> tags.
+		$parse = New PARSEENTRIES();
+		$parse->loadBibtexString($input);
+		$parse->extractEntries();
+		list($preamble, $strings, $entries, $undefinedStrings) = $parse->returnArrays();
+		
+		//Find all the fields in these bibtex entries:		
+		$fields = array();
+		foreach ($entries as $entry) {
+			$thekeys = array_keys($entry);
+			foreach ($thekeys as $key) {
+				array_push($fields, $key);
+			}
+		}
+		$fields = array_unique($fields);
+		
+		//Make sure bibtexCitation is first field, since it must be unique, makes
+		//table look better. Find where it is now, and switch with what's there.
+		reset($fields);
+		$count = 0;
+		while ( $thekey = current($fields) ) {
+			if ($thekey == "bibtexCitation") {
+				break;
+			} else {
+				$count++;
+				next($fields);
+			}
+		}
+		$tempval = $fields[0];
+		$fields[0] = "bibtexCitation";
+		$fields[$count] = $tempval;
+		
+		//Construct table header with these fields.
+		$output = '<table id="bibtextable"><tr>';
+		foreach($fields as $field) {
+			if ($field == "bibtexCitation") {
+				$output .= "\n<th ex:name=\"label\">$field</th>";
+			} else {
+				$output .= "\n<th ex:name=\"$field\">$field</th>";
+			}
+		}
+		$output .= "</tr>\n";
+		
+		//Fill in rest of table, with fields in right column.
+		foreach($entries as $entry) {
+			$output .= "<tr>";
+			foreach($fields as $field) {
+				if (array_key_exists($field, $entry)) {
+					if ($field == "author") 
+						{ $entry[$field] = str_replace(" and ", " ; ", $entry[$field]); }
+					$output .= "<td>{$entry[$field]}</td>";
+				} else {
+					$output .= "<td></td>";
+				}
+			}
+			$output .= "</tr>\n";
+		}
+		$output .= "</table>";
+
+		//Give a reasonable default lens.
+		//$output .= '<div ex:role="exhibit-lens" ex:itemTypes="Publication" class="publication-lens"  style="display: none"> <span ex:control="copy-button" class="copy-button"></span> <div><span class="publication-title" ex:content=".label"></span><i ex:if-exists=".venue"><span ex:content=".venue"></span>, </i> <i ex:if-exists=".event"><span ex:content=".event"></span>, </i> <span ex:content=".year"></span>.  <span ex:if-exists=".status">(<span ex:content=".status"></span>)</span> </div> <div class="authors" ex:content=".author"></div> <div ex:if-exists=".abstract" class="abstract" ex:content=".abstract"></div> <div ex:if-exists=".excerpt" class="excerpt" ex:content=".excerpt"></div> <div class="downloads"> <a ex:if-exists=".url" ex:href-content=".url">[Source]</a> <a ex:if-exists=".talkURL" ex:href-content=".talkURL">[Talk Video]</a> <a ex:if-exists=".screencastURL" ex:href-content=".screencastURL">[Screencast <span ex:content=".screencastKB"></span> KB]</a> <a ex:if-exists=".pdfURL" ex:href-content=".pdfURL">[PDF <span ex:content=".pdfKB"></span> KB]</a> <a ex:if-exists=".pptURL" ex:href-content=".pptURL">[PowerPoint <span ex:content=".pptKB"></span> KB]</a> <a ex:if-exists=".psURL" ex:href-content=".psURL">[PS <span ex:content=".psKB"></span> KB]</a> </div> </div>';
+		
+		$output .= '<div ex:role="exhibit-lens" style="display:none"> <div> <div style="font-size:120%; font-style:italic"> <span ex:content=".title"></span> </div> <div> Authors: <span ex:content=".author"></span>, <span ex:content=".year" style="font-size: 80%; font-weight:bold"></span>.  </div> </div> <div><a ex:if-exists=".pdfurl" ex:href-content=".pdfurl">[PDF <span ex:content=".pdfkb"></span> KB]</a> </div>'; 
+
+	} catch (Exception $e) { $output = "Error in Bibtex"; }
+
+	return $output;
 }
 
 /**
