@@ -91,7 +91,7 @@ Timegrid.Layout.prototype.configure = function(params) {
 Timegrid.Layout.prototype.computeCellSizes = function() {
     // Compute the cell sizes for the grid
     this.xCell = this.xCell || this.xcell || 100.0 / this.xSize;
-    this.yCell = this.yCell || this.ycell || (this.gridheight - 1) / this.ySize;
+    this.yCell = this.params.yCell || this.params.ycell || (this.gridheight - 1) / this.ySize;
 };
 
 /**
