@@ -17,13 +17,13 @@ Exhibit.Formatter._ListFormatter = function(uiContext) {
     this._emptyText = uiContext.getSetting("format/list/empty-text");
     
     if (typeof this._separator != "string") {
-        this._separator = ", ";
+        this._separator = Exhibit.Formatter.l10n.listSeparator;
     }
     if (typeof this._lastSeparator != "string") {
-        this._lastSeparator = ", and ";
+        this._lastSeparator = Exhibit.Formatter.l10n.listLastSeparator;
     }
     if (typeof this._pairSeparator != "string") {
-        this._pairSeparator = " and ";
+        this._pairSeparator = Exhibit.Formatter.l10n.listPairSeparator;
     }
 };
 
@@ -87,7 +87,7 @@ Exhibit.Formatter._TextFormatter.prototype.formatText = function(value) {
     if (this._maxLength == 0 || value.length <= this._maxLength) {
         return value;
     } else {
-        return value.substr(0, this._maxLength) + "...";
+        return value.substr(0, this._maxLength) + Exhibit.Formatter.l10n.textEllipsis;
     }
 };
 
@@ -105,7 +105,8 @@ Exhibit.Formatter._BooleanFormatter.prototype.format = function(value, appender)
 };
 
 Exhibit.Formatter._BooleanFormatter.prototype.formatText = function(value) {
-    return (typeof value == "boolean" ? value : (typeof value == "string" ? (value == "true") : false)) ? "true" : "false";
+    return (typeof value == "boolean" ? value : (typeof value == "string" ? (value == "true") : false)) ? 
+        Exhibit.Formatter.l10n.booleanTrue : Exhibit.Formatter.l10n.booleanFalse;
 };
 
 /*==================================================
@@ -218,18 +219,18 @@ Exhibit.Formatter._CurrencyFormatter = function(uiContext) {
     
     this._symbol = uiContext.getSetting("format/currency/symbol");
     if (this._symbol == null) {
-        this._symbol = "";
+        this._symbol = Exhibit.Formatter.l10n.currencySymbol;
     }
     
     this._symbolPlacement = uiContext.getSetting("format/currency/symbol-placement");
     if (this._symbolPlacement == null) {
-        this._symbol = "first";
+        this._symbol = Exhibit.Formatter.l10n.currencySymbolPlacement;
     }
     
     this._negativeFormat = {
-        signed :      uiContext.getBooleanSetting("format/currency/negative-format/signed", true),
-        red :         uiContext.getBooleanSetting("format/currency/negative-format/red", false),
-        parentheses : uiContext.getBooleanSetting("format/currency/negative-format/parentheses", false)
+        signed :      uiContext.getBooleanSetting("format/currency/negative-format/signed", Exhibit.Formatter.l10n.currencyShowSign),
+        red :         uiContext.getBooleanSetting("format/currency/negative-format/red", Exhibit.Formatter.l10n.currencyShowRed),
+        parentheses : uiContext.getBooleanSetting("format/currency/negative-format/parentheses", Exhibit.Formatter.l10n.currencyShowParentheses)
     };
 };
 
@@ -326,30 +327,34 @@ Exhibit.Formatter._DateFormatter = function(uiContext) {
     switch (mode) {
     case "short":
         template = 
-            show == "date" ? "dd/MM/yy" :
-            (show == "time" ? "hh:mm a" : "dd/MM/yy hh:mm a");
+            show == "date" ?  Exhibit.Formatter.l10n.dateShortFormat :
+            (show == "time" ? Exhibit.Formatter.l10n.timeShortFormat : 
+                              Exhibit.Formatter.l10n.dateTimeShortFormat);
         break;
     case "medium":
         template = 
-            show == "date" ? "EEE, MMM d, yyyy" :
-            (show == "time" ? "hh:mm a" : "EEE, MMM d, yyyy, hh:mm a");
+            show == "date" ?  Exhibit.Formatter.l10n.dateMediumFormat :
+            (show == "time" ? Exhibit.Formatter.l10n.timeMediumFormat : 
+                              Exhibit.Formatter.l10n.dateTimeMediumFormat);
         break;
     case "long":
         template = 
-            show == "date" ? "EEEE, MMMM d, yyyy" :
-            (show == "time" ? "HH:mm:ss z" : "EEEE, MMMM d, yyyy, HH:mm:ss z");
+            show == "date" ?  Exhibit.Formatter.l10n.dateLongFormat :
+            (show == "time" ? Exhibit.Formatter.l10n.timeLongFormat : 
+                              Exhibit.Formatter.l10n.dateTimeLongFormat);
         break;
     case "full":
         template = 
-            show == "date" ? "EEEE, MMMM d, yyyy" :
-            (show == "time" ? "HH:mm:ss.S z" : "EEEE, MMMM d, yyyy G, HH:mm:ss.S z");
+            show == "date" ?  Exhibit.Formatter.l10n.dateFullFormat :
+            (show == "time" ? Exhibit.Formatter.l10n.timeFullFormat : 
+                              Exhibit.Formatter.l10n.dateTimeFullFormat);
         break;
     default:
         template = uiContext.getSetting("format/date/template");
     }
     
     if (typeof template != "string") {
-        template = "EEE, MMM d, yyyy, hh:mm a";
+        template = Exhibit.Formatter.l10n.dateTimeDefaultFormat;
     }
     
     var segments = [];
@@ -412,12 +417,6 @@ Exhibit.Formatter._DateFormatter._pad3 = function(n) {
     return n < 10 ? ("00" + n) : (n < 100 ? ("0" + n) : n.toString());
 };
 
-Exhibit.Formatter._DateFormatter._shortDaysOfWeek = [ "Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat" ];
-Exhibit.Formatter._DateFormatter._daysOfWeek = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
-
-Exhibit.Formatter._DateFormatter._shortMonths = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-Exhibit.Formatter._DateFormatter._months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
-    
 Exhibit.Formatter._DateFormatter._retrievers = {
     // day of month
     "d": function(date) {
@@ -429,10 +428,10 @@ Exhibit.Formatter._DateFormatter._retrievers = {
     
     // day of week
     "EEE": function(date) {
-        return Exhibit.Formatter._DateFormatter._shortDaysOfWeek[date.getUTCDay()];
+        return Exhibit.Formatter.l10n.shortDaysOfWeek[date.getUTCDay()];
     },
     "EEEE": function(date) {
-        return Exhibit.Formatter._DateFormatter._daysOfWeek[date.getUTCDay()];
+        return Exhibit.Formatter.l10n.daysOfWeek[date.getUTCDay()];
     },
     
     // month
@@ -440,10 +439,10 @@ Exhibit.Formatter._DateFormatter._retrievers = {
         return Exhibit.Formatter._DateFormatter._pad(date.getUTCMonth() + 1);
     },
     "MMM": function(date) {
-        return Exhibit.Formatter._DateFormatter._shortMonths[date.getUTCMonth()];
+        return Exhibit.Formatter.l10n.shortMonths[date.getUTCMonth()];
     },
     "MMMM": function(date) {
-        return Exhibit.Formatter._DateFormatter._months[date.getUTCMonth()];
+        return Exhibit.Formatter.l10n.months[date.getUTCMonth()];
     },
     
     // year
@@ -458,7 +457,7 @@ Exhibit.Formatter._DateFormatter._retrievers = {
     // era
     "G": function(date) {
         var y = date.getUTCYear();
-        return y > 0 ? "AD" : "BC";
+        return y > 0 ? Exhibit.Formatter.l10n.commonEra : Exhibit.Formatter.l10n.beforeCommonEra;
     },
     
     // hours of day
@@ -476,10 +475,10 @@ Exhibit.Formatter._DateFormatter._retrievers = {
     
     // am/pm
     "a": function(date) {
-        return date.getUTCHours() < 12 ? "am" : "pm";
+        return date.getUTCHours() < 12 ? Exhibit.Formatter.l10n.beforeNoon : Exhibit.Formatter.l10n.afterNoon;
     },
     "A": function(date) {
-        return date.getUTCHours() < 12 ? "AM" : "PM";
+        return date.getUTCHours() < 12 ? Exhibit.Formatter.l10n.BeforeNoon : Exhibit.Formatter.l10n.AfterNoon;
     },
     
     // minutes of hour

@@ -9,6 +9,7 @@
         "data/database-l10n.js",
         "ui/ui-context-l10n.js",
         "ui/lens-l10n.js",
+        "ui/formatter-l10n.js",
         "ui/widgets/collection-summary-widget-l10n.js",
         "ui/views/view-panel-l10n.js",
         "ui/views/ordered-view-frame-l10n.js",
