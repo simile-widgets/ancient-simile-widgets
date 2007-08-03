@@ -57,14 +57,14 @@ Exhibit.CollectionSummaryWidget.prototype._initializeUI = function() {
         "span", 
         String.substitute(
             l10n.allResultsTemplate,
-            [ "exhibit-collectionSummaryWidget-count", "exhibit-collectionSummaryWidget-types" ]
+            [ "exhibit-collectionSummaryWidget-results" ]
         )
     );
     this._filteredResultsDom = SimileAjax.DOM.createDOMFromString(
         "span", 
         String.substitute(
             l10n.filteredResultsTemplate,
-            [ "exhibit-collectionSummaryWidget-count", "exhibit-collectionSummaryWidget-types" ]
+            [ "exhibit-collectionSummaryWidget-results" ]
         ),
         {   resetActionLink: Exhibit.UI.makeActionLink(l10n.resetFiltersLabel, onClearFilters)
         }
@@ -73,7 +73,7 @@ Exhibit.CollectionSummaryWidget.prototype._initializeUI = function() {
         "span", 
         String.substitute(
             l10n.noResultsTemplate,
-            [ "exhibit-collectionSummaryWidget-count", "exhibit-collectionSummaryWidget-types" ]
+            [ "exhibit-collectionSummaryWidget-results", "exhibit-collectionSummaryWidget-count" ]
         ),
         {   resetActionLink: Exhibit.UI.makeActionLink(l10n.resetFiltersLabel, onClearFilters)
         }
@@ -94,20 +94,21 @@ Exhibit.CollectionSummaryWidget.prototype._reconstruct = function() {
         if (currentSize == 0) {
             this._div.appendChild(this._noResultsDom.elmt);
         } else {
-            var typeLabels = database.getTypeLabels(this._collection.getRestrictedItems())[currentSize > 1 ? 1 : 0];
-            var typeLabel = (typeLabels.length > 0 && typeLabels.length <= 3) ?
-                Exhibit.l10n.composeListString(typeLabels) :
-                Exhibit.Database.l10n.itemType.pluralLabel;
+            var typeIDs = database.getTypeIDs(this._collection.getRestrictedItems()).toArray();
+            var typeID = typeIDs.length == 1 ? typeIDs[0] : "Item";
+            
+            var description = 
+                Exhibit.Database.l10n.labelItemsOfType(currentSize, typeID, database, "exhibit-collectionSummaryWidget-count");
             
             if (currentSize == originalSize) {
                 this._div.appendChild(this._allResultsDom.elmt);
-                this._allResultsDom.currentCountSpan.innerHTML = currentSize;
-                this._allResultsDom.typesSpan.innerHTML = typeLabel;
+                this._allResultsDom.resultDescription.innerHTML = "";
+                this._allResultsDom.resultDescription.appendChild(description);
             } else {
                 this._div.appendChild(this._filteredResultsDom.elmt);
-                this._filteredResultsDom.currentCountSpan.innerHTML = currentSize;
+                this._filteredResultsDom.resultDescription.innerHTML = "";
+                this._filteredResultsDom.resultDescription.appendChild(description);
                 this._filteredResultsDom.originalCountSpan.innerHTML = originalSize;
-                this._filteredResultsDom.typesSpan.innerHTML = typeLabel;
             }
         }
     }

@@ -32,10 +32,8 @@ Exhibit.Database._Impl = function() {
     var l10n = Exhibit.Database.l10n;
     
     var itemType = new Exhibit.Database._Type("Item");
-    itemType._uri           = "http://simile.mit.edu/2006/11/exhibit#Item";
-    itemType._label         = l10n.itemType.label;
-    itemType._pluralLabel   = l10n.itemType.pluralLabel;
-    this._types["Item"]     = itemType;
+    itemType._custom = Exhibit.Database.l10n.itemType;
+    this._types["Item"] = itemType;
 
     var labelProperty = new Exhibit.Database._Property("label");
     labelProperty._uri                  = "http://www.w3.org/2000/01/rdf-schema#label";
@@ -169,18 +167,15 @@ Exhibit.Database._Impl.prototype.loadTypes = function(typeEntries, baseURI) {
                 this._types[typeID] = type;
             };
             
-            type._uri = ("uri" in typeEntry) ? 
-                typeEntry.uri : 
-                (baseURI + "type#" + encodeURIComponent(typeID));
-            type._label = ("label" in typeEntry) ? 
-                typeEntry.label : 
-                typeID;
-            type._pluralLabel = ("pluralLabel" in typeEntry) ? 
-                typeEntry.pluralLabel : 
-                type._label;
-                
-            if ("origin" in typeEntry) {
-                type._origin = typeEntry.origin;
+            for (var p in typeEntry) {
+                type._custom[p] = typeEntry[p];
+            }
+            
+            if (!("uri" in type._custom)) {
+                type._custom["uri"] = baseURI + "type#" + encodeURIComponent(typeID);
+            }
+            if (!("label" in type._custom)) {
+                type._custom["label"] = typeID;
             }
         }
         
@@ -413,9 +408,8 @@ Exhibit.Database._Impl.prototype._ensureTypeExists = function(typeID, baseURI) {
     if (!(typeID in this._types)) {
         var type = new Exhibit.Database._Type(typeID);
         
-        type._uri = baseURI + "type#" + encodeURIComponent(typeID);
-        type._label = typeID;
-        type._pluralLabel = type._label;
+        type._custom["uri"] = baseURI + "type#" + encodeURIComponent(typeID);
+        type._custom["label"] = typeID;
         
         this._types[typeID] = type;
     }
@@ -676,21 +670,8 @@ Exhibit.Database._Impl.prototype.getSubjectsInRange = function(p, min, max, incl
     return (!set) ? new Exhibit.Set() : set;
 };
 
-Exhibit.Database._Impl.prototype.getTypeLabels = function(set) {
-    var typeIDSet = this.getObjectsUnion(set, "type", null, null);
-    var labels = [];
-    var pluralLabels = [];
-    
-    var database = this;
-    typeIDSet.visit(function(typeID) {
-        var type = database.getType(typeID);
-        if (type != null) {
-            labels.push(type.getLabel());
-            pluralLabels.push(type.getPluralLabel());
-        }
-    });
-    
-    return [ labels, pluralLabels ];
+Exhibit.Database._Impl.prototype.getTypeIDs = function(set) {
+    return this.getObjectsUnion(set, "type", null, null);
 };
 
 Exhibit.Database._Impl.prototype.addStatement = function(s, p, o) {
@@ -740,15 +721,15 @@ Exhibit.Database._Impl.prototype.removeSubjects = function(o, p) {
  */
 Exhibit.Database._Type = function(id) {
     this._id = id;
+    this._custom = {};
 };
 
 Exhibit.Database._Type.prototype = {
-    getID:          function() { return this._id; },
-    getURI:         function() { return this._uri; },
-    getLabel:       function() { return this._label; },
-    getPluralLabel: function() { return this._pluralLabel; },
-    getSuperTypeID: function() { return this._superTypeID; },
-    getOrigin:      function() { return this._origin; }
+    getID:          function()  { return this._id; },
+    getURI:         function()  { return this._custom["uri"]; },
+    getLabel:       function()  { return this._custom["label"]; },
+    getOrigin:      function()  { return this._custom["origin"]; },
+    getProperty:    function(p) { return this._custom[p]; }
 };
 
 /*==================================================

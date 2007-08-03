@@ -12,11 +12,11 @@ Exhibit.CollectionSummaryWidget.l10n.resetFiltersTooltip = "Clear all filters an
 Exhibit.CollectionSummaryWidget.l10n.resetActionTitle = "Reset all filters";
 
 Exhibit.CollectionSummaryWidget.l10n.allResultsTemplate =
-    "<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> total.";
+    "<span class='%0' id='resultDescription'></span>";
 
 Exhibit.CollectionSummaryWidget.l10n.noResultsTemplate =
-    "<span class='%0'>0</span> <span class='%1' id='typesSpan'>results</span>. (<span id='resetActionLink'></span>)";
+    "<span class='%0'><span class='%1'>0</span> results</span> (<span id='resetActionLink'></span>)";
 
 Exhibit.CollectionSummaryWidget.l10n.filteredResultsTemplate =
-    "<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> " +
-    "filtered from <span id='originalCountSpan'>0</span> originally. (<span id='resetActionLink'></span>)";
+    "<span class='%0' id='resultDescription'></span> " +
+    "filtered from <span id='originalCountSpan'>0</span> originally (<span id='resetActionLink'></span>)";

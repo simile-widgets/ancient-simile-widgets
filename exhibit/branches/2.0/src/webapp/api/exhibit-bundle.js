@@ -329,9 +329,7 @@ this._items=new Exhibit.Set();
 var l10n=Exhibit.Database.l10n;
 
 var itemType=new Exhibit.Database._Type("Item");
-itemType._uri="http://simile.mit.edu/2006/11/exhibit#Item";
-itemType._label=l10n.itemType.label;
-itemType._pluralLabel=l10n.itemType.pluralLabel;
+itemType._custom=Exhibit.Database.l10n.itemType;
 this._types["Item"]=itemType;
 
 var labelProperty=new Exhibit.Database._Property("label");
@@ -466,18 +464,15 @@ type=new Exhibit.Database._Type(typeID);
 this._types[typeID]=type;
 };
 
-type._uri=("uri"in typeEntry)?
-typeEntry.uri:
-(baseURI+"type#"+encodeURIComponent(typeID));
-type._label=("label"in typeEntry)?
-typeEntry.label:
-typeID;
-type._pluralLabel=("pluralLabel"in typeEntry)?
-typeEntry.pluralLabel:
-type._label;
+for(var p in typeEntry){
+type._custom[p]=typeEntry[p];
+}
 
-if("origin"in typeEntry){
-type._origin=typeEntry.origin;
+if(!("uri"in type._custom)){
+type._custom["uri"]=baseURI+"type#"+encodeURIComponent(typeID);
+}
+if(!("label"in type._custom)){
+type._custom["label"]=typeID;
 }
 }
 
@@ -708,9 +703,8 @@ Exhibit.Database._Impl.prototype._ensureTypeExists=function(typeID,baseURI){
 if(!(typeID in this._types)){
 var type=new Exhibit.Database._Type(typeID);
 
-type._uri=baseURI+"type#"+encodeURIComponent(typeID);
-type._label=typeID;
-type._pluralLabel=type._label;
+type._custom["uri"]=baseURI+"type#"+encodeURIComponent(typeID);
+type._custom["label"]=typeID;
 
 this._types[typeID]=type;
 }
@@ -971,21 +965,8 @@ return rangeIndex.getSubjectsInRange(min,max,inclusive,set,filter);
 return(!set)?new Exhibit.Set():set;
 };
 
-Exhibit.Database._Impl.prototype.getTypeLabels=function(set){
-var typeIDSet=this.getObjectsUnion(set,"type",null,null);
-var labels=[];
-var pluralLabels=[];
-
-var database=this;
-typeIDSet.visit(function(typeID){
-var type=database.getType(typeID);
-if(type!=null){
-labels.push(type.getLabel());
-pluralLabels.push(type.getPluralLabel());
-}
-});
-
-return[labels,pluralLabels];
+Exhibit.Database._Impl.prototype.getTypeIDs=function(set){
+return this.getObjectsUnion(set,"type",null,null);
 };
 
 Exhibit.Database._Impl.prototype.addStatement=function(s,p,o){
@@ -1032,15 +1013,15 @@ return true;
 
 Exhibit.Database._Type=function(id){
 this._id=id;
+this._custom={};
 };
 
 Exhibit.Database._Type.prototype={
 getID:function(){return this._id;},
-getURI:function(){return this._uri;},
-getLabel:function(){return this._label;},
-getPluralLabel:function(){return this._pluralLabel;},
-getSuperTypeID:function(){return this._superTypeID;},
-getOrigin:function(){return this._origin;}
+getURI:function(){return this._custom["uri"];},
+getLabel:function(){return this._custom["label"];},
+getOrigin:function(){return this._custom["origin"];},
+getProperty:function(p){return this._custom[p];}
 };
 
 
@@ -9841,14 +9822,14 @@ this._allResultsDom=SimileAjax.DOM.createDOMFromString(
 "span",
 String.substitute(
 l10n.allResultsTemplate,
-["exhibit-collectionSummaryWidget-count","exhibit-collectionSummaryWidget-types"]
+["exhibit-collectionSummaryWidget-results"]
 )
 );
 this._filteredResultsDom=SimileAjax.DOM.createDOMFromString(
 "span",
 String.substitute(
 l10n.filteredResultsTemplate,
-["exhibit-collectionSummaryWidget-count","exhibit-collectionSummaryWidget-types"]
+["exhibit-collectionSummaryWidget-results"]
 ),
 {resetActionLink:Exhibit.UI.makeActionLink(l10n.resetFiltersLabel,onClearFilters)
 }
@@ -9857,7 +9838,7 @@ this._noResultsDom=SimileAjax.DOM.createDOMFromString(
 "span",
 String.substitute(
 l10n.noResultsTemplate,
-["exhibit-collectionSummaryWidget-count","exhibit-collectionSummaryWidget-types"]
+["exhibit-collectionSummaryWidget-results","exhibit-collectionSummaryWidget-count"]
 ),
 {resetActionLink:Exhibit.UI.makeActionLink(l10n.resetFiltersLabel,onClearFilters)
 }
@@ -9878,20 +9859,21 @@ if(originalSize>0){
 if(currentSize==0){
 this._div.appendChild(this._noResultsDom.elmt);
 }else{
-var typeLabels=database.getTypeLabels(this._collection.getRestrictedItems())[currentSize>1?1:0];
-var typeLabel=(typeLabels.length>0&&typeLabels.length<=3)?
-Exhibit.l10n.composeListString(typeLabels):
-Exhibit.Database.l10n.itemType.pluralLabel;
+var typeIDs=database.getTypeIDs(this._collection.getRestrictedItems()).toArray();
+var typeID=typeIDs.length==1?typeIDs[0]:"Item";
+
+var description=
+Exhibit.Database.l10n.labelItemsOfType(currentSize,typeID,database,"exhibit-collectionSummaryWidget-count");
 
 if(currentSize==originalSize){
 this._div.appendChild(this._allResultsDom.elmt);
-this._allResultsDom.currentCountSpan.innerHTML=currentSize;
-this._allResultsDom.typesSpan.innerHTML=typeLabel;
+this._allResultsDom.resultDescription.innerHTML="";
+this._allResultsDom.resultDescription.appendChild(description);
 }else{
 this._div.appendChild(this._filteredResultsDom.elmt);
-this._filteredResultsDom.currentCountSpan.innerHTML=currentSize;
+this._filteredResultsDom.resultDescription.innerHTML="";
+this._filteredResultsDom.resultDescription.appendChild(description);
 this._filteredResultsDom.originalCountSpan.innerHTML=originalSize;
-this._filteredResultsDom.typesSpan.innerHTML=typeLabel;
 }
 }
 }
