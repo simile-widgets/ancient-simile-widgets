@@ -409,6 +409,7 @@ SimileAjax.DateTime.MILLENNIUM=10;
 SimileAjax.DateTime.EPOCH=-1;
 SimileAjax.DateTime.ERA=-2;
 
+
 SimileAjax.DateTime.gregorianUnitLengths=[];
 (function(){
 var d=SimileAjax.DateTime;
@@ -440,6 +441,7 @@ SimileAjax.DateTime._timezoneRegexp=new RegExp(
 SimileAjax.DateTime._timeRegexp=new RegExp(
 "^([0-9]{2})(:?([0-9]{2})(:?([0-9]{2})(\.([0-9]+))?)?)?$"
 );
+
 
 SimileAjax.DateTime.setIso8601Date=function(dateObject,string){
 
@@ -486,6 +488,7 @@ dateObject.setUTCDate(date);
 return dateObject;
 };
 
+
 SimileAjax.DateTime.setIso8601Time=function(dateObject,string){
 
 
@@ -507,62 +510,40 @@ dateObject.setUTCMilliseconds(ms);
 return dateObject;
 };
 
+
 SimileAjax.DateTime.timezoneOffset=new Date().getTimezoneOffset();
+
 
 SimileAjax.DateTime.setIso8601=function(dateObject,string){
 
 
 var offset=null;
-
 var comps=(string.indexOf("T")==-1)?string.split(" "):string.split("T");
 
-
-
 SimileAjax.DateTime.setIso8601Date(dateObject,comps[0]);
-
 if(comps.length==2){
 
-
-
 var d=comps[1].match(SimileAjax.DateTime._timezoneRegexp);
-
 if(d){
-
 if(d[0]=='Z'){
-
 offset=0;
-
 }else{
-
 offset=(Number(d[3])*60)+Number(d[5]);
-
 offset*=((d[2]=='-')?1:-1);
-
 }
-
 comps[1]=comps[1].substr(0,comps[1].length-d[0].length);
-
 }
-
-
 
 SimileAjax.DateTime.setIso8601Time(dateObject,comps[1]);
-
 }
-
 if(offset==null){
-
 offset=dateObject.getTimezoneOffset();
-
 }
-
 dateObject.setTime(dateObject.getTime()+offset*60000);
 
-
-
 return dateObject;
-
 };
+
 
 SimileAjax.DateTime.parseIso8601DateTime=function(string){
 try{
@@ -571,6 +552,7 @@ return SimileAjax.DateTime.setIso8601(new Date(0),string);
 return null;
 }
 };
+
 
 SimileAjax.DateTime.parseGregorianDateTime=function(o){
 if(o==null){
@@ -604,6 +586,7 @@ return new Date(Date.parse(s));
 return null;
 }
 };
+
 
 SimileAjax.DateTime.roundDownToInterval=function(date,intervalUnit,timeZone,multiple,firstDayOfWeek){
 var timeShift=timeZone*
@@ -688,6 +671,7 @@ break;
 date.setTime(date2.getTime()-timeShift);
 };
 
+
 SimileAjax.DateTime.roundUpToInterval=function(date,intervalUnit,timeZone,multiple,firstDayOfWeek){
 var originalTime=date.getTime();
 SimileAjax.DateTime.roundDownToInterval(date,intervalUnit,timeZone,multiple,firstDayOfWeek);
@@ -696,6 +680,7 @@ date.setTime(date.getTime()+
 SimileAjax.DateTime.gregorianUnitLengths[intervalUnit]*multiple);
 }
 };
+
 
 SimileAjax.DateTime.incrementByInterval=function(date,intervalUnit){
 switch(intervalUnit){
@@ -737,10 +722,12 @@ break;
 }
 };
 
+
 SimileAjax.DateTime.removeTimeZoneOffset=function(date,timeZone){
 return new Date(date.getTime()+
 timeZone*SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR]);
 };
+
 
 SimileAjax.DateTime.getTimezone=function(){
 var d=new Date();
@@ -1171,6 +1158,8 @@ node=node2;
 
 
 SimileAjax.Graphics=new Object();
+
+
 SimileAjax.Graphics.pngIsTranslucent=(!SimileAjax.Platform.browser.isIE)||(SimileAjax.Platform.browser.majorVersion>6);
 
 
@@ -1191,6 +1180,7 @@ elmt.style.verticalAlign=(verticalAlign!=null)?verticalAlign:"middle";
 return elmt;
 };
 
+
 SimileAjax.Graphics.createTranslucentImage=SimileAjax.Graphics.pngIsTranslucent?
 SimileAjax.Graphics._createTranslucentImage1:
 SimileAjax.Graphics._createTranslucentImage2;
@@ -1209,9 +1199,11 @@ var style=
 return"<img src='"+url+"' style=\""+style+"\" />";
 };
 
+
 SimileAjax.Graphics.createTranslucentImageHTML=SimileAjax.Graphics.pngIsTranslucent?
 SimileAjax.Graphics._createTranslucentImageHTML1:
 SimileAjax.Graphics._createTranslucentImageHTML2;
+
 
 SimileAjax.Graphics.setOpacity=function(elmt,opacity){
 if(SimileAjax.Platform.browser.isIE){
@@ -1243,8 +1235,8 @@ SimileAjax.Graphics._bubblePadding=15;
 SimileAjax.Graphics._bubblePointOffset=6;
 SimileAjax.Graphics._halfArrowWidth=18;
 
-SimileAjax.Graphics.createBubbleForPoint=function(pageX,pageY,contentWidth,contentHeight,orientation){
 
+SimileAjax.Graphics.createBubbleForPoint=function(pageX,pageY,contentWidth,contentHeight,orientation){
 function getWindowDims(){
 if(typeof window.innerHeight=='number'){
 return{w:window.innerWidth,h:window.innerHeight};
@@ -1424,6 +1416,7 @@ document.body.appendChild(div);
 return bubble;
 };
 
+
 SimileAjax.Graphics.createMessageBubble=function(doc){
 var containerDiv=doc.createElement("div");
 if(SimileAjax.Graphics.pngIsTranslucent){
@@ -1479,6 +1472,7 @@ contentDiv:contentDiv
 
 
 
+
 SimileAjax.Graphics.createAnimation=function(f,from,to,duration,cont){
 return new SimileAjax.Graphics._Animation(f,from,to,duration,cont);
 };
@@ -1496,10 +1490,12 @@ this.start=new Date().getTime();
 this.timePassed=0;
 };
 
+
 SimileAjax.Graphics._Animation.prototype.run=function(){
 var a=this;
 window.setTimeout(function(){a.step();},50);
 };
+
 
 SimileAjax.Graphics._Animation.prototype.step=function(){
 this.timePassed+=50;
@@ -1521,6 +1517,7 @@ this.f(this.to,0);
 this["cont"]();
 }
 };
+
 
 
 
@@ -2317,6 +2314,7 @@ return new Date(v.getTime()+n);
 
 
 /* window-manager.js */
+
 
 
 
