@@ -20,6 +20,7 @@ $includeMap = false;
 $includeTimeline = false;
 $wgAutoloadClasses['BibtexExport'] = dirname(__FILE__) . '/BibtexExport_body.php';
 $wgSpecialPages['BibtexExport'] = 'BibtexExport';
+$wgSpecialPages['BibTeXExport'] = 'BibtexExport';
 $wgHooks['LoadAllMessages'][] = 'BibtexExport::loadMessages';
 $wgHooks['LangugeGetSpecialPageAliases'][] = 'BibtexExportLocalizedPageName';
   

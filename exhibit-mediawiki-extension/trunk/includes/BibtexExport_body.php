@@ -15,9 +15,9 @@ class BibtexExport extends SpecialPage
         
         # If just Special:BibtexExport , explain what it is and die.
         if ($par == "") {
-        	echo "<h3>You haven't specified which wiki page you would like the Bibtex from.</h3>";
+        	echo "<h3>You haven't specified which wiki page you would like the BibTeX from.</h3>";
         	echo "<div style=\"width:33em\">";
-        	echo "To grab the Bibtex between the &lt;bibtex&gt; and &lt;/bibtex&gt; tags ";
+        	echo "To grab the BibTeX between the &lt;bibtex&gt; and &lt;/bibtex&gt; tags ";
         	echo "in an article, simply visit Special:BibtexExport/Article_Name.";
         	echo "<p>";
         	echo "To narrow it down you can append a query to the URL. For example, if you ";
