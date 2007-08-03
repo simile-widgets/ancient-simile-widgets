@@ -3563,6 +3563,7 @@ this.setComponent(id,component);
 Exhibit._Impl.prototype.configureFromDOM=function(root){
 var collectionElmts=[];
 var coderElmts=[];
+var coordinatorElmts=[];
 var lensElmts=[];
 var facetElmts=[];
 var otherElmts=[];
@@ -3572,6 +3573,7 @@ if(role.length>0){
 switch(role){
 case"collection":collectionElmts.push(elmt);break;
 case"coder":coderElmts.push(elmt);break;
+case"coordinator":coordinatorElmts.push(elmt);break;
 case"lens":lensElmts.push(elmt);break;
 case"facet":facetElmts.push(elmt);break;
 default:
@@ -3617,6 +3619,7 @@ SimileAjax.Debug.exception(e);
 }
 }
 };
+processElmts(coordinatorElmts);
 processElmts(coderElmts);
 processElmts(lensElmts);
 processElmts(facetElmts);
@@ -4295,6 +4298,32 @@ return Exhibit.DefaultColorCoder._mixedCase.label;
 Exhibit.DefaultColorCoder.prototype.getMixedColor=function(){
 return Exhibit.DefaultColorCoder._mixedCase.color;
 };
+
+
+/* coordinator.js */
+
+
+Exhibit.Coordinator=function(uiContext){
+this._uiContext=uiContext;
+}
+
+Exhibit.Coordinator.create=function(configuration,uiContext){
+var coordinator=new Exhibit.Coordinator(uiContext);
+
+return coordinator;
+};
+
+Exhibit.Coordinator.createFromDOM=function(div,uiContext){
+var coordinator=new Exhibit.Coordinator(Exhibit.UIContext.createFromDOM(div,uiContext,false));
+
+return coordinator;
+};
+
+Exhibit.Coordinator.prototype.dispose=function(){
+this._uiContext.dispose();
+this._uiContext=null;
+};
+
 
 
 /* list-facet.js */
@@ -7175,6 +7204,8 @@ case"view":
 return Exhibit.UI.createView(configuration,elmt,uiContext);
 case"facet":
 return Exhibit.UI.createFacet(configuration,elmt,uiContext);
+case"coordinator":
+return Exhibit.UI.createCoordinator(configuration,uiContext);
 case"coder":
 return Exhibit.UI.createCoder(configuration,uiContext);
 case"viewPanel":
@@ -7199,6 +7230,8 @@ case"view":
 return Exhibit.UI.createViewFromDOM(elmt,null,uiContext);
 case"facet":
 return Exhibit.UI.createFacetFromDOM(elmt,null,uiContext);
+case"coordinator":
+return Exhibit.UI.createCoordinatorFromDOM(elmt,uiContext);
 case"coder":
 return Exhibit.UI.createCoderFromDOM(elmt,uiContext);
 case"viewPanel":
@@ -7269,6 +7302,14 @@ SimileAjax.Debug.exception(e,"Unknown coderClass "+coderClassString);
 }
 
 return coderClass.createFromDOM(elmt,uiContext);
+};
+
+Exhibit.UI.createCoordinator=function(configuration,uiContext){
+return Exhibit.Coordinator.create(configuration,uiContext);
+};
+
+Exhibit.UI.createCoordinatorFromDOM=function(elmt,uiContext){
+return Exhibit.Coordinator.createFromDOM(elmt,uiContext);
 };
 
 Exhibit.UI._stringToObject=function(name,suffix){

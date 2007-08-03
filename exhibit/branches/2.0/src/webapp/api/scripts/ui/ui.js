@@ -23,6 +23,8 @@ Exhibit.UI.create = function(configuration, elmt, uiContext) {
             return Exhibit.UI.createView(configuration, elmt, uiContext);
         case "facet":
             return Exhibit.UI.createFacet(configuration, elmt, uiContext);
+        case "coordinator":
+            return Exhibit.UI.createCoordinator(configuration, uiContext);
         case "coder":
             return Exhibit.UI.createCoder(configuration, uiContext);
         case "viewPanel":
@@ -47,6 +49,8 @@ Exhibit.UI.createFromDOM = function(elmt, uiContext) {
         return Exhibit.UI.createViewFromDOM(elmt, null, uiContext);
     case "facet":
         return Exhibit.UI.createFacetFromDOM(elmt, null, uiContext);
+    case "coordinator":
+        return Exhibit.UI.createCoordinatorFromDOM(elmt, uiContext);
     case "coder":
         return Exhibit.UI.createCoderFromDOM(elmt, uiContext);
     case "viewPanel":
@@ -117,6 +121,14 @@ Exhibit.UI.createCoderFromDOM = function(elmt, uiContext) {
     }
     
     return coderClass.createFromDOM(elmt, uiContext);
+};
+
+Exhibit.UI.createCoordinator = function(configuration, uiContext) {
+    return Exhibit.Coordinator.create(configuration, uiContext);
+};
+
+Exhibit.UI.createCoordinatorFromDOM = function(elmt, uiContext) {
+    return Exhibit.Coordinator.createFromDOM(elmt, uiContext);
 };
 
 Exhibit.UI._stringToObject = function(name, suffix) {

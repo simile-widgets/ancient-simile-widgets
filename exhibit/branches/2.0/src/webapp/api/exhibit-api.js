@@ -65,6 +65,7 @@
             "ui/lens.js",
             "ui/format-parser.js",
             "ui/formatter.js",
+            "ui/coordinators.js",
             
             "ui/facets/list-facet.js",
             "ui/facets/numeric-range-facet.js",
@@ -72,13 +73,13 @@
             
             "ui/coders/color-coder.js",
             "ui/coders/default-color-coder.js",
-			"ui/coders/color-gradient-coder.js",
+            "ui/coders/color-gradient-coder.js",
             
             "ui/widgets/logo.js",
             "ui/widgets/collection-summary-widget.js",
             "ui/widgets/resizable-div-widget.js",
             "ui/widgets/legend-widget.js",
-			"ui/widgets/legend-gradient-widget.js",
+            "ui/widgets/legend-gradient-widget.js",
             "ui/widgets/option-widget.js",
             "ui/widgets/toolbox-widget.js",
             

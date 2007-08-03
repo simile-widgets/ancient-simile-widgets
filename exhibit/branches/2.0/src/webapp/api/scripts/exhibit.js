@@ -232,6 +232,7 @@ Exhibit._Impl.prototype.configure = function(configuration) {
 Exhibit._Impl.prototype.configureFromDOM = function(root) {
     var collectionElmts = [];
     var coderElmts = [];
+    var coordinatorElmts = [];
     var lensElmts = [];
     var facetElmts = [];
     var otherElmts = [];
@@ -241,6 +242,7 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
             switch (role) {
             case "collection":  collectionElmts.push(elmt); break;
             case "coder":       coderElmts.push(elmt); break;
+            case "coordinator": coordinatorElmts.push(elmt); break;
             case "lens":        lensElmts.push(elmt); break;
             case "facet":       facetElmts.push(elmt); break;
             default: 
@@ -286,6 +288,7 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
             }
         }
     };
+    processElmts(coordinatorElmts);
     processElmts(coderElmts);
     processElmts(lensElmts);
     processElmts(facetElmts);
