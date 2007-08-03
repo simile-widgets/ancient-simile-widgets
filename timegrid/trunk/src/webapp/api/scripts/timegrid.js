@@ -134,7 +134,11 @@ Timegrid._Impl.prototype._construct = function() {
         return Timegrid.LayoutFactory.createLayout(s, self._eventSource,
                                                       self._layoutParams);
     });
-    this._panel = new Timegrid.Controls.Panel(this._layouts);
+    if (this._panel) {
+        this._panel.setLayouts(this._layouts);
+    } else {
+        this._panel = new Timegrid.Controls.Panel(this._layouts);
+    }
     var container = this._container;
     var doc = container.ownerDocument;
 

@@ -16,14 +16,19 @@ Timegrid.Controls = {};
  */
 Timegrid.Controls.Panel = function(layouts, params) {
     this._layouts = layouts;
+    this._titles = $.map(this._layouts, function(l) { return l.title; });
+    this._tabSet = new Timegrid.Controls.TabSet(this._titles, this._layouts);
+};
+
+Timegrid.Controls.Panel.prototype.setLayouts = function(layouts) {
+    this._layouts = layouts;
+    this._titles = $.map(this._layouts, function(l) { return l.title; });
+    this._tabSet.setLayouts(this._titles, this._layouts);
 };
 
 Timegrid.Controls.Panel.prototype.render = function(container) {
-    var first = true;
-    var titles = $.map(this._layouts, function(l) { return l.title; });
-    var tabSet = new Timegrid.Controls.TabSet(titles, this._layouts);
-    tabSet.render(container);
-    tabSet.switchTo(titles[0]);
+    this._tabSet.render(container);
+    this._tabSet.switchTo(this._tabSet.current || this._titles[0]);
 };
 
 /*
@@ -32,14 +37,18 @@ Timegrid.Controls.Panel.prototype.render = function(container) {
  * sources.
  */
 Timegrid.Controls.TabSet = function(titles, layouts) {
+    this.setLayouts(titles, layouts);
+    this.current          = "";
+};
+
+Timegrid.Controls.TabSet.prototype.setLayouts = function(titles, layouts) {
+    this._tabs            = {};
+    this._renderedLayouts = {};
+    this._iterators       = {};
     this._layoutMap = {};
     for (i in titles) {
         this._layoutMap[titles[i]] = layouts[i];
     }
-    this._tabs            = {};
-    this._renderedLayouts = {};
-    this._iterators       = {};
-    this.current = "";
 };
 
 Timegrid.Controls.TabSet.prototype.render = function(container) {
@@ -61,7 +70,7 @@ Timegrid.Controls.TabSet.prototype.render = function(container) {
 };
 
 Timegrid.Controls.TabSet.prototype.switchTo = function(title) {
-    if (this.current) { 
+    if (this.current && this._renderedLayouts[this.current]) { 
         this._renderedLayouts[this.current].hide();
         this._tabs[this.current].removeClass('timegrid-tab-active'); 
     }
