@@ -18,6 +18,23 @@ $wgExtensionFunctions[] = "wfExhibitSetup";
 $exhibitEnabled = false;
 $includeMap = false;
 $includeTimeline = false;
+$wgAutoloadClasses['BibtexExport'] = dirname(__FILE__) . '/BibtexExport_body.php';
+$wgSpecialPages['BibtexExport'] = 'BibtexExport';
+$wgHooks['LoadAllMessages'][] = 'BibtexExport::loadMessages';
+$wgHooks['LangugeGetSpecialPageAliases'][] = 'BibtexExportLocalizedPageName';
+  
+function BibtexExportLocalizedPageName(&$specialPageArray, $code) {
+    # The localized title of the special page is among the messages of the
+    # extension:
+    BibtexExport::loadMessages();
+    $text = wfMsg('bibtexexport');
+
+    # Convert from title in text form to DBKey and put it into the alias array:
+    $title = Title::newFromText($text);
+    $specialPageArray['BibtexExport'][] = $title->getDBKey();
+
+    return true;
+}
 
 function wfExhibitSetup() {
 	global $wgParser;
