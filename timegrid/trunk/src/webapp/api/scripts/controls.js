@@ -131,7 +131,7 @@ Timegrid.Controls.Iterator.prototype.render = function(container) {
                    .addClass('timegrid-iterator-next')
                    .click(makeNextCallback(this._layout));
     this._div.append(prevLink);
-    this._div.append('<span>' + this._layout.getCurrent() + '</span>');
     this._div.append(nextLink);
+    this._div.append('<span>' + this._layout.getCurrent() + '</span>');
     return this._div;
 };
