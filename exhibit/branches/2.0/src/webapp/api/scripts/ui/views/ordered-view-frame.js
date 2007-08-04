@@ -752,7 +752,7 @@ Exhibit.OrderedViewFrame.createHeaderDom = function(
         dom.setOrders = function(orderElmts) {
             dom.ordersSpan.innerHTML = "";
             
-            var addDelimiter = Exhibit.l10n.createListDelimiter(dom.ordersSpan, orderElmts.length);
+            var addDelimiter = Exhibit.Formatter.createListDelimiter(dom.ordersSpan, orderElmts.length, uiContext);
             for (var i = 0; i < orderElmts.length; i++) {
                 addDelimiter();
                 dom.ordersSpan.appendChild(orderElmts[i]);

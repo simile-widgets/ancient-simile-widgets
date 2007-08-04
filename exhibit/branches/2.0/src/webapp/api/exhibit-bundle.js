@@ -5772,6 +5772,27 @@ return"0123456789abcdefABCDEF".indexOf(c)>=0;
 
 Exhibit.Formatter=new Object();
 
+Exhibit.Formatter.createListDelimiter=function(parentElmt,count,uiContext){
+var separator=uiContext.getSetting("format/list/separator");
+var lastSeparator=uiContext.getSetting("format/list/last-separator");
+var pairSeparator=uiContext.getSetting("format/list/pair-separator");
+
+var f=function(){
+if(f.index>0&&f.index<count){
+if(count>2){
+parentElmt.appendChild(document.createTextNode(
+(f.index==count-1)?lastSeparator:separator));
+}else{
+parentElmt.appendChild(document.createTextNode(pairSeparator));
+}
+}
+f.index++;
+};
+f.index=0;
+
+return f;
+};
+
 
 Exhibit.Formatter._ListFormatter=function(uiContext){
 this._uiContext=uiContext;
@@ -8441,7 +8462,7 @@ Exhibit.UI.enableActionLink(dom.thenSortByAction,enabled);
 dom.setOrders=function(orderElmts){
 dom.ordersSpan.innerHTML="";
 
-var addDelimiter=Exhibit.l10n.createListDelimiter(dom.ordersSpan,orderElmts.length);
+var addDelimiter=Exhibit.Formatter.createListDelimiter(dom.ordersSpan,orderElmts.length,uiContext);
 for(var i=0;i<orderElmts.length;i++){
 addDelimiter();
 dom.ordersSpan.appendChild(orderElmts[i]);

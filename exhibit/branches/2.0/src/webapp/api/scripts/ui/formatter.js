@@ -5,6 +5,27 @@
  */
 Exhibit.Formatter = new Object();
 
+Exhibit.Formatter.createListDelimiter = function(parentElmt, count, uiContext) {
+    var separator = uiContext.getSetting("format/list/separator");
+    var lastSeparator = uiContext.getSetting("format/list/last-separator");
+    var pairSeparator = uiContext.getSetting("format/list/pair-separator");
+    
+    var f = function() {
+        if (f.index > 0 && f.index < count) {
+            if (count > 2) {
+                parentElmt.appendChild(document.createTextNode(
+                (f.index == count - 1) ? lastSeparator : separator));
+            } else {
+                parentElmt.appendChild(document.createTextNode(pairSeparator));
+            }
+        }
+        f.index++;
+    };
+    f.index = 0;
+    
+    return f;
+};
+
 /*==================================================
  *  Exhibit.Formatter._ListFormatter
  *==================================================
