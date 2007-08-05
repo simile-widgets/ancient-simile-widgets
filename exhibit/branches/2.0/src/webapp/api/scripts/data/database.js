@@ -375,6 +375,21 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
         var uri = ("uri" in itemEntry) ? itemEntry.uri : (baseURI + "item#" + encodeURIComponent(id));
         var type = ("type" in itemEntry) ? itemEntry.type : "Item";
         
+        var isArray = function(obj) {
+           if (obj.constructor.toString().indexOf("Array") == -1)
+              return false;
+           else
+              return true;
+        }
+        if(isArray(label))
+            label = label[0];
+        if(isArray(id))
+            id = id[0];
+        if(isArray(uri))
+            uri = uri[0];
+        if(isArray(type))
+            type = type[0];
+        
         this._items.add(id);
         
         indexFunction(id, "uri", uri);
