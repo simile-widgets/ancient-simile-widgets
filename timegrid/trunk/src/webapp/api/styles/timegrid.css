@@ -28,20 +28,16 @@ div.timegrid-iterator {
 
 div.timegrid-tabs {
     float: right;
-    height: 1.5em;
 }
 
-span.timegrid-tab {
-    line-height: 1.5em;
+div.timegrid-tab {
     padding-left: 1em;
     padding-right: 1em;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    margin: .5em;
+    margin: 0px;
     background-color: #bbb;
 }
 
-span.timegrid-tab-active {
+div.timegrid-tab-active {
     font-weight: bold;
 }
 

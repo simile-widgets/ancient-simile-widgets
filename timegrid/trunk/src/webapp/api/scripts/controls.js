@@ -60,7 +60,8 @@ Timegrid.Controls.TabSet.prototype.render = function(container) {
         return function() { self.switchTo(title); }; 
     };
     for (title in this._layoutMap) {
-        var tab = $('<span><a href="javascript:void">' + title + '</a></span>')
+        var tab = $('<div><a href="javascript:void">' + title + '</a></div>')
+                    .height(this._layoutMap[title].tabHeight + "px")
                     .click(makeCallback(title))
                     .addClass('timegrid-tab').addClass('timegrid-rounded');
         tabDiv.append(tab);
