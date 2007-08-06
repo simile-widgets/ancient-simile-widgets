@@ -64,7 +64,7 @@ Timegrid.Controls.TabSet.prototype.render = function(container) {
                     .height(this._layoutMap[title].tabHeight + "px")
                     .click(makeCallback(title))
                     .addClass('timegrid-tab').addClass('timegrid-rounded');
-        tabDiv.append(tab);
+        tabDiv.prepend(tab);
         this._tabs[title] = tab;
     }
     if (!$.browser.msie) { $('.timegrid-tab').corner("30px top"); }

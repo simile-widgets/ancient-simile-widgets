@@ -1,6 +1,7 @@
 div.timegrid-default {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 9pt;
+    overflow: hidden;
 }
 
 div.timegrid-default * {
@@ -26,14 +27,11 @@ div.timegrid-iterator {
     border: none;
 }
 
-div.timegrid-tabs {
-    float: right;
-}
-
 div.timegrid-tab {
     padding-left: 1em;
     padding-right: 1em;
     margin: 0px;
+    float: right;
     background-color: #bbb;
 }
 
