@@ -1262,11 +1262,8 @@ bubble._content=null;
 bubble._closed=true;
 }
 }
-
-var layer=SimileAjax.WindowManager.pushLayer(close,true);
 var bubble={
-_closed:false,
-close:function(){SimileAjax.WindowManager.popLayer(layer);}
+_closed:false
 };
 
 var dims=getWindowDims();
@@ -1297,7 +1294,10 @@ div.style.width=bubbleWidth+"px";
 div.style.height=bubbleHeight+"px";
 div.style.position="absolute";
 div.style.zIndex=1000;
+
+var layer=SimileAjax.WindowManager.pushLayer(close,true,div);
 bubble._div=div;
+bubble.close=function(){SimileAjax.WindowManager.popLayer(layer);}
 
 var divInner=document.createElement("div");
 divInner.style.width="100%";
