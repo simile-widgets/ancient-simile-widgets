@@ -21,6 +21,9 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.xSize = 7;
     this.ySize = 24;
     this.iterable = true;
+        
+    // These are default values that can be overridden in configure
+    this.n = 3;
 
     this.xMapper = function(obj) { 
         var time = self.timezoneMapper(obj.time);
@@ -30,15 +33,16 @@ Timegrid.NDayLayout = function(eventSource, params) {
     };
     this.yMapper = function(obj) { 
         var time = self.timezoneMapper(obj.time);
-        return time.getHours() + time.getMinutes() / 60.0;
+        return (time.getHours() + time.getMinutes() / 60.0) - self.dayStart;
     };
     
-    // These are default values that can be overridden in configure
-    this.n = 3;
-    
     this.configure(params);
+    
     this.title = params.title || Timegrid.NDayLayout.l10n.makeTitle(this.n);
     this.xSize = this.n;
+    this.dayEnd = this.dayend || 24;
+    this.dayStart = this.daystart || 0;
+    this.ySize  = this.dayEnd - this.dayStart;
     this.computeCellSizes();
     
     // Initialize our eventSource
@@ -46,6 +50,7 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.startTime = new Date(this.eventSource.getEarliestDate()) || new Date();
     this.startTime.setHours(0);
     this.endTime = this.computeEndTime(this.startTime); 
+    
     this.initializeGrid();
 };
 Timegrid.LayoutFactory.registerLayout("n-day", Timegrid.NDayLayout);
@@ -157,10 +162,13 @@ Timegrid.NDayLayout.prototype.getXLabels = function() {
 };
 
 Timegrid.NDayLayout.prototype.getYLabels = function() {
-    // FIXME: Change this to proper localized label rendering
-    return [ "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am",
-             "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm",
-             "6pm", "7pm", "8pm", "9pm", "10pm", "11pm" ];
+    var date = (new Date()).clearTime();
+    var labels = [];
+    for (var i = this.dayStart; i < this.dayEnd; i++) {
+        date.setHours(i);
+        labels.push(date.format(Timegrid.NDayLayout.l10n.yLabelFormat));
+    }
+    return labels;
 };
 
 Timegrid.NDayLayout.prototype.goPrevious = function() {
