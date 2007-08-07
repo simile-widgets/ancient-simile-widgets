@@ -2958,7 +2958,7 @@ data[i]=data[i].trim();
 
 return data;
 };
-if(hastextandlink){
+if(hastextwithlink){
 var fallback=attr.valueParser;
 attr.valueParser=function(text,node,rowNo,colNo){
 var links=node.getElementsByTagName("a");

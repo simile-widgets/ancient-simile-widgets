@@ -24,26 +24,26 @@ Exhibit.HtmlTableImporter.load = function(link, database, cont) {
             }
         }
     } else if (typeof link != "string") {
-		var xpath = link.getAttribute('ex:xpath'); 
-		var columns = (link.getAttribute('ex:columns')).split(',');
-		var babelURL = "http://simile.mit.edu/babel/html-extractor?" + [
-			"xpath=" + xpath,
-			"url=" + encodeURIComponent(url)
-		].join("&");
-		var fConvert = function(string) {
-			var div = document.createElement("div");
-			div.innerHTML = string;
-			var table = div.firstChild;
-			
-		    var th, ths = table.getElementsByTagName("th");
-			for( col = 0; th = ths[col]; col++ ) {
-				var label = columns[col];
-				th.setAttribute('ex:name', label);
-			}
-			
-			Exhibit.HtmlTableImporter.loadTable(table, database);
-			return {};
-		}
+        var xpath = link.getAttribute('ex:xpath'); 
+        var columns = (link.getAttribute('ex:columns')).split(',');
+        var babelURL = "http://simile.mit.edu/babel/html-extractor?" + [
+            "xpath=" + xpath,
+            "url=" + encodeURIComponent(url)
+        ].join("&");
+        var fConvert = function(string) {
+            var div = document.createElement("div");
+            div.innerHTML = string;
+            var table = div.firstChild;
+            
+            var th, ths = table.getElementsByTagName("th");
+            for( col = 0; th = ths[col]; col++ ) {
+                var label = columns[col];
+                th.setAttribute('ex:name', label);
+            }
+            
+            Exhibit.HtmlTableImporter.loadTable(table, database);
+            return {};
+        }
         return Exhibit.JSONPImporter.load(babelURL, database, cont, fConvert);
     } else {
         if (cont) {
@@ -99,9 +99,9 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
         if( attr ) {
             props[field] = attr;
             if (props[field].valueType == "textwithlink") {
-            	props[field].valueType = "text";
-            	props[(field + "-link")] = {valueType : "url"};
-            	hastextwithlink = true;
+                props[field].valueType = "text";
+                props[(field + "-link")] = {valueType : "url"};
+                hastextwithlink = true;
             }
             parsed.properties = props;
         }
@@ -125,7 +125,7 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
 
                     return data;
                 };
-                if( hastextandlink) { 
+                if (hastextwithlink) { 
                     var fallback = attr.valueParser; 
                     attr.valueParser = function( text, node, rowNo, colNo ) { 
                         var links = node.getElementsByTagName("a"); 
