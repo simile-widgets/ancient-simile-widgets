@@ -38,8 +38,9 @@ Exhibit.MapView._settingSpecs = {
     "mapConstructor":   { type: "function", defaultValue: null      },
     "color":            { type: "text",     defaultValue: "#FF9000" },
     "colorCoder":       { type: "text",     defaultValue: null      },
-   	"sizeCoder":	    { type: "text",     defaultValue: null      },
-   	"iconSize":	        { type: "int",      defaultValue: 0         },
+    "sizeCoder":        { type: "text",     defaultValue: null      },
+    "iconSize":         { type: "int",      defaultValue: 0         },
+    "iconFit":          { type: "text",     defaultValue: "smaller" },
     "iconScale":        { type: "float",    defaultValue: 1         },
     "iconOffsetX":      { type: "float",    defaultValue: 0         },
     "iconOffsetY":      { type: "float",    defaultValue: 0         },
@@ -567,6 +568,9 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
     
     if (iconURL != null) {
         imageParameters.push("icon=" + iconURL);
+        if (settings.iconFit != "smaller") {
+            imageParameters.push("iconFit=" + settings.iconFit);
+        }
         if (settings.iconScale != 1) {
             imageParameters.push("iconScale=" + settings.iconScale);
         }

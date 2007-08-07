@@ -41,6 +41,7 @@ Exhibit.MapView._settingSpecs={
 "colorCoder":{type:"text",defaultValue:null},
 "sizeCoder":{type:"text",defaultValue:null},
 "iconSize":{type:"int",defaultValue:0},
+"iconFit":{type:"text",defaultValue:"smaller"},
 "iconScale":{type:"float",defaultValue:1},
 "iconOffsetX":{type:"float",defaultValue:0},
 "iconOffsetY":{type:"float",defaultValue:0},
@@ -566,6 +567,9 @@ var pinParameters=[];
 
 if(iconURL!=null){
 imageParameters.push("icon="+iconURL);
+if(settings.iconFit!="smaller"){
+imageParameters.push("iconFit="+settings.iconFit);
+}
 if(settings.iconScale!=1){
 imageParameters.push("iconScale="+settings.iconScale);
 }
