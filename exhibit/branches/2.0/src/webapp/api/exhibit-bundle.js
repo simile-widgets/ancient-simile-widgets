@@ -670,6 +670,21 @@ var id=("id"in itemEntry)?itemEntry.id:label;
 var uri=("uri"in itemEntry)?itemEntry.uri:(baseURI+"item#"+encodeURIComponent(id));
 var type=("type"in itemEntry)?itemEntry.type:"Item";
 
+var isArray=function(obj){
+if(obj.constructor.toString().indexOf("Array")==-1)
+return false;
+else
+return true;
+}
+if(isArray(label))
+label=label[0];
+if(isArray(id))
+id=id[0];
+if(isArray(uri))
+uri=uri[0];
+if(isArray(type))
+type=type[0];
+
 this._items.add(id);
 
 indexFunction(id,"uri",uri);
@@ -4278,6 +4293,308 @@ return Exhibit.DefaultColorCoder._mixedCase.label;
 };
 Exhibit.DefaultColorCoder.prototype.getMixedColor=function(){
 return Exhibit.DefaultColorCoder._mixedCase.color;
+};
+
+
+/* size-coder.js */
+
+
+
+Exhibit.SizeCoder=function(uiContext){
+this._uiContext=uiContext;
+this._settings={};
+
+this._map={};
+this._mixedCase={label:"mixed",size:10};
+this._missingCase={label:"missing",size:10};
+this._othersCase={label:"others",size:10};
+};
+
+Exhibit.SizeCoder._settingSpecs={
+};
+
+Exhibit.SizeCoder.create=function(configuration,uiContext){
+var coder=new Exhibit.SizeCoder(Exhibit.UIContext.create(configuration,uiContext));
+
+Exhibit.SizeCoder._configure(coder,configuration);
+return coder;
+};
+
+Exhibit.SizeCoder.createFromDOM=function(configElmt,uiContext){
+configElmt.style.display="none";
+
+var configuration=Exhibit.getConfigurationFromDOM(configElmt);
+var coder=new Exhibit.SizeCoder(Exhibit.UIContext.create(configuration,uiContext));
+
+Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.SizeCoder._settingSpecs,coder._settings);
+
+try{
+var node=configElmt.firstChild;
+while(node!=null){
+if(node.nodeType==1){
+coder._addEntry(
+Exhibit.getAttribute(node,"case"),
+node.firstChild.nodeValue.trim(),
+Exhibit.getAttribute(node,"size"));
+}
+node=node.nextSibling;
+}
+}catch(e){
+SimileAjax.Debug.exception(e,"SizeCoder: Error processing configuration of coder");
+}
+
+Exhibit.SizeCoder._configure(coder,configuration);
+return coder;
+};
+
+Exhibit.SizeCoder._configure=function(coder,configuration){
+Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.SizeCoder._settingSpecs,coder._settings);
+
+if("entries"in configuration){
+var entries=configuration.entries;
+for(var i=0;i<entries.length;i++){
+coder._addEntry(entries[i].kase,entries[i].key,entries[i].size);
+}
+}
+}
+
+Exhibit.SizeCoder.prototype.dispose=function(){
+this._uiContext=null;
+this._settings=null;
+};
+
+Exhibit.SizeCoder.prototype._addEntry=function(kase,key,size){
+var entry=null;
+switch(kase){
+case"others":entry=this._othersCase;break;
+case"mixed":entry=this._mixedCase;break;
+case"missing":entry=this._missingCase;break;
+}
+if(entry!=null){
+entry.label=key;
+entry.size=size;
+}else{
+this._map[key]={size:size};
+}
+};
+
+Exhibit.SizeCoder.prototype.translate=function(key,flags){
+if(key in this._map){
+if(flags)flags.keys.add(key);
+return this._map[key].size;
+}else if(key==null){
+if(flags)flags.missing=true;
+return this._missingCase.size;
+}else{
+if(flags)flags.others=true;
+return this._othersCase.size;
+}
+};
+
+Exhibit.SizeCoder.prototype.translateSet=function(keys,flags){
+var size=null;
+var self=this;
+keys.visit(function(key){
+var size2=self.translate(key,flags);
+if(size==null){
+size=size2;
+}else if(size!=size2){
+if(flags)flags.mixed=true;
+size=self._mixedCase.size;
+return true;
+}
+return false;
+});
+
+if(size!=null){
+return size;
+}else{
+if(flags)flags.missing=true;
+return this._missingCase.size;
+}
+};
+
+Exhibit.SizeCoder.prototype.getOthersLabel=function(){
+return this._othersCase.label;
+};
+Exhibit.SizeCoder.prototype.getOthersSize=function(){
+return this._othersCase.size;
+};
+
+Exhibit.SizeCoder.prototype.getMissingLabel=function(){
+return this._missingCase.label;
+};
+Exhibit.SizeCoder.prototype.getMissingSize=function(){
+return this._missingCase.size;
+};
+
+Exhibit.SizeCoder.prototype.getMixedLabel=function(){
+return this._mixedCase.label;
+};
+Exhibit.SizeCoder.prototype.getMixedSize=function(){
+return this._mixedCase.size;
+};
+
+
+/* size-gradient-coder.js */
+
+
+
+Exhibit.SizeGradientCoder=function(uiContext){
+this._uiContext=uiContext;
+this._settings={};
+
+this._gradientPoints=[];
+this._mixedCase={label:"mixed",size:20};
+this._missingCase={label:"missing",size:20};
+this._othersCase={label:"others",size:20};
+};
+
+Exhibit.SizeGradientCoder._settingSpecs={
+};
+
+Exhibit.SizeGradientCoder.create=function(configuration,uiContext){
+var coder=new Exhibit.SizeGradientCoder(Exhibit.UIContext.create(configuration,uiContext));
+
+Exhibit.SizeGradientCoder._configure(coder,configuration);
+return coder;
+};
+
+Exhibit.SizeGradientCoder.createFromDOM=function(configElmt,uiContext){
+configElmt.style.display="none";
+
+var configuration=Exhibit.getConfigurationFromDOM(configElmt);
+var coder=new Exhibit.SizeGradientCoder(Exhibit.UIContext.create(configuration,uiContext));
+
+Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.SizeGradientCoder._settingSpecs,coder._settings);
+
+try{
+var gradientPoints=Exhibit.getAttribute(configElmt,"gradientPoints",";")
+for(var i=0;i<gradientPoints.length;i++){
+var point=gradientPoints[i].split(',');
+coder._gradientPoints.push({value:parseFloat(point[0]),size:parseFloat(point[1])});
+}
+
+var node=configElmt.firstChild;
+while(node!=null){
+if(node.nodeType==1){
+coder._addEntry(
+Exhibit.getAttribute(node,"case"),
+node.firstChild.nodeValue.trim(),
+Exhibit.getAttribute(node,"size"));
+}
+node=node.nextSibling;
+}
+}catch(e){
+SimileAjax.Debug.exception(e,"SizeGradientCoder: Error processing configuration of coder");
+}
+
+Exhibit.SizeGradientCoder._configure(coder,configuration);
+return coder;
+};
+
+Exhibit.SizeGradientCoder._configure=function(coder,configuration){
+Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.SizeGradientCoder._settingSpecs,coder._settings);
+
+if("entries"in configuration){
+var entries=configuration.entries;
+for(var i=0;i<entries.length;i++){
+coder._addEntry(entries[i].kase,entries[i].key,entries[i].size);
+}
+}
+}
+
+Exhibit.SizeGradientCoder.prototype.dispose=function(){
+this._uiContext=null;
+this._settings=null;
+};
+
+Exhibit.SizeGradientCoder.prototype._addEntry=function(kase,key,size){
+var entry=null;
+switch(kase){
+case"others":entry=this._othersCase;break;
+case"mixed":entry=this._mixedCase;break;
+case"missing":entry=this._missingCase;break;
+}
+if(entry!=null){
+entry.label=key;
+entry.size=size;
+}
+};
+
+Exhibit.SizeGradientCoder.prototype.translate=function(key,flags){
+var gradientPoints=this._gradientPoints;
+var getSize=function(key){
+if(key.constructor!=Number){
+key=parseFloat(key);
+}
+for(j=0;j<gradientPoints.length;j++){
+if(key==gradientPoints[j].value){
+return gradientPoints[j].size;
+}else if(gradientPoints[j+1]!=null){
+if(key<gradientPoints[j+1].value){
+var fraction=(key-gradientPoints[j].value)/(gradientPoints[j+1].value-gradientPoints[j].value);
+var newSize=Math.floor(gradientPoints[j].size+fraction*(gradientPoints[j+1].size-gradientPoints[j].size));
+return newSize;
+}
+}
+}
+}
+
+if(key>=gradientPoints[0].value&key<=gradientPoints[gradientPoints.length-1].value){
+if(flags)flags.keys.add(key);
+return getSize(key);
+}else if(key==null){
+if(flags)flags.missing=true;
+return this._missingCase.size;
+}else{
+if(flags)flags.others=true;
+return this._othersCase.size;
+}
+};
+
+Exhibit.SizeGradientCoder.prototype.translateSet=function(keys,flags){
+var size=null;
+var self=this;
+keys.visit(function(key){
+var size2=self.translate(key,flags);
+if(size==null){
+size=size2;
+}else if(size!=size2){
+if(flags)flags.mixed=true;
+size=self._mixedCase.size;
+return true;
+}
+return false;
+});
+
+if(size!=null){
+return size;
+}else{
+if(flags)flags.missing=true;
+return this._missingCase.size;
+}
+};
+
+Exhibit.SizeGradientCoder.prototype.getOthersLabel=function(){
+return this._othersCase.label;
+};
+Exhibit.SizeGradientCoder.prototype.getOthersSize=function(){
+return this._othersCase.size;
+};
+
+Exhibit.SizeGradientCoder.prototype.getMissingLabel=function(){
+return this._missingCase.label;
+};
+Exhibit.SizeGradientCoder.prototype.getMissingSize=function(){
+return this._missingCase.size;
+};
+
+Exhibit.SizeGradientCoder.prototype.getMixedLabel=function(){
+return this._mixedCase.label;
+};
+Exhibit.SizeGradientCoder.prototype.getMixedSize=function(){
+return this._mixedCase.size;
 };
 
 
@@ -10266,9 +10583,13 @@ this._configuration=configuration;
 this._div=containerElmt;
 this._uiContext=uiContext;
 
-this._markerGenerator="markerGenerator"in configuration?
-configuration.markerGenerator:
+this._colorMarkerGenerator="colorMarkerGenerator"in configuration?
+configuration.colorMarkerGenerator:
 Exhibit.LegendWidget._defaultColorMarkerGenerator;
+
+this._sizeMarkerGenerator="sizeMarkerGenerator"in configuration?
+configuration.sizeMarkerGenerator:
+Exhibit.LegendWidget._defaultSizeMarkerGenerator;
 
 this._labelStyler="labelStyler"in configuration?
 configuration.labelStyler:
@@ -10297,8 +10618,24 @@ Exhibit.LegendWidget.prototype.clear=function(){
 this._div.innerHTML="";
 };
 
-Exhibit.LegendWidget.prototype.addEntry=function(value,label){
+Exhibit.LegendWidget.prototype.addLegendLabel=function(label){
+var dom=SimileAjax.DOM.createDOMFromString(
+"div",
+"<div id='legend-label'>"+
+"<span id='label' class='exhibit-legendWidget-entry-title'>"+
+label.replace(/\s+/g,"\u00a0")+
+"</span>"+
+"\u00a0\u00a0 </div>",
+{}
+);
+dom.elmt.className="exhibit-legendWidget-label";
+this._div.appendChild(dom.elmt);
+}
+
+Exhibit.LegendWidget.prototype.addEntry=function(value,label,type){
+type=type||'color';
 label=(label!=null)?label.toString():key.toString();
+if(type=='color'){
 var dom=SimileAjax.DOM.createDOMFromString(
 "span",
 "<span id='marker'></span>\u00a0"+
@@ -10306,8 +10643,20 @@ var dom=SimileAjax.DOM.createDOMFromString(
 label.replace(/\s+/g,"\u00a0")+
 "</span>"+
 "\u00a0\u00a0 ",
-{marker:this._markerGenerator(value)}
+{marker:this._colorMarkerGenerator(value)}
 );
+}
+if(type=='size'){
+var dom=SimileAjax.DOM.createDOMFromString(
+"span",
+"<span id='marker'></span>\u00a0"+
+"<span id='label' class='exhibit-legendWidget-entry-title'>"+
+label.replace(/\s+/g,"\u00a0")+
+"</span>"+
+"\u00a0\u00a0 ",
+{marker:this._sizeMarkerGenerator(value)}
+);
+}
 dom.elmt.className="exhibit-legendWidget-entry";
 this._labelStyler(dom.label,value);
 this._div.appendChild(dom.elmt);
@@ -10324,6 +10673,15 @@ span.style.background=value;
 span.innerHTML="\u00a0\u00a0";
 return span;
 };
+
+Exhibit.LegendWidget._defaultSizeMarkerGenerator=function(value){
+var span=document.createElement("span");
+span.className="exhibit-legendWidget-entry-swatch";
+span.style.height=value;
+span.style.width=value;
+span.innerHTML="\u00a0\u00a0";
+return span;
+}
 
 Exhibit.LegendWidget._defaultColorLabelStyler=function(elmt,value){
 
@@ -11506,8 +11864,8 @@ uiContext
 );
 dom.plotContainer=dom.resizableDivWidget.getContentDiv();
 
-if(legendWidgetSettings=="gradient"){
-dom.legendWidget=Exhibit.LegendGradientWidget.create(
+if(legendWidgetSettings.colorGradient==true){
+dom.legendGradientWidget=Exhibit.LegendGradientWidget.create(
 dom.legendDiv,
 uiContext);
 }else{dom.legendWidget=Exhibit.LegendWidget.create(

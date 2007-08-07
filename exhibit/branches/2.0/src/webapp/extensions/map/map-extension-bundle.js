@@ -12,9 +12,11 @@ this._settings={};
 this._accessors={
 getProxy:function(itemID,database,visitor){visitor(itemID);},
 getColorKey:null,
+getSizeKey:null,
 getIcon:null
 };
 this._colorCoder=null;
+this._sizeCoder=null;
 
 var view=this;
 this._listener={
@@ -37,6 +39,8 @@ Exhibit.MapView._settingSpecs={
 "mapConstructor":{type:"function",defaultValue:null},
 "color":{type:"text",defaultValue:"#FF9000"},
 "colorCoder":{type:"text",defaultValue:null},
+"sizeCoder":{type:"text",defaultValue:null},
+"iconSize":{type:"int",defaultValue:0},
 "iconScale":{type:"float",defaultValue:1},
 "iconOffsetX":{type:"float",defaultValue:0},
 "iconOffsetY":{type:"float",defaultValue:0},
@@ -46,7 +50,9 @@ Exhibit.MapView._settingSpecs={
 "shapeAlpha":{type:"float",defaultValue:0.7},
 "pin":{type:"boolean",defaultValue:true},
 "pinHeight":{type:"int",defaultValue:6},
-"pinWidth":{type:"int",defaultValue:6}
+"pinWidth":{type:"int",defaultValue:6},
+"sizeLegendLabel":{type:"text",defaultValue:""},
+"colorLegendLabel":{type:"text",defaultValue:""}
 };
 
 Exhibit.MapView._accessorSpecs=[
@@ -91,6 +97,10 @@ type:"text"
 },
 {accessorName:"getColorKey",
 attributeName:"colorKey",
+type:"text"
+},
+{accessorName:"getSizeKey",
+attributeName:"sizeKey",
 type:"text"
 },
 {accessorName:"getIcon",
@@ -229,13 +239,19 @@ if(this._colorCoder==null){
 this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 }
 }
+if("getSizeKey"in this._accessors){
+if("sizeCoder"in this._settings){
+this._sizeCoder=this._uiContext.getExhibit().getComponent(this._settings.sizeCoder);
+}
+}
 };
 
 Exhibit.MapView.prototype._initializeUI=function(){
 var self=this;
 var settings=this._settings;
-var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":
-{markerGenerator:function(color){
+var legendWidgetSettings={};
+if("_gradientPoints"in this._colorCoder){legendWidgetSettings.colorGradient=true;}
+legendWidgetSettings.colorMarkerGenerator=function(color){
 var shape="square";
 return SimileAjax.Graphics.createTranslucentImage(
 Exhibit.MapView._markerUrlPrefix+
@@ -244,7 +260,17 @@ Exhibit.MapView._markerUrlPrefix+
 "middle"
 );
 }
-};
+legendWidgetSettings.sizeMarkerGenerator=function(iconSize){
+var shape="square";
+return SimileAjax.Graphics.createTranslucentImage(
+Exhibit.MapView._markerUrlPrefix+
+"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+"&width="+iconSize+
+"&height="+iconSize+
+"&pinHeight=0",
+"middle"
+);
+}
 
 this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -257,6 +283,7 @@ self._map.checkResize();
 },
 legendWidgetSettings
 );
+
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
 
 var mapDiv=this._dom.plotContainer;
@@ -304,7 +331,6 @@ var database=this._uiContext.getDatabase();
 var settings=this._settings;
 var accessors=this._accessors;
 
-
 var originalSize=collection.countAllItems();
 var currentSize=collection.countRestrictedItems();
 var unplottableItems=[];
@@ -316,6 +342,7 @@ if(currentSize>0){
 var currentSet=collection.getRestrictedItems();
 var locationToData={};
 var hasColorKey=(this._accessors.getColorKey!=null);
+var hasSizeKey=(this._accessors.getSizeKey!=null);
 var hasIcon=(this._accessors.getIcon!=null);
 
 currentSet.visit(function(itemID){
@@ -328,7 +355,11 @@ if(hasColorKey){
 colorKeys=new Exhibit.Set();
 accessors.getColorKey(itemID,database,function(v){colorKeys.add(v);});
 }
-
+var sizeKeys=null;
+if(hasSizeKey){
+sizeKeys=new Exhibit.Set();
+accessors.getSizeKey(itemID,database,function(v){sizeKeys.add(v);});
+}
 for(var n=0;n<latlngs.length;n++){
 var latlng=latlngs[n];
 var latlngKey=latlng.lat+","+latlng.lng;
@@ -338,6 +369,9 @@ locationData.items.push(itemID);
 if(hasColorKey){
 locationData.colorKeys.addSet(colorKeys);
 }
+if(hasSizeKey){
+locationData.sizeKeys.addSet(sizeKeys);
+}
 }else{
 var locationData={
 latlng:latlng,
@@ -345,6 +379,9 @@ items:[itemID]
 };
 if(hasColorKey){
 locationData.colorKeys=colorKeys;
+}
+if(hasSizeKey){
+locationData.sizeKeys=sizeKeys;
 }
 locationToData[latlngKey]=locationData;
 }
@@ -355,6 +392,7 @@ unplottableItems.push(itemID);
 });
 
 var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
+var sizeCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
 var bounds,maxAutoZoom=Infinity;
 var addMarkerAtLocation=function(locationData){
 var itemCount=locationData.items.length;
@@ -368,6 +406,10 @@ var color=self._settings.color;
 if(hasColorKey){
 color=self._colorCoder.translateSet(locationData.colorKeys,colorCodingFlags);
 }
+var iconSize=self._settings.iconSize;
+if(hasSizeKey){
+iconSize=self._sizeCoder.translateSet(locationData.sizeKeys,sizeCodingFlags);
+}
 
 var icon=null;
 if(itemCount==1){
@@ -379,6 +421,7 @@ accessors.getIcon(locationData.items[0],database,function(v){icon=v;});
 var icon=Exhibit.MapView._makeIcon(
 shape,
 color,
+iconSize,
 itemCount==1?"":itemCount.toString(),
 icon,
 self._settings
@@ -399,13 +442,16 @@ self._map.addOverlay(marker);
 for(var latlngKey in locationToData){
 addMarkerAtLocation(locationToData[latlngKey]);
 }
-
 if(hasColorKey){
 var legendWidget=this._dom.legendWidget;
 var colorCoder=this._colorCoder;
 var keys=colorCodingFlags.keys.toArray().sort();
-if(this._colorCoder._gradientPoints!=null){
-legendWidget.addGradient(this._colorCoder._gradientPoints);
+if(settings.colorLegendLabel!==""){
+legendWidget.addLegendLabel(settings.colorLegendLabel);
+}
+if(colorCoder._gradientPoints!=null){
+var legendGradientWidget=this._dom.legendWidget;
+legendGradientWidget.addGradient(this._colorCoder._gradientPoints);
 }else{
 for(var k=0;k<keys.length;k++){
 var key=keys[k];
@@ -422,6 +468,44 @@ legendWidget.addEntry(colorCoder.getMixedColor(),colorCoder.getMixedLabel());
 }
 if(colorCodingFlags.missing){
 legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
+}
+}
+
+if(hasSizeKey){
+var legendWidget=this._dom.legendWidget;
+sizeLegendDiv=document.createElement('div');
+sizeLegendDiv.setAttribute('align','center');
+legendWidget._div=legendWidget._div.parentNode.appendChild(sizeLegendDiv);
+var sizeCoder=this._sizeCoder;
+var keys=sizeCodingFlags.keys.toArray().sort();
+if(settings.sizeLegendLabel!==""){
+legendWidget.addLegendLabel(settings.sizeLegendLabel);
+}
+if(sizeCoder._gradientPoints!=null){
+var points=sizeCoder._gradientPoints;
+var space=(points[points.length-1].value-points[0].value)/10;
+keys=[];
+for(var i=0;i<11;i++){keys.push(Math.floor(points[0].value+space*i));}
+for(var k=0;k<keys.length;k++){
+var key=keys[k];
+var size=sizeCoder.translate(key);
+legendWidget.addEntry(size,key,'size');
+}
+}else{
+for(var k=0;k<keys.length;k++){
+var key=keys[k];
+var size=sizeCoder.translate(key);
+legendWidget.addEntry(size,key,'size');
+}
+if(sizeCodingFlags.others){
+legendWidget.addEntry(sizeCoder.getOthersSize(),sizeCoder.getOthersLabel(),'size');
+}
+if(sizeCodingFlags.mixed){
+legendWidget.addEntry(sizeCoder.getMixedSize(),sizeCoder.getMixedLabel(),'size');
+}
+if(sizeCodingFlags.missing){
+legendWidget.addEntry(sizeCoder.getMissingSize(),sizeCoder.getMissingLabel(),'size');
+}
 }
 }
 
@@ -449,13 +533,19 @@ Exhibit.MapView._iconData=null;
 Exhibit.MapView._markerUrlPrefix="http://simile.mit.edu/painter/painter?";
 Exhibit.MapView._defaultMarkerShape="circle";
 
-Exhibit.MapView._makeIcon=function(shape,color,label,iconURL,settings){
+Exhibit.MapView._makeIcon=function(shape,color,iconSize,label,iconURL,settings){
 var extra=label.length*3;
 var halfWidth=Math.ceil(settings.shapeWidth/2)+extra;
 var bodyHeight=settings.shapeHeight;
 var width=halfWidth*2;
 var height=bodyHeight;
-
+if(iconSize>0){
+width=iconSize;
+halfWidth=Math.ceil(iconSize/2);
+height=iconSize;
+bodyHeight=iconSize;
+settings.pin=false;
+}
 var icon=new GIcon();
 var imageParameters=[
 "renderer=map-marker",
@@ -522,7 +612,7 @@ icon.infoWindowAnchor=new GPoint(halfWidth,0);
 }
 
 icon.image=Exhibit.MapView._markerUrlPrefix+imageParameters.concat(pinParameters).join("&");
-icon.shadow=Exhibit.MapView._markerUrlPrefix+shadowParameters.concat(pinParameters).join("&");
+if(iconSize==0){icon.shadow=Exhibit.MapView._markerUrlPrefix+shadowParameters.concat(pinParameters).join("&");}
 icon.iconSize=new GSize(width,height);
 icon.shadowSize=new GSize(width*1.5,height-2);
 
