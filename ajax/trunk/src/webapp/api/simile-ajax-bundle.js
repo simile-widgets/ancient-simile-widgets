@@ -156,6 +156,7 @@ this.addSet(a);
 }
 }
 
+
 SimileAjax.Set.prototype.add=function(o){
 if(!(o in this._hash)){
 this._hash[o]=true;
@@ -165,11 +166,13 @@ return true;
 return false;
 }
 
+
 SimileAjax.Set.prototype.addSet=function(set){
 for(o in set._hash){
 this.add(o);
 }
 }
+
 
 SimileAjax.Set.prototype.remove=function(o){
 if(o in this._hash){
@@ -180,11 +183,13 @@ return true;
 return false;
 }
 
+
 SimileAjax.Set.prototype.removeSet=function(set){
 for(o in set._hash){
 this.remove(o);
 }
 }
+
 
 SimileAjax.Set.prototype.retainSet=function(set){
 for(o in this._hash){
@@ -195,13 +200,16 @@ this._count--;
 }
 }
 
+
 SimileAjax.Set.prototype.contains=function(o){
 return(o in this._hash);
 }
 
+
 SimileAjax.Set.prototype.size=function(){
 return this._count;
 }
+
 
 SimileAjax.Set.prototype.toArray=function(){
 var a=[];
@@ -211,6 +219,7 @@ a.push(o);
 return a;
 }
 
+
 SimileAjax.Set.prototype.visit=function(f){
 for(o in this._hash){
 if(f(o)==true){
@@ -218,7 +227,6 @@ break;
 }
 }
 }
-
 
 
 SimileAjax.SortedArray=function(compare,initialArray){
