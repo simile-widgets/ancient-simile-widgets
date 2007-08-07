@@ -2921,6 +2921,7 @@ var tr,trs=table.getElementsByTagName("tr");
 var th,ths=trs[0].getElementsByTagName("th");
 for(col=0;th=ths[col];col++){
 var field=textOf(th).trim();
+var hastextwithlink=false;
 var attr=readAttributes(th,proplist);
 var name=Exhibit.getAttribute(th,'name');
 if(name){
@@ -2930,6 +2931,11 @@ field=name;
 }
 if(attr){
 props[field]=attr;
+if(props[field].valueType=="textwithlink"){
+props[field].valueType="text";
+props[(field+"-link")]={valueType:"url"};
+hastextwithlink=true;
+}
 parsed.properties=props;
 }
 fields.push(field);
@@ -2952,6 +2958,17 @@ data[i]=data[i].trim();
 
 return data;
 };
+if(hastextandlink){
+var fallback=attr.valueParser;
+attr.valueParser=function(text,node,rowNo,colNo){
+var links=node.getElementsByTagName("a");
+if(!links.length){return fallback(text,node,rowNo,colNo);}
+var data={};
+data[fields[colNo]]=text.trim();
+data[(fields[colNo]+"-link")]=links[0].href;
+return data;
+}
+}
 }
 }
 columnData[col]=attr;
@@ -2977,22 +2994,6 @@ item[property]=data[property];
 }
 }else{
 item[fields[col]]=data;
-
-
-
-
-
-
-for(var i=0;i<td.childNodes.length;i++){
-if(td.childNodes[i].tagName==="A"){
-var thehref=td.childNodes[i].getAttribute("href");
-if(thehref){
-fieldname=fields[col]+"-link";
-item[fieldname]=thehref;
-break;
-}
-}
-}
 }
 }
 
