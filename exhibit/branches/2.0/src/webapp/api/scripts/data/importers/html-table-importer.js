@@ -69,7 +69,7 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
 
     // FIXME: it's probably a better idea to ask database.js for these lists:
     var typelist = [ "uri", "label", "pluralLabel" ];
-    var proplist = [ "uri", "valueType", // [text|number|date|boolean|item|url]
+    var proplist = [ "uri", "valueType", // [text|number|date|boolean|item|url|textwithlink]
                      "label", "reverseLabel",
                      "pluralLabel", "reversePluralLabel",
                      "groupingLabel", "reverseGroupingLabel" ];
@@ -88,6 +88,7 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
     var th, ths = trs[0].getElementsByTagName("th");
     for( col = 0; th = ths[col]; col++ ) {
         var field = textOf( th ).trim();
+        var hastextwithlink = false;
         var attr = readAttributes( th, proplist );
         var name = Exhibit.getAttribute( th, 'name' );
         if( name ) {
@@ -97,6 +98,11 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
         }
         if( attr ) {
             props[field] = attr;
+            if (props[field].valueType == "textwithlink") {
+            	props[field].valueType = "text";
+            	props[(field + "-link")] = {valueType : "url"};
+            	hastextwithlink = true;
+            }
             parsed.properties = props;
         }
         fields.push( field );
@@ -119,6 +125,17 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
 
                     return data;
                 };
+                if( hastextandlink) { 
+                    var fallback = attr.valueParser; 
+                    attr.valueParser = function( text, node, rowNo, colNo ) { 
+                        var links = node.getElementsByTagName("a"); 
+                        if( !links.length ) { return fallback( text, node, rowNo, colNo ); }
+                        var data={};
+                        data[fields[colNo]] = text.trim();
+                        data[(fields[colNo] + "-link") ] = links[0].href;
+                        return data;
+                    } 
+                }
             }
         }
         columnData[col] = attr;
@@ -144,22 +161,6 @@ Exhibit.HtmlTableImporter.loadTable = function(table, database) {
                 }
             } else {
                 item[fields[col]] = data;
-                
-               //Check for link to extract as well. If td cell has an A tag in
-               //it, take the link from that and store it also. If the textContent
-               //is stored in the "name" field, for example, then the link 
-               // in the cell is stored in the "name-link" field. Only the first
-               // url is stored.  
-                for (var i=0; i < td.childNodes.length; i++) {
-                    if (td.childNodes[i].tagName === "A") {
-               	        var thehref = td.childNodes[i].getAttribute("href");
-               	        if (thehref) {
-	       	            fieldname = fields[col] + "-link";
-    	                    item[fieldname] = thehref;
-    	                    break;
-		        }
-                    }
-                }
             }
         }
 
