@@ -27,6 +27,7 @@
             "util/jquery.corner.js",
             "util/jquery.dimensions.js",
             "util/jquery.prettybox.js",
+            "util/dstructs/dstructs.js",
             
             "controls.js",
             "listeners.js",
@@ -39,7 +40,8 @@
             "layouts/nmonth.js",
             "layouts/nday.js",
             "layouts/weekly.js",
-            "layouts/monthly.js"
+            "layouts/monthly.js",
+            "layouts/property.js"
         ];
         var cssFiles = [
             "timegrid.css",

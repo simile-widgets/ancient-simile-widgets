@@ -500,6 +500,19 @@ Date.parseString = function(val, format) {
     });
     
     /**
+     * Clones this date into a new object, optionally modifying the provided
+     * instance instead.
+     */
+    add('clone', function(date) {
+        if (date && date instanceof Date) {
+            date.setTime(this.getTime());
+            return date;
+        } else {
+            return new Date(this);
+        }
+    });
+    
+    /**
      * Add an amount of time to a date. Negative numbers can be passed to 
      * subtract time.
      */
