@@ -15,6 +15,7 @@ getProxy:function(itemID,database,visitor){visitor(itemID);},
 getColorKey:null
 };
 
+this._selectListener=null;
 this._largestSize=0;
 
 var view=this;
@@ -39,7 +40,8 @@ Exhibit.TimelineView._settingSpecs={
 "bottomBandPixelsPerUnit":{type:"int",defaultValue:200},
 "timelineHeight":{type:"int",defaultValue:400},
 "timelineConstructor":{type:"function",defaultValue:null},
-"colorCoder":{type:"text",defaultValue:null}
+"colorCoder":{type:"text",defaultValue:null},
+"selectCoordinator":{type:"text",defaultValue:null}
 };
 
 Exhibit.TimelineView._accessorSpecs=[
@@ -118,6 +120,11 @@ this._uiContext.getCollection().removeListener(this._listener);
 
 this._timeline=null;
 
+if(this._selectListener!=null){
+this._selectListener.dispose();
+this._selectListener=null;
+}
+
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
 
@@ -139,6 +146,15 @@ this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorC
 
 if(this._colorCoder==null){
 this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
+}
+}
+if("selectCoordinator"in this._settings){
+var selectCoordinator=exhibit.getComponent(this._settings.selectCoordinator);
+if(selectCoordinator!=null){
+var self=this;
+this._selectListener=selectCoordinator.addListener(function(o){
+self._select(o);
+});
 }
 }
 };
@@ -382,6 +398,14 @@ band.scrollToCenter(this._eventSource.getLatestDate());
 this._dom.setUnplottableMessage(currentSize,unplottableItems);
 };
 
+Exhibit.TimelineView.prototype._select=function(selection){
+var itemID=selection.itemIDs[0];
+this._timeline.getBand(0).showBubbleForEvent(itemID);
+};
+
 Exhibit.TimelineView.prototype._fillInfoBubble=function(evt,elmt,theme,labeller){
 this._uiContext.getLensRegistry().createLens(evt._itemID,elmt,this._uiContext);
+if(this._selectListener!=null){
+this._selectListener.fire({itemIDs:[evt._itemID]});
+}
 };

@@ -14,6 +14,7 @@ Exhibit.TimelineView = function(containerElmt, uiContext) {
         getColorKey:    null
     };
 
+    this._selectListener = null;
     this._largestSize = 0;
     
     var view = this;
@@ -38,7 +39,8 @@ Exhibit.TimelineView._settingSpecs = {
     "bottomBandPixelsPerUnit": { type: "int",        defaultValue: 200 },
     "timelineHeight":          { type: "int",        defaultValue: 400 },
     "timelineConstructor":     { type: "function",   defaultValue: null },
-    "colorCoder":              { type: "text",       defaultValue: null }
+    "colorCoder":              { type: "text",       defaultValue: null },
+    "selectCoordinator":       { type: "text",       defaultValue: null }
 };
 
 Exhibit.TimelineView._accessorSpecs = [
@@ -117,6 +119,11 @@ Exhibit.TimelineView.prototype.dispose = function() {
     
     this._timeline = null;
     
+    if (this._selectListener != null) {
+        this._selectListener.dispose();
+        this._selectListener = null;
+    }
+    
     this._toolboxWidget.dispose();
     this._toolboxWidget = null;
     
@@ -140,11 +147,20 @@ Exhibit.TimelineView.prototype._internalValidate = function() {
             this._colorCoder = new Exhibit.DefaultColorCoder(this._uiContext);
         }
     }
+    if ("selectCoordinator" in this._settings) {
+        var selectCoordinator = exhibit.getComponent(this._settings.selectCoordinator);
+        if (selectCoordinator != null) {
+            var self = this;
+            this._selectListener = selectCoordinator.addListener(function(o) {
+                self._select(o);
+            });
+        }
+    }
 };
 
 Exhibit.TimelineView.prototype._initializeUI = function() {
     var self = this;
-	var legendWidgetSettings="_gradientPoints" in this._colorCoder ? "gradient" : {}
+    var legendWidgetSettings="_gradientPoints" in this._colorCoder ? "gradient" : {}
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -343,25 +359,25 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             var legendWidget = this._dom.legendWidget;
             var colorCoder = this._colorCoder;
             var keys = colorCodingFlags.keys.toArray().sort();
-			if(this._colorCoder._gradientPoints != null) {
-				legendWidget.addGradient(this._colorCoder._gradientPoints);
-			} else {
-	            for (var k = 0; k < keys.length; k++) {
-	                var key = keys[k];
-	                var color = colorCoder.translate(key);
-	                legendWidget.addEntry(color, key);
-	            }
-			}
-			
-			if (colorCodingFlags.others) {
-				legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
-			}
-			if (colorCodingFlags.mixed) {
-				legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
-			}
-			if (colorCodingFlags.missing) {
-				legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
-			}
+            if(this._colorCoder._gradientPoints != null) {
+                legendWidget.addGradient(this._colorCoder._gradientPoints);
+            } else {
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    var color = colorCoder.translate(key);
+                    legendWidget.addEntry(color, key);
+                }
+            }
+            
+            if (colorCodingFlags.others) {
+                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+            }
+            if (colorCodingFlags.mixed) {
+                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+            }
+            if (colorCodingFlags.missing) {
+                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+            }
         }
         
         var plottableSize = currentSize - unplottableItems.length;
@@ -383,6 +399,14 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     this._dom.setUnplottableMessage(currentSize, unplottableItems);
 };
 
+Exhibit.TimelineView.prototype._select = function(selection) {
+    var itemID = selection.itemIDs[0];
+    this._timeline.getBand(0).showBubbleForEvent(itemID);
+};
+
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {
     this._uiContext.getLensRegistry().createLens(evt._itemID, elmt, this._uiContext);
+    if (this._selectListener != null) {
+        this._selectListener.fire({ itemIDs: [ evt._itemID ] });
+    }
 };
