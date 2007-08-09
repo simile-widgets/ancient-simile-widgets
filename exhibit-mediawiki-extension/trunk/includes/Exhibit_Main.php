@@ -75,6 +75,9 @@ function wfExhibitAddHTMLHeader(&$out) {
 		$out->addScript($ExhibitScript);
 		$out->addScript($WExhibitScript);
 	}
+	
+	$GMapScript = '<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg"></script>';
+	$out->addScript($GMapScript);
 
 	return true;
 }
@@ -172,12 +175,6 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 	if ($argv["disabled"]) {
 		$exhibitEnabled = false;
 	}
-	if ($argv["map"]) {
-		$includeMap = true;
-	}
-	if ($argv["timeline"]) {
-		$includeTimeline = true;
-	}
 
 	// use SimpleXML parser
 	$output = "";
@@ -197,8 +194,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			}
 		}
 		
-		
-		// <data>
+		// <source>
 		$sourceData = array();
 		$sourceColumns = array();
 		$sourceHideTable = array();
@@ -211,7 +207,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		$sourceColumns = implode(';', $sourceColumns);
 		$sourceHideTable = implode(',', $sourceHideTable);
 		
-		// <configuration>	
+		// <facet>	
 		$facets = array();
 		foreach ($xml->facet as $facet) {
 			$attributes = array();
@@ -223,6 +219,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		}
 		$facets = implode('/', $facets);
 		
+		// <view>
 		$views = array();
 		foreach ($xml->view as $view) {
 			$attributes = array();
@@ -234,7 +231,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		}
 		$views = implode('/', $views);
 
-		//create coder divs and spans right here.
+		// <coder> create coder divs and spans right here.
 		$coders = "";
 		foreach ($xml->coder as $coder) {
 			$coders .= '<div ex:role="coder"';
