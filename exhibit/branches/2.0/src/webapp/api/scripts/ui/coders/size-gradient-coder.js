@@ -121,7 +121,7 @@ Exhibit.SizeGradientCoder.prototype.translate = function(key, flags) {
 		}
 		for (j = 0; j < gradientPoints.length; j++) {
 			if (key == gradientPoints[j].value) {
-				return gradientPoints[j].size;
+				return self._markerScale.func(gradientPoints[j].size);
 			} else if (gradientPoints[j+1] != null) {
 				if (key < gradientPoints[j+1].value) {
 					var fraction = (key - gradientPoints[j].value)/(gradientPoints[j+1].value - gradientPoints[j].value);
