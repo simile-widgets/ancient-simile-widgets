@@ -57,7 +57,10 @@ Exhibit.MapView._settingSpecs={
 "pinHeight":{type:"int",defaultValue:6},
 "pinWidth":{type:"int",defaultValue:6},
 "sizeLegendLabel":{type:"text",defaultValue:""},
-"colorLegendLabel":{type:"text",defaultValue:""}
+"colorLegendLabel":{type:"text",defaultValue:""},
+"showHeader":{type:"boolean",defaultValue:true},
+"showSummary":{type:"boolean",defaultValue:true},
+"showFooter":{type:"boolean",defaultValue:true}
 };
 
 Exhibit.MapView._accessorSpecs=[
@@ -297,7 +300,7 @@ this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
 this._div,
 this._uiContext,
-true,
+this._settings.showSummary&&this._settings.showHeader,
 {onResize:function(){
 self._map.checkResize();
 }

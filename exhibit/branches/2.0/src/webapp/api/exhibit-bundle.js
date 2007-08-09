@@ -11907,11 +11907,14 @@ dom.plotContainer=dom.resizableDivWidget.getContentDiv();
 if(legendWidgetSettings.colorGradient==true){
 dom.legendGradientWidget=Exhibit.LegendGradientWidget.create(
 dom.legendDiv,
-uiContext);
-}else{dom.legendWidget=Exhibit.LegendWidget.create(
+uiContext
+);
+}else{
+dom.legendWidget=Exhibit.LegendWidget.create(
 legendWidgetSettings,
 dom.legendDiv,
-uiContext);
+uiContext
+);
 }
 
 dom.setUnplottableMessage=function(totalCount,unplottableItems){

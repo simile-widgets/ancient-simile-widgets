@@ -48,7 +48,7 @@ Exhibit.ViewUtilities.constructPlottingViewDom = function(
     resizableDivWidgetSettings, 
     legendWidgetSettings
 )
- { 
+{ 
     var dom = SimileAjax.DOM.createDOMFromString(
         div,
         "<div class='exhibit-views-header'>" +
@@ -75,15 +75,18 @@ Exhibit.ViewUtilities.constructPlottingViewDom = function(
     );
     dom.plotContainer = dom.resizableDivWidget.getContentDiv();
     
-    if(legendWidgetSettings.colorGradient == true) {
-		dom.legendGradientWidget = Exhibit.LegendGradientWidget.create(
-				dom.legendDiv,
-				uiContext);
-	} else{ dom.legendWidget = Exhibit.LegendWidget.create(
-				legendWidgetSettings,
-				dom.legendDiv, 
-				uiContext);
-			}
+    if (legendWidgetSettings.colorGradient == true) {
+        dom.legendGradientWidget = Exhibit.LegendGradientWidget.create(
+            dom.legendDiv,
+            uiContext
+        );
+    } else {
+        dom.legendWidget = Exhibit.LegendWidget.create(
+            legendWidgetSettings,
+            dom.legendDiv, 
+            uiContext
+        );
+    }
     
     dom.setUnplottableMessage = function(totalCount, unplottableItems) {
         Exhibit.ViewUtilities._setUnplottableMessage(dom, totalCount, unplottableItems, uiContext);

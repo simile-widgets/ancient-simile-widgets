@@ -41,7 +41,10 @@ Exhibit.TimelineView._settingSpecs={
 "timelineHeight":{type:"int",defaultValue:400},
 "timelineConstructor":{type:"function",defaultValue:null},
 "colorCoder":{type:"text",defaultValue:null},
-"selectCoordinator":{type:"text",defaultValue:null}
+"selectCoordinator":{type:"text",defaultValue:null},
+"showHeader":{type:"boolean",defaultValue:true},
+"showSummary":{type:"boolean",defaultValue:true},
+"showFooter":{type:"boolean",defaultValue:true}
 };
 
 Exhibit.TimelineView._accessorSpecs=[
@@ -167,7 +170,7 @@ this._div.innerHTML="";
 this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
 this._div,
 this._uiContext,
-true,
+this._settings.showSummary&&this._settings.showHeader,
 {onResize:function(){
 self._timeline.layout();
 }
@@ -280,6 +283,16 @@ bandInfos[1].highlight=true;
 bandInfos[1].eventPainter.setLayout(bandInfos[0].eventPainter.getLayout());
 
 this._timeline=Timeline.create(timelineDiv,bandInfos,Timeline.HORIZONTAL);
+}
+
+var self=this;
+var listener=function(eventID){
+if(self._selectListener!=null){
+self._selectListener.fire({itemIDs:[eventID]});
+}
+}
+for(var i=0;i<this._timeline.getBandCount();i++){
+this._timeline.getBand(i).getEventPainter().addOnSelectListener(listener);
 }
 };
 
@@ -405,7 +418,4 @@ this._timeline.getBand(0).showBubbleForEvent(itemID);
 
 Exhibit.TimelineView.prototype._fillInfoBubble=function(evt,elmt,theme,labeller){
 this._uiContext.getLensRegistry().createLens(evt._itemID,elmt,this._uiContext);
-if(this._selectListener!=null){
-this._selectListener.fire({itemIDs:[evt._itemID]});
-}
 };
