@@ -36,8 +36,9 @@ Timegrid.PropertyLayout = function(eventSource, params) {
 
     this.eventSource = eventSource;
     this.values      = new DStructs.Array();
-    this.startTime   = this.eventSource.getEarliestDate().clone() || new Date();
-    this.endTime     = this.eventSource.getLatestDate().clone() || new Date();
+    this.startTime   = new Date(this.eventSource.getEarliestDate()) || new Date();
+    this.endTime     = new Date(this.eventSource.getLatestDate()) || new Date();
+    this.initializeGrid();
 };
 Timegrid.LayoutFactory.registerLayout("property", Timegrid.PropertyLayout);
 
@@ -128,7 +129,7 @@ Timegrid.PropertyLayout.prototype.getXLabels = function() {
 Timegrid.PropertyLayout.prototype.getYLabels = function() {
     var date = (new Date()).clearTime();
     var labels = [];
-    for (var i = this.dayStart; i < this.dayEnd; i++) {
+    for (var i = +this.dayStart; i < +this.dayEnd; i++) {
         date.setHours(i);
         labels.push(date.format(Timegrid.PropertyLayout.l10n.yLabelFormat));
     }

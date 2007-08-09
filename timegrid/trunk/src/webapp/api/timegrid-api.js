@@ -29,14 +29,15 @@
             "util/jquery.prettybox.js",
             "util/dstructs/dstructs.js",
             
+            "sources/default.js",
+            
             "controls.js",
             "listeners.js",
             "grid.js",
-            "sources.js",
             "themes.js",
             "labellers.js",
-            "layouts.js",
-
+            
+            "layouts/layout.js",
             "layouts/nmonth.js",
             "layouts/nday.js",
             "layouts/weekly.js",
