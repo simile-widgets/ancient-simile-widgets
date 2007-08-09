@@ -4445,6 +4445,25 @@ Exhibit.SizeGradientCoder=function(uiContext){
 this._uiContext=uiContext;
 this._settings={};
 
+this._log={
+func:function(size){return Math.ceil(Math.log(size));},
+invFunc:function(size){return Math.ceil(Math.exp(size));}
+}
+this._linear={
+func:function(size){return Math.ceil(size);},
+invFunc:function(size){return Math.ceil(size);}
+}
+this._quad={
+func:function(size){return Math.ceil(Math.pow(size,2));},
+invFunc:function(size){return Math.ceil(Math.sqrt(size));}
+}
+this._exp={
+func:function(size){return Math.ceil(Math.exp(size));},
+invFunc:function(size){return Math.ceil(Math.log(size));}
+}
+this._markerScale=this._quad;
+this._valueScale=this._linear;
+
 this._gradientPoints=[];
 this._mixedCase={label:"mixed",size:20};
 this._missingCase={label:"missing",size:20};
@@ -4470,11 +4489,20 @@ var coder=new Exhibit.SizeGradientCoder(Exhibit.UIContext.create(configuration,u
 Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.SizeGradientCoder._settingSpecs,coder._settings);
 
 try{
+var markerScale=coder._settings.markerScale;
+console.log(markerScale);
+if(markerScale=="log"){coder._markerScale=coder._log;}
+if(markerScale=="linear"){coder._markerScale=coder._linear;}
+if(markerScale=="exp"){coder._markerScale=coder._exp;}
+
 var gradientPoints=Exhibit.getAttribute(configElmt,"gradientPoints",";")
 for(var i=0;i<gradientPoints.length;i++){
 var point=gradientPoints[i].split(',');
-coder._gradientPoints.push({value:parseFloat(point[0]),size:parseFloat(point[1])});
+var value=parseFloat(point[0]);
+var size=coder._markerScale.invFunc(parseFloat(point[1]));
+coder._gradientPoints.push({value:value,size:size});
 }
+console.log(coder._gradientPoints);
 
 var node=configElmt.firstChild;
 while(node!=null){
@@ -4524,6 +4552,7 @@ entry.size=size;
 };
 
 Exhibit.SizeGradientCoder.prototype.translate=function(key,flags){
+var self=this;
 var gradientPoints=this._gradientPoints;
 var getSize=function(key){
 if(key.constructor!=Number){
@@ -4536,7 +4565,7 @@ return gradientPoints[j].size;
 if(key<gradientPoints[j+1].value){
 var fraction=(key-gradientPoints[j].value)/(gradientPoints[j+1].value-gradientPoints[j].value);
 var newSize=Math.floor(gradientPoints[j].size+fraction*(gradientPoints[j+1].size-gradientPoints[j].size));
-return newSize;
+return self._markerScale.func(newSize);
 }
 }
 }
