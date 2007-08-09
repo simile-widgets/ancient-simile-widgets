@@ -18,6 +18,9 @@ getIcon:null
 this._colorCoder=null;
 this._sizeCoder=null;
 
+this._selectListener=null;
+this._itemIDToMarker={};
+
 var view=this;
 this._listener={
 onItemsChanged:function(){
@@ -40,6 +43,7 @@ Exhibit.MapView._settingSpecs={
 "color":{type:"text",defaultValue:"#FF9000"},
 "colorCoder":{type:"text",defaultValue:null},
 "sizeCoder":{type:"text",defaultValue:null},
+"selectCoordinator":{type:"text",defaultValue:null},
 "iconSize":{type:"int",defaultValue:0},
 "iconFit":{type:"text",defaultValue:"smaller"},
 "iconScale":{type:"float",defaultValue:1},
@@ -215,6 +219,12 @@ this._uiContext.getCollection().removeListener(this._listener);
 
 this._map=null;
 
+if(this._selectListener!=null){
+this._selectListener.dispose();
+this._selectListener=null;
+}
+this._itemIDToMarker={};
+
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
 
@@ -231,9 +241,10 @@ GUnload();
 };
 
 Exhibit.MapView.prototype._internalValidate=function(){
+var exhibit=this._uiContext.getExhibit();
 if("getColorKey"in this._accessors){
 if("colorCoder"in this._settings){
-this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+this._colorCoder=exhibit.getComponent(this._settings.colorCoder);
 }
 
 if(this._colorCoder==null){
@@ -242,7 +253,16 @@ this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 }
 if("getSizeKey"in this._accessors){
 if("sizeCoder"in this._settings){
-this._sizeCoder=this._uiContext.getExhibit().getComponent(this._settings.sizeCoder);
+this._sizeCoder=exhibit.getComponent(this._settings.sizeCoder);
+}
+}
+if("selectCoordinator"in this._settings){
+var selectCoordinator=exhibit.getComponent(this._settings.selectCoordinator);
+if(selectCoordinator!=null){
+var self=this;
+this._selectListener=selectCoordinator.addListener(function(o){
+self._select(o);
+});
 }
 }
 };
@@ -332,12 +352,14 @@ var database=this._uiContext.getDatabase();
 var settings=this._settings;
 var accessors=this._accessors;
 
+
 var originalSize=collection.countAllItems();
 var currentSize=collection.countRestrictedItems();
 var unplottableItems=[];
 
 this._map.clearOverlays();
 this._dom.legendWidget.clear();
+this._itemIDToMarker={};
 
 if(currentSize>0){
 var currentSet=collection.getRestrictedItems();
@@ -437,8 +459,15 @@ bounds.extend(point);
 
 GEvent.addListener(marker,"click",function(){
 marker.openInfoWindow(self._createInfoWindow(locationData.items));
+if(self._selectListener!=null){
+self._selectListener.fire({itemIDs:locationData.items});
+}
 });
 self._map.addOverlay(marker);
+
+for(var x=0;x<locationData.items.length;x++){
+self._itemIDToMarker[locationData.items[x]]=marker;
+}
 }
 for(var latlngKey in locationToData){
 addMarkerAtLocation(locationToData[latlngKey]);
@@ -520,6 +549,14 @@ self._map.setCenter(bounds.getCenter());
 }
 }
 this._dom.setUnplottableMessage(currentSize,unplottableItems);
+};
+
+Exhibit.MapView.prototype._select=function(selection){
+var itemID=selection.itemIDs[0];
+var marker=this._itemIDToMarker[itemID];
+if(marker){
+marker.openInfoWindow(this._createInfoWindow([itemID]));
+}
 };
 
 Exhibit.MapView.prototype._createInfoWindow=function(items){

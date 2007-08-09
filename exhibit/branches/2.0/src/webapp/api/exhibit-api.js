@@ -65,7 +65,7 @@
             "ui/lens.js",
             "ui/format-parser.js",
             "ui/formatter.js",
-            "ui/coordinators.js",
+            "ui/coordinator.js",
             
             "ui/facets/list-facet.js",
             "ui/facets/numeric-range-facet.js",
