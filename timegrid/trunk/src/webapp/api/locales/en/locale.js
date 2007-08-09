@@ -12,7 +12,8 @@
         "layouts/nday-l10n.js",
         "layouts/nmonth-l10n.js",
         "layouts/monthly-l10n.js",
-        "layouts/weekly-l10n.js"
+        "layouts/weekly-l10n.js",
+        "layouts/property-l10n.js"
     ];
     var cssFiles = [
     ];
