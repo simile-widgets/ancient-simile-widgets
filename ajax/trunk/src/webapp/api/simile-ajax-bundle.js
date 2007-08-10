@@ -1327,7 +1327,7 @@ contentWidth=300;
 }
 
 div.style.position="absolute";
-div.style.left="5000px";
+div.style.left="-5000px";
 div.style.top="0px";
 div.style.width=contentWidth+"px";
 document.body.appendChild(div);
@@ -1335,7 +1335,7 @@ document.body.appendChild(div);
 window.setTimeout(function(){
 var width=div.scrollWidth;
 var height=div.scrollHeight;
-console.log(contentWidth+" "+width+" "+height);
+
 var bubble=SimileAjax.Graphics.createBubbleForPoint(pageX,pageY,width,height,orientation);
 
 document.body.removeChild(div);
