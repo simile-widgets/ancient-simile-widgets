@@ -1321,6 +1321,32 @@ SimileAjax.Graphics._bubblePointOffset=6;
 SimileAjax.Graphics._halfArrowWidth=18;
 
 
+SimileAjax.Graphics.createBubbleForContentAndPoint=function(div,pageX,pageY,contentWidth,orientation){
+if(typeof contentWidth!="number"){
+contentWidth=300;
+}
+
+div.style.position="absolute";
+div.style.left="5000px";
+div.style.top="0px";
+div.style.width=contentWidth+"px";
+document.body.appendChild(div);
+
+window.setTimeout(function(){
+var width=div.scrollWidth;
+var height=div.scrollHeight;
+console.log(contentWidth+" "+width+" "+height);
+var bubble=SimileAjax.Graphics.createBubbleForPoint(pageX,pageY,width,height,orientation);
+
+document.body.removeChild(div);
+div.style.position="static";
+div.style.left="";
+div.style.top="";
+bubble.content.appendChild(div);
+},200);
+};
+
+
 SimileAjax.Graphics.createBubbleForPoint=function(pageX,pageY,contentWidth,contentHeight,orientation){
 function getWindowDims(){
 if(typeof window.innerHeight=='number'){

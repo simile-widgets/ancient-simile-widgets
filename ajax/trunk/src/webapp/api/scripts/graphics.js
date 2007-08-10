@@ -116,6 +116,44 @@ SimileAjax.Graphics._bubblePointOffset = 6;
 SimileAjax.Graphics._halfArrowWidth = 18;
 
 /**
+ * Creates a nice, rounded bubble popup with the given content in a div,
+ * page coordinates and a suggested width. The bubble will point to the 
+ * location on the page as described by pageX and pageY.  All measurements 
+ * should be given in pixels.
+ *
+ * @param {Element} the content div
+ * @param {Number} pageX the x coordinate of the point to point to
+ * @param {Number} pageY the y coordinate of the point to point to
+ * @param {Number} contentWidth a suggested width of the content
+ * @param {String} orientation a string ("top", "bottom", "left", or "right")
+ *   that describes the orientation of the arrow on the bubble
+ */
+SimileAjax.Graphics.createBubbleForContentAndPoint = function(div, pageX, pageY, contentWidth, orientation) {
+    if (typeof contentWidth != "number") {
+        contentWidth = 300;
+    }
+    
+    div.style.position = "absolute";
+    div.style.left = "5000px";
+    div.style.top = "0px";
+    div.style.width = contentWidth + "px";
+    document.body.appendChild(div);
+    
+    window.setTimeout(function() {
+        var width = div.scrollWidth;
+        var height = div.scrollHeight;
+        console.log(contentWidth + " " + width + " " + height);
+        var bubble = SimileAjax.Graphics.createBubbleForPoint(pageX, pageY, width, height, orientation);
+        
+        document.body.removeChild(div);
+        div.style.position = "static";
+        div.style.left = "";
+        div.style.top = "";
+        bubble.content.appendChild(div);
+    }, 200);
+};
+
+/**
  * Creates a nice, rounded bubble popup with the given page coordinates and
  * content dimensions.  The bubble will point to the location on the page
  * as described by pageX and pageY.  All measurements should be given in
