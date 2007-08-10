@@ -254,9 +254,8 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     var settings = this._settings;
     var legendWidgetSettings = {};
-    if ("_gradientPoints" in this._colorCoder) {
-        legendWidgetSettings.colorGradient = true; 
-    }
+    
+    legendWidgetSettings.colorGradient = (this._colorCoder != null && "_gradientPoints" in this._colorCoder);
     legendWidgetSettings.colorMarkerGenerator = function(color) {
         var shape="square";
         return SimileAjax.Graphics.createTranslucentImage(
@@ -276,7 +275,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
             "&pinHeight=0",
             "middle"
         );
-     }
+    }
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
