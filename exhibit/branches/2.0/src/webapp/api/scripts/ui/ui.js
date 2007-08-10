@@ -314,16 +314,14 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
 
 Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext) {
     var coords = SimileAjax.DOM.getPageCoordinates(elmt);
-    var bubble = SimileAjax.Graphics.createBubbleForPoint(
-        coords.left + Math.round(elmt.offsetWidth / 2), 
-        coords.top + Math.round(elmt.offsetHeight / 2), 
-        uiContext.getSetting("bubbleWidth"),
-        uiContext.getSetting("bubbleHeight")
-    );
-    
     var itemLensDiv = document.createElement("div");
     var itemLens = uiContext.getLensRegistry().createLens(itemID, itemLensDiv, uiContext);
-    bubble.content.appendChild(itemLensDiv);
+    SimileAjax.Graphics.createBubbleForContentAndPoint(
+        itemLensDiv, 
+        coords.left + Math.round(elmt.offsetWidth / 2), 
+        coords.top + Math.round(elmt.offsetHeight / 2), 
+        uiContext.getSetting("bubbleWidth")
+    );
 };
 
 Exhibit.UI.createButton = function(name, handler, className) {

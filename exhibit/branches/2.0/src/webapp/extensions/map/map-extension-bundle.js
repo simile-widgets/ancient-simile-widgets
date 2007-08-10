@@ -232,8 +232,8 @@ GUnload();
 };
 
 Exhibit.MapView.prototype._internalValidate=function(){
-if("getColorKey"in this._accessors){
-if("colorCoder"in this._settings){
+if(this._accessors.getColorKey!=null){
+if(this._settings.colorCoder!=null){
 this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
 }
 
@@ -241,12 +241,11 @@ if(this._colorCoder==null){
 this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
 }
 }
-if("getSizeKey"in this._accessors){
-if("sizeCoder"in this._settings){
+if(this._accessors.getSizeKey!=null){
+if(this._settings.sizeCoder!=null){
 this._sizeCoder=this._uiContext.getExhibit().getComponent(this._settings.sizeCoder);
 if("markerScale"in this._settings){
 this._sizeCoder._settings.markerScale=this._settings.markerScale;
-console.log(this._sizeCoder._settings);
 }
 }
 }
@@ -256,7 +255,9 @@ Exhibit.MapView.prototype._initializeUI=function(){
 var self=this;
 var settings=this._settings;
 var legendWidgetSettings={};
-if("_gradientPoints"in this._colorCoder){legendWidgetSettings.colorGradient=true;}
+if("_gradientPoints"in this._colorCoder){
+legendWidgetSettings.colorGradient=true;
+}
 legendWidgetSettings.colorMarkerGenerator=function(color){
 var shape="square";
 return SimileAjax.Graphics.createTranslucentImage(

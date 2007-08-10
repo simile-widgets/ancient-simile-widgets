@@ -4490,7 +4490,6 @@ Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.SizeGradient
 
 try{
 var markerScale=coder._settings.markerScale;
-console.log(markerScale);
 if(markerScale=="log"){coder._markerScale=coder._log;}
 if(markerScale=="linear"){coder._markerScale=coder._linear;}
 if(markerScale=="exp"){coder._markerScale=coder._exp;}
@@ -4560,7 +4559,7 @@ key=parseFloat(key);
 }
 for(j=0;j<gradientPoints.length;j++){
 if(key==gradientPoints[j].value){
-return gradientPoints[j].size;
+return self._markerScale.func(gradientPoints[j].size);
 }else if(gradientPoints[j+1]!=null){
 if(key<gradientPoints[j+1].value){
 var fraction=(key-gradientPoints[j].value)/(gradientPoints[j+1].value-gradientPoints[j].value);
@@ -7873,16 +7872,14 @@ return span;
 
 Exhibit.UI.showItemInPopup=function(itemID,elmt,uiContext){
 var coords=SimileAjax.DOM.getPageCoordinates(elmt);
-var bubble=SimileAjax.Graphics.createBubbleForPoint(
-coords.left+Math.round(elmt.offsetWidth/2),
-coords.top+Math.round(elmt.offsetHeight/2),
-uiContext.getSetting("bubbleWidth"),
-uiContext.getSetting("bubbleHeight")
-);
-
 var itemLensDiv=document.createElement("div");
 var itemLens=uiContext.getLensRegistry().createLens(itemID,itemLensDiv,uiContext);
-bubble.content.appendChild(itemLensDiv);
+SimileAjax.Graphics.createBubbleForContentAndPoint(
+itemLensDiv,
+coords.left+Math.round(elmt.offsetWidth/2),
+coords.top+Math.round(elmt.offsetHeight/2),
+uiContext.getSetting("bubbleWidth")
+);
 };
 
 Exhibit.UI.createButton=function(name,handler,className){
@@ -10035,6 +10032,7 @@ this._uiContext
 }
 }catch(e){
 SimileAjax.Debug.log("Failed to create view "+this._viewLabels[index]);
+console.log(e);
 }
 this._uiContext.getExhibit().setComponent(this._viewIDs[index],this._view);
 this._dom.setViewIndex(index);

@@ -11,7 +11,7 @@ Exhibit.MapView = function(containerElmt, uiContext) {
     this._accessors = {
         getProxy:    function(itemID, database, visitor) { visitor(itemID); },
         getColorKey: null,
-        getSizeKey: null,
+        getSizeKey:  null,
         getIcon:     null
     };
     this._colorCoder = null;
@@ -51,8 +51,8 @@ Exhibit.MapView._settingSpecs = {
     "pin":              { type: "boolean",  defaultValue: true      },
     "pinHeight":        { type: "int",      defaultValue: 6         },
     "pinWidth":         { type: "int",      defaultValue: 6         },
-    "sizeLegendLabel":	{ type: "text",     defaultValue: null      },
-    "colorLegendLabel":	{ type: "text",     defaultValue: null      },
+    "sizeLegendLabel":    { type: "text",     defaultValue: null      },
+    "colorLegendLabel":    { type: "text",     defaultValue: null      },
     "markerScale":      { type: "text",     defaultValue: null      }
 };
 
@@ -231,8 +231,8 @@ Exhibit.MapView.prototype.dispose = function() {
 };
 
 Exhibit.MapView.prototype._internalValidate = function() {
-    if ("getColorKey" in this._accessors) {
-        if ("colorCoder" in this._settings) {
+    if (this._accessors.getColorKey != null) {
+        if (this._settings.colorCoder != null) {
             this._colorCoder = this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
         }
         
@@ -240,12 +240,11 @@ Exhibit.MapView.prototype._internalValidate = function() {
             this._colorCoder = new Exhibit.DefaultColorCoder(this._uiContext);
         }
     }
-    if ("getSizeKey" in this._accessors) {  
-        if ("sizeCoder" in this._settings) {
+    if (this._accessors.getSizeKey != null) {  
+        if (this._settings.sizeCoder != null) {
             this._sizeCoder = this._uiContext.getExhibit().getComponent(this._settings.sizeCoder);
             if ("markerScale" in this._settings) {
-            	this._sizeCoder._settings.markerScale = this._settings.markerScale;
-            	console.log(this._sizeCoder._settings);
+                this._sizeCoder._settings.markerScale = this._settings.markerScale;
             }
         }
     }
@@ -254,28 +253,30 @@ Exhibit.MapView.prototype._internalValidate = function() {
 Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     var settings = this._settings;
-	var legendWidgetSettings = {};
-	if ("_gradientPoints" in this._colorCoder) { legendWidgetSettings.colorGradient = true; }	
-	legendWidgetSettings.colorMarkerGenerator = function(color) {
-		var shape="square";
-		return SimileAjax.Graphics.createTranslucentImage(
-			Exhibit.MapView._markerUrlPrefix+
-			"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
-			"&width=20&height=20&pinHeight=5&background="+color.substr(1),
-			"middle"
-		);
-	}
-	legendWidgetSettings.sizeMarkerGenerator = function(iconSize) {
-		var shape="square";
-		return SimileAjax.Graphics.createTranslucentImage(
-			Exhibit.MapView._markerUrlPrefix+
-			"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
-			"&width="+iconSize+
-			"&height="+iconSize+
-			"&pinHeight=0",
-			"middle"
-		);
-	 }
+    var legendWidgetSettings = {};
+    if ("_gradientPoints" in this._colorCoder) {
+        legendWidgetSettings.colorGradient = true; 
+    }
+    legendWidgetSettings.colorMarkerGenerator = function(color) {
+        var shape="square";
+        return SimileAjax.Graphics.createTranslucentImage(
+            Exhibit.MapView._markerUrlPrefix+
+            "?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+            "&width=20&height=20&pinHeight=5&background="+color.substr(1),
+            "middle"
+        );
+    }
+    legendWidgetSettings.sizeMarkerGenerator = function(iconSize) {
+        var shape="square";
+        return SimileAjax.Graphics.createTranslucentImage(
+            Exhibit.MapView._markerUrlPrefix+
+            "?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+            "&width="+iconSize+
+            "&height="+iconSize+
+            "&pinHeight=0",
+            "middle"
+        );
+     }
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -334,7 +335,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
     var collection = this._uiContext.getCollection();
     var database = this._uiContext.getDatabase();
     var settings = this._settings;
-    var accessors = this._accessors;	
+    var accessors = this._accessors;    
     /*
      *  Get the current collection and check if it's empty
      */
@@ -343,8 +344,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
     var unplottableItems = [];
     
     this._map.clearOverlays();
-	this._dom.legendWidget.clear();
-	
+    this._dom.legendWidget.clear();
+    
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
         var locationToData = {};
@@ -415,7 +416,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
             }
             var iconSize = self._settings.iconSize;
             if (hasSizeKey) {
-            	iconSize = self._sizeCoder.translateSet(locationData.sizeKeys, sizeCodingFlags);
+                iconSize = self._sizeCoder.translateSet(locationData.sizeKeys, sizeCodingFlags);
             }
 
             var icon = null;
@@ -454,30 +455,30 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var colorCoder = this._colorCoder;
             var keys = colorCodingFlags.keys.toArray().sort();
             if (settings.colorLegendLabel !== null) {
-            	legendWidget.addLegendLabel(settings.colorLegendLabel);
+                legendWidget.addLegendLabel(settings.colorLegendLabel);
             }
-			if (colorCoder._gradientPoints != null) {
-				var legendGradientWidget = this._dom.legendWidget;
-				legendGradientWidget.addGradient(this._colorCoder._gradientPoints);
-			} else {
-	            for (var k = 0; k < keys.length; k++) {
-	                var key = keys[k];
-	                var color = colorCoder.translate(key);
-	                legendWidget.addEntry(color, key);
-	            }
-			}
-			
-			if (colorCodingFlags.others) {
-				legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
-			}
-			if (colorCodingFlags.mixed) {
-				legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
-			}
-			if (colorCodingFlags.missing) {
-				legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
-			}
-		}
-		
+            if (colorCoder._gradientPoints != null) {
+                var legendGradientWidget = this._dom.legendWidget;
+                legendGradientWidget.addGradient(this._colorCoder._gradientPoints);
+            } else {
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    var color = colorCoder.translate(key);
+                    legendWidget.addEntry(color, key);
+                }
+            }
+            
+            if (colorCodingFlags.others) {
+                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+            }
+            if (colorCodingFlags.mixed) {
+                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+            }
+            if (colorCodingFlags.missing) {
+                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+            }
+        }
+        
         if (hasSizeKey) {
             var legendWidget = this._dom.legendWidget;
             sizeLegendDiv = document.createElement('div');
@@ -486,35 +487,35 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var sizeCoder = this._sizeCoder;
             var keys = sizeCodingFlags.keys.toArray().sort();    
             if (settings.sizeLegendLabel !== null) {
-            	legendWidget.addLegendLabel(settings.sizeLegendLabel);
+                legendWidget.addLegendLabel(settings.sizeLegendLabel);
             }
             if (sizeCoder._gradientPoints != null) {
-            	var points = sizeCoder._gradientPoints;
-            	var space = (points[points.length - 1].value - points[0].value)/10;
-            	keys = [];
-            	for (var i = 0; i < 11; i++) { keys.push(Math.floor(points[0].value + space*i)); }
-            	for (var k = 0; k < keys.length; k++) {
-					var key = keys[k];
-					var size = sizeCoder.translate(key);
-					legendWidget.addEntry(size, key, 'size');
-				}
-           	} else {       
-				for (var k = 0; k < keys.length; k++) {
-					var key = keys[k];
-					var size = sizeCoder.translate(key);
-					legendWidget.addEntry(size, key, 'size');
-				}
-				if (sizeCodingFlags.others) {
-					legendWidget.addEntry(sizeCoder.getOthersSize(), sizeCoder.getOthersLabel(), 'size');
-				}
-				if (sizeCodingFlags.mixed) {
-					legendWidget.addEntry(sizeCoder.getMixedSize(), sizeCoder.getMixedLabel(), 'size');
-				}
-				if (sizeCodingFlags.missing) {
-					legendWidget.addEntry(sizeCoder.getMissingSize(), sizeCoder.getMissingLabel(), 'size');
-				}
-			}
-		}		
+                var points = sizeCoder._gradientPoints;
+                var space = (points[points.length - 1].value - points[0].value)/10;
+                keys = [];
+                for (var i = 0; i < 11; i++) { keys.push(Math.floor(points[0].value + space*i)); }
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    var size = sizeCoder.translate(key);
+                    legendWidget.addEntry(size, key, 'size');
+                }
+               } else {       
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    var size = sizeCoder.translate(key);
+                    legendWidget.addEntry(size, key, 'size');
+                }
+                if (sizeCodingFlags.others) {
+                    legendWidget.addEntry(sizeCoder.getOthersSize(), sizeCoder.getOthersLabel(), 'size');
+                }
+                if (sizeCodingFlags.mixed) {
+                    legendWidget.addEntry(sizeCoder.getMixedSize(), sizeCoder.getMixedLabel(), 'size');
+                }
+                if (sizeCodingFlags.missing) {
+                    legendWidget.addEntry(sizeCoder.getMissingSize(), sizeCoder.getMissingLabel(), 'size');
+                }
+            }
+        }        
         
         if (bounds && typeof settings.zoom == "undefined") {
             var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
@@ -547,11 +548,11 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
     var width = halfWidth * 2;
     var height = bodyHeight;
     if (iconSize > 0) {
-    	width = iconSize;
-    	halfWidth = Math.ceil(iconSize / 2);
-    	height = iconSize;
-    	bodyHeight = iconSize;
-    	settings.pin = false;
+        width = iconSize;
+        halfWidth = Math.ceil(iconSize / 2);
+        height = iconSize;
+        bodyHeight = iconSize;
+        settings.pin = false;
     }   
     var icon = new GIcon();
     var imageParameters = [

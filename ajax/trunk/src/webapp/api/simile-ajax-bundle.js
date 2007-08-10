@@ -1333,8 +1333,8 @@ div.style.width=contentWidth+"px";
 document.body.appendChild(div);
 
 window.setTimeout(function(){
-var width=div.scrollWidth;
-var height=div.scrollHeight;
+var width=div.scrollWidth+10;
+var height=div.scrollHeight+10;
 
 var bubble=SimileAjax.Graphics.createBubbleForPoint(pageX,pageY,width,height,orientation);
 
@@ -1342,6 +1342,7 @@ document.body.removeChild(div);
 div.style.position="static";
 div.style.left="";
 div.style.top="";
+div.style.width=width+"px";
 bubble.content.appendChild(div);
 },200);
 };
