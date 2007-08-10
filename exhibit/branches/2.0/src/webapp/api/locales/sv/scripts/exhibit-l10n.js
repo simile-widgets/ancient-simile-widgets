@@ -23,8 +23,7 @@ Exhibit.l10n.badJsonMessage = function(url, e) {
     return "JSON-filen\n  " + url + "\ninnehåller fel =\n\n" + e;
 };
 Exhibit.l10n.failedToLoadDataFileMessage = function(url) {
-    return "Kunde inte hitta filen\n  " + url +
-         "\nKontrollera att filnamnet är korrekt.";
+    return "Kunde inte hitta filen\n  " + url + "\nKontrollera att filnamnet är korrekt.";
 };
 
 /*
@@ -49,32 +48,3 @@ Exhibit.l10n.smwExporterLabel =               "Semantisk wikitext";
 Exhibit.l10n.exhibitJsonExporterLabel =       "Exhibit JSON";
 Exhibit.l10n.tsvExporterLabel =               "Tabseparerade värden";
 Exhibit.l10n.htmlExporterLabel =              "HTML för den här vyn";
-
-/*
- *  List composition
- */
-Exhibit.l10n.composeListString = function(a) {
-    var s = "";
-    for (var i = 0; i < a.length; i++) {
-        if (i > 0) {
-            if (i < a.length - 1)
-                s += ", ";
-            else
-                s += " och ";
-        }
-        s += a[i];
-    }
-    return s;
-};
-Exhibit.l10n.createListDelimiter = function(parentElmt, count) {
-    var f = function() {
-        if (f.index > 0 && f.index < count) {
-            parentElmt.appendChild(document.createTextNode(
-                (f.index == count - 1) ? " och " : ", "));
-        }
-        f.index++;
-    };
-    f.index = 0;
-
-    return f;
-};

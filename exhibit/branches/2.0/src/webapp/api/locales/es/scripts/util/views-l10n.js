@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.ViewUtilities English localization
+ *  Exhibit.ViewUtilities Spanish localization
  *==================================================
  */
 

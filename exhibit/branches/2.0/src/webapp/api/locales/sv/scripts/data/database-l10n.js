@@ -10,30 +10,25 @@ if (!("l10n" in Exhibit.Database)) {
 Exhibit.Database.l10n.itemType = {
     label:          "Sak",
     pluralLabel:    "Saker"
+    
 };
 Exhibit.Database.l10n.labelProperty = {
     label:                  "etikett",
     pluralLabel:            "etiketter",
     reverseLabel:           "etikett till",
-    reversePluralLabel:     "etiketter till",
-    groupingLabel:          "etiketter",
-    reverseGroupingLabel:   "saker med etiketten"
+    reversePluralLabel:     "etiketter till"
 };
 Exhibit.Database.l10n.typeProperty = {
     label:                  "typ",
     pluralLabel:            "typer",
     reverseLabel:           "typ av",
-    reversePluralLabel:     "typer av",
-    groupingLabel:          "typer",
-    reverseGroupingLabel:   "saker av dessa typer"
+    reversePluralLabel:     "typer av"
 };
 Exhibit.Database.l10n.uriProperty = {
     label:                  "URI",
     pluralLabel:            "URIer",
     reverseLabel:           "URI för",
-    reversePluralLabel:     "URIer för",
-    groupingLabel:          "URIer",
-    reverseGroupingLabel:   "saker med dessa URIer"
+    reversePluralLabel:     "URIer för"
 };
 Exhibit.Database.l10n.sortLabels = {
     "text": {

@@ -12,11 +12,11 @@ Exhibit.CollectionSummaryWidget.l10n.resetFiltersTooltip = "Välj bort några filt
 Exhibit.CollectionSummaryWidget.l10n.resetActionTitle = "visa alla";
 
 Exhibit.CollectionSummaryWidget.l10n.allResultsTemplate =
-    "<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>resultat</span> totalt.";
+    "<span class='%0' id='resultDescription'></span>";
 
 Exhibit.CollectionSummaryWidget.l10n.noResultsTemplate =
     "<span class='%0'>0</span> <span class='%1' id='typesSpan'>resultat</span>. (<span id='resetActionLink'></span>)";
 
 Exhibit.CollectionSummaryWidget.l10n.filteredResultsTemplate =
-    "<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> " +
+    "<span class='%0' id='resultDescription'></span> " +
     "av <span id='originalCountSpan'>0</span> totalt. (<span id='resetActionLink'></span>)";

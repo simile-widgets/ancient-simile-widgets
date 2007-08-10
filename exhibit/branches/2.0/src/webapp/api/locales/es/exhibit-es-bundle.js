@@ -3,6 +3,7 @@
 /* database-l10n.js */
 
 
+
 if(!("l10n"in Exhibit.Database)){
 Exhibit.Database.l10n={};
 }
@@ -10,30 +11,25 @@ Exhibit.Database.l10n={};
 Exhibit.Database.l10n.itemType={
 label:"Elemento",
 pluralLabel:"Elementos"
+
 };
 Exhibit.Database.l10n.labelProperty={
 label:"etiqueta",
 pluralLabel:"etiquetas",
 reverseLabel:"etiqueta de",
-reversePluralLabel:"etiquetas de",
-groupingLabel:"etiquetas",
-reverseGroupingLabel:"elementos etiquetados"
+reversePluralLabel:"etiquetas de"
 };
 Exhibit.Database.l10n.typeProperty={
 label:"tipo",
 pluralLabel:"tipos",
 reverseLabel:"tipo de",
-reversePluralLabel:"tipos de",
-groupingLabel:"tipos",
-reverseGroupingLabel:"elementos pertenecientes a esos tipos"
+reversePluralLabel:"tipos de"
 };
 Exhibit.Database.l10n.uriProperty={
 label:"URI",
 pluralLabel:"URIs",
 reverseLabel:"URI de",
-reversePluralLabel:"URIs de",
-groupingLabel:"URIs",
-reverseGroupingLabel:"elementos denotados por esas URIs"
+reversePluralLabel:"URIs de"
 };
 Exhibit.Database.l10n.sortLabels={
 "text":{
@@ -104,39 +100,61 @@ Exhibit.l10n.tsvExporterLabel="Tab Separated Values";
 Exhibit.l10n.htmlExporterLabel="Generated HTML of this view";
 
 
-Exhibit.l10n.composeListString=function(a){
-var s="";
-for(var i=0;i<a.length;i++){
-if(i>0){
-if(i<a.length-1){
-s+=", ";
-}else if(a.length<3){
-s+=" y ";
-}else{
-s+=", y ";
-}
-}
-s+=a[i];
-}
-return s;
-};
+/* formatter-l10n.js */
 
-Exhibit.l10n.createListDelimiter=function(parentElmt,count){
-var f=function(){
-if(f.index>0&&f.index<count){
-if(count>2){
-parentElmt.appendChild(document.createTextNode(
-(f.index==count-1)?", y ":", "));
-}else{
-parentElmt.appendChild(document.createTextNode(" y "));
-}
-}
-f.index++;
-};
-f.index=0;
 
-return f;
+
+if(!("l10n"in Exhibit.Formatter)){
+Exhibit.Formatter.l10n={};
 }
+
+Exhibit.Formatter.l10n.listSeparator=", ";
+Exhibit.Formatter.l10n.listLastSeparator=", and ";
+Exhibit.Formatter.l10n.listPairSeparator=" and ";
+
+Exhibit.Formatter.l10n.textEllipsis="...";
+
+Exhibit.Formatter.l10n.booleanTrue="true";
+Exhibit.Formatter.l10n.booleanFalse="false";
+
+Exhibit.Formatter.l10n.currencySymbol="$";
+Exhibit.Formatter.l10n.currencySymbolPlacement="first";
+Exhibit.Formatter.l10n.currencyShowSign=true;
+Exhibit.Formatter.l10n.currencyShowRed=false;
+Exhibit.Formatter.l10n.currencyShowParentheses=false;
+
+Exhibit.Formatter.l10n.dateTimeDefaultFormat="EEE, MMM d, yyyy, hh:mm a";
+
+Exhibit.Formatter.l10n.dateShortFormat="dd/MM/yy";
+Exhibit.Formatter.l10n.timeShortFormat="hh:mm a";
+Exhibit.Formatter.l10n.dateTimeShortFormat="dd/MM/yy hh:mm a";
+
+Exhibit.Formatter.l10n.dateMediumFormat="EEE, MMM d, yyyy";
+Exhibit.Formatter.l10n.timeMediumFormat="hh:mm a";
+Exhibit.Formatter.l10n.dateTimeMediumFormat="EEE, MMM d, yyyy, hh:mm a";
+
+Exhibit.Formatter.l10n.dateLongFormat="EEEE, MMMM d, yyyy";
+Exhibit.Formatter.l10n.timeLongFormat="HH:mm:ss z";
+Exhibit.Formatter.l10n.dateTimeLongFormat="EEEE, MMMM d, yyyy, HH:mm:ss z";
+
+Exhibit.Formatter.l10n.dateFullFormat="EEEE, MMMM d, yyyy";
+Exhibit.Formatter.l10n.timeFullFormat="HH:mm:ss.S z";
+Exhibit.Formatter.l10n.dateTimeFullFormat="EEEE, MMMM d, yyyy G, HH:mm:ss.S z";
+
+Exhibit.Formatter.l10n.shortDaysOfWeek=["Sun","Mon","Tue","Wed","Thr","Fri","Sat"];
+Exhibit.Formatter.l10n.daysOfWeek=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+Exhibit.Formatter.l10n.shortMonths=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+Exhibit.Formatter.l10n.months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+Exhibit.Formatter.l10n.commonEra="CE";
+Exhibit.Formatter.l10n.beforeCommonEra="BCE";
+
+Exhibit.Formatter.l10n.beforeNoon="am";
+Exhibit.Formatter.l10n.afterNoon="pm";
+
+Exhibit.Formatter.l10n.BeforeNoon="AM";
+Exhibit.Formatter.l10n.AfterNoon="PM";
 
 
 /* lens-l10n.js */
@@ -250,7 +268,7 @@ return"selecciona "+viewLabel+" vista";
 };
 Exhibit.ViewPanel.l10n.missingViewClassMessage="En la especificación de una de las vistas falta el campo viewClass.";
 Exhibit.ViewPanel.l10n.viewClassNotFunctionMessage=function(expr){
-return" El valor del atributo viewClass '"+expr+"' espeficicado\n"+
+return"El valor del atributo viewClass '"+expr+"' espeficicado\n"+
 "en una de las vistas no se corresponde con una función Javascript.";
 };
 Exhibit.ViewPanel.l10n.badViewClassMessage=function(expr){
@@ -272,14 +290,14 @@ Exhibit.CollectionSummaryWidget.l10n.resetFiltersTooltip="Elimina algunos filtro
 Exhibit.CollectionSummaryWidget.l10n.resetActionTitle="Reset all filters";
 
 Exhibit.CollectionSummaryWidget.l10n.allResultsTemplate=
-"<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> total.";
+"<span class='%0' id='resultDescription'></span>";
 
 Exhibit.CollectionSummaryWidget.l10n.noResultsTemplate=
-"<span class='%0'>0</span> <span class='%1' id='typesSpan'>resultados</span>. (<span id='resetActionLink'></span>)";
+"<span class='%0'>0</span> <span class='%1' id='typesSpan'>resultados</span> (<span id='resetActionLink'></span>)";
 
 Exhibit.CollectionSummaryWidget.l10n.filteredResultsTemplate=
-"<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> "+
-"filtered from <span id='originalCountSpan'>0</span> originally. (<span id='resetActionLink'></span>)";
+"<span class='%0' id='resultDescription'></span> "+
+"filtered from <span id='originalCountSpan'>0</span> originally (<span id='resetActionLink'></span>)";
 
 
 /* facets-l10n.js */

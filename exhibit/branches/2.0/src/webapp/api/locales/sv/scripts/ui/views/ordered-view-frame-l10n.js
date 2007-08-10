@@ -26,7 +26,7 @@ Exhibit.OrderedViewFrame.l10n.ungroupAsSortedActionTitle = "ogrupperade";
 Exhibit.OrderedViewFrame.l10n.showAllActionTitle = "show all results";
 Exhibit.OrderedViewFrame.l10n.dontShowAllActionTitle = "show first few results";
 Exhibit.OrderedViewFrame.l10n.formatDontShowAll = function(limitCount) {
-    return "Visa bara de första  " + limitCount + " resultaten";
+    return "Visa bara de första " + limitCount + " resultaten";
 };
 Exhibit.OrderedViewFrame.l10n.formatShowAll = function(count) {
     return "Visa samtliga " + count + " resultat";

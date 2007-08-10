@@ -1,5 +1,5 @@
 ﻿/*==================================================
- *  Exhibit.ViewPanel English localization
+ *  Exhibit.ViewPanel Spanish localization
  *==================================================
  */
 
@@ -12,7 +12,7 @@ Exhibit.ViewPanel.l10n.createSelectViewActionTitle = function(viewLabel) {
 };
 Exhibit.ViewPanel.l10n.missingViewClassMessage = "En la especificación de una de las vistas falta el campo viewClass.";
 Exhibit.ViewPanel.l10n.viewClassNotFunctionMessage = function(expr) {
-    return " El valor del atributo viewClass '" + expr + "' espeficicado\n" +
+    return "El valor del atributo viewClass '" + expr + "' espeficicado\n" +
         "en una de las vistas no se corresponde con una función Javascript.";
 };
 Exhibit.ViewPanel.l10n.badViewClassMessage = function(expr) {

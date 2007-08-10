@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.UIContext English localization
+ *  Exhibit.UIContext Spanish localization
  *==================================================
  */
 

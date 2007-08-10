@@ -11,30 +11,25 @@ Exhibit.Database.l10n={};
 Exhibit.Database.l10n.itemType={
 label:"Sak",
 pluralLabel:"Saker"
+
 };
 Exhibit.Database.l10n.labelProperty={
 label:"etikett",
 pluralLabel:"etiketter",
 reverseLabel:"etikett till",
-reversePluralLabel:"etiketter till",
-groupingLabel:"etiketter",
-reverseGroupingLabel:"saker med etiketten"
+reversePluralLabel:"etiketter till"
 };
 Exhibit.Database.l10n.typeProperty={
 label:"typ",
 pluralLabel:"typer",
 reverseLabel:"typ av",
-reversePluralLabel:"typer av",
-groupingLabel:"typer",
-reverseGroupingLabel:"saker av dessa typer"
+reversePluralLabel:"typer av"
 };
 Exhibit.Database.l10n.uriProperty={
 label:"URI",
 pluralLabel:"URIer",
 reverseLabel:"URI för",
-reversePluralLabel:"URIer för",
-groupingLabel:"URIer",
-reverseGroupingLabel:"saker med dessa URIer"
+reversePluralLabel:"URIer för"
 };
 Exhibit.Database.l10n.sortLabels={
 "text":{
@@ -84,8 +79,7 @@ Exhibit.l10n.badJsonMessage=function(url,e){
 return"JSON-filen\n  "+url+"\ninnehåller fel =\n\n"+e;
 };
 Exhibit.l10n.failedToLoadDataFileMessage=function(url){
-return"Kunde inte hitta filen\n  "+url+
-"\nKontrollera att filnamnet är korrekt.";
+return"Kunde inte hitta filen\n  "+url+"\nKontrollera att filnamnet är korrekt.";
 };
 
 
@@ -106,31 +100,61 @@ Exhibit.l10n.tsvExporterLabel="Tabseparerade värden";
 Exhibit.l10n.htmlExporterLabel="HTML för den här vyn";
 
 
-Exhibit.l10n.composeListString=function(a){
-var s="";
-for(var i=0;i<a.length;i++){
-if(i>0){
-if(i<a.length-1)
-s+=", ";
-else
-s+=" och ";
-}
-s+=a[i];
-}
-return s;
-};
-Exhibit.l10n.createListDelimiter=function(parentElmt,count){
-var f=function(){
-if(f.index>0&&f.index<count){
-parentElmt.appendChild(document.createTextNode(
-(f.index==count-1)?" och ":", "));
-}
-f.index++;
-};
-f.index=0;
+/* formatter-l10n.js */
 
-return f;
-};
+
+
+if(!("l10n"in Exhibit.Formatter)){
+Exhibit.Formatter.l10n={};
+}
+
+Exhibit.Formatter.l10n.listSeparator=", ";
+Exhibit.Formatter.l10n.listLastSeparator=", och ";
+Exhibit.Formatter.l10n.listPairSeparator=" och ";
+
+Exhibit.Formatter.l10n.textEllipsis="...";
+
+Exhibit.Formatter.l10n.booleanTrue="true";
+Exhibit.Formatter.l10n.booleanFalse="false";
+
+Exhibit.Formatter.l10n.currencySymbol="$";
+Exhibit.Formatter.l10n.currencySymbolPlacement="first";
+Exhibit.Formatter.l10n.currencyShowSign=true;
+Exhibit.Formatter.l10n.currencyShowRed=false;
+Exhibit.Formatter.l10n.currencyShowParentheses=false;
+
+Exhibit.Formatter.l10n.dateTimeDefaultFormat="EEE, MMM d, yyyy, hh:mm a";
+
+Exhibit.Formatter.l10n.dateShortFormat="dd/MM/yy";
+Exhibit.Formatter.l10n.timeShortFormat="hh:mm a";
+Exhibit.Formatter.l10n.dateTimeShortFormat="dd/MM/yy hh:mm a";
+
+Exhibit.Formatter.l10n.dateMediumFormat="EEE, MMM d, yyyy";
+Exhibit.Formatter.l10n.timeMediumFormat="hh:mm a";
+Exhibit.Formatter.l10n.dateTimeMediumFormat="EEE, MMM d, yyyy, hh:mm a";
+
+Exhibit.Formatter.l10n.dateLongFormat="EEEE, MMMM d, yyyy";
+Exhibit.Formatter.l10n.timeLongFormat="HH:mm:ss z";
+Exhibit.Formatter.l10n.dateTimeLongFormat="EEEE, MMMM d, yyyy, HH:mm:ss z";
+
+Exhibit.Formatter.l10n.dateFullFormat="EEEE, MMMM d, yyyy";
+Exhibit.Formatter.l10n.timeFullFormat="HH:mm:ss.S z";
+Exhibit.Formatter.l10n.dateTimeFullFormat="EEEE, MMMM d, yyyy G, HH:mm:ss.S z";
+
+Exhibit.Formatter.l10n.shortDaysOfWeek=["Sun","Mon","Tue","Wed","Thr","Fri","Sat"];
+Exhibit.Formatter.l10n.daysOfWeek=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+Exhibit.Formatter.l10n.shortMonths=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+Exhibit.Formatter.l10n.months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+Exhibit.Formatter.l10n.commonEra="CE";
+Exhibit.Formatter.l10n.beforeCommonEra="BCE";
+
+Exhibit.Formatter.l10n.beforeNoon="am";
+Exhibit.Formatter.l10n.afterNoon="pm";
+
+Exhibit.Formatter.l10n.BeforeNoon="AM";
+Exhibit.Formatter.l10n.AfterNoon="PM";
 
 
 /* lens-l10n.js */
@@ -183,7 +207,7 @@ Exhibit.OrderedViewFrame.l10n.ungroupAsSortedActionTitle="ogrupperade";
 Exhibit.OrderedViewFrame.l10n.showAllActionTitle="show all results";
 Exhibit.OrderedViewFrame.l10n.dontShowAllActionTitle="show first few results";
 Exhibit.OrderedViewFrame.l10n.formatDontShowAll=function(limitCount){
-return"Visa bara de första  "+limitCount+" resultaten";
+return"Visa bara de första "+limitCount+" resultaten";
 };
 Exhibit.OrderedViewFrame.l10n.formatShowAll=function(count){
 return"Visa samtliga "+count+" resultat";
@@ -191,7 +215,6 @@ return"Visa samtliga "+count+" resultat";
 
 
 /* tabular-view-l10n.js */
-
 
 
 if(!("l10n"in Exhibit.TabularView)){
@@ -267,13 +290,13 @@ Exhibit.CollectionSummaryWidget.l10n.resetFiltersTooltip="Välj bort några filt
 Exhibit.CollectionSummaryWidget.l10n.resetActionTitle="visa alla";
 
 Exhibit.CollectionSummaryWidget.l10n.allResultsTemplate=
-"<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>resultat</span> totalt.";
+"<span class='%0' id='resultDescription'></span>";
 
 Exhibit.CollectionSummaryWidget.l10n.noResultsTemplate=
 "<span class='%0'>0</span> <span class='%1' id='typesSpan'>resultat</span>. (<span id='resetActionLink'></span>)";
 
 Exhibit.CollectionSummaryWidget.l10n.filteredResultsTemplate=
-"<span class='%0' id='currentCountSpan'>0</span> <span class='%1' id='typesSpan'>results</span> "+
+"<span class='%0' id='resultDescription'></span> "+
 "av <span id='originalCountSpan'>0</span> totalt. (<span id='resetActionLink'></span>)";
 
 

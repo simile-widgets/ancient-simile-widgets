@@ -2,6 +2,7 @@
  *  Exhibit.Database Spanish localization
  *==================================================
  */
+ 
 if (!("l10n" in Exhibit.Database)) {
     Exhibit.Database.l10n = {};
 }
@@ -9,30 +10,25 @@ if (!("l10n" in Exhibit.Database)) {
 Exhibit.Database.l10n.itemType = {
     label:          "Elemento",
     pluralLabel:    "Elementos"
+    
 };
 Exhibit.Database.l10n.labelProperty = {
     label:                  "etiqueta",
     pluralLabel:            "etiquetas",
     reverseLabel:           "etiqueta de",
-    reversePluralLabel:     "etiquetas de",
-    groupingLabel:          "etiquetas",
-    reverseGroupingLabel:   "elementos etiquetados"
+    reversePluralLabel:     "etiquetas de"
 };
 Exhibit.Database.l10n.typeProperty = {
     label:                  "tipo",
     pluralLabel:            "tipos",
     reverseLabel:           "tipo de",
-    reversePluralLabel:     "tipos de",
-    groupingLabel:          "tipos",
-    reverseGroupingLabel:   "elementos pertenecientes a esos tipos"
+    reversePluralLabel:     "tipos de"
 };
 Exhibit.Database.l10n.uriProperty = {
     label:                  "URI",
     pluralLabel:            "URIs",
     reverseLabel:           "URI de",
-    reversePluralLabel:     "URIs de",
-    groupingLabel:          "URIs",
-    reverseGroupingLabel:   "elementos denotados por esas URIs"
+    reversePluralLabel:     "URIs de"
 };
 Exhibit.Database.l10n.sortLabels = {
     "text": {

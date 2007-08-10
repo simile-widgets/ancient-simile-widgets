@@ -2,7 +2,6 @@
  *  Exhibit.TabularView Swedish localization
  *==================================================
  */
-
 if (!("l10n" in Exhibit.TabularView)) {
     Exhibit.TabularView.l10n = {};
 }
