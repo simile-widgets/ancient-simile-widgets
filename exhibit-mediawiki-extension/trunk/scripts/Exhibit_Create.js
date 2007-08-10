@@ -7,15 +7,21 @@ function createExhibit() {
 	 * Data: We're using the HTML table importer to get the data for the exhibit.
 	 */
 	window.database = Exhibit.Database.create();
-	window.exhibit = Exhibit.create(window.database);			
-	for(var i = 0; i < sourceData.length; i++) {
-		var dataTable = document.getElementById(sourceData[i]);	
+	window.exhibit = Exhibit.create(window.database);		
+	for (var id in sources) {
+		var source = sources[id];
+		var dataTable = document.getElementById(source.id);
 		var th, ths = dataTable.getElementsByTagName("th");
-		var columns = sourceColumns[i].split(',');	
-		if (columns[0] !== "") {                   //TODO: make more thorough test--look for label
+		var columns = source.columns;
+		if (columns[0] !== "") {
 			for(var c = 0; c < ths.length; c++) {
-				var label = columns[c];
-				ths[c].setAttribute('ex:name', label);
+				var split = columns[c].indexOf(':');
+				if (split > 0) {
+					var name = columns[c].substring(0, split);
+					var valueType = columns[c].substring((split + 1), columns[c].length);
+					ths[c].setAttribute('ex:valueType', valueType);
+				} else { var name = columns[c]; }
+				ths[c].setAttribute('ex:name', name);
 			}	
 		} else {
 			ths[0].setAttribute('ex:name', 'label');
@@ -27,8 +33,10 @@ function createExhibit() {
 				ths[c].setAttribute('ex:name', label);
 			}
 		}
-		if (sourceHideTable[i] == "false") { // BUG: hideTable[i] is a string, not a boolean
-		} else { dataTable.setAttribute("style", "display:none");}
+		if (source.hideTable) { dataTable.setAttribute("style", "display:none"); }
+		dataTable.setAttribute("ex:type", source.type);
+		dataTable.setAttribute("ex:label", source.label);
+		dataTable.setAttribute("ex:pluralLabel", source.pluralLabel);	
 		Exhibit.HtmlTableImporter.loadTable(dataTable, window.database); 
 	}
 

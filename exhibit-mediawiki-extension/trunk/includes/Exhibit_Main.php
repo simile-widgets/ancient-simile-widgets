@@ -76,8 +76,8 @@ function wfExhibitAddHTMLHeader(&$out) {
 		$out->addScript($WExhibitScript);
 	}
 	
-	$GMapScript = '<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg"></script>';
-	$out->addScript($GMapScript);
+	//$GMapScript = '<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg"></script>';
+	//$out->addScript($GMapScript);
 
 	return true;
 }
@@ -195,17 +195,31 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		}
 		
 		// <source>
-		$sourceData = array();
-		$sourceColumns = array();
-		$sourceHideTable = array();
+		$sources = array();
+		$count = 0;
 		foreach ($xml->source as $source) {
-			array_push($sourceData, $source['id']);
-			array_push($sourceColumns, $source['columns']);
-			array_push($sourceHideTable, $source['hideTable']);
-		}	
-		$sourceData = implode(',', $sourceData);
-		$sourceColumns = implode(';', $sourceColumns);
-		$sourceHideTable = implode(',', $sourceHideTable);
+			$id = $source['id'];
+			if ($id == "") { $id = null; }
+			$columns = $source['columns'];
+			if ($columns == "") { $columns = null; }
+			$hideTable = $source['hideTable'];
+			if ($hideTable == "") { $hideTable = true; }
+			$type = $source['type'];
+			if ($type == "") { $type = "Item"; }
+			$label = $source['label'];
+			if ($label == "") { $label = "Item"; }
+			$pluralLabel = $source['pluralLabel'];
+			if ($pluralLabel == "") { $pluralLabel = "Items"; }
+			$object = 'source' . $count . ': { id:  "'. $id .'" , ' .
+										  'columns: "' . $columns . '".split(","), ' .
+										  'hideTable: "' . $hideTable . '", ' .
+										  'type: "' . $type . '", ' .
+										  'label: "' . $label . '", ' .
+										  'pluralLabel: "' . $pluralLabel . '" }';
+			array_push($sources, $object);
+			$count++;
+		}
+		$sources = implode(',', $sources);
 		
 		// <facet>	
 		$facets = array();
@@ -252,12 +266,9 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			}
 			$coders .= "</div>";
 		}
-		
 		$output = <<<OUTPUT
 		<script type="text/javascript">
-		var sourceData = "$sourceData".split(',');
-		var sourceColumns = "$sourceColumns".split(';');
-		var sourceHideTable = "$sourceHideTable".split(',');
+		var sources = { $sources };
 		var facets = "$facets".split('/');
 		var views = "$views".split('/');
 		</script>
