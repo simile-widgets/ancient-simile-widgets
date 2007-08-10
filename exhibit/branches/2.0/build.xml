@@ -96,5 +96,11 @@
             <include name="**/*.js" />
         </fileset>
     </jsmin>
+  	
+    <jsmin output="src/webapp/api/locales/zh/exhibit-zh-bundle.js">
+        <fileset dir="src/webapp/api/locales/zh/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
   </target>
 </project>
