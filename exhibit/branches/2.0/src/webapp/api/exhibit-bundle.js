@@ -4501,7 +4501,6 @@ var value=parseFloat(point[0]);
 var size=coder._markerScale.invFunc(parseFloat(point[1]));
 coder._gradientPoints.push({value:value,size:size});
 }
-console.log(coder._gradientPoints);
 
 var node=configElmt.firstChild;
 while(node!=null){
