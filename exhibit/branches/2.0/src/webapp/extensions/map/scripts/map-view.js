@@ -17,6 +17,9 @@ Exhibit.MapView = function(containerElmt, uiContext) {
     this._colorCoder = null;
     this._sizeCoder = null;
     
+    this._selectListener = null;
+    this._itemIDToMarker = {};
+    
     var view = this;
     this._listener = { 
         onItemsChanged: function() {
@@ -39,6 +42,7 @@ Exhibit.MapView._settingSpecs = {
     "color":            { type: "text",     defaultValue: "#FF9000" },
     "colorCoder":       { type: "text",     defaultValue: null      },
     "sizeCoder":        { type: "text",     defaultValue: null      },
+    "selectCoordinator":  { type: "text",   defaultValue: null      },
     "iconSize":         { type: "int",      defaultValue: 0         },
     "iconFit":          { type: "text",     defaultValue: "smaller" },
     "iconScale":        { type: "float",    defaultValue: 1         },
@@ -51,9 +55,12 @@ Exhibit.MapView._settingSpecs = {
     "pin":              { type: "boolean",  defaultValue: true      },
     "pinHeight":        { type: "int",      defaultValue: 6         },
     "pinWidth":         { type: "int",      defaultValue: 6         },
-    "sizeLegendLabel":    { type: "text",     defaultValue: null      },
-    "colorLegendLabel":    { type: "text",     defaultValue: null      },
-    "markerScale":      { type: "text",     defaultValue: null      }
+    "sizeLegendLabel":  { type: "text",     defaultValue: null      },
+    "colorLegendLabel": { type: "text",     defaultValue: null      },
+    "markerScale":      { type: "text",     defaultValue: null      },
+    "showHeader":       { type: "boolean",  defaultValue: true      },
+    "showSummary":      { type: "boolean",  defaultValue: true      },
+    "showFooter":       { type: "boolean",  defaultValue: true      }
 };
 
 Exhibit.MapView._accessorSpecs = [
@@ -215,6 +222,12 @@ Exhibit.MapView.prototype.dispose = function() {
     
     this._map = null;
     
+    if (this._selectListener != null) {
+        this._selectListener.dispose();
+        this._selectListener = null;
+    }
+    this._itemIDToMarker = {};
+    
     this._toolboxWidget.dispose();
     this._toolboxWidget = null;
     
@@ -231,9 +244,10 @@ Exhibit.MapView.prototype.dispose = function() {
 };
 
 Exhibit.MapView.prototype._internalValidate = function() {
+    var exhibit = this._uiContext.getExhibit();
     if (this._accessors.getColorKey != null) {
         if (this._settings.colorCoder != null) {
-            this._colorCoder = this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+            this._colorCoder = exhibit.getComponent(this._settings.colorCoder);
         }
         
         if (this._colorCoder == null) {
@@ -242,10 +256,19 @@ Exhibit.MapView.prototype._internalValidate = function() {
     }
     if (this._accessors.getSizeKey != null) {  
         if (this._settings.sizeCoder != null) {
-            this._sizeCoder = this._uiContext.getExhibit().getComponent(this._settings.sizeCoder);
+            this._sizeCoder = exhibit.getComponent(this._settings.sizeCoder);
             if ("markerScale" in this._settings) {
                 this._sizeCoder._settings.markerScale = this._settings.markerScale;
             }
+        }
+    }
+    if ("selectCoordinator" in this._settings) {
+        var selectCoordinator = exhibit.getComponent(this._settings.selectCoordinator);
+        if (selectCoordinator != null) {
+            var self = this;
+            this._selectListener = selectCoordinator.addListener(function(o) {
+                self._select(o);
+            });
         }
     }
 };
@@ -281,7 +304,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
         this._div, 
         this._uiContext, 
-        true, // showSummary
+        this._settings.showSummary && this._settings.showHeader,
         {   onResize: function() { 
                 self._map.checkResize(); 
             } 
@@ -334,7 +357,8 @@ Exhibit.MapView.prototype._reconstruct = function() {
     var collection = this._uiContext.getCollection();
     var database = this._uiContext.getDatabase();
     var settings = this._settings;
-    var accessors = this._accessors;    
+    var accessors = this._accessors;
+    
     /*
      *  Get the current collection and check if it's empty
      */
@@ -344,6 +368,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
     
     this._map.clearOverlays();
     this._dom.legendWidget.clear();
+    this._itemIDToMarker = {};
     
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
@@ -443,8 +468,15 @@ Exhibit.MapView.prototype._reconstruct = function() {
             
             GEvent.addListener(marker, "click", function() { 
                 marker.openInfoWindow(self._createInfoWindow(locationData.items));
+                if (self._selectListener != null) {
+                    self._selectListener.fire({ itemIDs: locationData.items });
+                }
             });
             self._map.addOverlay(marker);
+            
+            for (var x = 0; x < locationData.items.length; x++) {
+                self._itemIDToMarker[locationData.items[x]] = marker;
+            }
         }
         for (var latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
@@ -526,6 +558,14 @@ Exhibit.MapView.prototype._reconstruct = function() {
         }
     }
     this._dom.setUnplottableMessage(currentSize, unplottableItems);
+};
+
+Exhibit.MapView.prototype._select = function(selection) {
+    var itemID = selection.itemIDs[0];
+    var marker = this._itemIDToMarker[itemID];
+    if (marker) {
+        marker.openInfoWindow(this._createInfoWindow([ itemID ]));
+    }
 };
 
 Exhibit.MapView.prototype._createInfoWindow = function(items) {
