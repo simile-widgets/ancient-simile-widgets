@@ -6177,6 +6177,14 @@ f.index=0;
 return f;
 };
 
+Exhibit.Formatter._lessThanRegex=/</g;
+Exhibit.Formatter._greaterThanRegex=/>/g;
+
+Exhibit.Formatter.encodeAngleBrackets=function(s){
+return s.replace(Exhibit.Formatter._lessThanRegex,"&lt;").
+replace(Exhibit.Formatter._greaterThanRegex,"&gt;");
+};
+
 
 Exhibit.Formatter._ListFormatter=function(uiContext){
 this._uiContext=uiContext;
@@ -6250,13 +6258,9 @@ span.innerHTML=this.formatText(value);
 appender(span);
 };
 
-Exhibit.Formatter._lessThanRegex=/</g;
-Exhibit.Formatter._greaterThanRegex=/>/g;
-
 Exhibit.Formatter._TextFormatter.prototype.formatText=function(value){
 if(Exhibit.params.safe){
-value=value.replace(Exhibit.Formatter._lessThanRegex,"&lt;").
-replace(Exhibit.Formatter._greaterThanRegex,"&gt;");
+value=Exhibit.Formatter.encodeAngleBrackets(value);
 }
 
 if(this._maxLength==0||value.length<=this._maxLength){
@@ -11252,6 +11256,10 @@ onSelect,
 onSelectOnly,
 uiContext
 ){
+if(Exhibit.params.safe){
+label=Exhibit.Formatter.encodeAngleBrackets(label);
+}
+
 var dom=SimileAjax.DOM.createDOMFromString(
 "div",
 "<div class='exhibit-facet-value-count'>"+count+"</div>"+

@@ -26,6 +26,14 @@ Exhibit.Formatter.createListDelimiter = function(parentElmt, count, uiContext) {
     return f;
 };
 
+Exhibit.Formatter._lessThanRegex = /</g;
+Exhibit.Formatter._greaterThanRegex = />/g;
+
+Exhibit.Formatter.encodeAngleBrackets = function(s) {
+    return s.replace(Exhibit.Formatter._lessThanRegex, "&lt;").
+        replace(Exhibit.Formatter._greaterThanRegex, "&gt;");
+};
+
 /*==================================================
  *  Exhibit.Formatter._ListFormatter
  *==================================================
@@ -105,13 +113,9 @@ Exhibit.Formatter._TextFormatter.prototype.format = function(value, appender) {
     appender(span);
 };
 
-Exhibit.Formatter._lessThanRegex = /</g;
-Exhibit.Formatter._greaterThanRegex = />/g;
-
 Exhibit.Formatter._TextFormatter.prototype.formatText = function(value) {
     if (Exhibit.params.safe) {
-        value = value.replace(Exhibit.Formatter._lessThanRegex, "&lt;").
-            replace(Exhibit.Formatter._greaterThanRegex, "&gt;");
+        value = Exhibit.Formatter.encodeAngleBrackets(value);
     }
     
     if (this._maxLength == 0 || value.length <= this._maxLength) {

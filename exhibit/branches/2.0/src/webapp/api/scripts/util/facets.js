@@ -45,6 +45,10 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     onSelectOnly,
     uiContext
 ) {
+    if (Exhibit.params.safe) {
+        label = Exhibit.Formatter.encodeAngleBrackets(label);
+    }
+    
     var dom = SimileAjax.DOM.createDOMFromString(
         "div",
         "<div class='exhibit-facet-value-count'>" + count + "</div>" +
