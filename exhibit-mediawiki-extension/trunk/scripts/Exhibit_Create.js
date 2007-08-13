@@ -11,7 +11,7 @@ function createExhibit() {
 	for (var id in sources) {
 		var source = sources[id];
 		var dataTable = document.getElementById(source.id);
-		if (source.hideTable) { dataTable.setAttribute("style", "display:none"); }
+		if (source.hideTable !== "false") { dataTable.setAttribute("style", "display:none"); }
 		dataTable.setAttribute("ex:type", source.type);
 		dataTable.setAttribute("ex:label", source.label);
 		dataTable.setAttribute("ex:pluralLabel", source.pluralLabel);
