@@ -535,3 +535,54 @@ SimileAjax.Graphics.createStructuredDataCopyButton = function(image, width, heig
     
     return div;
 };
+
+SimileAjax.Graphics.getFontRenderingContext = function(elmt, width) {
+    return new SimileAjax.Graphics._FontRenderingContext(elmt, width);
+};
+
+SimileAjax.Graphics._FontRenderingContext = function(elmt, width) {
+    this._originalElmt = elmt;
+    this._div = document.createElement("div");
+    this._div.style.position = "absolute";
+    this._div.style.left = "-1000px";
+    this._div.style.top = "-1000px";
+    if (typeof width == "string") {
+        this._div.style.width = width;
+    } else if (typeof width == "number") {
+        this._div.style.width = width + "px";
+    }
+    document.body.appendChild(this._div);
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.dispose = function() {
+    document.body.removeChild(this._div);
+    
+    this._div = null;
+    this._originalElmt = null;
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.update = function() {
+    if (SimileAjax.Platform.browser.isIE) {
+        this._div.style.fontFamily = this._originalElmt.currentStyle.fontFamily;
+        this._div.style.fontSize = this._originalElmt.currentStyle.fontSize;
+        this._div.style.fontWeight = this._originalElmt.currentStyle.fontWeight;
+        this._div.style.fontVariant = this._originalElmt.currentStyle.fontVariant;
+        this._div.style.fontStyle = this._originalElmt.currentStyle.fontStyle;
+    } else {
+        this._div.style.font = window.getComputedStyle(this._originalElmt, "").getPropertyValue("font");
+    }
+    this._div.innerHTML = "A";
+    this._lineHeight = this._div.offsetHeight;
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.computeSize = function(text) {
+    this._div.innerHTML = text;
+    return {
+        width:  this._div.offsetWidth,
+        height: this._div.offsetHeight
+    };
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.getLineHeight = function() {
+    return this._lineHeight;
+};

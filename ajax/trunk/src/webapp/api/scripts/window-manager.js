@@ -150,7 +150,7 @@ SimileAjax.WindowManager._canProcessEventAtLayer = function(layer) {
     return true;
 };
 
-SimileAjax.WindowManager._cancelPopups = function(evt) {
+SimileAjax.WindowManager.cancelPopups = function(evt) {
     var evtCoords = (evt) ? SimileAjax.DOM.getEventPageCoordinates(evt) : { x: -1, y: -1 };
     
     var i = SimileAjax.WindowManager._layers.length - 1;
@@ -171,7 +171,7 @@ SimileAjax.WindowManager._cancelPopups = function(evt) {
 
 SimileAjax.WindowManager._onBodyMouseDown = function(elmt, evt, target) {
     if (!("eventPhase" in evt) || evt.eventPhase == evt.BUBBLING_PHASE) {
-        SimileAjax.WindowManager._cancelPopups(evt);
+        SimileAjax.WindowManager.cancelPopups(evt);
     }
 };
 

@@ -348,6 +348,13 @@ this._index();
 return new SimileAjax.EventIndex._Iterator(this._events,startDate,endDate,this._unit);
 };
 
+SimileAjax.EventIndex.prototype.getReverseIterator=function(startDate,endDate){
+if(!this._indexed){
+this._index();
+}
+return new SimileAjax.EventIndex._ReverseIterator(this._events,startDate,endDate,this._unit);
+};
+
 SimileAjax.EventIndex.prototype.getAllIterator=function(){
 return new SimileAjax.EventIndex._AllIterator(this._events);
 };
@@ -444,6 +451,58 @@ return null;
 _findNext:function(){
 var unit=this._unit;
 while((++this._currentIndex)<this._maxIndex){
+var evt=this._events.elementAt(this._currentIndex);
+if(unit.compare(evt.getStart(),this._endDate)<0&&
+unit.compare(evt.getEnd(),this._startDate)>0){
+
+this._next=evt;
+this._hasNext=true;
+return;
+}
+}
+this._next=null;
+this._hasNext=false;
+}
+};
+
+SimileAjax.EventIndex._ReverseIterator=function(events,startDate,endDate,unit){
+this._events=events;
+this._startDate=startDate;
+this._endDate=endDate;
+this._unit=unit;
+
+this._minIndex=events.find(function(evt){
+return unit.compare(evt.getStart(),startDate);
+});
+if(this._minIndex-1>=0){
+this._minIndex=this._events.elementAt(this._minIndex-1)._earliestOverlapIndex;
+}
+
+this._maxIndex=events.find(function(evt){
+return unit.compare(evt.getStart(),endDate);
+});
+
+this._currentIndex=this._maxIndex;
+this._hasNext=false;
+this._next=null;
+this._findNext();
+};
+
+SimileAjax.EventIndex._ReverseIterator.prototype={
+hasNext:function(){return this._hasNext;},
+next:function(){
+if(this._hasNext){
+var next=this._next;
+this._findNext();
+
+return next;
+}else{
+return null;
+}
+},
+_findNext:function(){
+var unit=this._unit;
+while((--this._currentIndex)>=this._minIndex){
 var evt=this._events.elementAt(this._currentIndex);
 if(unit.compare(evt.getStart(),this._endDate)<0&&
 unit.compare(evt.getEnd(),this._startDate)>0){
@@ -1670,6 +1729,57 @@ textarea.select();
 return div;
 };
 
+SimileAjax.Graphics.getFontRenderingContext=function(elmt,width){
+return new SimileAjax.Graphics._FontRenderingContext(elmt,width);
+};
+
+SimileAjax.Graphics._FontRenderingContext=function(elmt,width){
+this._originalElmt=elmt;
+this._div=document.createElement("div");
+this._div.style.position="absolute";
+this._div.style.left="-1000px";
+this._div.style.top="-1000px";
+if(typeof width=="string"){
+this._div.style.width=width;
+}else if(typeof width=="number"){
+this._div.style.width=width+"px";
+}
+document.body.appendChild(this._div);
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.dispose=function(){
+document.body.removeChild(this._div);
+
+this._div=null;
+this._originalElmt=null;
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.update=function(){
+if(SimileAjax.Platform.browser.isIE){
+this._div.style.fontFamily=this._originalElmt.currentStyle.fontFamily;
+this._div.style.fontSize=this._originalElmt.currentStyle.fontSize;
+this._div.style.fontWeight=this._originalElmt.currentStyle.fontWeight;
+this._div.style.fontVariant=this._originalElmt.currentStyle.fontVariant;
+this._div.style.fontStyle=this._originalElmt.currentStyle.fontStyle;
+}else{
+this._div.style.font=window.getComputedStyle(this._originalElmt,"").getPropertyValue("font");
+}
+this._div.innerHTML="A";
+this._lineHeight=this._div.offsetHeight;
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.computeSize=function(text){
+this._div.innerHTML=text;
+return{
+width:this._div.offsetWidth,
+height:this._div.offsetHeight
+};
+};
+
+SimileAjax.Graphics._FontRenderingContext.prototype.getLineHeight=function(){
+return this._lineHeight;
+};
+
 
 /* history.js */
 
@@ -2571,7 +2681,7 @@ return false;
 return true;
 };
 
-SimileAjax.WindowManager._cancelPopups=function(evt){
+SimileAjax.WindowManager.cancelPopups=function(evt){
 var evtCoords=(evt)?SimileAjax.DOM.getEventPageCoordinates(evt):{x:-1,y:-1};
 
 var i=SimileAjax.WindowManager._layers.length-1;
@@ -2592,7 +2702,7 @@ SimileAjax.WindowManager._popToLayer(i);
 
 SimileAjax.WindowManager._onBodyMouseDown=function(elmt,evt,target){
 if(!("eventPhase"in evt)||evt.eventPhase==evt.BUBBLING_PHASE){
-SimileAjax.WindowManager._cancelPopups(evt);
+SimileAjax.WindowManager.cancelPopups(evt);
 }
 };
 
