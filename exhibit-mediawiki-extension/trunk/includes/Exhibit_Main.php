@@ -67,11 +67,11 @@ function wfExhibitAddHTMLHeader(&$out) {
 	$gmapkey = 'ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg';
 	
 	if ($exhibitEnabled) {	
-		$ExhibitScript = '<script type="text/javascript" src="http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false';
+		$ExhibitScriptSrc = 'http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true';
 		$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';				
-		if ($includeTimeline) { $ExhibitScript = $ExhibitScript . '&views=timeline'; }
-		if ($includeMap) { $ExhibitScript = $ExhibitScript . '&gmapkey=' . $gmapkey; }	
-		$ExhibitScript = $ExhibitScript . '" ></script><script>SimileAjax.History.enabled = false;</script>';
+		if ($includeTimeline) { $ExhibitScriptSrc = $ExhibitScriptSrc . '&views=timeline'; }
+		if ($includeMap) { $ExhibitScriptSrc = $ExhibitScriptSrc . '&gmapkey=' . $gmapkey; }	
+		$ExhibitScript = '<script type="text/javascript" src ="' . $ExhibitScriptSrc . '"></script><script>SimileAjax.History.enabled = false;</script>';
 		$out->addScript($ExhibitScript);
 		$out->addScript($WExhibitScript);
 	}
@@ -266,6 +266,27 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			}
 			$coders .= "</div>";
 		}
+		
+		if ($xml->lens) {
+			$safe = true;
+			// DOMDocument doesn't like ex: attributes, so we'll deal with ex1928374 instead, and
+			// switch back later. The only problem is if ex1928374 occurrs naturally in the
+			// lens somewhere, it will get changed later with all the other ones.
+			$lenstext = str_replace( "ex:", "ex1928374", $xml->lens );
+			
+			$doc = new DOMDocument();
+			$doc->loadXML($lenstext);
+			if ($doc->getElementsByTagName("script")->length > 0) {
+				$lens = "Has script tag, you fool!!!! ";
+				$safe = false;
+			}
+			if (docOrChildrenHaveEventHandler($doc)) {
+				$lens = "Lens has event handlers, unsafe!!!";
+				$safe = false;
+			}
+		}
+		if ($safe) { $lens = str_replace("ex1928374", "ex:", $doc->saveHTML()); }
+		
 		$output = <<<OUTPUT
 		<script type="text/javascript">
 		var sources = { $sources };
@@ -273,10 +294,37 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		var views = "$views".split('/');
 		</script>
 		$coders
+		$lens
 		<div id="exhibitLocation"></div>
 OUTPUT;
 	}
 	return $output;
+}
+
+// Checks to see if any attributes of the node begin with "on", or
+// any attributes of node children do.
+function docOrChildrenHaveEventHandler( $doc ) {
+	$hashandler = false;
+	if ($doc->hasAttributes()) {
+		foreach ($doc->attributes as $attr) {
+			$attrname = $attr->nodeName;
+			// ex1928374 is what ex: was turned into prior to creating the DOMNode because
+			// it couldn't handle ex: .
+			if (strpos($attrname, "on") === 0 || strpos($attrname, "ex1928374on") === 0) {
+				$hashandler = true;
+				break;
+			}
+		}
+	}  
+	if (!$hashandler && $doc->childNodes->length > 0) {
+		foreach ($doc->childNodes as $node) {
+			if (docOrChildrenHaveEventHandler($node)) {
+				$hashandler = true;
+				break;
+			}
+		}
+	}
+	return $hashandler;
 }
 
 ?>
