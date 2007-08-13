@@ -272,15 +272,12 @@ intervalUnit:bottomIntervalUnit,
 intervalPixels:settings.bottomBandPixelsPerUnit,
 eventSource:this._eventSource,
 
-showEventText:false,
-trackHeight:0.5,
-trackGap:0.2,
+overview:true,
 theme:theme
 })
 ];
 bandInfos[1].syncWith=0;
 bandInfos[1].highlight=true;
-bandInfos[1].eventPainter.setLayout(bandInfos[0].eventPainter.getLayout());
 
 this._timeline=Timeline.create(timelineDiv,bandInfos,Timeline.HORIZONTAL);
 }
