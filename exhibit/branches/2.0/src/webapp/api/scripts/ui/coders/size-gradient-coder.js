@@ -16,8 +16,8 @@ Exhibit.SizeGradientCoder = function(uiContext) {
     	invFunc: function(size) { return Math.ceil(size); }
     }
     this._quad = {
-    	func: function(size) { return Math.ceil(Math.pow(size, 2)); },
-    	invFunc: function(size) { return Math.ceil(Math.sqrt(size)); }
+    	func: function(size) { return Math.ceil(Math.pow((size / 100), 2)); },
+    	invFunc: function(size) { return Math.sqrt(size) * 100; }
     }
     this._exp = { 
     	func: function(size) { return Math.ceil(Math.exp(size)); },
