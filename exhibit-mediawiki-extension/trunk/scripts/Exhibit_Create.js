@@ -11,6 +11,10 @@ function createExhibit() {
 	for (var id in sources) {
 		var source = sources[id];
 		var dataTable = document.getElementById(source.id);
+		if (source.hideTable) { dataTable.setAttribute("style", "display:none"); }
+		dataTable.setAttribute("ex:type", source.type);
+		dataTable.setAttribute("ex:label", source.label);
+		dataTable.setAttribute("ex:pluralLabel", source.pluralLabel);
 		var th, ths = dataTable.getElementsByTagName("th");
 		var columns = source.columns;
 		if (columns[0] !== "") {
@@ -32,11 +36,7 @@ function createExhibit() {
 				label = label.replace(/\s/g,'');
 				ths[c].setAttribute('ex:name', label);
 			}
-		}
-		if (source.hideTable) { dataTable.setAttribute("style", "display:none"); }
-		dataTable.setAttribute("ex:type", source.type);
-		dataTable.setAttribute("ex:label", source.label);
-		dataTable.setAttribute("ex:pluralLabel", source.pluralLabel);	
+		}	
 		Exhibit.HtmlTableImporter.loadTable(dataTable, window.database); 
 	}
 
