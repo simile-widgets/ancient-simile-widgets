@@ -4454,8 +4454,8 @@ func:function(size){return Math.ceil(size);},
 invFunc:function(size){return Math.ceil(size);}
 }
 this._quad={
-func:function(size){return Math.ceil(Math.pow(size,2));},
-invFunc:function(size){return Math.ceil(Math.sqrt(size));}
+func:function(size){return Math.ceil(Math.pow((size/100),2));},
+invFunc:function(size){return Math.sqrt(size)*100;}
 }
 this._exp={
 func:function(size){return Math.ceil(Math.exp(size));},
@@ -6245,11 +6245,20 @@ this._maxLength=0;
 
 Exhibit.Formatter._TextFormatter.prototype.format=function(value,appender){
 var span=document.createElement("span");
+
 span.innerHTML=this.formatText(value);
 appender(span);
 };
 
+Exhibit.Formatter._lessThanRegex=/</g;
+Exhibit.Formatter._greaterThanRegex=/>/g;
+
 Exhibit.Formatter._TextFormatter.prototype.formatText=function(value){
+if(Exhibit.params.safe){
+value=value.replace(Exhibit.Formatter._lessThanRegex,"&lt;").
+replace(Exhibit.Formatter._greaterThanRegex,"&gt;");
+}
+
 if(this._maxLength==0||value.length<=this._maxLength){
 return value;
 }else{
@@ -6317,6 +6326,10 @@ this._tooltip=uiContext.getSetting("format/image/tooltip");
 };
 
 Exhibit.Formatter._ImageFormatter.prototype.format=function(value,appender){
+if(Exhibit.params.safe){
+value=value.trim().startsWith("javascript:")?"":value;
+}
+
 var img=document.createElement("img");
 img.src=value;
 
@@ -6356,6 +6369,9 @@ appender(a);
 };
 
 Exhibit.Formatter._URLFormatter.prototype.formatText=function(value){
+if(Exhibit.params.safe){
+value=value.trim().startsWith("javascript:")?"":value;
+}
 return value;
 };
 
@@ -7857,8 +7873,13 @@ Exhibit.UI.makeValueSpan=function(label,valueType,layer){
 var span=document.createElement("span");
 span.className="exhibit-value";
 if(valueType=="url"){
+var url=label;
+if(Exhibit.params.safe){
+url=url.trim().startsWith("javascript:")?"":url;
+}
+
 span.innerHTML=
-"<a href=\""+label+"\" target='_blank'>"+
+"<a href=\""+url+"\" target='_blank'>"+
 (label.length>50?
 label.substr(0,20)+" ... "+label.substr(label.length-20):
 label)+

@@ -300,8 +300,13 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
     var span = document.createElement("span");
     span.className = "exhibit-value";
     if (valueType == "url") {
+        var url = label;
+        if (Exhibit.params.safe) {
+            url = url.trim().startsWith("javascript:") ? "" : url;
+        }
+        
         span.innerHTML = 
-            "<a href=\"" + label + "\" target='_blank'>" +
+            "<a href=\"" + url + "\" target='_blank'>" +
                 (label.length > 50 ? 
                     label.substr(0, 20) + " ... " + label.substr(label.length - 20) :
                     label) +

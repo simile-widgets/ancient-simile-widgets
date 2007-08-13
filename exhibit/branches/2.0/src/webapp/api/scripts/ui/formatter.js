@@ -100,11 +100,20 @@ Exhibit.Formatter._TextFormatter = function(uiContext) {
 
 Exhibit.Formatter._TextFormatter.prototype.format = function(value, appender) {
     var span = document.createElement("span");
+
     span.innerHTML = this.formatText(value);
     appender(span);
 };
 
+Exhibit.Formatter._lessThanRegex = /</g;
+Exhibit.Formatter._greaterThanRegex = />/g;
+
 Exhibit.Formatter._TextFormatter.prototype.formatText = function(value) {
+    if (Exhibit.params.safe) {
+        value = value.replace(Exhibit.Formatter._lessThanRegex, "&lt;").
+            replace(Exhibit.Formatter._greaterThanRegex, "&gt;");
+    }
+    
     if (this._maxLength == 0 || value.length <= this._maxLength) {
         return value;
     } else {
@@ -181,6 +190,10 @@ Exhibit.Formatter._ImageFormatter = function(uiContext) {
 };
 
 Exhibit.Formatter._ImageFormatter.prototype.format = function(value, appender) {
+    if (Exhibit.params.safe) {
+        value = value.trim().startsWith("javascript:") ? "" : value;
+    }
+    
     var img = document.createElement("img");
     img.src = value;
     
@@ -223,6 +236,9 @@ Exhibit.Formatter._URLFormatter.prototype.format = function(value, appender) {
 };
 
 Exhibit.Formatter._URLFormatter.prototype.formatText = function(value) {
+    if (Exhibit.params.safe) {
+        value = value.trim().startsWith("javascript:") ? "" : value;
+    }
     return value;
 };
 

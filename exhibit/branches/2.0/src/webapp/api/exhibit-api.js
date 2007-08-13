@@ -25,7 +25,7 @@
     
         window.Exhibit = {
             loaded:     false,
-            params:     { bundle: true, autoCreate: true },
+            params:     { bundle: true, autoCreate: true, safe: false },
             namespace:  "http://simile.mit.edu/2006/11/exhibit#",
             importers:  {},
             locales:    [ "en" ]
@@ -127,7 +127,7 @@
             }
         }
 
-        var paramTypes = { bundle:Boolean, js:Array, css:Array, autoCreate:Boolean };
+        var paramTypes = { bundle:Boolean, js:Array, css:Array, autoCreate:Boolean, safe:Boolean };
         if (typeof Exhibit_urlPrefix == "string") {
             Exhibit.urlPrefix = Exhibit_urlPrefix;
             if ("Exhibit_parameters" in window) {
