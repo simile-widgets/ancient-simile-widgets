@@ -569,7 +569,12 @@ SimileAjax.Graphics._FontRenderingContext.prototype.update = function() {
         this._div.style.fontVariant = this._originalElmt.currentStyle.fontVariant;
         this._div.style.fontStyle = this._originalElmt.currentStyle.fontStyle;
     } else {
-        this._div.style.font = window.getComputedStyle(this._originalElmt, "").getPropertyValue("font");
+        var style = window.getComputedStyle(this._originalElmt, "");
+        this._div.style.fontFamily = style.getPropertyValue("font-family");
+        this._div.style.fontSize = style.getPropertyValue("font-size");
+        this._div.style.fontWeight = style.getPropertyValue("font-weight");
+        this._div.style.fontVariant = style.getPropertyValue("font-variant");
+        this._div.style.fontStyle = style.getPropertyValue("font-style");
     }
     this._div.innerHTML = "A";
     this._lineHeight = this._div.offsetHeight;
