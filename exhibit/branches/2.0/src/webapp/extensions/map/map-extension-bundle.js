@@ -320,7 +320,7 @@ return SimileAjax.Graphics.createTranslucentImage(
 Exhibit.MapView._markerUrlPrefix+
 "?renderer=map-marker&shape="+shape+
 "&width=50&height=50&icon="+iconURL+
-"&iconScale="+iconScale,
+"&iconScale="+scale,
 "middle"
 );
 }
@@ -710,7 +710,6 @@ if(iconSize==0){icon.shadow=Exhibit.MapView._markerUrlPrefix+shadowParameters.co
 icon.iconSize=new GSize(width,height);
 icon.shadowSize=new GSize(width*1.5,height-2);
 
-console.log(icon);
 return icon;
 };
 

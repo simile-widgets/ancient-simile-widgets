@@ -319,7 +319,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
             Exhibit.MapView._markerUrlPrefix+
             "?renderer=map-marker&shape="+shape+
             "&width=50&height=50&icon="+iconURL+
-            "&iconScale="+iconScale,
+            "&iconScale="+scale,
             "middle"
         );
     }
@@ -711,6 +711,5 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
     icon.iconSize = new GSize(width, height);
     icon.shadowSize = new GSize(width * 1.5, height - 2);
     
-    console.log(icon);
     return icon;
 };
