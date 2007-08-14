@@ -13,10 +13,12 @@ this._accessors={
 getProxy:function(itemID,database,visitor){visitor(itemID);},
 getColorKey:null,
 getSizeKey:null,
+getIconKey:null,
 getIcon:null
 };
 this._colorCoder=null;
 this._sizeCoder=null;
+this._iconCoder=null;
 
 this._selectListener=null;
 this._itemIDToMarker={};
@@ -43,6 +45,7 @@ Exhibit.MapView._settingSpecs={
 "color":{type:"text",defaultValue:"#FF9000"},
 "colorCoder":{type:"text",defaultValue:null},
 "sizeCoder":{type:"text",defaultValue:null},
+"iconCoder":{type:"text",defaultValue:null},
 "selectCoordinator":{type:"text",defaultValue:null},
 "iconSize":{type:"int",defaultValue:0},
 "iconFit":{type:"text",defaultValue:"smaller"},
@@ -58,6 +61,7 @@ Exhibit.MapView._settingSpecs={
 "pinWidth":{type:"int",defaultValue:6},
 "sizeLegendLabel":{type:"text",defaultValue:null},
 "colorLegendLabel":{type:"text",defaultValue:null},
+"iconLegendLabel":{type:"text",defaultValue:null},
 "markerScale":{type:"text",defaultValue:null},
 "showHeader":{type:"boolean",defaultValue:true},
 "showSummary":{type:"boolean",defaultValue:true},
@@ -110,6 +114,10 @@ type:"text"
 },
 {accessorName:"getSizeKey",
 attributeName:"sizeKey",
+type:"text"
+},
+{accessorName:"getIconKey",
+attributeName:"iconKey",
 type:"text"
 },
 {accessorName:"getIcon",
@@ -263,6 +271,11 @@ this._sizeCoder._settings.markerScale=this._settings.markerScale;
 }
 }
 }
+if(this._accessors.getIconKey!=null){
+if(this._settings.iconCoder!=null){
+this._iconCoder=exhibit.getComponent(this._settings.iconCoder);
+}
+}
 if("selectCoordinator"in this._settings){
 var selectCoordinator=exhibit.getComponent(this._settings.selectCoordinator);
 if(selectCoordinator!=null){
@@ -281,22 +294,33 @@ var legendWidgetSettings={};
 
 legendWidgetSettings.colorGradient=(this._colorCoder!=null&&"_gradientPoints"in this._colorCoder);
 legendWidgetSettings.colorMarkerGenerator=function(color){
-var shape="square";
+var shape=settings.shape;
 return SimileAjax.Graphics.createTranslucentImage(
 Exhibit.MapView._markerUrlPrefix+
-"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+"?renderer=map-marker&shape="+shape+
 "&width=20&height=20&pinHeight=5&background="+color.substr(1),
 "middle"
 );
 }
 legendWidgetSettings.sizeMarkerGenerator=function(iconSize){
-var shape="square";
+var shape=settings.shape;
 return SimileAjax.Graphics.createTranslucentImage(
 Exhibit.MapView._markerUrlPrefix+
-"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+"?renderer=map-marker&shape="+shape+
 "&width="+iconSize+
 "&height="+iconSize+
 "&pinHeight=0",
+"middle"
+);
+}
+legendWidgetSettings.iconMarkerGenerator=function(iconURL){
+var shape=settings.shape;
+var scale=settings.iconScale;
+return SimileAjax.Graphics.createTranslucentImage(
+Exhibit.MapView._markerUrlPrefix+
+"?renderer=map-marker&shape="+shape+
+"&width=50&height=50&icon="+iconURL+
+"&iconScale="+iconScale,
 "middle"
 );
 }
@@ -374,6 +398,7 @@ var currentSet=collection.getRestrictedItems();
 var locationToData={};
 var hasColorKey=(this._accessors.getColorKey!=null);
 var hasSizeKey=(this._accessors.getSizeKey!=null);
+var hasIconKey=(this._accessors.getIconKey!=null);
 var hasIcon=(this._accessors.getIcon!=null);
 
 currentSet.visit(function(itemID){
@@ -391,29 +416,28 @@ if(hasSizeKey){
 sizeKeys=new Exhibit.Set();
 accessors.getSizeKey(itemID,database,function(v){sizeKeys.add(v);});
 }
+var iconKeys=null;
+if(hasIconKey){
+iconKeys=new Exhibit.Set();
+accessors.getIconKey(itemID,database,function(v){iconKeys.add(v);});
+}
 for(var n=0;n<latlngs.length;n++){
 var latlng=latlngs[n];
 var latlngKey=latlng.lat+","+latlng.lng;
 if(latlngKey in locationToData){
 var locationData=locationToData[latlngKey];
 locationData.items.push(itemID);
-if(hasColorKey){
-locationData.colorKeys.addSet(colorKeys);
-}
-if(hasSizeKey){
-locationData.sizeKeys.addSet(sizeKeys);
-}
+if(hasColorKey){locationData.colorKeys.addSet(colorKeys);}
+if(hasSizeKey){locationData.sizeKeys.addSet(sizeKeys);}
+if(hasIconKey){locationData.iconKeys.addSet(iconKeys);}
 }else{
 var locationData={
 latlng:latlng,
 items:[itemID]
 };
-if(hasColorKey){
-locationData.colorKeys=colorKeys;
-}
-if(hasSizeKey){
-locationData.sizeKeys=sizeKeys;
-}
+if(hasColorKey){locationData.colorKeys=colorKeys;}
+if(hasSizeKey){locationData.sizeKeys=sizeKeys;}
+if(hasIconKey){locationData.iconKeys=iconKeys;}
 locationToData[latlngKey]=locationData;
 }
 }
@@ -424,6 +448,7 @@ unplottableItems.push(itemID);
 
 var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
 var sizeCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
+var iconCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
 var bounds,maxAutoZoom=Infinity;
 var addMarkerAtLocation=function(locationData){
 var itemCount=locationData.items.length;
@@ -447,6 +472,9 @@ if(itemCount==1){
 if(hasIcon){
 accessors.getIcon(locationData.items[0],database,function(v){icon=v;});
 }
+}
+if(hasIconKey){
+icon=self._iconCoder.translateSet(locationData.iconKeys,iconCodingFlags);
 }
 
 var icon=Exhibit.MapView._makeIcon(
@@ -544,6 +572,23 @@ legendWidget.addEntry(sizeCoder.getMixedSize(),sizeCoder.getMixedLabel(),'size')
 if(sizeCodingFlags.missing){
 legendWidget.addEntry(sizeCoder.getMissingSize(),sizeCoder.getMissingLabel(),'size');
 }
+}
+}
+
+if(hasIconKey){
+var legendWidget=this._dom.legendWidget;
+iconLegendDiv=document.createElement('div');
+iconLegendDiv.setAttribute('align','center');
+legendWidget._div=legendWidget._div.parentNode.appendChild(iconLegendDiv);
+var iconCoder=this._iconCoder;
+var keys=iconCodingFlags.keys.toArray().sort();
+if(settings.iconLegendLabel!==null){
+legendWidget.addLegendLabel(settings.iconLegendLabel);
+}
+for(var k=0;k<keys.length;k++){
+var key=keys[k];
+var icon=iconCoder.translate(key);
+legendWidget.addEntry(icon,key,'icon');
 }
 }
 
@@ -665,6 +710,7 @@ if(iconSize==0){icon.shadow=Exhibit.MapView._markerUrlPrefix+shadowParameters.co
 icon.iconSize=new GSize(width,height);
 icon.shadowSize=new GSize(width*1.5,height-2);
 
+console.log(icon);
 return icon;
 };
 

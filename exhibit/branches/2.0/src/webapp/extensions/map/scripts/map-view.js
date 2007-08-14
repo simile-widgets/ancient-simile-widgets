@@ -314,11 +314,12 @@ Exhibit.MapView.prototype._initializeUI = function() {
     }
     legendWidgetSettings.iconMarkerGenerator = function(iconURL) {
         var shape=settings.shape;
+        var scale=settings.iconScale;
         return SimileAjax.Graphics.createTranslucentImage(
             Exhibit.MapView._markerUrlPrefix+
             "?renderer=map-marker&shape="+shape+
             "&width=50&height=50&icon="+iconURL+
-            "&iconScale=0.5",
+            "&iconScale="+iconScale,
             "middle"
         );
     }
