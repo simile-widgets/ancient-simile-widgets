@@ -146,6 +146,20 @@ DStructs.Array.prototype.clone = function() {
     this.each(function(e) { clone.push(e); });
     return clone;
 };
+DStructs.Array.prototype.iterator = function() {
+    return new DStructs.Iterator(this);
+};
+
+DStructs.Iterator = function(items) {
+    var index = 0;
+    this.hasNext = function() {
+        return index < items.length;
+    };
+    this.next = function() {
+        index++;
+        return items[index - 1];
+    };
+};
 
 
 DStructs.Hash = function() {
