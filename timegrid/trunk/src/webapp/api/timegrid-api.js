@@ -36,6 +36,7 @@
             "labellers.js",
             
             "sources/default.js",
+            "sources/recurring.js",
             
             "layouts/layout.js",
             "layouts/nmonth.js",
