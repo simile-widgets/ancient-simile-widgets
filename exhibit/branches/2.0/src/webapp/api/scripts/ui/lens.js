@@ -311,24 +311,39 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
                 };
                 parseChildTextNodes = false;
             } else {
-                var x = name.indexOf("-content");
+                var isStyle = false;
+                var x = name.indexOf("-style-content");
+                if (x > 0) {
+                    isStyle = true;
+                } else {
+                    x = name.indexOf("-content");
+                }
+                
                 if (x > 0) {
                     if (templateNode.contentAttributes == null) {
                         templateNode.contentAttributes = [];
                     }
                     templateNode.contentAttributes.push({
                         name:       name.substr(0, x),
-                        expression: Exhibit.ExpressionParser.parse(value)
+                        expression: Exhibit.ExpressionParser.parse(value),
+                        isStyle:    isStyle
                     });
                 } else {
-                    x = name.indexOf("-subcontent");
+                    x = name.indexOf("-style-subcontent");
+                    if (x > 0) {
+                        isStyle = true;
+                    } else {
+                        x = name.indexOf("-subcontent");
+                    }
+                    
                     if (x > 0) {
                         if (templateNode.subcontentAttributes == null) {
                             templateNode.subcontentAttributes = [];
                         }
                         templateNode.subcontentAttributes.push({
                             name:       name.substr(0, x),
-                            fragments:  Exhibit.Lens._parseSubcontentAttribute(value)
+                            fragments:  Exhibit.Lens._parseSubcontentAttribute(value),
+                            isStyle:    isStyle
                         });
                     }
                 }
@@ -550,8 +565,15 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 "value",
                 database
             ).values.visit(function(v) { values.push(v); });
-                
-            elmt.setAttribute(attribute.name, values.join(";"));
+            
+            var value = values.join(";");
+            if (attribute.isStyle) {
+                elmt.style[attribute.name] = value;
+            } else if ("class" == attribute.name) {
+                elmt.className = value;
+            } else {
+                elmt.setAttribute(attribute.name, value);
+            }
         }
     }
     if (templateNode.subcontentAttributes != null) {
@@ -573,7 +595,14 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                     ).value;
                 }
             }
-            elmt.setAttribute(attribute.name, results);
+            
+            if (attribute.isStyle) {
+                elmt.style[attribute.name] = results;
+            } else if ("class" == attribute.name) {
+                elmt.className = results;
+            } else {
+                elmt.setAttribute(attribute.name, results);
+            }
         }
     }
     var handlers = templateNode.handlers;
