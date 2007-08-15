@@ -24,6 +24,7 @@ Timegrid.RecurringEventSource = function() {
     /** Adds the given event prototype to this event source */
     this.addEventPrototype = function(eventPrototype) {
         eventPrototypes.push(eventPrototype);
+        this._fire("onAddMany", []);
     };
     
     /** Removes the given event prototype from this source's prototypes */
@@ -34,6 +35,7 @@ Timegrid.RecurringEventSource = function() {
     /** Removes all of the event prototypes from this source */
     this.clearEventPrototypes = function() {
         eventPrototypes.clear();
+        this._fire("onClear", []);
     };
 
     /** Generates events from event prototypes */
