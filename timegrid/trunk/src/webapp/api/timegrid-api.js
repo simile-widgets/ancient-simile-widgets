@@ -12,7 +12,7 @@
     
         window.Timegrid = {
             loaded:     false,
-            bundle:     false,
+            params: { autoCreate: true, bundle: false },
             importers:  {}
         };
     
@@ -68,11 +68,13 @@
             return;
         }
         Timegrid.urlPrefix = url.substr(0, url.indexOf("timegrid-api.js"));
+        var paramTypes = { bundle: Boolean, autoCreate: Boolean };
+        SimileAjax.parseURLParameters(url, Timegrid.params, paramTypes);
         
         /*
          *  Core scripts and styles
          */
-        if (Timegrid.bundle) {
+        if (Timegrid.params.bundle) {
             SimileAjax.includeJavascriptFiles(document, Timegrid.urlPrefix, [ "bundle.js" ]);
             SimileAjax.includeCssFiles(document, Timegrid.urlPrefix, [ "bundle.css" ]);
         } else {
@@ -88,8 +90,9 @@
             localeFiles.push(locales[i] + "/locale.js");
         };
         SimileAjax.includeJavascriptFiles(document, Timegrid.urlPrefix + "locales/", localeFiles);
-        
-        SimileAjax.includeJavascriptFile(document, Timegrid.urlPrefix + "scripts/create.js");
+        if (Timegrid.params.autoCreate) { 
+            SimileAjax.includeJavascriptFile(document, Timegrid.urlPrefix + "scripts/create.js");
+        }
         Timegrid.loaded = true;
     };
     
