@@ -31,6 +31,7 @@ DStructs.Array = function() {
         } else {
             x.push(a[i]);
         }
+    }
     for (var i in this) { x[i] = this[i]; }
     return x;
 };
@@ -109,7 +110,6 @@ DStructs.Array.prototype.indicesOf = function(obj) {
 DStructs.Array.prototype.remove = function(obj) {
     var removed = 0;
     while (this.contains(obj)) {
-
     }
     return removed;
 };
