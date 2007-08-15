@@ -15,15 +15,17 @@ Timegrid.resize = function() {
 
 Timegrid.createFromDOM = function(elmt) {
     var config = Timegrid.getConfigFromDOM(elmt);
-    var eventSource = new Timegrid.DefaultEventSource();
     var layoutNames = config.views.split(",");
-    var tg = Timegrid.create(elmt, eventSource, layoutNames, config);
     var getExtension = function(s) {
         return s.split('.').pop().toLowerCase();
     };
     if (config.eventsource) {
-        eventSource = eval(config.eventsource);
+        var eventSource = eval(config.eventsource);
+        var tg = Timegrid.create(elmt, eventSource, layoutNames, config);
+        return tg;
     } else if (config.src) {
+        var eventSource = new Timegrid.DefaultEventSource();
+        var tg = Timegrid.create(elmt, eventSource, layoutNames, config);
         switch (getExtension(config.src)) {
             case 'xml':
             tg.loadXML(config.src, function(xml, url) {
@@ -36,8 +38,8 @@ Timegrid.createFromDOM = function(elmt) {
             });
             break;
         }
+        return tg;
     }
-    return tg;
 };
 
 Timegrid.getConfigFromDOM = function(elmt) {
