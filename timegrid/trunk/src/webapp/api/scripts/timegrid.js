@@ -21,7 +21,9 @@ Timegrid.createFromDOM = function(elmt) {
     var getExtension = function(s) {
         return s.split('.').pop().toLowerCase();
     };
-    if (config.src) {
+    if (config.eventsource) {
+        eventSource = eval(config.eventsource);
+    } else if (config.src) {
         switch (getExtension(config.src)) {
             case 'xml':
             tg.loadXML(config.src, function(xml, url) {
