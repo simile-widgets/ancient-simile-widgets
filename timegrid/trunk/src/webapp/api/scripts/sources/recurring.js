@@ -46,22 +46,20 @@ Timegrid.RecurringEventSource = function() {
 };
 $.inherit(Timegrid.RecurringEventSource, Timegrid.ListenerAware);
 
-Timegrid.RecurringEventSource.prototype = {
-    loadXML: function(xml, url) {
+Timegrid.RecurringEventSource.prototype.loadXML = function(xml, url) {
     
-    },
-    loadJSON: function(data, url) {
+};
+Timegrid.RecurringEventSource.prototype.loadJSON = function(data, url) {
     
-    },
-    getEventIterator: function(startDate, endDate) {
-        return this.generateEvents(startDate, endDate).iterator();
-    },
-    getEarliestDate: function() {
+};
+Timegrid.RecurringEventSource.prototype.getEventIterator = function(startDate, endDate) {
+    return this.generateEvents(startDate, endDate).iterator();
+};
+Timegrid.RecurringEventSource.prototype.getEarliestDate = function() {
     
-    },
-    getLatestDate: function() {
+};
+Timegrid.RecurringEventSource.prototype.getLatestDate = function() {
     
-    }
 };
 
 Timegrid.RecurringEventSource.EventPrototype = function(dayArray, start, end, 
