@@ -75,6 +75,12 @@ Exhibit.Lens.prototype._constructDefaultUI = function(itemID, div, uiContext) {
     var properties = Exhibit.Lens._commonProperties;
     
     var label = database.getObject(itemID, "label");
+    label = label != null ? label : itemID;
+    
+    if (Exhibit.params.safe) {
+        label = Exhibit.Formatter.encodeAngleBrackets(label);
+    }
+    
     var template = {
         elmt:       div,
         className:  "exhibit-lens",

@@ -301,17 +301,20 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
     span.className = "exhibit-value";
     if (valueType == "url") {
         var url = label;
-        if (Exhibit.params.safe) {
-            url = url.trim().startsWith("javascript:") ? "" : url;
+        if (Exhibit.params.safe && url.trim().startsWith("javascript:")) {
+            span.appendChild(document.createTextNode(url));
+        } else {
+            span.innerHTML = 
+                "<a href=\"" + url + "\" target='_blank'>" +
+                    (label.length > 50 ? 
+                        label.substr(0, 20) + " ... " + label.substr(label.length - 20) :
+                        label) +
+                "</a>";
         }
-        
-        span.innerHTML = 
-            "<a href=\"" + url + "\" target='_blank'>" +
-                (label.length > 50 ? 
-                    label.substr(0, 20) + " ... " + label.substr(label.length - 20) :
-                    label) +
-            "</a>";
     } else {
+        if (Exhibit.params.safe) {
+            label = Exhibit.Formatter.encodeAngleBrackets(label);
+        }
         span.innerHTML = label;
     }
     return span;
