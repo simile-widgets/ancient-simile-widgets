@@ -14,11 +14,8 @@ Exhibit.LegendGradientWidget.create = function (containerElmt, uiContext) {
 };
 
 Exhibit.LegendGradientWidget.prototype.addGradient = function(configuration) {
-
-console.log(configuration);
 	var gradientPoints = [];
 	var gradientPoints = configuration;
-console.log(gradientPoints);
 	var sortObj = function(a, b) {
 		return a.value - b.value;
 	};

@@ -89,6 +89,10 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
             facet._valueSet.add(selection[i]);
         }
     }
+	if("height" in configuration) {
+		console.log(configuration);
+		facet._height = parseInt(configuration.height);
+	}
     
     if (!("facetLabel" in facet._settings)) {
         facet._settings.facetLabel = "missing ex:facetLabel";
