@@ -514,7 +514,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var colorCoder = this._colorCoder;
             var keys = colorCodingFlags.keys.toArray().sort();
             if (settings.colorLegendLabel !== null) {
-                legendWidget.addLegendLabel(settings.colorLegendLabel);
+                legendWidget.addLegendLabel(settings.colorLegendLabel, 'color');
             }
             if (colorCoder._gradientPoints != null) {
                 var legendGradientWidget = this._dom.legendWidget;
@@ -540,13 +540,10 @@ Exhibit.MapView.prototype._reconstruct = function() {
         
         if (hasSizeKey) {
             var legendWidget = this._dom.legendWidget;
-            sizeLegendDiv = document.createElement('div');
-            sizeLegendDiv.setAttribute('align', 'center');
-            legendWidget._div = legendWidget._div.parentNode.appendChild(sizeLegendDiv);
             var sizeCoder = this._sizeCoder;
             var keys = sizeCodingFlags.keys.toArray().sort();    
             if (settings.sizeLegendLabel !== null) {
-                legendWidget.addLegendLabel(settings.sizeLegendLabel);
+                legendWidget.addLegendLabel(settings.sizeLegendLabel, 'size');
             }
             if (sizeCoder._gradientPoints != null) {
                 var points = sizeCoder._gradientPoints;
@@ -578,18 +575,24 @@ Exhibit.MapView.prototype._reconstruct = function() {
 
         if (hasIconKey) {
             var legendWidget = this._dom.legendWidget;
-            iconLegendDiv = document.createElement('div');
-            iconLegendDiv.setAttribute('align', 'center');
-            legendWidget._div = legendWidget._div.parentNode.appendChild(iconLegendDiv);
             var iconCoder = this._iconCoder;
             var keys = iconCodingFlags.keys.toArray().sort();    
             if (settings.iconLegendLabel !== null) {
-                legendWidget.addLegendLabel(settings.iconLegendLabel);
+                legendWidget.addLegendLabel(settings.iconLegendLabel, 'icon');
             }      
 			for (var k = 0; k < keys.length; k++) {
 				var key = keys[k];
 				var icon = iconCoder.translate(key);
 				legendWidget.addEntry(icon, key, 'icon');
+			}
+		    if (iconCodingFlags.others) {
+				legendWidget.addEntry(iconCoder.getOthersIcon(), iconCoder.getOthersLabel(), 'icon');
+			}
+			if (iconCodingFlags.mixed) {
+				legendWidget.addEntry(iconCoder.getMixedIcon(), iconCoder.getMixedLabel(), 'icon');
+			}
+			if (iconCodingFlags.missing) {
+				legendWidget.addEntry(iconCoder.getMissingIcon(), iconCoder.getMissingLabel(), 'icon');
 			}
         }  
         

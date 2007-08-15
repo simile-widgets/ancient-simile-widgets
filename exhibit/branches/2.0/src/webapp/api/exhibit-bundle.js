@@ -10862,14 +10862,15 @@ this._uiContext=null;
 
 Exhibit.LegendWidget.prototype._initializeUI=function(){
 this._div.className="exhibit-legendWidget";
-this._div.innerHTML="";
+this._div.innerHTML="<div id='exhibit-color-legend'></div><div id='exhibit-size-legend'></div><div id='exhibit-icon-legend'></div>";
 };
 
 Exhibit.LegendWidget.prototype.clear=function(){
-this._div.innerHTML="";
+console.log('hi');
+this._div.innerHTML="<div id='exhibit-color-legend'></div><div id='exhibit-size-legend'></div><div id='exhibit-icon-legend'></div>";
 };
 
-Exhibit.LegendWidget.prototype.addLegendLabel=function(label){
+Exhibit.LegendWidget.prototype.addLegendLabel=function(label,type){
 var dom=SimileAjax.DOM.createDOMFromString(
 "div",
 "<div id='legend-label'>"+
@@ -10880,7 +10881,8 @@ label.replace(/\s+/g,"\u00a0")+
 {}
 );
 dom.elmt.className="exhibit-legendWidget-label";
-this._div.appendChild(dom.elmt);
+var id='exhibit-'+type+'-legend';
+document.getElementById(id).appendChild(dom.elmt);
 }
 
 Exhibit.LegendWidget.prototype.addEntry=function(value,label,type){
@@ -10896,6 +10898,7 @@ label.replace(/\s+/g,"\u00a0")+
 "\u00a0\u00a0 ",
 {marker:this._colorMarkerGenerator(value)}
 );
+var legendDiv=document.getElementById('exhibit-color-legend');
 }
 if(type=='size'){
 var dom=SimileAjax.DOM.createDOMFromString(
@@ -10907,6 +10910,7 @@ label.replace(/\s+/g,"\u00a0")+
 "\u00a0\u00a0 ",
 {marker:this._sizeMarkerGenerator(value)}
 );
+var legendDiv=document.getElementById('exhibit-size-legend');
 }
 if(type=='icon'){
 var dom=SimileAjax.DOM.createDOMFromString(
@@ -10918,10 +10922,11 @@ label.replace(/\s+/g,"\u00a0")+
 "\u00a0\u00a0 ",
 {marker:this._iconMarkerGenerator(value)}
 );
+var legendDiv=document.getElementById('exhibit-icon-legend');
 }
 dom.elmt.className="exhibit-legendWidget-entry";
 this._labelStyler(dom.label,value);
-this._div.appendChild(dom.elmt);
+legendDiv.appendChild(dom.elmt);
 };
 
 Exhibit.LegendWidget._localeSort=function(a,b){
