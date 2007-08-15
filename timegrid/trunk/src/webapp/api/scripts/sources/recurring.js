@@ -40,7 +40,7 @@ Timegrid.RecurringEventSource = function() {
 
     /** Generates events from event prototypes */
     this.generateEvents = function(startDate, endDate) {
-        return eventPrototypes.foldr(new DStructs.Array(), function(a, ep) {
+        return eventPrototypes.foldr(new DStructs.Array(), function(ep, a) {
             a.concat(ep.generateEvents(startDate, endDate));
             return a;
         });
@@ -58,10 +58,10 @@ Timegrid.RecurringEventSource.prototype.getEventIterator = function(startDate, e
     return this.generateEvents(startDate, endDate).iterator();
 };
 Timegrid.RecurringEventSource.prototype.getEarliestDate = function() {
-    
+    return (new Date()).clearTime().setDay(0);
 };
 Timegrid.RecurringEventSource.prototype.getLatestDate = function() {
-    
+    return (new Date()).clearTime().setDay(7);
 };
 
 Timegrid.RecurringEventSource.EventPrototype = function(dayArray, start, end, 

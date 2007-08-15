@@ -511,6 +511,17 @@ Date.parseString = function(val, format) {
             return new Date(this);
         }
     });
+
+    /**
+     * Set the day of the week of the date within this same week
+     */
+    add('setDay', function(n) {
+        var day = this.getDay();
+        if (day == n) { return this; }
+        if (n == 7) { this.add('d', 7); return this.setDay(0); }
+        if (day < n) { this.add('d', 1); return this.setDay(n); }
+        if (day > n) { this.add('d', -1); return this.setDay(n); }
+    });
     
     /**
      * Add an amount of time to a date. Negative numbers can be passed to 
