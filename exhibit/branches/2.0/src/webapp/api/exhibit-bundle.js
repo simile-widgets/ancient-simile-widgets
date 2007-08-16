@@ -4952,7 +4952,7 @@ facet._settings.facetLabel=segment.forward?property.getLabel():property.getRever
 }
 
 Exhibit.ListFacet.prototype.dispose=function(){
-this._uiContext.getCollection().addFacet(this);
+this._uiContext.getCollection().removeFacet(this);
 
 this._uiContext.getCollection().removeListener(this._listener);
 this._uiContext=null;
@@ -5317,7 +5317,7 @@ facet._settings.facetLabel=segment.forward?property.getLabel():property.getRever
 }
 
 Exhibit.NumericRangeFacet.prototype.dispose=function(){
-this._uiContext.getCollection().addFacet(this);
+this._uiContext.getCollection().removeFacet(this);
 
 this._uiContext.getCollection().removeListener(this._listener);
 this._uiContext=null;
@@ -5655,7 +5655,7 @@ facet._valueSet.add(selection[i]);
 }
 
 Exhibit.TextSearchFacet.prototype.dispose=function(){
-this._uiContext.getCollection().addFacet(this);
+this._uiContext.getCollection().removeFacet(this);
 
 this._uiContext.getCollection().removeListener(this._listener);
 this._uiContext=null;
