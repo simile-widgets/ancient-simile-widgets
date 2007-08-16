@@ -4907,6 +4907,11 @@ for(var i=0,s;s=selection[i];i++){
 facet._valueSet.add(s);
 }
 }
+
+var height=Exhibit.getAttribute(configElmt,"height");
+if(height!=null&&height.length>0){
+facet._height=parseInt(height);
+}
 }catch(e){
 SimileAjax.Debug.exception(e,"ListFacet: Error processing configuration of list facet");
 }
@@ -4931,7 +4936,6 @@ facet._valueSet.add(selection[i]);
 }
 }
 if("height"in configuration){
-console.log(configuration);
 facet._height=parseInt(configuration.height);
 }
 
@@ -10247,7 +10251,6 @@ this._uiContext
 }
 }catch(e){
 SimileAjax.Debug.log("Failed to create view "+this._viewLabels[index]);
-console.log(e);
 }
 this._uiContext.getExhibit().setComponent(this._viewIDs[index],this._view);
 this._dom.setViewIndex(index);

@@ -15,7 +15,7 @@ Exhibit.VEMapView = function(containerElmt, uiContext) {
     this._accessors = {
         getProxy: function(itemID, database, visitor) { visitor(itemID); },
         getColorKey: null,
-		getIcon:     null 
+        getIcon:     null 
     };
     this._colorCoder = null;
     
@@ -40,15 +40,15 @@ Exhibit.VEMapView._settingSpecs = {
     "mapConstructor":   { type: "function", defaultValue: null      },
     "color":            { type: "text",     defaultValue: "#FF9000" },
     "colorCoder":       { type: "text",     defaultValue: null      },
-	"iconScale":        { type: "float",    defaultValue: 1         }, 
-	"iconOffsetX":      { type: "float",    defaultValue: 0         }, 
-	"iconOffsetY":      { type: "float",    defaultValue: 0         }, 
-	"shape":            { type: "text",     defaultValue: "circle"  }, 
-	"bodyWidth":        { type: "int",      defaultValue: 24        }, 
-	"bodyHeight":       { type: "int",      defaultValue: 24        }, 
-	"pin":              { type: "boolean",  defaultValue: true      }, 
-	"pinHeight":        { type: "int",      defaultValue: 6         }, 
-	"pinWidth":         { type: "int",      defaultValue: 6         } 
+    "iconScale":        { type: "float",    defaultValue: 1         }, 
+    "iconOffsetX":      { type: "float",    defaultValue: 0         }, 
+    "iconOffsetY":      { type: "float",    defaultValue: 0         }, 
+    "shape":            { type: "text",     defaultValue: "circle"  }, 
+    "bodyWidth":        { type: "int",      defaultValue: 24        }, 
+    "bodyHeight":       { type: "int",      defaultValue: 24        }, 
+    "pin":              { type: "boolean",  defaultValue: true      }, 
+    "pinHeight":        { type: "int",      defaultValue: 6         }, 
+    "pinWidth":         { type: "int",      defaultValue: 6         } 
 };
 
 Exhibit.VEMapView._accessorSpecs = [
@@ -95,10 +95,10 @@ Exhibit.VEMapView._accessorSpecs = [
         attributeName:  "colorKey",
         type:           "text"
     },
-	{   accessorName : "getIcon",
-		attributeName:  "icon", 
-	    type:           "url"
- 	}
+    {   accessorName : "getIcon",
+        attributeName:  "icon", 
+        type:           "url"
+     }
 ];
 
 Exhibit.VEMapView.create = function(configuration, containerElmt, uiContext) {
@@ -176,17 +176,17 @@ Exhibit.VEMapView.prototype._internalValidate = function() {
 Exhibit.VEMapView.prototype._initializeUI = function() {
     var self = this;
     var settings = this._settings;
-	var legendWidgetSettings="_gradientPoints" in this._colorCoder ? "gradient" :
-		{markerGenerator:function(color){
-			var shape="square";
-			return SimileAjax.Graphics.createTranslucentImage(
-			Exhibit.MapView._markerUrlPrefix+
-			"?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
-			"&width=20&height=20&pinHeight=0&background="+color.substr(1),
-			"middle"
-			);
-			}
-		};
+    var legendWidgetSettings="_gradientPoints" in this._colorCoder ? "gradient" :
+        {markerGenerator:function(color){
+            var shape="square";
+            return SimileAjax.Graphics.createTranslucentImage(
+            Exhibit.MapView._markerUrlPrefix+
+            "?renderer=map-marker&shape="+Exhibit.MapView._defaultMarkerShape+
+            "&width=20&height=20&pinHeight=0&background="+color.substr(1),
+            "middle"
+            );
+            }
+        };
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -194,7 +194,7 @@ Exhibit.VEMapView.prototype._initializeUI = function() {
         this._uiContext, 
         true, // showSummary
         {}, // resizableDivWidgetSettings 
-		legendWidgetSettings
+        legendWidgetSettings
     );    
     this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     
@@ -202,14 +202,14 @@ Exhibit.VEMapView.prototype._initializeUI = function() {
     mapDiv.style.height = settings.mapHeight + "px";
     mapDiv.className = "exhibit-mapView-map";
     mapDiv.style.position = "relative";
-	mapDiv.int = 1 // integer to increment for unique string ID
-	mapDiv.id = "map-" + mapDiv.int++;  // VEMap takes a string ID
+    mapDiv.int = 1 // integer to increment for unique string ID
+    mapDiv.id = "map-" + mapDiv.int++;  // VEMap takes a string ID
     
     var settings = this._settings;
     if (settings._mapConstructor != null) {
         this._map = settings._mapConstructor(mapDiv);
     } 
-	else {
+    else {
         this._map = new VEMap(mapDiv.id);
         this._map.LoadMap(new VELatLong(settings.center[0], settings.center[1]), settings.zoom);
     }
@@ -233,13 +233,13 @@ Exhibit.VEMapView.prototype._reconstruct = function() {
         var currentSet = collection.getRestrictedItems();
         var locationToData = {};
         var hasColorKey = (this._accessors.getColorKey != null);
-		var hasIcon = (this._accessors.getIcon != null); 
+        var hasIcon = (this._accessors.getIcon != null); 
         
         currentSet.visit(function(itemID) {
             var latlngs = [];
             self._getLatlng(itemID, database, function(v) { 
-            	if ("lat" in v && "lng" in v) latlngs.push(v); 
-            	}
+                if ("lat" in v && "lng" in v) latlngs.push(v); 
+                }
             );
             
             if (latlngs.length > 0) {
@@ -249,7 +249,7 @@ Exhibit.VEMapView.prototype._reconstruct = function() {
                     accessors.getColorKey(itemID, database, function(v) { colorKeys.add(v); });
                 }
                 
-				// collecting lat/long data
+                // collecting lat/long data
                 for (var n = 0; n < latlngs.length; n++) {
                     var latlng = latlngs[n];
                     var latlngKey = latlng.lat + "," + latlng.lng;
@@ -279,17 +279,17 @@ Exhibit.VEMapView.prototype._reconstruct = function() {
         var bounds, maxAutoZoom = Infinity;
         var addMarkerAtLocation = function(locationData) {
             var itemCount = locationData.items.length;    
-			var shape = self._settings.shape;
+            var shape = self._settings.shape;
             var color = self._settings.color;
             if (hasColorKey) {
                 color = self._colorCoder.translateSet(locationData.colorKeys, colorCodingFlags);
-			} 
+            } 
      
-			var icon = null;  
-			if (itemCount == 1) { 
-			   if (hasIcon) { 
-			      accessors.getIcon(locationData.items[0], database, function(v) { icon = v; }); 
-		 		}
+            var icon = null;  
+            if (itemCount == 1) { 
+               if (hasIcon) { 
+                  accessors.getIcon(locationData.items[0], database, function(v) { icon = v; }); 
+                 }
             }
             
             var icon = Exhibit.VEMapView._makeIcon(
@@ -297,22 +297,22 @@ Exhibit.VEMapView.prototype._reconstruct = function() {
                 color, 
                 itemCount == 1 ? "" : itemCount.toString(),
                 icon, 
-				self._settings
+                self._settings
             );
 
-			var layer = new VEShapeLayer();
-			var point = new VELatLong(locationData.latlng.lat, locationData.latlng.lng);
-			var marker = new VEShape(VEShapeType.Pushpin, point);
-			var title = locationData.items[0];
-			var description = self._createDescription(locationData.items);
-			
-			marker.SetCustomIcon(icon); 
-			marker.SetTitle(title);
-			marker.SetDescription(description); 
-			marker.SetIconAnchor(point); // anchor for info box
-			
-			self._map.AddShapeLayer(layer);
-			layer.AddShape(marker);
+            var layer = new VEShapeLayer();
+            var point = new VELatLong(locationData.latlng.lat, locationData.latlng.lng);
+            var marker = new VEShape(VEShapeType.Pushpin, point);
+            var title = locationData.items[0];
+            var description = self._createDescription(locationData.items);
+            
+            marker.SetCustomIcon(icon); 
+            marker.SetTitle(title);
+            marker.SetDescription(description); 
+            marker.SetIconAnchor(point); // anchor for info box
+            
+            self._map.AddShapeLayer(layer);
+            layer.AddShape(marker);
         }
         for (var latlngKey in locationToData) {
             addMarkerAtLocation(locationToData[latlngKey]);
@@ -322,25 +322,25 @@ Exhibit.VEMapView.prototype._reconstruct = function() {
             var legendWidget = this._dom.legendWidget;
             var colorCoder = this._colorCoder;
             var keys = colorCodingFlags.keys.toArray().sort();
-			if(this._colorCoder._gradientPoints != null) {
-				legendWidget.addGradient(this._colorCoder._gradientPoints);
-			} else {
-	            for (var k = 0; k < keys.length; k++) {
-	                var key = keys[k];
-	                var color = colorCoder.translate(key);
-	                legendWidget.addEntry(color, key);
-	            }
-			}
-			
-			if (colorCodingFlags.others) {
-				legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
-			}
-			if (colorCodingFlags.mixed) {
-				legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
-			}
-			if (colorCodingFlags.missing) {
-				legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
-			}
+            if(this._colorCoder._gradientPoints != null) {
+                legendWidget.addGradient(this._colorCoder._gradientPoints);
+            } else {
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    var color = colorCoder.translate(key);
+                    legendWidget.addEntry(color, key);
+                }
+            }
+            
+            if (colorCodingFlags.others) {
+                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+            }
+            if (colorCodingFlags.mixed) {
+                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+            }
+            if (colorCodingFlags.missing) {
+                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+            }
         }
     }
     this._dom.setUnplottableMessage(currentSize, unplottableItems);
@@ -356,11 +356,10 @@ Exhibit.VEMapView.prototype._createDescription = function(items) {
         items, 
         this._uiContext
     );
-	var newElmt = document.createElement("div");
-	newElmt.appendChild(bubbleElmt);
-	
-	console.log(newElmt.innerHTML);
-	return newElmt.innerHTML;
+    var newElmt = document.createElement("div");
+    newElmt.appendChild(bubbleElmt);
+    
+    return newElmt.innerHTML;
 };
 
 Exhibit.VEMapView._iconData = null;
@@ -374,13 +373,13 @@ Exhibit.VEMapView._defaultMarkerShape = "circle";
 Exhibit.VEMapView._makeIcon = function(shape, color, label, iconURL, settings) {
     var extra = label.length * 3;
     var halfWidth = Math.ceil(settings.bodyWidth / 2) + extra; 
-	var bodyHeight = settings.bodyHeight;
+    var bodyHeight = settings.bodyHeight;
     var width = halfWidth * 2;
     var height = bodyHeight;
     
     var icon = new VECustomIconSpecification
 
-	var imageParameters = [
+    var imageParameters = [
         "renderer=map-marker",
         "shape=" + shape,
         "width=" + width,
@@ -389,7 +388,7 @@ Exhibit.VEMapView._makeIcon = function(shape, color, label, iconURL, settings) {
         "label=" + label
     ];
     
-	var pinParameters = [];
+    var pinParameters = [];
 
     if (iconURL != null) {
         imageParameters.push("icon=" + iconURL);
@@ -405,35 +404,34 @@ Exhibit.VEMapView._makeIcon = function(shape, color, label, iconURL, settings) {
     }
 
 
-	if (settings.pin) {
+    if (settings.pin) {
         var pinHeight = settings.pinHeight;
         var pinHalfWidth = Math.ceil(settings.pinWidth / 4);
         
-		height += pinHeight;
+        height += pinHeight;
         
         pinParameters.push("pinHeight=" + pinHeight);
         pinParameters.push("pinWidth=" + (pinHalfWidth * 2));
 
-		/*
-		 * There's an inconsistency here. This will offset some icons correctly,
-		 * but not others of different sizes.
-		 * This error seems to occur when there is an image inside the bubble. We think 
-		 * that the marker is being plotted based on the upper left corner of the image,
-		 * unrelated to the png painter image.
-		 */
-		//icon.ImageOffset = new VEPixel(pinHalfWidth, -(height / 2));
-		console.log(icon.ImageOffset);
+        /*
+         * There's an inconsistency here. This will offset some icons correctly,
+         * but not others of different sizes.
+         * This error seems to occur when there is an image inside the bubble. We think 
+         * that the marker is being plotted based on the upper left corner of the image,
+         * unrelated to the png painter image.
+         */
+        //icon.ImageOffset = new VEPixel(pinHalfWidth, -(height / 2));
     } else {
         pinParameters.push("pin=false");
     }
 
-	icon.TextContent = " " // this makes ImageOffset work (VE bug!)
-	icon.Image = Exhibit.MapView._markerUrlPrefix + imageParameters.concat(pinParameters).join("&");
-	icon.ImageHeight = height;
-	icon.ImageWidth = width;
+    icon.TextContent = " " // this makes ImageOffset work (VE bug!)
+    icon.Image = Exhibit.MapView._markerUrlPrefix + imageParameters.concat(pinParameters).join("&");
+    icon.ImageHeight = height;
+    icon.ImageWidth = width;
 
-	// icon shadows with VE?
-	
-	return icon
+    // icon shadows with VE?
+    
+    return icon
 
 };

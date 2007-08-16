@@ -1068,7 +1068,6 @@ this._uiContext
 var newElmt=document.createElement("div");
 newElmt.appendChild(bubbleElmt);
 
-console.log(newElmt.innerHTML);
 return newElmt.innerHTML;
 };
 
@@ -1122,7 +1121,6 @@ pinParameters.push("pinWidth="+(pinHalfWidth*2));
 
 
 
-console.log(icon.ImageOffset);
 }else{
 pinParameters.push("pin=false");
 }

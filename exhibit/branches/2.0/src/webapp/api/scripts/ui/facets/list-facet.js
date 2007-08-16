@@ -11,7 +11,7 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     this._valueSet = new Exhibit.Set();
     
     this._settings = {};
-	this._height = Exhibit.getAttribute(containerElmt, "height");
+    this._height = Exhibit.getAttribute(containerElmt, "height");
     this._dom = null;
     
     var self = this;
@@ -53,7 +53,7 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
     );
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.ListFacet._settingSpecs, facet._settings);
-	
+    
     try {
         var expressionString = Exhibit.getAttribute(configElmt, "expression");
         if (expressionString != null && expressionString.length > 0) {
@@ -65,6 +65,11 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
             for (var i = 0, s; s = selection[i]; i++) {
                 facet._valueSet.add(s);
             }
+        }
+        
+        var height = Exhibit.getAttribute(configElmt, "height");
+        if (height != null && height.length > 0) {
+            facet._height = parseInt(height);
         }
     } catch (e) {
         SimileAjax.Debug.exception(e, "ListFacet: Error processing configuration of list facet");
@@ -89,10 +94,9 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
             facet._valueSet.add(selection[i]);
         }
     }
-	if("height" in configuration) {
-		console.log(configuration);
-		facet._height = parseInt(configuration.height);
-	}
+    if("height" in configuration) {
+        facet._height = parseInt(configuration.height);
+    }
     
     if (!("facetLabel" in facet._settings)) {
         facet._settings.facetLabel = "missing ex:facetLabel";
@@ -267,10 +271,10 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     var containerDiv = this._dom.valuesContainer;
     
     containerDiv.style.display = "none";
-	if (this._height) {
-		containerDiv.style.height = this._height;
-	}	
-	
+    if (this._height) {
+        containerDiv.style.height = this._height;
+    }    
+    
         var facetHasSelection = this._valueSet.size() > 0;
         var constructValue = function(entry) {
             var onSelect = function(elmt, evt, target) {
