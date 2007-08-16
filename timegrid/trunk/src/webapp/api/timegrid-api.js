@@ -12,7 +12,7 @@
     
         window.Timegrid = {
             loaded:     false,
-            params: { autoCreate: true, bundle: true },
+            params: { autoCreate: true, bundle: false },
             importers:  {}
         };
     
