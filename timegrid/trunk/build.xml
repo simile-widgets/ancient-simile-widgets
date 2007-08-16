@@ -24,25 +24,20 @@
   </target>
   	
   <target name="bundle" depends="tasks">
-    <jsmin output="${api.dir}/bundle.js">
+    <jsmin output="${api.dir}/timegrid-bundle.js">
         <fileset dir="src/webapp/api/scripts">
+        	<include name="util/jquery.*.js" />
         	<include name="timegrid.js" />
         </fileset>
-        <fileset dir="src/webapp/api/scripts/util">
-        	<include name="platform.js" />
-        </fileset>
     	
-        <fileset dir="src/webapp/api/scripts/util">
-        	<include name="*.js" />
-        	<exclude name="platform.js" />
-        </fileset>
         <fileset dir="src/webapp/api/scripts">
-        	<include name="*.js" />
+        	<include name="**/*.js" />
         	<exclude name="timegrid.js" />
+        	<exclude name="util/jquery.*.js" />
         </fileset>
   	</jsmin>
   	
-    <concat destfile="src/webapp/api/bundle.css">
+    <concat destfile="src/webapp/api/timegrid-bundle.css">
         <fileset dir="src/webapp/api/styles">
         	<include name="**/*.css" />
         </fileset>
