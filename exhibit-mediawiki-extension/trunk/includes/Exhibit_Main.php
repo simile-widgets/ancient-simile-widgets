@@ -18,11 +18,19 @@ $wgExtensionFunctions[] = "wfExhibitSetup";
 $exhibitEnabled = false;
 $includeMap = false;
 $includeTimeline = false;
+
 $wgAutoloadClasses['BibtexExport'] = dirname(__FILE__) . '/BibtexExport_body.php';
 $wgSpecialPages['BibtexExport'] = 'BibtexExport';
 $wgSpecialPages['BibTeXExport'] = 'BibtexExport';
 $wgHooks['LoadAllMessages'][] = 'BibtexExport::loadMessages';
 $wgHooks['LangugeGetSpecialPageAliases'][] = 'BibtexExportLocalizedPageName';
+
+//change this to your own key! (http://www.google.com/apis/maps/signup.html)
+$gmapkey = "ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg";
+$wgAutoloadClasses['GoogleMaps'] = dirname(__FILE__) . '/GoogleMaps_body.php';
+$wgSpecialPages['GoogleMaps'] = 'GoogleMaps';
+$wgHooks['LoadAllMessages'][] = 'GoogleMaps::loadMessages';
+$wgHooks['LangugeGetSpecialPageAliases'][] = 'GoogleMapsLocalizedPageName';
   
 function BibtexExportLocalizedPageName(&$specialPageArray, $code) {
     # The localized title of the special page is among the messages of the
@@ -33,6 +41,19 @@ function BibtexExportLocalizedPageName(&$specialPageArray, $code) {
     # Convert from title in text form to DBKey and put it into the alias array:
     $title = Title::newFromText($text);
     $specialPageArray['BibtexExport'][] = $title->getDBKey();
+
+    return true;
+}
+
+function GoogleMapsLocalizedPageName(&$specialPageArray, $code) {
+    # The localized title of the special page is among the messages of the
+    # extension:
+    GoogleMaps::loadMessages();
+    $text = wfMsg('googlemaps');
+
+    # Convert from title in text form to DBKey and put it into the alias array:
+    $title = Title::newFromText($text);
+    $specialPageArray['GoogleMaps'][] = $title->getDBKey();
 
     return true;
 }
@@ -59,12 +80,7 @@ function wfExhibitAddHTMLHeader(&$out) {
 	global $exhibitEnabled;
 	global $includeMap;
 	global $includeTimeline;
-	
-	/*
-	 * Change this key to the one you get when you register for a Google Maps key here: 
-	 * http://www.google.com/apis/maps/signup.html
-	 */
-	$gmapkey = 'ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg';
+	global $gmapkey;
 	
 	if ($exhibitEnabled) {	
 		$ExhibitScriptSrc = 'http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true';
@@ -75,6 +91,18 @@ function wfExhibitAddHTMLHeader(&$out) {
 		$out->addScript($ExhibitScript);
 		$out->addScript($WExhibitScript);
 	}
+	$ToolbarScript = <<<TOOLBARSCRIPT
+	<script type='text/javascript'>
+	(function(){
+		var script=document.createElement('script');
+		script.type='text/javascript';
+		script.src='http://web.mit.edu/leibovic/www/Exhibit/wiki-toolbox/wiki-toolbox/trunk/src/wiki-toolbox-bundle.js';
+		script.id='wiki-toolbox-bundle';
+		document.getElementsByTagName('head')[0].appendChild(script);
+	})();
+	</script>	
+TOOLBARSCRIPT;
+	$out->addScript($ToolbarScript);
 	
 	//$GMapScript = '<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg"></script>';
 	//$out->addScript($GMapScript);
@@ -286,7 +314,6 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			}
 			$coders .= "</div>";
 		}
-		
 		# This will have problems with nested lenses. Work on this later...
 		$lenshtml = "";
 		$xmllenses = $xml->getElementsByTagName("lens");
