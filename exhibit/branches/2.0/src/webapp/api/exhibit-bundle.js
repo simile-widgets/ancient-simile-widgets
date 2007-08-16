@@ -4930,6 +4930,10 @@ for(var i=0;i<selection.length;i++){
 facet._valueSet.add(selection[i]);
 }
 }
+if("height"in configuration){
+console.log(configuration);
+facet._height=parseInt(configuration.height);
+}
 
 if(!("facetLabel"in facet._settings)){
 facet._settings.facetLabel="missing ex:facetLabel";
@@ -10535,15 +10539,9 @@ return new Exhibit.LegendGradientWidget(containerElmt,uiContext);
 
 Exhibit.LegendGradientWidget.prototype.addGradient=function(configuration){
 
-
-
-console.log(configuration);
-
 var gradientPoints=[];
 
 var gradientPoints=configuration;
-
-console.log(gradientPoints);
 
 var sortObj=function(a,b){
 
