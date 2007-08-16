@@ -21,6 +21,12 @@ Timegrid.RecurringEventSource = function() {
     
     //========================= Privileged Methods ==========================//
     
+    /** Sets this source's event prototypes to the given prototypes */
+    this.setEventPrototypes = function(a) {
+        eventPrototypes.clear();
+        this.addAllEventPrototypes(a);
+    };
+    
     /** Adds the given event prototype to this event source */
     this.addEventPrototype = function(eventPrototype) {
         eventPrototypes.push(eventPrototype);
