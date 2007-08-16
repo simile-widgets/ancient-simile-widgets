@@ -310,7 +310,8 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 					$b = $code->attributes->item($k)->nodeValue;
 					$coders .= " ex:$a=\"$b\"";
 				}
-				$coders .= ">$code</span>";
+				$codetext = $code->nodeValue;
+				$coders .= ">$codetext</span>";
 			}
 			$coders .= "</div>";
 		}
