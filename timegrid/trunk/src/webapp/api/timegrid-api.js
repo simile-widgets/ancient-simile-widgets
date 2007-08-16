@@ -12,7 +12,7 @@
     
         window.Timegrid = {
             loaded:     false,
-            params: { autoCreate: true, bundle: false },
+            params: { autoCreate: true, bundle: true },
             importers:  {}
         };
     
@@ -23,9 +23,9 @@
             "util/debug.js",
             "util/date.js",
             "util/excanvas.pack.js",
-            "util/jquery.simile.js",
+            "util/jquery.dimensions.js", 
+            "util/jquery.simile.js", 
             "util/jquery.corner.js",
-            "util/jquery.dimensions.js",
             "util/jquery.prettybox.js",
             "util/dstructs/dstructs.js",
             
@@ -75,8 +75,12 @@
          *  Core scripts and styles
          */
         if (Timegrid.params.bundle) {
-            SimileAjax.includeJavascriptFiles(document, Timegrid.urlPrefix, [ "bundle.js" ]);
-            SimileAjax.includeCssFiles(document, Timegrid.urlPrefix, [ "bundle.css" ]);
+            SimileAjax.includeJavascriptFiles(document, Timegrid.urlPrefix, [ 
+                "scripts/util/jquery.dimensions.js", 
+                "scripts/util/jquery.simile.js", 
+                "timegrid-bundle.js"
+            ]);
+            SimileAjax.includeCssFiles(document, Timegrid.urlPrefix, [ "timegrid-bundle.css" ]);
         } else {
             SimileAjax.includeJavascriptFiles(document, Timegrid.urlPrefix + "scripts/", javascriptFiles);
             SimileAjax.includeCssFiles(document, Timegrid.urlPrefix + "styles/", cssFiles);
@@ -103,8 +107,8 @@
         window.SimileAjax_onLoad = loadMe;
         
         //var url = "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false";
-        //var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
-        var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
+        var url = "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js";
+        //var url = "http://simile.mit.edu/repository/ajax/trunk/src/webapp/api/simile-ajax-api.js";
         var createScriptElement = function() {
             var script = document.createElement("script");
             script.type = "text/javascript";

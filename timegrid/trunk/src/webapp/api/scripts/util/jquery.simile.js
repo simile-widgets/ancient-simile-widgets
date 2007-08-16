@@ -15,7 +15,7 @@ jQuery.extend({
     /**
      * Provides a basic mechanism for Javascript inheritance.
      */
-    inherit:  function(subclass, superclass) {
+    inherit: function(subclass, superclass) {
         function Dummy() {};
         Dummy.prototype = superclass.prototype;
         subclass.prototype = new Dummy();

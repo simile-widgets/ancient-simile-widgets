@@ -22,26 +22,57 @@
         classname="edu.mit.simile.jsminTask.JSMinTask"
         classpath="tools/jsminTask.jar"/>
   </target>
-  	
+      
   <target name="bundle" depends="tasks">
     <jsmin output="${api.dir}/timegrid-bundle.js">
-        <fileset dir="src/webapp/api/scripts">
-        	<include name="util/jquery.*.js" />
-        	<include name="timegrid.js" />
+        <fileset dir="src/webapp/api/scripts/">
+            <include name="timegrid.js" />
+            <include name="util/util.js" />
         </fileset>
-    	
-        <fileset dir="src/webapp/api/scripts">
-        	<include name="**/*.js" />
-        	<exclude name="timegrid.js" />
-        	<exclude name="util/jquery.*.js" />
+        
+        <fileset dir="src/webapp/api/scripts/">
+            <include name="util/debug.js" />
+            <include name="util/date.js" />
+            <include name="util/excanvas.pack.js" />
+            <include name="util/jquery.corner.js" />
+            <include name="util/jquery.prettybox.js" />
+            <include name="util/dstructs/dstructs.js" />
+            
+            <include name="listeners.js" />
+            <include name="sources/default.js" />
         </fileset>
-  	</jsmin>
-  	
+        
+        <fileset dir="src/webapp/api/scripts/">
+            <include name="controls.js" />
+            <include name="grid.js" />
+            <include name="themes.js" />
+            <include name="labellers.js" />
+            
+            <include name="layouts/layout.js" />
+        </fileset>
+        
+        <fileset dir="src/webapp/api/scripts/">
+            <include name="sources/recurring.js" />
+            
+            <include name="layouts/nmonth.js" />
+            <include name="layouts/nday.js" />
+            <include name="layouts/weekly.js" />
+            <include name="layouts/monthly.js" />
+            <include name="layouts/property.js" />
+        </fileset>
+    </jsmin>
+      
     <concat destfile="src/webapp/api/timegrid-bundle.css">
-        <fileset dir="src/webapp/api/styles">
-        	<include name="**/*.css" />
+        <fileset dir="src/webapp/api/styles/">
+            <include name="**/*.css" />
         </fileset>
     </concat>
+    
+    <jsmin output="${api.dir}/locales/en/timegrid-en-bundle.js">
+        <fileset dir="src/webapp/api/locales/en/scripts/">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
   </target>
   
   <target name="docs">

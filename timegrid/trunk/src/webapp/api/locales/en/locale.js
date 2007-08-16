@@ -19,7 +19,7 @@
     ];
 
     var urlPrefix = Timegrid.urlPrefix + "locales/en/";
-    if (Timegrid.bundle) {
+    if (Timegrid.params.bundle) {
         SimileAjax.includeJavascriptFiles(document, urlPrefix, [ "timegrid-en-bundle.js" ]);
         if (cssFiles.length > 0) {
             SimileAjax.includeCssFiles(document, urlPrefix, [ "timegrid-en-bundle.css" ]);
