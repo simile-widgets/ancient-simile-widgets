@@ -17,6 +17,7 @@ Timegrid.NDayLayout.l10n.makeRange = function(d1, d2) {
 
 /** Format for horizontal "Mon 5/24" style labels */
 Timegrid.NDayLayout.l10n.xLabelFormat = "E M/d";
+Timegrid.NDayLayout.l10n.mini.xLabelFormat = "e";
 
 /** Format for vertical "12am" style labels */
 Timegrid.NDayLayout.l10n.yLabelFormat = "ha";

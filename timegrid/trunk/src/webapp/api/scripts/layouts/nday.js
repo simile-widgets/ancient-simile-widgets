@@ -158,8 +158,10 @@ Timegrid.NDayLayout.prototype.renderNow = function() {
 Timegrid.NDayLayout.prototype.getXLabels = function() {
     var date = new Date(this.startTime);
     var labels = [];
+    var format = this.mini ? Timegrid.NDayLayout.l10n.mini.xLabelFormat :
+                             Timegrid.NDayLayout.l10n.xLabelFormat;
     while (date < this.endTime) {
-        labels.push(date.format(Timegrid.NDayLayout.l10n.xLabelFormat));
+        labels.push(date.format(format));
         date.setHours(24);
     }
     return labels;

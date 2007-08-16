@@ -363,6 +363,7 @@ Date.parseString = function(val, format) {
     	value["dd"]=Date.LZ(d);
     	value["E"]=Date.l10n.dayAbbreviations[E];
     	value["EE"]=Date.l10n.dayNames[E];
+        value["e"]=value["E"][0];
     	value["H"]=H;
     	value["HH"]=Date.LZ(H);
     	if (H==0){

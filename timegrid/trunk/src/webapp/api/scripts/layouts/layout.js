@@ -113,8 +113,8 @@ Timegrid.Layout.prototype.render = function(container) {
     if (this.mini) {
         this.scrollwidth = 0;
         this.tabHeight = 0;
-        // this.xLabelHeight = 0;
-        // this.yLabelWidth = 0;
+        this.xLabelHeight = 12;
+        this.yLabelWidth = 12;
     }
     if (!(this.params.height && this.params.gridheight)) {
         this.scrollwidth = 0;
