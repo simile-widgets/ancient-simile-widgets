@@ -170,9 +170,11 @@ Timegrid.NDayLayout.prototype.getXLabels = function() {
 Timegrid.NDayLayout.prototype.getYLabels = function() {
     var date = (new Date()).clearTime();
     var labels = [];
+    var format = this.mini ? Timegrid.NDayLayout.l10n.mini.yLabelFormat :
+                             Timegrid.NDayLayout.l10n.yLabelFormat;
     for (var i = this.dayStart; i < this.dayEnd; i++) {
         date.setHours(i);
-        labels.push(date.format(Timegrid.NDayLayout.l10n.yLabelFormat));
+        labels.push(date.format(format));
     }
     return labels;
 };

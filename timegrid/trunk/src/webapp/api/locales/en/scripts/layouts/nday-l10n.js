@@ -21,6 +21,7 @@ Timegrid.NDayLayout.l10n.mini.xLabelFormat = "e";
 
 /** Format for vertical "12am" style labels */
 Timegrid.NDayLayout.l10n.yLabelFormat = "ha";
+Timegrid.NDayLayout.l10n.mini.yLabelFormat = "h";
 
 /** Format for displaying the grid's starting date, e.g. "6/12/2007" */
 Timegrid.NDayLayout.l10n.startFormat = "M/d/yyyy";
