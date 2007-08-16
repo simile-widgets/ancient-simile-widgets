@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 if (!("l10n" in Timegrid.NDayLayout)) {
-    Timegrid.NDayLayout.l10n = {};
+    Timegrid.NDayLayout.l10n = { mini: {} };
 }
  
 /** Function to create a title string from an n-value */
