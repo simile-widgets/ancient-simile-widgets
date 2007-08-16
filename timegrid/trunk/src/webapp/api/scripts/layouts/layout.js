@@ -113,8 +113,8 @@ Timegrid.Layout.prototype.render = function(container) {
     if (this.mini) {
         this.scrollwidth = 0;
         this.tabHeight = 0;
-        this.xLabelHeight = 0;
-        this.yLabelWidth = 0;
+        // this.xLabelHeight = 0;
+        // this.yLabelWidth = 0;
     }
     if (!(this.params.height && this.params.gridheight)) {
         this.scrollwidth = 0;
@@ -159,20 +159,20 @@ Timegrid.Layout.prototype.render = function(container) {
     gridDiv.append(this.renderEvents(document));
     gridDiv.append(this.renderGridlines(document));
     
+    var xLabels = this.renderXLabels();
+    var yLabels = this.renderYLabels();
+    var syncHorizontalScroll = function(a, b) {
+        $(a).scroll(function() { b.scrollLeft = a.scrollLeft; });
+        $(b).scroll(function() { a.scrollLeft = b.scrollLeft; });
+    };
+    var syncVerticalScroll = function(a, b) {
+        $(a).scroll(function() { b.scrollTop = a.scrollTop; });
+        $(b).scroll(function() { a.scrollTop = b.scrollTop; });
+    };
+    syncVerticalScroll(yLabels, gridWindowDiv.get(0));
+    syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
+    this._viewDiv.append(xLabels).append(yLabels);
     if (!this.mini) {
-        var xLabels = this.renderXLabels();
-        var yLabels = this.renderYLabels();
-        var syncHorizontalScroll = function(a, b) {
-            $(a).scroll(function() { b.scrollLeft = a.scrollLeft; });
-            $(b).scroll(function() { a.scrollLeft = b.scrollLeft; });
-        };
-        var syncVerticalScroll = function(a, b) {
-            $(a).scroll(function() { b.scrollTop = a.scrollTop; });
-            $(b).scroll(function() { a.scrollTop = b.scrollTop; });
-        };
-        syncVerticalScroll(yLabels, gridWindowDiv.get(0));
-        syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
-        this._viewDiv.append(xLabels).append(yLabels);
         if ($.browser.msie) {
             $('.timegrid-view:visible .timegrid-rounded-shadow', 
               this._container).prettybox(4,0,0,1);

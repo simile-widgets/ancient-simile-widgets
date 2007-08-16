@@ -26,6 +26,12 @@ Timegrid.RecurringEventSource = function() {
         eventPrototypes.push(eventPrototype);
         this._fire("onAddMany", []);
     };
+
+    /** Adds all of the event prototypes from the given array */
+    this.addAllEventPrototypes = function(a) {
+        eventPrototypes.addAll(a);
+        this._fire("onAddMany", []);
+    };
     
     /** Removes the given event prototype from this source's prototypes */
     this.removeEventPrototype = function(eventPrototype) {
