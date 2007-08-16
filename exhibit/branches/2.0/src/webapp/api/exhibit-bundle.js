@@ -10893,7 +10893,6 @@ this._div.innerHTML="<div id='exhibit-color-legend'></div><div id='exhibit-size-
 };
 
 Exhibit.LegendWidget.prototype.clear=function(){
-console.log('hi');
 this._div.innerHTML="<div id='exhibit-color-legend'></div><div id='exhibit-size-legend'></div><div id='exhibit-icon-legend'></div>";
 };
 

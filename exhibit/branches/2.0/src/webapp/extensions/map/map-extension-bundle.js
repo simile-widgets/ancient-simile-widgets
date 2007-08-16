@@ -314,15 +314,11 @@ Exhibit.MapView._markerUrlPrefix+
 );
 }
 legendWidgetSettings.iconMarkerGenerator=function(iconURL){
-var shape=settings.shape;
-var scale=settings.iconScale;
-return SimileAjax.Graphics.createTranslucentImage(
-Exhibit.MapView._markerUrlPrefix+
-"?renderer=map-marker&shape="+shape+
-"&width=50&height=50&icon="+iconURL+
-"&iconScale="+scale,
-"middle"
-);
+elmt=document.createElement('img');
+elmt.src=iconURL;
+elmt.style.verticalAlighn="middle";
+elmt.style.height="40px";
+return elmt;
 }
 
 this._div.innerHTML="";
@@ -546,9 +542,9 @@ legendWidget.addLegendLabel(settings.sizeLegendLabel,'size');
 }
 if(sizeCoder._gradientPoints!=null){
 var points=sizeCoder._gradientPoints;
-var space=(points[points.length-1].value-points[0].value)/10;
+var space=(points[points.length-1].value-points[0].value)/5;
 keys=[];
-for(var i=0;i<11;i++){keys.push(Math.floor(points[0].value+space*i));}
+for(var i=0;i<6;i++){keys.push(Math.floor(points[0].value+space*i));}
 for(var k=0;k<keys.length;k++){
 var key=keys[k];
 var size=sizeCoder.translate(key);
