@@ -178,14 +178,21 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 
 	// use SimpleXML parser
 	$output = "";
+
 	try {
-		$xmlstr = "<?xml version='1.0' standalone='yes'?><root>$input</root>"; 
-		$xml = new SimpleXMLElement($xmlstr);
-	} catch (Exception $e) { $output = "<b>Problem in the exhibit tags</b>"; }		
+		# DOMDocument doesn't like ex: attributes, so we'll deal with ex1928374 instead, and
+		# switch back later. The only problem is if ex1928374 occurrs naturally in the
+		# lens somewhere, it will get changed later with all the other ones.
+		$input = str_replace( "ex:", "ex1928374", $input );
+		
+		$xml = new DOMDocument();
+		$xml->preserveWhiteSpace = false;
+		$xml->loadXML("<root>$input</root>");
 	
-	if ($output == "") {
-		foreach ($xml->view as $view) {
-			switch ((string) $view['viewClass']) {
+		$xmlviews = $xml->getElementsByTagName("view");
+		for ($i=0; $i < $xmlviews->length; $i++) {
+			$view = $xmlviews->item($i);
+			switch ((string) $view->attributes->getNamedItem('viewClass')->nodeValue) {
 			case 'Map':
 				$includeMap = true;
 			case 'Timeline':
@@ -197,19 +204,18 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		// <source>
 		$sources = array();
 		$count = 0;
-		foreach ($xml->source as $source) {
-			$id = $source['id'];
-			if ($id == "") { $id = null; }
-			$columns = $source['columns'];
-			if ($columns == "") { $columns = null; }
-			$hideTable = $source['hideTable'];
-			if ($hideTable == "") { $hideTable = true; }
-			$type = $source['type'];
-			if ($type == "") { $type = "Item"; }
-			$label = $source['label'];
-			if ($label == "") { $label = "Item"; }
-			$pluralLabel = $source['pluralLabel'];
-			if ($pluralLabel == "") { $pluralLabel = "Items"; }
+		for ($i = 0; $i < $xml->getElementsByTagName("source")->length; $i++) {
+			$source = $xml->getElementsByTagName("source")->item($i);
+			$id = $source->attributes->getNamedItem("id")->nodeValue;
+			$columns = $source->attributes->getNamedItem("columns")->nodeValue;
+			$hideTable = $source->attributes->getNamedItem("hideTable")->nodeValue;
+			if (!$hideTable) { $hideTable = true; }
+			$type = $source->attributes->getNamedItem('type')->nodeValue;
+			if (!$type) { $type = "Item"; }
+			$label = $source->attributes->getNamedItem('label')->nodeValue;
+			if (!$label) { $label = "Item"; }
+			$pluralLabel = $source->attributes->getNamedItem('pluralLabel')->nodeValue;
+			if (!$pluralLabel) { $pluralLabel = "Items"; }
 			$object = 'source' . $count . ': { id:  "'. $id .'" , ' .
 										  'columns: "' . $columns . '".split(","), ' .
 										  'hideTable: "' . $hideTable . '", ' .
@@ -223,10 +229,13 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		
 		// <facet>	
 		$facets = array();
-		foreach ($xml->facet as $facet) {
+		$xmlfacets = $xml->getElementsByTagName("facet");
+		for ($i=0; $i < $xmlfacets->length; $i++) {
+			$facet = $xmlfacets->item($i);
 			$attributes = array();
-			foreach ($facet->attributes() as $a => $b) {
-				$attr = $a."='".$b."'";
+			for ($j = 0; $j < $facet->attributes->length; $j++) {
+				$node = $facet->attributes->item($j);
+				$attr = $node->nodeName . "='" . $node->nodeValue . "'";
 			array_push( $attributes, $attr);
 		}
 		array_push( $facets, implode(';', $attributes));
@@ -235,21 +244,28 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		
 		// <view>
 		$views = array();
-		foreach ($xml->view as $view) {
+		$xmlviews = $xml->getElementsByTagName("view");
+		for ($i = 0; $i < $xmlviews->length; $i++) {
+			$view = $xmlviews->Item($i);
 			$attributes = array();
-			foreach ($view->attributes() as $a => $b) {
-				$attr = $a."='".$b."'";
-			array_push( $attributes, $attr);
-		}
+			for ($j = 0; $j < $view->attributes->length; $j++) {
+				$node = $view->attributes->item($j);
+				$attr = $node->nodeName . "='" . $node->nodeValue . "'";
+				array_push( $attributes, $attr);
+			}
 		array_push( $views, implode(';', $attributes));
 		}
 		$views = implode('/', $views);
-
+	
 		// <coder> create coder divs and spans right here.
 		$coders = "";
-		foreach ($xml->coder as $coder) {
+		$xmlcoders = $xml->getElementsByTagName("coder");
+		for ($i = 0; $i < $xmlcoders->length; $i++) {
+			$coder = $xmlcoders->item($i);
 			$coders .= '<div ex:role="coder"';
-			foreach ($coder->attributes() as $a => $b) {
+			for ($j = 0; $j < $coder->attributes->length; $j++) {
+				$a = $coder->attributes->item($j)->nodeName;
+				$b = $coder->attributes->item($j)->nodeValue;
 				if ($a == "id" ) {
 					$coders .= " id=\"$b\"";
 				} else {
@@ -257,9 +273,13 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 				}
 			}
 			$coders .=">";
-			foreach ($coder->code as $code) {
+			$xmlcodes = $coder->getElementsByTagName("code");
+			for ($j = 0; $j < $xmlcodes->length; $j++) {
+				$code = $xmlcodes->item($j);
 				$coders .= "<span";
-				foreach($code->attributes() as $a => $b) {
+				for($k = 0; $k < $code->attributes->length; $k++) {
+					$a = $code->attributes->item($k)->nodeName;
+					$b = $code->attributes->item($k)->nodeValue;
 					$coders .= " ex:$a=\"$b\"";
 				}
 				$coders .= ">$code</span>";
@@ -267,25 +287,29 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			$coders .= "</div>";
 		}
 		
-		if ($xml->lens) {
+		# This will have problems with nested lenses. Work on this later...
+		$lenshtml = "";
+		$xmllenses = $xml->getElementsByTagName("lens");
+		for ($i = 0; $i < $xmllenses->length; $i++) {
+			$lens = $xmllenses->item($i);
 			$safe = true;
-			// DOMDocument doesn't like ex: attributes, so we'll deal with ex1928374 instead, and
-			// switch back later. The only problem is if ex1928374 occurrs naturally in the
-			// lens somewhere, it will get changed later with all the other ones.
-			$lenstext = str_replace( "ex:", "ex1928374", $xml->lens );
-			
-			$doc = new DOMDocument();
-			$doc->loadXML($lenstext);
-			if ($doc->getElementsByTagName("script")->length > 0) {
-				$lens = "Has script tag, you fool!!!! ";
+	
+			if ($lens->getElementsByTagName("script")->length > 0) {
+				$lenshtml = "Has script tag, unsafe! ";
 				$safe = false;
 			}
-			if (docOrChildrenHaveEventHandler($doc)) {
-				$lens = "Lens has event handlers, unsafe!!!";
+			if (docOrChildrenHaveEventHandler($lens)) {
+				$lenshtml = "Lens has event handlers, unsafe! ";
 				$safe = false;
 			}
+			if (!$safe) { break; }
+			$lensdoc = new DOMDocument();
+			$lenstree = $lensdoc->importNode($lens, true);
+			$lensdoc->appendChild($lenstree);
+			$lenshtml .= $lensdoc->saveHTML();
 		}
-		if ($safe) { $lens = str_replace("ex1928374", "ex:", $doc->saveHTML()); }
+		// Put the ex: 's back in that we took out at the start
+		$lenshtml = str_replace("ex1928374", "ex:", $lenshtml);
 		
 		$output = <<<OUTPUT
 		<script type="text/javascript">
@@ -294,11 +318,14 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		var views = "$views".split('/');
 		</script>
 		$coders
-		$lens
+		$lenshtml
 		<div id="exhibitLocation"></div>
 OUTPUT;
-	}
-	return $output;
+	
+		return $output;
+	} catch (Exception $e) { 
+		echo $e; 
+	} 
 }
 
 // Checks to see if any attributes of the node begin with "on", or
