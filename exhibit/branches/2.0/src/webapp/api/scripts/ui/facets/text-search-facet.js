@@ -83,6 +83,8 @@ Exhibit.TextSearchFacet._configure = function(facet, configuration) {
 }
 
 Exhibit.TextSearchFacet.prototype.dispose = function() {
+    this._uiContext.getCollection().addFacet(this);
+    
     this._uiContext.getCollection().removeListener(this._listener);
     this._uiContext = null;
     
