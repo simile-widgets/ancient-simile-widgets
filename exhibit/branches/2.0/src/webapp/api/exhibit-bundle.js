@@ -4871,6 +4871,7 @@ uiContext.getCollection().addListener(this._listener);
 Exhibit.ListFacet._settingSpecs={
 "facetLabel":{type:"text"},
 "fixedOrder":{type:"text"},
+"sortMode":{type:"text",defaultValue:"value"},
 "height":{type:"text"}
 };
 
@@ -5085,11 +5086,11 @@ entry.label=labeler(entry.value);
 entry.selected=selection.contains(entry.value);
 }
 
-var sortFunction=function(a,b){return a.label.localeCompare(b.label);};
+var sortValueFunction=function(a,b){return a.label.localeCompare(b.label);};
 if("_orderMap"in this){
 var orderMap=this._orderMap;
 
-sortFunction=function(a,b){
+sortValueFunction=function(a,b){
 if(a.label in orderMap){
 if(b.label in orderMap){
 return orderMap[a.label]-orderMap[b.label];
@@ -5103,10 +5104,18 @@ return a.label.localeCompare(b.label);
 }
 }
 }else if(valueType=="number"){
-sortFunction=function(a,b){
+sortValueFunction=function(a,b){
 a=parseFloat(a.value);
 b=parseFloat(b.value);
 return a<b?-1:a>b?1:0;
+}
+}
+
+var sortFunction=sortValueFunction;
+if(this._settings.sortMode=="count"){
+sortFunction=function(a,b){
+var c=b.count-a.count;
+return c!=0?c:sortFunction(a,b);
 }
 }
 
