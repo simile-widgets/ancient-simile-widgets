@@ -4852,7 +4852,6 @@ this._expression=null;
 this._valueSet=new Exhibit.Set();
 
 this._settings={};
-this._height=Exhibit.getAttribute(containerElmt,"height");
 this._dom=null;
 
 var self=this;
@@ -4870,7 +4869,8 @@ uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.ListFacet._settingSpecs={
-"facetLabel":{type:"text"}
+"facetLabel":{type:"text"},
+"fixedOrder":{type:"text"}
 };
 
 Exhibit.ListFacet.create=function(configuration,containerElmt,uiContext){
@@ -4907,11 +4907,6 @@ for(var i=0,s;s=selection[i];i++){
 facet._valueSet.add(s);
 }
 }
-
-var height=Exhibit.getAttribute(configElmt,"height");
-if(height!=null&&height.length>0){
-facet._height=parseInt(height);
-}
 }catch(e){
 SimileAjax.Debug.exception(e,"ListFacet: Error processing configuration of list facet");
 }
@@ -4935,9 +4930,6 @@ for(var i=0;i<selection.length;i++){
 facet._valueSet.add(selection[i]);
 }
 }
-if("height"in configuration){
-facet._height=parseInt(configuration.height);
-}
 
 if(!("facetLabel"in facet._settings)){
 facet._settings.facetLabel="missing ex:facetLabel";
@@ -4948,6 +4940,15 @@ if(property!=null){
 facet._settings.facetLabel=segment.forward?property.getLabel():property.getReverseLabel();
 }
 }
+}
+if("fixedOrder"in facet._settings){
+var values=facet._settings.fixedOrder.split(";");
+var orderMap={};
+for(var i=0;i<values.length;i++){
+orderMap[values[i].trim()]=i;
+}
+
+facet._orderMap=orderMap;
 }
 }
 
@@ -5083,14 +5084,32 @@ entry.label=labeler(entry.value);
 entry.selected=selection.contains(entry.value);
 }
 
-entries.sort((valueType=="number")?
-function(a,b){
+var sortFunction=function(a,b){return a.label.localeCompare(b.label);};
+if("_orderMap"in this){
+var orderMap=this._orderMap;
+
+sortFunction=function(a,b){
+if(a.label in orderMap){
+if(b.label in orderMap){
+return orderMap[a.label]-orderMap[b.label];
+}else{
+return-1;
+}
+}else if(b.label in orderMap){
+return 1;
+}else{
+return a.label.localeCompare(b.label);
+}
+}
+}else if(valueType=="number"){
+sortFunction=function(a,b){
 a=parseFloat(a.value);
 b=parseFloat(b.value);
 return a<b?-1:a>b?1:0;
-}:
-function(a,b){return a.label.localeCompare(b.label);}
-);
+}
+}
+
+entries.sort(sortFunction);
 }
 return entries;
 }
@@ -5114,9 +5133,6 @@ var self=this;
 var containerDiv=this._dom.valuesContainer;
 
 containerDiv.style.display="none";
-if(this._height){
-containerDiv.style.height=this._height;
-}
 
 var facetHasSelection=this._valueSet.size()>0;
 var constructValue=function(entry){

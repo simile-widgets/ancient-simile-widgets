@@ -11,7 +11,6 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     this._valueSet = new Exhibit.Set();
     
     this._settings = {};
-    this._height = Exhibit.getAttribute(containerElmt, "height");
     this._dom = null;
     
     var self = this;
@@ -29,7 +28,8 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
 };
 
 Exhibit.ListFacet._settingSpecs = {
-    "facetLabel":       { type: "text" }
+    "facetLabel":       { type: "text" },
+    "fixedOrder":       { type: "text" }
 };
 
 Exhibit.ListFacet.create = function(configuration, containerElmt, uiContext) {
@@ -66,11 +66,6 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
                 facet._valueSet.add(s);
             }
         }
-        
-        var height = Exhibit.getAttribute(configElmt, "height");
-        if (height != null && height.length > 0) {
-            facet._height = parseInt(height);
-        }
     } catch (e) {
         SimileAjax.Debug.exception(e, "ListFacet: Error processing configuration of list facet");
     }
@@ -94,9 +89,6 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
             facet._valueSet.add(selection[i]);
         }
     }
-    if("height" in configuration) {
-        facet._height = parseInt(configuration.height);
-    }
     
     if (!("facetLabel" in facet._settings)) {
         facet._settings.facetLabel = "missing ex:facetLabel";
@@ -107,6 +99,15 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
                 facet._settings.facetLabel = segment.forward ? property.getLabel() : property.getReverseLabel();
             }
         }
+    }
+    if ("fixedOrder" in facet._settings) {
+        var values = facet._settings.fixedOrder.split(";");
+        var orderMap = {};
+        for (var i = 0; i < values.length; i++) {
+            orderMap[values[i].trim()] = i;
+        }
+        
+        facet._orderMap = orderMap;
     }
 }
 
@@ -241,15 +242,33 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
             entry.label = labeler(entry.value);
             entry.selected = selection.contains(entry.value);
         }
+        
+        var sortFunction = function(a, b) { return a.label.localeCompare(b.label); };
+        if ("_orderMap" in this) {
+            var orderMap = this._orderMap;
             
-        entries.sort((valueType == "number") ?
-            function(a, b) {
+            sortFunction = function(a, b) {
+                if (a.label in orderMap) {
+                    if (b.label in orderMap) {
+                        return orderMap[a.label] - orderMap[b.label];
+                    } else {
+                        return -1;
+                    }
+                } else if (b.label in orderMap) {
+                    return 1;
+                } else {
+                    return a.label.localeCompare(b.label);
+                }
+            }
+        } else if (valueType == "number") {
+            sortFunction = function(a, b) {
                 a = parseFloat(a.value);
                 b = parseFloat(b.value);
                 return a < b ? -1 : a > b ? 1 : 0;
-            } :
-            function(a, b) { return a.label.localeCompare(b.label); }
-        );
+            }
+        }
+        
+        entries.sort(sortFunction);
     }
     return entries;
 }
@@ -273,37 +292,34 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     var containerDiv = this._dom.valuesContainer;
     
     containerDiv.style.display = "none";
-    if (this._height) {
-        containerDiv.style.height = this._height;
-    }    
     
-        var facetHasSelection = this._valueSet.size() > 0;
-        var constructValue = function(entry) {
-            var onSelect = function(elmt, evt, target) {
-                self._filter(entry.value, entry.label, false);
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            };
-            var onSelectOnly = function(elmt, evt, target) {
-                self._filter(entry.value, entry.label, !(evt.ctrlKey || evt.metaKey));
-                SimileAjax.DOM.cancelEvent(evt);
-                return false;
-            };
-            var elmt = Exhibit.FacetUtilities.constructFacetItem(
-                entry.label, 
-                entry.count, 
-                entry.selected, 
-                facetHasSelection,
-                onSelect,
-                onSelectOnly,
-                self._uiContext
-            );
-            containerDiv.appendChild(elmt);
+    var facetHasSelection = this._valueSet.size() > 0;
+    var constructValue = function(entry) {
+        var onSelect = function(elmt, evt, target) {
+            self._filter(entry.value, entry.label, false);
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
         };
-        
-        for (var j = 0; j < entries.length; j++) {
-            constructValue(entries[j]);
-        }
+        var onSelectOnly = function(elmt, evt, target) {
+            self._filter(entry.value, entry.label, !(evt.ctrlKey || evt.metaKey));
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        };
+        var elmt = Exhibit.FacetUtilities.constructFacetItem(
+            entry.label, 
+            entry.count, 
+            entry.selected, 
+            facetHasSelection,
+            onSelect,
+            onSelectOnly,
+            self._uiContext
+        );
+        containerDiv.appendChild(elmt);
+    };
+    
+    for (var j = 0; j < entries.length; j++) {
+        constructValue(entries[j]);
+    }
     containerDiv.style.display = "block";
     
     this._dom.setSelectionCount(this._valueSet.size());
