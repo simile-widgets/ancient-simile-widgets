@@ -45,6 +45,9 @@ Timegrid.createFromDOM = function(elmt) {
 Timegrid.getConfigFromDOM = function(elmt) {
     var config = $(elmt).attrs('tg');
     config.scrollwidth = $.scrollWidth();
+    for (var k in config) {
+        config[k.toLowerCase()] = config[k];
+    }
     return config;
 };
 

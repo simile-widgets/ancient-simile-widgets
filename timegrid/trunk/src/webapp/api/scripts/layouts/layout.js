@@ -144,6 +144,7 @@ Timegrid.Layout.prototype.render = function(container) {
         $(this._container).width(this.width + "px");
     }
     $(this._container).css('position', 'relative');
+    this._viewDiv.height(this.height - this.tabHeight + "px");
 
     gridWindowDiv.css("top", this.xLabelHeight).css("left", this.yLabelWidth)
                  .css("right", "0px").css("bottom", "0px");
@@ -214,6 +215,7 @@ Timegrid.Layout.prototype.renderXLabels = function() {
     xLabelsDiv.width(this.gridwidth + "px");
     xLabelContainer.append(xLabelsDiv.addClass('timegrid-xlabels'));
     xLabelContainer.height(this.xLabelHeight + "px");
+    xLabelContainer.width(this.gridwidth + "px");
     xLabelContainer.css("right", this.scrollwidth + "px");
     xLabelContainer.css("left", this.yLabelWidth + "px");
     var labels = this.getXLabels();
@@ -231,6 +233,7 @@ Timegrid.Layout.prototype.renderYLabels = function() {
     yLabelsDiv.width(this.yLabelWidth + "px").css("left", "0px");
     yLabelContainer.append(yLabelsDiv.addClass('timegrid-ylabels'));
     yLabelContainer.width(this.yLabelWidth + "px");
+    yLabelContainer.height("100%");
     yLabelContainer.css("top", this.xLabelHeight + "px");
     yLabelContainer.css("bottom", this.scrollwidth + "px");
     var labels = this.getYLabels();
