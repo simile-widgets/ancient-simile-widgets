@@ -1755,19 +1755,20 @@ this._originalElmt=null;
 };
 
 SimileAjax.Graphics._FontRenderingContext.prototype.update=function(){
-if(SimileAjax.Platform.browser.isIE){
-this._div.style.fontFamily=this._originalElmt.currentStyle.fontFamily;
-this._div.style.fontSize=this._originalElmt.currentStyle.fontSize;
-this._div.style.fontWeight=this._originalElmt.currentStyle.fontWeight;
-this._div.style.fontVariant=this._originalElmt.currentStyle.fontVariant;
-this._div.style.fontStyle=this._originalElmt.currentStyle.fontStyle;
-}else{
+if(window.getComputedStyle){
 var style=window.getComputedStyle(this._originalElmt,"");
 this._div.style.fontFamily=style.getPropertyValue("font-family");
 this._div.style.fontSize=style.getPropertyValue("font-size");
 this._div.style.fontWeight=style.getPropertyValue("font-weight");
 this._div.style.fontVariant=style.getPropertyValue("font-variant");
 this._div.style.fontStyle=style.getPropertyValue("font-style");
+}else{
+var style=this._originalElmt.currentStyle;
+this._div.style.fontFamily=style.fontFamily;
+this._div.style.fontSize=style.fontSize;
+this._div.style.fontWeight=style.fontWeight;
+this._div.style.fontVariant=style.fontVariant;
+this._div.style.fontStyle=style.fontStyle;
 }
 this._div.innerHTML="A";
 this._lineHeight=this._div.offsetHeight;
