@@ -120,19 +120,22 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
 };
 
 Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
-    var jediv = this.mini ? $("<div><div></div></div>") : 
-                            $("<div><div>" + evt.getText() + "</div></div>");
+    var ediv = document.createElement('div');
+    var tediv = document.createElement('div');
+    if (!this.mini) { tediv.innerHTML = evt.getText(); }
+    ediv.appendChild(tediv);
     var length = (evt.getEnd() - evt.getStart()) / (1000 * 60 * 60.0);
-    jediv.addClass("timegrid-event");
+    var className = "timegrid-event";
     if (!this.mini) {
-        jediv.addClass('timegrid-rounded-shadow');
+       className += ' timegrid-rounded-shadow';
     }
-    jediv.css("height", this.yCell * length);
-    jediv.css("top", this.yCell * y);
-    jediv.css("left", this.xCell * x + '%');
-    if (evt.getColor()) { jediv.css('background-color', evt.getColor()); }
-    if (evt.getTextColor()) { jediv.css('color', evt.getTextColor()); }
-    return jediv.get()[0]; // Return the actual DOM element
+    ediv.className = className;
+    ediv.style.height = this.yCell * length + "px";
+    ediv.style.top = this.yCell * y + "px";
+    ediv.style.left = this.xCell * x + '%';
+    if (evt.getColor()) { ediv.style.backgroundColor = evt.getColor(); }
+    if (evt.getTextColor()) { ediv.style.color = evt.getTextColor(); }
+    return ediv; // Return the actual DOM element
 };
 
 Timegrid.NDayLayout.prototype.renderNow = function() {
