@@ -26,6 +26,7 @@ Exhibit.NumericRangeFacet = function(containerElmt, uiContext) {
 
 Exhibit.NumericRangeFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
+    "height":           { type: "text" },
     "interval":         { type: "float", defaultValue: 10 }
 };
 
@@ -280,6 +281,10 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
         function(elmt, evt, target) { self._clearSelections(); },
         this._uiContext
     );
+    
+    if ("height" in this._settings) {
+        this._dom.valuesContainer.style.height = this._settings.height;
+    }
 };
 
 Exhibit.NumericRangeFacet.prototype._toggleRange = function(from, to, wasSelected, singleSelection) {

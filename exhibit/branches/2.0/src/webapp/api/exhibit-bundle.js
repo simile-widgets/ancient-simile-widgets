@@ -4870,7 +4870,8 @@ uiContext.getCollection().addListener(this._listener);
 
 Exhibit.ListFacet._settingSpecs={
 "facetLabel":{type:"text"},
-"fixedOrder":{type:"text"}
+"fixedOrder":{type:"text"},
+"height":{type:"text"}
 };
 
 Exhibit.ListFacet.create=function(configuration,containerElmt,uiContext){
@@ -5126,6 +5127,10 @@ this._settings.facetLabel,
 function(elmt,evt,target){self._clearSelections();},
 this._uiContext
 );
+
+if("height"in this._settings){
+this._dom.valuesContainer.style.height=this._settings.height;
+}
 };
 
 Exhibit.ListFacet.prototype._constructBody=function(entries){
@@ -5269,6 +5274,7 @@ uiContext.getCollection().addListener(this._listener);
 
 Exhibit.NumericRangeFacet._settingSpecs={
 "facetLabel":{type:"text"},
+"height":{type:"text"},
 "interval":{type:"float",defaultValue:10}
 };
 
@@ -5523,6 +5529,10 @@ this._settings.facetLabel,
 function(elmt,evt,target){self._clearSelections();},
 this._uiContext
 );
+
+if("height"in this._settings){
+this._dom.valuesContainer.style.height=this._settings.height;
+}
 };
 
 Exhibit.NumericRangeFacet.prototype._toggleRange=function(from,to,wasSelected,singleSelection){
