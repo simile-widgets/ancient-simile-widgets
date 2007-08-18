@@ -9,7 +9,7 @@ div.timegrid-default * {
     padding: 0;
 }
 
-div.timegrid-default ul, li {
+div.timegrid-default ul, div.timegrid-default li {
     font-size: 9pt;
 }
 
