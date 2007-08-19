@@ -91,7 +91,7 @@ Exhibit.TileView.prototype._initializeUI = function() {
         ]
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    if (this._settings.showToolbox) {console.log("here");
+    if (this._settings.showToolbox) {
         this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
     }
 
