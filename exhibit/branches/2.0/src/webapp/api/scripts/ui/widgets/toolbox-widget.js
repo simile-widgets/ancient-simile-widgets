@@ -45,6 +45,9 @@ Exhibit.ToolboxWidget._configure = function(widget, configuration) {
 };
 
 Exhibit.ToolboxWidget.prototype.dispose = function() {
+    this._containerElmt.onmouseover = null;
+    this._containerElmt.onmouseout = null;
+    
     this._dismiss();
     this._settings = null;
     this._containerElmt = null;

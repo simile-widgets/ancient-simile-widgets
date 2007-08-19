@@ -9188,6 +9188,7 @@ Exhibit.TabularView._settingSpecs={
 "sortAscending":{type:"boolean",defaultValue:true},
 "sortColumn":{type:"int",defaultValue:0},
 "showSummary":{type:"boolean",defaultValue:true},
+"showToolbox":{type:"boolean",defaultValue:true},
 "border":{type:"int",defaultValue:1},
 "cellPadding":{type:"int",defaultValue:5},
 "cellSpacing":{type:"int",defaultValue:3}
@@ -9352,8 +9353,10 @@ Math.max(0,Math.min(this._settings.sortColumn,this._columns.length-1));
 Exhibit.TabularView.prototype.dispose=function(){
 this._uiContext.getCollection().removeListener(this._listener);
 
+if(this._toolboxWidget){
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
+}
 
 this._collectionSummaryWidget.dispose();
 this._collectionSummaryWidget=null;
@@ -9377,7 +9380,9 @@ this._collectionSummaryWidget=Exhibit.CollectionSummaryWidget.create(
 this._dom.collectionSummaryDiv,
 this._uiContext
 );
+if(this._settings.showToolbox){
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
+}
 
 if(!this._settings.showSummary){
 this._dom.collectionSummaryDiv.style.display="none";
@@ -9690,6 +9695,7 @@ return dom;
 Exhibit.ThumbnailView=function(containerElmt,uiContext){
 this._div=containerElmt;
 this._uiContext=uiContext;
+this._settings={};
 
 var view=this;
 this._listener={
@@ -9705,6 +9711,10 @@ view._reconstruct();
 }
 };
 
+Exhibit.ThumbnailView._settingSpecs={
+"showToolbox":{type:"boolean",defaultValue:true}
+};
+
 Exhibit.ThumbnailView.create=function(configuration,containerElmt,uiContext){
 var view=new Exhibit.ThumbnailView(
 containerElmt,
@@ -9712,6 +9722,10 @@ Exhibit.UIContext.create(configuration,uiContext,true)
 );
 
 view._lensRegistry=Exhibit.UIContext.createLensRegistry(configuration,uiContext.getLensRegistry());
+
+Exhibit.SettingsUtilities.collectSettings(
+configuration,Exhibit.ThumbnailView._settingSpecs,view._settings);
+
 view._orderedViewFrame.configure(configuration);
 
 view._initializeUI();
@@ -9726,6 +9740,12 @@ Exhibit.UIContext.createFromDOM(configElmt,uiContext,true)
 );
 
 view._lensRegistry=Exhibit.UIContext.createLensRegistryFromDOM(configElmt,configuration,uiContext.getLensRegistry());
+
+Exhibit.SettingsUtilities.collectSettingsFromDOM(
+configElmt,Exhibit.ThumbnailView._settingSpecs,view._settings);
+Exhibit.SettingsUtilities.collectSettings(
+configuration,Exhibit.ThumbnailView._settingSpecs,view._settings);
+
 view._orderedViewFrame.configureFromDOM(configElmt);
 view._orderedViewFrame.configure(configuration);
 
@@ -9736,8 +9756,10 @@ return view;
 Exhibit.ThumbnailView.prototype.dispose=function(){
 this._uiContext.getCollection().removeListener(this._listener);
 
+if(this._toolboxWidget){
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
+}
 
 this._orderedViewFrame.dispose();
 this._orderedViewFrame=null;
@@ -9769,7 +9791,9 @@ field:"footerDiv"
 ]
 };
 this._dom=SimileAjax.DOM.createDOMFromTemplate(template);
+if(this._settings.showToolbox){
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
+}
 
 var self=this;
 this._orderedViewFrame._divHeader=this._dom.headerDiv;
@@ -9900,6 +9924,7 @@ return div;
 Exhibit.TileView=function(containerElmt,uiContext){
 this._div=containerElmt;
 this._uiContext=uiContext;
+this._settings={};
 
 var view=this;
 
@@ -9910,11 +9935,19 @@ this._orderedViewFrame=new Exhibit.OrderedViewFrame(uiContext);
 this._orderedViewFrame.parentReconstruct=function(){view._reconstruct();};
 };
 
+Exhibit.TileView._settingSpecs={
+"showToolbox":{type:"boolean",defaultValue:true}
+};
+
 Exhibit.TileView.create=function(configuration,containerElmt,uiContext){
 var view=new Exhibit.TileView(
 containerElmt,
 Exhibit.UIContext.create(configuration,uiContext)
 );
+
+Exhibit.SettingsUtilities.collectSettings(
+configuration,Exhibit.TileView._settingSpecs,view._settings);
+
 view._orderedViewFrame.configure(configuration);
 
 view._initializeUI();
@@ -9928,6 +9961,11 @@ containerElmt!=null?containerElmt:configElmt,
 Exhibit.UIContext.createFromDOM(configElmt,uiContext)
 );
 
+Exhibit.SettingsUtilities.collectSettingsFromDOM(
+configElmt,Exhibit.TileView._settingSpecs,view._settings);
+Exhibit.SettingsUtilities.collectSettings(
+configuration,Exhibit.TileView._settingSpecs,view._settings);
+
 view._orderedViewFrame.configureFromDOM(configElmt);
 view._orderedViewFrame.configure(configuration);
 
@@ -9940,7 +9978,11 @@ this._uiContext.getCollection().removeListener(this._listener);
 
 this._div.innerHTML="";
 
+if(this._toolboxWidget){
 this._toolboxWidget.dispose();
+this._toolboxWidget=null;
+}
+
 this._orderedViewFrame.dispose();
 this._orderedViewFrame=null;
 this._dom=null;
@@ -9967,7 +10009,9 @@ field:"footerDiv"
 ]
 };
 this._dom=SimileAjax.DOM.createDOMFromTemplate(template);
+if(this._settings.showToolbox){console.log("here");
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
+}
 
 var self=this;
 this._orderedViewFrame._divHeader=this._dom.headerDiv;
@@ -11273,6 +11317,9 @@ Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.ToolboxWidget._s
 };
 
 Exhibit.ToolboxWidget.prototype.dispose=function(){
+this._containerElmt.onmouseover=null;
+this._containerElmt.onmouseout=null;
+
 this._dismiss();
 this._settings=null;
 this._containerElmt=null;

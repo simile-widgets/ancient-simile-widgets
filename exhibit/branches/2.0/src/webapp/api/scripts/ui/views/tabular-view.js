@@ -23,6 +23,7 @@ Exhibit.TabularView._settingSpecs = {
     "sortAscending":        { type: "boolean", defaultValue: true },
     "sortColumn":           { type: "int",     defaultValue: 0 },
     "showSummary":          { type: "boolean", defaultValue: true },
+    "showToolbox":          { type: "boolean", defaultValue: true },
     "border":               { type: "int",     defaultValue: 1 },
     "cellPadding":          { type: "int",     defaultValue: 5 },
     "cellSpacing":          { type: "int",     defaultValue: 3 }
@@ -187,8 +188,10 @@ Exhibit.TabularView.prototype._internalValidate = function() {
 Exhibit.TabularView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
     
-    this._toolboxWidget.dispose();
-    this._toolboxWidget = null;
+    if (this._toolboxWidget) {
+        this._toolboxWidget.dispose();
+        this._toolboxWidget = null;
+    }
     
     this._collectionSummaryWidget.dispose();
     this._collectionSummaryWidget = null;
@@ -212,7 +215,9 @@ Exhibit.TabularView.prototype._initializeUI = function() {
         this._dom.collectionSummaryDiv, 
         this._uiContext
     );
-    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+    if (this._settings.showToolbox) {
+        this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+    }
     
     if (!this._settings.showSummary) {
         this._dom.collectionSummaryDiv.style.display = "none";

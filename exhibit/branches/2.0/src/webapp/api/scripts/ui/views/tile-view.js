@@ -6,7 +6,8 @@
 Exhibit.TileView = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
-
+    this._settings = {};
+    
     var view = this;
 
     this._listener = { onItemsChanged: function() { view._reconstruct(); } };
@@ -16,11 +17,19 @@ Exhibit.TileView = function(containerElmt, uiContext) {
     this._orderedViewFrame.parentReconstruct = function() { view._reconstruct(); };
 };
 
+Exhibit.TileView._settingSpecs = {
+    "showToolbox":          { type: "boolean", defaultValue: true }
+};
+
 Exhibit.TileView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.TileView(
         containerElmt,
         Exhibit.UIContext.create(configuration, uiContext)
     );
+    
+    Exhibit.SettingsUtilities.collectSettings(
+        configuration, Exhibit.TileView._settingSpecs, view._settings);
+        
     view._orderedViewFrame.configure(configuration);
 
     view._initializeUI();
@@ -33,7 +42,12 @@ Exhibit.TileView.createFromDOM = function(configElmt, containerElmt, uiContext) 
         containerElmt != null ? containerElmt : configElmt,
         Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
-
+    
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(
+        configElmt, Exhibit.TileView._settingSpecs, view._settings);
+    Exhibit.SettingsUtilities.collectSettings(
+        configuration, Exhibit.TileView._settingSpecs, view._settings);
+    
     view._orderedViewFrame.configureFromDOM(configElmt);
     view._orderedViewFrame.configure(configuration);
 
@@ -46,7 +60,11 @@ Exhibit.TileView.prototype.dispose = function() {
 
     this._div.innerHTML = "";
 
-    this._toolboxWidget.dispose();
+    if (this._toolboxWidget) {
+        this._toolboxWidget.dispose();
+        this._toolboxWidget = null;
+    }
+    
     this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
     this._dom = null;
@@ -73,7 +91,9 @@ Exhibit.TileView.prototype._initializeUI = function() {
         ]
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+    if (this._settings.showToolbox) {console.log("here");
+        this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+    }
 
     var self = this;
     this._orderedViewFrame._divHeader = this._dom.headerDiv;

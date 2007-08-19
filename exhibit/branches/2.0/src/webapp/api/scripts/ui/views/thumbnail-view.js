@@ -6,6 +6,7 @@
 Exhibit.ThumbnailView = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
+    this._settings = {};
     
     var view = this;
     this._listener = { 
@@ -21,6 +22,10 @@ Exhibit.ThumbnailView = function(containerElmt, uiContext) {
     }
 };
 
+Exhibit.ThumbnailView._settingSpecs = {
+    "showToolbox":          { type: "boolean", defaultValue: true }
+};
+
 Exhibit.ThumbnailView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.ThumbnailView(
         containerElmt,
@@ -28,6 +33,10 @@ Exhibit.ThumbnailView.create = function(configuration, containerElmt, uiContext)
     );
     
     view._lensRegistry = Exhibit.UIContext.createLensRegistry(configuration, uiContext.getLensRegistry());
+    
+    Exhibit.SettingsUtilities.collectSettings(
+        configuration, Exhibit.ThumbnailView._settingSpecs, view._settings);
+        
     view._orderedViewFrame.configure(configuration);
     
     view._initializeUI();
@@ -42,6 +51,12 @@ Exhibit.ThumbnailView.createFromDOM = function(configElmt, containerElmt, uiCont
     );
     
     view._lensRegistry = Exhibit.UIContext.createLensRegistryFromDOM(configElmt, configuration, uiContext.getLensRegistry());
+    
+    Exhibit.SettingsUtilities.collectSettingsFromDOM(
+        configElmt, Exhibit.ThumbnailView._settingSpecs, view._settings);
+    Exhibit.SettingsUtilities.collectSettings(
+        configuration, Exhibit.ThumbnailView._settingSpecs, view._settings);
+        
     view._orderedViewFrame.configureFromDOM(configElmt);
     view._orderedViewFrame.configure(configuration);
     
@@ -52,8 +67,10 @@ Exhibit.ThumbnailView.createFromDOM = function(configElmt, containerElmt, uiCont
 Exhibit.ThumbnailView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
     
-    this._toolboxWidget.dispose();
-    this._toolboxWidget = null;
+    if (this._toolboxWidget) {
+        this._toolboxWidget.dispose();
+        this._toolboxWidget = null;
+    }
     
     this._orderedViewFrame.dispose();
     this._orderedViewFrame = null;
@@ -85,7 +102,9 @@ Exhibit.ThumbnailView.prototype._initializeUI = function() {
         ]
     };
     this._dom = SimileAjax.DOM.createDOMFromTemplate(template);
-    this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+    if (this._settings.showToolbox) {
+        this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+    }
     
     var self = this;
     this._orderedViewFrame._divHeader = this._dom.headerDiv;
