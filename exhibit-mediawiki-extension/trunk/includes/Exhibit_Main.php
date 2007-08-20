@@ -93,19 +93,17 @@ function wfExhibitAddHTMLHeader(&$out) {
 	}
 	$ToolbarScript = <<<TOOLBARSCRIPT
 	<script type='text/javascript'>
+	var wikiURL = 'http://simile.mit.edu/shelf';
 	(function(){
 		var script=document.createElement('script');
 		script.type='text/javascript';
-		script.src='http://web.mit.edu/leibovic/www/Exhibit/wiki-toolbox/wiki-toolbox/trunk/src/wiki-toolbox-bundle.js';
+		script.src='http://simile.mit.edu/repository/wiki-toolbox/trunk/src/wiki-toolbox-bundle.js';
 		script.id='wiki-toolbox-bundle';
 		document.getElementsByTagName('head')[0].appendChild(script);
 	})();
 	</script>	
 TOOLBARSCRIPT;
 	$out->addScript($ToolbarScript);
-	
-	//$GMapScript = '<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg"></script>';
-	//$out->addScript($GMapScript);
 
 	return true;
 }
@@ -231,7 +229,6 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		
 		// <source>
 		$sources = array();
-		$count = 0;
 		for ($i = 0; $i < $xml->getElementsByTagName("source")->length; $i++) {
 			$source = $xml->getElementsByTagName("source")->item($i);
 			$id = $source->attributes->getNamedItem("id")->nodeValue;
@@ -244,46 +241,51 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			if (!$label) { $label = "Item"; }
 			$pluralLabel = $source->attributes->getNamedItem('pluralLabel')->nodeValue;
 			if (!$pluralLabel) { $pluralLabel = "Items"; }
-			$object = 'source' . $count . ': { id:  "'. $id .'" , ' .
+			$object = 'source' . $i . ': { id:  "'. $id .'" , ' .
 										  'columns: "' . $columns . '".split(","), ' .
 										  'hideTable: "' . $hideTable . '", ' .
 										  'type: "' . $type . '", ' .
 										  'label: "' . $label . '", ' .
 										  'pluralLabel: "' . $pluralLabel . '" }';
 			array_push($sources, $object);
-			$count++;
 		}
 		$sources = implode(',', $sources);
 		
 		// <facet>	
 		$facets = array();
 		$xmlfacets = $xml->getElementsByTagName("facet");
-		for ($i=0; $i < $xmlfacets->length; $i++) {
+		for ($i = 0; $i < $xmlfacets->length; $i++) {
 			$facet = $xmlfacets->item($i);
-			$attributes = array();
+			$position = 'right';
+			$innerHTML = 'ex:role="facet"';
 			for ($j = 0; $j < $facet->attributes->length; $j++) {
-				$node = $facet->attributes->item($j);
-				$attr = $node->nodeName . "='" . $node->nodeValue . "'";
-			array_push( $attributes, $attr);
+				$a = $facet->attributes->item($j)->nodeName;
+				$b = $facet->attributes->item($j)->nodeValue;
+				if ($a == "position" ) {
+					$position = $b;
+				} else {
+					$innerHTML .= " ex:$a=\"$b\"";
+				}
+			}
+			$object = 'facet' . $i . ': { position: "' . $position . '", ' .
+										 'innerHTML: \'' . $innerHTML . '\' }';
+			array_push($facets, $object);
 		}
-		array_push( $facets, implode(';', $attributes));
-		}
-		$facets = implode('/', $facets);
+		$facets = implode(',', $facets);
 		
 		// <view>
 		$views = array();
 		$xmlviews = $xml->getElementsByTagName("view");
 		for ($i = 0; $i < $xmlviews->length; $i++) {
-			$view = $xmlviews->Item($i);
-			$attributes = array();
+			$view = $xmlviews->item($i);
+			$attrHTML = "ex:role='view' ";
 			for ($j = 0; $j < $view->attributes->length; $j++) {
 				$node = $view->attributes->item($j);
-				$attr = $node->nodeName . "='" . $node->nodeValue . "'";
-				array_push( $attributes, $attr);
+				$attrHTML .= "ex:" . $node->nodeName . "='" . $node->nodeValue . "' ";
 			}
-		array_push( $views, implode(';', $attributes));
+		array_push( $views, $attrHTML);
 		}
-		$views = implode('/', $views);
+		$views = implode(';', $views);
 	
 		// <coder> create coder divs and spans right here.
 		$coders = "";
@@ -341,9 +343,9 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		
 		$output = <<<OUTPUT
 		<script type="text/javascript">
-		var sources = { $sources };
-		var facets = "$facets".split('/');
-		var views = "$views".split('/');
+		var sources = { $sources }; 
+		var facets = { $facets }; 
+		var views = "$views".split(';');
 		</script>
 		$coders
 		$lenshtml

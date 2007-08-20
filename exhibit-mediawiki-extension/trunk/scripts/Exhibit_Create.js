@@ -41,67 +41,46 @@ function createExhibit() {
 	}
 
 	var exhibitDiv = document.getElementById('exhibitLocation');
-	exhibitDiv.innerHTML = "<table width='100%'><tr><td><div id='top-facets'></div></td></tr><tr id='exhibit-content' valign='top'><td id='left-facets' width='0%'></td><td id='view-content'><div id='view'></div></td><td id='right-facets' width='0%'></td></tr></table><div id='bottom-facets'></div>";		
+	exhibitDiv.innerHTML = "<div id='top-facets'></div><table width='100%' style='clear: both'><tr id='exhibit-content' valign='top'><td id='left-facets' width='0%'></td><td id='view-content'><div id='view'></div></td><td id='right-facets' width='0%'></td></tr></table><div id='bottom-facets'></div>";		
 
 	/*
 	 * Configuration: We're creating HTML strings that specify the configurations, 
 	 * formatted in the same form as specifications in the HTML of a regular exhibit.
 	 */
-	if (facets && (facets[0] !== "")) {
-		var leftFacets = [];
-		var rightFacets = [];
-		var topFacets = [];
-		var bottomFacets = [];
-		var facetHTML = "";
-		for (var i = 0; i < facets.length; i++) {
-			var attrs = facets[i].split(';');
-			var attrHTML = "";
-			for (var j = 0; j < attrs.length; j++) {
-				attrHTML = attrHTML + ' ex:' + attrs[j];
+	if (facets) {
+		for (var index in facets) {
+			var facet = facets[index];
+			var position = facet.position;
+			var innerHTML = "<div " + facet.innerHTML + " style='padding: 2px; float: left; width: 15em' ></div>";
+			if (position == "top") {
+				var facetDiv = document.getElementById('top-facets')
+				facetDiv.innerHTML = facetDiv.innerHTML + innerHTML;
 			}
-			
-			var facetDiv = document.createElement('div');
-			facetDiv.innerHTML = '<div ex:role="facet" ' + attrHTML + ' ></div>';
-			
-			var facetPosition = 'right';			
-			if (facetDiv.lastChild.getAttribute('ex:position')) { facetPosition = facetDiv.lastChild.getAttribute('ex:position'); }			
-			if (facetPosition == 'left') { leftFacets.push(facetDiv.lastChild); }
-			if (facetPosition == 'right') { rightFacets.push(facetDiv.lastChild); }
-			if (facetPosition == 'top') { topFacets.push(facetDiv); }
-			if (facetPosition == 'bottom') { bottomFacets.push(facetDiv); }
-		}
-		for (var i = 0; i < topFacets.length; i++) {
-			document.getElementById('top-facets').appendChild(topFacets[i]);
-			topFacets[i].lastChild.setAttribute('style', 'padding: 2px; float: left; width: 15em');
-		}
-		for (var i = 0; i < bottomFacets.length; i++) {
-			document.getElementById('bottom-facets').appendChild(bottomFacets[i]);
-			bottomFacets[i].lastChild.setAttribute('style', 'padding: 2px; float: left; width: 15em');
-		}
-		for (var i = 0; i < leftFacets.length; i++) { 
-			var leftFacetTd = document.getElementById('left-facets');
-			leftFacetTd.setAttribute('width', '20%');
-			leftFacetTd.appendChild(leftFacets[i]);
-		}	
-		for (var i = 0; i < rightFacets.length; i++) { 
-			var rightFacetTd = document.getElementById('right-facets');
-			rightFacetTd.setAttribute('width', '20%');
-			rightFacetTd.appendChild(rightFacets[i]);
+			if (position == "bottom") {
+				var facetDiv = document.getElementById('bottom-facets');
+				facetDiv.innerHTML = facetDiv.innerHTML + innerHTML;
+			}
+			if (position == "left") {
+			console.log('hi');
+				var facetTd = document.getElementById('left-facets');
+				facetTd.innerHTML = facetTd.innerHTML + innerHTML;
+				facetTd.setAttribute('width', '20%');
+			}
+			if (position == "right") {
+				var facetTd = document.getElementById('right-facets');
+				facetTd.innerHTML = facetTd.innerHTML + innerHTML;
+				facetTd.setAttribute('width', '20%');
+			}
 		}
 	}
 	
 	if (views && (views[0] !== "")) {
-		var viewHTML = "";
+		var viewHTML = '<div id="exhibit-view-panel" ex:role="viewPanel">';
 		for (var i = 0; i < views.length; i++) {
-			var attrs = views[i].split(';');
-			var attrHTML = "";
-			for (var j = 0; j < attrs.length; j++) {
-				attrHTML = attrHTML + ' ex:' + attrs[j];
-			}
-			viewHTML = viewHTML + '<div ex:role="view" ' + attrHTML + ' ></div>';
+			viewHTML = viewHTML + '<div ' + views[i] + ' ></div>';
 		}
-		var returnHTML = '<div id="exhibit-view-panel" ex:role="viewPanel">' + viewHTML + '</div>';
-		document.getElementById("view").innerHTML = returnHTML;
+		viewHTML = viewHTML + '</div>';
+		document.getElementById("view").innerHTML = viewHTML;
 	} else {
 		document.getElementById("view").innerHTML = '<div ex:role="view"></div>';
 	}
