@@ -20,3 +20,21 @@ Timegrid.WeekLayout = function(eventSource, params) {
 };
 Timegrid.LayoutFactory.registerLayout("week", Timegrid.WeekLayout);
 $.inherit(Timegrid.WeekLayout, Timegrid.NDayLayout);
+
+Timegrid.WeekLayout.prototype.computeStartTime = function(date) {
+    if (date) {
+        // We don't need to make sure it's the start of the week, once it's
+        // been set properly already.
+        var startTime = new Date(date);
+        startTime.add('d', 0 - this.n);
+        return startTime;
+    } else {
+        var startTime = new Date(this.eventSource.getEarliestDate()) ||
+                        new Date();
+        var newStartTime = new Date(startTime);
+        newStartTime.clearTime().setDay(Date.l10n.firstDayOfWeek);
+        return newStartTime > startTime ? this.computeStartTime(newStartTime) :
+                                          newStartTime;
+    }
+};
+

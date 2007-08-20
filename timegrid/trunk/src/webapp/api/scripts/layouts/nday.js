@@ -47,7 +47,7 @@ Timegrid.NDayLayout = function(eventSource, params) {
     
     // Initialize our eventSource
     this.eventSource = eventSource;
-    this.startTime = new Date(this.eventSource.getEarliestDate()) || new Date();
+    this.startTime = this.computeStartTime();
     this.startTime.setHours(0);
     this.endTime = this.computeEndTime(this.startTime); 
     
@@ -210,8 +210,12 @@ Timegrid.NDayLayout.prototype.computeStartTime = function(date) {
         startTime.add('d', 0 - this.n);
         startTime.setHours(0);
         return startTime;
+    } else {
+        var startTime = new Date(this.eventSource.getEarliestDate()) ||
+                        new Date();
+        startTime.clearTime();
+        return startTime;
     }
-    return false;
 };
 
 Timegrid.NDayLayout.prototype.computeEndTime = function(date) {
