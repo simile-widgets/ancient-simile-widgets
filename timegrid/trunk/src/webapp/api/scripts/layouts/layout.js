@@ -1,10 +1,10 @@
-/******************************************************************************
- * Layouts
- * @fileoverview
+/**
+ * @fileOverview
  *   This is where we define the entrypoint for  all of the different default 
- *   layouts that Timegrid is capable of, e.g. month, week, n-day, etc.
+ *   layouts that Timegrid is capable of, e.g. month, week, n-day, etc. Both
+ *   LayoutFactory and the common Layout superclass are defined in this file.
  * @author masont
- *****************************************************************************/
+ */
 
 /**
  * Constructs a LayoutFactory object.
@@ -17,6 +17,14 @@ Timegrid.LayoutFactory = function() {};
 
 Timegrid.LayoutFactory._constructors = {};
 
+/**
+ * Registers a layout class with this layout factory.  Automatically places the
+ * given layout under the common Layout superclass, and binds the name string
+ * to the constructor.
+ *
+ * @param {String} name the name to bind to the given constructor
+ * @param {Function} constructor the constructor to a layout class
+ */
 Timegrid.LayoutFactory.registerLayout = function(name, constructor) {
     $.inherit(constructor, Timegrid.Layout);
     Timegrid.LayoutFactory._constructors[name] = constructor;
@@ -26,7 +34,7 @@ Timegrid.LayoutFactory.registerLayout = function(name, constructor) {
  * Instantiates a Timegrid layout with the given parameter hash.
  *
  * @param {String} name the name of the layout
- * @param {Timegrid.DefaultEventSource} eventSource an EventSource object to layout and render
+ * @param {EventSource} eventSource an EventSource object to layout and render
  * @param params a hash of parameters to be passed into the desired layout
  * @return {Timegrid.Layout} a Timegrid.Layout instance of the specified subclass
  */
@@ -43,52 +51,84 @@ Timegrid.LayoutFactory.createLayout = function(name, eventSource, params) {
 
 /**
  * Instantiates a Layout object. This constructor should always be overridden.
+ *
  * @class Layout is the base class for all layouts that Timegrid supports.
  * @constructor
+ * @param {EventSource} eventSource the eventSource to pull events from
+ * @param {Object} params a parameter hash
  */
 Timegrid.Layout = function(eventSource, params) {
     var self = this;
+    /**
+     * An object containing a parameter hash
+     * @type Object
+     */
     this.params = params;
     /**
-     * The number of columns in the grid.
-     * @type int
+     * The number of columns in the grid
+     * @type Number
      */
     this.xSize = 0;
     /**
-     * The number of rows in the grid.
-     * @type int
+     * The number of rows in the grid
+     * @type Number
      */
     this.ySize = 0;
+    /**
+     * A function to map date objects to a custom timezone
+     * @type Function
+     */
     this.timezoneMapper = function(date) { 
         if (typeof self.timezoneoffset != "undefined") {
             return date.toTimezone(self.timezoneoffset);
         }
         return date;
     };
+    /**
+     * A function to map endpoints to an integer x-coordinate
+     * @type Function
+     */
     this.xMapper = function(obj) { return self.timezoneMapper(obj.time); };
+    /**
+     * A function to map endpoints to an integer y-coordinate
+     * @type Function
+     */
     this.yMapper = function(obj) { return self.timezoneMapper(obj.time); };
-    
+    /**
+     * The height of the horizontal labels in pixels
+     * @type Number
+     */
     this.xLabelHeight = 24;
+    /**
+     * The width of the vertical labels in pixels
+     * @type Number
+     */
     this.yLabelWidth = 48;
+    /**
+     * The height of the tabs that page between views in pixels
+     * @type Number
+     */
     this.tabHeight = 18;
 };
 
-Timegrid.Layout.prototype.addXMapper = function(f) {
-    var old = this.xMapper;
-    this.xMapper = function(obj) { return f(old(obj)); };
-};
-
-Timegrid.Layout.prototype.addYMapper = function(f) {
-    var old = this.yMapper;
-    this.yMapper = function(obj) { return f(old(obj)); };
-};
-
+/**
+ * Takes a parameter hash and extends this layout with it, flattening key names
+ * to lowercase as it goes.  This is done to eliminate browser-specific
+ * attribute case sensitivity.
+ *
+ * @param {Object} params a parameter hash
+ */
 Timegrid.Layout.prototype.configure = function(params) {
     for (attr in params) {
         this[attr] = params[attr.toLowerCase()];
     }
 };
 
+/**
+ * Computes the grid dimensions (gridheight, gridwidth, ycell, xcell) for this
+ * layout.  This is relatively complex since any of the above values can be
+ * either user-specified or computed.
+ */
 Timegrid.Layout.prototype.computeCellSizes = function() {
     // Compute the cell sizes for the grid
     this.xCell = this.params.xCell || this.params.xcell || 100.0 / this.xSize;
@@ -106,8 +146,8 @@ Timegrid.Layout.prototype.computeCellSizes = function() {
  * Renders out this layout into a DOM object with a wrapping div element as its
  * parent, returning the div.
  *
- * @param the parent element
- * @return a rendered DOM tree descended from a div element
+ * @param {Element} container the parent element
+ * @return {Element} a rendered DOM tree descended from a div element
  */
 Timegrid.Layout.prototype.render = function(container) {
     if (this.mini) {
@@ -187,9 +227,28 @@ Timegrid.Layout.prototype.render = function(container) {
     return this._viewDiv.get(0);
 };
 
+/**
+ * An abstract method to render events for this layout.  This method is where
+ * specific layout implementations hook into the main rendering loop.  While 
+ * generally used to render events, this method can return any valid input to
+ * the jQuery <code>append</code> method, which is then appended under the grid
+ * <code>div</code> element.
+ * 
+ * @function
+ * @param {Document} doc the document to create elements from
+ * @return {Content} any valid argument to jQuery's append, to be appended under
+ *   the grid <code>div</code>
+ */
 Timegrid.Layout.prototype.renderEvents = Timegrid.abstract("renderEvents");
 
-Timegrid.Layout.prototype.renderGridlines = function(doc) {
+/**
+ * Renders the gridlines for this layout.  Gridlines are represented in the DOM
+ * as absolutely positioned <code>div</code> elements with one dimension set to
+ * one pixel.
+ *
+ * @return {Element} a DOM element containing this layout's gridlines
+ */
+Timegrid.Layout.prototype.renderGridlines = function() {
     var gridlineContainer = document.createElement("div");
     gridlineContainer.className = 'timegrid-gridlines';
     
@@ -210,6 +269,13 @@ Timegrid.Layout.prototype.renderGridlines = function(doc) {
     return gridlineContainer;
 };
 
+/**
+ * Renders the horizontal column labels that run above the grid.  The labels 
+ * themselves are provided by the implementing layout subclasses by
+ * <code>getXLabels()</code>
+ *
+ * @return {Element} a DOM element containing the horizontal labels
+ */
 Timegrid.Layout.prototype.renderXLabels = function() {
     var xLabelContainer = document.createElement("div");
     xLabelContainer.className = 'timegrid-xlabels-window';
@@ -237,6 +303,13 @@ Timegrid.Layout.prototype.renderXLabels = function() {
     return xLabelContainer;
 };
 
+/**
+ * Renders the vertical row labels that run along the side of the grid.  The 
+ * labels themselves are provided by the implementing layout subclasses by
+ * <code>getYLabels()</code>
+ *
+ * @return {Element} a DOM element containing the vertical labels
+ */
 Timegrid.Layout.prototype.renderYLabels = function() {
     var yLabelContainer = document.createElement("div");
     yLabelContainer.className = 'timegrid-ylabels-window';
@@ -267,6 +340,20 @@ Timegrid.Layout.prototype.renderYLabels = function() {
     return yLabelContainer;
 };
 
+/**
+ * An abstract method to get the horizontal column labels for this layout.  This
+ * method must be implemented by all layout types subclassing Layout.
+ *
+ * @function
+ * @return {Array} an array of strings to use as column labels
+ */
 Timegrid.Layout.prototype.getXLabels = Timegrid.abstract("getXLabels");
 
+/**
+ * An abstract method to get the vertical row labels for this layout.  This
+ * method must be implemented by all layout types subclassing Layout.
+ *
+ * @function
+ * @return {Array} an array of strings to use as row labels
+ */
 Timegrid.Layout.prototype.getYLabels = Timegrid.abstract("getYLabels");

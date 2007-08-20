@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta name="generator" content="JsDoc Toolkit 1.0">
-	<title>JsDoc: debug.js</title>
+	<title>JsDoc: layout.js</title>
 	<link rel=stylesheet href="default.css" type="text/css" media=screen>
 </head>
 
@@ -12,14 +12,20 @@
 	<div class="content">
 		<div class="docs">
 		
-			<div class="sectionHead">Library: debug.js</div>
+			<div class="sectionHead">Library: layout.js</div>
 			<div class="section overview">
 				<div class="itemTitle">
 					Overview
 				</div>
 				<div>	
-					<div class="desc">No overview provided.</div>
+					<div class="desc">This is where we define the entrypoint for  all of the different default 
+  layouts that Timegrid is capable of, e.g. month, week, n-day, etc. Both
+  LayoutFactory and the common Layout superclass are defined in this file.</div>
 					<div class="itemTags">
+					
+						<ul>
+							<li>author: masont</li>
+						</ul>
 					
 					</div>
 				</div>
@@ -28,15 +34,1048 @@
 			<div class="sectionHead">Constructors</div>
 			
 			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timegrid.LayoutFactory"></a>
+					
+					
+					Timegrid.LayoutFactory(<span class="signature"></span>)
+					
+				</div>
+				
+				
+					<div class="desc">Constructs a LayoutFactory object.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout"></a>
+					
+					
+					Timegrid.Layout(<span class="signature">eventSource, params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Instantiates a Layout object. This constructor should always be overridden.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							EventSource
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							the eventSource to pull events from
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							Object
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							a parameter hash
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.timezoneMapper">timezoneMapper</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.xMapper">xMapper</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.yMapper">yMapper</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.configure">configure</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.computeCellSizes">computeCellSizes</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.render">render</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.renderEvents">renderEvents</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.renderGridlines">renderGridlines</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.renderXLabels">renderXLabels</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.renderYLabels">renderYLabels</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.getXLabels">getXLabels</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.getYLabels">getYLabels</a></li>
+					</ul>
+				
+				
+				
+				
+				<div class="detailHead">properties</div>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.params">params</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.xSize">xSize</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.ySize">ySize</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.xLabelHeight">xLabelHeight</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.yLabelWidth">yLabelWidth</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timegrid.Layout.tabHeight">tabHeight</a></li>
+					</ul>
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			<div class="sectionHead">Functions</div>
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.LayoutFactory.registerLayout"></a>
+					
+					
+					Timegrid.LayoutFactory.registerLayout(<span class="signature">name, constructor</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Registers a layout class with this layout factory.  Automatically places the
+given layout under the common Layout superclass, and binds the name string
+to the constructor.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							String
+						</td>
+						<td>
+							name
+						</td>
+						<td>
+							the name to bind to the given constructor
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							Function
+						</td>
+						<td>
+							constructor
+						</td>
+						<td>
+							the constructor to a layout class
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.LayoutFactory.createLayout"></a>
+					
+					
+					Timegrid.LayoutFactory.createLayout(<span class="signature">name, eventSource, params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Instantiates a Timegrid layout with the given parameter hash.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							String
+						</td>
+						<td>
+							name
+						</td>
+						<td>
+							the name of the layout
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							EventSource
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							an EventSource object to layout and render
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							a hash of parameters to be passed into the desired layout
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Timegrid.Layout
+						</td>
+						<td>
+							a Timegrid.Layout instance of the specified subclass
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.timezoneMapper"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>timezoneMapper(<span class="signature">date</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">A function to map date objects to a custom timezone</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							date
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.xMapper"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>xMapper(<span class="signature">obj</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">A function to map endpoints to an integer x-coordinate</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							obj
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.yMapper"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>yMapper(<span class="signature">obj</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">A function to map endpoints to an integer y-coordinate</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							obj
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.configure"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>configure(<span class="signature">params</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Takes a parameter hash and extends this layout with it, flattening key names
+to lowercase as it goes.  This is done to eliminate browser-specific
+attribute case sensitivity.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Object
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							a parameter hash
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.computeCellSizes"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>computeCellSizes(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Computes the grid dimensions (gridheight, gridwidth, ycell, xcell) for this
+layout.  This is relatively complex since any of the above values can be
+either user-specified or computed.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.render"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>render(<span class="signature">container</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Renders out this layout into a DOM object with a wrapping div element as its
+parent, returning the div.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Element
+						</td>
+						<td>
+							container
+						</td>
+						<td>
+							the parent element
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Element
+						</td>
+						<td>
+							a rendered DOM tree descended from a div element
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.renderEvents"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>renderEvents(<span class="signature">doc</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">An abstract method to render events for this layout.  This method is where
+specific layout implementations hook into the main rendering loop.  While 
+generally used to render events, this method can return any valid input to
+the jQuery <code>append</code> method, which is then appended under the grid
+<code>div</code> element.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Document
+						</td>
+						<td>
+							doc
+						</td>
+						<td>
+							the document to create elements from
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Content
+						</td>
+						<td>
+							any valid argument to jQuery's append, to be appended under
+  the grid <code>div</code>
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.renderGridlines"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>renderGridlines(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Renders the gridlines for this layout.  Gridlines are represented in the DOM
+as absolutely positioned <code>div</code> elements with one dimension set to
+one pixel.</div>
+				
+				
+				
+				
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Element
+						</td>
+						<td>
+							a DOM element containing this layout's gridlines
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.renderXLabels"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>renderXLabels(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Renders the horizontal column labels that run above the grid.  The labels 
+themselves are provided by the implementing layout subclasses by
+<code>getXLabels()</code></div>
+				
+				
+				
+				
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Element
+						</td>
+						<td>
+							a DOM element containing the horizontal labels
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.renderYLabels"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>renderYLabels(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Renders the vertical row labels that run along the side of the grid.  The 
+labels themselves are provided by the implementing layout subclasses by
+<code>getYLabels()</code></div>
+				
+				
+				
+				
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Element
+						</td>
+						<td>
+							a DOM element containing the vertical labels
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.getXLabels"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>getXLabels(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">An abstract method to get the horizontal column labels for this layout.  This
+method must be implemented by all layout types subclassing Layout.</div>
+				
+				
+				
+				
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Array
+						</td>
+						<td>
+							an array of strings to use as column labels
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.getYLabels"></a>
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>getYLabels(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">An abstract method to get the vertical row labels for this layout.  This
+method must be implemented by all layout types subclassing Layout.</div>
+				
+				
+				
+				
+				
+				
+				
+				<div class="detailHead">returns</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							Array
+						</td>
+						<td>
+							an array of strings to use as row labels
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+			</div>
+			
 			
 			
 			<div class="sectionHead">Objects</div>
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.params"></a>
+					
+					<span class="type">Object</span>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>params
+					
+					
+				</div>
+				
+				
+					<div class="desc">An object containing a parameter hash</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.xSize"></a>
+					
+					<span class="type">Number</span>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>xSize
+					
+					
+				</div>
+				
+				
+					<div class="desc">The number of columns in the grid</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.ySize"></a>
+					
+					<span class="type">Number</span>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>ySize
+					
+					
+				</div>
+				
+				
+					<div class="desc">The number of rows in the grid</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.xLabelHeight"></a>
+					
+					<span class="type">Number</span>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>xLabelHeight
+					
+					
+				</div>
+				
+				
+					<div class="desc">The height of the horizontal labels in pixels</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.yLabelWidth"></a>
+					
+					<span class="type">Number</span>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>yLabelWidth
+					
+					
+				</div>
+				
+				
+					<div class="desc">The width of the vertical labels in pixels</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			<div class="section object">
+				<div class="itemTitle">
+					<a name="Timegrid.Layout.tabHeight"></a>
+					
+					
+						<i><a href="#Timegrid.Layout" class="type">Timegrid.Layout.</a></i>tabHeight
+					
+					
+				</div>
+				
+				
+					<div class="desc">The height of the tabs that page between views</div>
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		</div>
 	</div>
 	<div class="finePrint">
-	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Fri, 20 Jul 2007 18:29:54 GMT
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Mon, 20 Aug 2007 18:41:57 GMT
 	</div>
 </body>
 </html>
