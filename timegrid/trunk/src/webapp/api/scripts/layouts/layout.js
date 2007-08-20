@@ -221,7 +221,7 @@ Timegrid.Layout.prototype.renderXLabels = function() {
     var xLabelsDiv = document.createElement("div");
     xLabelsDiv.className = 'timegrid-xlabels';
     xLabelsDiv.style.height = this.xLabelHeight + "px"
-    xLabelsDiv.style.width = this.gridwidth + "px";
+    xLabelsDiv.style.width = this.xCell * this.xSize + "%"; 
     xLabelsDiv.style.top = "0px";
     xLabelContainer.appendChild(xLabelsDiv);
     
@@ -247,7 +247,7 @@ Timegrid.Layout.prototype.renderYLabels = function() {
     
     var yLabelsDiv = document.createElement("div");
     yLabelsDiv.className = 'timegrid-ylabels';
-    yLabelsDiv.style.height = this.gridheight + "px";
+    yLabelsDiv.style.height = this.yCell * this.ySize + "px";
     yLabelsDiv.style.width = this.yLabelWidth + "px";
     yLabelsDiv.style.left = "0px";
     yLabelContainer.appendChild(yLabelsDiv);
