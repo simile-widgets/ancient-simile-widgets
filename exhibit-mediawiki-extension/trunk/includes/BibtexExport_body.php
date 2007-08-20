@@ -74,9 +74,9 @@ class BibtexExport extends SpecialPage
 					
 					#Now we know what to filter by, let's go through the bibtex.
 					foreach($entries as $entry) {
-						if ($filterby == author) {
-							$entry['author'] = explode(" and ", $entry['author']);
-							if (in_array( $val, $entry['author'])) {
+						if ($filterby == "author") {
+							$authorarray = explode(" and ", $entry['author']);
+							if (in_array( $val, $authorarray)) {
 								$survivingentries[] = $entry;
 							}
 						}
@@ -104,7 +104,7 @@ class BibtexExport extends SpecialPage
     		foreach($entry as $field => $value) {
     			if ($field == "bibtexEntryType") { $output .= "@$value{"; }
     			elseif ($field == "bibtexCitation") { $output .= "$value,\n"; }
-    			elseif ($field == "author") { $output .= "author = \"" . implode(" and ", $value) . "\",\n"; }
+    			elseif ($field == "author") { $output .= "author = \"" . $value . "\",\n"; }
 				else { $output .= "$field = \"$value\",\n"; }
 			}
 			$output .= "}\n\n";
