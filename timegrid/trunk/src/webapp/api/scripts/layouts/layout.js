@@ -139,7 +139,7 @@ Timegrid.Layout.prototype.render = function(container) {
     }
     $(this._container).height(this.height + "px");
     if (!this.params.width) { 
-        this.width = this.gridwidth || $(this._container).width(); 
+        this.width = this.params.gridwidth || $(this._container).width(); 
     } else {
         $(this._container).width(this.width + "px");
     }
