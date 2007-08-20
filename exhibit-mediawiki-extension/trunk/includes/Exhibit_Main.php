@@ -285,7 +285,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			}
 		array_push( $views, $attrHTML);
 		}
-		$views = implode(';', $views);
+		$views = implode('/', $views);
 	
 		// <coder> create coder divs and spans right here.
 		$coders = "";
@@ -345,7 +345,7 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 		<script type="text/javascript">
 		var sources = { $sources }; 
 		var facets = { $facets }; 
-		var views = "$views".split(';');
+		var views = "$views".split('/');
 		</script>
 		$coders
 		$lenshtml
