@@ -53,11 +53,9 @@ Timegrid.RecurringEventSource = function() {
     /** Generates events from event prototypes */
     this.generateEvents = function(startDate, endDate) {
         // FIXME: This does not work in IE
-        return eventPrototypes.foldr(new DStructs.Array(), function(ep, a) {
-            a.concat(ep.generateEvents(startDate, endDate));
-            return a;
+        return eventPrototypes.reduce(new DStructs.Array(), function(a, ep) {
+            return a.concat(ep.generateEvents(startDate, endDate));
         });
-        //return eventPrototypes[0].generateEvents(startDate, endDate);
     };
 };
 $.inherit(Timegrid.RecurringEventSource, Timegrid.ListenerAware);
