@@ -87,7 +87,7 @@ DStructs.Array.prototype.each = function(f) {
 };
 DStructs.Array.prototype.reduce = function(init, f) {
     for (var i = 0, len = this.length, result = init; i < len; i++) {
-        result = f(result, this[i]);
+        result = f.call(this, result, this[i]);
     }
     return result;
 };
