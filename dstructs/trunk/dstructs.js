@@ -48,12 +48,13 @@ DStructs.Array.prototype.slice = function(start, end) {
 };
 DStructs.Array.prototype.concat = function() { 
     var arrays = arguments;
+    var result = this.clone();
     for (var i = 0; i < arrays.length; i++) {
         if (arrays[i] instanceof Array) {
-            this.addAll(arrays[i]);
+            result.addAll(arrays[i]);
         }
     }
-    return this;
+    return result;
 };
 DStructs.Array.prototype.addAll = function(a) {
     for (var i = 0; i < a.length; i++) {
@@ -84,15 +85,11 @@ DStructs.Array.prototype.each = function(f) {
     }
     return this;
 };
-DStructs.Array.prototype.foldr = function(init, f) {
-    if (this.empty()) {
-        return init;
-    } else {
-        return f(this[0], this.slice(1).foldr(init, f));
+DStructs.Array.prototype.reduce = function(init, f) {
+    for (var i = 0, len = this.length, result = init; i < len; i++) {
+        result = f(result, this[i]);
     }
-};
-DStructs.Array.prototype.foldl = function(init, f) {
-
+    return result;
 };
 DStructs.Array.prototype.zip = function() {
 
@@ -127,7 +124,6 @@ DStructs.Array.prototype.uniq_i = function() {
             hash.put(e, i);
         }
     });
-    console.log(indices);
     return this;
 };
 DStructs.Array.prototype.uniq = function() {
