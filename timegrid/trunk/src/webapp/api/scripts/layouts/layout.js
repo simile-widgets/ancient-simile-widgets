@@ -282,7 +282,7 @@ Timegrid.Layout.prototype.renderXLabels = function() {
     xLabelContainer.style.height = this.xLabelHeight + "px";
     xLabelContainer.style.width = this.width - this.yLabelWidth - 
                                   this.scrollwidth - 2 + "px";
-    xLabelContainer.style.left = this.yLabelWidth + "px";
+    xLabelContainer.style.left = this.yLabelWidth - 1 + "px";
     
     var xLabelsDiv = document.createElement("div");
     xLabelsDiv.className = 'timegrid-xlabels';
@@ -316,7 +316,7 @@ Timegrid.Layout.prototype.renderYLabels = function() {
     yLabelContainer.style.width = this.yLabelWidth + "px";
     yLabelContainer.style.height = this.height - this.xLabelHeight -
                                    this.scrollwidth - this.tabHeight - 2 + "px";
-    yLabelContainer.style.top = this.xLabelHeight + "px";
+    yLabelContainer.style.top = this.xLabelHeight - 1 + "px";
     
     var yLabelsDiv = document.createElement("div");
     yLabelsDiv.className = 'timegrid-ylabels';
