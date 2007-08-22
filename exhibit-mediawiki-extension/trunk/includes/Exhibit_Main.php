@@ -25,7 +25,7 @@ $wgSpecialPages['BibTeXExport'] = 'BibtexExport';
 $wgHooks['LoadAllMessages'][] = 'BibtexExport::loadMessages';
 $wgHooks['LangugeGetSpecialPageAliases'][] = 'BibtexExportLocalizedPageName';
 
-//change this to your own key! (http://www.google.com/apis/maps/signup.html)
+#CHANGETHIS: Change this to your own key! (http://www.google.com/apis/maps/signup.html)
 $gmapkey = "ABQIAAAANowuNonWJ4d9uRGbydnrrhQtmVvwtG6TMOLiwecD59_rvdOkHxSVnf2RHe6KLnOHOyWLgmqJEUyQQg";
 $wgAutoloadClasses['GoogleMaps'] = dirname(__FILE__) . '/GoogleMaps_body.php';
 $wgSpecialPages['GoogleMaps'] = 'GoogleMaps';
@@ -91,9 +91,10 @@ function wfExhibitAddHTMLHeader(&$out) {
 		$out->addScript($ExhibitScript);
 		$out->addScript($WExhibitScript);
 	}
+	#CHANGETHIS: Change the wikiURL to match the URL of the root directory of your wiki.
 	$ToolbarScript = <<<TOOLBARSCRIPT
 	<script type='text/javascript'>
-	var wikiURL = 'http://simile.mit.edu/shelf';
+	var wikiURL = 'http://simile.mit.edu/axo';
 	(function(){
 		var script=document.createElement('script');
 		script.type='text/javascript';
@@ -101,7 +102,7 @@ function wfExhibitAddHTMLHeader(&$out) {
 		script.id='wiki-toolbox-bundle';
 		document.getElementsByTagName('head')[0].appendChild(script);
 	})();
-	</script>	
+	</script>		
 TOOLBARSCRIPT;
 	$out->addScript($ToolbarScript);
 
