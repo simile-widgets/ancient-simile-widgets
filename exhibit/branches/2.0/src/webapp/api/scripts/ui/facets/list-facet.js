@@ -274,7 +274,7 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
         if (this._settings.sortMode == "count") {
             sortFunction = function(a, b) {
                 var c = b.count - a.count;
-                return c != 0 ? c : sortFunction(a, b);
+                return c != 0 ? c : sortValueFunction(a, b);
             }
         }
         
