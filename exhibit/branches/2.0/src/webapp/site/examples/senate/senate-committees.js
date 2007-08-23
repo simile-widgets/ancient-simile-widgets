@@ -2733,9 +2733,11 @@
 	],
 	"types" :      {
 		"Senator" :   {
+            "pluralLabel" : "Senators",
 			"uri" : "http://simile.mit.edu/2007/05/senate-ns#Senator"
 		},
 		"Committee" : {
+            "pluralLabel" : "Committees",
 			"uri" : "http://simile.mit.edu/2007/05/senate-ns#Committee"
 		}
 	},

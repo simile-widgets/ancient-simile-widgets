@@ -6359,6 +6359,16 @@ var separator=uiContext.getSetting("format/list/separator");
 var lastSeparator=uiContext.getSetting("format/list/last-separator");
 var pairSeparator=uiContext.getSetting("format/list/pair-separator");
 
+if(typeof separator!="string"){
+separator=Exhibit.Formatter.l10n.listSeparator;
+}
+if(typeof lastSeparator!="string"){
+lastSeparator=Exhibit.Formatter.l10n.listLastSeparator;
+}
+if(typeof pairSeparator!="string"){
+pairSeparator=Exhibit.Formatter.l10n.listPairSeparator;
+}
+
 var f=function(){
 if(f.index>0&&f.index<count){
 if(count>2){

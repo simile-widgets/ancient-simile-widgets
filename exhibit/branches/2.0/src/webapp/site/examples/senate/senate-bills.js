@@ -140,6 +140,7 @@
 	],
 	"types" :      {
 		"Bill" : {
+            "pluralLabel" : "Bills",
 			"uri" : "http://simile.mit.edu/2007/05/senate-ns#Bill"
 		}
 	},

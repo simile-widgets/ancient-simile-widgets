@@ -2,66 +2,58 @@
 <head>
     <title>SIMILE | Exhibit | US Cities By Population</title>
     
-    <link href="schema.js" type="application/json" rel="exhibit/data" />
     <link href="cities.js" type="application/json" rel="exhibit/data" />
     
-    <!-- key for the simile web site -->
-    <!--script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?views=timeline&gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRT8JS25vht86mrPMqm9xZ3_t36WsBSDK8ixrPT9HiBqbx74R8zkuY0oGQ" type="text/javascript"></script-->
-
-    <!-- key for 127.0.0.1 -->
-    <script src="../../../api/exhibit-api.js?gmapkey=ABQIAAAANowuNonWJ4d9uRGbydnrrhREGtQZq9OFJfHndXhPP8gxXzlLARRSAIK_NOxPWcNPU-OIP9Qa_mmMPw&bundle=false" type="text/javascript"></script>
+    <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js"></script>
+    
+    <!-- google map key for the simile web site -->
+    <!--script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQtmVvwtG6TMOLiwecD59_rvdOkHxTAPhubLidYKS8G8qHrZGTBqAeJEg"></script-->
+    
+    <!-- google map key for http://127.0.0.1:8888/ -->
+    <script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAANowuNonWJ4d9uRGbydnrrhREGtQZq9OFJfHndXhPP8gxXzlLARRSAIK_NOxPWcNPU-OIP9Qa_mmMPw" type="text/javascript"></script>
 	
-    <link rel='stylesheet' href='styles.css' type='text/css' />
+    <style>
+        body {
+            margin:         0px;
+            padding:        0px;
+            font-family:    "georgia", "times", "times new roman", serif;
+            font-size:      10pt;
+        }
+        #header { padding: 1em; background: #CCD9E6; }
+        #content { padding: 1em; }
+        div.map-lens { padding: 1em; }
+    </style>
 </head>
 
 <body>
-    <div ex:role="collection" ex:itemTypes="City"></div>
-    
-    <table id="frame">
-        <tr>
-            <td id="content">
-                <h1>US Cities by Population</h1>
-                <p>Here is the <a href="cities.js" target="_blank">Exhibit JSON data file</a>.
-                
-                <div ex:role="coder" ex:coderClass="SizeGradient" id="pop-coder"
-                   ex:gradientPoints="0, 10; 4000000, 50" >
-                </div>
-                
-                <div id="exhibit-view-panel" ex:role="viewPanel">
-                    <div ex:role="view"
-                        ex:viewClass="Map"
-                        ex:label="Cities"
-                        ex:latlng=".latlng"
-                        ex:sizeKey=".pop"
-                        ex:sizeCoder="pop-coder"
-                        ex:sizeLegendLabel="Population"
-                        ex:center="38.62756, -90.19896"
-                        ex:zoom="4"
-                        >
-                        <div class="map-lens" ex:role="lens" style="display: none;">
-							<div><span ex:content=".label" /></div>
-                            <div>Rank: <span ex:content=".rank"></span></div>
-                            <div>Population: <span ex:content=".pop"></span></div>
-                        </div>
-                    </div>
-                    <div ex:role="view"
-                        ex:viewClass="Tabular"
-                        ex:label="Table"
-                        ex:columns=".rank, .label, .state, .pop"
-                        ex:columnLabels="rank, city, state, population"
-                        ex:sortColumn="0"
-                        ex:sortAscending="true"
-                        ></div>
-                </div>
-            </td>
-            <td id="sidebar">
-                <div id="exhibit-browse-panel">
-                    <div ex:role="facet" ex:facetClass="TextSearch"></div>
-                    <div ex:role="facet" ex:expression=".state" ex:facetLabel="State"></div>
-                </div>
-            </td>
-        </tr>
-    </table>
-
+    <div id="header">
+        <h1>US Cities by Population</h1>
+        <p>Using <a href="http://simile.mit.edu/exhibit/">Exhibit</a>, you can make this map
+            with just the two simple files you see in <a href="./">this directory</a>.
+            Could you have built the same map with as little effort using anything else?
+        </p>
+    </div>
+    <div id="content">
+        <div ex:role="coder" ex:coderClass="SizeGradient" id="pop-coder"
+           ex:gradientPoints="0, 10; 10000000, 100" >
+        </div>
+        <div ex:role="view"
+            ex:viewClass="Map"
+            ex:label="Cities"
+            ex:latlng=".latlng"
+            ex:sizeKey=".pop"
+            ex:sizeCoder="pop-coder"
+            ex:sizeLegendLabel="Population"
+            ex:center="38.62756, -90.19896"
+            ex:zoom="4"
+            ex:mapHeight="500"
+            ex:showHeader="false"
+            >
+            <div class="map-lens" ex:role="lens" style="display: none;">
+                <div>#<span ex:content=".rank"></span>. <b ex:content=".label"></b></div>
+                <div><span ex:content=".pop"></span> people</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

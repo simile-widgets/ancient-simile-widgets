@@ -27,9 +27,9 @@ td {
 }
             
 #content {
-    width: 70%;
-    padding: 2em;
-    background-color: #F4F0EA;
+    width:              70%;
+    padding:            2em;
+    background-color:   #DFFFFF;
 }
 
 #content h1 {
@@ -38,59 +38,23 @@ td {
 }
 
 #sidebar {
-    width: 20%;
-    white-space: nowrap;
-    background-color: #fff;
-    background-position: bottom right;
-    background-repeat: no-repeat;
-    background-attachment: fixed; 
-    border-left: 1px solid #ccc;
-    padding: 1em;
-}
-
-#view-panel {
-    margin-top: 3em;
-}
-
-#view-panel table {
-    border-spacing: 0px;
-    border-collapse: collapse;
-}
-
-#view-panel h1 {
-    border: none;
-    font-size: 120%;
-}
-
-#view-panel h1 {
-    border: none;
-    background: none;
-    padding: 0;
-    margin: 1em 0;
-}
-
-#view-panel h2 {
-    border: none;
-    background: none;
-    padding: 0;
-    margin: 0.5em;
-}
-
-.item {
-    border: 1px solid #aaa;
-    padding: 0.3em;
+    width:                  25%;
+    white-space:            nowrap;
+    background-color:       #C0B7B7;
+    border-left:            1px solid #ccc;
+    padding:                1em;
 }
 
 div.map-lens {
-    text-align: center;
+    padding: 1em;
 }
 
 div.exhibit-facet-body {
-    background-color: #E3E6EC;
-    border: 1px solid #B8B8BB;
+    background-color: white;
+    border:           none;
 }
 
 div.exhibit-facet-header {
-    color: #523015;
-    background-color: white;
+    color:      white;
+    background: none
 }

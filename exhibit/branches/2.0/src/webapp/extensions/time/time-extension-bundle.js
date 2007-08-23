@@ -399,10 +399,12 @@ this._eventSource.addMany(events);
 
 var band=this._timeline.getBand(0);
 var centerDate=band.getCenterVisibleDate();
-if(centerDate<this._eventSource.getEarliestDate()){
-band.scrollToCenter(this._eventSource.getEarliestDate());
-}else if(centerDate>this._eventSource.getLatestDate()){
-band.scrollToCenter(this._eventSource.getLatestDate());
+var earliest=this._eventSource.getEarliestDate();
+var latest=this._eventSource.getLatestDate();
+if(earliest!=null&&centerDate<earliest){
+band.scrollToCenter(earliest);
+}else if(latest!=null&&centerDate>latest){
+band.scrollToCenter(latest);
 }
 }
 this._dom.setUnplottableMessage(currentSize,unplottableItems);

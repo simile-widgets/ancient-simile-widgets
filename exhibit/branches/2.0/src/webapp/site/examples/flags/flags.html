@@ -1,35 +1,61 @@
 ﻿<html>
 <head>
-    <title>SIMILE | Exhibit | Countries</title>
+    <title>SIMILE | Exhibit | Flags of the World</title>
     
     <link href="data.json" type="application/json" rel="exhibit/data" />
     
-    <!-- key for the simile web site -->
-    <!--script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRT8JS25vht86mrPMqm9xZ3_t36WsBSDK8ixrPT9HiBqbx74R8zkuY0oGQ" type="text/javascript"></script-->
+    <script src="http://127.0.0.1:8888/exhibit/api/exhibit-api.js"></script>
     
-    <!-- key for 127.0.0.1 -->
-    <script src="../../../api/exhibit-api.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQJTrawViuEb6qB72O7Dx55ZuZJPxQxDF4OwwpQrkrEeY7bfbCgZfepwg" type="text/javascript"></script>
-
-    <link rel='stylesheet' href='styles.css' type='text/css' />
+    <!-- google map key for the simile web site -->
+    <!--script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQtmVvwtG6TMOLiwecD59_rvdOkHxTAPhubLidYKS8G8qHrZGTBqAeJEg"></script-->
+    
+    <!-- google map key for http://127.0.0.1:8888/ -->
+    <script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAANowuNonWJ4d9uRGbydnrrhREGtQZq9OFJfHndXhPP8gxXzlLARRSAIK_NOxPWcNPU-OIP9Qa_mmMPw" type="text/javascript"></script>
+	
+    <style>
+        body {
+            margin:         0px;
+            padding:        0px;
+            font-family:    "georgia", "times", "times new roman", serif;
+            font-size:      8pt;
+        }
+        div.map-lens { padding: 1em; }
+        a { color: #533421; }
+    </style>
 </head>
 
 <body>
-    <h1>Flags</h1>
-    <p>Adapted from <a href="http://ecmanaut.blogspot.com/">Johan Sundström</a>'s
-        <a href="http://ecmanaut.googlecode.com/svn/trunk/exhibits/flags.html">flags of the world exhibit</a>,
-        with images from <a href="http://www.famfamfam.com/lab/icons/flags/">famfamfam.com</a>.
-        Here is the <a href="data.json" target="_blank">Exhibit JSON data file</a>.
-    </p>
-
-    <div ex:role="view"
-        ex:viewClass="Map"
-        ex:latlng=".latlng"
-        ex:icon="concat('http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/site/examples/flags/images/', .code, '.png')"
-        ex:shape="square"
-        ex:shapeWidth="30"
-        ex:shapeHeight="25"
-        ex:mapHeight="600"
-        >
-    </div>
+    <table width="100%" cellpadding="20"><tr valign="top">
+        <td width="20%" style="background: #DE8D57">
+            <h1>Flags of the World</h1>
+            <p>Adapted from <a href="http://ecmanaut.blogspot.com/">Johan Sundström</a>'s
+                <a href="http://ecmanaut.googlecode.com/svn/trunk/exhibits/flags.html">flags of the world exhibit</a>,
+                with images from <a href="http://www.famfamfam.com/lab/icons/flags/">famfamfam.com</a>.
+                Here is the <a href="data.json" target="_blank">Exhibit JSON data file</a>.
+            </p>
+            <p>Using <a href="http://simile.mit.edu/exhibit/">Exhibit</a>, you can make this map
+                with just the few simple files you see in <a href="./">this directory</a>.
+                Could you have built the same map with as little effort using anything else?
+            </p>
+            <center ex:role="logo" ex:color="BlanchedAlmond"></center>
+        </td>
+        <td>
+            <div ex:role="view"
+                ex:viewClass="Map"
+                ex:latlng=".latlng"
+                ex:icon="concat('http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/site/examples/flags/images/', .code, '.png')"
+                ex:iconFit="none"
+                ex:shape="square"
+                ex:shapeWidth="30"
+                ex:shapeHeight="25"
+                ex:mapHeight="600"
+                >
+                <div ex:role="lens" style="display: none;">
+                    <img ex:src-subcontent="images/{{.code}}.png" />
+                    <b ex:content=".label"></b> [<span ex:content=".code"></span>]
+                </div>
+            </div>
+        </td>
+    </tr></table>
 </body>
 </html>
