@@ -50,7 +50,7 @@
             "themes/theme-sandy-stone-beach-ocean-diver.css"
         ];
         
-        var locales = [ "en", "fr" ];
+        var locales = [  ];
         
         var defaultClientLocales = ("language" in navigator ? navigator.language : navigator.browserLanguage).split(";");
         for (var l = 0; l < defaultClientLocales.length; l++) {
@@ -61,6 +61,7 @@
             }
             locales.push(locale);
         }
+        if (!locales.length) { locales.push("en"); }
         
         var url = SimileAjax.findScript(document, "timegrid-api.js");
         if (url == null) {

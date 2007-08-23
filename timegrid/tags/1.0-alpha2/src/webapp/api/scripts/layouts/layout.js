@@ -233,8 +233,11 @@ Timegrid.Layout.prototype.renderChanged = function() {
     this._gridDiv.empty();
     this._gridDiv.append(this.renderEvents(document));
     this._gridDiv.append(this.renderGridlines(document));
-    this.renderXLabels();
-    this.renderYLabels();
+    if (this.renderedStartTime && this.renderedStartTime != this.startTime) {
+        this.renderXLabels();
+        this.renderYLabels();
+    }
+    this.renderedStartTime = this.startTime;
     if (!this.mini) {
         if ($.browser.msie) {
             $('.timegrid-view:visible .timegrid-rounded-shadow', 
@@ -268,7 +271,9 @@ Timegrid.Layout.prototype.renderEvents = Timegrid.abstract("renderEvents");
  * @return {Element} a DOM element containing this layout's gridlines
  */
 Timegrid.Layout.prototype.renderGridlines = function() {
+    if (this._gridlineContainer) { return; }
     var gridlineContainer = document.createElement("div");
+    this._gridlineContainer = gridlineContainer;
     gridlineContainer.className = 'timegrid-gridlines';
     
     for (var x = 0; x < this.xSize; x++) { // Vertical lines
