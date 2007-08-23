@@ -271,7 +271,7 @@ Timegrid.Layout.prototype.renderEvents = Timegrid.abstract("renderEvents");
  * @return {Element} a DOM element containing this layout's gridlines
  */
 Timegrid.Layout.prototype.renderGridlines = function() {
-    if (this._gridlineContainer) { return; }
+    if (this._gridlineContainer) { return this._gridlineContainer; }
     var gridlineContainer = document.createElement("div");
     this._gridlineContainer = gridlineContainer;
     gridlineContainer.className = 'timegrid-gridlines';
