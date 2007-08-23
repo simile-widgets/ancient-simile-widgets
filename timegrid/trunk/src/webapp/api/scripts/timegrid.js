@@ -169,6 +169,10 @@ Timegrid._Impl.prototype._construct = function() {
     this.rendering = false;
 };
 
+Timegrid._Impl.prototype._update = function() {
+    this._panel.renderChanged();
+};
+
 Timegrid._Impl.prototype._resize = function() {
     var newHeight = $(this._container).height();
     var newWidth = $(this._container).width();
@@ -181,10 +185,10 @@ Timegrid._Impl.prototype._resize = function() {
 };
 
 Timegrid._Impl.prototype._onAddMany = function() {
-    this._construct();
+    this._update();
 };
 
 Timegrid._Impl.prototype._onClear = function() {
-    this._construct();
+    this._update();
 };
 

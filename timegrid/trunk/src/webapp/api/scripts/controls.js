@@ -31,6 +31,11 @@ Timegrid.Controls.Panel.prototype.render = function(container) {
     this._tabSet.switchTo(this._tabSet.current || this._titles[0]);
 };
 
+Timegrid.Controls.Panel.prototype.renderChanged = function() {
+    this._tabSet.renderChanged();
+    this._tabSet.switchTo(this._tabSet.current || this._titles[0]);
+};
+
 /*
  * TabSet is a style of control that generates a set of tabs.  These tabs can
  * be configured to switch between different views, time slices, or data
@@ -68,6 +73,11 @@ Timegrid.Controls.TabSet.prototype.render = function(container) {
         this._tabs[lTitle] = tab;
     }
     if (!$.browser.msie) { $('.timegrid-tab').corner("30px top"); }
+};
+
+Timegrid.Controls.TabSet.prototype.renderChanged = function() {
+    var layout = this._layoutMap[this.current];
+    layout.renderChanged();
 };
 
 Timegrid.Controls.TabSet.prototype.switchTo = function(title) {

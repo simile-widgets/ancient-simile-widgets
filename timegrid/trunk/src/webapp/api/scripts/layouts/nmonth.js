@@ -21,9 +21,6 @@ Timegrid.NMonthLayout = function(eventSource, params) {
     
     // Initialize our eventSource
     this.eventSource   = eventSource;
-    this.startTime     = this.eventSource.getEarliestDate() || new Date();
-    this.dataStartTime = new Date(this.eventSource.getEarliestDate()) ||
-                         new Date();
 
     // Configure our mappers
     this.xMapper = function(obj) {
@@ -41,6 +38,13 @@ Timegrid.NMonthLayout = function(eventSource, params) {
 Timegrid.LayoutFactory.registerLayout("n-month", Timegrid.NMonthLayout);
 
 Timegrid.NMonthLayout.prototype.initializeGrid = function() {
+    this.startTime     = this.eventSource.getEarliestDate() || new Date();
+    this.dataStartTime = new Date(this.eventSource.getEarliestDate()) ||
+                         new Date();
+    this.updateGrid();
+};
+
+Timegrid.NMonthLayout.prototype.updateGrid = function() {
     this.computeDimensions();
     var now = new Date();
     if (now.isBetween(this.startTime, this.endTime)) { this.now = now; }
@@ -161,14 +165,14 @@ Timegrid.NMonthLayout.prototype.getYLabels = function() {
 Timegrid.NMonthLayout.prototype.goPrevious = function() {
     this.dataStartTime.add('M', 0 - this.n);
     this.startTime = new Date(this.dataStartTime);
-    this.initializeGrid();
+    this.updateGrid();
     this.render();
 };
 
 Timegrid.NMonthLayout.prototype.goNext = function() {
     this.dataStartTime.add('M', this.n);
     this.startTime = new Date(this.dataStartTime);
-    this.initializeGrid();
+    this.updateGrid();
     this.render();
 };
 

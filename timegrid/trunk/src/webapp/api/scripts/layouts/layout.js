@@ -198,9 +198,9 @@ Timegrid.Layout.prototype.render = function(container) {
     this.gridheight = this.gridheight || gridWindowDiv.height() - this.scrollwidth;
     gridDiv.height(this.gridheight + "px").width(this.gridwidth + "px");
     this.computeCellSizes();
+    this._gridDiv = gridDiv;
     gridDiv.append(this.renderEvents(document));
     gridDiv.append(this.renderGridlines(document));
-    
     var xLabels = this.renderXLabels();
     var yLabels = this.renderYLabels();
     var syncHorizontalScroll = function(a, b) {
@@ -213,8 +213,8 @@ Timegrid.Layout.prototype.render = function(container) {
     };
     syncVerticalScroll(yLabels, gridWindowDiv.get(0));
     syncHorizontalScroll(xLabels, gridWindowDiv.get(0));
-    
     this._viewDiv.append(xLabels).append(yLabels);
+    
     if (!this.mini) {
         if ($.browser.msie) {
             $('.timegrid-view:visible .timegrid-rounded-shadow', 
@@ -224,7 +224,26 @@ Timegrid.Layout.prototype.render = function(container) {
               this._container).prettybox(4,7,1,0.7);
         }
     }
+
     return this._viewDiv.get(0);
+};
+
+Timegrid.Layout.prototype.renderChanged = function() {
+    this.initializeGrid();
+    this._gridDiv.empty();
+    this._gridDiv.append(this.renderEvents(document));
+    this._gridDiv.append(this.renderGridlines(document));
+    this.renderXLabels();
+    this.renderYLabels();
+    if (!this.mini) {
+        if ($.browser.msie) {
+            $('.timegrid-view:visible .timegrid-rounded-shadow', 
+              this._container).prettybox(4,0,0,1);
+        } else {
+            $('.timegrid-view:visible .timegrid-rounded-shadow', 
+              this._container).prettybox(4,7,1,0.7);
+        }
+    }
 };
 
 /**
@@ -277,7 +296,10 @@ Timegrid.Layout.prototype.renderGridlines = function() {
  * @return {Element} a DOM element containing the horizontal labels
  */
 Timegrid.Layout.prototype.renderXLabels = function() {
-    var xLabelContainer = document.createElement("div");
+    this._xLabelContainer = this._xLabelContainer ||
+                            document.createElement("div");
+    var xLabelContainer = this._xLabelContainer;
+    xLabelContainer.innerHTML = "";
     xLabelContainer.className = 'timegrid-xlabels-window';
     xLabelContainer.style.height = this.xLabelHeight + "px";
     xLabelContainer.style.width = this.width - this.yLabelWidth - 
@@ -311,7 +333,10 @@ Timegrid.Layout.prototype.renderXLabels = function() {
  * @return {Element} a DOM element containing the vertical labels
  */
 Timegrid.Layout.prototype.renderYLabels = function() {
-    var yLabelContainer = document.createElement("div");
+    this._yLabelContainer = this._yLabelContainer || 
+                            document.createElement("div");
+    var yLabelContainer = this._yLabelContainer;
+    yLabelContainer.innerHTML = "";
     yLabelContainer.className = 'timegrid-ylabels-window';
     yLabelContainer.style.width = this.yLabelWidth + "px";
     yLabelContainer.style.height = this.height - this.xLabelHeight -

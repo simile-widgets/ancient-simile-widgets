@@ -45,17 +45,20 @@ Timegrid.NDayLayout = function(eventSource, params) {
     this.ySize  = this.dayEnd - this.dayStart;
     this.computeCellSizes();
     
-    // Initialize our eventSource
     this.eventSource = eventSource;
-    this.startTime = this.computeStartTime();
-    this.startTime.setHours(0);
-    this.endTime = this.computeEndTime(this.startTime); 
-    
-    this.initializeGrid();
+    this.initializeGrid(eventSource);
 };
 Timegrid.LayoutFactory.registerLayout("n-day", Timegrid.NDayLayout);
 
 Timegrid.NDayLayout.prototype.initializeGrid = function() {
+    this.startTime = this.computeStartTime();
+    this.startTime.setHours(0);
+    this.endTime = this.computeEndTime(this.startTime); 
+    
+    this.updateGrid();
+};
+
+Timegrid.NDayLayout.prototype.updateGrid = function() {
     var now = new Date();
     if (now.isBetween(this.startTime, this.endTime)) { this.now = now; }
     
@@ -185,14 +188,14 @@ Timegrid.NDayLayout.prototype.getYLabels = function() {
 Timegrid.NDayLayout.prototype.goPrevious = function() {
     this.endTime = this.startTime;
     this.startTime = this.computeStartTime(this.endTime);
-    this.initializeGrid();
+    this.updateGrid();
     this.render();
 };
 
 Timegrid.NDayLayout.prototype.goNext = function() {
     this.startTime = this.endTime;
     this.endTime = this.computeEndTime(this.startTime);
-    this.initializeGrid();
+    this.updateGrid();
     this.render();
 };
 
