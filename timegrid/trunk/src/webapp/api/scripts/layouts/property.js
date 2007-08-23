@@ -35,14 +35,18 @@ Timegrid.PropertyLayout = function(eventSource, params) {
     this.ySize  = this.dayEnd - this.dayStart;    
 
     this.eventSource = eventSource;
-    this.values      = new DStructs.Array();
-    this.startTime   = new Date(this.eventSource.getEarliestDate()) || new Date();
-    this.endTime     = new Date(this.eventSource.getLatestDate()) || new Date();
     this.initializeGrid();
 };
 Timegrid.LayoutFactory.registerLayout("property", Timegrid.PropertyLayout);
 
 Timegrid.PropertyLayout.prototype.initializeGrid = function() {
+    this.startTime   = new Date(this.eventSource.getEarliestDate()) || new Date();
+    this.endTime     = new Date(this.eventSource.getLatestDate()) || new Date();
+    this.values      = new DStructs.Array();
+    this.updateGrid();
+};
+
+Timegrid.PropertyLayout.prototype.updateGrid = function() {
     this.computeDimensions();
     this.eventGrid = new Timegrid.Grid([], this.xSize, this.ySize,
                                        this.xMapper, this.yMapper);
@@ -77,7 +81,7 @@ Timegrid.PropertyLayout.prototype.renderEvents = function(doc) {
             var endpoints = this.eventGrid.get(x,y).sort(function(a, b) {
                 return a.time - b.time;
             });
-            for (i in endpoints) {
+            for (var i = 0; i < endpoints.length; i++) {
                 var endpoint = endpoints[i];
                 if (endpoint.type == "start") {
                     // Render the event

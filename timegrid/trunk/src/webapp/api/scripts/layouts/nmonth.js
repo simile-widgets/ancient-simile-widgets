@@ -43,7 +43,6 @@ Timegrid.NMonthLayout.prototype.initializeGrid = function() {
                          new Date();
     this.updateGrid();
 };
-
 Timegrid.NMonthLayout.prototype.updateGrid = function() {
     this.computeDimensions();
     var now = new Date();
@@ -104,7 +103,7 @@ Timegrid.NMonthLayout.prototype.renderEvents = function(doc) {
 Timegrid.NMonthLayout.prototype.renderEventList = function(evts, x, y, n, m) {
     var jediv = $("<div></div>").addClass("timegrid-month-cell");
     var eList = $("<ul></ul>").addClass("timegrid-event-list");
-    for (i in evts) {
+    for (var i = 0; i < evts.length; i++) {
         eList.append('<li>' + evts[i].getText() + '</li>');
     }
     jediv.append(eList);

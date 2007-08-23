@@ -119,7 +119,7 @@ Timegrid.Layout = function(eventSource, params) {
  * @param {Object} params a parameter hash
  */
 Timegrid.Layout.prototype.configure = function(params) {
-    for (attr in params) {
+    for (var attr in params) {
         this[attr] = params[attr.toLowerCase()];
     }
 };
