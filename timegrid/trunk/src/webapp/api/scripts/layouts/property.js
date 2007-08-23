@@ -95,8 +95,8 @@ Timegrid.PropertyLayout.prototype.renderEvents = function(doc) {
                     for (id in currentEvents) {
                         var eDiv = currentEvents[id];
                         var newWidth = this.xCell / currentCount;
-                        $(eDiv).css("width", newWidth + "%");
-                        $(eDiv).css("left", this.xCell * x + newWidth * hIndex + "%");
+                        $(eDiv).css("width", newWidth + "px");
+                        $(eDiv).css("left", this.xCell * x + newWidth * hIndex + "px");
                         hIndex++;
                     }
                 } else if (endpoint.type == "end") {
@@ -120,7 +120,7 @@ Timegrid.PropertyLayout.prototype.renderEvent = function(evt, x, y) {
     }
     jediv.css("height", this.yCell * length);
     jediv.css("top", this.yCell * y);
-    jediv.css("left", this.xCell * x + '%');
+    jediv.css("left", this.xCell * x + 'px');
     if (evt.getColor()) { jediv.css('background-color', evt.getColor()); }
     if (evt.getTextColor()) { jediv.css('color', evt.getTextColor()); }
     return jediv.get()[0]; // Return the actual DOM element

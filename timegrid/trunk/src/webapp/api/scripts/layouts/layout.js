@@ -131,7 +131,8 @@ Timegrid.Layout.prototype.configure = function(params) {
  */
 Timegrid.Layout.prototype.computeCellSizes = function() {
     // Compute the cell sizes for the grid
-    this.xCell = this.params.xCell || this.params.xcell || 100.0 / this.xSize;
+    this.xCell = this.params.xCell || this.params.xcell ||
+                 (this.gridwidth - 1) / this.xSize;
     this.yCell = this.params.yCell || this.params.ycell ||
                  (this.gridheight - 1) / this.ySize;
     if (this.params.yCell || this.params.ycell) {
@@ -275,7 +276,7 @@ Timegrid.Layout.prototype.renderGridlines = function() {
         var vlineDiv = document.createElement('div');
         vlineDiv.className = 'timegrid-vline';
         vlineDiv.style.height = this.gridheight + "px";
-        vlineDiv.style.left = x * this.xCell + "%";
+        vlineDiv.style.left = x * this.xCell + "px";
         gridlineContainer.appendChild(vlineDiv);
     }
     for (var y = 0; y <= this.ySize; y++) { // Horizontal lines
@@ -318,8 +319,8 @@ Timegrid.Layout.prototype.renderXLabels = function() {
         var label = document.createElement("div");
         label.className = 'timegrid-label';
         label.innerHTML = labels[i];
-        label.style.width = this.xCell + '%';
-        label.style.left = (i * this.xCell) + '%';
+        label.style.width = this.xCell + 'px';
+        label.style.left = (i * this.xCell) + 'px';
         xLabelsDiv.appendChild(label);
     }    
     return xLabelContainer;

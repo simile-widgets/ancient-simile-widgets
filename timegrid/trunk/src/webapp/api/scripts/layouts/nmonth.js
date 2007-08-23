@@ -108,18 +108,18 @@ Timegrid.NMonthLayout.prototype.renderEventList = function(evts, x, y, n, m) {
     }
     jediv.append(eList);
     jediv.append('<span class="timegrid-month-date-label">' + n + '</span>');
-    jediv.css("height", this.yCell).css("width", this.xCell + "%");
+    jediv.css("height", this.yCell).css("width", this.xCell + "px");
     jediv.css("top", this.yCell * y);
-    jediv.css("left", this.xCell * x + '%');
+    jediv.css("left", this.xCell * x + 'px');
     return jediv.get()[0]; // Return the actual DOM element
 };
 
 Timegrid.NMonthLayout.prototype.renderCellColor = function(x, y, m) {
     var jcdiv = $("<div></div>").addClass("timegrid-month-cell");
     jcdiv.addClass("timegrid-month-cell-" + (m % 2 ? "odd" : "even"));
-    jcdiv.css("height", this.yCell).css("width", this.xCell + "%");
+    jcdiv.css("height", this.yCell).css("width", this.xCell + "px");
     jcdiv.css("top", this.yCell * y);
-    jcdiv.css("left", this.xCell * x + "%");
+    jcdiv.css("left", this.xCell * x + "px");
     
     if (this.now) {
         var nowX = this.xMapper({ time: this.now });

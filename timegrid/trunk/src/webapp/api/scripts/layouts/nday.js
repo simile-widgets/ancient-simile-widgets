@@ -104,8 +104,8 @@ Timegrid.NDayLayout.prototype.renderEvents = function(doc) {
                 var eDiv = currentEvents[id];
                 var newWidth = this.xCell / currentCount;
                 var newLeft = this.xCell * x + newWidth * hIndex;
-                $(eDiv).css("width", newWidth + "%");
-                $(eDiv).css("left", newLeft + "%");
+                $(eDiv).css("width", newWidth + "px");
+                $(eDiv).css("left", newLeft + "px");
                 hIndex++;
             }
         } else if (endpoint.type == "end") {
@@ -135,7 +135,7 @@ Timegrid.NDayLayout.prototype.renderEvent = function(evt, x, y) {
     ediv.className = className;
     ediv.style.height = this.yCell * length + "px";
     ediv.style.top = this.yCell * y + "px";
-    ediv.style.left = this.xCell * x + '%';
+    ediv.style.left = this.xCell * x + 'px';
     if (evt.getColor()) { ediv.style.backgroundColor = evt.getColor(); }
     if (evt.getTextColor()) { ediv.style.color = evt.getTextColor(); }
     return ediv; // Return the actual DOM element
@@ -150,12 +150,12 @@ Timegrid.NDayLayout.prototype.renderNow = function() {
     
     var rectDiv = $('<div></div>').addClass('timegrid-week-highlights');
     var yRect = $('<div></div>').height(this.yCell + "px")
-                                .width(this.xCell * this.xSize + "%")
+                                .width(this.xCell * this.xSize + "px")
                                 .css('top', nowY * this.yCell + "px")
                                 .addClass('timegrid-week-highlight');
     var xRect = $('<div></div>').height(this.yCell * this.ySize + "px")
-                                .width(this.xCell + "%")
-                                .css('left', nowX * this.xCell + "%")
+                                .width(this.xCell + "px")
+                                .css('left', nowX * this.xCell + "px")
                                 .addClass('timegrid-week-highlight');
     rectDiv.append(xRect).append(yRect);
     return rectDiv.get(0);
