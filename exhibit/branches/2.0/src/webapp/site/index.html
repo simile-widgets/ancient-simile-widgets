@@ -4,6 +4,14 @@
     <link rel='stylesheet' href='styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
     <style>
+        p.blurb {
+            font-size:  120%;
+            font-style: italic;
+            width:      30em;
+        }
+        .blurb em {
+            text-decoration: underline;
+        }
         p.example-heading {
             font-weight: bold;
             margin:      0;
@@ -22,6 +30,12 @@
             overflow:    hidden;
             height:      1px;
             visibility:  hidden;
+        }
+        #carousel {
+            border: 1px solid #ddd;
+            height: 300px;
+            background: url(images/gradient-background.png) repeat-x bottom left;
+            overflow: hidden;
         }
     </style>
     <script type="text/javascript">
@@ -54,7 +68,7 @@
         }
     </script>
 </head>
-<body onload="onLoad();">
+<body onload="">
 <!--#include virtual="sidebar.html" -->
 <ul id="path">
   <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
@@ -65,77 +79,31 @@
     <img src="http://simile.mit.edu/images/exhibit.png" style="float: right; margin: 2em;" />
     
     <h1>Exhibit</h1>
-    <p>Exhibit is a <em>lightweight structured data publishing framework</em> that 
-        lets you create web pages with support for sorting, filtering, and rich 
-        visualizations by writing only HTML and optionally some CSS and Javascript 
-        code.
-    </p>
-    <p>It's like <a href="http://maps.google.com/">Google Maps</a> and 
-        <a href="http://simile.mit.edu/timeline/">Timeline</a>, 
-        but for structured data normally published through database-backed 
-        web sites. Exhibit essentially removes the need for a database or a 
-        server side web application. Its Javascript-based engine makes it easy for 
-        everyone who has a little bit of knowledge of HTML and small data 
-        sets to share them with the world and let people easily interact with them.
+    <p class="blurb">
+        Create <em>interactive</em> <em>data-rich</em> web pages like these ones below
+        without ever touching a database or a web server, or doing <em>any</em> 
+        programming:
     </p>
     
-    <p>Check out these diverse sample <em>exhibits</em>:</p>
+    <div id="carousel"><div id="carousel-content">
+        <img src="images/example-screenshot-senate.png" />
+        <img src="images/example-screenshot-presidents.png" />
+        <img src="images/example-screenshot-nobelists.png" />
+        <img src="images/example-screenshot-flags.png" />
+        <img src="images/example-screenshot-factbook.png" />
+        <img src="images/example-screenshot-csail-pis.png" />
+        <img src="images/example-screenshot-billionnaires.png" />
+        <img src="images/example-screenshot-cities.png" />
+        <img src="images/example-screenshot-cereals.png" />
+    </div></div>
     
-    <center style="clear: both">
-        <p>Remember: there is <span style="font-size: 200%">no database, no web application</span> behind these examples.</p>
-        <table width="700" border="0" cellpadding="5" class="examples">
-            <tr align="center">
-                <td width="50%">
-                    <p class="example-heading"><a href="examples/presidents/presidents.html">U.S. Presidents</a></p>
-                    <p class="example-details" id="example-presidents-views">in a 
-                        <span name="example-view" class="example-view" example="presidents" view="table">table</span>, on 
-                        <span name="example-view" class="example-view" example="presidents" view="map">maps</span> and 
-                        <span name="example-view" class="example-view" example="presidents" view="timeline">time lines</span>
-                    </p>
-                    <div id="example-presidents-image-loader" class="example-image-loader"></div>
-                    <p id="example-presidents-image" class="example-image">
-                        <a href="examples/presidents/presidents.html"><img src="images/example-presidents-map.png" /></a>
-                    </p>
-                </td>
-                <td width="50%">
-                    <p class="example-heading"><a href="examples/nobelists/nobelists.html">MIT-related Nobel Prize Winners</a></p>
-                    <p class="example-details" id="example-nobelists-views">as 
-                        <span name="example-view" class="example-view" example="nobelists" view="thumbnails">thumbnails</span>, in a 
-                        <span name="example-view" class="example-view" example="nobelists" view="table">table</span>, on a 
-                        <span name="example-view" class="example-view" example="nobelists" view="timeline">time line</span>
-                    </p>
-                    <div id="example-nobelists-image-loader" class="example-image-loader"></div>
-                    <p id="example-nobelists-image" class="example-image">
-                        <a href="examples/nobelists/nobelists.html"><img src="images/example-nobelists-timeline.png" /></a>
-                    </p>
-                </td>
-            </tr>
-        </table>
-        <table width="700" border="0" cellpadding="5" class="examples">
-            <tr align="center">
-                <td width="50%">
-                    <p class="example-heading"><a href="http://haystack.csail.mit.edu/publications.html">Haystack Group's Publications</a></p>
-                    <p class="example-details" id="example-publications-views">in a table</p>
-                    <div id="example-publications-image-loader" class="example-image-loader"></div>
-                    <p id="example-publications-image" class="example-image">
-                        <a href="http://haystack.csail.mit.edu/publications.html"><img src="images/example-publications-table.png" /></a>
-                    </p>
-                </td>
-                <td width="50%">
-                    <p class="example-heading"><a href="/exhibit/examples/cereals/cereal-characters.html">Topher's Breakfast Cereal Characters</a></p>
-                    <p class="example-details" id="example-cereals-views">as 
-                        <span name="example-view" class="example-view" example="cereals" view="thumbnails">thumbnails</span> and on a 
-                        <span name="example-view" class="example-view" example="cereals" view="timeline">time line</span>
-                    </p>
-                    <div id="example-cereals-image-loader" class="example-image-loader"></div>
-                    <p id="example-cereals-image" class="example-image">
-                        <a href="/exhibit/examples/cereals/cereal-characters.html"><img src="images/example-cereals-thumbnails.png" /></a>
-                    </p>
-                </td>
-            </tr>
-        </table>
-        <p>There are <a href="http://simile.mit.edu/wiki/Exhibit/Examples">more examples</a> on our wiki.</p>
-    </center>
+    <p class="blurb">
+        Exhibit is a <em>three-tier web application framework</em> pretty much entirely
+        in Javascript, so that you can just include it like you would include
+        Google Maps, and it would take care of everything. No need to do SQL, ASP, PHP,
+        CGI, or whatever, if you just want to show a few hundred records of data on maps,
+        timelines, scatter plots, interactive tables, etc.
+    </p>
     
     <h2>It's Easy to Make Your Own Exhibits!</h2>
     
@@ -151,7 +119,7 @@
                     <img src="images/spreadsheet.png" />
                 </td>
                 <td width="50%">
-                    <img src="images/example-presidents-map.png" />
+                    <img src="images/example-screenshot-presidents.png" />
                 </td>
             </tr>
         </table>
