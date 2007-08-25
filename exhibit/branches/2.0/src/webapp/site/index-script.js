@@ -89,9 +89,10 @@ function scrollToLeft() {
     var carousel = document.getElementById("carousel");
     var carouselContent = document.getElementById("carousel-content");
     
+    var maxDistance = Math.floor(0.7 * carousel.offsetWidth);
     var from = carouselContent.offsetLeft;
     var to = Math.min(
-        carouselContent.offsetLeft + Math.floor(0.7 * carousel.offsetWidth),
+        carouselContent.offsetLeft + maxDistance,
         0
     );
     
@@ -101,7 +102,7 @@ function scrollToLeft() {
         }, 
         from, 
         to, 
-        1500,
+        500 + Math.round(1000 * (to - from) / maxDistance),
         function() {
             animation = null;
             showHideScrollButtons();
@@ -118,9 +119,10 @@ function scrollToRight() {
     var carousel = document.getElementById("carousel");
     var carouselContent = document.getElementById("carousel-content");
     
+    var maxDistance = Math.floor(0.7 * carousel.offsetWidth);
     var from = carouselContent.offsetLeft;
     var to = Math.max(
-        carouselContent.offsetLeft - Math.floor(0.7 * carousel.offsetWidth),
+        carouselContent.offsetLeft - maxDistance,
         carousel.offsetWidth - carouselContent.offsetWidth
     );
     
@@ -130,7 +132,7 @@ function scrollToRight() {
         }, 
         from, 
         to, 
-        1500,
+        500 + Math.round(1000 * (from - to) / maxDistance),
         function() {
             animation = null;
             showHideScrollButtons();

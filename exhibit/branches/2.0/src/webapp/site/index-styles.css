@@ -14,7 +14,7 @@ p.blurb {
 
 #carousel {
     border: 1px solid #ddd;
-    height: 300px;
+    height: 280px;
     background: url(images/gradient-background.png) repeat-x bottom left;
     overflow: hidden;
     position: relative;
@@ -36,14 +36,14 @@ p.blurb {
     display:    none;
     position:   absolute; 
     left:       0px; 
-    bottom:     0px;
+    top:        100px;
     cursor:     pointer;
 }
 #scroll-right {
     display:    none;
     position:   absolute; 
     right:      0px; 
-    bottom:     0px;
+    top:        100px;
     cursor:     pointer;
 }
 
