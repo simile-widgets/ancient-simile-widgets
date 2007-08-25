@@ -79,59 +79,64 @@ function showHideScrollButtons() {
     scrollRightButton.style.display = (carouselContent.offsetLeft + carouselContent.offsetWidth > carousel.offsetWidth) ? "block" : "none";
 }
 
-var animating = false;
+var animation = null;
+
 function scrollToLeft() {
-    if (animating) return;
+    if (animation != null) {
+        animation.canceled = true;
+    }
     
     var carousel = document.getElementById("carousel");
     var carouselContent = document.getElementById("carousel-content");
     
     var from = carouselContent.offsetLeft;
     var to = Math.min(
-        carouselContent.offsetLeft + Math.floor(0.8 * carousel.offsetWidth),
+        carouselContent.offsetLeft + Math.floor(0.7 * carousel.offsetWidth),
         0
     );
     
-    animating = true;
-    new Animation(
+    animation = new Animation(
         function(current, change) {
             carouselContent.style.left = current + "px";
         }, 
         from, 
         to, 
-        1000,
+        1500,
         function() {
-            animating = false;
+            animation = null;
             showHideScrollButtons();
         }
-    ).run();
+    );
+    animation.run();
 }
 
 function scrollToRight() {
-    if (animating) return;
+    if (animation != null) {
+        animation.canceled = true;
+    }
     
     var carousel = document.getElementById("carousel");
     var carouselContent = document.getElementById("carousel-content");
     
     var from = carouselContent.offsetLeft;
     var to = Math.max(
-        carouselContent.offsetLeft - Math.floor(0.8 * carousel.offsetWidth),
+        carouselContent.offsetLeft - Math.floor(0.7 * carousel.offsetWidth),
         carousel.offsetWidth - carouselContent.offsetWidth
     );
     
-    animating = true;
-    new Animation(
+    animation = new Animation(
         function(current, change) {
-            carouselContent.style.left = current + "px";
+            carouselContent.style.left = Math.floor(current) + "px";
         }, 
         from, 
         to, 
-        1000,
+        1500,
         function() {
-            animating = false;
+            animation = null;
             showHideScrollButtons();
         }
-    ).run();
+    );
+    animation.run();
 }
 
 function Animation(f, from, to, duration, cont) {
@@ -145,6 +150,8 @@ function Animation(f, from, to, duration, cont) {
     this.duration = duration;
     this.start = new Date().getTime();
     this.timePassed = 0;
+    
+    this.canceled = false;
 };
 
 Animation.prototype.run = function() {
@@ -153,10 +160,12 @@ Animation.prototype.run = function() {
 };
 
 Animation.prototype.step = function() {
+    if (this.canceled) return;
+    
     this.timePassed += 50;
     
     var timePassedFraction = this.timePassed / this.duration;
-    var parameterFraction = -Math.cos(timePassedFraction * Math.PI) / 2 + 0.5;
+    var parameterFraction = 1 - Math.exp(-7 * timePassedFraction); //-Math.cos(timePassedFraction * Math.PI) / 2 + 0.5;
     var current = parameterFraction * (this.to - this.from) + this.from;
     
     try {
