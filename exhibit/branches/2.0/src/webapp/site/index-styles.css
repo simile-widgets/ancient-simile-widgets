@@ -40,7 +40,6 @@ p.blurb {
     cursor:     pointer;
 }
 #scroll-right {
-    display:    none;
     position:   absolute; 
     right:      0px; 
     top:        100px;

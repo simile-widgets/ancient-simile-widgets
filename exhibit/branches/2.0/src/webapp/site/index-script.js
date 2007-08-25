@@ -47,7 +47,6 @@ function onLoad() {
     for (var i = 0; i < examples.length; i++) {
         makeExample(i);
     }
-    showHideScrollButtons();
     
     window.onresize = onWindowResize;
 }
