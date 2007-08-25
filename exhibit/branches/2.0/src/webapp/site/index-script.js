@@ -6,7 +6,7 @@ function onLoad() {
         {   url:        "examples/flags/flags.html",
             screenshot: "images/example-screenshot-flags.png"
         },
-        {   url:        "examples/cereals/cereals.html",
+        {   url:        "examples/cereals/cereal-characters.html",
             screenshot: "images/example-screenshot-cereals.png"
         },
         {   url:        "examples/billionaires/billionaires.html",

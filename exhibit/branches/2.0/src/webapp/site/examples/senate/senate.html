@@ -8,10 +8,10 @@
     <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js"></script>
     
     <!-- google map key for the simile web site -->
-    <!--script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQtmVvwtG6TMOLiwecD59_rvdOkHxTAPhubLidYKS8G8qHrZGTBqAeJEg"></script-->
+    <script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQtmVvwtG6TMOLiwecD59_rvdOkHxTAPhubLidYKS8G8qHrZGTBqAeJEg"></script>
     
     <!-- google map key for http://127.0.0.1:8888/ -->
-    <script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAANowuNonWJ4d9uRGbydnrrhREGtQZq9OFJfHndXhPP8gxXzlLARRSAIK_NOxPWcNPU-OIP9Qa_mmMPw" type="text/javascript"></script>
+    <!--script src="http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js?gmapkey=ABQIAAAANowuNonWJ4d9uRGbydnrrhREGtQZq9OFJfHndXhPP8gxXzlLARRSAIK_NOxPWcNPU-OIP9Qa_mmMPw" type="text/javascript"></script-->
 
     <script type="text/javascript">
         var rowStyler = function(item, database, tr) {
@@ -70,9 +70,9 @@
                             >
                             <div class="map-lens" ex:role="exhibit-lens">
                                 <p><a ex:href-content=".homepage"><span ex:content=".label"></span>, (<span ex:content=".party"></span>-<span ex:content=".state"></span>)</a></p>
-                			    <p><span ex:content=".committeeMember.label"></span></p>
-                			    <div ex:if-exists="!sponsor"><p>Sponsoring <span ex:content="!sponsor"></span>: <span ex:content="!sponsor.description"></span></p></div>
-                			    <div ex:if-exists="!sponsor.cosponsor"><p>Cosponsors: <span ex:content="!sponsor.cosponsor"></span></p></div>
+                                <p><span ex:content=".committeeMember.label"></span></p>
+                                <div ex:if-exists="!sponsor"><p>Sponsoring <span ex:content="!sponsor"></span>: <span ex:content="!sponsor.description"></span></p></div>
+                                <div ex:if-exists="!sponsor.cosponsor"><p>Cosponsors: <span ex:content="!sponsor.cosponsor"></span></p></div>
                             </div>
                         </div>
                     </div>
