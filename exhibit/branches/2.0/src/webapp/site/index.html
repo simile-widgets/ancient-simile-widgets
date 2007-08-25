@@ -2,81 +2,20 @@
 <head>
     <title>SIMILE | Exhibit</title>
     <link rel='stylesheet' href='styles.css' type='text/css' />
+    <link rel='stylesheet' href='index-styles.css' type='text/css' />
     <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
-    <style>
-        p.blurb {
-            font-size:  120%;
-            font-style: italic;
-            width:      30em;
-        }
-        .blurb em {
-            text-decoration: underline;
-        }
-        p.example-heading {
-            font-weight: bold;
-            margin:      0;
-        }
-        p.example-details {
-            margin:      1em;
-        }
-        span.example-view {
-            border:         1px dotted #f88;
-            background:     #fee;
-            padding:        2px;
-        }
-        p.example-image {
-        }
-        div.example-image-loader {
-            overflow:    hidden;
-            height:      1px;
-            visibility:  hidden;
-        }
-        #carousel {
-            border: 1px solid #ddd;
-            height: 300px;
-            background: url(images/gradient-background.png) repeat-x bottom left;
-            overflow: hidden;
-        }
-    </style>
-    <script type="text/javascript">
-        function onExampleViewMouseOver() {
-            var example = this.getAttribute("example");
-            var view = this.getAttribute("view");
-            document.getElementById("example-" + example + "-image")
-                .getElementsByTagName("a")[0]
-                .getElementsByTagName("img")[0].src =
-                    "images/example-" + example + "-" + view + ".png";
-        }
-        function onLoad() {
-            var examples = [ "cereals", "nobelists", "presidents", "publications" ];
-            for (var i = 0; i < examples.length; i++) {
-                var example = examples[i];
-                var divLoader = document.getElementById("example-" + example + "-image-loader");
-                
-                var div = document.getElementById("example-" + example + "-views");
-                var spans = div.getElementsByTagName("span");
-                for (var j = 0; j < spans.length; j++) {
-                    var span = spans[j];
-                    span.onmouseover = onExampleViewMouseOver;
-                    
-                    var view = span.getAttribute("view");
-                    var img = document.createElement("img");
-                    img.src = "images/example-" + example + "-" + view + ".png";
-                    divLoader.appendChild(img);
-                }
-            }
-        }
-    </script>
+    <script type="text/javascript" src="index-script.js"></script>
 </head>
-<body onload="">
+<body onload="onLoad();">
 <!--#include virtual="sidebar.html" -->
+
 <ul id="path">
+  <img src="images/exhibit-logo.png" style="float: right; margin: 12px 15px;" />
   <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
   <li><span>Exhibit</span></li>
 </ul>
 
 <div id="body">
-    <img src="http://simile.mit.edu/images/exhibit.png" style="float: right; margin: 2em;" />
     
     <h1>Exhibit</h1>
     <p class="blurb">
@@ -85,109 +24,44 @@
         programming:
     </p>
     
-    <div id="carousel"><div id="carousel-content">
-        <img src="images/example-screenshot-senate.png" />
-        <img src="images/example-screenshot-presidents.png" />
-        <img src="images/example-screenshot-nobelists.png" />
-        <img src="images/example-screenshot-flags.png" />
-        <img src="images/example-screenshot-factbook.png" />
-        <img src="images/example-screenshot-csail-pis.png" />
-        <img src="images/example-screenshot-billionnaires.png" />
-        <img src="images/example-screenshot-cities.png" />
-        <img src="images/example-screenshot-cereals.png" />
-    </div></div>
+    <div id="carousel">
+        <table id="carousel-content" border="0" cellspacing="0" cellpadding="0"><tr></tr></table>
+        <div id="carousel-message">
+            <i>click on screenshots to see live web sites</i>
+        </div>
+        <img src="images/scroll-left.png" id="scroll-left" onclick="scrollToLeft();" />
+        <img src="images/scroll-right.png" id="scroll-right" onclick="scrollToRight();" />
+    </div>
     
     <p class="blurb">
-        Exhibit is a <em>three-tier web application framework</em> pretty much entirely
-        in Javascript, so that you can just include it like you would include
-        Google Maps, and it would take care of everything. No need to do SQL, ASP, PHP,
-        CGI, or whatever, if you just want to show a few hundred records of data on maps,
-        timelines, scatter plots, interactive tables, etc.
+        Exhibit is a <em>three-tier web application framework</em> written
+        in Javascript, which you can include like you would include Google Maps.
+    </p>
+    <p class="blurb">
+        If you just want to show a few hundred records of data on maps, timelines, 
+        scatter plots, interactive tables, etc., why bother learning SQL, ASP, PHP,
+        CGI, or whatever when you can just use Exhibit?
+    </p>
+    <p class="blurb">To use Exhibit, you write: a simple data file, and an HTML file in 
+        which you specify how the data should be shown. Data + Presentation. 
+        That's all there is to publishing, as it should be.
     </p>
     
-    <h2>It's Easy to Make Your Own Exhibits!</h2>
+    <h2>Documentation</h2>
     
-    <p>"No Database, No Web Application" means that you can create your own exhibits using just
-        a text editor. Don't let those sophisticated features scare you. It's quite easy to 
-        make exhibits. We even let you copy data straight out of a boring spreadsheet and convert 
-        it into an exhibit automatically.
-    </p>
-    <center>
-        <table width="700" border="0" cellpadding="5" class="examples">
-            <tr align="center" valign="bottom">
-                <td width="50%">
-                    <img src="images/spreadsheet.png" />
-                </td>
-                <td width="50%">
-                    <img src="images/example-screenshot-presidents.png" />
-                </td>
-            </tr>
-        </table>
-    </center>
-    
-    <p>Here are:
+    <p>It's easy to make your own exhibits! Here are:
         <ul>
             <li>a <a href="http://simile.mit.edu/wiki/Exhibit/Getting_Started_Tutorial">Getting Started tutorial</a> - must read first</li>
             <li>a <a href="http://simile.mit.edu/wiki/Exhibit/How_to_make_an_exhibit_from_a_spreadsheet">tutorial for converting data from spreadsheets</a></li>
             <li>a <a href="http://simile.mit.edu/wiki/Exhibit/How_to_make_a_publications_exhibit">tutorial for making exhibits out of bibtex files</a>
         </ul>
     </p>
-    
-    <h2>How Does Exhibit Work and Why Use It?</h2>
-    
-    <p>Exhibit consists of a bunch of Javascript files that you include in your web page.
-        At load time, this Javascript code reads in one or more 
-        <a href="http://en.wikipedia.org/wiki/Json">JSON</a> data files that you link from
-        within your web page and constructs a database implemented in Javascript right
-        inside the browser of whoever visits your web page. It then dynamically re-constructs 
-        the web page as the visitor sorts and filters through the data. As the visitor
-        interacts with the web page, only the web <em>browser</em> is responsible for providing
-        the interaction; the web <em>server</em> is no longer needed.
-    </p>
-    <p>So, <b>where's the database</b>, again? The data is stored in JSON files, and the database
-        is implemented in Javascript and running inside the web browser.
-    </p>
-    </p>The advantages of Exhibit are as follows:
-        <ul>
-            <li><b>No traditional database technology</b> involved even though 
-                Exhibit-embedding web pages appear as if they are backed by 
-                databases. So you don't have to design any database, configure 
-                it, and maintain it. After all, if you only have a few dozens 
-                of things to publish rather than thousands, why would you spend 
-                so much effort in dealing with database technologies?
-            </li>
-            <li><b>No server-side code</b> required even though 
-                Exhibit-embedding web pages are heavily templated. So, there
-                is no need to learn ASP, PHP, JSP, CGI, Velocity, etc. There
-                is no need to worry which server-side scripting technology
-                your hosting provider supports.
-            </li>
-            <li><b>No need for web server</b> if you only want to create exhibits 
-                and keep them on your own computer for your own use. They work
-                straight from the file system.
-            </li>
-        </ul>
-    </p>
-    
+    <p>More documentation is <a href="/wiki/Exhibit">our wiki</a>.</p>
     <p>We also provide a complementary service called 
         <a href="http://simile.mit.edu/babel/">Babel</a> that lets you convert data
         from various sources, including tab-separated values (copied straight from
         spreadsheets) and Bibtex files, into formats that Exhibit understands.
     </p>
-    
-    <p>Of course, Exhibit currently only scales to a few hundreds of items, but
-        maybe that's all you need. Furthermore, we are working on optimizing
-        Exhibit and on ways for you to smoothly transit over to server-side
-        solutions as your data sets grow.
-    </p>
-    
-    <p>Don't let companies and institutions be the only ones who can publish
-        nice visualizations and browsable data collections to the Web. You can
-        do the same with the data you care about!
-    </p>
-
-    <h2>Documentation</h2>
-    <p>... is all on <a href="/wiki/Exhibit">our wiki</a>.</p>
     
     <h2>Download</h2>
     <p>Actually, there is nothing to download&mdash;you didn't have to download Google Maps, did you?!
@@ -198,7 +72,6 @@
         if you have extra disk space to waste, sure, here's 
         <a href="http://simile.mit.edu/wiki/Exhibit/Download_Exhibit%27s_Source_Code">how to download Exhibit's source code</a>.
     </p>
-    
     
     <h2>Feedback / Contribute</h2>
     <ul>
