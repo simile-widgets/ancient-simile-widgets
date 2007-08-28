@@ -21,6 +21,13 @@
         }
         div.map-lens { padding: 1em; }
         a { color: #533421; }
+        div.flag-container {
+            width:      200px;
+            height:     180px;
+        }
+        .flag-container img {
+            border:     1px solid #ccc;
+        }
     </style>
 </head>
 
@@ -50,9 +57,12 @@
                 ex:shapeHeight="25"
                 ex:mapHeight="600"
                 >
-                <div ex:role="lens" style="display: none;">
-                    <img ex:src-subcontent="images/{{.code}}.png" />
-                    <b ex:content=".label"></b> [<span ex:content=".code"></span>]
+                <div ex:role="lens" style="display: none;" class="map-lens">
+                    <div class="flag-container">
+                        <img ex:src-subcontent="http://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_{{.label}}.svg/200px-Flag_of_{{.label}}.svg.png" />
+                    </div>
+                    <div><b ex:content=".label"></b> [<span ex:content=".code"></span>]</div>
+                    <div>(Image from Wikipedia)</div>
                 </div>
             </div>
         </td>
