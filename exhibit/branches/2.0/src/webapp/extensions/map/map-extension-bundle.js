@@ -399,7 +399,7 @@ var hasIcon=(this._accessors.getIcon!=null);
 
 currentSet.visit(function(itemID){
 var latlngs=[];
-self._getLatlng(itemID,database,function(v){if("lat"in v&&"lng"in v)latlngs.push(v);});
+self._getLatlng(itemID,database,function(v){if(v!=null&&"lat"in v&&"lng"in v)latlngs.push(v);});
 
 if(latlngs.length>0){
 var colorKeys=null;
@@ -950,7 +950,7 @@ var hasIcon=(this._accessors.getIcon!=null);
 currentSet.visit(function(itemID){
 var latlngs=[];
 self._getLatlng(itemID,database,function(v){
-if("lat"in v&&"lng"in v)latlngs.push(v);
+if(v!=null&&"lat"in v&&"lng"in v)latlngs.push(v);
 }
 );
 
