@@ -704,8 +704,8 @@ width,0
 icon.infoWindowAnchor=new GPoint(halfWidth,0);
 }
 
-icon.image=Exhibit.MapView._markerUrlPrefix+imageParameters.concat(pinParameters).join("&");
-if(iconSize==0){icon.shadow=Exhibit.MapView._markerUrlPrefix+shadowParameters.concat(pinParameters).join("&");}
+icon.image=Exhibit.MapView._markerUrlPrefix+imageParameters.concat(pinParameters).join("&")+"&.png";
+if(iconSize==0){icon.shadow=Exhibit.MapView._markerUrlPrefix+shadowParameters.concat(pinParameters).join("&")+"&.png";}
 icon.iconSize=new GSize(width,height);
 icon.shadowSize=new GSize(width*1.5,height-2);
 
