@@ -49,4 +49,5 @@ p.blurb {
 img.example-screenshot {
     margin:     0px 20px;
     cursor:     pointer;
+    border:     none;
 }

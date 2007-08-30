@@ -30,25 +30,96 @@ function onLoad() {
     ];
     
     var carouselContent = document.getElementById("carousel-content");
+    carouselContent.style.display = "none";
+    
     var tr = carouselContent.rows[0];
     
+    var pngIsTranslucent = true;
+    var isIE = (navigator.appName.toLowerCase().indexOf("microsoft") != -1);
+    if (isIE) {
+        var parseVersionString = function(s) {
+            return parseInt(s.split(".")[0]);
+        };
+        var indexOf = function(s, sub, start) {
+            var i = s.indexOf(sub, start);
+            return i >= 0 ? i : s.length;
+        };
+
+        var ua = navigator.userAgent.toLowerCase();
+        var offset = ua.indexOf("msie ");
+        if (offset >= 0) {
+            var majorVersion = parseVersionString(ua.substring(offset + 5, indexOf(ua, ";", offset)));
+            pngIsTranslucent = (majorVersion > 6);
+        }
+    }
+    
+    var makeImage = pngIsTranslucent ? 
+        function(url) {
+            elmt = document.createElement("img");
+            elmt.setAttribute("src", url);
+            return elmt;
+        } :
+        function(url) {
+            elmt = document.createElement("img");
+            elmt.style.width = "1px";  // just so that IE will calculate the size property
+            elmt.style.height = "1px";
+            elmt.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='image')";
+            return elmt;
+        };
+
     var makeExample = function(index) {
         var example = examples[index];
         
-        var img = document.createElement("img");
-        img.src = example.screenshot;
+        var a = document.createElement("a");
+        a.href = examples[index].url;
+        a.target = "_blank";
+        
+        var img = makeImage(example.screenshot);
         img.className = "example-screenshot";
-        img.onclick = function() { showExample(examples[index].url); };
+        a.appendChild(img);
         
         var td = tr.insertCell(index);
-        td.appendChild(img);
+        td.appendChild(a);
     }
-    
     for (var i = 0; i < examples.length; i++) {
         makeExample(i);
     }
     
+    var carousel = document.getElementById("carousel");
+    
+    var scrollLeft = makeImage("images/scroll-left.png");
+    scrollLeft.id = "scroll-left";
+    scrollLeft.onclick = scrollToLeft;
+    carousel.appendChild(scrollLeft);
+    
+    var scrollRight = makeImage("images/scroll-right.png");
+    scrollRight.id = "scroll-right";
+    scrollRight.onclick = scrollToRight;
+    carousel.appendChild(scrollRight);
+    
     window.onresize = onWindowResize;
+    
+    /*
+     * Show and animate the carousel content in
+     */
+    carouselContent.style.left = "0px";//Math.floor(carousel.offsetWidth / 2) + "px";
+    carouselContent.style.display = "block";
+    /*
+    animation = new Animation(
+        function(current, change) {
+            carouselContent.style.left = current + "px";
+        }, 
+        Math.floor(carousel.offsetWidth / 2), 
+        0, 
+        2000,
+        function() {
+            animation = null;
+            showHideScrollButtons();
+        }
+    );
+    animation.run();
+    */
+    //window.setTimeout(march, 200);
 }
 
 function onWindowResize() {
@@ -64,8 +135,19 @@ function onWindowResize() {
     showHideScrollButtons();
 }
 
-function showExample(url) {
-    window.open(url);
+function onCarouselMouseOver() {
+    march = function() {};
+    showHideScrollButtons();
+}
+
+function march() {
+    var carousel = document.getElementById("carousel");
+    var carouselContent = document.getElementById("carousel-content");
+    if (carouselContent.offsetLeft + carouselContent.offsetWidth > carousel.offsetWidth) {
+        carouselContent.style.left = (carouselContent.offsetLeft - 1) + "px";
+        
+        window.setTimeout(march, 120);
+    }
 }
 
 function showHideScrollButtons() {

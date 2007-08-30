@@ -47,8 +47,8 @@
                 <div ex:role="view"
                     ex:viewClass="Tabular"
                     ex:label="Compare Their Wealth"
-                    ex:columns=".number, .label, .ageAtPeak, .wealth, .origin, .company"
-                    ex:columnLabels="rank, name, age at peak, wealth in billion USD, origin, company"
+                    ex:columns=".number, .label, .ageAtPeak, .wealth, .origin, .origin-country, .company"
+                    ex:columnLabels="rank, name, age at peak, wealth in billion USD, origin, country of origin, company"
                     ex:sortColumn="0"
                     ex:sortAscending="true"
                     ></div>
@@ -59,7 +59,7 @@
             <div ex:role="facet" ex:facetClass="TextSearch"></div>
             <hr/>
             <div ex:role="facet" ex:expression=".company" ex:facetLabel="Companies" ex:height="15em"></div>
-            <div ex:role="facet" ex:expression=".origin" ex:facetLabel="Origins" ex:height="20em"></div>
+            <div ex:role="facet" ex:expression=".origin-country" ex:facetLabel="Countries of Origin" ex:height="20em"></div>
             
             
             <div style="text-align: center; margin: 2em;">

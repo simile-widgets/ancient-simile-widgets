@@ -48,6 +48,10 @@
                         <p>Sponsored by <span ex:content=".sponsor"></span>; <span ex:content=".cosponsor"></span></p>
                         <p><a ex:href-content=".billHomepage">Read the bill</a></p>
                     </div>
+                    <div ex:role="coder" ex:coderClass="Color" id="party-colors" style="display: none">
+                        <span ex:color="#AAAAFF">D</span>
+                        <span ex:color="#FFAAAA">R</span>
+                    </div>
                     
                     <div ex:role="exhibit-viewPanel">
                         <div ex:role="exhibit-view"
@@ -64,11 +68,12 @@
                             ex:viewClass="Exhibit.MapView"
                             ex:label="Map"
                             ex:latlng=".stateLatLng"
-                            ex:marker=".party"
+                            ex:colorKey=".party"
+                            ex:colorCoder="party-colors"
                             ex:center="38.479394673276445, -95.361328125"
                             ex:zoom="3"
                             >
-                            <div class="map-lens" ex:role="exhibit-lens">
+                            <div class="map-lens" ex:role="exhibit-lens" style="display: none">
                                 <p><a ex:href-content=".homepage"><span ex:content=".label"></span>, (<span ex:content=".party"></span>-<span ex:content=".state"></span>)</a></p>
                                 <p><span ex:content=".committeeMember.label"></span></p>
                                 <div ex:if-exists="!sponsor"><p>Sponsoring <span ex:content="!sponsor"></span>: <span ex:content="!sponsor.description"></span></p></div>
