@@ -1774,6 +1774,30 @@ this._div.innerHTML="A";
 this._lineHeight=this._div.offsetHeight;
 };
 
+SimileAjax.Graphics._FontRenderingContext.prototype._copyStyle=function(){
+try{
+var style=window.getComputedStyle(this._originalElmt,"");
+this._div.style.fontFamily=style.getPropertyValue("font-family");
+this._div.style.fontSize=style.getPropertyValue("font-size");
+this._div.style.fontWeight=style.getPropertyValue("font-weight");
+this._div.style.fontVariant=style.getPropertyValue("font-variant");
+this._div.style.fontStyle=style.getPropertyValue("font-style");
+return;
+}catch(e){
+}
+
+var style=this._originalElmt.currentStyle;
+if(style==null){
+style=this._originalElmt.runningStyle;
+}
+
+this._div.style.fontFamily=style.fontFamily;
+this._div.style.fontSize=style.fontSize;
+this._div.style.fontWeight=style.fontWeight;
+this._div.style.fontVariant=style.fontVariant;
+this._div.style.fontStyle=style.fontStyle;
+}
+
 SimileAjax.Graphics._FontRenderingContext.prototype.computeSize=function(text){
 this._div.innerHTML=text;
 return{
