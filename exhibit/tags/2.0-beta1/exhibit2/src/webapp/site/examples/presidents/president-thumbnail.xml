@@ -1,4 +1,0 @@
-<div class="thumbnail" xmlns:ex="http://simile.mit.edu/2006/11/exhibit#">
-    <div><img ex:src-content=".imageURL" /></div>
-    <span ex:content="value" />
-</div>
