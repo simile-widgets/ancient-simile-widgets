@@ -9,7 +9,7 @@ p.blurb {
     width:      35em;
 }
 .blurb em {
-    text-decoration: underline;
+    font-weight: bold;
 }
 
 #carousel {
