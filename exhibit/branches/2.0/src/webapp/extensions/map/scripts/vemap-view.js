@@ -28,6 +28,7 @@ Exhibit.VEMapView = function(containerElmt, uiContext) {
     uiContext.getCollection().addListener(this._listener);
 };
 
+Exhibit.VEMapView._id = 1;
 Exhibit.VEMapView._settingSpecs = {
     "center":           { type: "float",    defaultValue: [20,0],   dimensions: 2 },
     "zoom":             { type: "float",    defaultValue: 2         },
@@ -202,8 +203,7 @@ Exhibit.VEMapView.prototype._initializeUI = function() {
     mapDiv.style.height = settings.mapHeight + "px";
     mapDiv.className = "exhibit-mapView-map";
     mapDiv.style.position = "relative";
-    mapDiv.int = 1 // integer to increment for unique string ID
-    mapDiv.id = "map-" + mapDiv.int++;  // VEMap takes a string ID
+    mapDiv.id = "map-" + Exhibit.VEMapView._id++;  // VEMap takes a string ID
     
     var settings = this._settings;
     if (settings._mapConstructor != null) {

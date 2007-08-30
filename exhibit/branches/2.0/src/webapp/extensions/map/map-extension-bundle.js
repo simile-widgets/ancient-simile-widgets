@@ -740,6 +740,7 @@ view._reconstruct();
 uiContext.getCollection().addListener(this._listener);
 };
 
+Exhibit.VEMapView._id=1;
 Exhibit.VEMapView._settingSpecs={
 "center":{type:"float",defaultValue:[20,0],dimensions:2},
 "zoom":{type:"float",defaultValue:2},
@@ -914,8 +915,7 @@ var mapDiv=this._dom.plotContainer;
 mapDiv.style.height=settings.mapHeight+"px";
 mapDiv.className="exhibit-mapView-map";
 mapDiv.style.position="relative";
-mapDiv.int=1
-mapDiv.id="map-"+mapDiv.int++;
+mapDiv.id="map-"+Exhibit.VEMapView._id++;
 
 var settings=this._settings;
 if(settings._mapConstructor!=null){
