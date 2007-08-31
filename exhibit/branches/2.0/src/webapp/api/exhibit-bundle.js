@@ -11716,9 +11716,12 @@ var value=f(field);
 if(value==null){
 continue;
 }
+
+if(typeof value=="string"){
 value=value.trim();
 if(value.length==0){
 continue;
+}
 }
 
 var type="text";
@@ -11909,9 +11912,12 @@ var value=f(spec.attributeName);
 if(value==null){
 return null;
 }
+
+if(typeof value=="string"){
 value=value.trim();
 if(value.length==0){
 return null;
+}
 }
 
 try{
@@ -11959,9 +11965,12 @@ var value=f(spec.attributeName);
 if(value==null){
 return null;
 }
+
+if(typeof value=="string"){
 value=value.trim();
 if(value.length==0){
 return null;
+}
 }
 
 var bindingType="text";

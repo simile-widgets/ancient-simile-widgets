@@ -42,9 +42,12 @@ Exhibit.SettingsUtilities._internalCollectSettings = function(f, specs, settings
         if (value == null) {
             continue;
         }
-        value = value.trim();
-        if (value.length == 0) {
-            continue;
+        
+        if (typeof value == "string") {
+            value = value.trim();
+            if (value.length == 0) {
+                continue;
+            }
         }
         
         var type = "text";
@@ -238,9 +241,12 @@ Exhibit.SettingsUtilities._createTupleAccessor = function(f, spec) {
     if (value == null) {
         return null;
     }
-    value = value.trim();
-    if (value.length == 0) {
-        return null;
+    
+    if (typeof value == "string") {
+        value = value.trim();
+        if (value.length == 0) {
+            return null;
+        }
     }
     
     try {
@@ -288,9 +294,12 @@ Exhibit.SettingsUtilities._createElementalAccessor = function(f, spec) {
     if (value == null) {
         return null;
     }
-    value = value.trim();
-    if (value.length == 0) {
-        return null;
+    
+    if (typeof value == "string") {
+        value = value.trim();
+        if (value.length == 0) {
+            return null;
+        }
     }
     
     var bindingType = "text";
