@@ -89,7 +89,10 @@ Exhibit.CollectionSummaryWidget.prototype._reconstruct = function() {
     var database = this._uiContext.getDatabase();
     var dom = this._dom;
 
-    this._div.innerHTML = "";
+    while (this._div.childNodes.length > 0) {
+        this._div.removeChild(this._div.firstChild);
+    }
+    
     if (originalSize > 0) {
         if (currentSize == 0) {
             this._div.appendChild(this._noResultsDom.elmt);
