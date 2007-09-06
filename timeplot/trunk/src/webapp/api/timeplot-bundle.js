@@ -5,7 +5,7 @@
 
 
 Timeline.Debug=SimileAjax.Debug;
-log=SimileAjax.Debug.log;
+var log=SimileAjax.Debug.log;
 
 
 Object.extend=function(destination,source){
@@ -213,12 +213,22 @@ if(styles){
 for(style in styles){
 if(style=="left"){
 styles[style]+=this._paddingX;
+styles[style]+="px";
 }else if(style=="right"){
 styles[style]+=this._paddingX;
+styles[style]+="px";
 }else if(style=="top"){
 styles[style]+=this._paddingY;
+styles[style]+="px";
 }else if(style=="bottom"){
 styles[style]+=this._paddingY;
+styles[style]+="px";
+}else if(style=="width"){
+if(styles[style]<0)styles[style]=0;
+styles[style]+="px";
+}else if(style=="height"){
+if(styles[style]<0)styles[style]=0;
+styles[style]+="px";
 }
 div.style[style]=styles[style];
 }
@@ -927,6 +937,8 @@ onClear:function(){source._clear();}
 }
 this.addListener(this._processingListener);
 this._listeners=[];
+this._data=null;
+this._range=null;
 };
 
 Timeplot.DataSource.prototype={
@@ -1258,7 +1270,7 @@ power--;
 var unit=Math.pow(10,power);
 var inc=unit;
 while(true){
-dy=this.toScreen(this._minValue+inc);
+var dy=this.toScreen(this._minValue+inc);
 
 while(dy<this._gridSpacing){
 inc+=unit;
@@ -1756,8 +1768,8 @@ this._lens.instrumented=true;
 
 
 Timeplot.MagnifyingTimeGeometry.prototype.setMagnifyingParams=function(c,a,b){
-var a=a/2;
-var b=b/2;
+a=a/2;
+b=b/2;
 
 var w=this._canvas.width;
 var d=this._period;
