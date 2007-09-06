@@ -290,7 +290,6 @@ Timeplot._Impl.prototype = {
                     if (styles[style] < 0) styles[style] = 0;
                     styles[style] += "px";
                 }
-                log(styles);
                 div.style[style] = styles[style];
             }
         }
