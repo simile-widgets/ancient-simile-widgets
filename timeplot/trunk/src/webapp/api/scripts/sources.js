@@ -179,6 +179,8 @@ Timeplot.DataSource = function(eventSource) {
     }
     this.addListener(this._processingListener);
     this._listeners = [];
+    this._data = null;
+    this._range = null;
 };
 
 Timeplot.DataSource.prototype = {

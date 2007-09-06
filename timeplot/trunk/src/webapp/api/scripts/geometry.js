@@ -224,7 +224,7 @@ Timeplot.DefaultValueGeometry.prototype = {
         var unit = Math.pow(10,power);
         var inc = unit;
         while (true) {
-            dy = this.toScreen(this._minValue + inc);
+            var dy = this.toScreen(this._minValue + inc);
 
 	        while (dy < this._gridSpacing) {
 	        	inc += unit;
@@ -792,8 +792,8 @@ Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
  * should span.
  */
 Timeplot.MagnifyingTimeGeometry.prototype.setMagnifyingParams = function(c,a,b) {
-    var a = a / 2;
-    var b = b / 2;
+    a = a / 2;
+    b = b / 2;
 
     var w = this._canvas.width;
     var d = this._period;

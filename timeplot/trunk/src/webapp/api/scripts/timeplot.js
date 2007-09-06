@@ -6,7 +6,7 @@
  */
 
 Timeline.Debug = SimileAjax.Debug; // timeline uses it's own debug system which is not as advanced
-log = SimileAjax.Debug.log; // shorter name is easier to use
+var log = SimileAjax.Debug.log; // shorter name is easier to use
 
 /*
  * This function is used to implement a raw but effective OOP-like inheritance
@@ -273,13 +273,24 @@ Timeplot._Impl.prototype = {
             for (style in styles) {
                 if (style == "left") {
                     styles[style] += this._paddingX;
+                    styles[style] += "px";
                 } else if (style == "right") {
                     styles[style] += this._paddingX;
+                    styles[style] += "px";
                 } else if (style == "top") {
                     styles[style] += this._paddingY;
+                    styles[style] += "px";
                 } else if (style == "bottom") {
                     styles[style] += this._paddingY;
+                    styles[style] += "px";
+                } else if (style == "width") {
+                    if (styles[style] < 0) styles[style] = 0;
+                    styles[style] += "px";
+                } else if (style == "height") {
+                    if (styles[style] < 0) styles[style] = 0;
+                    styles[style] += "px";
                 }
+                log(styles);
                 div.style[style] = styles[style];
             }
         }
