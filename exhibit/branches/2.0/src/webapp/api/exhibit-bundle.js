@@ -6896,11 +6896,11 @@ this._lensSelectors=[];
 };
 
 Exhibit.LensRegistry.prototype.registerDefaultLens=function(elmtOrURL){
-this._defaultLens=elmtOrURL;
+this._defaultLens=(typeof elmtOrURL=="string")?elmtOrURL:elmtOrURL.cloneNode(true);
 };
 
 Exhibit.LensRegistry.prototype.registerLensForType=function(elmtOrURL,type){
-this._typeToLens[type]=elmtOrURL;
+this._typeToLens[type]=(typeof elmtOrURL=="string")?elmtOrURL:elmtOrURL.cloneNode(true);
 };
 
 Exhibit.LensRegistry.prototype.addLensSelector=function(lensSelector){
