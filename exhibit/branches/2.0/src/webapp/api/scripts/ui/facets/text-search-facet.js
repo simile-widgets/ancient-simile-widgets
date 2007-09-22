@@ -26,6 +26,7 @@ Exhibit.TextSearchFacet = function(containerElmt, uiContext) {
 };
 
 Exhibit.TextSearchFacet._settingSpecs = {
+	"facetLabel":       { type: "text" }
 };
 
 Exhibit.TextSearchFacet.create = function(configuration, containerElmt, uiContext) {
@@ -79,6 +80,9 @@ Exhibit.TextSearchFacet._configure = function(facet, configuration) {
         for (var i = 0; i < selection.length; i++) {
             facet._valueSet.add(selection[i]);
         }
+    }
+    if (!("facetLabel" in facet._settings)) {
+        facet._settings.facetLabel = "";
     }
 }
 
@@ -167,15 +171,18 @@ Exhibit.TextSearchFacet.prototype._notifyCollection = function() {
 
 Exhibit.TextSearchFacet.prototype._initializeUI = function() {
     var self = this;
-    this._dom = Exhibit.TextSearchFacet.constructFacetFrame(this._div);
+    this._dom = Exhibit.TextSearchFacet.constructFacetFrame(this._div, this._settings.facetLabel);
     
     SimileAjax.WindowManager.registerEvent(this._dom.input, "keyup",
         function(elmt, evt, target) { self._onTextInputKeyUp(); });
 };
 
-Exhibit.TextSearchFacet.constructFacetFrame = function(div) {
+Exhibit.TextSearchFacet.constructFacetFrame = function(div, facetLabel) {
     return SimileAjax.DOM.createDOMFromString(
         div,
+        "<div class='exhibit-facet-header'>" +
+            "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
+        "</div>" +
         "<div class='exhibit-text-facet'><input type='text' id='input'></div>"
     );
 };
