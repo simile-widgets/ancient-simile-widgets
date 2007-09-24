@@ -323,7 +323,7 @@ Exhibit.ExpressionScanner.prototype.next = function() {
             var i = this._index;
             while (i < this._maxIndex) {
                 var c = this._text.charAt(i);
-                if ("(),.!@".indexOf(c) < 0) {
+                if ("(),.!@ \t".indexOf(c) < 0) {
                     i++;
                 } else {
                     break;
