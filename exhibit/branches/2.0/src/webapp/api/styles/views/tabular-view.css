@@ -2,12 +2,6 @@ table.exhibit-tabularView-body {
     width: 100%;
 }
 
-.exhibit-tabularView-body > tbody > tr > td:first-child {
-    width:      3em;
-    text-align: right;
-    color:      #aaa
-}
-
 .exhibit-tabularView-columnHeader {
     cursor:         pointer;
     white-space:    pre;

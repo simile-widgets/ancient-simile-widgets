@@ -255,6 +255,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
          *  Sort the items
          */
         var table = document.createElement("table");
+        table.className = "exhibit-tabularView-body";
         if (this._settings.tableStyler != null) {
             this._settings.tableStyler(table, database);
         } else {
