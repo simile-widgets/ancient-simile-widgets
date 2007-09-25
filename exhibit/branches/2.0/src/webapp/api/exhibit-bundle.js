@@ -7468,7 +7468,7 @@ if(attribute.isStyle){
 elmt.style[attribute.name]=value;
 }else if("class"==attribute.name){
 elmt.className=value;
-}else if(Exhibit.Lens._attributeValueIsSafe(attribute.name,attribute.value)){
+}else if(Exhibit.Lens._attributeValueIsSafe(attribute.name,value)){
 elmt.setAttribute(attribute.name,value);
 }
 }
