@@ -7085,7 +7085,7 @@ var compiledTemplate=Exhibit.Lens._compiledTemplates[id];
 if(compiledTemplate==null){
 compiledTemplate={
 url:id,
-template:Exhibit.Lens._compileTemplate(lensTemplateNode,false),
+template:Exhibit.Lens.compileTemplate(lensTemplateNode,false),
 compiled:true,
 jobs:[]
 };
@@ -7109,7 +7109,7 @@ SimileAjax.Debug.log("Failed to load view template from "+lensTemplateURL+"\n"+s
 };
 var fDone=function(xmlhttp){
 try{
-compiledTemplate.template=Exhibit.Lens._compileTemplate(
+compiledTemplate.template=Exhibit.Lens.compileTemplate(
 xmlhttp.responseXML.documentElement,true);
 compiledTemplate.compiled=true;
 
@@ -7133,7 +7133,7 @@ SimileAjax.XmlHttp.get(lensTemplateURL,fError,fDone);
 return compiledTemplate;
 };
 
-Exhibit.Lens._compileTemplate=function(rootNode,isXML){
+Exhibit.Lens.compileTemplate=function(rootNode,isXML){
 return Exhibit.Lens._processTemplateNode(rootNode,isXML);
 };
 
@@ -7334,6 +7334,24 @@ fragments.push(value.substr(current));
 return fragments;
 };
 
+Exhibit.Lens.constructFromLensTemplate=function(itemID,templateNode,parentElmt,uiContext){
+Exhibit.Lens._constructFromLensTemplateNode(
+{"value":itemID
+},
+{"value":"item"
+},
+templateNode,
+parentElmt,
+uiContext
+);
+
+var node=parentElmt.lastChild;
+node.style.display=(node.tagName=="span")?"inline":"block";
+node.setAttribute("ex:itemID",itemID);
+
+return node;
+};
+
 Exhibit.Lens._performConstructFromLensTemplateJob=function(job){
 Exhibit.Lens._constructFromLensTemplateNode(
 {"value":job.itemID
@@ -7342,8 +7360,7 @@ Exhibit.Lens._constructFromLensTemplateNode(
 },
 job.template.template,
 job.div,
-job.uiContext,
-job
+job.uiContext
 );
 
 var node=job.div.firstChild;
@@ -7359,7 +7376,7 @@ job.div.setAttribute("ex:itemID",job.itemID);
 };
 
 Exhibit.Lens._constructFromLensTemplateNode=function(
-roots,rootValueTypes,templateNode,parentElmt,uiContext,job
+roots,rootValueTypes,templateNode,parentElmt,uiContext
 ){
 if(typeof templateNode=="string"){
 parentElmt.appendChild(document.createTextNode(templateNode));
@@ -7388,12 +7405,12 @@ database
 
 if(children!=null&&children.length>0){
 Exhibit.Lens._constructFromLensTemplateNode(
-roots,rootValueTypes,children[0],parentElmt,uiContext,job);
+roots,rootValueTypes,children[0],parentElmt,uiContext);
 }
 }else{
 if(children!=null&&children.length>1){
 Exhibit.Lens._constructFromLensTemplateNode(
-roots,rootValueTypes,children[1],parentElmt,uiContext,job);
+roots,rootValueTypes,children[1],parentElmt,uiContext);
 }
 }
 return;
@@ -7414,7 +7431,7 @@ childTemplateNode.condition.test=="case"){
 
 if(values.contains(childTemplateNode.condition.value)){
 Exhibit.Lens._constructFromLensTemplateNode(
-roots,rootValueTypes,childTemplateNode,parentElmt,uiContext,job);
+roots,rootValueTypes,childTemplateNode,parentElmt,uiContext);
 
 return;
 }
@@ -7426,7 +7443,7 @@ lastChildTemplateNode=childTemplateNode;
 
 if(lastChildTemplateNode!=null){
 Exhibit.Lens._constructFromLensTemplateNode(
-roots,rootValueTypes,lastChildTemplateNode,parentElmt,uiContext,job);
+roots,rootValueTypes,lastChildTemplateNode,parentElmt,uiContext);
 }
 return;
 }
@@ -7451,7 +7468,7 @@ if(attribute.isStyle){
 elmt.style[attribute.name]=value;
 }else if("class"==attribute.name){
 elmt.className=value;
-}else{
+}else if(Exhibit.Lens._attributeValueIsSafe(attribute.name,attribute.value)){
 elmt.setAttribute(attribute.name,value);
 }
 }
@@ -7480,15 +7497,18 @@ if(attribute.isStyle){
 elmt.style[attribute.name]=results;
 }else if("class"==attribute.name){
 elmt.className=results;
-}else{
+}else if(Exhibit.Lens._attributeValueIsSafe(attribute.name,results)){
 elmt.setAttribute(attribute.name,results);
 }
 }
 }
+
+if(!Exhibit.params.safe){
 var handlers=templateNode.handlers;
 for(var h=0;h<handlers.length;h++){
 var handler=handlers[h];
 elmt[handler.name]=handler.code;
+}
 }
 
 if(templateNode.control!=null){
@@ -7515,7 +7535,7 @@ var processOneValue=function(childValue){
 var roots2={"value":childValue,"index":index++};
 for(var i=0;i<children.length;i++){
 Exhibit.Lens._constructFromLensTemplateNode(
-roots2,rootValueTypes2,children[i],elmt,uiContext,job);
+roots2,rootValueTypes2,children[i],elmt,uiContext);
 }
 };
 if(results.values instanceof Array){
@@ -7530,7 +7550,7 @@ Exhibit.Lens._constructDefaultValueList(results.values,results.valueType,elmt,ui
 }
 }else if(children!=null){
 for(var i=0;i<children.length;i++){
-Exhibit.Lens._constructFromLensTemplateNode(roots,rootValueTypes,children[i],elmt,uiContext,job);
+Exhibit.Lens._constructFromLensTemplateNode(roots,rootValueTypes,children[i],elmt,uiContext);
 }
 }
 };
@@ -7552,7 +7572,9 @@ parentElmt.appendChild(elmt);
 var attributes=templateNode.attributes;
 for(var i=0;i<attributes.length;i++){
 var attribute=attributes[i];
+if(Exhibit.Lens._attributeValueIsSafe(attribute.name,attribute.value)){
 elmt.setAttribute(attribute.name,attribute.value);
+}
 }
 var styles=templateNode.styles;
 for(var i=0;i<styles.length;i++){
@@ -7568,6 +7590,15 @@ parentElmt.appendChild(elmt);
 });
 };
 
+Exhibit.Lens._attributeValueIsSafe=function(name,value){
+if(Exhibit.params.safe){
+if((name=="href"&&value.startsWith("javascript:"))||
+(name.startsWith("on"))){
+return false;
+}
+}
+return true;
+};
 
 /* ui-context.js */
 
