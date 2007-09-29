@@ -178,13 +178,21 @@ Exhibit.TextSearchFacet.prototype._initializeUI = function() {
 };
 
 Exhibit.TextSearchFacet.constructFacetFrame = function(div, facetLabel) {
-    return SimileAjax.DOM.createDOMFromString(
-        div,
-        "<div class='exhibit-facet-header'>" +
-            "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
-        "</div>" +
-        "<div class='exhibit-text-facet'><input type='text' id='input'></div>"
-    );
+	console.log(facetLabel);
+    if (facetLabel !== "" && facetLabel !== null) {
+		return SimileAjax.DOM.createDOMFromString(
+			div,
+			"<div class='exhibit-facet-header'>" +
+				"<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
+			"</div>" +
+			"<div class='exhibit-text-facet'><input type='text' id='input'></div>"
+		);
+	} else {
+		return SimileAjax.DOM.createDOMFromString(
+			div,
+			"<div class='exhibit-text-facet'><input type='text' id='input'></div>"
+		);
+	}
 };
 
 Exhibit.TextSearchFacet.prototype._onTextInputKeyUp = function() {

@@ -489,6 +489,9 @@
     properties: {
         'wealth': {
             valueType:              "number"
+        },
+        'number': {
+        	valueType:				"number"
         }
     }
 }

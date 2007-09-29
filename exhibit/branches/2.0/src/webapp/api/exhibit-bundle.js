@@ -5785,6 +5785,7 @@ function(elmt,evt,target){self._onTextInputKeyUp();});
 };
 
 Exhibit.TextSearchFacet.constructFacetFrame=function(div,facetLabel){
+if(facetLabel!==""&&facetLabel!==null){
 return SimileAjax.DOM.createDOMFromString(
 div,
 "<div class='exhibit-facet-header'>"+
@@ -5792,6 +5793,12 @@ div,
 "</div>"+
 "<div class='exhibit-text-facet'><input type='text' id='input'></div>"
 );
+}else{
+return SimileAjax.DOM.createDOMFromString(
+div,
+"<div class='exhibit-text-facet'><input type='text' id='input'></div>"
+);
+}
 };
 
 Exhibit.TextSearchFacet.prototype._onTextInputKeyUp=function(){
