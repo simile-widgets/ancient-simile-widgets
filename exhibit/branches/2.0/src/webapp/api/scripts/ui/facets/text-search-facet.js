@@ -178,7 +178,6 @@ Exhibit.TextSearchFacet.prototype._initializeUI = function() {
 };
 
 Exhibit.TextSearchFacet.constructFacetFrame = function(div, facetLabel) {
-	console.log(facetLabel);
     if (facetLabel !== "" && facetLabel !== null) {
 		return SimileAjax.DOM.createDOMFromString(
 			div,
