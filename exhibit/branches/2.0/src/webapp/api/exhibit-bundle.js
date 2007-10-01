@@ -12121,6 +12121,7 @@ var visited=false;
 
 var recurse=index==maxIndex?function(){visitor(tuple);}:function(){f(tuple,index+1);};
 if(binding.isTuple){
+
 binding.accessor(
 value,
 database,

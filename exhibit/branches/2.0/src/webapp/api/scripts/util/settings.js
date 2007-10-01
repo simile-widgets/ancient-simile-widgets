@@ -401,6 +401,12 @@ Exhibit.SettingsUtilities._evaluateBindings = function(value, database, visitor,
         
         var recurse = index == maxIndex ? function() { visitor(tuple); } : function() { f(tuple, index + 1); };
         if (binding.isTuple) {
+            /*
+                The tuple accessor will copy existing fields out of "tuple" into a new
+                object and then injects new fields into it before calling the visitor.
+                This is so that the same tuple object is not reused for different
+                tuple values, which would cause old tuples to be overwritten by new ones.
+             */
             binding.accessor(
                 value, 
                 database, 
