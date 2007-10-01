@@ -102,9 +102,21 @@ function wfExhibitAddHTMLHeader(&$out) {
 		$out->addScript($WExhibitScript);
 	}
 	
-	$out->addScript("<script type='text/javascript'>var wikiURL = '${wgServer}${wgScript}';</script>");
-	$out->addScript("<script type='text/javascript' id='wiki-toolbox-bundle' src='http://simile.mit.edu/repository/wiki-toolbox/trunk/src/wiki-toolbox-bundle.js'></script>");
-
+	#CHANGETHIS: Change the wikiURL to match the URL of the root directory of your wiki. 
+	$ToolbarScript = <<<TOOLBARSCRIPT
+	<script type='text/javascript'> 
+	var wikiURL = 'http://simile.mit.edu/axo'; 
+	(function(){ 
+		var script=document.createElement('script'); 
+		script.type='text/javascript'; 
+		script.src='http://simile.mit.edu/repository/wiki-toolbox/trunk/src/wiki-toolbox-bundle.js'; 
+		script.id='wiki-toolbox-bundle'; 
+		document.getElementsByTagName('head')[0].appendChild(script); 
+		})(); 
+	</script>               
+TOOLBARSCRIPT;
+	$out->addScript($ToolbarScript);
+	
 	return true;
 }
 
