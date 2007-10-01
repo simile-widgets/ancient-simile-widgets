@@ -188,15 +188,9 @@ Exhibit.SettingsUtilities._internalCreateAccessors = function(f, specs, accessor
         } else {
             accessor = createOneAccessor(spec);
         }
-		
+        
         if (accessor != null) {
-            if (isTuple) {
-                accessors[accessorName] = function(value, database, visitor) {
-                    accessor(value, database, visitor, {});
-                };
-            } else {
-                accessors[accessorName] = accessor;
-            }
+            accessors[accessorName] = accessor;
         } else if (!(accessorName in accessors)) {
             accessors[accessorName] = function(value, database, visitor) {};
         }
@@ -269,14 +263,21 @@ Exhibit.SettingsUtilities._createTupleAccessor = function(f, spec) {
         
         return function(itemID, database, visitor, tuple) {
             expression.evaluateOnItem(itemID, database).values.visit(
-                function(v) { 
+                function(v) {
                     var a = v.split(separator);
                     if (a.length == parsers.length) {
-                        for (var i = 0; i < bindingNames.length; i++) {
-                            tuple[bindingNames[i]] = null;
-                            parsers[i](a[i], function(v) { tuple[bindingNames[i]] = v; });
+                        var tuple2 = {};
+                        if (tuple) {
+                            for (var n in tuple) {
+                                tuple2[n] = tuple[n];
+                            }
                         }
-                        visitor(tuple);
+                        
+                        for (var i = 0; i < bindingNames.length; i++) {
+                            tuple2[bindingNames[i]] = null;
+                            parsers[i](a[i], function(v) { tuple2[bindingNames[i]] = v; });
+                        }
+                        visitor(tuple2);
                     }
                 }
             );
@@ -403,7 +404,7 @@ Exhibit.SettingsUtilities._evaluateBindings = function(value, database, visitor,
             binding.accessor(
                 value, 
                 database, 
-                function() { visited = true; recurse(); }, 
+                function(tuple2) { visited = true; tuple = tuple2; recurse(); }, 
                 tuple
             );
         } else {
