@@ -1253,8 +1253,11 @@ return Exhibit.BibtexExporter._wrap(s);
 Exhibit.BibtexExporter._exportOne=function(itemID,database){
 var s="";
 var type=database.getObject(itemID,"pub-type");
+
 var key=database.getObject(itemID,"key");
-s+="@"+type+"{"+(key!=null?key:itemID)+"\n";
+key=(key!=null?key:itemID);
+key=key.replace(/[\s,]/g,"-");
+s+="@"+type+"{"+key+",\n";
 
 var allProperties=database.getAllProperties();
 for(var i=0;i<allProperties.length;i++){
