@@ -16,8 +16,8 @@
 
 $wgExtensionFunctions[] = "wfExhibitSetup";
 $exhibitEnabled = false;
-$includeMap = false;
-$includeTimeline = false;
+$exhibitMap = false;
+$exhibitTimeline = false;
 
 $wgAutoloadClasses['BibtexExport'] = dirname(__FILE__) . '/BibtexExport_body.php';
 $wgSpecialPages['BibtexExport'] = 'BibtexExport';
@@ -77,34 +77,33 @@ function wfExhibitSetup() {
  */
 function wfExhibitAddHTMLHeader(&$out) {
 	global $wgScriptPath;
+	global $wgServer;
+	global $wgScript;
+	global $wgExhibitHeaderAdded;
+	
 	global $exhibitEnabled;
-	global $includeMap;
-	global $includeTimeline;
+	global $exhibitMap;
+	global $exhibitTimeline;
 	global $gmapkey;
 	
+	// Avoid adding these scripts multiple times 
+    // (for some reason, this hook is being called multiple times during editing/previewing)
+    if ($wgExhibitHeaderAdded)
+		return true;
+	
+	$wgExhibitHeaderAdded = true;
 	if ($exhibitEnabled) {	
 		$ExhibitScriptSrc = 'http://simile.mit.edu/repository/exhibit/branches/2.0/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true';
 		$WExhibitScript = '<script type="text/javascript" src="'. $wgScriptPath . '/extensions/ExhibitExtension/scripts/Exhibit_Create.js"></script>';				
-		if ($includeTimeline) { $ExhibitScriptSrc = $ExhibitScriptSrc . '&views=timeline'; }
-		if ($includeMap) { $ExhibitScriptSrc = $ExhibitScriptSrc . '&gmapkey=' . $gmapkey; }	
+		if ($exhibitTimeline) { $ExhibitScriptSrc = $ExhibitScriptSrc . '&views=timeline'; }
+		if ($exhibitMap) { $ExhibitScriptSrc = $ExhibitScriptSrc . '&gmapkey=' . $gmapkey; }	
 		$ExhibitScript = '<script type="text/javascript" src ="' . $ExhibitScriptSrc . '"></script><script>SimileAjax.History.enabled = false;</script>';
 		$out->addScript($ExhibitScript);
 		$out->addScript($WExhibitScript);
 	}
-	#CHANGETHIS: Change the wikiURL to match the URL of the root directory of your wiki.
-	$ToolbarScript = <<<TOOLBARSCRIPT
-	<script type='text/javascript'>
-	var wikiURL = 'http://simile.mit.edu/axo';
-	(function(){
-		var script=document.createElement('script');
-		script.type='text/javascript';
-		script.src='http://simile.mit.edu/repository/wiki-toolbox/trunk/src/wiki-toolbox-bundle.js';
-		script.id='wiki-toolbox-bundle';
-		document.getElementsByTagName('head')[0].appendChild(script);
-	})();
-	</script>		
-TOOLBARSCRIPT;
-	$out->addScript($ToolbarScript);
+	
+	$out->addScript("<script type='text/javascript'>var wikiURL = '${wgServer}${wgScript}';</script>");
+	$out->addScript("<script type='text/javascript' id='wiki-toolbox-bundle' src='http://simile.mit.edu/repository/wiki-toolbox/trunk/src/wiki-toolbox-bundle.js'></script>");
 
 	return true;
 }
@@ -121,6 +120,29 @@ function bibtexToHTMLTable( $input, $argv ) {
 	include("Parse_Entries.php");
 	
 	try {
+	
+		if ($argv["file"])
+		{
+			$file = $argv["file"];
+			if (preg_match("@^http://@", $file))
+			{
+				// get a remote url via fopen
+				$fp = @fopen($file, "r");
+				if ($fp)
+				{
+					$input .= stream_get_contents($fp);
+					fclose($fp);
+				}
+			}
+			else
+			{
+				// treat as an uploaded file on the wiki
+				$image = new Image(Title::makeTitle(NS_IMAGE, $file));
+				if ($image->exists())
+					$input .= file_get_contents($image->getImagePath());
+			}
+		}
+
 		//Use the bibtex parser to get arrays from the bibtex in the <bibtex> tags.
 		$parse = New PARSEENTRIES();
 		$parse->loadBibtexString($input);
@@ -181,8 +203,7 @@ function bibtexToHTMLTable( $input, $argv ) {
 		$output .= "</table>";
 
 		//Give a reasonable default lens.
-		//$output .= '<div ex:role="exhibit-lens" ex:itemTypes="Publication" class="publication-lens"  style="display: none"> <span ex:control="copy-button" class="copy-button"></span> <div><span class="publication-title" ex:content=".label"></span><i ex:if-exists=".venue"><span ex:content=".venue"></span>, </i> <i ex:if-exists=".event"><span ex:content=".event"></span>, </i> <span ex:content=".year"></span>.  <span ex:if-exists=".status">(<span ex:content=".status"></span>)</span> </div> <div class="authors" ex:content=".author"></div> <div ex:if-exists=".abstract" class="abstract" ex:content=".abstract"></div> <div ex:if-exists=".excerpt" class="excerpt" ex:content=".excerpt"></div> <div class="downloads"> <a ex:if-exists=".url" ex:href-content=".url">[Source]</a> <a ex:if-exists=".talkURL" ex:href-content=".talkURL">[Talk Video]</a> <a ex:if-exists=".screencastURL" ex:href-content=".screencastURL">[Screencast <span ex:content=".screencastKB"></span> KB]</a> <a ex:if-exists=".pdfURL" ex:href-content=".pdfURL">[PDF <span ex:content=".pdfKB"></span> KB]</a> <a ex:if-exists=".pptURL" ex:href-content=".pptURL">[PowerPoint <span ex:content=".pptKB"></span> KB]</a> <a ex:if-exists=".psURL" ex:href-content=".psURL">[PS <span ex:content=".psKB"></span> KB]</a> </div> </div>';
-		
+		//$output .= '<div ex:role="exhibit-lens" ex:itemTypes="Publication" class="publication-lens"  style="display: none"> <span ex:control="copy-button" class="copy-button"></span> <div><span class="publication-title" ex:content=".label"></span><i ex:if-exists=".venue"><span ex:content=".venue"></span>, </i> <i ex:if-exists=".event"><span ex:content=".event"></span>, </i> <span ex:content=".year"></span>.  <span ex:if-exists=".status">(<span ex:content=".status"></span>)</span> </div> <div class="authors" ex:content=".author"></div> <div ex:if-exists=".abstract" class="abstract" ex:content=".abstract"></div> <div ex:if-exists=".excerpt" class="excerpt" ex:content=".excerpt"></div> <div class="downloads"> <a ex:if-exists=".url" ex:href-content=".url">[Source]</a> <a ex:if-exists=".talkURL" ex:href-content=".talkURL">[Talk Video]</a> <a ex:if-exists=".screencastURL" ex:href-content=".screencastURL">[Screencast <span ex:content=".screencastKB"></span> KB]</a> <a ex:if-exists=".pdfURL" ex:href-content=".pdfURL">[PDF <span ex:content=".pdfKB"></span> KB]</a> <a ex:if-exists=".pptURL" ex:href-content=".pptURL">[PowerPoint <span ex:content=".pptKB"></span> KB]</a> <a ex:if-exists=".psURL" ex:href-content=".psURL">[PS <span ex:content=".psKB"></span> KB]</a> </div> </div>';		
 		$output .= '<div ex:role="exhibit-lens" style="display:none"> <div> <div style="font-size:120%; font-style:italic"> <span ex:content=".title"></span> </div> <div> Authors: <span ex:content=".author"></span>, <span ex:content=".year" style="font-size: 80%; font-weight:bold"></span>.  </div> </div> <div><a ex:if-exists=".pdfurl" ex:href-content=".pdfurl">[PDF <span ex:content=".pdfkb"></span> KB]</a> </div>'; 
 
 	} catch (Exception $e) { $output = "Error in Bibtex"; }
@@ -196,8 +217,8 @@ function bibtexToHTMLTable( $input, $argv ) {
  */
 function Exhibit_getHTMLResult( $input, $argv ) {
 	global $exhibitEnabled;
-	global $includeMap;
-	global $includeTimeline;
+	global $exhibitMap;
+	global $exhibitTimeline;
 	$exhibitEnabled = true;
 	if ($argv["disabled"]) {
 		$exhibitEnabled = false;
@@ -221,9 +242,9 @@ function Exhibit_getHTMLResult( $input, $argv ) {
 			$view = $xmlviews->item($i);
 			switch ((string) $view->attributes->getNamedItem('viewClass')->nodeValue) {
 			case 'Map':
-				$includeMap = true;
+				$exhibitMap = true;
 			case 'Timeline':
-				$includeTimeline = true;
+				$exhibitTimeline = true;
 				break;
 			}
 		}
