@@ -9,6 +9,7 @@ Exhibit.TabularView = function(containerElmt, uiContext) {
     
     this._settings = { rowStyler: null, tableStyler: null };
     this._columns = [];
+    this._rowTemplate = null;
 
     var view = this;
     this._listener = { 
@@ -90,6 +91,11 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContex
                 
                 index++;
             }
+        }
+        
+        var tables = configElmt.getElementsByTagName("table");
+        if (tables.length > 0 && tables[0].rows.length > 0) {
+            view._rowTemplate = Exhibit.Lens.compileTemplate(tables[0].rows[0], false);
         }
     } catch (e) {
         SimileAjax.Debug.exception(e, "TabularView: Error processing configuration of tabular view");
@@ -263,56 +269,16 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             table.cellPadding = this._settings.cellPadding;
             table.border = this._settings.border;
         }
-
-        /*
-         *  Create item rows
-         */
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var tr = table.insertRow(i);
-            
-            for (var c = 0; c < this._columns.length; c++) {
-                var column = this._columns[c];
-                var td = tr.insertCell(c);
-                
-                var results = column.expression.evaluate(
-                    { "value" : item.id }, 
-                    { "value" : "item" }, 
-                    "value",
-                    database
-                );
-                
-                var valueType = column.format == "list" ? results.valueType : column.format;
-                column.uiContext.formatList(
-                    results.values, 
-                    results.size,
-                    valueType,
-                    function(elmt) { td.appendChild(elmt); }
-                );
-                
-                if (column.styler != null) {
-                    column.styler(item.id, database, td);
-                }
-            }
-            
-            if (this._settings.rowStyler != null) {
-                this._settings.rowStyler(item.id, database, tr, i);
-            }
-        }
-
+        
         /*
          *  Create the column headers
          */
-        var th = table.createTHead();
-        tr = th.insertRow(0);
+        tr = table.insertRow(0);
         var createColumnHeader = function(i) {
             var column = self._columns[i];
             if (column.label == null) {
                 column.label = self._getColumnLabel(column.expression);
             }
-            var colgroup = document.createElement("colgroup");
-            colgroup.className = column.label;
-            table.appendChild(colgroup);
 
             var td = document.createElement("th");
             Exhibit.TabularView.createColumnHeader(
@@ -328,6 +294,53 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         };
         for (var i = 0; i < this._columns.length; i++) {
             createColumnHeader(i);
+        }
+
+        /*
+         *  Create item rows
+         */
+        var renderItem;
+        if (this._rowTemplate != null) {
+            renderItem = function(i) {
+                var item = items[i];
+                Exhibit.Lens.constructFromLensTemplate(item.id, self._rowTemplate, table, self._uiContext);
+            }
+        } else {
+            renderItem = function(i) {
+                var item = items[i];
+                var tr = table.insertRow(table.rows.length);
+                
+                for (var c = 0; c < self._columns.length; c++) {
+                    var column = self._columns[c];
+                    var td = tr.insertCell(c);
+                    
+                    var results = column.expression.evaluate(
+                        { "value" : item.id }, 
+                        { "value" : "item" }, 
+                        "value",
+                        database
+                    );
+                    
+                    var valueType = column.format == "list" ? results.valueType : column.format;
+                    column.uiContext.formatList(
+                        results.values, 
+                        results.size,
+                        valueType,
+                        function(elmt) { td.appendChild(elmt); }
+                    );
+                    
+                    if (column.styler != null) {
+                        column.styler(item.id, database, td);
+                    }
+                }
+                
+                if (self._settings.rowStyler != null) {
+                    self._settings.rowStyler(item.id, database, tr, i);
+                }
+            }
+        }
+        for (var i = 0; i < items.length; i++) {
+            renderItem(i);
         }
 
         bodyDiv.appendChild(table);

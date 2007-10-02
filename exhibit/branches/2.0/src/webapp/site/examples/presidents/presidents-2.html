@@ -109,6 +109,26 @@
                         ex:selectCoordinator="president"
                         >
                     </div>
+                    <div ex:role="view"
+                        ex:viewClass="Tabular"
+                        ex:label="Details"
+                        ex:columns=".term, .label, .party, .presidency.inDate, .presidency.outDate, add(foreach(.presidency, date-range(.inDate, .outDate, 'day')))"
+                        ex:columnLabels="term, name, party, took office, left office, days in office"
+                        ex:formats="date { mode: medium; show: date }"
+                        ex:sortColumn="4"
+                        ex:sortAscending="false"
+                        >
+                        <table style="display: none;">
+                            <tr ex:background-style-content="if(exists(.death), '#ccc', 'white')">
+                                <td><span ex:content=".term"></span></td>
+                                <td><b ex:content=".label"></b><br/><img ex:src-content=".imageURL" /></td>
+                                <td><span ex:content=".party"></span></td>
+                                <td><span ex:content=".presidency.inDate"></span></td>
+                                <td><span ex:content=".presidency.outDate"></span></td>
+                                <td><span ex:content="add(foreach(.presidency, date-range(.inDate, .outDate, 'day')))"></span></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </td>
         </tr>

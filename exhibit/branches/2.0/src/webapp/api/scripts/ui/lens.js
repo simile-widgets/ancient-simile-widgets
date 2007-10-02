@@ -259,7 +259,7 @@ Exhibit.Lens._processTemplateNode = function(node, isXML) {
 
 Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
     var templateNode = {
-        tag:                    elmt.tagName,
+        tag:                    elmt.tagName.toLowerCase(),
         control:                null,
         condition:              null,
         content:                null,
