@@ -26,6 +26,9 @@ Exhibit.ViewPanel.create = function(configuration, div, uiContext) {
             var viewConfig = configuration.views[i];
             
             var viewClass = ("viewClass" in view) ? view.viewClass : Exhibit.TileView;
+            if (typeof viewClass == "string") {
+                viewClass = Exhibit.UI.viewClassNameToViewClass(viewClass);
+            }
             
             var label = null;
             if ("label" in viewConfig) {

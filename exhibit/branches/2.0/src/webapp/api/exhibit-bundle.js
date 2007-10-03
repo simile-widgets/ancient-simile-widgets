@@ -7943,6 +7943,9 @@ return null;
 
 Exhibit.UI.createView=function(configuration,elmt,uiContext){
 var viewClass="viewClass"in configuration?configuration.viewClass:Exhibit.TileView;
+if(typeof viewClass=="string"){
+viewClass=Exhibit.UI.viewClassNameToViewClass(viewClass);
+}
 return viewClass.create(configuration,elmt,uiContext);
 };
 
@@ -7964,41 +7967,53 @@ return Exhibit.TileView;
 
 Exhibit.UI.createFacet=function(configuration,elmt,uiContext){
 var facetClass="facetClass"in configuration?configuration.facetClass:Exhibit.ListFacet;
+if(typeof facetClass=="string"){
+facetClass=Exhibit.UI.facetClassNameToFacetClass(facetClass);
+}
 return facetClass.create(configuration,elmt,uiContext);
 };
 
 Exhibit.UI.createFacetFromDOM=function(elmt,container,uiContext){
-var facetClassString=Exhibit.getAttribute(elmt,"facetClass");
-var facetClass=Exhibit.ListFacet;
-if(facetClassString!=null&&facetClassString.length>0){
-try{
-facetClass=Exhibit.UI._stringToObject(facetClassString,"Facet");
-}catch(e){
-SimileAjax.Debug.exception(e,"Unknown facetClass "+facetClassString);
-}
-}
-
+var facetClass=Exhibit.UI.facetClassNameToFacetClass(Exhibit.getAttribute(elmt,"facetClass"));
 return facetClass.createFromDOM(elmt,container,uiContext);
 };
 
+Exhibit.UI.facetClassNameToFacetClass=function(name){
+if(name!=null&&name.length>0){
+try{
+return Exhibit.UI._stringToObject(name,"Facet");
+}catch(e){
+SimileAjax.Debug.warn("Unknown facetClass "+name);
+}
+}
+return Exhibit.ListFacet;
+};
+
+
 Exhibit.UI.createCoder=function(configuration,uiContext){
 var coderClass="coderClass"in configuration?configuration.coderClass:Exhibit.ColorCoder;
+if(typeof coderClass=="string"){
+coderClass=Exhibit.UI.coderClassNameToCoderClass(coderClass);
+}
 return coderClass.create(configuration,uiContext);
 };
 
 Exhibit.UI.createCoderFromDOM=function(elmt,uiContext){
-var coderClassString=Exhibit.getAttribute(elmt,"coderClass");
-var coderClass=Exhibit.ColorCoder;
-if(coderClassString!=null&&coderClassString.length>0){
-try{
-coderClass=Exhibit.UI._stringToObject(coderClassString,"Coder");
-}catch(e){
-SimileAjax.Debug.exception(e,"Unknown coderClass "+coderClassString);
-}
-}
-
+var coderClass=Exhibit.UI.coderClassNameToCoderClass(Exhibit.getAttribute(elmt,"coderClass"));
 return coderClass.createFromDOM(elmt,uiContext);
 };
+
+Exhibit.UI.coderClassNameToCoderClass=function(name){
+if(name!=null&&name.length>0){
+try{
+return Exhibit.UI._stringToObject(name,"Coder");
+}catch(e){
+SimileAjax.Debug.warn("Unknown coderClass "+name);
+}
+}
+return Exhibit.ColorCoder;
+};
+
 
 Exhibit.UI.createCoordinator=function(configuration,uiContext){
 return Exhibit.Coordinator.create(configuration,uiContext);
@@ -10219,6 +10234,9 @@ for(var i=0;i<configuration.views.length;i++){
 var viewConfig=configuration.views[i];
 
 var viewClass=("viewClass"in view)?view.viewClass:Exhibit.TileView;
+if(typeof viewClass=="string"){
+viewClass=Exhibit.UI.viewClassNameToViewClass(viewClass);
+}
 
 var label=null;
 if("label"in viewConfig){
