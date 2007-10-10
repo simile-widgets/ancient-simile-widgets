@@ -8,14 +8,30 @@
 
 (function() {
 
-    var debug = false;
-    
+    var local = false;
+
+    // obtain local mode from the document URL    
     if (document.location.search.length > 0) {
         var params = document.location.search.substr(1).split("&");
         for (var i = 0; i < params.length; i++) {
-            if (params[i] == "debug") {
-                debug = true;
+            if (params[i] == "local") {
+                local = true;
             }
+        }
+    }
+    
+    // obtain local mode from the script URL params attribute    
+    var heads = document.documentElement.getElementsByTagName("head");
+    for (var h = 0; h < heads.length; h++) {
+        var node = heads[h].firstChild;
+        while (node != null) {
+            if (node.nodeType == 1 && node.tagName.toLowerCase() == "script") {
+                var url = node.src;
+                if (url.indexOf("timeplot-api") >= 0) {
+                    local = (url.indexOf("local") >= 0);
+                }
+            }
+            node = node.nextSibling;
         }
     }
     
@@ -88,13 +104,13 @@
             }
         }
 
-        var timeplotURLPrefix = (debug) ? "/timeplot/api/1.0/" : Timeplot.urlPrefix;
+        var timeplotURLPrefix = (local) ? "/timeplot/api/1.0/" : Timeplot.urlPrefix;
         
         var scriptURLs = Timeplot.params.js || [];
         var cssURLs = Timeplot.params.css || [];
 
         // Core scripts and styles
-        if (Timeplot.params.bundle && !debug) {
+        if (Timeplot.params.bundle && !local) {
             scriptURLs.push(timeplotURLPrefix + "timeplot-bundle.js");
             cssURLs.push(timeplotURLPrefix + "timeplot-bundle.css");
         } else {
@@ -123,7 +139,7 @@
         if (typeof Timeline != "undefined") {
             loadTimeplot();
         } else {
-            var timelineURL = (debug) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
+            var timelineURL = (local) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
             window.SimileAjax_onLoad = loadTimeplot;
             SimileAjax.includeJavascriptFile(document, timelineURL);
         }
@@ -133,7 +149,7 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadTimeline;
         
-        var url = debug ?
+        var url = local ?
             "/ajax/api-2.0/simile-ajax-api.js?bundle=false" :
             "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js?bundle=true";
                 
