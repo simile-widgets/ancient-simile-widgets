@@ -32,6 +32,7 @@ timeGeometry:("timeGeometry"in params)?params.timeGeometry:new Timeplot.DefaultT
 valueGeometry:("valueGeometry"in params)?params.valueGeometry:new Timeplot.DefaultValueGeometry(),
 timeZone:("timeZone"in params)?params.timeZone:0,
 fillColor:("fillColor"in params)?((params.fillColor=="string")?new Timeplot.Color(params.fillColor):params.fillColor):null,
+fillGradient:("fillGradient"in params)?params.fillGradient:true,
 lineColor:("lineColor"in params)?((params.lineColor=="string")?new Timeplot.Color(params.lineColor):params.lineColor):new Timeplot.Color("#606060"),
 lineWidth:("lineWidth"in params)?params.lineWidth:1.0,
 dotRadius:("dotRadius"in params)?params.dotRadius:2.0,
@@ -646,12 +647,16 @@ ctx.lineJoin='miter';
 
 if(this._dataSource){
 if(this._plotInfo.fillColor){
+if(this._plotInfo.fillGradient){
 var gradient=ctx.createLinearGradient(0,this._canvas.height,0,0);
 gradient.addColorStop(0,this._plotInfo.fillColor.toString());
 gradient.addColorStop(0.5,this._plotInfo.fillColor.toString());
 gradient.addColorStop(1,'rgba(255,255,255,0)');
 
 ctx.fillStyle=gradient;
+}else{
+ctx.fillStyle=this._plotInfo.fillColor.toString();
+}
 
 ctx.beginPath();
 ctx.moveTo(0,0);
@@ -1897,7 +1902,7 @@ this.b=255;
 this.b=0;
 }
 if(this.a>1.0){
-this.a=255;
+this.a=1.0;
 }else if(this.a<0.0){
 this.a=0.0;
 }
@@ -1906,7 +1911,8 @@ return this;
 
 
 toString:function(alpha){
-return'rgba('+this.r+','+this.g+','+this.b+','+((alpha)?alpha:'1.0')+')';
+var a=(alpha)?alpha:((this.a)?this.a:1.0);
+return'rgba('+this.r+','+this.g+','+this.b+','+a+')';
 },
 
 
