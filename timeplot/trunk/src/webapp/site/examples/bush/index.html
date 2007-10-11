@@ -27,12 +27,13 @@
         }
     </style>
     
-    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+    <script type="text/javascript" src="http://localhost:9999/timeplot/api/1.0/timeplot-api.js"></script>
 
     <script>
         var timeplot1;
 
         var fill = new Timeplot.Color('#D1DBBD');
+        fill.transparency(0.75);
         var line = new Timeplot.Color('#193441');
         var event = new Timeplot.Color('#cc0000');
 
@@ -66,6 +67,7 @@
                     lineColor: line,
                     dotColor: line,
                     fillColor: fill,
+                    fillGradient: false,
                     showValues: true
                 }),
                 Timeplot.createPlotInfo({
