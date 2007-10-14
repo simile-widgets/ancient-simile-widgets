@@ -561,7 +561,6 @@ SimileAjax.Graphics._FontRenderingContext.prototype.update = function() {
 
 SimileAjax.Graphics._FontRenderingContext.prototype.computeSize = function(text) {
     this._elmt.innerHTML = text;
-    console.log(text + " " + this._elmt.offsetWidth);
     return {
         width:  this._elmt.offsetWidth,
         height: this._elmt.offsetHeight
