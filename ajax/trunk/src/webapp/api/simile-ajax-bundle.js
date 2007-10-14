@@ -1734,61 +1734,30 @@ return new SimileAjax.Graphics._FontRenderingContext(elmt,width);
 };
 
 SimileAjax.Graphics._FontRenderingContext=function(elmt,width){
-this._originalElmt=elmt;
-this._div=document.createElement("div");
-this._div.style.position="absolute";
-this._div.style.left="-1000px";
-this._div.style.top="-1000px";
+this._elmt=elmt;
+this._elmt.style.visibility="hidden";
 if(typeof width=="string"){
-this._div.style.width=width;
+this._elmt.style.width=width;
 }else if(typeof width=="number"){
-this._div.style.width=width+"px";
+this._elmt.style.width=width+"px";
 }
-document.body.appendChild(this._div);
 };
 
 SimileAjax.Graphics._FontRenderingContext.prototype.dispose=function(){
-document.body.removeChild(this._div);
-
-this._div=null;
-this._originalElmt=null;
+this._elmt=null;
 };
 
 SimileAjax.Graphics._FontRenderingContext.prototype.update=function(){
-this._copyStyle();
-this._div.innerHTML="A";
-this._lineHeight=this._div.offsetHeight;
+this._elmt.innerHTML="A";
+this._lineHeight=this._elmt.offsetHeight;
 };
 
-SimileAjax.Graphics._FontRenderingContext.prototype._copyStyle=function(){
-try{
-var style=window.getComputedStyle(this._originalElmt,"");
-this._div.style.fontFamily=style.getPropertyValue("font-family");
-this._div.style.fontSize=style.getPropertyValue("font-size");
-this._div.style.fontWeight=style.getPropertyValue("font-weight");
-this._div.style.fontVariant=style.getPropertyValue("font-variant");
-this._div.style.fontStyle=style.getPropertyValue("font-style");
-return;
-}catch(e){
-}
-
-var style=this._originalElmt.currentStyle;
-if(style==null){
-style=this._originalElmt.runningStyle;
-}
-
-this._div.style.fontFamily=style.fontFamily;
-this._div.style.fontSize=style.fontSize;
-this._div.style.fontWeight=style.fontWeight;
-this._div.style.fontVariant=style.fontVariant;
-this._div.style.fontStyle=style.fontStyle;
-}
-
 SimileAjax.Graphics._FontRenderingContext.prototype.computeSize=function(text){
-this._div.innerHTML=text;
+this._elmt.innerHTML=text;
+console.log(text+" "+this._elmt.offsetWidth);
 return{
-width:this._div.offsetWidth,
-height:this._div.offsetHeight
+width:this._elmt.offsetWidth,
+height:this._elmt.offsetHeight
 };
 };
 
