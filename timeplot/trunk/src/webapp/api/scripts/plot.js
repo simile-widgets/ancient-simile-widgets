@@ -248,7 +248,15 @@ Timeplot.Plot.prototype = {
 	            this._plot(function(x,y) {
                     ctx.lineTo(x,y);
 	            });
-                ctx.lineTo(this._canvas.width, 0);
+                if (this._plotInfo.fillFrom == Number.NEGATIVE_INFINITY) {
+                    ctx.lineTo(this._canvas.width, 0);
+                } else if (this._plotInfo.fillFrom == Number.POSITIVE_INFINITY) {
+                    ctx.lineTo(this._canvas.width, this._canvas.height);
+                    ctx.lineTo(0, this._canvas.height);
+                } else {
+                    ctx.lineTo(this._canvas.width, this._valueGeometry.toScreen(this._plotInfo.fillFrom));
+                    ctx.lineTo(0, this._valueGeometry.toScreen(this._plotInfo.fillFrom));
+                }
                 ctx.fill();
             }
                     

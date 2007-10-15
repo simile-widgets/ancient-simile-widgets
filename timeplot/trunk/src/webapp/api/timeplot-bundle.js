@@ -33,6 +33,7 @@ valueGeometry:("valueGeometry"in params)?params.valueGeometry:new Timeplot.Defau
 timeZone:("timeZone"in params)?params.timeZone:0,
 fillColor:("fillColor"in params)?((params.fillColor=="string")?new Timeplot.Color(params.fillColor):params.fillColor):null,
 fillGradient:("fillGradient"in params)?params.fillGradient:true,
+fillFrom:("fillFrom"in params)?params.fillFrom:Number.NEGATIVE_INFINITY,
 lineColor:("lineColor"in params)?((params.lineColor=="string")?new Timeplot.Color(params.lineColor):params.lineColor):new Timeplot.Color("#606060"),
 lineWidth:("lineWidth"in params)?params.lineWidth:1.0,
 dotRadius:("dotRadius"in params)?params.dotRadius:2.0,
@@ -663,7 +664,15 @@ ctx.moveTo(0,0);
 this._plot(function(x,y){
 ctx.lineTo(x,y);
 });
+if(this._plotInfo.fillFrom==Number.NEGATIVE_INFINITY){
 ctx.lineTo(this._canvas.width,0);
+}else if(this._plotInfo.fillFrom==Number.POSITIVE_INFINITY){
+ctx.lineTo(this._canvas.width,this._canvas.height);
+ctx.lineTo(0,this._canvas.height);
+}else{
+ctx.lineTo(this._canvas.width,this._valueGeometry.toScreen(this._plotInfo.fillFrom));
+ctx.lineTo(0,this._valueGeometry.toScreen(this._plotInfo.fillFrom));
+}
 ctx.fill();
 }
 
