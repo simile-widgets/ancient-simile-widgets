@@ -3050,6 +3050,9 @@ fConvert=null;
 }
 }
 }
+if(fConvert!=null&&"preprocessURL"in fConvert){
+url=fConvert.preprocessURL(url);
+}
 
 var next=Exhibit.JSONPImporter._callbacks.next||1;
 Exhibit.JSONPImporter._callbacks.next=next+1;
@@ -3162,31 +3165,50 @@ var valueTypes={"text":true,"number":true,"item":true,"url":true,"boolean":true}
 var entries=json.feed.entry;
 for(var i=0;i<entries.length;i++){
 var entry=entries[i];
-var item={label:entry.title.$t};
-var fields=entry.content.$t;
+var id=entry.id.$t;
+var c=id.lastIndexOf("C");
+var r=id.lastIndexOf("R");
 
-var openBrace=fields.indexOf("{");
-while(openBrace>=0){
-var closeBrace=fields.indexOf("}",openBrace+1);
-if(closeBrace<0){
+entries[i]={
+row:parseInt(id.substring(r+1,c))-1,
+col:parseInt(id.substring(c+1))-1,
+val:entry.content.$t
+};
+};
+
+var cellIndex=0;
+var getNextRow=function(){
+if(cellIndex<entries.length){
+var firstEntry=entries[cellIndex++];
+var row=[firstEntry];
+while(cellIndex<entries.length){
+var nextEntry=entries[cellIndex];
+if(nextEntry.row==firstEntry.row){
+row.push(nextEntry);
+cellIndex++;
+}else{
 break;
 }
+}
+return row;
+}
+return null;
+};
 
-var fieldSpec=fields.substring(openBrace+1,closeBrace).trim().split(":");
-openBrace=fields.indexOf("{",closeBrace+1);
+var propertyRow=getNextRow();
+if(propertyRow!=null){
+var propertiesByColumn=[];
+for(var i=0;i<propertyRow.length;i++){
+var cell=propertyRow[i];
 
-var fieldValues=openBrace>0?fields.substring(closeBrace+1,openBrace):fields.substr(closeBrace+1);
-fieldValues=fieldValues.replace(/^\:\s+|,\s+$/g,"");
-
+var fieldSpec=cell.val.trim().replace(/^\{/g,"").replace(/\}$/g,"").split(":");
 var fieldName=fieldSpec[0].trim();
-var property=properties[fieldName];
-if(!(property)){
 var fieldDetails=fieldSpec.length>1?fieldSpec[1].split(","):[];
-property={};
+
+var property={single:false};
 
 for(var d=0;d<fieldDetails.length;d++){
 var detail=fieldDetails[d].trim();
-var property={single:false};
 if(detail in valueTypes){
 property.valueType=detail;
 }else if(detail=="single"){
@@ -3194,21 +3216,48 @@ property.single=true;
 }
 }
 
+propertiesByColumn[cell.col]=fieldName;
 properties[fieldName]=property;
 }
 
+var row=null;
+while((row=getNextRow())!=null){
+var item={};
+
+for(var i=0;i<row.length;i++){
+var cell=row[i];
+var fieldName=propertiesByColumn[cell.col];
+if(typeof fieldName=="string"){
+item[fieldName]=cell.val;
+
+var property=properties[fieldName];
 if(!property.single){
-fieldValues=fieldValues.split(";");
+
+var fieldValues=cell.val.split(";");
+
 for(var v=0;v<fieldValues.length;v++){
+
 fieldValues[v]=fieldValues[v].trim();
+
 }
-}
+
 item[fieldName]=fieldValues;
+}else{
+item[fieldName]=cell.val.trim();
 }
+
+}
+}
+
 items.push(item);
+}
 }
 
 return{types:types,properties:properties,items:items};
+};
+
+Exhibit.JSONPImporter.googleSpreadsheetsConverter.preprocessURL=function(url){
+return url.replace(/\/list\//g,"/cells/");
 };
 
 
