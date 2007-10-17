@@ -27,6 +27,7 @@ class GoogleMaps extends SpecialPage
         foreach ( $allMessages as $lang => $langMessages ) {
             $wgMessageCache->addMessages( $langMessages, $lang );
         }
+        return true;
     }
 }
 ?>
