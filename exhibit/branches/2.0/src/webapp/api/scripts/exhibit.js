@@ -293,4 +293,42 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
     processElmts(lensElmts);
     processElmts(facetElmts);
     processElmts(otherElmts);
+    
+    var hash = document.location.hash;
+    if (hash.length > 1) {
+        var itemID = decodeURIComponent(hash.substr(1));
+        if (this._database.containsItem(itemID)) {
+            this._showFocusDialogOnItem(itemID);
+        }
+    }
+};
+
+Exhibit._Impl.prototype._showFocusDialogOnItem = function(itemID) {
+    var dom = SimileAjax.DOM.createDOMFromString(
+        "div",
+        "<div class='exhibit-focusDialog-viewContainer' id='lensContainer'>" +
+        "</div>" +
+        "<div class='exhibit-focusDialog-controls'>" +
+            "<button id='closeButton'>" + 
+                "Close" + 
+            "</button>" +
+        "</div>"
+    );
+    dom.elmt.className = "exhibit-focusDialog exhibit-ui-protection";
+    dom.close = function() {
+        document.body.removeChild(dom.elmt);
+    };
+    dom.layer = SimileAjax.WindowManager.pushLayer(function() { dom.close(); }, false);
+    
+    var itemLens = this._uiContext.getLensRegistry().createLens(itemID, dom.lensContainer, this._uiContext);
+    
+    dom.elmt.style.top = (document.body.scrollTop + 100) + "px";
+    document.body.appendChild(dom.elmt);
+    
+    SimileAjax.WindowManager.registerEvent(
+        dom.closeButton, 
+        "click", 
+        function(elmt, evt, target) { SimileAjax.WindowManager.popLayer(dom.layer); },
+        dom.layer
+    );
 };
