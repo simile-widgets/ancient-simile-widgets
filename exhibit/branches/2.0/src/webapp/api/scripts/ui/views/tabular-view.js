@@ -223,6 +223,9 @@ Exhibit.TabularView.prototype._initializeUI = function() {
     );
     if (this._settings.showToolbox) {
         this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+        this._toolboxWidget.getGeneratedHTML = function() {
+            return self._dom.bodyDiv.innerHTML;
+        };
     }
     
     if (!this._settings.showSummary) {

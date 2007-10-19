@@ -9585,6 +9585,9 @@ this._uiContext
 );
 if(this._settings.showToolbox){
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
+this._toolboxWidget.getGeneratedHTML=function(){
+return self._dom.bodyDiv.innerHTML;
+};
 }
 
 if(!this._settings.showSummary){
@@ -9985,6 +9988,8 @@ this._uiContext=null;
 };
 
 Exhibit.ThumbnailView.prototype._initializeUI=function(){
+var self=this;
+
 this._div.innerHTML="";
 var template={
 elmt:this._div,
@@ -10004,9 +10009,11 @@ field:"footerDiv"
 this._dom=SimileAjax.DOM.createDOMFromTemplate(template);
 if(this._settings.showToolbox){
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
+this._toolboxWidget.getGeneratedHTML=function(){
+return self._dom.bodyDiv.innerHTML;
+};
 }
 
-var self=this;
 this._orderedViewFrame._divHeader=this._dom.headerDiv;
 this._orderedViewFrame._divFooter=this._dom.footerDiv;
 this._orderedViewFrame._generatedContentElmtRetriever=function(){
@@ -10203,6 +10210,8 @@ this._uiContext=null;
 };
 
 Exhibit.TileView.prototype._initializeUI=function(){
+var self=this;
+
 this._div.innerHTML="";
 var template={
 elmt:this._div,
@@ -10222,9 +10231,11 @@ field:"footerDiv"
 this._dom=SimileAjax.DOM.createDOMFromTemplate(template);
 if(this._settings.showToolbox){
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
+this._toolboxWidget.getGeneratedHTML=function(){
+return self._dom.bodyDiv.innerHTML;
+};
 }
 
-var self=this;
 this._orderedViewFrame._divHeader=this._dom.headerDiv;
 this._orderedViewFrame._divFooter=this._dom.footerDiv;
 this._orderedViewFrame._generatedContentElmtRetriever=function(){
@@ -11495,6 +11506,7 @@ Exhibit.ToolboxWidget=function(containerElmt,uiContext){
 this._containerElmt=containerElmt;
 this._uiContext=uiContext;
 this._settings={};
+this._customExporters=[];
 
 this._hovering=false;
 this._initializeUI();
@@ -11541,6 +11553,10 @@ this._dismiss();
 this._settings=null;
 this._containerElmt=null;
 this._uiContext=null;
+};
+
+Exhibit.ToolboxWidget.prototype.addExporter=function(exporter){
+this._customExporters.push(exporter);
 };
 
 Exhibit.ToolboxWidget.prototype._initializeUI=function(){
@@ -11666,6 +11682,17 @@ Exhibit.ToolboxWidget.createExportDialogBox(text).open();
 var exporters=Exhibit.getExporters();
 for(var i=0;i<exporters.length;i++){
 makeMenuItem(exporters[i]);
+}
+for(var i=0;i<this._customExporters.length;i++){
+makeMenuItem(this._customExporters[i]);
+}
+
+if("getGeneratedHTML"in this){
+makeMenuItem({
+getLabel:function(){return Exhibit.l10n.htmlExporterLabel;},
+exportOne:this.getGeneratedHTML,
+exportMany:this.getGeneratedHTML,
+});
 }
 
 

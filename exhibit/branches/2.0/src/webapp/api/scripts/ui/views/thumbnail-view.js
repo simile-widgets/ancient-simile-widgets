@@ -85,6 +85,8 @@ Exhibit.ThumbnailView.prototype.dispose = function() {
 };
 
 Exhibit.ThumbnailView.prototype._initializeUI = function() {
+    var self = this;
+    
     this._div.innerHTML = "";
     var template = {
         elmt: this._div,
@@ -104,9 +106,11 @@ Exhibit.ThumbnailView.prototype._initializeUI = function() {
     this._dom = SimileAjax.DOM.createDOMFromTemplate(template);
     if (this._settings.showToolbox) {
         this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
+        this._toolboxWidget.getGeneratedHTML = function() {
+            return self._dom.bodyDiv.innerHTML;
+        };
     }
     
-    var self = this;
     this._orderedViewFrame._divHeader = this._dom.headerDiv;
     this._orderedViewFrame._divFooter = this._dom.footerDiv;
     this._orderedViewFrame._generatedContentElmtRetriever = function() {

@@ -6,6 +6,7 @@ Exhibit.ToolboxWidget = function(containerElmt, uiContext) {
     this._containerElmt = containerElmt;
     this._uiContext = uiContext;
     this._settings = {};
+    this._customExporters = [];
     
     this._hovering = false;
     this._initializeUI();
@@ -52,6 +53,10 @@ Exhibit.ToolboxWidget.prototype.dispose = function() {
     this._settings = null;
     this._containerElmt = null;
     this._uiContext = null;
+};
+
+Exhibit.ToolboxWidget.prototype.addExporter = function(exporter) {
+    this._customExporters.push(exporter);
 };
 
 Exhibit.ToolboxWidget.prototype._initializeUI = function() {
@@ -177,6 +182,17 @@ Exhibit.ToolboxWidget.prototype._showExportMenu = function(elmt) {
     var exporters = Exhibit.getExporters();
     for (var i = 0; i < exporters.length; i++) {
         makeMenuItem(exporters[i]);
+    }
+    for (var i = 0; i < this._customExporters.length; i++) {
+        makeMenuItem(this._customExporters[i]);
+    }
+    
+    if ("getGeneratedHTML" in this) {
+        makeMenuItem({ 
+            getLabel:   function() { return Exhibit.l10n.htmlExporterLabel; },
+            exportOne:  this.getGeneratedHTML,
+            exportMany: this.getGeneratedHTML,
+        });
     }
     
     /*if (generatedContentElmtRetriever != null) {
