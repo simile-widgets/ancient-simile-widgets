@@ -52,7 +52,7 @@ Exhibit.getExporters = function() {
     return [].concat(Exhibit._exporters);
 };
 
-Exhibit.addExporters = function(exporter) {
+Exhibit.addExporter = function(exporter) {
     Exhibit._initializeExporters();
     Exhibit._exporters.push(exporter);
 };
@@ -293,6 +293,31 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
     processElmts(lensElmts);
     processElmts(facetElmts);
     processElmts(otherElmts);
+    
+    var exporters = Exhibit.getAttribute(document.body, "exporters");
+    if (exporters != null) {
+        exporters = exporters.split(";");
+        for (var i = 0; i < exporters.length; i++) {
+            var expr = exporters[i];
+            var exporter = null;
+            
+            try {
+                exporter = eval(expr);
+            } catch (e) {}
+            
+            if (exporter == null) {
+                try { exporter = eval(expr + "Exporter"); } catch (e) {}
+            }
+            
+            if (exporter == null) {
+                try { exporter = eval("Exhibit." + expr + "Exporter"); } catch (e) {}
+            }
+            
+            if (typeof exporter == "object") {
+                Exhibit.addExporter(exporter);
+            }
+        }
+    }
     
     var hash = document.location.hash;
     if (hash.length > 1) {
