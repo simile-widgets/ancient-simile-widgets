@@ -26,7 +26,7 @@ Exhibit.TextSearchFacet = function(containerElmt, uiContext) {
 };
 
 Exhibit.TextSearchFacet._settingSpecs = {
-	"facetLabel":       { type: "text" }
+    "facetLabel":       { type: "text" }
 };
 
 Exhibit.TextSearchFacet.create = function(configuration, containerElmt, uiContext) {
@@ -56,6 +56,11 @@ Exhibit.TextSearchFacet.createFromDOM = function(configElmt, containerElmt, uiCo
         if (s != null && s.length > 0) {
             facet._expressions = Exhibit.ExpressionParser.parseSeveral(s);
         }
+        
+        var query = Exhibit.getAttribute(configElmt, "query");
+        if (query != null && query.length > 0) {
+            facet._text = query;
+        }
     } catch (e) {
         SimileAjax.Debug.exception(e, "TextSearchFacet: Error processing configuration of list facet");
     }
@@ -80,6 +85,9 @@ Exhibit.TextSearchFacet._configure = function(facet, configuration) {
         for (var i = 0; i < selection.length; i++) {
             facet._valueSet.add(selection[i]);
         }
+    }
+    if ("query" in configuration) {
+        facet._text = configuration.query;
     }
     if (!("facetLabel" in facet._settings)) {
         facet._settings.facetLabel = "";
@@ -173,25 +181,29 @@ Exhibit.TextSearchFacet.prototype._initializeUI = function() {
     var self = this;
     this._dom = Exhibit.TextSearchFacet.constructFacetFrame(this._div, this._settings.facetLabel);
     
+    if (this._text != null) {
+        this._dom.input.value = this._text;
+    }
+    
     SimileAjax.WindowManager.registerEvent(this._dom.input, "keyup",
         function(elmt, evt, target) { self._onTextInputKeyUp(); });
 };
 
 Exhibit.TextSearchFacet.constructFacetFrame = function(div, facetLabel) {
     if (facetLabel !== "" && facetLabel !== null) {
-		return SimileAjax.DOM.createDOMFromString(
-			div,
-			"<div class='exhibit-facet-header'>" +
-				"<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
-			"</div>" +
-			"<div class='exhibit-text-facet'><input type='text' id='input'></div>"
-		);
-	} else {
-		return SimileAjax.DOM.createDOMFromString(
-			div,
-			"<div class='exhibit-text-facet'><input type='text' id='input'></div>"
-		);
-	}
+        return SimileAjax.DOM.createDOMFromString(
+            div,
+            "<div class='exhibit-facet-header'>" +
+                "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
+            "</div>" +
+            "<div class='exhibit-text-facet'><input type='text' id='input'></div>"
+        );
+    } else {
+        return SimileAjax.DOM.createDOMFromString(
+            div,
+            "<div class='exhibit-text-facet'><input type='text' id='input'></div>"
+        );
+    }
 };
 
 Exhibit.TextSearchFacet.prototype._onTextInputKeyUp = function() {

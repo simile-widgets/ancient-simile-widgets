@@ -5715,6 +5715,11 @@ var s=Exhibit.getAttribute(configElmt,"expressions");
 if(s!=null&&s.length>0){
 facet._expressions=Exhibit.ExpressionParser.parseSeveral(s);
 }
+
+var query=Exhibit.getAttribute(configElmt,"query");
+if(query!=null&&query.length>0){
+facet._text=query;
+}
 }catch(e){
 SimileAjax.Debug.exception(e,"TextSearchFacet: Error processing configuration of list facet");
 }
@@ -5739,6 +5744,9 @@ var selection=configuration.selection;
 for(var i=0;i<selection.length;i++){
 facet._valueSet.add(selection[i]);
 }
+}
+if("query"in configuration){
+facet._text=configuration.query;
 }
 if(!("facetLabel"in facet._settings)){
 facet._settings.facetLabel="";
@@ -5831,6 +5839,10 @@ this._uiContext.getCollection().onFacetUpdated(this);
 Exhibit.TextSearchFacet.prototype._initializeUI=function(){
 var self=this;
 this._dom=Exhibit.TextSearchFacet.constructFacetFrame(this._div,this._settings.facetLabel);
+
+if(this._text!=null){
+this._dom.input.value=this._text;
+}
 
 SimileAjax.WindowManager.registerEvent(this._dom.input,"keyup",
 function(elmt,evt,target){self._onTextInputKeyUp();});
