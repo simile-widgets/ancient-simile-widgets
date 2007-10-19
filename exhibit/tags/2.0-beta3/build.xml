@@ -1,0 +1,112 @@
+<!--+
+    |
+    |           +===========================+
+    |           |    Exhibit Build System   |
+    |           +===========================+
+    |
+    | This is just for bundling and minifying javascript and CSS files.
+    |
+    +-->
+
+<project default="bundle" basedir="." name="Exhibit">
+
+  <target name="tasks">
+    <taskdef name="jsmin"
+        classname="edu.mit.simile.jsminTask.JSMinTask"
+        classpath="tools/jsminTask.jar"/>
+  </target>
+      
+  <target name="bundle" depends="tasks">
+    <!-- SimileAjax -->
+    <jsmin output="src/ajax/api/simile-ajax-bundle.js">
+        <fileset dir="src/ajax/api/scripts">
+            <include name="platform.js" />
+        </fileset>
+        <fileset dir="src/ajax/api/scripts">
+            <include name="**/*.js" />
+            <exclude name="signal.js" />
+            <exclude name="platform.js" />
+        </fileset>
+    </jsmin>
+      
+    <!-- Exhibit -->
+    <jsmin output="src/webapp/api/exhibit-bundle.js">
+        <fileset dir="src/webapp/api/scripts">
+            <include name="**/*.js" />
+            <exclude name="create.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/api/exhibit-bundle.css">
+        <fileset dir="src/webapp/api/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+      
+    <!-- Time extension -->
+    <jsmin output="src/webapp/extensions/time/time-extension-bundle.js">
+        <fileset dir="src/webapp/extensions/time/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/extensions/time/time-extension-bundle.css">
+        <fileset dir="src/webapp/extensions/time/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+    
+    <!-- Map extension -->
+    <jsmin output="src/webapp/extensions/map/map-extension-bundle.js">
+        <fileset dir="src/webapp/extensions/map/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/extensions/map/map-extension-bundle.css">
+        <fileset dir="src/webapp/extensions/map/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+    
+    <!-- Chart extension -->
+    <jsmin output="src/webapp/extensions/chart/chart-extension-bundle.js">
+        <fileset dir="src/webapp/extensions/chart/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/extensions/chart/chart-extension-bundle.css">
+        <fileset dir="src/webapp/extensions/chart/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+    
+      <!-- ========== Locales ========== -->
+    <jsmin output="src/webapp/api/locales/en/exhibit-en-bundle.js">
+        <fileset dir="src/webapp/api/locales/en/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    
+    <jsmin output="src/webapp/api/locales/es/exhibit-es-bundle.js">
+        <fileset dir="src/webapp/api/locales/es/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    
+    <jsmin output="src/webapp/api/locales/fr/exhibit-fr-bundle.js">
+        <fileset dir="src/webapp/api/locales/fr/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    
+    <jsmin output="src/webapp/api/locales/sv/exhibit-sv-bundle.js">
+        <fileset dir="src/webapp/api/locales/sv/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    
+    <jsmin output="src/webapp/api/locales/zh/exhibit-zh-bundle.js">
+        <fileset dir="src/webapp/api/locales/zh/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+  </target>
+</project>
