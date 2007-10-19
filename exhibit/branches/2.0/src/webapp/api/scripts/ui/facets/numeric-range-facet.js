@@ -249,6 +249,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
             var elmt = Exhibit.FacetUtilities.constructFacetItem(
                 from + " - " + to, 
                 count, 
+                null,
                 selected, 
                 facetHasSelection,
                 onSelect,

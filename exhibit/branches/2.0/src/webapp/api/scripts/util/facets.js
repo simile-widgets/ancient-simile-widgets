@@ -39,6 +39,7 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
 Exhibit.FacetUtilities.constructFacetItem = function(
     label, 
     count, 
+    color,
     selected, 
     facetHasSelection,
     onSelect,
@@ -68,8 +69,14 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     if (typeof label == "string") {
         dom.elmt.title = label;
         dom.inner.appendChild(document.createTextNode(label));
+        if (color != null) {
+            dom.inner.style.color = color;
+        }
     } else {
         dom.inner.appendChild(label);
+        if (color != null) {
+            label.style.color = color;
+        }
     }
     
     SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelectOnly, SimileAjax.WindowManager.getBaseLayer());

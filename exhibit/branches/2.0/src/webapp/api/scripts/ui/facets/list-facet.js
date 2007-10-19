@@ -6,6 +6,7 @@
 Exhibit.ListFacet = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
+    this._colorCoder = null;
     
     this._expression = null;
     this._valueSet = new Exhibit.Set();
@@ -36,7 +37,8 @@ Exhibit.ListFacet._settingSpecs = {
     "fixedOrder":       { type: "text" },
     "sortMode":         { type: "text", defaultValue: "value" },
     "showMissing":      { type: "boolean", defaultValue: true },
-    "height":           { type: "text" }
+    "height":           { type: "text" },
+    "colorCoder":       { type: "text", defaultValue: null }
 };
 
 Exhibit.ListFacet.create = function(configuration, containerElmt, uiContext) {
@@ -124,6 +126,10 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
         
         facet._orderMap = orderMap;
     }
+    
+    if ("colorCoder" in facet._settings) {
+        facet._colorCoder = facet._uiContext.getExhibit().getComponent(facet._settings.colorCoder);
+    }
 }
 
 Exhibit.ListFacet.prototype.dispose = function() {
@@ -131,6 +137,7 @@ Exhibit.ListFacet.prototype.dispose = function() {
     
     this._uiContext.getCollection().removeListener(this._listener);
     this._uiContext = null;
+    this._colorCoder = null;
     
     this._div.innerHTML = "";
     this._div = null;
@@ -393,12 +400,14 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
         var elmt = Exhibit.FacetUtilities.constructFacetItem(
             entry.selectionLabel, 
             entry.count, 
+            (self._colorCoder != null) ? self._colorCoder.translate(entry.value) : null,
             entry.selected, 
             facetHasSelection,
             onSelect,
             onSelectOnly,
             self._uiContext
         );
+        
         containerDiv.appendChild(elmt);
     };
     

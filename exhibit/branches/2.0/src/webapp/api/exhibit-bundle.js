@@ -4962,6 +4962,7 @@ this._coordinator._fire(this,o);
 Exhibit.ListFacet=function(containerElmt,uiContext){
 this._div=containerElmt;
 this._uiContext=uiContext;
+this._colorCoder=null;
 
 this._expression=null;
 this._valueSet=new Exhibit.Set();
@@ -4992,7 +4993,8 @@ Exhibit.ListFacet._settingSpecs={
 "fixedOrder":{type:"text"},
 "sortMode":{type:"text",defaultValue:"value"},
 "showMissing":{type:"boolean",defaultValue:true},
-"height":{type:"text"}
+"height":{type:"text"},
+"colorCoder":{type:"text",defaultValue:null}
 };
 
 Exhibit.ListFacet.create=function(configuration,containerElmt,uiContext){
@@ -5080,6 +5082,10 @@ orderMap[values[i].trim()]=i;
 
 facet._orderMap=orderMap;
 }
+
+if("colorCoder"in facet._settings){
+facet._colorCoder=facet._uiContext.getExhibit().getComponent(facet._settings.colorCoder);
+}
 }
 
 Exhibit.ListFacet.prototype.dispose=function(){
@@ -5087,6 +5093,7 @@ this._uiContext.getCollection().removeFacet(this);
 
 this._uiContext.getCollection().removeListener(this._listener);
 this._uiContext=null;
+this._colorCoder=null;
 
 this._div.innerHTML="";
 this._div=null;
@@ -5349,12 +5356,14 @@ return false;
 var elmt=Exhibit.FacetUtilities.constructFacetItem(
 entry.selectionLabel,
 entry.count,
+(self._colorCoder!=null)?self._colorCoder.translate(entry.value):null,
 entry.selected,
 facetHasSelection,
 onSelect,
 onSelectOnly,
 self._uiContext
 );
+
 containerDiv.appendChild(elmt);
 };
 
@@ -5736,6 +5745,7 @@ return false;
 var elmt=Exhibit.FacetUtilities.constructFacetItem(
 from+" - "+to,
 count,
+null,
 selected,
 facetHasSelection,
 onSelect,
@@ -11918,6 +11928,7 @@ return dom;
 Exhibit.FacetUtilities.constructFacetItem=function(
 label,
 count,
+color,
 selected,
 facetHasSelection,
 onSelect,
@@ -11947,8 +11958,14 @@ dom.elmt.className=selected?"exhibit-facet-value exhibit-facet-value-selected":"
 if(typeof label=="string"){
 dom.elmt.title=label;
 dom.inner.appendChild(document.createTextNode(label));
+if(color!=null){
+dom.inner.style.color=color;
+}
 }else{
 dom.inner.appendChild(label);
+if(color!=null){
+label.style.color=color;
+}
 }
 
 SimileAjax.WindowManager.registerEvent(dom.elmt,"click",onSelectOnly,SimileAjax.WindowManager.getBaseLayer());
