@@ -282,7 +282,12 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML) {
         if (value == null || typeof value != "string" || value.length == 0 || name == "contentEditable") {
             continue;
         }
-        if (name.length > 3 && name.substr(0,3) == "ex:") {
+        if (name == "ex:onshow") {
+            templateNode.attributes.push({
+                name:   name,
+                value:  value
+            });
+        } else if (name.length > 3 && name.substr(0,3) == "ex:") {
             name = name.substr(3);
             if (name == "control") {
                 templateNode.control = value;
@@ -455,21 +460,12 @@ Exhibit.Lens._parseSubcontentAttribute = function(value) {
 };
 
 Exhibit.Lens.constructFromLensTemplate = function(itemID, templateNode, parentElmt, uiContext) {
-    Exhibit.Lens._constructFromLensTemplateNode(
-        {   "value" : itemID
-        },
-        {   "value" : "item"
-        },
-        templateNode, 
-        parentElmt, 
-        uiContext
-    );
-    
-    var node = parentElmt.lastChild;
-    node.style.display = (node.tagName == "span") ? "inline" : "block";
-    node.setAttribute("ex:itemID", itemID);
-    
-    return node;
+    return Exhibit.Lens._performConstructFromLensTemplateJob({
+        itemID:     itemID,
+        template:   { template: templateNode },
+        div:        parentElmt,
+        uiContext:  uiContext
+    });
 };
 
 Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
@@ -483,7 +479,7 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
         job.uiContext
     );
     
-    var node = job.div.firstChild;
+    var node = job.div.lastChild;
     var tagName = node.tagName;
     if (tagName == "span") {
         node.style.display = "inline";
@@ -491,8 +487,21 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
         node.style.display = "block";
     }
     
-    job.div.setAttribute("ex:itemID", job.itemID);
+    node.setAttribute("ex:itemID", job.itemID);
+    
+    if (!Exhibit.params.safe) {
+        var onshow = Exhibit.getAttribute(node, "onshow");
+        if (onshow != null && onshow.length > 0) {
+            try {
+                eval("(function() { " + onshow + " })").call(node);
+            } catch (e) {
+                SimileAjax.Debug.log(e);
+            }
+        }
+    }
+    
     //Exhibit.ToolboxWidget.createFromDOM(job.div, job.div, job.uiContext);
+    return node;
 };
 
 Exhibit.Lens._constructFromLensTemplateNode = function(
