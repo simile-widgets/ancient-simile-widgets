@@ -1,4 +1,4 @@
-
+﻿
 
 /* collection.js */
 
@@ -5294,15 +5294,15 @@ count++;
 
 if(count>0||this._selectMissing){
 var span=document.createElement("span");
-span.innerHTML="(missing this field)";
-span.style.color="#aaa";
+span.innerHTML=Exhibit.FacetUtilities.l10n.missingThisField;
+span.className="exhibit-facet-value-missingThisField";
 
 entries.unshift({
 value:null,
 count:count,
 selected:this._selectMissing,
 selectionLabel:span,
-actionLabel:"(missing this field)"
+actionLabel:Exhibit.FacetUtilities.l10n.missingThisField
 });
 }
 }

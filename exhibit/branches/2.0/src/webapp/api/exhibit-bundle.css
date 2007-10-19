@@ -288,6 +288,10 @@ div.exhibit-facet-value-checkbox {
     float:          right;
 }
 
+span.exhibit-facet-value-missingThisField {
+    color:          #888;
+}
+
 /*==================================================
  * Text search facet
  *==================================================

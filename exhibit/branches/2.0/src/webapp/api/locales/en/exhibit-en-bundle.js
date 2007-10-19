@@ -1,4 +1,4 @@
-
+﻿
 
 /* database-l10n.js */
 
@@ -335,6 +335,7 @@ Exhibit.FacetUtilities.l10n.facetSelectOnlyActionTitle="Select only %0 in facet 
 Exhibit.FacetUtilities.l10n.facetClearSelectionsActionTitle="Clear selections in facet %0";
 Exhibit.FacetUtilities.l10n.facetTextSearchActionTitle="Text search %0";
 Exhibit.FacetUtilities.l10n.facetClearTextSearchActionTitle="Clear text search";
+Exhibit.FacetUtilities.l10n.missingThisField="(missing this field)";
 
 
 /* views-l10n.js */

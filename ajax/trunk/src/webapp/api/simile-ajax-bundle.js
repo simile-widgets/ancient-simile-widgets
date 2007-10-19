@@ -1,4 +1,4 @@
-
+﻿
 
 /* platform.js */
 

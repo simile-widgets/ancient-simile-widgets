@@ -1,4 +1,4 @@
-
+﻿
 
 /* bar-chart-view.js */
 

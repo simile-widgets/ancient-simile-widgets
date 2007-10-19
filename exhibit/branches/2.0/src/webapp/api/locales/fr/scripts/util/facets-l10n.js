@@ -14,3 +14,4 @@ Exhibit.FacetUtilities.l10n.facetSelectOnlyActionTitle = "Sélectionner seulemen
 Exhibit.FacetUtilities.l10n.facetClearSelectionsActionTitle = "Effacer les sélections dans la facette %0";
 Exhibit.FacetUtilities.l10n.facetTextSearchActionTitle = "Recherche du texte %0";
 Exhibit.FacetUtilities.l10n.facetClearTextSearchActionTitle = "Effacer la recherche de texte";
+Exhibit.FacetUtilities.l10n.missingThisField = "(missing this field)";
