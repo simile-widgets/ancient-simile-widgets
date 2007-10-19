@@ -3690,7 +3690,7 @@ var dom=SimileAjax.DOM.createDOMFromString(
 "</div>"+
 "<div class='exhibit-focusDialog-controls'>"+
 "<button id='closeButton'>"+
-"Close"+
+Exhibit.l10n.focusDialogBoxCloseButtonLabel+
 "</button>"+
 "</div>"
 );
