@@ -9,6 +9,7 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     
     this._expression = null;
     this._valueSet = new Exhibit.Set();
+    this._selectMissing = false;
     
     this._settings = {};
     this._dom = null;
@@ -22,6 +23,9 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
             if ("_valueToItem" in self) {
                 delete self._valueToItem;
             }
+            if ("_missingItems" in self) {
+                delete self._missingItems;
+            }
         }
     };
     uiContext.getCollection().addListener(this._listener);
@@ -31,6 +35,7 @@ Exhibit.ListFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
     "fixedOrder":       { type: "text" },
     "sortMode":         { type: "text", defaultValue: "value" },
+    "showMissing":      { type: "boolean", defaultValue: true },
     "height":           { type: "text" }
 };
 
@@ -68,6 +73,11 @@ Exhibit.ListFacet.createFromDOM = function(configElmt, containerElmt, uiContext)
                 facet._valueSet.add(s);
             }
         }
+        
+        var selectMissing = Exhibit.getAttribute(configElmt, "selectMissing");
+        if (selectMissing != null && selectMissing.length > 0) {
+            facet._selectMissing = (selectMissing == "true");
+        }
     } catch (e) {
         SimileAjax.Debug.exception(e, "ListFacet: Error processing configuration of list facet");
     }
@@ -90,6 +100,9 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
         for (var i = 0; i < selection.length; i++) {
             facet._valueSet.add(selection[i]);
         }
+    }
+    if ("selectMissing" in configuration) {
+        facet._selectMissing = configuration.selectMissing;
     }
     
     if (!("facetLabel" in facet._settings)) {
@@ -126,19 +139,27 @@ Exhibit.ListFacet.prototype.dispose = function() {
     this._expression = null;
     this._valueSet = null;
     this._settings = null;
+    
+    this._itemToValue = null;
+    this._valueToItem = null;
+    this._missingItems = null;
 };
 
 Exhibit.ListFacet.prototype.hasRestrictions = function() {
-    return this._valueSet.size() > 0;
+    return this._valueSet.size() > 0 || this._selectMissing;
 };
 
 Exhibit.ListFacet.prototype.clearAllRestrictions = function() {
-    var restrictions = [];
-    if (this._valueSet.size() > 0) {
+    var restrictions = { selection: [], selectMissing: false };
+    if (this.hasRestrictions()) {
         this._valueSet.visit(function(v) {
-            restrictions.push(v);
+            restrictions.selection.push(v);
         });
         this._valueSet = new Exhibit.Set();
+        
+        restrictions.selectMissing = this._selectMissing;
+        this._selectMissing = false;
+        
         this._notifyCollection();
     }
     return restrictions;
@@ -146,9 +167,11 @@ Exhibit.ListFacet.prototype.clearAllRestrictions = function() {
 
 Exhibit.ListFacet.prototype.applyRestrictions = function(restrictions) {
     this._valueSet = new Exhibit.Set();
-    for (var i = 0; i < restrictions.length; i++) {
-        this._valueSet.add(restrictions[i]);
+    for (var i = 0; i < restrictions.selection.length; i++) {
+        this._valueSet.add(restrictions.selection[i]);
     }
+    this._selectMissing = restrictions.selectMissing;
+    
     this._notifyCollection();
 };
 
@@ -161,11 +184,21 @@ Exhibit.ListFacet.prototype.setSelection = function(value, selected) {
     this._notifyCollection();
 }
 
+Exhibit.ListFacet.prototype.setSelectMissing = function(selected) {
+    if (selected != this._selectMissing) {
+        this._selectMissing = selected;
+        this._notifyCollection();
+    }
+}
+
 Exhibit.ListFacet.prototype.restrict = function(items) {
-    if (this._valueSet.size() == 0) {
+    if (this._valueSet.size() == 0 && !this._selectMissing) {
         return items;
-    } else if (this._expression.isPath()) {
-        return this._expression.getPath().walkBackward(
+    }
+    
+    var set;
+    if (this._expression.isPath()) {
+        set = this._expression.getPath().walkBackward(
             this._valueSet, 
             "item", items, 
             this._uiContext.getDatabase()
@@ -173,9 +206,9 @@ Exhibit.ListFacet.prototype.restrict = function(items) {
     } else {
         this._buildMaps();
         
-        var set = new Exhibit.Set();
-        var valueToItem = this._valueToItem;
+        set = new Exhibit.Set();
         
+        var valueToItem = this._valueToItem;
         this._valueSet.visit(function(value) {
             if (value in valueToItem) {
                 var itemA = valueToItem[value];
@@ -187,8 +220,20 @@ Exhibit.ListFacet.prototype.restrict = function(items) {
                 }
             }
         });
-        return set;
     }
+    
+    if (this._selectMissing) {
+        this._buildMaps();
+        
+        var missingItems = this._missingItems;
+        items.visit(function(item) {
+            if (item in missingItems) {
+                set.add(item);
+            }
+        });
+    }
+    
+    return set;
 };
 
 Exhibit.ListFacet.prototype.update = function(items) {
@@ -241,25 +286,25 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
             
         for (var i = 0; i < entries.length; i++) {
             var entry = entries[i];
-            entry.label = labeler(entry.value);
+            entry.actionLabel = entry.selectionLabel = labeler(entry.value);
             entry.selected = selection.contains(entry.value);
         }
         
-        var sortValueFunction = function(a, b) { return a.label.localeCompare(b.label); };
+        var sortValueFunction = function(a, b) { return a.selectionLabel.localeCompare(b.selectionLabel); };
         if ("_orderMap" in this) {
             var orderMap = this._orderMap;
             
             sortValueFunction = function(a, b) {
-                if (a.label in orderMap) {
-                    if (b.label in orderMap) {
-                        return orderMap[a.label] - orderMap[b.label];
+                if (a.selectionLabel in orderMap) {
+                    if (b.selectionLabel in orderMap) {
+                        return orderMap[a.selectionLabel] - orderMap[b.selectionLabel];
                     } else {
                         return -1;
                     }
-                } else if (b.label in orderMap) {
+                } else if (b.selectionLabel in orderMap) {
                     return 1;
                 } else {
-                    return a.label.localeCompare(b.label);
+                    return a.selectionLabel.localeCompare(b.selectionLabel);
                 }
             }
         } else if (valueType == "number") {
@@ -280,6 +325,32 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
         
         entries.sort(sortFunction);
     }
+    
+    if (this._settings.showMissing || this._selectMissing) {
+        this._buildMaps();
+        
+        var count = 0;
+        for (var item in this._missingItems) {
+            if (items.contains(item)) {
+                count++;
+            }
+        }
+        
+        if (count > 0 || this._selectMissing) {
+            var span = document.createElement("span");
+            span.innerHTML = "(missing this field)";
+            span.style.color = "#aaa";
+            
+            entries.unshift({
+                value:          null, 
+                count:          count,
+                selected:       this._selectMissing,
+                selectionLabel: span,
+                actionLabel:    "(missing this field)"
+            });
+        }
+    }
+    
     return entries;
 }
 
@@ -307,20 +378,20 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     
     containerDiv.style.display = "none";
     
-    var facetHasSelection = this._valueSet.size() > 0;
+    var facetHasSelection = this._valueSet.size() > 0 || this._selectMissing;
     var constructValue = function(entry) {
         var onSelect = function(elmt, evt, target) {
-            self._filter(entry.value, entry.label, false);
+            self._filter(entry.value, entry.actionLabel, false);
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         };
         var onSelectOnly = function(elmt, evt, target) {
-            self._filter(entry.value, entry.label, !(evt.ctrlKey || evt.metaKey));
+            self._filter(entry.value, entry.actionLabel, !(evt.ctrlKey || evt.metaKey));
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         };
         var elmt = Exhibit.FacetUtilities.constructFacetItem(
-            entry.label, 
+            entry.selectionLabel, 
             entry.count, 
             entry.selected, 
             facetHasSelection,
@@ -336,36 +407,76 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     }
     containerDiv.style.display = "block";
     
-    this._dom.setSelectionCount(this._valueSet.size());
+    this._dom.setSelectionCount(this._valueSet.size() + (this._selectMissing ? 1 : 0));
 };
 
-Exhibit.ListFacet.prototype._filter = function(value, label, singleSelection) {
+Exhibit.ListFacet.prototype._filter = function(value, label, selectOnly) {
     var self = this;
-    var wasSelected = this._valueSet.contains(value);
-    var wasOnlyThingSelected = (this._valueSet.size() == 1 && wasSelected);
-    if (singleSelection && !wasOnlyThingSelected) {
-        var newRestrictions = [ value ];
-        var oldRestrictions = [];
-        this._valueSet.visit(function(v) {
-            oldRestrictions.push(v);
-        });
+    var selected, select, deselect;
     
-        SimileAjax.History.addLengthyAction(
-            function() { self.applyRestrictions(newRestrictions); },
-            function() { self.applyRestrictions(oldRestrictions); },
+    var oldValues = new Exhibit.Set(this._valueSet);
+    var oldSelectMissing = this._selectMissing;
+    
+    var newValues;
+    var newSelectMissing;
+    var actionLabel;
+    
+    var wasSelected;
+    var wasOnlyThingSelected;
+    
+    if (value == null) { // the (missing this field) case
+        wasSelected = oldSelectMissing;
+        wasOnlyThingSelected = wasSelected && (oldValues.size() == 0);
+        
+        if (selectOnly) {
+            if (oldValues.size() == 0) {
+                newSelectMissing = !oldSelectMissing;
+            } else {
+                newSelectMissing = true;
+            }
+            newValues = new Exhibit.Set();
+        } else {
+            newSelectMissing = !oldSelectMissing;
+            newValues = new Exhibit.Set(oldValues);
+        }
+    } else {
+        wasSelected = oldValues.contains(value);
+        wasOnlyThingSelected = wasSelected && (oldValues.size() == 1) && !oldSelectMissing;
+        
+        if (selectOnly) {
+            newSelectMissing = false;
+            newValues = new Exhibit.Set();
+            
+            if (!oldValues.contains(value)) {
+                newValues.add(value);
+            } else if (oldValues.size() > 1 || oldSelectMissing) {
+                newValues.add(value);
+            }
+        } else {
+            newSelectMissing = oldSelectMissing;
+            newValues = new Exhibit.Set(oldValues);
+            if (newValues.contains(value)) {
+                newValues.remove(value);
+            } else {
+                newValues.add(value);
+            }
+        }
+    }
+    
+    var newRestrictions = { selection: newValues.toArray(), selectMissing: newSelectMissing };
+    var oldRestrictions = { selection: oldValues.toArray(), selectMissing: oldSelectMissing };
+    
+    SimileAjax.History.addLengthyAction(
+        function() { self.applyRestrictions(newRestrictions); },
+        function() { self.applyRestrictions(oldRestrictions); },
+        (selectOnly && !wasOnlyThingSelected) ?
             String.substitute(
                 Exhibit.FacetUtilities.l10n["facetSelectOnlyActionTitle"],
-                [ label, this._settings.facetLabel ])
-        );
-    } else {
-        SimileAjax.History.addLengthyAction(
-            function() { self.setSelection(value, !wasSelected); },
-            function() { self.setSelection(value, wasSelected); },
+                [ label, this._settings.facetLabel ]) :
             String.substitute(
                 Exhibit.FacetUtilities.l10n[wasSelected ? "facetUnselectActionTitle" : "facetSelectActionTitle"],
                 [ label, this._settings.facetLabel ])
-        );
-    }
+    );
 };
 
 Exhibit.ListFacet.prototype._clearSelections = function() {
@@ -381,9 +492,10 @@ Exhibit.ListFacet.prototype._clearSelections = function() {
 };
 
 Exhibit.ListFacet.prototype._buildMaps = function() {
-    if (!("_itemToValue" in this) || !("_valueToItem" in this)) {
+    if (!("_itemToValue" in this)) {
         var itemToValue = {};
         var valueToItem = {};
+        var missingItems = {};
         var valueType = "text";
         
         var insert = function(x, y, map) {
@@ -405,11 +517,14 @@ Exhibit.ListFacet.prototype._buildMaps = function() {
                     insert(item, value, itemToValue);
                     insert(value, item, valueToItem);
                 });
+            } else {
+                missingItems[item] = true;
             }
         });
         
         this._itemToValue = itemToValue;
         this._valueToItem = valueToItem;
+        this._missingItems = missingItems;
         this._valueType = valueType;
     }
 };

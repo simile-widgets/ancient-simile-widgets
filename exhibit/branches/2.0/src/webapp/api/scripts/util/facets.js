@@ -62,11 +62,15 @@ Exhibit.FacetUtilities.constructFacetItem = function(
                         )) +
                 "</div>"
             ) +
-            label +
         "</div>"
     );
     dom.elmt.className = selected ? "exhibit-facet-value exhibit-facet-value-selected" : "exhibit-facet-value";
-    dom.elmt.title = label;
+    if (typeof label == "string") {
+        dom.elmt.title = label;
+        dom.inner.appendChild(document.createTextNode(label));
+    } else {
+        dom.inner.appendChild(label);
+    }
     
     SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelectOnly, SimileAjax.WindowManager.getBaseLayer());
     if (facetHasSelection) {
