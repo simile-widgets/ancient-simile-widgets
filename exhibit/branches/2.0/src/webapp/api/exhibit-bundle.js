@@ -11825,7 +11825,7 @@ if("getGeneratedHTML"in this){
 makeMenuItem({
 getLabel:function(){return Exhibit.l10n.htmlExporterLabel;},
 exportOne:this.getGeneratedHTML,
-exportMany:this.getGeneratedHTML,
+exportMany:this.getGeneratedHTML
 });
 }
 

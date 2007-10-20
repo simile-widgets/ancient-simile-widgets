@@ -191,7 +191,7 @@ Exhibit.ToolboxWidget.prototype._showExportMenu = function(elmt) {
         makeMenuItem({ 
             getLabel:   function() { return Exhibit.l10n.htmlExporterLabel; },
             exportOne:  this.getGeneratedHTML,
-            exportMany: this.getGeneratedHTML,
+            exportMany: this.getGeneratedHTML
         });
     }
     
