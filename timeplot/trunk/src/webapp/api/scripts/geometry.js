@@ -625,7 +625,7 @@ Timeplot.DefaultTimeGeometry.prototype = {
 	        if (x > 0) { 
 		        grid.push({ x: x, label: l });
 	        }
-	        time.incrementByInterval(t, unit);
+	        time.incrementByInterval(t, unit, this._timeZone);
         } while (t.getTime() < this._latestDate.getTime());
         
         return grid;
