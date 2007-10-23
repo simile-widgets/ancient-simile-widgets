@@ -1,4 +1,4 @@
-﻿
+
 
 /* platform.js */
 
@@ -826,44 +826,53 @@ SimileAjax.DateTime.gregorianUnitLengths[intervalUnit]*multiple);
 };
 
 
-SimileAjax.DateTime.incrementByInterval=function(date,intervalUnit){
+SimileAjax.DateTime.incrementByInterval=function(date,intervalUnit,timeZone){
+timeZone=(typeof timeZone=='undefined')?0:timeZone;
+
+var timeShift=timeZone*
+SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR];
+
+var date2=new Date(date.getTime()+timeShift);
+
 switch(intervalUnit){
 case SimileAjax.DateTime.MILLISECOND:
-date.setTime(date.getTime()+1)
+date2.setTime(date2.getTime()+1)
 break;
 case SimileAjax.DateTime.SECOND:
-date.setTime(date.getTime()+1000);
+date2.setTime(date2.getTime()+1000);
 break;
 case SimileAjax.DateTime.MINUTE:
-date.setTime(date.getTime()+
+date2.setTime(date2.getTime()+
 SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.MINUTE]);
 break;
 case SimileAjax.DateTime.HOUR:
-date.setTime(date.getTime()+
+date2.setTime(date2.getTime()+
 SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR]);
 break;
 case SimileAjax.DateTime.DAY:
-date.setUTCDate(date.getUTCDate()+1);
+date2.setUTCDate(date2.getUTCDate()+1);
 break;
 case SimileAjax.DateTime.WEEK:
-date.setUTCDate(date.getUTCDate()+7);
+date2.setUTCDate(date2.getUTCDate()+7);
 break;
 case SimileAjax.DateTime.MONTH:
-date.setUTCMonth(date.getUTCMonth()+1);
+date2.setUTCMonth(date2.getUTCMonth()+1);
 break;
 case SimileAjax.DateTime.YEAR:
-date.setUTCFullYear(date.getUTCFullYear()+1);
+date2.setUTCFullYear(date2.getUTCFullYear()+1);
 break;
 case SimileAjax.DateTime.DECADE:
-date.setUTCFullYear(date.getUTCFullYear()+10);
+date2.setUTCFullYear(date2.getUTCFullYear()+10);
 break;
 case SimileAjax.DateTime.CENTURY:
-date.setUTCFullYear(date.getUTCFullYear()+100);
+date2.setUTCFullYear(date2.getUTCFullYear()+100);
 break;
 case SimileAjax.DateTime.MILLENNIUM:
-date.setUTCFullYear(date.getUTCFullYear()+1000);
+date2.setUTCFullYear(date2.getUTCFullYear()+1000);
 break;
 }
+
+date.setTime(date2.getTime()-timeShift);
 };
 
 
@@ -874,19 +883,10 @@ timeZone*SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR]);
 
 
 SimileAjax.DateTime.getTimezone=function(){
-var d=new Date();
-var utcHours=d.getUTCHours();
-var utcDay=d.getUTCDate();
-var localHours=d.getHours();
-var localDay=d.getDate();
-if(utcDay==localDay){
-return localHours-utcHours;
-}else if(utcHours>12){
-return 24-utcHours+localHours;
-}else{
-return-(utcHours+24-localHours);
-}
+var d=new Date().getTimezoneOffset();
+return d/60;
 };
+
 
 /* debug.js */
 
