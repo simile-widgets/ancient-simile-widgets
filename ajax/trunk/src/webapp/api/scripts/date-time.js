@@ -442,11 +442,11 @@ SimileAjax.DateTime.removeTimeZoneOffset = function(date, timeZone) {
 };
 
 /**
- * Returns the timezone offset of the user's browser.
+ * Returns the timezone of the user's browser.
  *
- * @return {Number} the timezone offset in the user's locale in hours
+ * @return {Number} the timezone in the user's locale in hours
  */
 SimileAjax.DateTime.getTimezone = function() {
     var d = new Date().getTimezoneOffset();
-    return d / 60;
+    return d / -60;
 };
