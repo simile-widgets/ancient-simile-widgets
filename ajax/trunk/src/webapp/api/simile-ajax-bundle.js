@@ -884,7 +884,7 @@ timeZone*SimileAjax.DateTime.gregorianUnitLengths[SimileAjax.DateTime.HOUR]);
 
 SimileAjax.DateTime.getTimezone=function(){
 var d=new Date().getTimezoneOffset();
-return d/60;
+return d/-60;
 };
 
 
