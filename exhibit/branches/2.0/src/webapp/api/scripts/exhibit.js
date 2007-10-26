@@ -206,7 +206,7 @@ Exhibit._Impl.prototype.configure = function(configuration) {
             if (id == null || id.length == 0) {
                 id = "default";
             }
-            this.setCollection(id, Exhibit.Collection.create(id, config, this.getDatabase()));
+            this.setCollection(id, Exhibit.Collection.create2(id, config, this._uiContext));
         }
     }
     if ("components" in configuration) {
@@ -260,16 +260,16 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
     };
     f(root || document.body);
     
+    var uiContext = this._uiContext;
     for (var i = 0; i < collectionElmts.length; i++) {
         var elmt = collectionElmts[i];
         var id = elmt.id;
         if (id==null || id.length == 0) {
             id = "default";
         }
-        this.setCollection(id, Exhibit.Collection.createFromDOM(id, elmt, this.getDatabase()));
+        this.setCollection(id, Exhibit.Collection.createFromDOM2(id, elmt, uiContext));
     }
     
-    var uiContext = this._uiContext;
     var self = this;
     var processElmts = function(elmts) {
         for (var i = 0; i < elmts.length; i++) {

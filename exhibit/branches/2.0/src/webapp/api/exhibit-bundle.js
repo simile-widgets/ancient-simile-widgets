@@ -13,45 +13,121 @@ this._updating=false;
 
 this._items=null;
 this._restrictedItems=null;
-
-var self=this;
-this._listener={
-onAfterLoadingItems:function(){
-self._update();
-}
-};
-database.addListener(this._listener);
 };
 
 Exhibit.Collection.create=function(id,configuration,database){
+
 var collection=new Exhibit.Collection(id,database);
 
+
+
 if("itemTypes"in configuration){
+
 collection._itemTypes=configuration.itemTypes;
+
 collection._update=Exhibit.Collection._typeBasedCollection_update;
+
 }else{
+
 collection._update=Exhibit.Collection._allItemsCollection_update;
+
 }
+
+
+collection._listener={onAfterLoadingItems:function(){collection._update();}};
+database.addListener(collection._listener);
+
+
+collection._update();
+
+
+
+return collection;
+
+};
+
+Exhibit.Collection.create2=function(id,configuration,uiContext){
+var database=uiContext.getDatabase();
+
+if("expression"in configuration){
+var collection=new Exhibit.Collection(id,database);
+
+collection._expression=Exhibit.ExpressionParser.parse(configuration.expression);
+collection._baseCollection=("baseCollectionID"in configuration)?
+uiContext.getExhibit().getCollection(configuration.baseCollectionID):
+uiContext.getCollection();
+
+collection._update=Exhibit.Collection._basedCollection_update;
+
+collection._listener={onItemsChanged:function(){collection._update();}};
+collection._baseCollection.addListener(collection._listener);
 
 collection._update();
 
 return collection;
+}else{
+return Exhibit.Collection.create(id,configuration,database);
+}
 };
 
 Exhibit.Collection.createFromDOM=function(id,elmt,database){
+
 var collection=new Exhibit.Collection(id,database);
 
+
+
 var itemTypes=Exhibit.getAttribute(elmt,"itemTypes",",");
+
 if(itemTypes!=null&&itemTypes.length>0){
+
 collection._itemTypes=itemTypes;
+
 collection._update=Exhibit.Collection._typeBasedCollection_update;
+
 }else{
+
 collection._update=Exhibit.Collection._allItemsCollection_update;
+
 }
+
+
+
+collection._listener={onAfterLoadingItems:function(){collection._update();}};
+database.addListener(collection._listener);
+
+collection._update();
+
+
+
+return collection;
+
+};
+
+Exhibit.Collection.createFromDOM2=function(id,elmt,uiContext){
+var database=uiContext.getDatabase();
+
+var expressionString=Exhibit.getAttribute(elmt,"expression");
+if(expressionString!=null&&expressionString.length>0){
+var collection=new Exhibit.Collection(id,database);
+
+collection._expression=Exhibit.ExpressionParser.parse(expressionString);
+
+var baseCollectionID=Exhibit.getAttribute(elmt,"baseCollectionID");
+collection._baseCollection=(baseCollectionID!=null&&baseCollectionID.length>0)?
+uiContext.getExhibit().getCollection(baseCollectionID):
+uiContext.getCollection();
+
+collection._update=Exhibit.Collection._basedCollection_update;
+
+collection._listener={onItemsChanged:function(){collection._update();}};
+collection._baseCollection.addListener(collection._listener);
 
 collection._update();
 
 return collection;
+}else{
+return Exhibit.Collection.createFromDOM(id,elmt,database);
+}
 };
 
 Exhibit.Collection.createAllItemsCollection=function(id,database){
@@ -79,13 +155,35 @@ this._items=newItems;
 this._onRootItemsChanged();
 };
 
+Exhibit.Collection._basedCollection_update=function(){
+this._items=this._expression.evaluate(
+{"value":this._baseCollection.getRestrictedItems()},
+{"value":"item"},
+"value",
+this._database
+).values;
+
+this._onRootItemsChanged();
+};
+
 Exhibit.Collection.prototype.getID=function(){
 return this._id;
 };
 
 Exhibit.Collection.prototype.dispose=function(){
+if("_baseCollection"in this){
+this._baseCollection.removeListener(this._listener);
+this._baseCollection=null;
+this._expression=null;
+}else{
 this._database.removeListener(this._listener);
+}
 this._database=null;
+this._listener=null;
+
+this._listeners=null;
+this._items=null;
+this._restrictedItems=null;
 };
 
 Exhibit.Collection.prototype.addListener=function(listener){
@@ -3590,7 +3688,7 @@ var id=config.id;
 if(id==null||id.length==0){
 id="default";
 }
-this.setCollection(id,Exhibit.Collection.create(id,config,this.getDatabase()));
+this.setCollection(id,Exhibit.Collection.create2(id,config,this._uiContext));
 }
 }
 if("components"in configuration){
@@ -3640,16 +3738,16 @@ node=node.nextSibling;
 };
 f(root||document.body);
 
+var uiContext=this._uiContext;
 for(var i=0;i<collectionElmts.length;i++){
 var elmt=collectionElmts[i];
 var id=elmt.id;
 if(id==null||id.length==0){
 id="default";
 }
-this.setCollection(id,Exhibit.Collection.createFromDOM(id,elmt,this.getDatabase()));
+this.setCollection(id,Exhibit.Collection.createFromDOM2(id,elmt,uiContext));
 }
 
-var uiContext=this._uiContext;
 var self=this;
 var processElmts=function(elmts){
 for(var i=0;i<elmts.length;i++){
