@@ -9862,7 +9862,7 @@ table.border=this._settings.border;
 }
 
 
-tr=table.insertRow(0);
+var tr=table.insertRow(0);
 var createColumnHeader=function(i){
 var column=self._columns[i];
 if(column.label==null){
@@ -12102,7 +12102,7 @@ return false;
 }
 
 Exhibit.Set.prototype.addSet=function(set){
-for(o in set._hash){
+for(var o in set._hash){
 this.add(o);
 }
 }
@@ -12117,13 +12117,13 @@ return false;
 }
 
 Exhibit.Set.prototype.removeSet=function(set){
-for(o in set._hash){
+for(var o in set._hash){
 this.remove(o);
 }
 }
 
 Exhibit.Set.prototype.retainSet=function(set){
-for(o in this._hash){
+for(var o in this._hash){
 if(!set.contains(o)){
 delete this._hash[o];
 this._count--;
@@ -12141,14 +12141,14 @@ return this._count;
 
 Exhibit.Set.prototype.toArray=function(){
 var a=[];
-for(o in this._hash){
+for(var o in this._hash){
 a.push(o);
 }
 return a;
 }
 
 Exhibit.Set.prototype.visit=function(f){
-for(o in this._hash){
+for(var o in this._hash){
 if(f(o)==true){
 break;
 }

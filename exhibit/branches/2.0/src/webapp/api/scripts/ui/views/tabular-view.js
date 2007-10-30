@@ -276,7 +276,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         /*
          *  Create the column headers
          */
-        tr = table.insertRow(0);
+        var tr = table.insertRow(0);
         var createColumnHeader = function(i) {
             var column = self._columns[i];
             if (column.label == null) {

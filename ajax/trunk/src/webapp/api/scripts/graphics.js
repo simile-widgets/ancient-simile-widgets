@@ -18,7 +18,7 @@ SimileAjax.Graphics.pngIsTranslucent = (!SimileAjax.Platform.browser.isIE) || (S
  *==================================================
  */
 SimileAjax.Graphics._createTranslucentImage1 = function(url, verticalAlign) {
-    elmt = document.createElement("img");
+    var elmt = document.createElement("img");
     elmt.setAttribute("src", url);
     if (verticalAlign != null) {
         elmt.style.verticalAlign = verticalAlign;
@@ -26,7 +26,7 @@ SimileAjax.Graphics._createTranslucentImage1 = function(url, verticalAlign) {
     return elmt;
 };
 SimileAjax.Graphics._createTranslucentImage2 = function(url, verticalAlign) {
-    elmt = document.createElement("img");
+    var elmt = document.createElement("img");
     elmt.style.width = "1px";  // just so that IE will calculate the size property
     elmt.style.height = "1px";
     elmt.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url +"', sizingMethod='image')";

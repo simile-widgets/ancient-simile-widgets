@@ -1,4 +1,4 @@
-
+﻿
 
 /* platform.js */
 
@@ -168,7 +168,7 @@ return false;
 
 
 SimileAjax.Set.prototype.addSet=function(set){
-for(o in set._hash){
+for(var o in set._hash){
 this.add(o);
 }
 }
@@ -185,14 +185,14 @@ return false;
 
 
 SimileAjax.Set.prototype.removeSet=function(set){
-for(o in set._hash){
+for(var o in set._hash){
 this.remove(o);
 }
 }
 
 
 SimileAjax.Set.prototype.retainSet=function(set){
-for(o in this._hash){
+for(var o in this._hash){
 if(!set.contains(o)){
 delete this._hash[o];
 this._count--;
@@ -213,7 +213,7 @@ return this._count;
 
 SimileAjax.Set.prototype.toArray=function(){
 var a=[];
-for(o in this._hash){
+for(var o in this._hash){
 a.push(o);
 }
 return a;
@@ -221,7 +221,7 @@ return a;
 
 
 SimileAjax.Set.prototype.visit=function(f){
-for(o in this._hash){
+for(var o in this._hash){
 if(f(o)==true){
 break;
 }
@@ -1308,7 +1308,7 @@ SimileAjax.Graphics.pngIsTranslucent=(!SimileAjax.Platform.browser.isIE)||(Simil
 
 
 SimileAjax.Graphics._createTranslucentImage1=function(url,verticalAlign){
-elmt=document.createElement("img");
+var elmt=document.createElement("img");
 elmt.setAttribute("src",url);
 if(verticalAlign!=null){
 elmt.style.verticalAlign=verticalAlign;
@@ -1316,7 +1316,7 @@ elmt.style.verticalAlign=verticalAlign;
 return elmt;
 };
 SimileAjax.Graphics._createTranslucentImage2=function(url,verticalAlign){
-elmt=document.createElement("img");
+var elmt=document.createElement("img");
 elmt.style.width="1px";
 elmt.style.height="1px";
 elmt.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+url+"', sizingMethod='image')";
@@ -1967,7 +1967,7 @@ SimileAjax.HTML=new Object();
 
 SimileAjax.HTML._e2uHash={};
 (function(){
-e2uHash=SimileAjax.HTML._e2uHash;
+var e2uHash=SimileAjax.HTML._e2uHash;
 e2uHash['nbsp']='\u00A0[space]';
 e2uHash['iexcl']='\u00A1';
 e2uHash['cent']='\u00A2';
@@ -2223,7 +2223,7 @@ e2uHash['diams']='\u2666';
 })();
 
 SimileAjax.HTML.deEntify=function(s){
-e2uHash=SimileAjax.HTML._e2uHash;
+var e2uHash=SimileAjax.HTML._e2uHash;
 
 var re=/&(\w+?);/;
 while(re.test(s)){

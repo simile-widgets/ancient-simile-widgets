@@ -38,7 +38,7 @@ SimileAjax.Set.prototype.add = function(o) {
  * @param {SimileAjax.Set} set the set of elements to add
  */
 SimileAjax.Set.prototype.addSet = function(set) {
-    for (o in set._hash) {
+    for (var o in set._hash) {
         this.add(o);
     }
 }
@@ -66,7 +66,7 @@ SimileAjax.Set.prototype.remove = function(o) {
  * @param {SimileAjax.Set} set the set of elements to remove
  */
 SimileAjax.Set.prototype.removeSet = function(set) {
-    for (o in set._hash) {
+    for (var o in set._hash) {
         this.remove(o);
     }
 }
@@ -78,7 +78,7 @@ SimileAjax.Set.prototype.removeSet = function(set) {
  * @param {SimileAjax.Set} set the set to intersect
  */
 SimileAjax.Set.prototype.retainSet = function(set) {
-    for (o in this._hash) {
+    for (var o in this._hash) {
         if (!set.contains(o)) {
             delete this._hash[o];
             this._count--;
@@ -112,7 +112,7 @@ SimileAjax.Set.prototype.size = function() {
  */
 SimileAjax.Set.prototype.toArray = function() {
     var a = [];
-    for (o in this._hash) {
+    for (var o in this._hash) {
         a.push(o);
     }
     return a;
@@ -125,7 +125,7 @@ SimileAjax.Set.prototype.toArray = function() {
  * @param {Function} f a function of form f(element)
  */
 SimileAjax.Set.prototype.visit = function(f) {
-    for (o in this._hash) {
+    for (var o in this._hash) {
         if (f(o) == true) {
             break;
         }
