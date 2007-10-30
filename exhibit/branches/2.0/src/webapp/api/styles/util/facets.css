@@ -71,6 +71,44 @@ span.exhibit-facet-value-missingThisField {
 }
 
 /*==================================================
+ * Flowing facet box
+ *==================================================
+ */
+div.exhibit-flowingFacet {
+    clear:          both;
+}
+
+div.exhibit-flowingFacet-header {
+    padding:        2px;
+}
+
+span.exhibit-flowingFacet-header-title {
+    font-weight:    bold;
+}
+    
+div.exhibit-flowingFacet-body {
+}
+
+/*==================================================
+ * Flowing facet value
+ *==================================================
+ */
+
+div.exhibit-flowingFacet-value {
+    cursor:         pointer;
+}
+div.exhibit-flowingFacet-value-selected {
+    font-weight:    bold;
+}
+
+span.exhibit-flowingFacet-value-count {
+    color:          #aaa;
+}
+
+span.exhibit-flowingFacet-value-inner {
+}
+
+/*==================================================
  * Text search facet
  *==================================================
  */

@@ -26,6 +26,7 @@ Exhibit.NumericRangeFacet = function(containerElmt, uiContext) {
 
 Exhibit.NumericRangeFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
+    "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
     "interval":         { type: "float", defaultValue: 10 }
 };
@@ -235,6 +236,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
     var facetHasSelection = this._ranges.length > 0;
     var containerDiv = this._dom.valuesContainer;
     containerDiv.style.display = "none";
+        var constructFacetItemFunction = Exhibit.FacetUtilities[this._settings.scroll ? "constructFacetItem" : "constructFlowingFacetItem"];
         var makeFacetValue = function(from, to, count, selected) {
             var onSelect = function(elmt, evt, target) {
                 self._toggleRange(from, to, selected, false);
@@ -246,7 +248,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
                 SimileAjax.DOM.cancelEvent(evt);
                 return false;
             };
-            var elmt = Exhibit.FacetUtilities.constructFacetItem(
+            var elmt = constructFacetItemFunction(
                 from + " - " + to, 
                 count, 
                 null,
@@ -276,7 +278,7 @@ Exhibit.NumericRangeFacet.prototype._notifyCollection = function() {
 
 Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
     var self = this;
-    this._dom = Exhibit.FacetUtilities.constructFacetFrame(
+    this._dom = Exhibit.FacetUtilities[this._settings.scroll ? "constructFacetFrame" : "constructFlowingFacetFrame"](
         this._div,
         this._settings.facetLabel,
         function(elmt, evt, target) { self._clearSelections(); },

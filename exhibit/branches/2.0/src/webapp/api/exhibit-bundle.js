@@ -5092,6 +5092,7 @@ Exhibit.ListFacet._settingSpecs={
 "sortMode":{type:"text",defaultValue:"value"},
 "sortDirection":{type:"text",defaultValue:"forward"},
 "showMissing":{type:"boolean",defaultValue:true},
+"scroll":{type:"boolean",defaultValue:true},
 "height":{type:"text"},
 "colorCoder":{type:"text",defaultValue:null}
 };
@@ -5429,14 +5430,14 @@ this._uiContext.getCollection().onFacetUpdated(this);
 
 Exhibit.ListFacet.prototype._initializeUI=function(){
 var self=this;
-this._dom=Exhibit.FacetUtilities.constructFacetFrame(
+this._dom=Exhibit.FacetUtilities[this._settings.scroll?"constructFacetFrame":"constructFlowingFacetFrame"](
 this._div,
 this._settings.facetLabel,
 function(elmt,evt,target){self._clearSelections();},
 this._uiContext
 );
 
-if("height"in this._settings){
+if("height"in this._settings&&this._settings.scroll){
 this._dom.valuesContainer.style.height=this._settings.height;
 }
 };
@@ -5447,6 +5448,7 @@ var containerDiv=this._dom.valuesContainer;
 
 containerDiv.style.display="none";
 
+var constructFacetItemFunction=Exhibit.FacetUtilities[this._settings.scroll?"constructFacetItem":"constructFlowingFacetItem"];
 var facetHasSelection=this._valueSet.size()>0||this._selectMissing;
 var constructValue=function(entry){
 var onSelect=function(elmt,evt,target){
@@ -5459,7 +5461,7 @@ self._filter(entry.value,entry.actionLabel,!(evt.ctrlKey||evt.metaKey));
 SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
-var elmt=Exhibit.FacetUtilities.constructFacetItem(
+var elmt=constructFacetItemFunction(
 entry.selectionLabel,
 entry.count,
 (self._colorCoder!=null)?self._colorCoder.translate(entry.value):null,
@@ -5628,6 +5630,7 @@ uiContext.getCollection().addListener(this._listener);
 
 Exhibit.NumericRangeFacet._settingSpecs={
 "facetLabel":{type:"text"},
+"scroll":{type:"boolean",defaultValue:true},
 "height":{type:"text"},
 "interval":{type:"float",defaultValue:10}
 };
@@ -5837,6 +5840,7 @@ ranges.push(range);
 var facetHasSelection=this._ranges.length>0;
 var containerDiv=this._dom.valuesContainer;
 containerDiv.style.display="none";
+var constructFacetItemFunction=Exhibit.FacetUtilities[this._settings.scroll?"constructFacetItem":"constructFlowingFacetItem"];
 var makeFacetValue=function(from,to,count,selected){
 var onSelect=function(elmt,evt,target){
 self._toggleRange(from,to,selected,false);
@@ -5848,7 +5852,7 @@ self._toggleRange(from,to,selected,!(evt.ctrlKey||evt.metaKey));
 SimileAjax.DOM.cancelEvent(evt);
 return false;
 };
-var elmt=Exhibit.FacetUtilities.constructFacetItem(
+var elmt=constructFacetItemFunction(
 from+" - "+to,
 count,
 null,
@@ -5878,7 +5882,7 @@ this._uiContext.getCollection().onFacetUpdated(this);
 
 Exhibit.NumericRangeFacet.prototype._initializeUI=function(){
 var self=this;
-this._dom=Exhibit.FacetUtilities.constructFacetFrame(
+this._dom=Exhibit.FacetUtilities[this._settings.scroll?"constructFacetFrame":"constructFlowingFacetFrame"](
 this._div,
 this._settings.facetLabel,
 function(elmt,evt,target){self._clearSelections();},
@@ -12001,8 +12005,6 @@ return dom;
 
 Exhibit.FacetUtilities=new Object();
 
-
-
 Exhibit.FacetUtilities.constructFacetFrame=function(div,facetLabel,onClearAllSelections,uiContext){
 div.className="exhibit-facet";
 var dom=SimileAjax.DOM.createDOMFromString(
@@ -12081,6 +12083,71 @@ SimileAjax.WindowManager.registerEvent(dom.inner.firstChild,"click",onSelect,Sim
 return dom.elmt;
 };
 
+Exhibit.FacetUtilities.constructFlowingFacetFrame=function(div,facetLabel,onClearAllSelections,uiContext){
+div.className="exhibit-flowingFacet";
+var dom=SimileAjax.DOM.createDOMFromString(
+div,
+"<div class='exhibit-flowingFacet-header'>"+
+"<span class='exhibit-flowingFacet-header-title'>"+facetLabel+"</span>"+
+"</div>"+
+"<div class='exhibit-flowingFacet-body' id='valuesContainer'></div>"
+);
+
+dom.setSelectionCount=function(count){
+
+};
+
+return dom;
+};
+
+Exhibit.FacetUtilities.constructFlowingFacetItem=function(
+label,
+count,
+color,
+selected,
+facetHasSelection,
+onSelect,
+onSelectOnly,
+uiContext
+){
+if(Exhibit.params.safe){
+label=Exhibit.Formatter.encodeAngleBrackets(label);
+}
+
+var dom=SimileAjax.DOM.createDOMFromString(
+"div",
+SimileAjax.Graphics.createTranslucentImageHTML(
+Exhibit.urlPrefix+
+(facetHasSelection?
+(selected?"images/black-check.png":"images/no-check.png"):
+"images/no-check-no-border.png"
+),
+"middle"
+)+
+"<span class='exhibit-flowingFacet-value-inner' id='inner'></span>"+
+" "+
+"<span class='exhibit-flowingFacet-value-count'>("+count+")</span>"
+);
+dom.elmt.className=selected?"exhibit-flowingFacet-value exhibit-flowingFacet-value-selected":"exhibit-flowingFacet-value";
+if(typeof label=="string"){
+dom.elmt.title=label;
+dom.inner.appendChild(document.createTextNode(label));
+if(color!=null){
+dom.inner.style.color=color;
+}
+}else{
+dom.inner.appendChild(label);
+if(color!=null){
+label.style.color=color;
+}
+}
+
+SimileAjax.WindowManager.registerEvent(dom.elmt,"click",onSelectOnly,SimileAjax.WindowManager.getBaseLayer());
+if(facetHasSelection){
+SimileAjax.WindowManager.registerEvent(dom.elmt.firstChild,"click",onSelect,SimileAjax.WindowManager.getBaseLayer());
+}
+return dom.elmt;
+};
 
 
 /* set.js */

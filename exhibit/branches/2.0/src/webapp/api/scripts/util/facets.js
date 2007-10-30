@@ -6,8 +6,6 @@
  */
 Exhibit.FacetUtilities = new Object();
 
-
-
 Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAllSelections, uiContext) {
     div.className = "exhibit-facet";
     var dom = SimileAjax.DOM.createDOMFromString(
@@ -86,3 +84,68 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     return dom.elmt;
 };
 
+Exhibit.FacetUtilities.constructFlowingFacetFrame = function(div, facetLabel, onClearAllSelections, uiContext) {
+    div.className = "exhibit-flowingFacet";
+    var dom = SimileAjax.DOM.createDOMFromString(
+        div,
+        "<div class='exhibit-flowingFacet-header'>" +
+            "<span class='exhibit-flowingFacet-header-title'>" + facetLabel + "</span>" +
+        "</div>" +
+        "<div class='exhibit-flowingFacet-body' id='valuesContainer'></div>"
+    );
+    
+    dom.setSelectionCount = function(count) {
+        // nothing
+    };
+    
+    return dom;
+};
+
+Exhibit.FacetUtilities.constructFlowingFacetItem = function(
+    label, 
+    count, 
+    color,
+    selected, 
+    facetHasSelection,
+    onSelect,
+    onSelectOnly,
+    uiContext
+) {
+    if (Exhibit.params.safe) {
+        label = Exhibit.Formatter.encodeAngleBrackets(label);
+    }
+    
+    var dom = SimileAjax.DOM.createDOMFromString(
+        "div",
+        SimileAjax.Graphics.createTranslucentImageHTML(
+            Exhibit.urlPrefix + 
+            (   facetHasSelection ?
+                (selected ? "images/black-check.png" : "images/no-check.png") :
+                "images/no-check-no-border.png"
+            ),
+            "middle"
+        ) +
+        "<span class='exhibit-flowingFacet-value-inner' id='inner'></span>" + 
+        " " +
+        "<span class='exhibit-flowingFacet-value-count'>(" + count + ")</span>"
+    );
+    dom.elmt.className = selected ? "exhibit-flowingFacet-value exhibit-flowingFacet-value-selected" : "exhibit-flowingFacet-value";
+    if (typeof label == "string") {
+        dom.elmt.title = label;
+        dom.inner.appendChild(document.createTextNode(label));
+        if (color != null) {
+            dom.inner.style.color = color;
+        }
+    } else {
+        dom.inner.appendChild(label);
+        if (color != null) {
+            label.style.color = color;
+        }
+    }
+    
+    SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelectOnly, SimileAjax.WindowManager.getBaseLayer());
+    if (facetHasSelection) {
+        SimileAjax.WindowManager.registerEvent(dom.elmt.firstChild, "click", onSelect, SimileAjax.WindowManager.getBaseLayer());
+    }
+    return dom.elmt;
+};

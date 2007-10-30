@@ -38,6 +38,7 @@ Exhibit.ListFacet._settingSpecs = {
     "sortMode":         { type: "text", defaultValue: "value" },
     "sortDirection":    { type: "text", defaultValue: "forward" },
     "showMissing":      { type: "boolean", defaultValue: true },
+    "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
     "colorCoder":       { type: "text", defaultValue: null }
 };
@@ -375,14 +376,14 @@ Exhibit.ListFacet.prototype._notifyCollection = function() {
 
 Exhibit.ListFacet.prototype._initializeUI = function() {
     var self = this;
-    this._dom = Exhibit.FacetUtilities.constructFacetFrame(
+    this._dom = Exhibit.FacetUtilities[this._settings.scroll ? "constructFacetFrame" : "constructFlowingFacetFrame"](
         this._div,
         this._settings.facetLabel,
         function(elmt, evt, target) { self._clearSelections(); },
         this._uiContext
     );
     
-    if ("height" in this._settings) {
+    if ("height" in this._settings && this._settings.scroll) {
         this._dom.valuesContainer.style.height = this._settings.height;
     }
 };
@@ -393,6 +394,7 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
     
     containerDiv.style.display = "none";
     
+    var constructFacetItemFunction = Exhibit.FacetUtilities[this._settings.scroll ? "constructFacetItem" : "constructFlowingFacetItem"];
     var facetHasSelection = this._valueSet.size() > 0 || this._selectMissing;
     var constructValue = function(entry) {
         var onSelect = function(elmt, evt, target) {
@@ -405,7 +407,7 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         };
-        var elmt = Exhibit.FacetUtilities.constructFacetItem(
+        var elmt = constructFacetItemFunction(
             entry.selectionLabel, 
             entry.count, 
             (self._colorCoder != null) ? self._colorCoder.translate(entry.value) : null,
