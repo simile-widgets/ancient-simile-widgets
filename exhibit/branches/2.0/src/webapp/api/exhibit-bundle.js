@@ -5090,6 +5090,7 @@ Exhibit.ListFacet._settingSpecs={
 "facetLabel":{type:"text"},
 "fixedOrder":{type:"text"},
 "sortMode":{type:"text",defaultValue:"value"},
+"sortDirection":{type:"text",defaultValue:"forward"},
 "showMissing":{type:"boolean",defaultValue:true},
 "height":{type:"text"},
 "colorCoder":{type:"text",defaultValue:null}
@@ -5384,7 +5385,14 @@ return c!=0?c:sortValueFunction(a,b);
 }
 }
 
-entries.sort(sortFunction);
+var sortDirectionFunction=sortFunction;
+if(this._settings.sortDirection=="reverse"){
+sortDirectionFunction=function(a,b){
+return sortFunction(b,a);
+}
+}
+
+entries.sort(sortDirectionFunction);
 }
 
 if(this._settings.showMissing||this._selectMissing){
