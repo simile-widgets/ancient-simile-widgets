@@ -117,18 +117,20 @@ Exhibit.FacetUtilities.constructFlowingFacetItem = function(
     
     var dom = SimileAjax.DOM.createDOMFromString(
         "div",
-        SimileAjax.Graphics.createTranslucentImageHTML(
-            Exhibit.urlPrefix + 
-            (   facetHasSelection ?
-                (selected ? "images/black-check.png" : "images/no-check.png") :
-                "images/no-check-no-border.png"
-            ),
-            "middle"
+        (   "<div class='exhibit-flowingFacet-value-checkbox'>" +
+                SimileAjax.Graphics.createTranslucentImageHTML(
+                    Exhibit.urlPrefix + 
+                    (   facetHasSelection ?
+                        (selected ? "images/black-check.png" : "images/no-check.png") :
+                        "images/no-check-no-border.png"
+                    )) +
+            "</div>"
         ) +
-        "<span class='exhibit-flowingFacet-value-inner' id='inner'></span>" + 
+        "<span id='inner'></span>" +
         " " +
         "<span class='exhibit-flowingFacet-value-count'>(" + count + ")</span>"
     );
+    
     dom.elmt.className = selected ? "exhibit-flowingFacet-value exhibit-flowingFacet-value-selected" : "exhibit-flowingFacet-value";
     if (typeof label == "string") {
         dom.elmt.title = label;

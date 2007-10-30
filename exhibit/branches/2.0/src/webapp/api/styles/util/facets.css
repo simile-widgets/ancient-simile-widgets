@@ -79,7 +79,7 @@ div.exhibit-flowingFacet {
 }
 
 div.exhibit-flowingFacet-header {
-    padding:        2px;
+    padding:        2px 0px;
 }
 
 span.exhibit-flowingFacet-header-title {
@@ -96,7 +96,11 @@ div.exhibit-flowingFacet-body {
 
 div.exhibit-flowingFacet-value {
     cursor:         pointer;
+    clear:          both;
+    position:       relative;
+    padding-left:   20px;
 }
+
 div.exhibit-flowingFacet-value-selected {
     font-weight:    bold;
 }
@@ -105,7 +109,11 @@ span.exhibit-flowingFacet-value-count {
     color:          #aaa;
 }
 
-span.exhibit-flowingFacet-value-inner {
+div.exhibit-flowingFacet-value-checkbox {
+    position:       absolute;
+    left:           0px;
+    padding:        0;
+    margin:         0;
 }
 
 /*==================================================

@@ -12116,18 +12116,20 @@ label=Exhibit.Formatter.encodeAngleBrackets(label);
 
 var dom=SimileAjax.DOM.createDOMFromString(
 "div",
+("<div class='exhibit-flowingFacet-value-checkbox'>"+
 SimileAjax.Graphics.createTranslucentImageHTML(
 Exhibit.urlPrefix+
 (facetHasSelection?
 (selected?"images/black-check.png":"images/no-check.png"):
 "images/no-check-no-border.png"
-),
-"middle"
+))+
+"</div>"
 )+
-"<span class='exhibit-flowingFacet-value-inner' id='inner'></span>"+
+"<span id='inner'></span>"+
 " "+
 "<span class='exhibit-flowingFacet-value-count'>("+count+")</span>"
 );
+
 dom.elmt.className=selected?"exhibit-flowingFacet-value exhibit-flowingFacet-value-selected":"exhibit-flowingFacet-value";
 if(typeof label=="string"){
 dom.elmt.title=label;
