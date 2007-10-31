@@ -19,29 +19,31 @@
             }
         }
     }
-    
-    // obtain local mode from the script URL params attribute    
-    var heads = document.documentElement.getElementsByTagName("head");
-    for (var h = 0; h < heads.length; h++) {
-        var node = heads[h].firstChild;
-        while (node != null) {
-            if (node.nodeType == 1 && node.tagName.toLowerCase() == "script") {
-                var url = node.src;
-                if (url.indexOf("timeplot-api") >= 0) {
-                    local = (url.indexOf("local") >= 0);
+
+    // obtain local mode from the script URL params attribute
+    if (!local) {
+        var heads = document.documentElement.getElementsByTagName("head");
+        for (var h = 0; h < heads.length; h++) {
+            var node = heads[h].firstChild;
+            while (node != null) {
+                if (node.nodeType == 1 && node.tagName.toLowerCase() == "script") {
+                    var url = node.src;
+                    if (url.indexOf("timeplot-api") >= 0) {
+                        local = (url.indexOf("local") >= 0);
+                    }
                 }
+                node = node.nextSibling;
             }
-            node = node.nextSibling;
         }
     }
-    
+
     // Load Timeplot if it's not already loaded (after SimileAjax and Timeline)
     var loadTimeplot = function() {
-    	
+
         if (typeof window.Timeplot != "undefined") {
             return;
         }
-    
+        
         window.Timeplot = {
             loaded:     false,
             params:     { bundle: true, autoCreate: true },
@@ -105,6 +107,18 @@
         }
 
         var timeplotURLPrefix = (local) ? "/timeplot/api/1.0/" : Timeplot.urlPrefix;
+
+        if (local && !("console" in window)) {
+            var firebug = [ timeplotURLPrefix + "lib/firebug/firebug.js" ];
+            SimileAjax.includeJavascriptFiles(document, "", firebug);
+        }
+        
+        var canvas = document.createElement("canvas");
+
+        if (!canvas.getContext) {
+            var excanvas = [ timeplotURLPrefix + "lib/excanvas.js" ];
+            SimileAjax.includeJavascriptFiles(document, "", excanvas);
+        }
         
         var scriptURLs = Timeplot.params.js || [];
         var cssURLs = Timeplot.params.css || [];
@@ -123,12 +137,13 @@
         //    scriptURLs.push(Timeplot.urlPrefix + "locales/" + locales[i] + "/locale.js");
         //};
         
-        if (Timeplot.params.callback) {
-            window.SimileAjax_onLoad = function() {
+        window.SimileAjax_onLoad = function() {
+            if (local && window.console.open) window.console.open();
+            if (Timeplot.params.callback) {
                 eval(Timeplot.params.callback + "()");
             }
         }
-
+        
         SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
         SimileAjax.includeCssFiles(document, "", cssURLs);
         Timeplot.loaded = true;
