@@ -1,420 +1,178 @@
 ﻿
 
 /* timeline-view.js */
-
-
-
-Exhibit.TimelineView=function(containerElmt,uiContext){
-this._div=containerElmt;
-this._uiContext=uiContext;
-
+Exhibit.TimelineView=function(C,B){this._div=C;
+this._uiContext=B;
 this._settings={};
-this._accessors={
-getEventLabel:function(itemID,database,visitor){visitor(database.getObject(itemID,"label"));},
-getProxy:function(itemID,database,visitor){visitor(itemID);},
-getColorKey:null
-};
-
+this._accessors={getEventLabel:function(F,E,D){D(E.getObject(F,"label"));
+},getProxy:function(F,E,D){D(F);
+},getColorKey:null};
 this._selectListener=null;
 this._largestSize=0;
-
-var view=this;
-this._listener={
-onItemsChanged:function(){
-view._reconstruct();
-}
+var A=this;
+this._listener={onItemsChanged:function(){A._reconstruct();
+}};
+B.getCollection().addListener(this._listener);
 };
-uiContext.getCollection().addListener(this._listener);
+Exhibit.TimelineView._intervalChoices=["millisecond","second","minute","hour","day","week","month","year","decade","century","millennium"];
+Exhibit.TimelineView._settingSpecs={"topBandHeight":{type:"int",defaultValue:75},"topBandUnit":{type:"enum",choices:Exhibit.TimelineView._intervalChoices},"topBandPixelsPerUnit":{type:"int",defaultValue:200},"bottomBandHeight":{type:"int",defaultValue:25},"bottomBandUnit":{type:"enum",choices:Exhibit.TimelineView._intervalChoices},"bottomBandPixelsPerUnit":{type:"int",defaultValue:200},"timelineHeight":{type:"int",defaultValue:400},"timelineConstructor":{type:"function",defaultValue:null},"colorCoder":{type:"text",defaultValue:null},"selectCoordinator":{type:"text",defaultValue:null},"showHeader":{type:"boolean",defaultValue:true},"showSummary":{type:"boolean",defaultValue:true},"showFooter":{type:"boolean",defaultValue:true}};
+Exhibit.TimelineView._accessorSpecs=[{accessorName:"getProxy",attributeName:"proxy"},{accessorName:"getDuration",bindings:[{attributeName:"start",type:"date",bindingName:"start"},{attributeName:"end",type:"date",bindingName:"end",optional:true}]},{accessorName:"getColorKey",attributeName:"marker",type:"text"},{accessorName:"getColorKey",attributeName:"colorKey",type:"text"},{accessorName:"getEventLabel",attributeName:"eventLabel",type:"text"}];
+Exhibit.TimelineView.create=function(D,C,B){var A=new Exhibit.TimelineView(C,Exhibit.UIContext.create(D,B));
+Exhibit.TimelineView._configure(A,D);
+A._internalValidate();
+A._initializeUI();
+return A;
 };
-
-Exhibit.TimelineView._intervalChoices=[
-"millisecond","second","minute","hour","day","week","month","year","decade","century","millennium"
-];
-
-Exhibit.TimelineView._settingSpecs={
-"topBandHeight":{type:"int",defaultValue:75},
-"topBandUnit":{type:"enum",choices:Exhibit.TimelineView._intervalChoices},
-"topBandPixelsPerUnit":{type:"int",defaultValue:200},
-"bottomBandHeight":{type:"int",defaultValue:25},
-"bottomBandUnit":{type:"enum",choices:Exhibit.TimelineView._intervalChoices},
-"bottomBandPixelsPerUnit":{type:"int",defaultValue:200},
-"timelineHeight":{type:"int",defaultValue:400},
-"timelineConstructor":{type:"function",defaultValue:null},
-"colorCoder":{type:"text",defaultValue:null},
-"selectCoordinator":{type:"text",defaultValue:null},
-"showHeader":{type:"boolean",defaultValue:true},
-"showSummary":{type:"boolean",defaultValue:true},
-"showFooter":{type:"boolean",defaultValue:true}
+Exhibit.TimelineView.createFromDOM=function(D,C,B){var E=Exhibit.getConfigurationFromDOM(D);
+var A=new Exhibit.TimelineView(C!=null?C:D,Exhibit.UIContext.createFromDOM(D,B));
+Exhibit.SettingsUtilities.createAccessorsFromDOM(D,Exhibit.TimelineView._accessorSpecs,A._accessors);
+Exhibit.SettingsUtilities.collectSettingsFromDOM(D,Exhibit.TimelineView._settingSpecs,A._settings);
+Exhibit.TimelineView._configure(A,E);
+A._internalValidate();
+A._initializeUI();
+return A;
 };
-
-Exhibit.TimelineView._accessorSpecs=[
-{accessorName:"getProxy",
-attributeName:"proxy"
-},
-{accessorName:"getDuration",
-bindings:[
-{attributeName:"start",
-type:"date",
-bindingName:"start"
-},
-{attributeName:"end",
-type:"date",
-bindingName:"end",
-optional:true
-}
-]
-},
-{accessorName:"getColorKey",
-attributeName:"marker",
-type:"text"
-},
-{accessorName:"getColorKey",
-attributeName:"colorKey",
-type:"text"
-},
-{accessorName:"getEventLabel",
-attributeName:"eventLabel",
-type:"text"
-}
-];
-
-Exhibit.TimelineView.create=function(configuration,containerElmt,uiContext){
-var view=new Exhibit.TimelineView(
-containerElmt,
-Exhibit.UIContext.create(configuration,uiContext)
-);
-Exhibit.TimelineView._configure(view,configuration);
-
-view._internalValidate();
-view._initializeUI();
-return view;
-};
-
-Exhibit.TimelineView.createFromDOM=function(configElmt,containerElmt,uiContext){
-var configuration=Exhibit.getConfigurationFromDOM(configElmt);
-var view=new Exhibit.TimelineView(
-containerElmt!=null?containerElmt:configElmt,
-Exhibit.UIContext.createFromDOM(configElmt,uiContext)
-);
-
-Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.TimelineView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.TimelineView._settingSpecs,view._settings);
-Exhibit.TimelineView._configure(view,configuration);
-
-view._internalValidate();
-view._initializeUI();
-return view;
-};
-
-Exhibit.TimelineView._configure=function(view,configuration){
-Exhibit.SettingsUtilities.createAccessors(configuration,Exhibit.TimelineView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.TimelineView._settingSpecs,view._settings);
-
-var accessors=view._accessors;
-view._getDuration=function(itemID,database,visitor){
-accessors.getProxy(itemID,database,function(proxy){
-accessors.getDuration(proxy,database,visitor);
+Exhibit.TimelineView._configure=function(A,C){Exhibit.SettingsUtilities.createAccessors(C,Exhibit.TimelineView._accessorSpecs,A._accessors);
+Exhibit.SettingsUtilities.collectSettings(C,Exhibit.TimelineView._settingSpecs,A._settings);
+var B=A._accessors;
+A._getDuration=function(F,E,D){B.getProxy(F,E,function(G){B.getDuration(G,E,D);
 });
 };
 };
-
-Exhibit.TimelineView.prototype.dispose=function(){
-this._uiContext.getCollection().removeListener(this._listener);
-
+Exhibit.TimelineView.prototype.dispose=function(){this._uiContext.getCollection().removeListener(this._listener);
 this._timeline=null;
-
-if(this._selectListener!=null){
-this._selectListener.dispose();
+if(this._selectListener!=null){this._selectListener.dispose();
 this._selectListener=null;
-}
-
-this._toolboxWidget.dispose();
+}this._toolboxWidget.dispose();
 this._toolboxWidget=null;
-
 this._dom.dispose();
 this._dom=null;
-
 this._div.innerHTML="";
 this._div=null;
-
 this._uiContext.dispose();
 this._uiContext=null;
 };
-
-Exhibit.TimelineView.prototype._internalValidate=function(){
-if("getColorKey"in this._accessors){
-if("colorCoder"in this._settings){
-this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
-}
-
-if(this._colorCoder==null){
-this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
-}
-}
-if("selectCoordinator"in this._settings){
-var selectCoordinator=exhibit.getComponent(this._settings.selectCoordinator);
-if(selectCoordinator!=null){
-var self=this;
-this._selectListener=selectCoordinator.addListener(function(o){
-self._select(o);
+Exhibit.TimelineView.prototype._internalValidate=function(){if("getColorKey" in this._accessors){if("colorCoder" in this._settings){this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+}if(this._colorCoder==null){this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
+}}if("selectCoordinator" in this._settings){var B=exhibit.getComponent(this._settings.selectCoordinator);
+if(B!=null){var A=this;
+this._selectListener=B.addListener(function(C){A._select(C);
 });
-}
-}
-};
-
-Exhibit.TimelineView.prototype._initializeUI=function(){
-var self=this;
-var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":{}
-
+}}};
+Exhibit.TimelineView.prototype._initializeUI=function(){var A=this;
+var B="_gradientPoints" in this._colorCoder?"gradient":{};
 this._div.innerHTML="";
-this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
-this._div,
-this._uiContext,
-this._settings.showSummary&&this._settings.showHeader,
-{onResize:function(){
-self._timeline.layout();
-}
-},
-legendWidgetSettings
-);
+this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(this._div,this._uiContext,this._settings.showSummary&&this._settings.showHeader,{onResize:function(){A._timeline.layout();
+}},B);
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
-
 this._eventSource=new Timeline.DefaultEventSource();
 this._reconstruct();
 };
-
-Exhibit.TimelineView.prototype._reconstructTimeline=function(newEvents){
-var settings=this._settings;
-
-if(this._timeline!=null){
-this._timeline.dispose();
-}
-
-if(newEvents){
-this._eventSource.addMany(newEvents);
-}
-
-var timelineDiv=this._dom.plotContainer;
-if(settings.timelineConstructor!=null){
-this._timeline=settings.timelineConstructor(timelineDiv,this._eventSource);
-}else{
-timelineDiv.style.height=settings.timelineHeight+"px";
-timelineDiv.className="exhibit-timelineView-timeline";
-
-var theme=Timeline.ClassicTheme.create();
-theme.event.bubble.width=this._uiContext.getSetting("bubbleWidth");
-theme.event.bubble.height=this._uiContext.getSetting("bubbleHeight");
-
-var topIntervalUnit,bottomIntervalUnit;
-if(settings.topBandUnit!=null||settings.bottomBandUnit!=null){
-if(Exhibit.TimelineView._intervalLabelMap==null){
-Exhibit.TimelineView._intervalLabelMap={
-"millisecond":Timeline.DateTime.MILLISECOND,
-"second":Timeline.DateTime.SECOND,
-"minute":Timeline.DateTime.MINUTE,
-"hour":Timeline.DateTime.HOUR,
-"day":Timeline.DateTime.DAY,
-"week":Timeline.DateTime.WEEK,
-"month":Timeline.DateTime.MONTH,
-"year":Timeline.DateTime.YEAR,
-"decade":Timeline.DateTime.DECADE,
-"century":Timeline.DateTime.CENTURY,
-"millennium":Timeline.DateTime.MILLENNIUM
-};
-}
-
-if(settings.topBandUnit==null){
-bottomIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.bottomBandUnit];
-topIntervalUnit=bottomIntervalUnit-1;
-}else if(settings.bottomBandUnit==null){
-topIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.topBandUnit];
-bottomIntervalUnit=topIntervalUnit+1;
-}else{
-topIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.topBandUnit];
-bottomIntervalUnit=Exhibit.TimelineView._intervalLabelMap[settings.bottomBandUnit];
-}
-}else{
-var earliest=this._eventSource.getEarliestDate();
-var latest=this._eventSource.getLatestDate();
-
-var totalDuration=latest.getTime()-earliest.getTime();
-var totalEventCount=this._eventSource.getCount();
-if(totalDuration>0&&totalEventCount>1){
-var totalDensity=totalEventCount/totalDuration;
-
-var topIntervalUnit=Timeline.DateTime.MILLENNIUM;
-while(topIntervalUnit>0){
-var intervalDuration=Timeline.DateTime.gregorianUnitLengths[topIntervalUnit];
-var eventsPerPixel=totalDensity*intervalDuration/settings.topBandPixelsPerUnit;
-if(eventsPerPixel<0.01){
-break;
-}
-topIntervalUnit--;
-}
-}else{
-topIntervalUnit=Timeline.DateTime.YEAR;
-}
-bottomIntervalUnit=topIntervalUnit+1;
-}
-
-var bandInfos=[
-Timeline.createBandInfo({
-width:settings.topBandHeight+"%",
-intervalUnit:topIntervalUnit,
-intervalPixels:settings.topBandPixelsPerUnit,
-eventSource:this._eventSource,
-
-theme:theme
-}),
-Timeline.createBandInfo({
-width:settings.bottomBandHeight+"%",
-intervalUnit:bottomIntervalUnit,
-intervalPixels:settings.bottomBandPixelsPerUnit,
-eventSource:this._eventSource,
-
-overview:true,
-theme:theme
-})
-];
-bandInfos[1].syncWith=0;
-bandInfos[1].highlight=true;
-
-this._timeline=Timeline.create(timelineDiv,bandInfos,Timeline.HORIZONTAL);
-}
-
-var self=this;
-var listener=function(eventID){
-if(self._selectListener!=null){
-self._selectListener.fire({itemIDs:[eventID]});
-}
-}
-for(var i=0;i<this._timeline.getBandCount();i++){
-this._timeline.getBand(i).getEventPainter().addOnSelectListener(listener);
-}
-};
-
-Exhibit.TimelineView.prototype._reconstruct=function(){
-var self=this;
-var collection=this._uiContext.getCollection();
-var database=this._uiContext.getDatabase();
-var settings=this._settings;
-var accessors=this._accessors;
-
-
-var currentSize=collection.countRestrictedItems();
-var unplottableItems=[];
-
+Exhibit.TimelineView.prototype._reconstructTimeline=function(A){var E=this._settings;
+if(this._timeline!=null){this._timeline.dispose();
+}if(A){this._eventSource.addMany(A);
+}var N=this._dom.plotContainer;
+if(E.timelineConstructor!=null){this._timeline=E.timelineConstructor(N,this._eventSource);
+}else{N.style.height=E.timelineHeight+"px";
+N.className="exhibit-timelineView-timeline";
+var K=Timeline.ClassicTheme.create();
+K.event.bubble.width=this._uiContext.getSetting("bubbleWidth");
+K.event.bubble.height=this._uiContext.getSetting("bubbleHeight");
+var G,M;
+if(E.topBandUnit!=null||E.bottomBandUnit!=null){if(Exhibit.TimelineView._intervalLabelMap==null){Exhibit.TimelineView._intervalLabelMap={"millisecond":Timeline.DateTime.MILLISECOND,"second":Timeline.DateTime.SECOND,"minute":Timeline.DateTime.MINUTE,"hour":Timeline.DateTime.HOUR,"day":Timeline.DateTime.DAY,"week":Timeline.DateTime.WEEK,"month":Timeline.DateTime.MONTH,"year":Timeline.DateTime.YEAR,"decade":Timeline.DateTime.DECADE,"century":Timeline.DateTime.CENTURY,"millennium":Timeline.DateTime.MILLENNIUM};
+}if(E.topBandUnit==null){M=Exhibit.TimelineView._intervalLabelMap[E.bottomBandUnit];
+G=M-1;
+}else{if(E.bottomBandUnit==null){G=Exhibit.TimelineView._intervalLabelMap[E.topBandUnit];
+M=G+1;
+}else{G=Exhibit.TimelineView._intervalLabelMap[E.topBandUnit];
+M=Exhibit.TimelineView._intervalLabelMap[E.bottomBandUnit];
+}}}else{var L=this._eventSource.getEarliestDate();
+var H=this._eventSource.getLatestDate();
+var O=H.getTime()-L.getTime();
+var F=this._eventSource.getCount();
+if(O>0&&F>1){var C=F/O;
+var G=Timeline.DateTime.MILLENNIUM;
+while(G>0){var I=Timeline.DateTime.gregorianUnitLengths[G];
+var D=C*I/E.topBandPixelsPerUnit;
+if(D<0.01){break;
+}G--;
+}}else{G=Timeline.DateTime.YEAR;
+}M=G+1;
+}var Q=[Timeline.createBandInfo({width:E.topBandHeight+"%",intervalUnit:G,intervalPixels:E.topBandPixelsPerUnit,eventSource:this._eventSource,theme:K}),Timeline.createBandInfo({width:E.bottomBandHeight+"%",intervalUnit:M,intervalPixels:E.bottomBandPixelsPerUnit,eventSource:this._eventSource,overview:true,theme:K})];
+Q[1].syncWith=0;
+Q[1].highlight=true;
+this._timeline=Timeline.create(N,Q,Timeline.HORIZONTAL);
+}var P=this;
+var B=function(R){if(P._selectListener!=null){P._selectListener.fire({itemIDs:[R]});
+}};
+for(var J=0;
+J<this._timeline.getBandCount();
+J++){this._timeline.getBand(J).getEventPainter().addOnSelectListener(B);
+}};
+Exhibit.TimelineView.prototype._reconstruct=function(){var M=this;
+var L=this._uiContext.getCollection();
+var J=this._uiContext.getDatabase();
+var T=this._settings;
+var U=this._accessors;
+var B=L.countRestrictedItems();
+var N=[];
 this._dom.legendWidget.clear();
 this._eventSource.clear();
-
-if(currentSize>0){
-var currentSet=collection.getRestrictedItems();
-var hasColorKey=(this._accessors.getColorKey!=null);
-var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
-var events=[];
-
-var addEvent=function(itemID,duration,color){
-var label;
-accessors.getEventLabel(itemID,database,function(v){label=v;return true;});
-
-var evt=new Timeline.DefaultEventSource.Event(
-itemID,
-duration.start,
-duration.end,
-null,
-null,
-duration.end==null,
-label,
-"",
-null,
-null,
-null,
-color,
-color
-);
-evt._itemID=itemID;
-evt.getProperty=function(name){
-return database.getObject(this._itemID,name);
-};
-evt.fillInfoBubble=function(elmt,theme,labeller){
-self._fillInfoBubble(this,elmt,theme,labeller);
-};
-
-events.push(evt);
-};
-
-currentSet.visit(function(itemID){
-var durations=[];
-self._getDuration(itemID,database,function(duration){if("start"in duration)durations.push(duration);});
-
-if(durations.length>0){
-var color=null;
-if(hasColorKey){
-var colorKeys=new Exhibit.Set();
-accessors.getColorKey(itemID,database,function(key){colorKeys.add(key);});
-
-color=self._colorCoder.translateSet(colorKeys,colorCodingFlags);
-}
-
-for(var i=0;i<durations.length;i++){
-addEvent(itemID,durations[i],color);
-}
-}else{
-unplottableItems.push(itemID);
-}
+if(B>0){var C=L.getRestrictedItems();
+var D=(this._accessors.getColorKey!=null);
+var F={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
+var A=[];
+var O=function(b,a,Y){var Z;
+U.getEventLabel(b,J,function(c){Z=c;
+return true;
 });
-
-if(hasColorKey){
-var legendWidget=this._dom.legendWidget;
-var colorCoder=this._colorCoder;
-var keys=colorCodingFlags.keys.toArray().sort();
-if(this._colorCoder._gradientPoints!=null){
-legendWidget.addGradient(this._colorCoder._gradientPoints);
-}else{
-for(var k=0;k<keys.length;k++){
-var key=keys[k];
-var color=colorCoder.translate(key);
-legendWidget.addEntry(color,key);
-}
-}
-
-if(colorCodingFlags.others){
-legendWidget.addEntry(colorCoder.getOthersColor(),colorCoder.getOthersLabel());
-}
-if(colorCodingFlags.mixed){
-legendWidget.addEntry(colorCoder.getMixedColor(),colorCoder.getMixedLabel());
-}
-if(colorCodingFlags.missing){
-legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
-}
-}
-
-var plottableSize=currentSize-unplottableItems.length;
-if(plottableSize>this._largestSize){
-this._largestSize=plottableSize;
-this._reconstructTimeline(events);
-}else{
-this._eventSource.addMany(events);
-}
-
-var band=this._timeline.getBand(0);
-var centerDate=band.getCenterVisibleDate();
-var earliest=this._eventSource.getEarliestDate();
-var latest=this._eventSource.getLatestDate();
-if(earliest!=null&&centerDate<earliest){
-band.scrollToCenter(earliest);
-}else if(latest!=null&&centerDate>latest){
-band.scrollToCenter(latest);
-}
-}
-this._dom.setUnplottableMessage(currentSize,unplottableItems);
+var X=new Timeline.DefaultEventSource.Event(b,a.start,a.end,null,null,a.end==null,Z,"",null,null,null,Y,Y);
+X._itemID=b;
+X.getProperty=function(c){return J.getObject(this._itemID,c);
 };
-
-Exhibit.TimelineView.prototype._select=function(selection){
-var itemID=selection.itemIDs[0];
-this._timeline.getBand(0).showBubbleForEvent(itemID);
+X.fillInfoBubble=function(c,d,e){M._fillInfoBubble(this,c,d,e);
 };
-
-Exhibit.TimelineView.prototype._fillInfoBubble=function(evt,elmt,theme,labeller){
-this._uiContext.getLensRegistry().createLens(evt._itemID,elmt,this._uiContext);
+A.push(X);
+};
+C.visit(function(b){var Y=[];
+M._getDuration(b,J,function(c){if("start" in c){Y.push(c);
+}});
+if(Y.length>0){var X=null;
+if(D){var Z=new Exhibit.Set();
+U.getColorKey(b,J,function(c){Z.add(c);
+});
+X=M._colorCoder.translateSet(Z,F);
+}for(var a=0;
+a<Y.length;
+a++){O(b,Y[a],X);
+}}else{N.push(b);
+}});
+if(D){var S=this._dom.legendWidget;
+var R=this._colorCoder;
+var I=F.keys.toArray().sort();
+if(this._colorCoder._gradientPoints!=null){S.addGradient(this._colorCoder._gradientPoints);
+}else{for(var Q=0;
+Q<I.length;
+Q++){var W=I[Q];
+var P=R.translate(W);
+S.addEntry(P,W);
+}}if(F.others){S.addEntry(R.getOthersColor(),R.getOthersLabel());
+}if(F.mixed){S.addEntry(R.getMixedColor(),R.getMixedLabel());
+}if(F.missing){S.addEntry(R.getMissingColor(),R.getMissingLabel());
+}}var G=B-N.length;
+if(G>this._largestSize){this._largestSize=G;
+this._reconstructTimeline(A);
+}else{this._eventSource.addMany(A);
+}var K=this._timeline.getBand(0);
+var E=K.getCenterVisibleDate();
+var H=this._eventSource.getEarliestDate();
+var V=this._eventSource.getLatestDate();
+if(H!=null&&E<H){K.scrollToCenter(H);
+}else{if(V!=null&&E>V){K.scrollToCenter(V);
+}}}this._dom.setUnplottableMessage(B,N);
+};
+Exhibit.TimelineView.prototype._select=function(A){var B=A.itemIDs[0];
+this._timeline.getBand(0).showBubbleForEvent(B);
+};
+Exhibit.TimelineView.prototype._fillInfoBubble=function(A,B,C,D){this._uiContext.getLensRegistry().createLens(A._itemID,B,this._uiContext);
 };

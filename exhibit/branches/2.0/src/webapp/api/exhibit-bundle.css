@@ -362,6 +362,9 @@ div.exhibit-views-unplottableMessage {
 .exhibit-views-totalCount {
 }
 
+div.exhibit-views-bubbleWithItems {
+}
+
 div.exhibit-collectionView {
 }
 
@@ -419,6 +422,7 @@ div.exhibit-collectionView-footer {
     text-align: center;
     margin:     2em 0;
 }
+
 table.exhibit-tabularView-body {
     width: 100%;
 }

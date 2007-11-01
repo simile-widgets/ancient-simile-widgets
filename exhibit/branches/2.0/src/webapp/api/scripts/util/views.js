@@ -23,6 +23,8 @@ Exhibit.ViewUtilities.fillBubbleWithItems = function(bubbleElmt, arrayOfItemIDs,
     }
     
     if (arrayOfItemIDs.length > 1) {
+        bubbleElmt.className = [ bubbleElmt.className, "exhibit-views-bubbleWithItems" ].join(" ");
+        
         var ul = document.createElement("ul");
         for (var i = 0; i < arrayOfItemIDs.length; i++) {
             uiContext.format(arrayOfItemIDs[i], "item", function(elmt) {

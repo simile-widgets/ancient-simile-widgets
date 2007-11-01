@@ -385,7 +385,7 @@ Exhibit.BarChartView.prototype._reconstruct = function() {
         //rightCol.style.width="100%";
         barpart.style.position="relative";
         barpart.style.width="100%";
-        barpart.style.float="left";
+        //barpart.style.float="left";
 
         leftCol.appendChild(labelpart);
         rightCol.appendChild(barpart);

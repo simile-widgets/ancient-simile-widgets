@@ -1,1344 +1,669 @@
 ﻿
 
 /* bar-chart-view.js */
-
-
-Exhibit.BarChartView=function(containerElmt,uiContext){
-this._div=containerElmt;
-this._uiContext=uiContext;
-
+Exhibit.BarChartView=function(C,B){this._div=C;
+this._uiContext=B;
 this._settings={};
-this._accessors={
-getPointLabel:function(itemID,database,visitor){visitor(database.getObject(itemID,"label"));},
-getProxy:function(itemID,database,visitor){visitor(itemID);},
-getColorKey:null
-};
-
-
-
-this._axisFuncs={x:function(x){return x;}};
-this._axisInverseFuncs={x:function(x){return x;}};
-
-
+this._accessors={getPointLabel:function(F,E,D){D(E.getObject(F,"label"));
+},getProxy:function(F,E,D){D(F);
+},getColorKey:null};
+this._axisFuncs={x:function(D){return D;
+}};
+this._axisInverseFuncs={x:function(D){return D;
+}};
 this._colorKeyCache=new Object();
 this._maxColor=0;
-
-var view=this;
-this._listener={
-onItemsChanged:function(){
-view._reconstruct();
-}
+var A=this;
+this._listener={onItemsChanged:function(){A._reconstruct();
+}};
+B.getCollection().addListener(this._listener);
 };
-uiContext.getCollection().addListener(this._listener);
+Exhibit.BarChartView._settingSpecs={"plotHeight":{type:"int",defaultValue:400},"bubbleWidth":{type:"int",defaultValue:400},"bubbleHeight":{type:"int",defaultValue:300},"xAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},"xAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},"xAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},"yAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},"yAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},"yAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},"xLabel":{type:"text",defaultValue:"x"},"yLabel":{type:"text",defaultValue:"y"},"color":{type:"text",defaultValue:"#5D7CBA"},"colorCoder":{type:"text",defaultValue:null},"scroll":{type:"boolean",defaultValue:false}};
+Exhibit.BarChartView._accessorSpecs=[{accessorName:"getProxy",attributeName:"proxy"},{accessorName:"getPointLabel",attributeName:"pointLabel"},{accessorName:"getXY",alternatives:[{bindings:[{attributeName:"xy",types:["float","text"],bindingNames:["x","y"]}]},{bindings:[{attributeName:"x",type:"float",bindingName:"x"},{attributeName:"y",type:"text",bindingName:"y"}]}]},{accessorName:"getColorKey",attributeName:"colorKey",type:"text"}];
+Exhibit.BarChartView.create=function(D,C,B){var A=new Exhibit.BarChartView(C,Exhibit.UIContext.create(D,B));
+Exhibit.BarChartView._configure(A,D);
+A._internalValidate();
+A._initializeUI();
+return A;
 };
-
-Exhibit.BarChartView._settingSpecs={
-"plotHeight":{type:"int",defaultValue:400},
-"bubbleWidth":{type:"int",defaultValue:400},
-"bubbleHeight":{type:"int",defaultValue:300},
-"xAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},
-"xAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},
-"xAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},
-"yAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},
-"yAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},
-"yAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},
-"xLabel":{type:"text",defaultValue:"x"},
-"yLabel":{type:"text",defaultValue:"y"},
-"color":{type:"text",defaultValue:"#5D7CBA"},
-"colorCoder":{type:"text",defaultValue:null},
-"scroll":{type:"boolean",defaultValue:false}
+Exhibit.BarChartView.createFromDOM=function(D,C,B){var E=Exhibit.getConfigurationFromDOM(D);
+var A=new Exhibit.BarChartView(C!=null?C:D,Exhibit.UIContext.createFromDOM(D,B));
+Exhibit.SettingsUtilities.createAccessorsFromDOM(D,Exhibit.BarChartView._accessorSpecs,A._accessors);
+Exhibit.SettingsUtilities.collectSettingsFromDOM(D,Exhibit.BarChartView._settingSpecs,A._settings);
+Exhibit.BarChartView._configure(A,E);
+A._internalValidate();
+A._initializeUI();
+return A;
 };
-
-Exhibit.BarChartView._accessorSpecs=[
-{accessorName:"getProxy",
-attributeName:"proxy"
-},
-{accessorName:"getPointLabel",
-attributeName:"pointLabel"
-},
-{accessorName:"getXY",
-alternatives:[
-{bindings:[
-{attributeName:"xy",
-types:["float","text"],
-bindingNames:["x","y"]
-}
-]
-},
-{bindings:[
-{attributeName:"x",
-type:"float",
-bindingName:"x"
-},
-{attributeName:"y",
-type:"text",
-bindingName:"y"
-}
-]
-}
-]
-},
-{accessorName:"getColorKey",
-attributeName:"colorKey",
-type:"text"
-}
-];
-
-Exhibit.BarChartView.create=function(configuration,containerElmt,uiContext){
-var view=new Exhibit.BarChartView(
-containerElmt,
-Exhibit.UIContext.create(configuration,uiContext)
-);
-Exhibit.BarChartView._configure(view,configuration);
-
-view._internalValidate();
-view._initializeUI();
-return view;
-};
-
-Exhibit.BarChartView.createFromDOM=function(configElmt,containerElmt,uiContext){
-var configuration=Exhibit.getConfigurationFromDOM(configElmt);
-var view=new Exhibit.BarChartView(
-containerElmt!=null?containerElmt:configElmt,
-Exhibit.UIContext.createFromDOM(configElmt,uiContext)
-);
-
-Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.BarChartView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.BarChartView._settingSpecs,view._settings);
-Exhibit.BarChartView._configure(view,configuration);
-
-view._internalValidate();
-view._initializeUI();
-return view;
-};
-
-Exhibit.BarChartView._configure=function(view,configuration){
-Exhibit.SettingsUtilities.createAccessors(configuration,Exhibit.BarChartView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.BarChartView._settingSpecs,view._settings);
-
-view._axisFuncs.x=Exhibit.BarChartView._getAxisFunc(view._settings.xAxisType);
-view._axisInverseFuncs.x=Exhibit.BarChartView._getAxisInverseFunc(view._settings.xAxisType);
-
-
-
-
-var accessors=view._accessors;
-
-
-
-
-
-
-view._getXY=function(itemID,database,visitor){
-accessors.getProxy(itemID,database,function(proxy){
-accessors.getXY(proxy,database,visitor);
+Exhibit.BarChartView._configure=function(A,C){Exhibit.SettingsUtilities.createAccessors(C,Exhibit.BarChartView._accessorSpecs,A._accessors);
+Exhibit.SettingsUtilities.collectSettings(C,Exhibit.BarChartView._settingSpecs,A._settings);
+A._axisFuncs.x=Exhibit.BarChartView._getAxisFunc(A._settings.xAxisType);
+A._axisInverseFuncs.x=Exhibit.BarChartView._getAxisInverseFunc(A._settings.xAxisType);
+var B=A._accessors;
+A._getXY=function(F,E,D){B.getProxy(F,E,function(G){B.getXY(G,E,D);
 });
 };
 };
-
-
-Exhibit.BarChartView._getAxisFunc=function(s){
-if(s=="log"){
-return function(x){return(Math.log(x)/Math.log(10.0));};
-}else{
-return function(x){return x;};
-}
-}
-
-
-Exhibit.BarChartView._getAxisInverseFunc=function(s){
-if(s=="log"){
-return function(x){return Math.pow(10,x);};
-}else{
-return function(x){return x;};
+Exhibit.BarChartView._getAxisFunc=function(A){if(A=="log"){return function(B){return(Math.log(B)/Math.log(10));
 };
-}
-
-
-Exhibit.BarChartView._colors=[
-"FF9000",
-"5D7CBA",
-"A97838",
-"8B9BBA",
-"FFC77F",
-"003EBA",
-"29447B",
-"543C1C"
-];
+}else{return function(B){return B;
+};
+}};
+Exhibit.BarChartView._getAxisInverseFunc=function(A){if(A=="log"){return function(B){return Math.pow(10,B);
+};
+}else{return function(B){return B;
+};
+}};
+Exhibit.BarChartView._colors=["FF9000","5D7CBA","A97838","8B9BBA","FFC77F","003EBA","29447B","543C1C"];
 Exhibit.BarChartView._mixColor="FFFFFF";
-
-Exhibit.BarChartView.evaluateSingle=function(expression,itemID,database){
-return expression.evaluateSingleOnItem(itemID,database).value;
-}
-
-Exhibit.BarChartView.prototype.dispose=function(){
-this._uiContext.getCollection().removeListener(this._listener);
-
+Exhibit.BarChartView.evaluateSingle=function(C,B,A){return C.evaluateSingleOnItem(B,A).value;
+};
+Exhibit.BarChartView.prototype.dispose=function(){this._uiContext.getCollection().removeListener(this._listener);
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
-
 this._dom.dispose();
 this._dom=null;
-
 this._uiContext.dispose();
 this._uiContext=null;
-
 this._div.innerHTML="";
 this._div=null;
 };
-
-Exhibit.BarChartView.prototype._internalValidate=function(){
-if("getColorKey"in this._accessors){
-if("colorCoder"in this._settings){
-this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
-}
-
-if(this._colorCoder==null){
-this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
-}
-}
-};
-
-Exhibit.BarChartView.prototype._initializeUI=function(){
-var self=this;
-var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":{}
-
+Exhibit.BarChartView.prototype._internalValidate=function(){if("getColorKey" in this._accessors){if("colorCoder" in this._settings){this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+}if(this._colorCoder==null){this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
+}}};
+Exhibit.BarChartView.prototype._initializeUI=function(){var A=this;
+var B="_gradientPoints" in this._colorCoder?"gradient":{};
 this._div.innerHTML="";
-this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
-this._div,
-this._uiContext,
-true,
-{onResize:function(){
-self._reconstruct();
-}
-},
-legendWidgetSettings
-);
+this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(this._div,this._uiContext,true,{onResize:function(){A._reconstruct();
+}},B);
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
-
 this._dom.plotContainer.className="exhibit-barChartView-plotContainer";
 this._dom.plotContainer.style.height=this._settings.plotHeight+"px";
 this._reconstruct();
 };
-
-
-
-
-
-
-Exhibit.BarChartView.prototype._reconstruct=function(){
-var self=this;
-
-var collection=this._uiContext.getCollection();
-var database=this._uiContext.getDatabase();
-var settings=this._settings;
-var accessors=this._accessors;
-
+Exhibit.BarChartView.prototype._reconstruct=function(){var E=this;
+var c=this._uiContext.getCollection();
+var j=this._uiContext.getDatabase();
+var t=this._settings;
+var u=this._accessors;
 this._dom.plotContainer.innerHTML="";
-
-var scaleX=self._axisFuncs.x;
-
-var unscaleX=self._axisInverseFuncs.x;
-
-
-var currentSize=collection.countRestrictedItems();
-var unplottableItems=[];
-
+var b=E._axisFuncs.x;
+var B=E._axisInverseFuncs.x;
+var K=c.countRestrictedItems();
+var F=[];
 this._dom.legendWidget.clear();
-if(currentSize>0){
-var currentSet=collection.getRestrictedItems();
-var hasColorKey=(this._accessors.getColorKey!=null);
-
-var xyToData={};
-var xAxisMin=settings.xAxisMin;
-var xAxisMax=settings.xAxisMax;
-
-
-
-
-currentSet.visit(function(itemID){
-var xys=[];
-
-self._getXY(itemID,database,function(xy){if("x"in xy&&"y"in xy)xys.push(xy);});
-
-
-if(xys.length>0){
-var colorKeys=null;
-if(hasColorKey){
-colorKeys=new Exhibit.Set();
-accessors.getColorKey(itemID,database,function(v){colorKeys.add(v);});
-}
-
-for(var i=0;i<xys.length;i++){
-var xy=xys[i];
-var xyKey=xy.x+","+xy.y;
-if(xyKey in xyToData){
-var xyData=xyToData[xyKey];
-xyData.items.push(itemID);
-if(hasColorKey){
-xyData.colorKeys.addSet(colorKeys);
-}
-}else{
-try{
-xy.scaledX=scaleX(xy.x);
-
-
-if(!isFinite(xy.scaledX)){
-continue;
-}
-}catch(e){
-continue;
-}
-
-var xyData={
-xy:xy,
-items:[itemID]
-};
-if(hasColorKey){
-xyData.colorKeys=colorKeys;
-}
-xyToData[xyKey]=xyData;
-
-xAxisMin=Math.min(xAxisMin,xy.scaledX);
-xAxisMax=Math.max(xAxisMax,xy.scaledX);
-
-
-}
-}
-}else{
-unplottableItems.push(itemID);
-}
+if(K>0){var P=c.getRestrictedItems();
+var J=(this._accessors.getColorKey!=null);
+var Q={};
+var W=t.xAxisMin;
+var C=t.xAxisMax;
+P.visit(function(AC){var AD=[];
+E._getXY(AC,j,function(AE){if("x" in AE&&"y" in AE){AD.push(AE);
+}});
+if(AD.length>0){var k=null;
+if(J){k=new Exhibit.Set();
+u.getColorKey(AC,j,function(AE){k.add(AE);
 });
-
-
-var xDiff=xAxisMax-xAxisMin;
-
-
-var xInterval=1;
-if(xDiff>1){
-while(xInterval*20<xDiff){
-xInterval*=10;
-}
-}else{
-while(xInterval<xDiff*20){
-xInterval/=10;
-}
-}
-xAxisMin=Math.floor(xAxisMin/xInterval)*xInterval;
-xAxisMax=Math.ceil(xAxisMax/xInterval)*xInterval;
-
-
-settings.xAxisMin=xAxisMin;
-settings.xAxisMax=xAxisMax;
-
-
-
-
-var canvasFrame=document.createElement("div");
-canvasFrame.className=SimileAjax.Platform.browser.isIE?
-"exhibit-barChartView-canvasFrame-ie":
-"exhibit-barChartView-canvasFrame";
-this._dom.plotContainer.appendChild(canvasFrame);
-if(self._settings.scroll){
-canvasFrame.style.overflow="scroll";
-}
-
-
-var theTable=document.createElement("table");
-var tableBody=document.createElement("tbody");
-var theRow=document.createElement("tr");
-var leftCol=document.createElement("td");
-var rightCol=document.createElement("td");
-var labelpart=document.createElement("div");
-var barpart=document.createElement("div");
-
-theTable.style.width="100%";
-
-
-barpart.style.position="relative";
-barpart.style.width="100%";
-barpart.style.float="left";
-
-leftCol.appendChild(labelpart);
-rightCol.appendChild(barpart);
-theRow.appendChild(leftCol);
-theRow.appendChild(rightCol);
-tableBody.appendChild(theRow);
-theTable.appendChild(tableBody);
-
-canvasFrame.appendChild(theTable);
-
-
-
-var canvasDiv=document.createElement("div");
-canvasDiv.className="exhibit-barChartView-canvas";
-canvasDiv.style.height="100%";
-barpart.appendChild(canvasDiv);
-
-
-var yAxisDiv=document.createElement("div");
-yAxisDiv.className=SimileAjax.Platform.browser.isIE?
-"exhibit-barChartView-yAxis-ie":
-"exhibit-barChartView-yAxis";
-this._dom.plotContainer.appendChild(yAxisDiv);
-
-var yAxisDivInner=document.createElement("div");
-yAxisDivInner.style.position="relative";
-yAxisDivInner.style.height="100%";
-yAxisDiv.appendChild(yAxisDivInner);
-
-
-
-var yNameDiv=document.createElement("div");
-yNameDiv.className="exhibit-barChartView-yAxisName";
-yNameDiv.innerHTML=settings.yLabel;
-yAxisDivInner.appendChild(yNameDiv);
-
-
-
-
-var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
-var addBarAtLocation=function(xyData){
-var items=xyData.items;
-
-var color=settings.color;
-if(hasColorKey){
-color=self._colorCoder.translateSet(xyData.colorKeys,colorCodingFlags);
-}
-
-var xy=xyData.xy;
-
-
-var thelabel=document.createElement("div");
-var thetext=document.createTextNode(xy.y);
-thelabel.appendChild(thetext);
-thelabel.style.height="1.5em";
-labelpart.appendChild(thelabel);
-
-var bardiv=document.createElement("div");
-bardiv.style.position="relative";
-bardiv.style.height="1.5em";
-bardiv.style.zIndex="2";
-var bar=document.createElement("div");
-bar.className="exhibit-barChartView-bar";
-bar.style.backgroundColor=color;
-bar.style.textAlign="right";
-bar.style.left="0";
-
-var barwidth=Math.floor(100*(scaleX(xy.x)-xAxisMin)/(xAxisMax-xAxisMin));
-bar.style.width=barwidth+"%";
-bar.style.borderStyle="solid";
-bar.style.borderWidth="1px";
-bar.style.paddingLeft="0px";
-var thetext=document.createTextNode(xy.x);
-bar.appendChild(thetext);
-bardiv.appendChild(bar);
-canvasDiv.appendChild(bardiv);
-SimileAjax.WindowManager.registerEvent(bar,"click",
-function(elmt,evt,target){self._openPopup(bar,items);});
-SimileAjax.WindowManager.registerEvent(thelabel,"click",
-function(elmt,evt,target){self._openPopup(thelabel,items);});
-
-
-
-
-
-}
-
-for(xyKey in xyToData){
-addBarAtLocation(xyToData[xyKey]);
-}
-
-leftCol.style.width="1px";
-theTable.style.tableLayout="auto";
-
-var xAxisDiv=document.createElement("div");
-xAxisDiv.className="exhibit-barChartView-xAxis";
-
-
-
-
-
-var xAxisDivInner=document.createElement("div");
-xAxisDivInner.style.position="relative";
-xAxisDivInner.style.left=0;
-xAxisDiv.appendChild(xAxisDivInner);
-
-var canvasWidth=canvasDiv.offsetWidth;
-var canvasHeight=canvasDiv.offsetHeight;
-var xScale=canvasWidth/(xAxisMax-xAxisMin);
-
-
-canvasDiv.style.display="none";
-
-
-var makeMakeLabel=function(interval,unscale){
-
-if(interval>=1000000){
-return function(n){return Math.floor(unscale(n)/1000000)+"M";};
-}else if(interval>=1000){
-return function(n){return Math.floor(unscale(n)/1000)+"K";};
-}else{
-return function(n){return unscale(n);};
-}
+}for(var x=0;
+x<AD.length;
+x++){var AB=AD[x];
+var y=AB.x+","+AB.y;
+if(y in Q){var z=Q[y];
+z.items.push(AC);
+if(J){z.colorKeys.addSet(k);
+}}else{try{AB.scaledX=b(AB.x);
+if(!isFinite(AB.scaledX)){continue;
+}}catch(AA){continue;
+}var z={xy:AB,items:[AC]};
+if(J){z.colorKeys=k;
+}Q[y]=z;
+W=Math.min(W,AB.scaledX);
+C=Math.max(C,AB.scaledX);
+}}}else{F.push(AC);
+}});
+var T=C-W;
+var d=1;
+if(T>1){while(d*20<T){d*=10;
+}}else{while(d<T*20){d/=10;
+}}W=Math.floor(W/d)*d;
+C=Math.ceil(C/d)*d;
+t.xAxisMin=W;
+t.xAxisMax=C;
+var n=document.createElement("div");
+n.className=SimileAjax.Platform.browser.isIE?"exhibit-barChartView-canvasFrame-ie":"exhibit-barChartView-canvasFrame";
+this._dom.plotContainer.appendChild(n);
+if(E._settings.scroll){n.style.overflow="scroll";
+}var Y=document.createElement("table");
+var e=document.createElement("tbody");
+var q=document.createElement("tr");
+var w=document.createElement("td");
+var M=document.createElement("td");
+var i=document.createElement("div");
+var O=document.createElement("div");
+Y.style.width="100%";
+O.style.position="relative";
+O.style.width="100%";
+w.appendChild(i);
+M.appendChild(O);
+q.appendChild(w);
+q.appendChild(M);
+e.appendChild(q);
+Y.appendChild(e);
+n.appendChild(Y);
+var H=document.createElement("div");
+H.className="exhibit-barChartView-canvas";
+H.style.height="100%";
+O.appendChild(H);
+var Z=document.createElement("div");
+Z.className=SimileAjax.Platform.browser.isIE?"exhibit-barChartView-yAxis-ie":"exhibit-barChartView-yAxis";
+this._dom.plotContainer.appendChild(Z);
+var l=document.createElement("div");
+l.style.position="relative";
+l.style.height="100%";
+Z.appendChild(l);
+var v=document.createElement("div");
+v.className="exhibit-barChartView-yAxisName";
+v.innerHTML=t.yLabel;
+l.appendChild(v);
+var f={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
+var N=function(k){var AB=k.items;
+var y=t.color;
+if(J){y=E._colorCoder.translateSet(k.colorKeys,f);
+}var AC=k.xy;
+var z=document.createElement("div");
+var AD=document.createTextNode(AC.y);
+z.appendChild(AD);
+z.style.height="1.5em";
+i.appendChild(z);
+var AE=document.createElement("div");
+AE.style.position="relative";
+AE.style.height="1.5em";
+AE.style.zIndex="2";
+var AA=document.createElement("div");
+AA.className="exhibit-barChartView-bar";
+AA.style.backgroundColor=y;
+AA.style.textAlign="right";
+AA.style.left="0";
+var x=Math.floor(100*(b(AC.x)-W)/(C-W));
+AA.style.width=x+"%";
+AA.style.borderStyle="solid";
+AA.style.borderWidth="1px";
+AA.style.paddingLeft="0px";
+var AD=document.createTextNode(AC.x);
+AA.appendChild(AD);
+AE.appendChild(AA);
+H.appendChild(AE);
+SimileAjax.WindowManager.registerEvent(AA,"click",function(AG,AF,AH){E._openPopup(AA,AB);
+});
+SimileAjax.WindowManager.registerEvent(z,"click",function(AG,AF,AH){E._openPopup(z,AB);
+});
 };
-var makeLabelX=makeMakeLabel(xInterval,unscaleX);
-
-
-for(var x=xAxisMin+xInterval;x<xAxisMax;x+=xInterval){
-var left=Math.floor((x-xAxisMin)*xScale);
-
-var div=document.createElement("div");
-div.className="exhibit-barChartView-gridLine";
-div.style.width="1px";
-div.style.left=left+"px";
-div.style.top="0px";
-div.style.height="100%";
-div.style.zIndex="1";
-canvasDiv.appendChild(div);
-
-var labelDiv=document.createElement("div");
-labelDiv.className="exhibit-barChartView-xAxisLabel";
-labelDiv.style.left=left+"px";
-labelDiv.innerHTML=makeLabelX(x);
-xAxisDivInner.appendChild(labelDiv);
-}
-var xNameDiv=document.createElement("div");
-xNameDiv.className="exhibit-barChartView-xAxisName";
-xNameDiv.innerHTML=settings.xLabel;
-
-xAxisDivInner.appendChild(xNameDiv);
-barpart.appendChild(xAxisDiv);
-
-canvasDiv.style.display="block";
-
-if(hasColorKey){
-var legendWidget=this._dom.legendWidget;
-var colorCoder=this._colorCoder;
-var keys=colorCodingFlags.keys.toArray().sort();
-if(this._colorCoder._gradientPoints!=null){
-legendWidget.addGradient(this._colorCoder._gradientPoints);
-}else{
-for(var k=0;k<keys.length;k++){
-var key=keys[k];
-var color=colorCoder.translate(key);
-legendWidget.addEntry(color,key);
-}
-}
-
-if(colorCodingFlags.others){
-legendWidget.addEntry(colorCoder.getOthersColor(),colorCoder.getOthersLabel());
-}
-if(colorCodingFlags.mixed){
-legendWidget.addEntry(colorCoder.getMixedColor(),colorCoder.getMixedLabel());
-}
-if(colorCodingFlags.missing){
-legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
-}
-}
-}
-this._dom.setUnplottableMessage(currentSize,unplottableItems);
+for(xyKey in Q){N(Q[xyKey]);
+}w.style.width="1px";
+Y.style.tableLayout="auto";
+var U=document.createElement("div");
+U.className="exhibit-barChartView-xAxis";
+var A=document.createElement("div");
+A.style.position="relative";
+A.style.left=0;
+U.appendChild(A);
+var m=H.offsetWidth;
+var G=H.offsetHeight;
+var I=m/(C-W);
+H.style.display="none";
+var g=function(x,k){if(x>=1000000){return function(y){return Math.floor(k(y)/1000000)+"M";
 };
-
-Exhibit.BarChartView.prototype._openPopup=function(elmt,items){
-Exhibit.ViewUtilities.openBubbleForItems(elmt,items,this._uiContext);
+}else{if(x>=1000){return function(y){return Math.floor(k(y)/1000)+"K";
 };
-
-
+}else{return function(y){return k(y);
+};
+}}};
+var X=g(d,B);
+for(var h=W+d;
+h<C;
+h+=d){var D=Math.floor((h-W)*I);
+var s=document.createElement("div");
+s.className="exhibit-barChartView-gridLine";
+s.style.width="1px";
+s.style.left=D+"px";
+s.style.top="0px";
+s.style.height="100%";
+s.style.zIndex="1";
+H.appendChild(s);
+var V=document.createElement("div");
+V.className="exhibit-barChartView-xAxisLabel";
+V.style.left=D+"px";
+V.innerHTML=X(h);
+A.appendChild(V);
+}var p=document.createElement("div");
+p.className="exhibit-barChartView-xAxisName";
+p.innerHTML=t.xLabel;
+A.appendChild(p);
+O.appendChild(U);
+H.style.display="block";
+if(J){var a=this._dom.legendWidget;
+var r=this._colorCoder;
+var R=f.keys.toArray().sort();
+if(this._colorCoder._gradientPoints!=null){a.addGradient(this._colorCoder._gradientPoints);
+}else{for(var o=0;
+o<R.length;
+o++){var L=R[o];
+var S=r.translate(L);
+a.addEntry(S,L);
+}}if(f.others){a.addEntry(r.getOthersColor(),r.getOthersLabel());
+}if(f.mixed){a.addEntry(r.getMixedColor(),r.getMixedLabel());
+}if(f.missing){a.addEntry(r.getMissingColor(),r.getMissingLabel());
+}}}this._dom.setUnplottableMessage(K,F);
+};
+Exhibit.BarChartView.prototype._openPopup=function(B,A){Exhibit.ViewUtilities.openBubbleForItems(B,A,this._uiContext);
+};
 
 
 /* pivot-table-view.js */
-
-
-Exhibit.PivotTableView=function(containerElmt,uiContext){
-this._div=containerElmt;
-this._uiContext=uiContext;
-
+Exhibit.PivotTableView=function(C,B){this._div=C;
+this._uiContext=B;
 this._rowPath=null;
 this._columnPath=null;
 this._cellExpression=null;
-
 this._settings={};
-
-var view=this;
-this._listener={
-onItemsChanged:function(){
-view._reconstruct();
-}
+var A=this;
+this._listener={onItemsChanged:function(){A._reconstruct();
+}};
+B.getCollection().addListener(this._listener);
 };
-uiContext.getCollection().addListener(this._listener);
+Exhibit.PivotTableView.create=function(D,C,B){var A=new Exhibit.PivotTableView(C,Exhibit.UIContext.create(D,B));
+Exhibit.PivotTableView._configure(A,D);
+A._initializeUI();
+return A;
 };
-
-Exhibit.PivotTableView.create=function(configuration,containerElmt,uiContext){
-var view=new Exhibit.PivotTableView(
-containerElmt,
-Exhibit.UIContext.create(configuration,uiContext)
-);
-
-Exhibit.PivotTableView._configure(view,configuration);
-
-view._initializeUI();
-return view;
+Exhibit.PivotTableView.createFromDOM=function(D,C,B){var E=Exhibit.getConfigurationFromDOM(D);
+var A=new Exhibit.PivotTableView(C!=null?C:D,Exhibit.UIContext.createFromDOM(D,B));
+A._columnPath=Exhibit.PivotTableView._parsePath(Exhibit.getAttribute(D,"column"));
+A._rowPath=Exhibit.PivotTableView._parsePath(Exhibit.getAttribute(D,"row"));
+A._cellExpression=Exhibit.PivotTableView._parseExpression(Exhibit.getAttribute(D,"cell"));
+Exhibit.PivotTableView._configure(A,E);
+A._initializeUI();
+return A;
 };
-
-Exhibit.PivotTableView.createFromDOM=function(configElmt,containerElmt,uiContext){
-var configuration=Exhibit.getConfigurationFromDOM(configElmt);
-var view=new Exhibit.PivotTableView(
-containerElmt!=null?containerElmt:configElmt,
-Exhibit.UIContext.createFromDOM(configElmt,uiContext)
-);
-
-view._columnPath=Exhibit.PivotTableView._parsePath(Exhibit.getAttribute(configElmt,"column"));
-view._rowPath=Exhibit.PivotTableView._parsePath(Exhibit.getAttribute(configElmt,"row"));
-view._cellExpression=Exhibit.PivotTableView._parseExpression(Exhibit.getAttribute(configElmt,"cell"));
-Exhibit.PivotTableView._configure(view,configuration);
-
-view._initializeUI();
-return view;
+Exhibit.PivotTableView._configure=function(A,B){if("column" in B){A._columnPath=Exhibit.PivotTableView._parsePath(B.column);
+}if("row" in B){A._rowPath=Exhibit.PivotTableView._parsePath(B.row);
+}if("cell" in B){A._cellExpression=Exhibit.PivotTableView._parseExpression(B.cell);
+}};
+Exhibit.PivotTableView._parseExpression=function(A){try{return Exhibit.ExpressionParser.parse(A);
+}catch(B){SimileAjax.Debug.exception(B,"Error parsing expression "+A);
+}return null;
 };
-
-Exhibit.PivotTableView._configure=function(view,configuration){
-if("column"in configuration){
-view._columnPath=Exhibit.PivotTableView._parsePath(configuration.column);
-}
-if("row"in configuration){
-view._rowPath=Exhibit.PivotTableView._parsePath(configuration.row);
-}
-if("cell"in configuration){
-view._cellExpression=Exhibit.PivotTableView._parseExpression(configuration.cell);
-}
+Exhibit.PivotTableView._parsePath=function(A){try{var C=Exhibit.ExpressionParser.parse(A);
+if(C.isPath()){return C.getPath();
+}else{SimileAjax.Debug.log("Expecting a path but got a full expression: "+A);
+}}catch(B){SimileAjax.Debug.exception(B,"Error parsing expression "+A);
+}return null;
 };
-
-Exhibit.PivotTableView._parseExpression=function(s){
-try{
-return Exhibit.ExpressionParser.parse(s);
-}catch(e){
-SimileAjax.Debug.exception(e,"Error parsing expression "+s);
-}
-return null;
-};
-
-Exhibit.PivotTableView._parsePath=function(s){
-try{
-var expression=Exhibit.ExpressionParser.parse(s);
-if(expression.isPath()){
-return expression.getPath();
-}else{
-SimileAjax.Debug.log("Expecting a path but got a full expression: "+s);
-}
-}catch(e){
-SimileAjax.Debug.exception(e,"Error parsing expression "+s);
-}
-return null;
-};
-
-Exhibit.PivotTableView.prototype.dispose=function(){
-this._uiContext.getCollection().removeListener(this._listener);
-
+Exhibit.PivotTableView.prototype.dispose=function(){this._uiContext.getCollection().removeListener(this._listener);
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
-
 this._collectionSummaryWidget.dispose();
 this._collectionSummaryWidget=null;
-
 this._uiContext.dispose();
 this._uiContext=null;
-
 this._div.innerHTML="";
-
 this._dom=null;
 this._div=null;
 };
-
-Exhibit.PivotTableView.prototype._initializeUI=function(){
-var self=this;
-
+Exhibit.PivotTableView.prototype._initializeUI=function(){var A=this;
 this._div.innerHTML="";
 this._dom=Exhibit.PivotTableView.constructDom(this._div);
-this._collectionSummaryWidget=Exhibit.CollectionSummaryWidget.create(
-{},
-this._dom.collectionSummaryDiv,
-this._uiContext
-);
+this._collectionSummaryWidget=Exhibit.CollectionSummaryWidget.create({},this._dom.collectionSummaryDiv,this._uiContext);
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
-
 this._reconstruct();
 };
-
-Exhibit.PivotTableView.prototype._reconstruct=function(){
-this._dom.tableContainer.innerHTML="";
-
-var currentSize=this._uiContext.getCollection().countRestrictedItems();
-if(currentSize>0){
-var currentSet=this._uiContext.getCollection().getRestrictedItems();
-if(this._columnPath!=null&&this._rowPath!=null&&this._cellExpression!=null){
-this._makeTable(currentSet);
-}
-}
-};
-
-Exhibit.PivotTableView.prototype._makeTable=function(items){
-var self=this;
-var database=this._uiContext.getDatabase();
-
-var rowResults=this._rowPath.walkForward(items,"item",database).getSet();
-var columnResults=this._columnPath.walkForward(items,"item",database).getSet();
-
-var rowValues=Exhibit.PivotTableView._sortValues(rowResults);
-var columnValues=Exhibit.PivotTableView._sortValues(columnResults);
-
-var rowCount=rowValues.length;
-var columnCount=columnValues.length;
-
-var evenColor="#eee";
-var oddColor="#fff";
-
-var table=document.createElement("table");
-table.cellPadding=2;
-table.cellSpacing=0;
-
-var rowToInsert=0;
-var tr,td;
-
-for(var c=0;c<columnCount;c++){
-var cellToInsert=0;
-
-tr=table.insertRow(rowToInsert++);
-
-td=tr.insertCell(cellToInsert++);
-
-if(c>0){
-td=tr.insertCell(cellToInsert++);
-td.rowSpan=columnCount-c+1;
-td.style.backgroundColor=(c%2)==0?oddColor:evenColor;
-td.innerHTML="\u00a0";
-}
-
-td=tr.insertCell(cellToInsert++);
-td.colSpan=columnCount-c+1;
-td.style.backgroundColor=(c%2)==1?oddColor:evenColor;
-td.innerHTML=columnValues[c].label;
-}
-
-tr=table.insertRow(rowToInsert++);
-td=tr.insertCell(0);
-td=tr.insertCell(1);
-td.style.backgroundColor=(columnCount%2)==0?oddColor:evenColor;
-td.innerHTML="\u00a0";
-td=tr.insertCell(2);
-
-for(var r=0;r<rowCount;r++){
-var cellToInsert=0;
-var rowPair=rowValues[r];
-var rowValue=rowPair.value;
-
-tr=table.insertRow(rowToInsert++);
-
-td=tr.insertCell(cellToInsert++);
-td.innerHTML=rowValues[r].label;
-td.style.borderBottom="1px solid #aaa";
-
-var rowItems=this._rowPath.evaluateBackward(rowValue,rowResults.valueType,items,database).getSet();
-for(var c=0;c<columnCount;c++){
-var columnPair=columnValues[c];
-var columnValue=columnPair.value;
-
-td=tr.insertCell(cellToInsert++);
-td.style.backgroundColor=(c%2)==1?oddColor:evenColor;
-td.style.borderBottom="1px solid #ccc";
-td.title=rowPair.label+" / "+columnPair.label;
-
-var cellItemResults=this._columnPath.evaluateBackward(columnValue,columnResults.valueType,rowItems,database);
-var cellResults=this._cellExpression.evaluate(
-{"value":cellItemResults.getSet()},
-{"value":cellItemResults.valueType},
-"value",
-database
-);
-
-if(cellResults.valueType=="number"&&cellResults.values.size()==1){
-cellResults.values.visit(function(v){
-if(v!=0){
-td.appendChild(document.createTextNode(v));
-}else{
-td.appendChild(document.createTextNode("\u00a0"));
-}
+Exhibit.PivotTableView.prototype._reconstruct=function(){this._dom.tableContainer.innerHTML="";
+var A=this._uiContext.getCollection().countRestrictedItems();
+if(A>0){var B=this._uiContext.getCollection().getRestrictedItems();
+if(this._columnPath!=null&&this._rowPath!=null&&this._cellExpression!=null){this._makeTable(B);
+}}};
+Exhibit.PivotTableView.prototype._makeTable=function(Q){var P=this;
+var N=this._uiContext.getDatabase();
+var D=this._rowPath.walkForward(Q,"item",N).getSet();
+var J=this._columnPath.walkForward(Q,"item",N).getSet();
+var R=Exhibit.PivotTableView._sortValues(D);
+var E=Exhibit.PivotTableView._sortValues(J);
+var M=R.length;
+var Y=E.length;
+var Z="#eee";
+var F="#fff";
+var V=document.createElement("table");
+V.cellPadding=2;
+V.cellSpacing=0;
+var T=0;
+var B,K;
+for(var X=0;
+X<Y;
+X++){var L=0;
+B=V.insertRow(T++);
+K=B.insertCell(L++);
+if(X>0){K=B.insertCell(L++);
+K.rowSpan=Y-X+1;
+K.style.backgroundColor=(X%2)==0?F:Z;
+K.innerHTML="\u00a0";
+}K=B.insertCell(L++);
+K.colSpan=Y-X+1;
+K.style.backgroundColor=(X%2)==1?F:Z;
+K.innerHTML=E[X].label;
+}B=V.insertRow(T++);
+K=B.insertCell(0);
+K=B.insertCell(1);
+K.style.backgroundColor=(Y%2)==0?F:Z;
+K.innerHTML="\u00a0";
+K=B.insertCell(2);
+for(var O=0;
+O<M;
+O++){var L=0;
+var C=R[O];
+var U=C.value;
+B=V.insertRow(T++);
+K=B.insertCell(L++);
+K.innerHTML=R[O].label;
+K.style.borderBottom="1px solid #aaa";
+var S=this._rowPath.evaluateBackward(U,D.valueType,Q,N).getSet();
+for(var X=0;
+X<Y;
+X++){var W=E[X];
+var H=W.value;
+K=B.insertCell(L++);
+K.style.backgroundColor=(X%2)==1?F:Z;
+K.style.borderBottom="1px solid #ccc";
+K.title=C.label+" / "+W.label;
+var G=this._columnPath.evaluateBackward(H,J.valueType,S,N);
+var A=this._cellExpression.evaluate({"value":G.getSet()},{"value":G.valueType},"value",N);
+if(A.valueType=="number"&&A.values.size()==1){A.values.visit(function(a){if(a!=0){K.appendChild(document.createTextNode(a));
+}else{K.appendChild(document.createTextNode("\u00a0"));
+}});
+}else{var I=true;
+A.values.visit(function(a){if(I){I=false;
+}else{K.appendChild(document.createTextNode(", "));
+}K.appendChild(document.createTextNode(a));
 });
-}else{
-var first=true;
-cellResults.values.visit(function(v){
-if(first){
-first=false;
-}else{
-td.appendChild(document.createTextNode(", "));
-}
-td.appendChild(document.createTextNode(v));
-});
-}
-}
-}
-
-this._dom.tableContainer.appendChild(table);
+}}}this._dom.tableContainer.appendChild(V);
 };
-
-Exhibit.PivotTableView._sortValues=function(values,valueType,database){
-var a=[];
-values.visit(valueType=="item"?
-function(v){
-var label=database.getObject(v,"label");
-a.push({
-value:v,
-label:label!=null?label:v
+Exhibit.PivotTableView._sortValues=function(B,D,C){var A=[];
+B.visit(D=="item"?function(E){var F=C.getObject(E,"label");
+A.push({value:E,label:F!=null?F:E});
+}:function(E){A.push({value:E,label:E});
 });
-}:
-function(v){
-a.push({
-value:v,
-label:v
+A.sort(function(F,E){var G=F.label.localeCompare(E.label);
+return G!=null?G:F.value.localeCompare(E.value);
 });
-}
-);
-a.sort(function(o1,o2){
-var c=o1.label.localeCompare(o2.label);
-return c!=null?c:o1.value.localeCompare(o2.value);
-});
-return a;
+return A;
 };
-
-Exhibit.PivotTableView.prototype._openPopup=function(elmt,items){
-var coords=SimileAjax.DOM.getPageCoordinates(elmt);
-var bubble=SimileAjax.Graphics.createBubbleForPoint(
-coords.left+Math.round(elmt.offsetWidth/2),
-coords.top+Math.round(elmt.offsetHeight/2),
-400,
-300
-);
-
-if(items.length>1){
-var ul=document.createElement("ul");
-for(var i=0;i<items.length;i++){
-var li=document.createElement("li");
-li.appendChild(Exhibit.UI.makeItemSpan(items[i],null,this._uiContext));
-ul.appendChild(li);
-}
-bubble.content.appendChild(ul);
-}else{
-var itemLensDiv=document.createElement("div");
-var itemLens=this._uiContext.getLensRegistry().createLens(items[0],itemLensDiv,this._uiContext);
-bubble.content.appendChild(itemLensDiv);
-}
-};
-
-Exhibit.PivotTableView.constructDom=function(div){
-var l10n=Exhibit.PivotTableView.l10n;
-var template={
-elmt:div,
-children:[
-{tag:"div",
-className:"exhibit-collectionView-header",
-field:"collectionSummaryDiv"
-},
-{tag:"div",
-field:"tableContainer",
-className:"exhibit-pivotTableView-tableContainer"
-}
-]
-};
-
-return SimileAjax.DOM.createDOMFromTemplate(template);
+Exhibit.PivotTableView.prototype._openPopup=function(A,E){var G=SimileAjax.DOM.getPageCoordinates(A);
+var F=SimileAjax.Graphics.createBubbleForPoint(G.left+Math.round(A.offsetWidth/2),G.top+Math.round(A.offsetHeight/2),400,300);
+if(E.length>1){var D=document.createElement("ul");
+for(var C=0;
+C<E.length;
+C++){var H=document.createElement("li");
+H.appendChild(Exhibit.UI.makeItemSpan(E[C],null,this._uiContext));
+D.appendChild(H);
+}F.content.appendChild(D);
+}else{var I=document.createElement("div");
+var B=this._uiContext.getLensRegistry().createLens(E[0],I,this._uiContext);
+F.content.appendChild(I);
+}};
+Exhibit.PivotTableView.constructDom=function(C){var A=Exhibit.PivotTableView.l10n;
+var B={elmt:C,children:[{tag:"div",className:"exhibit-collectionView-header",field:"collectionSummaryDiv"},{tag:"div",field:"tableContainer",className:"exhibit-pivotTableView-tableContainer"}]};
+return SimileAjax.DOM.createDOMFromTemplate(B);
 };
 
 
 /* scatter-plot-view.js */
-
-
-Exhibit.ScatterPlotView=function(containerElmt,uiContext){
-this._div=containerElmt;
-this._uiContext=uiContext;
-
+Exhibit.ScatterPlotView=function(C,B){this._div=C;
+this._uiContext=B;
 this._settings={};
-this._accessors={
-getPointLabel:function(itemID,database,visitor){visitor(database.getObject(itemID,"label"));},
-getProxy:function(itemID,database,visitor){visitor(itemID);},
-getColorKey:null
-};
-
-
-this._axisFuncs={x:function(x){return x;},y:function(y){return y;}};
-this._axisInverseFuncs={x:function(x){return x;},y:function(y){return y;}};
-
+this._accessors={getPointLabel:function(F,E,D){D(E.getObject(F,"label"));
+},getProxy:function(F,E,D){D(F);
+},getColorKey:null};
+this._axisFuncs={x:function(D){return D;
+},y:function(D){return D;
+}};
+this._axisInverseFuncs={x:function(D){return D;
+},y:function(D){return D;
+}};
 this._colorKeyCache=new Object();
 this._maxColor=0;
-
-var view=this;
-this._listener={
-onItemsChanged:function(){
-view._reconstruct();
-}
+var A=this;
+this._listener={onItemsChanged:function(){A._reconstruct();
+}};
+B.getCollection().addListener(this._listener);
 };
-uiContext.getCollection().addListener(this._listener);
+Exhibit.ScatterPlotView._settingSpecs={"plotHeight":{type:"int",defaultValue:400},"bubbleWidth":{type:"int",defaultValue:400},"bubbleHeight":{type:"int",defaultValue:300},"xAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},"xAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},"xAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},"yAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},"yAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},"yAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},"xLabel":{type:"text",defaultValue:"x"},"yLabel":{type:"text",defaultValue:"y"},"color":{type:"text",defaultValue:"#0000aa"},"colorCoder":{type:"text",defaultValue:null}};
+Exhibit.ScatterPlotView._accessorSpecs=[{accessorName:"getProxy",attributeName:"proxy"},{accessorName:"getPointLabel",attributeName:"pointLabel"},{accessorName:"getXY",alternatives:[{bindings:[{attributeName:"xy",types:["float","float"],bindingNames:["x","y"]}]},{bindings:[{attributeName:"x",type:"float",bindingName:"x"},{attributeName:"y",type:"float",bindingName:"y"}]}]},{accessorName:"getColorKey",attributeName:"colorKey",type:"text"}];
+Exhibit.ScatterPlotView.create=function(D,C,B){var A=new Exhibit.ScatterPlotView(C,Exhibit.UIContext.create(D,B));
+Exhibit.ScatterPlotView._configure(A,D);
+A._internalValidate();
+A._initializeUI();
+return A;
 };
-
-Exhibit.ScatterPlotView._settingSpecs={
-"plotHeight":{type:"int",defaultValue:400},
-"bubbleWidth":{type:"int",defaultValue:400},
-"bubbleHeight":{type:"int",defaultValue:300},
-"xAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},
-"xAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},
-"xAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},
-"yAxisMin":{type:"float",defaultValue:Number.POSITIVE_INFINITY},
-"yAxisMax":{type:"float",defaultValue:Number.NEGATIVE_INFINITY},
-"yAxisType":{type:"enum",defaultValue:"linear",choices:["linear","log"]},
-"xLabel":{type:"text",defaultValue:"x"},
-"yLabel":{type:"text",defaultValue:"y"},
-"color":{type:"text",defaultValue:"#0000aa"},
-"colorCoder":{type:"text",defaultValue:null}
+Exhibit.ScatterPlotView.createFromDOM=function(D,C,B){var E=Exhibit.getConfigurationFromDOM(D);
+var A=new Exhibit.ScatterPlotView(C!=null?C:D,Exhibit.UIContext.createFromDOM(D,B));
+Exhibit.SettingsUtilities.createAccessorsFromDOM(D,Exhibit.ScatterPlotView._accessorSpecs,A._accessors);
+Exhibit.SettingsUtilities.collectSettingsFromDOM(D,Exhibit.ScatterPlotView._settingSpecs,A._settings);
+Exhibit.ScatterPlotView._configure(A,E);
+A._internalValidate();
+A._initializeUI();
+return A;
 };
-
-Exhibit.ScatterPlotView._accessorSpecs=[
-{accessorName:"getProxy",
-attributeName:"proxy"
-},
-{accessorName:"getPointLabel",
-attributeName:"pointLabel"
-},
-{accessorName:"getXY",
-alternatives:[
-{bindings:[
-{attributeName:"xy",
-types:["float","float"],
-bindingNames:["x","y"]
-}
-]
-},
-{bindings:[
-{attributeName:"x",
-type:"float",
-bindingName:"x"
-},
-{attributeName:"y",
-type:"float",
-bindingName:"y"
-}
-]
-}
-]
-},
-{accessorName:"getColorKey",
-attributeName:"colorKey",
-type:"text"
-}
-];
-
-Exhibit.ScatterPlotView.create=function(configuration,containerElmt,uiContext){
-var view=new Exhibit.ScatterPlotView(
-containerElmt,
-Exhibit.UIContext.create(configuration,uiContext)
-);
-Exhibit.ScatterPlotView._configure(view,configuration);
-
-view._internalValidate();
-view._initializeUI();
-return view;
-};
-
-Exhibit.ScatterPlotView.createFromDOM=function(configElmt,containerElmt,uiContext){
-var configuration=Exhibit.getConfigurationFromDOM(configElmt);
-var view=new Exhibit.ScatterPlotView(
-containerElmt!=null?containerElmt:configElmt,
-Exhibit.UIContext.createFromDOM(configElmt,uiContext)
-);
-
-Exhibit.SettingsUtilities.createAccessorsFromDOM(configElmt,Exhibit.ScatterPlotView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt,Exhibit.ScatterPlotView._settingSpecs,view._settings);
-Exhibit.ScatterPlotView._configure(view,configuration);
-
-view._internalValidate();
-view._initializeUI();
-return view;
-};
-
-Exhibit.ScatterPlotView._configure=function(view,configuration){
-Exhibit.SettingsUtilities.createAccessors(configuration,Exhibit.ScatterPlotView._accessorSpecs,view._accessors);
-Exhibit.SettingsUtilities.collectSettings(configuration,Exhibit.ScatterPlotView._settingSpecs,view._settings);
-
-view._axisFuncs.x=Exhibit.ScatterPlotView._getAxisFunc(view._settings.xAxisType);
-view._axisInverseFuncs.x=Exhibit.ScatterPlotView._getAxisInverseFunc(view._settings.xAxisType);
-
-view._axisFuncs.y=Exhibit.ScatterPlotView._getAxisFunc(view._settings.yAxisType);
-view._axisInverseFuncs.y=Exhibit.ScatterPlotView._getAxisInverseFunc(view._settings.yAxisType);
-
-var accessors=view._accessors;
-view._getXY=function(itemID,database,visitor){
-accessors.getProxy(itemID,database,function(proxy){
-accessors.getXY(proxy,database,visitor);
+Exhibit.ScatterPlotView._configure=function(A,C){Exhibit.SettingsUtilities.createAccessors(C,Exhibit.ScatterPlotView._accessorSpecs,A._accessors);
+Exhibit.SettingsUtilities.collectSettings(C,Exhibit.ScatterPlotView._settingSpecs,A._settings);
+A._axisFuncs.x=Exhibit.ScatterPlotView._getAxisFunc(A._settings.xAxisType);
+A._axisInverseFuncs.x=Exhibit.ScatterPlotView._getAxisInverseFunc(A._settings.xAxisType);
+A._axisFuncs.y=Exhibit.ScatterPlotView._getAxisFunc(A._settings.yAxisType);
+A._axisInverseFuncs.y=Exhibit.ScatterPlotView._getAxisInverseFunc(A._settings.yAxisType);
+var B=A._accessors;
+A._getXY=function(F,E,D){B.getProxy(F,E,function(G){B.getXY(G,E,D);
 });
 };
 };
-
-
-Exhibit.ScatterPlotView._getAxisFunc=function(s){
-if(s=="log"){
-return function(x){return(Math.log(x)/Math.log(10.0));};
-}else{
-return function(x){return x;};
-}
-}
-
-
-Exhibit.ScatterPlotView._getAxisInverseFunc=function(s){
-if(s=="log"){
-return function(x){return Math.pow(10,x);};
-}else{
-return function(x){return x;};
+Exhibit.ScatterPlotView._getAxisFunc=function(A){if(A=="log"){return function(B){return(Math.log(B)/Math.log(10));
 };
-}
-
-
-Exhibit.ScatterPlotView._colors=[
-"FF9000",
-"5D7CBA",
-"A97838",
-"8B9BBA",
-"FFC77F",
-"003EBA",
-"29447B",
-"543C1C"
-];
+}else{return function(B){return B;
+};
+}};
+Exhibit.ScatterPlotView._getAxisInverseFunc=function(A){if(A=="log"){return function(B){return Math.pow(10,B);
+};
+}else{return function(B){return B;
+};
+}};
+Exhibit.ScatterPlotView._colors=["FF9000","5D7CBA","A97838","8B9BBA","FFC77F","003EBA","29447B","543C1C"];
 Exhibit.ScatterPlotView._mixColor="FFFFFF";
-
-Exhibit.ScatterPlotView.evaluateSingle=function(expression,itemID,database){
-return expression.evaluateSingleOnItem(itemID,database).value;
-}
-
-Exhibit.ScatterPlotView.prototype.dispose=function(){
-this._uiContext.getCollection().removeListener(this._listener);
-
+Exhibit.ScatterPlotView.evaluateSingle=function(C,B,A){return C.evaluateSingleOnItem(B,A).value;
+};
+Exhibit.ScatterPlotView.prototype.dispose=function(){this._uiContext.getCollection().removeListener(this._listener);
 this._toolboxWidget.dispose();
 this._toolboxWidget=null;
-
 this._dom.dispose();
 this._dom=null;
-
 this._uiContext.dispose();
 this._uiContext=null;
-
 this._div.innerHTML="";
 this._div=null;
 };
-
-Exhibit.ScatterPlotView.prototype._internalValidate=function(){
-if("getColorKey"in this._accessors){
-if("colorCoder"in this._settings){
-this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
-}
-
-if(this._colorCoder==null){
-this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
-}
-}
-};
-
-Exhibit.ScatterPlotView.prototype._initializeUI=function(){
-var self=this;
-var legendWidgetSettings="_gradientPoints"in this._colorCoder?"gradient":{}
-
+Exhibit.ScatterPlotView.prototype._internalValidate=function(){if("getColorKey" in this._accessors){if("colorCoder" in this._settings){this._colorCoder=this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
+}if(this._colorCoder==null){this._colorCoder=new Exhibit.DefaultColorCoder(this._uiContext);
+}}};
+Exhibit.ScatterPlotView.prototype._initializeUI=function(){var A=this;
+var B="_gradientPoints" in this._colorCoder?"gradient":{};
 this._div.innerHTML="";
-this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(
-this._div,
-this._uiContext,
-true,
-{onResize:function(){
-self._reconstruct();
-}
-},
-legendWidgetSettings
-);
+this._dom=Exhibit.ViewUtilities.constructPlottingViewDom(this._div,this._uiContext,true,{onResize:function(){A._reconstruct();
+}},B);
 this._toolboxWidget=Exhibit.ToolboxWidget.createFromDOM(this._div,this._div,this._uiContext);
-
 this._dom.plotContainer.className="exhibit-scatterPlotView-plotContainer";
 this._dom.plotContainer.style.height=this._settings.plotHeight+"px";
 this._reconstruct();
 };
-
-Exhibit.ScatterPlotView.prototype._reconstruct=function(){
-var self=this;
-var collection=this._uiContext.getCollection();
-var database=this._uiContext.getDatabase();
-var settings=this._settings;
-var accessors=this._accessors;
-
+Exhibit.ScatterPlotView.prototype._reconstruct=function(){var I=this;
+var h=this._uiContext.getCollection();
+var o=this._uiContext.getDatabase();
+var z=this._settings;
+var AA=this._accessors;
 this._dom.plotContainer.innerHTML="";
-
-var scaleX=self._axisFuncs.x;
-var scaleY=self._axisFuncs.y;
-var unscaleX=self._axisInverseFuncs.x;
-var unscaleY=self._axisInverseFuncs.y;
-
-var currentSize=collection.countRestrictedItems();
-var unplottableItems=[];
-
+var f=I._axisFuncs.x;
+var d=I._axisFuncs.y;
+var D=I._axisInverseFuncs.x;
+var B=I._axisInverseFuncs.y;
+var P=h.countRestrictedItems();
+var J=[];
 this._dom.legendWidget.clear();
-if(currentSize>0){
-var currentSet=collection.getRestrictedItems();
-var hasColorKey=(this._accessors.getColorKey!=null);
-
-var xyToData={};
-var xAxisMin=settings.xAxisMin;
-var xAxisMax=settings.xAxisMax;
-var yAxisMin=settings.yAxisMin;
-var yAxisMax=settings.yAxisMax;
-
-
-currentSet.visit(function(itemID){
-var xys=[];
-self._getXY(itemID,database,function(xy){if("x"in xy&&"y"in xy)xys.push(xy);});
-
-if(xys.length>0){
-var colorKeys=null;
-if(hasColorKey){
-colorKeys=new Exhibit.Set();
-accessors.getColorKey(itemID,database,function(v){colorKeys.add(v);});
-}
-
-for(var i=0;i<xys.length;i++){
-var xy=xys[i];
-var xyKey=xy.x+","+xy.y;
-if(xyKey in xyToData){
-var xyData=xyToData[xyKey];
-xyData.items.push(itemID);
-if(hasColorKey){
-xyData.colorKeys.addSet(colorKeys);
-}
-}else{
-try{
-xy.scaledX=scaleX(xy.x);
-xy.scaledY=scaleY(xy.y);
-if(!isFinite(xy.scaledX)||!isFinite(xy.scaledY)){
-continue;
-}
-}catch(e){
-continue;
-}
-
-var xyData={
-xy:xy,
-items:[itemID]
-};
-if(hasColorKey){
-xyData.colorKeys=colorKeys;
-}
-xyToData[xyKey]=xyData;
-
-xAxisMin=Math.min(xAxisMin,xy.scaledX);
-xAxisMax=Math.max(xAxisMax,xy.scaledX);
-yAxisMin=Math.min(yAxisMin,xy.scaledY);
-yAxisMax=Math.max(yAxisMax,xy.scaledY);
-}
-}
-}else{
-unplottableItems.push(itemID);
-}
+if(P>0){var R=h.getRestrictedItems();
+var O=(this._accessors.getColorKey!=null);
+var S={};
+var Z=z.xAxisMin;
+var F=z.xAxisMax;
+var g=z.yAxisMin;
+var H=z.yAxisMax;
+R.visit(function(AF){var AG=[];
+I._getXY(AF,o,function(AH){if("x" in AH&&"y" in AH){AG.push(AH);
+}});
+if(AG.length>0){var k=null;
+if(O){k=new Exhibit.Set();
+AA.getColorKey(AF,o,function(AH){k.add(AH);
 });
-
-
-var xDiff=xAxisMax-xAxisMin;
-var yDiff=yAxisMax-yAxisMin;
-
-var xInterval=1;
-if(xDiff>1){
-while(xInterval*20<xDiff){
-xInterval*=10;
-}
-}else{
-while(xInterval<xDiff*20){
-xInterval/=10;
-}
-}
-xAxisMin=Math.floor(xAxisMin/xInterval)*xInterval;
-xAxisMax=Math.ceil(xAxisMax/xInterval)*xInterval;
-
-var yInterval=1;
-if(yDiff>1){
-while(yInterval*20<yDiff){
-yInterval*=10;
-}
-}else{
-while(yInterval<yDiff*20){
-yInterval/=10;
-}
-}
-yAxisMin=Math.floor(yAxisMin/yInterval)*yInterval;
-yAxisMax=Math.ceil(yAxisMax/yInterval)*yInterval;
-
-settings.xAxisMin=xAxisMin;
-settings.xAxisMax=xAxisMax;
-settings.yAxisMin=yAxisMin;
-settings.yAxisMax=yAxisMax;
-
-
-var canvasFrame=document.createElement("div");
-canvasFrame.className=SimileAjax.Platform.browser.isIE?
-"exhibit-scatterPlotView-canvasFrame-ie":
-"exhibit-scatterPlotView-canvasFrame";
-this._dom.plotContainer.appendChild(canvasFrame);
-
-var canvasDiv=document.createElement("div");
-canvasDiv.className="exhibit-scatterPlotView-canvas";
-canvasDiv.style.height="100%";
-canvasFrame.appendChild(canvasDiv);
-
-var xAxisDiv=document.createElement("div");
-xAxisDiv.className="exhibit-scatterPlotView-xAxis";
-this._dom.plotContainer.appendChild(xAxisDiv);
-
-var xAxisDivInner=document.createElement("div");
-xAxisDivInner.style.position="relative";
-xAxisDiv.appendChild(xAxisDivInner);
-
-var yAxisDiv=document.createElement("div");
-yAxisDiv.className=SimileAjax.Platform.browser.isIE?
-"exhibit-scatterPlotView-yAxis-ie":
-"exhibit-scatterPlotView-yAxis";
-this._dom.plotContainer.appendChild(yAxisDiv);
-
-var yAxisDivInner=document.createElement("div");
-yAxisDivInner.style.position="relative";
-yAxisDivInner.style.height="100%";
-yAxisDiv.appendChild(yAxisDivInner);
-
-var canvasWidth=canvasDiv.offsetWidth;
-var canvasHeight=canvasDiv.offsetHeight;
-var xScale=canvasWidth/(xAxisMax-xAxisMin);
-var yScale=canvasHeight/(yAxisMax-yAxisMin);
-
-canvasDiv.style.display="none";
-
-
-var makeMakeLabel=function(interval,unscale){
-
-if(interval>=1000000){
-return function(n){return Math.floor(unscale(n)/1000000)+"M";};
-}else if(interval>=1000){
-return function(n){return Math.floor(unscale(n)/1000)+"K";};
-}else{
-return function(n){return unscale(n);};
-}
+}for(var x=0;
+x<AG.length;
+x++){var AE=AG[x];
+var y=AE.x+","+AE.y;
+if(y in S){var AC=S[y];
+AC.items.push(AF);
+if(O){AC.colorKeys.addSet(k);
+}}else{try{AE.scaledX=f(AE.x);
+AE.scaledY=d(AE.y);
+if(!isFinite(AE.scaledX)||!isFinite(AE.scaledY)){continue;
+}}catch(AD){continue;
+}var AC={xy:AE,items:[AF]};
+if(O){AC.colorKeys=k;
+}S[y]=AC;
+Z=Math.min(Z,AE.scaledX);
+F=Math.max(F,AE.scaledX);
+g=Math.min(g,AE.scaledY);
+H=Math.max(H,AE.scaledY);
+}}}else{J.push(AF);
+}});
+var V=F-Z;
+var M=H-g;
+var i=1;
+if(V>1){while(i*20<V){i*=10;
+}}else{while(i<V*20){i/=10;
+}}Z=Math.floor(Z/i)*i;
+F=Math.ceil(F/i)*i;
+var E=1;
+if(M>1){while(E*20<M){E*=10;
+}}else{while(E<M*20){E/=10;
+}}g=Math.floor(g/E)*E;
+H=Math.ceil(H/E)*E;
+z.xAxisMin=Z;
+z.xAxisMax=F;
+z.yAxisMin=g;
+z.yAxisMax=H;
+var s=document.createElement("div");
+s.className=SimileAjax.Platform.browser.isIE?"exhibit-scatterPlotView-canvasFrame-ie":"exhibit-scatterPlotView-canvasFrame";
+this._dom.plotContainer.appendChild(s);
+var L=document.createElement("div");
+L.className="exhibit-scatterPlotView-canvas";
+L.style.height="100%";
+s.appendChild(L);
+var W=document.createElement("div");
+W.className="exhibit-scatterPlotView-xAxis";
+this._dom.plotContainer.appendChild(W);
+var C=document.createElement("div");
+C.style.position="relative";
+W.appendChild(C);
+var c=document.createElement("div");
+c.className=SimileAjax.Platform.browser.isIE?"exhibit-scatterPlotView-yAxis-ie":"exhibit-scatterPlotView-yAxis";
+this._dom.plotContainer.appendChild(c);
+var p=document.createElement("div");
+p.style.position="relative";
+p.style.height="100%";
+c.appendChild(p);
+var r=L.offsetWidth;
+var K=L.offsetHeight;
+var N=r/(F-Z);
+var q=K/(H-g);
+L.style.display="none";
+var m=function(x,k){if(x>=1000000){return function(y){return Math.floor(k(y)/1000000)+"M";
 };
-var makeLabelX=makeMakeLabel(xInterval,unscaleX);
-var makeLabelY=makeMakeLabel(yInterval,unscaleY);
-
-for(var x=xAxisMin+xInterval;x<xAxisMax;x+=xInterval){
-var left=Math.floor((x-xAxisMin)*xScale);
-
-var div=document.createElement("div");
-div.className="exhibit-scatterPlotView-gridLine";
-div.style.width="1px";
-div.style.left=left+"px";
-div.style.top="0px";
-div.style.height="100%";
-canvasDiv.appendChild(div);
-
-var labelDiv=document.createElement("div");
-labelDiv.className="exhibit-scatterPlotView-xAxisLabel";
-labelDiv.style.left=left+"px";
-labelDiv.innerHTML=makeLabelX(x);
-xAxisDivInner.appendChild(labelDiv);
-}
-var xNameDiv=document.createElement("div");
-xNameDiv.className="exhibit-scatterPlotView-xAxisName";
-xNameDiv.innerHTML=settings.xLabel;
-xAxisDivInner.appendChild(xNameDiv);
-
-for(var y=yAxisMin+yInterval;y<yAxisMax;y+=yInterval){
-var bottom=Math.floor((y-yAxisMin)*yScale);
-
-var div=document.createElement("div");
-div.className="exhibit-scatterPlotView-gridLine";
-div.style.height="1px";
-div.style.bottom=bottom+"px";
-div.style.left="0px";
-div.style.width="100%";
-canvasDiv.appendChild(div);
-
-var labelDiv=document.createElement("div");
-labelDiv.className="exhibit-scatterPlotView-yAxisLabel";
-labelDiv.style.bottom=bottom+"px";
-labelDiv.innerHTML=makeLabelY(y);
-yAxisDivInner.appendChild(labelDiv);
-}
-var yNameDiv=document.createElement("div");
-yNameDiv.className="exhibit-scatterPlotView-yAxisName";
-yNameDiv.innerHTML=settings.yLabel;
-yAxisDivInner.appendChild(yNameDiv);
-
-
-var colorCodingFlags={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
-var addPointAtLocation=function(xyData){
-var items=xyData.items;
-
-var color=settings.color;
-if(hasColorKey){
-color=self._colorCoder.translateSet(xyData.colorKeys,colorCodingFlags);
-}
-
-var xy=xyData.xy;
-var marker=Exhibit.ScatterPlotView._makePoint(
-color,
-Math.floor((xy.scaledX-xAxisMin)*xScale),
-Math.floor((xy.scaledY-yAxisMin)*yScale),
-xyData.items+": "+
-settings.xLabel+" = "+xy.x+", "+
-settings.yLabel+" = "+xy.y
-);
-
-SimileAjax.WindowManager.registerEvent(marker,"click",
-function(elmt,evt,target){self._openPopup(marker,items);});
-
-canvasDiv.appendChild(marker);
-}
-
-for(xyKey in xyToData){
-addPointAtLocation(xyToData[xyKey]);
-}
-canvasDiv.style.display="block";
-
-if(hasColorKey){
-var legendWidget=this._dom.legendWidget;
-var colorCoder=this._colorCoder;
-var keys=colorCodingFlags.keys.toArray().sort();
-if(this._colorCoder._gradientPoints!=null){
-legendWidget.addGradient(this._colorCoder._gradientPoints);
-}else{
-for(var k=0;k<keys.length;k++){
-var key=keys[k];
-var color=colorCoder.translate(key);
-legendWidget.addEntry(color,key);
-}
-}
-
-if(colorCodingFlags.others){
-legendWidget.addEntry(colorCoder.getOthersColor(),colorCoder.getOthersLabel());
-}
-if(colorCodingFlags.mixed){
-legendWidget.addEntry(colorCoder.getMixedColor(),colorCoder.getMixedLabel());
-}
-if(colorCodingFlags.missing){
-legendWidget.addEntry(colorCoder.getMissingColor(),colorCoder.getMissingLabel());
-}
-}
-}
-this._dom.setUnplottableMessage(currentSize,unplottableItems);
+}else{if(x>=1000){return function(y){return Math.floor(k(y)/1000)+"K";
 };
-
-Exhibit.ScatterPlotView.prototype._openPopup=function(elmt,items){
-Exhibit.ViewUtilities.openBubbleForItems(elmt,items,this._uiContext);
+}else{return function(y){return k(y);
 };
-
-Exhibit.ScatterPlotView._makePoint=function(color,left,bottom,tooltip){
-var outer=document.createElement("div");
-outer.innerHTML="<div class='exhibit-scatterPlotView-point' style='background: "+color+
-"; width: 6px; height: 6px; left: "+(left-3)+"px; bottom: "+(bottom+3)+"px;' title='"+tooltip+"'></div>";
-
-return outer.firstChild;
+}}};
+var b=m(i,D);
+var a=m(E,B);
+for(var n=Z+i;
+n<F;
+n+=i){var G=Math.floor((n-Z)*N);
+var w=document.createElement("div");
+w.className="exhibit-scatterPlotView-gridLine";
+w.style.width="1px";
+w.style.left=G+"px";
+w.style.top="0px";
+w.style.height="100%";
+L.appendChild(w);
+var Y=document.createElement("div");
+Y.className="exhibit-scatterPlotView-xAxisLabel";
+Y.style.left=G+"px";
+Y.innerHTML=b(n);
+C.appendChild(Y);
+}var u=document.createElement("div");
+u.className="exhibit-scatterPlotView-xAxisName";
+u.innerHTML=z.xLabel;
+C.appendChild(u);
+for(var l=g+E;
+l<H;
+l+=E){var A=Math.floor((l-g)*q);
+var w=document.createElement("div");
+w.className="exhibit-scatterPlotView-gridLine";
+w.style.height="1px";
+w.style.bottom=A+"px";
+w.style.left="0px";
+w.style.width="100%";
+L.appendChild(w);
+var Y=document.createElement("div");
+Y.className="exhibit-scatterPlotView-yAxisLabel";
+Y.style.bottom=A+"px";
+Y.innerHTML=a(l);
+p.appendChild(Y);
+}var AB=document.createElement("div");
+AB.className="exhibit-scatterPlotView-yAxisName";
+AB.innerHTML=z.yLabel;
+p.appendChild(AB);
+var j={mixed:false,missing:false,others:false,keys:new Exhibit.Set()};
+var X=function(AC){var y=AC.items;
+var x=z.color;
+if(O){x=I._colorCoder.translateSet(AC.colorKeys,j);
+}var AD=AC.xy;
+var k=Exhibit.ScatterPlotView._makePoint(x,Math.floor((AD.scaledX-Z)*N),Math.floor((AD.scaledY-g)*q),AC.items+": "+z.xLabel+" = "+AD.x+", "+z.yLabel+" = "+AD.y);
+SimileAjax.WindowManager.registerEvent(k,"click",function(AF,AE,AG){I._openPopup(k,y);
+});
+L.appendChild(k);
+};
+for(xyKey in S){X(S[xyKey]);
+}L.style.display="block";
+if(O){var e=this._dom.legendWidget;
+var v=this._colorCoder;
+var T=j.keys.toArray().sort();
+if(this._colorCoder._gradientPoints!=null){e.addGradient(this._colorCoder._gradientPoints);
+}else{for(var t=0;
+t<T.length;
+t++){var Q=T[t];
+var U=v.translate(Q);
+e.addEntry(U,Q);
+}}if(j.others){e.addEntry(v.getOthersColor(),v.getOthersLabel());
+}if(j.mixed){e.addEntry(v.getMixedColor(),v.getMixedLabel());
+}if(j.missing){e.addEntry(v.getMissingColor(),v.getMissingLabel());
+}}}this._dom.setUnplottableMessage(P,J);
+};
+Exhibit.ScatterPlotView.prototype._openPopup=function(B,A){Exhibit.ViewUtilities.openBubbleForItems(B,A,this._uiContext);
+};
+Exhibit.ScatterPlotView._makePoint=function(B,E,A,D){var C=document.createElement("div");
+C.innerHTML="<div class='exhibit-scatterPlotView-point' style='background: "+B+"; width: 6px; height: 6px; left: "+(E-3)+"px; bottom: "+(A+3)+"px;' title='"+D+"'></div>";
+return C.firstChild;
 };
