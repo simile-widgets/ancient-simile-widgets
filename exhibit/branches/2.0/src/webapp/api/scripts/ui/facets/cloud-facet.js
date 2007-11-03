@@ -34,6 +34,7 @@ Exhibit.CloudFacet = function(containerElmt, uiContext) {
 
 Exhibit.CloudFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
+    "minimumCount":     { type: "int", defaultValue: 1 },
     "showMissing":      { type: "boolean", defaultValue: true }
 };
 
@@ -222,6 +223,7 @@ Exhibit.CloudFacet.prototype._computeFacet = function(items) {
     var database = this._uiContext.getDatabase();
     var entries = [];
     var valueType = "text";
+    var self = this;
     
     if (this._expression.isPath()) {
         var path = this._expression.getPath();
@@ -231,7 +233,9 @@ Exhibit.CloudFacet.prototype._computeFacet = function(items) {
         if (facetValueResult.size > 0) {
             facetValueResult.forEachValue(function(facetValue) {
                 var itemSubcollection = path.evaluateBackward(facetValue, valueType, items, database);
-                entries.push({ value: facetValue, count: itemSubcollection.size });
+                if (itemSubcollection.size >= self._settings.minimumCount || self._valueSet.contains(facetValue)) {
+                    entries.push({ value: facetValue, count: itemSubcollection.size });
+                }
             });
         };
     } else {
@@ -247,7 +251,7 @@ Exhibit.CloudFacet.prototype._computeFacet = function(items) {
                 }
             }
             
-            if (count > 0) {
+            if (count >= this._settings.minimumCount || this._valueSet.contains(value)) {
                 entries.push({ value: value, count: count });
             }
         }
