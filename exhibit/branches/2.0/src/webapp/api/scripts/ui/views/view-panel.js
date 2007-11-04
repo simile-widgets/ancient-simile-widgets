@@ -31,7 +31,9 @@ Exhibit.ViewPanel.create = function(configuration, div, uiContext) {
             }
             
             var label = null;
-            if ("label" in viewConfig) {
+            if ("viewLabel" in viewConfig) {
+                label = viewConfig.viewLabel;
+            } else if ("label" in viewConfig) {
                 label = viewConfig.label;
             } else if ("l10n" in viewClass && "viewLabel" in viewClass.l10n) {
                 label = viewClass.l10n.viewLabel;
@@ -92,7 +94,8 @@ Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
                     }
                 }
                 
-                var label = Exhibit.getAttribute(node, "label");
+                var viewLabel = Exhibit.getAttribute(node, "viewLabel");
+                var label = (viewLabel != null && viewLabel.length > 0) ? viewLabel : Exhibit.getAttribute(node, "label");
                 var tooltip = Exhibit.getAttribute(node, "title");
                 var id = node.id;
                 

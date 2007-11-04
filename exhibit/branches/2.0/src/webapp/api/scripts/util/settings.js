@@ -87,43 +87,54 @@ Exhibit.SettingsUtilities._internalCollectSettings = function(f, specs, settings
 };
 
 Exhibit.SettingsUtilities._parseSetting = function(s, type, spec) {
+    var sType = typeof s;
     if (type == "text") {
         return s;
     } else if (type == "float") {
-        var f = parseFloat(s);
-        if (isNaN(f)) {
-            throw new Error("Expected a floating point number but got " + s);
-        } else {
-            return f;
+        if (sType == "number") {
+            return s;
+        } else if (sType == "string") {
+            var f = parseFloat(s);
+            if (!isNaN(f)) {
+                return f;
+            }
         }
+        throw new Error("Expected a floating point number but got " + s);
     } else if (type == "int") {
-        var n = parseInt(s);
-        if (isNaN(n)) {
-            throw new Error("Expected an integer but got " + s);
-        } else {
-            return n;
+        if (sType == "number") {
+            return Math.round(s);
+        } else if (sType == "string") {
+            var n = parseInt(s);
+            if (!isNaN(n)) {
+                return n;
+            }
         }
+        throw new Error("Expected an integer but got " + s);
     } else if (type == "boolean") {
-        s = s.toLowerCase();
-        if (s == "true") {
-            return true;
-        } else if (s == "false") {
-            return false;
-        } else {
-            throw new Error("Expected either 'true' or 'false' but got " + s);
+        if (sType == "boolean") {
+            return s;
+        } else if (sType == "string") {
+            s = s.toLowerCase();
+            if (s == "true") {
+                return true;
+            } else if (s == "false") {
+                return false;
+            }
         }
+        throw new Error("Expected either 'true' or 'false' but got " + s);
     } else if (type == "function") {
-        try {
-            if (typeof s == "string") {
-                s = eval(s);
+        if (sType == "function") {
+            return s;
+        } else if (sType == "string") {
+            try {
+                var f = eval(s);
+                if (typeof f == "function") {
+                    return f;
+                }
+            } catch (e) {
+                // silent
             }
-            if (typeof s == "function") {
-                return s;
-            }
-        } catch (e) {
-            // silent
         }
-        
         throw new Error("Expected a function or the name of a function but got " + s);
     } else if (type == "enum") {
         var choices = spec.choices;
