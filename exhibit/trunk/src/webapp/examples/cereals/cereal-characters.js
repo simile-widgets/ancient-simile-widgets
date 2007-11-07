@@ -53,7 +53,7 @@
             thumbnail: 'images/buzzbee.png',
             image:     'images/buzzbee_large.png',
             url:       'http://www.lavasurfer.com/cereal-generalmills2.html',
-            text:      'BuzzBee, the Honey Nut Bee (late 1970\'s/early 1980\'s), is a cheery bee with small wings, and white shoes on his hind legs. His job is to encourage you to eat Honey Nut Cheerios. ìItís a honey of an O, itís Honey Nut Cheerios.î An earlier bee design is shown at left, with a more current design at right. He was officially named BuzzBee on April 6, 2000.'
+            text:      'BuzzBee, the Honey Nut Bee (late 1970\'s/early 1980\'s), is a cheery bee with small wings, and white shoes on his hind legs. His job is to encourage you to eat Honey Nut Cheerios. ‚ÄúIt‚Äôs a honey of an O, it‚Äôs Honey Nut Cheerios.‚Äù An earlier bee design is shown at left, with a more current design at right. He was officially named BuzzBee on April 6, 2000.'
         },
         {   type:      'Character',
             label:     'Snap!',
@@ -137,7 +137,7 @@
             thumbnail: 'images/smacks.png',
             image:     'images/smacks_large.png',
             url:       'http://www.lavasurfer.com/cereal-kelloggs5.html',
-            text:      'Smacks is a frog who has a stringly resemblance to Dig\'em. But then, all frogs look alike. Smacks are a sugar-toasted wheat puff. Smacks Choco are coco-flavored Smacks. TrÈsors and Choco TrÈsors are chocolate-filled puffs.'
+            text:      'Smacks is a frog who has a stringly resemblance to Dig\'em. But then, all frogs look alike. Smacks are a sugar-toasted wheat puff. Smacks Choco are coco-flavored Smacks. Tr√©sors and Choco Tr√©sors are chocolate-filled puffs.'
         },
         {   type:      'Character',
             label:     'Broncos Kid',
@@ -293,7 +293,7 @@
             thumbnail: 'images/cinimini-baker.png',
             image:     'images/cinimini-baker_large.png',
             url:       'http://www.lavasurfer.com/cereal-nestle-nabisco.html',
-            text:      'CiniMini Baker (1997) overlooking his handiwork. He is known as Le Petit P‚tissier in France.'
+            text:      'CiniMini Baker (1997) overlooking his handiwork. He is known as Le Petit P√¢tissier in France.'
         },
         {   type:      'Character',
             label:     'Quik Rabbit',
