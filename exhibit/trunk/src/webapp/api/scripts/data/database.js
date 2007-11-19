@@ -730,6 +730,24 @@ Exhibit.Database._Impl.prototype.removeSubjects = function(o, p) {
     }
 };
 
+Exhibit.Database._Impl.prototype.removeAllStatements = function() {
+    this._listeners.fire("onBeforeRemovingAllStatements", []);
+    try {
+        this._spo = {};
+        this._ops = {};
+        this._items = new Exhibit.Set();
+    
+        for (var propertyID in this._properties) {
+            this._properties[propertyID]._onNewData();
+        }
+        this._propertyArray = null;
+        
+        this._listeners.fire("onAfterRemovingAllStatements", []);
+    } catch(e) {
+        SimileAjax.Debug.exception(e, "Database.removeAllStatements failed");
+    }
+};
+
 /*==================================================
  *  Exhibit.Database._Type
  *==================================================

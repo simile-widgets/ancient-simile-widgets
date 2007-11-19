@@ -24,7 +24,11 @@ Exhibit.Collection.create = function(id, configuration, database) {
         collection._update = Exhibit.Collection._allItemsCollection_update;
     }
     
-    collection._listener = { onAfterLoadingItems: function() { collection._update(); } };
+    var update = function() { collection._update(); };
+    collection._listener = { 
+        onAfterLoadingItems: update,
+        onAfterRemovingAllStatements: update
+    };
     database.addListener(collection._listener);
     
     collection._update();
@@ -67,7 +71,11 @@ Exhibit.Collection.createFromDOM = function(id, elmt, database) {
         collection._update = Exhibit.Collection._allItemsCollection_update;
     }
     
-    collection._listener = { onAfterLoadingItems: function() { collection._update(); } };
+    var update = function() { collection._update(); };
+    collection._listener = { 
+        onAfterLoadingItems: update,
+        onAfterRemovingAllStatements: update
+    };
     database.addListener(collection._listener);
         
     collection._update();
@@ -104,6 +112,13 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
 
 Exhibit.Collection.createAllItemsCollection = function(id, database) {
     var collection = new Exhibit.Collection(id, database);
+    
+    var update = function() { collection._update(); };
+    collection._listener = { 
+        onAfterLoadingItems: update,
+        onAfterRemovingAllStatements: update
+    };
+    database.addListener(collection._listener);
     
     collection._update = Exhibit.Collection._allItemsCollection_update;
     collection._update();

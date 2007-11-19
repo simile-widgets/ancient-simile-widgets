@@ -83,15 +83,6 @@ Exhibit._Impl = function(database) {
     this._collectionMap = {};
     this._componentMap= {};
     
-    var self = this;
-    this._focusID = null;
-    this._databaseListener = {
-        onAfterLoadingItems : function() {
-            //self._tryToFocusOnItem(); // FIXME: Not implemented.
-        }
-    };
-    this._database.addListener(this._databaseListener);
-    
     this._historyListener = {
         onBeforePerform:        function(action) { if(action.lengthy) { Exhibit.UI.showBusyIndicator();} },
         onAfterPerform:         function(action) { if(action.lengthy) { Exhibit.UI.hideBusyIndicator();} },
@@ -100,17 +91,11 @@ Exhibit._Impl = function(database) {
         onBeforeRedoSeveral:    function() { Exhibit.UI.showBusyIndicator();},
         onAfterRedoSeveral:     function() { Exhibit.UI.hideBusyIndicator();}
     };
-    SimileAjax.History.addListener(this._historyListener);
-    
-    var hash = document.location.hash;
-    if (hash.length > 1) {
-        this._focusID = decodeURIComponent(hash.substr(1));
-    }
+    SimileAjax.History.addListener(this._historyListener);    
 };
 
 Exhibit._Impl.prototype.dispose = function() {
     SimileAjax.History.removeListener(this._historyListener);
-    this._database.removeListener(this._databaseListener);
     
     for (var id in this._componentMap) {
         try{
