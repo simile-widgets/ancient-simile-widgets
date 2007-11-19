@@ -1,0 +1,19 @@
+/*==================================================
+ * Exhibit styles
+ *
+ * Note that almost all CSS code is in themes.
+ *==================================================
+ */
+.exhibit-ui-protection div {
+    margin:     0;
+    padding:    0;
+}
+.exhibit-ui-protection table {
+	font-size: 100%;
+}
+.exhibit-ui-protection tr {
+	vertical-align: top;
+}
+a img {
+    border: none;
+}

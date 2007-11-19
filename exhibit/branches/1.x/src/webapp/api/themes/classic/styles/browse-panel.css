@@ -1,0 +1,76 @@
+/*==================================================
+ * Browse Panel styles
+ *==================================================
+ */
+div.exhibit-browsePanel {
+}
+
+div.exhibit-browsePanel-notConfigureMessage {
+    border:     1px solid #604800;
+    padding:    1em;
+    background: #FFFFE0;
+    text-align: center;
+}
+
+div.exhibit-browsePanel-logoContainer {
+    text-align: center;
+    margin:     1em;
+    clear:      both;
+}
+
+/*==================================================
+ * Facet box
+ *==================================================
+ */
+div.exhibit-facet-frame {
+    position:   relative;
+    overflow:   hidden;
+    opacity:    0;
+}
+
+div.exhibit-facet {
+    margin:     1em;
+    padding:    1px;
+}
+
+div.exhibit-facet-header {
+    padding:        2px;
+}
+div.exhibit-facet-header-filterControl {
+    float:          right;
+    width:          2em;
+    display:        none;
+    background:     #FFFFE0;
+    cursor:         pointer;
+}
+.exhibit-facet-hasSelection div.exhibit-facet-header-filterControl {
+    display:        block;
+}
+
+span.exhibit-facet-header-title {
+    font-weight:    bold;
+}
+span.exhibit-facet-header-detail {
+    color:          #888;
+    padding-left:   0.5em;
+}
+    
+div.exhibit-facet-body-frame {
+    border:         1px solid #ddd;
+}
+
+div.exhibit-facet-body {
+    height:         10em;
+    overflow:       auto;
+}
+
+div.exhibit-facet-resizer {
+    text-align:     center;
+    cursor:         n-resize;
+    height:         10px;
+}
+
+div.exhibit-facet-footer {
+    text-align: center;
+    padding:    2px;
+}
