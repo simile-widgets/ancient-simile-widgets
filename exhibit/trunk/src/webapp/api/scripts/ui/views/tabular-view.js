@@ -306,7 +306,11 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         if (this._rowTemplate != null) {
             renderItem = function(i) {
                 var item = items[i];
-                Exhibit.Lens.constructFromLensTemplate(item.id, self._rowTemplate, table, self._uiContext);
+                var tr = Exhibit.Lens.constructFromLensTemplate(item.id, self._rowTemplate, table, self._uiContext);
+                
+                if (self._settings.rowStyler != null) {
+                    self._settings.rowStyler(item.id, database, tr, i);
+                }
             }
         } else {
             renderItem = function(i) {

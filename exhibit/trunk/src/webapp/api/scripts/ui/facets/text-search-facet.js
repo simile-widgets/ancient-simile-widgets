@@ -26,7 +26,8 @@ Exhibit.TextSearchFacet = function(containerElmt, uiContext) {
 };
 
 Exhibit.TextSearchFacet._settingSpecs = {
-    "facetLabel":       { type: "text" }
+    "facetLabel":       { type: "text" },
+    "queryParamName":   { type: "text" }
 };
 
 Exhibit.TextSearchFacet.create = function(configuration, containerElmt, uiContext) {
@@ -89,6 +90,13 @@ Exhibit.TextSearchFacet._configure = function(facet, configuration) {
     if ("query" in configuration) {
         facet._text = configuration.query;
     }
+    if ("queryParamName" in facet._settings) {
+        var params = SimileAjax.parseURLParameters();
+        if (facet._settings["queryParamName"] in params) {
+            facet._text = params[facet._settings["queryParamName"]];
+        }
+    }
+    
     if (!("facetLabel" in facet._settings)) {
         facet._settings.facetLabel = "";
     }
