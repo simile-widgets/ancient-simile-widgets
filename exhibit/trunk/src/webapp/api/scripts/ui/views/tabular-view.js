@@ -44,9 +44,12 @@ Exhibit.TabularView.create = function(configuration, containerElmt, uiContext) {
 
 Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
+    
+    uiContext = Exhibit.UIContext.createFromDOM(configElmt, uiContext);
+    
     var view = new Exhibit.TabularView(
         containerElmt != null ? containerElmt : configElmt, 
-        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
+        uiContext
     );
     
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.TabularView._settingSpecs, view._settings);
@@ -95,7 +98,7 @@ Exhibit.TabularView.createFromDOM = function(configElmt, containerElmt, uiContex
         
         var tables = configElmt.getElementsByTagName("table");
         if (tables.length > 0 && tables[0].rows.length > 0) {
-            view._rowTemplate = Exhibit.Lens.compileTemplate(tables[0].rows[0], false);
+            view._rowTemplate = Exhibit.Lens.compileTemplate(tables[0].rows[0], false, uiContext);
         }
     } catch (e) {
         SimileAjax.Debug.exception(e, "TabularView: Error processing configuration of tabular view");
