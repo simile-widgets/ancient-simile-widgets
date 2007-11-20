@@ -706,7 +706,11 @@ Exhibit.Lens._constructElmtWithAttributes = function(templateNode, parentElmt, d
     for (var i = 0; i < attributes.length; i++) {
         var attribute = attributes[i];
         if (Exhibit.Lens._attributeValueIsSafe(attribute.name, attribute.value)) {
-            elmt.setAttribute(attribute.name, attribute.value);
+            try {
+                elmt.setAttribute(attribute.name, attribute.value);
+            } catch (e) {
+                // ignore; this happens on IE for attribute "type" on element "input"
+            }
         }
     }
     var styles = templateNode.styles;
