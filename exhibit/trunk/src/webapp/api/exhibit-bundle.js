@@ -996,7 +996,7 @@ this._index++;
 this._index+=2;
 }else{this._token={type:Exhibit.ExpressionScanner.OPERATOR,value:C,start:this._index,end:this._index+1};
 this._index++;
-}}else{if("+-*/".indexOf(C)>=0){this._token={type:Exhibit.ExpressionScanner.OPERATOR,value:C,start:this._index,end:this._index+1};
+}}else{if("+-*/=".indexOf(C)>=0){this._token={type:Exhibit.ExpressionScanner.OPERATOR,value:C,start:this._index,end:this._index+1};
 this._index++;
 }else{if("(),".indexOf(C)>=0){this._token={type:Exhibit.ExpressionScanner.DELIMITER,value:C,start:this._index,end:this._index+1};
 this._index++;

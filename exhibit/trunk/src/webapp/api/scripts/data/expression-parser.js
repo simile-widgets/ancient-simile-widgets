@@ -263,7 +263,7 @@ Exhibit.ExpressionScanner.prototype.next = function() {
                 };
                 this._index++;
             }
-        } else if ("+-*/".indexOf(c1) >= 0) {
+        } else if ("+-*/=".indexOf(c1) >= 0) {
             this._token = {
                 type:   Exhibit.ExpressionScanner.OPERATOR,
                 value:  c1,
