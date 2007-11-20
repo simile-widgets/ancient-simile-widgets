@@ -223,13 +223,14 @@ Exhibit.Lens._startCompilingTemplate = function(lensTemplateURL, job) {
         try {
             compiledTemplate.template = Exhibit.Lens.compileTemplate(
                 xmlhttp.responseXML.documentElement, true, job.uiContext);
+                
             compiledTemplate.compiled = true;
             
             for (var i = 0; i < compiledTemplate.jobs.length; i++) {
                 try {
-                    var job = compiledTemplate.jobs[i];
-                    job.template = compiledTemplate;
-                    Exhibit.Lens._performConstructFromLensTemplateJob(job);
+                    var job2 = compiledTemplate.jobs[i];
+                    job2.template = compiledTemplate;
+                    Exhibit.Lens._performConstructFromLensTemplateJob(job2);
                 } catch (e) {
                     SimileAjax.Debug.exception(e, "Lens: Error constructing lens template in job queue");
                 }
