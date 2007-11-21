@@ -154,6 +154,13 @@ Exhibit.CollectionSummaryWidget.l10n.noResultsTemplate="<span class='%0'><span c
 Exhibit.CollectionSummaryWidget.l10n.filteredResultsTemplate="<span class='%0' id='resultDescription'></span> filtrés sur un total de <span id='originalCountSpan'>0</span> items (<span id='resetActionLink'></span>)";
 
 
+/* coders-l10n.js */
+if(!("l10n" in Exhibit.Coders)){Exhibit.Coders.l10n={};
+}Exhibit.Coders.l10n.mixedCaseLabel="mixed";
+Exhibit.Coders.l10n.missingCaseLabel="missing";
+Exhibit.Coders.l10n.othersCaseLabel="others";
+
+
 /* facets-l10n.js */
 if(!("l10n" in Exhibit.FacetUtilities)){Exhibit.FacetUtilities.l10n={};
 }Exhibit.FacetUtilities.l10n.clearSelectionsTooltip="Effacer ces sélections";

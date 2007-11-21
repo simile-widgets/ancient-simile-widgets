@@ -1892,9 +1892,9 @@ Exhibit.Persistence.getItemLink=function(A){return Exhibit.Persistence.getURLWit
 Exhibit.ColorCoder=function(A){this._uiContext=A;
 this._settings={};
 this._map={};
-this._mixedCase={label:"mixed",color:"#fff"};
-this._missingCase={label:"missing",color:"#888"};
-this._othersCase={label:"others",color:"#aaa"};
+this._mixedCase={label:Exhibit.Coders.l10n.mixedCaseLabel,color:Exhibit.Coders.mixedCaseColor};
+this._missingCase={label:Exhibit.Coders.l10n.missingCaseLabel,color:Exhibit.Coders.missingCaseColor};
+this._othersCase={label:Exhibit.Coders.l10n.othersCaseLabel,color:Exhibit.Coders.othersCaseColor};
 };
 Exhibit.ColorCoder._settingSpecs={};
 Exhibit.ColorCoder.create=function(C,A){var B=new Exhibit.ColorCoder(Exhibit.UIContext.create(C,A));
@@ -1972,9 +1972,9 @@ Exhibit.ColorCoder.prototype.getMixedColor=function(){return this._mixedCase.col
 Exhibit.ColorGradientCoder=function(A){this._uiContext=A;
 this._settings={};
 this._gradientPoints=[];
-this._mixedCase={label:"mixed",color:"#fff"};
-this._missingCase={label:"missing",color:"#888"};
-this._othersCase={label:"others",color:"#aaa"};
+this._mixedCase={label:Exhibit.Coders.l10n.mixedCaseLabel,color:Exhibit.Coders.mixedCaseColor};
+this._missingCase={label:Exhibit.Coders.l10n.missingCaseLabel,color:Exhibit.Coders.missingCaseColor};
+this._othersCase={label:Exhibit.Coders.l10n.othersCaseLabel,color:Exhibit.Coders.othersCaseColor};
 };
 Exhibit.ColorGradientCoder._settingSpecs={};
 Exhibit.ColorGradientCoder.create=function(C,A){var B=new Exhibit.ColorGradientCoder(Exhibit.UIContext.create(C,A));
@@ -2073,18 +2073,15 @@ Exhibit.ColorGradientCoder.prototype.getMixedColor=function(){return this._mixed
 
 /* default-color-coder.js */
 Exhibit.DefaultColorCoder=function(A){};
-Exhibit.DefaultColorCoder._colors=["#FF9000","#5D7CBA","#A97838","#8B9BBA","#FFC77F","#003EBA","#29447B","#543C1C"];
+Exhibit.DefaultColorCoder.colors=["#FF9000","#5D7CBA","#A97838","#8B9BBA","#FFC77F","#003EBA","#29447B","#543C1C"];
 Exhibit.DefaultColorCoder._map={};
-Exhibit.DefaultColorCoder._mixedCase={label:"mixed",color:"#fff"};
-Exhibit.DefaultColorCoder._othersCase={label:"others",color:"#aaa"};
-Exhibit.DefaultColorCoder._missingCase={label:"missing",color:"#888"};
 Exhibit.DefaultColorCoder._nextColor=0;
 Exhibit.DefaultColorCoder.prototype.translate=function(C,A){if(C==null){if(A){A.missing=true;
-}return Exhibit.DefaultColorCoder._missingCase.color;
+}return Exhibit.Coders.missingCaseColor;
 }else{if(A){A.keys.add(C);
 }if(C in Exhibit.DefaultColorCoder._map){return Exhibit.DefaultColorCoder._map[C];
-}else{var B=Exhibit.DefaultColorCoder._colors[Exhibit.DefaultColorCoder._nextColor];
-Exhibit.DefaultColorCoder._nextColor=(Exhibit.DefaultColorCoder._nextColor+1)%Exhibit.DefaultColorCoder._colors.length;
+}else{var B=Exhibit.DefaultColorCoder.colors[Exhibit.DefaultColorCoder._nextColor];
+Exhibit.DefaultColorCoder._nextColor=(Exhibit.DefaultColorCoder._nextColor+1)%Exhibit.DefaultColorCoder.colors.length;
 Exhibit.DefaultColorCoder._map[C]=B;
 return B;
 }}};
@@ -2092,26 +2089,26 @@ Exhibit.DefaultColorCoder.prototype.translateSet=function(D,A){var C=null;
 var B=this;
 D.visit(function(F){var E=B.translate(F,A);
 if(C==null){C=E;
-}else{if(C!=E){C=Exhibit.DefaultColorCoder._mixedCase.color;
+}else{if(C!=E){C=Exhibit.DefaultColorCoder.mixedCaseColor;
 A.mixed=true;
 return true;
 }}return false;
 });
 if(C!=null){return C;
 }else{A.missing=true;
-return Exhibit.DefaultColorCoder._missingCase.color;
+return Exhibit.Coders.missingCaseColor;
 }};
-Exhibit.DefaultColorCoder.prototype.getOthersLabel=function(){return Exhibit.DefaultColorCoder._othersCase.label;
+Exhibit.DefaultColorCoder.prototype.getOthersLabel=function(){return Exhibit.Coders.l10n.othersCaseLabel;
 };
-Exhibit.DefaultColorCoder.prototype.getOthersColor=function(){return Exhibit.DefaultColorCoder._othersCase.color;
+Exhibit.DefaultColorCoder.prototype.getOthersColor=function(){return Exhibit.Coders.othersCaseColor;
 };
-Exhibit.DefaultColorCoder.prototype.getMissingLabel=function(){return Exhibit.DefaultColorCoder._missingCase.label;
+Exhibit.DefaultColorCoder.prototype.getMissingLabel=function(){return Exhibit.Coders.l10n.missingCaseLabel;
 };
-Exhibit.DefaultColorCoder.prototype.getMissingColor=function(){return Exhibit.DefaultColorCoder._missingCase.color;
+Exhibit.DefaultColorCoder.prototype.getMissingColor=function(){return Exhibit.Coders.missingCaseColor;
 };
-Exhibit.DefaultColorCoder.prototype.getMixedLabel=function(){return Exhibit.DefaultColorCoder._mixedCase.label;
+Exhibit.DefaultColorCoder.prototype.getMixedLabel=function(){return Exhibit.Coders.l10n.mixedCaseLabel;
 };
-Exhibit.DefaultColorCoder.prototype.getMixedColor=function(){return Exhibit.DefaultColorCoder._mixedCase.color;
+Exhibit.DefaultColorCoder.prototype.getMixedColor=function(){return Exhibit.DefaultColorCoder.mixedCaseColor;
 };
 
 
@@ -5818,6 +5815,13 @@ SimileAjax.WindowManager.registerEvent(D,"keyup",function(F,E,G){if(E.keyCode==2
 };
 return C;
 };
+
+
+/* coders.js */
+Exhibit.Coders=new Object();
+Exhibit.Coders.mixedCaseColor="#fff";
+Exhibit.Coders.othersCaseColor="#aaa";
+Exhibit.Coders.missingCaseColor="#888";
 
 
 /* facets.js */

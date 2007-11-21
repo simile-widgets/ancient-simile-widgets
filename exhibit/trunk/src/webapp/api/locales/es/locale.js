@@ -16,6 +16,7 @@
         "ui/views/tile-view-l10n.js",
         "ui/views/thumbnail-view-l10n.js",
         "ui/views/tabular-view-l10n.js",
+        "util/coders-l10n.js",
         "util/facets-l10n.js",
         "util/views-l10n.js"
     ];

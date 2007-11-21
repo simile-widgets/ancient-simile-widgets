@@ -40,6 +40,7 @@
             "util/settings.js",
             "util/views.js",
             "util/facets.js",
+            "util/coders.js",
             
             "data/database.js",
             "data/expression.js",

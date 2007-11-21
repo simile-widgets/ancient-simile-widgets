@@ -8,9 +8,18 @@ Exhibit.ColorCoder = function(uiContext) {
     this._settings = {};
     
     this._map = {};
-    this._mixedCase = { label: "mixed", color: "#fff" };
-    this._missingCase = { label: "missing", color: "#888" };
-    this._othersCase = { label: "others", color: "#aaa" };
+    this._mixedCase = { 
+        label: Exhibit.Coders.l10n.mixedCaseLabel, 
+        color: Exhibit.Coders.mixedCaseColor
+    };
+    this._missingCase = { 
+        label: Exhibit.Coders.l10n.missingCaseLabel, 
+        color: Exhibit.Coders.missingCaseColor 
+    };
+    this._othersCase = { 
+        label: Exhibit.Coders.l10n.othersCaseLabel, 
+        color: Exhibit.Coders.othersCaseColor 
+    };
 };
 
 Exhibit.ColorCoder._settingSpecs = {
