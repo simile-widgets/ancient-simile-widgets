@@ -38,6 +38,7 @@ Exhibit.ListFacet._settingSpecs = {
     "sortMode":         { type: "text", defaultValue: "value" },
     "sortDirection":    { type: "text", defaultValue: "forward" },
     "showMissing":      { type: "boolean", defaultValue: true },
+    "missingLabel":     { type: "text" },
     "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
     "colorCoder":       { type: "text", defaultValue: null }
@@ -354,7 +355,8 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
         
         if (count > 0 || this._selectMissing) {
             var span = document.createElement("span");
-            span.innerHTML = Exhibit.FacetUtilities.l10n.missingThisField;
+            span.innerHTML = ("missingLabel" in this._settings) ? 
+                this._settings.missingLabel : Exhibit.FacetUtilities.l10n.missingThisField;
             span.className = "exhibit-facet-value-missingThisField";
             
             entries.unshift({

@@ -35,7 +35,8 @@ Exhibit.CloudFacet = function(containerElmt, uiContext) {
 Exhibit.CloudFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
     "minimumCount":     { type: "int", defaultValue: 1 },
-    "showMissing":      { type: "boolean", defaultValue: true }
+    "showMissing":      { type: "boolean", defaultValue: true },
+    "missingLabel":     { type: "text" }
 };
 
 Exhibit.CloudFacet.create = function(configuration, containerElmt, uiContext) {
@@ -324,7 +325,8 @@ Exhibit.CloudFacet.prototype._computeFacet = function(items) {
         
         if (count > 0 || this._selectMissing) {
             var span = document.createElement("span");
-            span.innerHTML = Exhibit.FacetUtilities.l10n.missingThisField;
+            span.innerHTML = ("missingLabel" in this._settings) ? 
+                this._settings.missingLabel : Exhibit.FacetUtilities.l10n.missingThisField;
             span.className = "exhibit-facet-value-missingThisField";
             
             entries.unshift({
