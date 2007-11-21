@@ -349,11 +349,25 @@ Exhibit.CloudFacet.prototype._notifyCollection = function() {
 Exhibit.CloudFacet.prototype._initializeUI = function() {
     this._div.innerHTML = "";
     this._div.className = "exhibit-cloudFacet";
+
+    var dom = SimileAjax.DOM.createDOMFromString(
+        this._div,
+        (("facetLabel" in this._settings) ?
+            (   "<div class='exhibit-cloudFacet-header'>" +
+                    "<span class='exhibit-cloudFacet-header-title'>" + this._settings.facetLabel + "</span>" +
+                "</div>"
+            ) :
+            ""
+        ) +
+        "<div class='exhibit-cloudFacet-body' id='valuesContainer'></div>"
+    );
+
+    this._dom = dom;
 };
 
 Exhibit.CloudFacet.prototype._constructBody = function(entries) {
     var self = this;
-    var div = this._div;
+    var div = this._dom.valuesContainer;
     
     div.style.display = "none";
     div.innerHTML = "";
@@ -462,16 +476,17 @@ Exhibit.CloudFacet.prototype._filter = function(value, label, selectOnly) {
     var newRestrictions = { selection: newValues.toArray(), selectMissing: newSelectMissing };
     var oldRestrictions = { selection: oldValues.toArray(), selectMissing: oldSelectMissing };
     
+    var facetLabel = ("facetLabel" in this._settings) ? this._settings.facetLabel : "";
     SimileAjax.History.addLengthyAction(
         function() { self.applyRestrictions(newRestrictions); },
         function() { self.applyRestrictions(oldRestrictions); },
         (selectOnly && !wasOnlyThingSelected) ?
             String.substitute(
                 Exhibit.FacetUtilities.l10n["facetSelectOnlyActionTitle"],
-                [ label, this._settings.facetLabel ]) :
+                [ label, facetLabel ]) :
             String.substitute(
                 Exhibit.FacetUtilities.l10n[wasSelected ? "facetUnselectActionTitle" : "facetSelectActionTitle"],
-                [ label, this._settings.facetLabel ])
+                [ label, facetLabel ])
     );
 };
 

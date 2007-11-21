@@ -132,6 +132,18 @@ div.exhibit-text-facet input {
  *==================================================
  */
 div.exhibit-cloudFacet {
+    clear:          both;
+}
+
+div.exhibit-cloudFacet-header {
+    padding:        2px 0px;
+}
+
+span.exhibit-cloudFacet-header-title {
+    font-weight:    bold;
+}
+
+div.exhibit-cloudFacet-body {
     padding:    0.5em;
     border:     1px solid #aaa;
 }
