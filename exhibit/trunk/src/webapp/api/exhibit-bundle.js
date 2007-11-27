@@ -2089,7 +2089,7 @@ Exhibit.DefaultColorCoder.prototype.translateSet=function(D,A){var C=null;
 var B=this;
 D.visit(function(F){var E=B.translate(F,A);
 if(C==null){C=E;
-}else{if(C!=E){C=Exhibit.Colors.mixedCaseColor;
+}else{if(C!=E){C=Exhibit.Coders.mixedCaseColor;
 A.mixed=true;
 return true;
 }}return false;
