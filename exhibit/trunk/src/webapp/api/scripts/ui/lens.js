@@ -691,29 +691,45 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
 
 Exhibit.Lens._constructElmtWithAttributes = function(templateNode, parentElmt, database) {
     var elmt;
-    switch (templateNode.tag) {
-    case "tr":
-        elmt = parentElmt.insertRow(parentElmt.rows.length);
-        break;
-    case "td":
-        elmt = parentElmt.insertCell(parentElmt.cells.length);
-        break;
-    default:
-        elmt = document.createElement(templateNode.tag);
+    if (templateNode.tag == "input" && SimileAjax.Platform.browser.isIE) {
+        var a = [ "<input" ];
+        var attributes = templateNode.attributes;
+        for (var i = 0; i < attributes.length; i++) {
+            var attribute = attributes[i];
+            if (Exhibit.Lens._attributeValueIsSafe(attribute.name, attribute.value)) {
+                a.push(attribute.name + "=\"" + attribute.value + "\"");
+            }
+        }
+        a.push("></input>");
+        
+        elmt = SimileAjax.DOM.createElementFromString(a.join(" "));
         parentElmt.appendChild(elmt);
-    }
-    
-    var attributes = templateNode.attributes;
-    for (var i = 0; i < attributes.length; i++) {
-        var attribute = attributes[i];
-        if (Exhibit.Lens._attributeValueIsSafe(attribute.name, attribute.value)) {
-            try {
-                elmt.setAttribute(attribute.name, attribute.value);
-            } catch (e) {
-                // ignore; this happens on IE for attribute "type" on element "input"
+    } else {
+        switch (templateNode.tag) {
+        case "tr":
+            elmt = parentElmt.insertRow(parentElmt.rows.length);
+            break;
+        case "td":
+            elmt = parentElmt.insertCell(parentElmt.cells.length);
+            break;
+        default:
+            elmt = document.createElement(templateNode.tag);
+            parentElmt.appendChild(elmt);
+        }
+        
+        var attributes = templateNode.attributes;
+        for (var i = 0; i < attributes.length; i++) {
+            var attribute = attributes[i];
+            if (Exhibit.Lens._attributeValueIsSafe(attribute.name, attribute.value)) {
+                try {
+                    elmt.setAttribute(attribute.name, attribute.value);
+                } catch (e) {
+                    // ignore; this happens on IE for attribute "type" on element "input"
+                }
             }
         }
     }
+    
     var styles = templateNode.styles;
     for (var i = 0; i < styles.length; i++) {
         var style = styles[i];
