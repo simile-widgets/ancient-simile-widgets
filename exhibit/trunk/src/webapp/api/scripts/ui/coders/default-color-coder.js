@@ -46,7 +46,7 @@ Exhibit.DefaultColorCoder.prototype.translateSet = function(keys, flags) {
         if (color == null) {
             color = color2;
         } else if (color != color2) {
-            color = Exhibit.DefaultColorCoder.mixedCaseColor;
+            color = Exhibit.Colors.mixedCaseColor;
             flags.mixed = true;
             return true; // exit visitation
         }
