@@ -2108,7 +2108,7 @@ Exhibit.DefaultColorCoder.prototype.getMissingColor=function(){return Exhibit.Co
 };
 Exhibit.DefaultColorCoder.prototype.getMixedLabel=function(){return Exhibit.Coders.l10n.mixedCaseLabel;
 };
-Exhibit.DefaultColorCoder.prototype.getMixedColor=function(){return Exhibit.DefaultColorCoder.mixedCaseColor;
+Exhibit.DefaultColorCoder.prototype.getMixedColor=function(){return Exhibit.Coders.mixedCaseColor;
 };
 
 

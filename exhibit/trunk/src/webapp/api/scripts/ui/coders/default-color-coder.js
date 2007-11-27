@@ -79,5 +79,5 @@ Exhibit.DefaultColorCoder.prototype.getMixedLabel = function() {
     return Exhibit.Coders.l10n.mixedCaseLabel;
 };
 Exhibit.DefaultColorCoder.prototype.getMixedColor = function() {
-    return Exhibit.DefaultColorCoder.mixedCaseColor;
+    return Exhibit.Coders.mixedCaseColor;
 };
