@@ -103,7 +103,7 @@ return SimileAjax.Graphics.createTranslucentImage(Exhibit.MapView._markerUrlPref
 };
 D.iconMarkerGenerator=function(E){elmt=document.createElement("img");
 elmt.src=E;
-elmt.style.verticalAlighn="middle";
+elmt.style.verticalAlign="middle";
 elmt.style.height="40px";
 return elmt;
 };
@@ -249,7 +249,7 @@ V.addEntry(E,N,"size");
 }}}if(C){var V=this._dom.legendWidget;
 var A=this._iconCoder;
 var R=F.keys.toArray().sort();
-if(h.iconLegendLabel!==null){V.addLegendLabel(h.iconLegendLabel,"icon");
+if(h.iconLegendLabel!=null){V.addLegendLabel(h.iconLegendLabel,"icon");
 }for(var c=0;
 c<R.length;
 c++){var N=R[c];

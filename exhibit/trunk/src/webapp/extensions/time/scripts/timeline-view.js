@@ -6,17 +6,18 @@
 Exhibit.TimelineView = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
-    
+
     this._settings = {};
     this._accessors = {
         getEventLabel:  function(itemID, database, visitor) { visitor(database.getObject(itemID, "label")); },
         getProxy:       function(itemID, database, visitor) { visitor(itemID); },
-        getColorKey:    null
+        getColorKey:    null,
+        getIconKey:     null 
     };
 
     this._selectListener = null;
     this._largestSize = 0;
-    
+
     var view = this;
     this._listener = { 
         onItemsChanged: function() {
@@ -40,6 +41,7 @@ Exhibit.TimelineView._settingSpecs = {
     "timelineHeight":          { type: "int",        defaultValue: 400 },
     "timelineConstructor":     { type: "function",   defaultValue: null },
     "colorCoder":              { type: "text",       defaultValue: null },
+    "iconCoder":               { type: "text",       defaultValue: null },
     "selectCoordinator":       { type: "text",       defaultValue: null },
     "showHeader":              { type: "boolean",    defaultValue: true },
     "showSummary":             { type: "boolean",    defaultValue: true },
@@ -71,11 +73,16 @@ Exhibit.TimelineView._accessorSpecs = [
         attributeName:  "colorKey",
         type:           "text"
     },
+    {   accessorName:   "getIconKey",
+        attributeName:  "iconKey",
+        type:           "text"
+    },
     {   accessorName:   "getEventLabel",
         attributeName:  "eventLabel",
         type:           "text"
     }
-];
+];    
+
 
 Exhibit.TimelineView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.TimelineView(
@@ -145,9 +152,15 @@ Exhibit.TimelineView.prototype._internalValidate = function() {
         if ("colorCoder" in this._settings) {
             this._colorCoder = this._uiContext.getExhibit().getComponent(this._settings.colorCoder);
         }
-        
+
         if (this._colorCoder == null) {
             this._colorCoder = new Exhibit.DefaultColorCoder(this._uiContext);
+        }
+    }
+    if ("getIconKey" in this._accessors) {
+        this._iconCoder = null;
+        if ("iconCoder" in this._settings) {
+            this._iconCoder = this._uiContext.getExhibit().getComponent(this._settings.iconCoder);
         }
     }
     if ("selectCoordinator" in this._settings) {
@@ -163,7 +176,16 @@ Exhibit.TimelineView.prototype._internalValidate = function() {
 
 Exhibit.TimelineView.prototype._initializeUI = function() {
     var self = this;
-    var legendWidgetSettings="_gradientPoints" in this._colorCoder ? "gradient" : {}
+    var legendWidgetSettings = {};
+    
+    legendWidgetSettings.colorGradient = (this._colorCoder != null && "_gradientPoints" in this._colorCoder);
+    legendWidgetSettings.iconMarkerGenerator = function(iconURL) {
+        elmt = document.createElement('img');
+        elmt.src = iconURL;
+        elmt.style.verticalAlign = "middle";
+        elmt.style.height = "40px";
+        return elmt;
+    }
     
     this._div.innerHTML = "";
     this._dom = Exhibit.ViewUtilities.constructPlottingViewDom(
@@ -298,26 +320,28 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
     var database = this._uiContext.getDatabase();
     var settings = this._settings;
     var accessors = this._accessors;
-    
+
     /*
      *  Get the current collection and check if it's empty
      */
     var currentSize = collection.countRestrictedItems();
     var unplottableItems = [];
-    
+
     this._dom.legendWidget.clear();
     this._eventSource.clear();
-    
+
     if (currentSize > 0) {
         var currentSet = collection.getRestrictedItems();
         var hasColorKey = (this._accessors.getColorKey != null);
+        var hasIconKey = (this._accessors.getIconKey != null && this._iconCoder != null);
         var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+        var iconCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
         var events = [];
-        
-        var addEvent = function(itemID, duration, color) {
+
+        var addEvent = function(itemID, duration, color, icon) {
             var label;
             accessors.getEventLabel(itemID, database, function(v) { label = v; return true; });
-            
+
             var evt = new Timeline.DefaultEventSource.Event(
                 itemID,
                 duration.start,
@@ -329,7 +353,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 "",     // description
                 null,   // image url
                 null,   // link url
-                null,   // icon url
+                icon,   // icon url
                 color,
                 color
             );
@@ -340,31 +364,40 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             evt.fillInfoBubble = function(elmt, theme, labeller) {
                 self._fillInfoBubble(this, elmt, theme, labeller);
             };
-            
+
             events.push(evt);
         };
-        
+
         currentSet.visit(function(itemID) {
             var durations = [];
             self._getDuration(itemID, database, function(duration) { if ("start" in duration) durations.push(duration); });
-            
+
             if (durations.length > 0) {
                 var color = null;
+                var icon = null;
                 if (hasColorKey) {
                     var colorKeys = new Exhibit.Set();
                     accessors.getColorKey(itemID, database, function(key) { colorKeys.add(key); });
-                    
+
                     color = self._colorCoder.translateSet(colorKeys, colorCodingFlags);
                 }
-                
+
+                var icon = null;
+                if (hasIconKey) {
+                    var iconKeys = new Exhibit.Set();
+                    accessors.getIconKey(itemID, database, function(key) { iconKeys.add(key); });
+
+                    icon = self._iconCoder.translateSet(iconKeys, iconCodingFlags);
+                }
+
                 for (var i = 0; i < durations.length; i++) {
-                    addEvent(itemID, durations[i], color);
+                    addEvent(itemID, durations[i], color, icon);
                 }
             } else {
                 unplottableItems.push(itemID);
             }
         });
-        
+
         if (hasColorKey) {
             var legendWidget = this._dom.legendWidget;
             var colorCoder = this._colorCoder;
@@ -378,7 +411,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                     legendWidget.addEntry(color, key);
                 }
             }
-            
+
             if (colorCodingFlags.others) {
                 legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
             }
@@ -389,6 +422,29 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
             }
         }
+
+        if (hasIconKey) {
+            var legendWidget = this._dom.legendWidget;
+            var iconCoder = this._iconCoder;
+            var keys = iconCodingFlags.keys.toArray().sort();    
+            if (settings.iconLegendLabel != null) {
+                legendWidget.addLegendLabel(settings.iconLegendLabel, 'icon');
+            }
+            for (var k = 0; k < keys.length; k++) {
+                var key = keys[k];
+                var icon = iconCoder.translate(key);
+                legendWidget.addEntry(icon, key, 'icon');
+            }
+            if (iconCodingFlags.others) {
+                legendWidget.addEntry(iconCoder.getOthersIcon(), iconCoder.getOthersLabel(), 'icon');
+            }
+            if (iconCodingFlags.mixed) {
+                legendWidget.addEntry(iconCoder.getMixedIcon(), iconCoder.getMixedLabel(), 'icon');
+            }
+            if (iconCodingFlags.missing) {
+                legendWidget.addEntry(iconCoder.getMissingIcon(), iconCoder.getMissingLabel(), 'icon');
+            }
+        }
         
         var plottableSize = currentSize - unplottableItems.length;
         if (plottableSize > this._largestSize) {
@@ -397,7 +453,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         } else {
             this._eventSource.addMany(events);
         }
-        
+
         var band = this._timeline.getBand(0);
         var centerDate = band.getCenterVisibleDate();
         var earliest = this._eventSource.getEarliestDate();

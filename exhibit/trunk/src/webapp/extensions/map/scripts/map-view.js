@@ -315,7 +315,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
     legendWidgetSettings.iconMarkerGenerator = function(iconURL) {
         elmt = document.createElement('img');
         elmt.src = iconURL;
-        elmt.style.verticalAlighn = "middle";
+        elmt.style.verticalAlign = "middle";
         elmt.style.height = "40px";
         return elmt;
     }
@@ -471,7 +471,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
                 }
             }
             if (hasIconKey) {
-            	icon = self._iconCoder.translateSet(locationData.iconKeys, iconCodingFlags);
+                icon = self._iconCoder.translateSet(locationData.iconKeys, iconCodingFlags);
             }
             
             var icon = Exhibit.MapView._makeIcon(
@@ -573,23 +573,23 @@ Exhibit.MapView.prototype._reconstruct = function() {
             var legendWidget = this._dom.legendWidget;
             var iconCoder = this._iconCoder;
             var keys = iconCodingFlags.keys.toArray().sort();    
-            if (settings.iconLegendLabel !== null) {
+            if (settings.iconLegendLabel != null) {
                 legendWidget.addLegendLabel(settings.iconLegendLabel, 'icon');
             }      
-			for (var k = 0; k < keys.length; k++) {
-				var key = keys[k];
-				var icon = iconCoder.translate(key);
-				legendWidget.addEntry(icon, key, 'icon');
-			}
-		    if (iconCodingFlags.others) {
-				legendWidget.addEntry(iconCoder.getOthersIcon(), iconCoder.getOthersLabel(), 'icon');
-			}
-			if (iconCodingFlags.mixed) {
-				legendWidget.addEntry(iconCoder.getMixedIcon(), iconCoder.getMixedLabel(), 'icon');
-			}
-			if (iconCodingFlags.missing) {
-				legendWidget.addEntry(iconCoder.getMissingIcon(), iconCoder.getMissingLabel(), 'icon');
-			}
+            for (var k = 0; k < keys.length; k++) {
+                var key = keys[k];
+                var icon = iconCoder.translate(key);
+                legendWidget.addEntry(icon, key, 'icon');
+            }
+            if (iconCodingFlags.others) {
+                legendWidget.addEntry(iconCoder.getOthersIcon(), iconCoder.getOthersLabel(), 'icon');
+            }
+            if (iconCodingFlags.mixed) {
+                legendWidget.addEntry(iconCoder.getMixedIcon(), iconCoder.getMixedLabel(), 'icon');
+            }
+            if (iconCodingFlags.missing) {
+                legendWidget.addEntry(iconCoder.getMissingIcon(), iconCoder.getMissingLabel(), 'icon');
+            }
         }  
         
         if (bounds && typeof settings.zoom == "undefined") {
