@@ -6137,7 +6137,7 @@ A++){if(this.hasOwnProperty(A)){B[A]=E.call(C,this[A],A,this);
 /* views.js */
 Exhibit.ViewUtilities=new Object();
 Exhibit.ViewUtilities.openBubbleForItems=function(B,D,C){var E=SimileAjax.DOM.getPageCoordinates(B);
-var A=SimileAjax.Graphics.createBubbleForPoint(E.left+Math.round(elmt.offsetWidth/2),E.top+Math.round(elmt.offsetHeight/2),C.getSetting("bubbleWidth"),C.getSetting("bubbleHeight"));
+var A=SimileAjax.Graphics.createBubbleForPoint(E.left+Math.round(B.offsetWidth/2),E.top+Math.round(B.offsetHeight/2),C.getSetting("bubbleWidth"),C.getSetting("bubbleHeight"));
 Exhibit.ViewUtilities.fillBubbleWithItems(A.content,D,C);
 };
 Exhibit.ViewUtilities.fillBubbleWithItems=function(F,C,B){if(F==null){F=document.createElement("div");

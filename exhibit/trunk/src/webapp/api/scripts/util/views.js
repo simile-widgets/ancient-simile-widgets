@@ -9,8 +9,8 @@ Exhibit.ViewUtilities = new Object();
 Exhibit.ViewUtilities.openBubbleForItems = function(anchorElmt, arrayOfItemIDs, uiContext) {
     var coords = SimileAjax.DOM.getPageCoordinates(anchorElmt);
     var bubble = SimileAjax.Graphics.createBubbleForPoint(
-        coords.left + Math.round(elmt.offsetWidth / 2), 
-        coords.top + Math.round(elmt.offsetHeight / 2), 
+        coords.left + Math.round(anchorElmt.offsetWidth / 2), 
+        coords.top + Math.round(anchorElmt.offsetHeight / 2), 
         uiContext.getSetting("bubbleWidth"), // px
         uiContext.getSetting("bubbleHeight") // px
     );
