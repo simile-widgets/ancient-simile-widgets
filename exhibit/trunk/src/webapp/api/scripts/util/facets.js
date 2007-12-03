@@ -61,17 +61,18 @@ Exhibit.FacetUtilities.constructFacetItem = function(
                         )) +
                 "</div>"
             ) +
+            "<a class='exhibit-facet-value-link' href='javascript:{}' id='link'></a>" +
         "</div>"
     );
     dom.elmt.className = selected ? "exhibit-facet-value exhibit-facet-value-selected" : "exhibit-facet-value";
     if (typeof label == "string") {
         dom.elmt.title = label;
-        dom.inner.appendChild(document.createTextNode(label));
+        dom.link.appendChild(document.createTextNode(label));
         if (color != null) {
             dom.inner.style.color = color;
         }
     } else {
-        dom.inner.appendChild(label);
+        dom.link.appendChild(label);
         if (color != null) {
             label.style.color = color;
         }
@@ -126,7 +127,7 @@ Exhibit.FacetUtilities.constructFlowingFacetItem = function(
                     )) +
             "</div>"
         ) +
-        "<span id='inner'></span>" +
+        "<a class='exhibit-flowingFacet-value-link' href='javascript:{}' id='inner'></a>" +
         " " +
         "<span class='exhibit-flowingFacet-value-count'>(" + count + ")</span>"
     );

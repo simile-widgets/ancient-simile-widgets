@@ -62,6 +62,13 @@ div.exhibit-facet-value-inner {
     padding-left:   2.5em;
 }
 
+a.exhibit-facet-value-link {
+    text-decoration: none;
+}
+a.exhibit-facet-value-link:hover {
+    text-decoration: underline;
+}
+
 div.exhibit-facet-value-checkbox {
     float:          right;
 }
@@ -99,6 +106,13 @@ div.exhibit-flowingFacet-value {
     clear:          both;
     position:       relative;
     padding-left:   20px;
+}
+
+a.exhibit-flowingFacet-value-link {
+    text-decoration: none;
+}
+a.exhibit-flowingFacet-value-link:hover {
+    text-decoration: underline;
 }
 
 div.exhibit-flowingFacet-value-selected {
