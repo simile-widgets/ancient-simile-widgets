@@ -67,7 +67,6 @@ B.colorGradient=(this._colorCoder!=null&&"_gradientPoints" in this._colorCoder);
 B.iconMarkerGenerator=function(C){elmt=document.createElement("img");
 elmt.src=C;
 elmt.style.verticalAlign="middle";
-elmt.style.height="40px";
 return elmt;
 };
 this._div.innerHTML="";

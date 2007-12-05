@@ -183,7 +183,6 @@ Exhibit.TimelineView.prototype._initializeUI = function() {
         elmt = document.createElement('img');
         elmt.src = iconURL;
         elmt.style.verticalAlign = "middle";
-        elmt.style.height = "40px";
         return elmt;
     }
     
