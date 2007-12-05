@@ -5851,7 +5851,7 @@ Exhibit.FacetUtilities.constructFacetItem=function(H,F,B,D,I,G,A,E){if(Exhibit.p
 C.elmt.className=D?"exhibit-facet-value exhibit-facet-value-selected":"exhibit-facet-value";
 if(typeof H=="string"){C.elmt.title=H;
 C.link.appendChild(document.createTextNode(H));
-if(B!=null){C.inner.style.color=B;
+if(B!=null){C.link.style.color=B;
 }}else{C.link.appendChild(H);
 if(B!=null){H.style.color=B;
 }}SimileAjax.WindowManager.registerEvent(C.elmt,"click",A,SimileAjax.WindowManager.getBaseLayer());

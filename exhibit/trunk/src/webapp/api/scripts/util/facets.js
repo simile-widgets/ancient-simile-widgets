@@ -69,7 +69,7 @@ Exhibit.FacetUtilities.constructFacetItem = function(
         dom.elmt.title = label;
         dom.link.appendChild(document.createTextNode(label));
         if (color != null) {
-            dom.inner.style.color = color;
+            dom.link.style.color = color;
         }
     } else {
         dom.link.appendChild(label);
