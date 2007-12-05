@@ -36,6 +36,17 @@
                     <div ex:role="facet" ex:expression=".decade" ex:facetLabel="Decades" ex:height="20em"></div>
                 </td>
                 <td>
+    
+                    <div ex:role="coder" ex:coderClass="Icon" id="icons">
+                        <span ex:icon="http://www.wybron.com/sml/general_mills.png">General Mills</span>
+                        <span ex:icon="http://www.wybron.com/sml/kellogs.png">Kellog's</span>
+                        <span ex:icon="http://www.wybron.com/sml/nabisco.png">Nabisco</span>
+                        <span ex:icon="http://www.wybron.com/sml/nestle.png">Nestle</span>
+                        <span ex:icon="http://www.wybron.com/sml/post.png">Post</span>
+                        <span ex:icon="http://www.wybron.com/sml/quaker.png">Quaker Oats</span>
+                        <span ex:icon="http://www.wybron.com/sml/ralston.png">Ralston</span>
+                    </div>
+                    
                     <div ex:role="viewPanel">
                         <div ex:role="lens" class="item" style="display: none;">
                             <table cellspacing="5">
@@ -70,6 +81,8 @@
                             ex:viewClass="Timeline"
                             ex:start=".decade"
                             ex:colorKey=".brand"
+                             ex:iconKey=".brand"
+                             ex:iconCoder="icons"
                             ex:topBandUnit="year"
                             ex:topBandPixelsPerUnit="50"
                             ex:bottomBandUnit="decade"
