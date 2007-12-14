@@ -25,7 +25,7 @@
     
         window.Exhibit = {
             loaded:     false,
-            params:     { bundle: true, autoCreate: true, safe: false },
+            params:     { bundle: !useLocalResources, autoCreate: true, safe: false },
             namespace:  "http://simile.mit.edu/2006/11/exhibit#",
             importers:  {},
             locales:    [ "en" ]
@@ -147,6 +147,10 @@
             Exhibit.urlPrefix = url.substr(0, url.indexOf("exhibit-api.js"));
         
             SimileAjax.parseURLParameters(url, Exhibit.params, paramTypes);
+        }
+        
+        if (useLocalResources) {
+            Exhibit.urlPrefix = "http://127.0.0.1:8888/exhibit/api/";
         }
 
         if (Exhibit.params.locale) { // ISO-639 language codes,
