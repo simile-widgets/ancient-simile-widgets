@@ -273,7 +273,9 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML, uiContext) {
         children:               null
     };
     
-    var parseChildTextNodes = true;
+    var settings = {
+        parseChildTextNodes: true
+    };
     
     var attributes = elmt.attributes;
     for (var i = 0; i < attributes.length; i++) {
@@ -281,106 +283,7 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML, uiContext) {
         var name = attribute.nodeName;
         var value = attribute.nodeValue;
         
-        if (value == null || typeof value != "string" || value.length == 0 || name == "contentEditable") {
-            continue;
-        }
-        if (name == "ex:onshow") {
-            templateNode.attributes.push({
-                name:   name,
-                value:  value
-            });
-        } else if (name.length > 3 && name.substr(0,3) == "ex:") {
-            name = name.substr(3);
-            if (name == "formats") {
-                templateNode.uiContext = Exhibit.UIContext._createWithParent(uiContext);
-                
-                Exhibit.FormatParser.parseSeveral(templateNode.uiContext, value, 0, {});
-            } else if (name == "control") {
-                templateNode.control = value;
-            } else if (name == "content") {
-                templateNode.content = Exhibit.ExpressionParser.parse(value);
-            } else if (name == "if-exists") {
-                templateNode.condition = {
-                    test:       "if-exists",
-                    expression: Exhibit.ExpressionParser.parse(value)
-                };
-            } else if (name == "if") {
-                templateNode.condition = {
-                    test:       "if",
-                    expression: Exhibit.ExpressionParser.parse(value)
-                };
-                parseChildTextNodes = false;
-            } else if (name == "select") {
-                templateNode.condition = {
-                    test:       "select",
-                    expression: Exhibit.ExpressionParser.parse(value)
-                };
-            } else if (name == "case") {
-                templateNode.condition = {
-                    test:   "case",
-                    value:  value
-                };
-                parseChildTextNodes = false;
-            } else {
-                var isStyle = false;
-                var x = name.indexOf("-style-content");
-                if (x > 0) {
-                    isStyle = true;
-                } else {
-                    x = name.indexOf("-content");
-                }
-                
-                if (x > 0) {
-                    if (templateNode.contentAttributes == null) {
-                        templateNode.contentAttributes = [];
-                    }
-                    templateNode.contentAttributes.push({
-                        name:       name.substr(0, x),
-                        expression: Exhibit.ExpressionParser.parse(value),
-                        isStyle:    isStyle
-                    });
-                } else {
-                    x = name.indexOf("-style-subcontent");
-                    if (x > 0) {
-                        isStyle = true;
-                    } else {
-                        x = name.indexOf("-subcontent");
-                    }
-                    
-                    if (x > 0) {
-                        if (templateNode.subcontentAttributes == null) {
-                            templateNode.subcontentAttributes = [];
-                        }
-                        templateNode.subcontentAttributes.push({
-                            name:       name.substr(0, x),
-                            fragments:  Exhibit.Lens._parseSubcontentAttribute(value),
-                            isStyle:    isStyle
-                        });
-                    }
-                }
-            }
-        } else {
-            if (name == "style") {
-                Exhibit.Lens._processStyle(templateNode, value);
-            } else if (name != "id") {
-                if (name == "class") {
-                    if (SimileAjax.Platform.browser.isIE) {
-                        name = "className";
-                    }
-                } else if (name == "cellspacing") {
-                    name = "cellSpacing";
-                } else if (name == "cellpadding") {
-                    name = "cellPadding";
-                } else if (name == "bgcolor") {
-                    name = "bgColor";
-                }
-                
-                templateNode.attributes.push({
-                    name:   name,
-                    value:  value
-                });
-            }
-        }
+        Exhibit.Lens._processTemplateAttribute(uiContext, templateNode, settings, name, value);
     }
     
     if (!isXML && SimileAjax.Platform.browser.isIE) {
@@ -410,13 +313,124 @@ Exhibit.Lens._processTemplateElement = function(elmt, isXML, uiContext) {
     if (childNode != null) {
         templateNode.children = [];
         while (childNode != null) {
-            if ((parseChildTextNodes && childNode.nodeType == 3) || childNode.nodeType == 1) {
+            if ((settings.parseChildTextNodes && childNode.nodeType == 3) || childNode.nodeType == 1) {
                 templateNode.children.push(Exhibit.Lens._processTemplateNode(childNode, isXML, templateNode.uiContext));
             }
             childNode = childNode.nextSibling;
         }
     }
     return templateNode;
+};
+
+Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, settings, name, value) {
+    if (value == null || typeof value != "string" || value.length == 0 || name == "contentEditable") {
+        return;
+    }
+    if (name == "ex:onshow") {
+        templateNode.attributes.push({
+            name:   name,
+            value:  value
+        });
+    } else if (name.length > 3 && name.substr(0,3) == "ex:") {
+        name = name.substr(3);
+        if (name == "formats") {
+            templateNode.uiContext = Exhibit.UIContext._createWithParent(uiContext);
+            
+            Exhibit.FormatParser.parseSeveral(templateNode.uiContext, value, 0, {});
+        } else if (name == "control") {
+            templateNode.control = value;
+        } else if (name == "content") {
+            templateNode.content = Exhibit.ExpressionParser.parse(value);
+        } else if (name == "tag") {
+            /*
+                This is a hack for 2 cases:
+                1.  See http://simile.mit.edu/mail/ReadMsg?listName=General&msgId=22328
+                2.  IE7 throws a "Not enough storage is available to complete this operation" 
+                    exception if we try to access elmt.attributes on <embed> elements
+            */
+            templateNode.tag = value;
+        } else if (name == "if-exists") {
+            templateNode.condition = {
+                test:       "if-exists",
+                expression: Exhibit.ExpressionParser.parse(value)
+            };
+        } else if (name == "if") {
+            templateNode.condition = {
+                test:       "if",
+                expression: Exhibit.ExpressionParser.parse(value)
+            };
+            settings.parseChildTextNodes = false;
+        } else if (name == "select") {
+            templateNode.condition = {
+                test:       "select",
+                expression: Exhibit.ExpressionParser.parse(value)
+            };
+        } else if (name == "case") {
+            templateNode.condition = {
+                test:   "case",
+                value:  value
+            };
+            settings.parseChildTextNodes = false;
+        } else {
+            var isStyle = false;
+            var x = name.indexOf("-style-content");
+            if (x > 0) {
+                isStyle = true;
+            } else {
+                x = name.indexOf("-content");
+            }
+            
+            if (x > 0) {
+                if (templateNode.contentAttributes == null) {
+                    templateNode.contentAttributes = [];
+                }
+                templateNode.contentAttributes.push({
+                    name:       name.substr(0, x),
+                    expression: Exhibit.ExpressionParser.parse(value),
+                    isStyle:    isStyle
+                });
+            } else {
+                x = name.indexOf("-style-subcontent");
+                if (x > 0) {
+                    isStyle = true;
+                } else {
+                    x = name.indexOf("-subcontent");
+                }
+                
+                if (x > 0) {
+                    if (templateNode.subcontentAttributes == null) {
+                        templateNode.subcontentAttributes = [];
+                    }
+                    templateNode.subcontentAttributes.push({
+                        name:       name.substr(0, x),
+                        fragments:  Exhibit.Lens._parseSubcontentAttribute(value),
+                        isStyle:    isStyle
+                    });
+                }
+            }
+        }
+    } else {
+        if (name == "style") {
+            Exhibit.Lens._processStyle(templateNode, value);
+        } else if (name != "id") {
+            if (name == "class") {
+                if (SimileAjax.Platform.browser.isIE) {
+                    name = "className";
+                }
+            } else if (name == "cellspacing") {
+                name = "cellSpacing";
+            } else if (name == "cellpadding") {
+                name = "cellPadding";
+            } else if (name == "bgcolor") {
+                name = "bgColor";
+            }
+            
+            templateNode.attributes.push({
+                name:   name,
+                value:  value
+            });
+        }
+    }
 };
 
 Exhibit.Lens._processStyle = function(templateNode, styleValue) {
