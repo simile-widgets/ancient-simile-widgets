@@ -308,6 +308,8 @@ Timeplot.ColumnSource.prototype._process = function() {
         values: values
     };
 
+    if (max == Number.MIN_VALUE) max = 1;
+    
     this._range = {
         earliestDate: this._eventSource.getEarliestDate(),
         latestDate: this._eventSource.getLatestDate(),
