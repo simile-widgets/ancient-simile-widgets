@@ -219,13 +219,13 @@ Timeplot.DataSource.prototype = {
     },
     
     /**
-     * Return the value associate with the given time in this time series
+     * Return the value associated with the given time in this time series
      */
     getValue: function(t) {
     	if (this._data) {
 	    	for (var i = 0; i < this._data.times.length; i++) {
 	    		var l = this._data.times[i];
-	    		if (l > t) {
+	    		if (l >= t) {
 	    			return this._data.values[i];
 	    		}
 	    	}
