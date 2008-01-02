@@ -260,6 +260,7 @@ Timeplot._Impl.prototype = {
 	        container.appendChild(div);
     	}
         div.setAttribute("class","timeplot-div " + clazz);
+        div.setAttribute("className","timeplot-div " + clazz);
         this.placeDiv(div,styles);
         return div;
     },
@@ -395,6 +396,9 @@ Timeplot._Impl.prototype = {
 
         var s = SimileAjax.DOM.getSize(this._containerDiv);    
 
+	// bug in getsize, should also check for ie's "auto" value
+	if (s.w == 'auto' && this._containerDiv.offsetWidth) s.w = this._containerDiv.offsetWidth;
+	if (s.h == 'auto' && this._containerDiv.offsetHeight) s.h = this._containerDiv.offsetHeight;
         canvas.width = s.w;
         canvas.height = s.h;
         
@@ -436,14 +440,18 @@ Timeplot._Impl.prototype = {
         var canvas = doc.createElement("canvas");
         
         if (this._isBrowserSupported(canvas)) {
-	        // this is where we'll place the labels
-	        var labels = doc.createElement("div");
-	        containerDiv.appendChild(labels);
+            // this is where we'll place the labels
+            var labels = doc.createElement("div");
+            containerDiv.appendChild(labels);
 
             this._canvas = canvas;
             canvas.className = "timeplot-canvas";
-            this._prepareCanvas();
             containerDiv.appendChild(canvas);
+            if(!canvas.getContext && G_vmlCanvasManager) {
+                canvas = G_vmlCanvasManager.initElement(this._canvas);
+                this._canvas = canvas;
+            }
+            this._prepareCanvas();
     
             // inserting copyright and link to simile
             var elmtCopyright = SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/copyright.png");

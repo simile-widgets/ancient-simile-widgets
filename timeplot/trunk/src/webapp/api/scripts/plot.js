@@ -263,7 +263,12 @@ Timeplot.Plot.prototype = {
             if (this._plotInfo.lineColor) {
                 ctx.strokeStyle = this._plotInfo.lineColor.toString();
 	            ctx.beginPath();
+                    var first = true;
 	            this._plot(function(x,y) {
+                        if (first) {
+                             first = false;
+                             ctx.moveTo(x,y);
+                        }
 	                ctx.lineTo(x,y);
 	            });
 	            ctx.stroke();
