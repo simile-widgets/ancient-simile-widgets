@@ -72,6 +72,7 @@ Timeplot._Impl = function(elmt, plotInfos) {
     };
     this._painter = null;
     this._active = false;
+    this._upright = false;
     this._initialize();
 };
 
@@ -406,14 +407,25 @@ Timeplot._Impl.prototype = {
         this._paddingY = (this.getHeight() - canvas.height) / 2;
     
         var ctx = canvas.getContext('2d');
-        ctx.translate(0,canvas.height);
-        ctx.scale(1,-1);
+        this._setUpright(ctx, canvas);
         ctx.globalCompositeOperation = 'source-over';
+    },
+
+    _setUpright: function(ctx, canvas) {
+        // excanvas+IE requires this to be done only once, ever; actual canvas
+        // implementations reset and require this for each call to re-layout
+        if (!SimileAjax.Platform.browser.isIE) this._upright = false;
+        if (!this._upright) {
+            this._upright = true;
+            ctx.translate(0, canvas.height);
+            ctx.scale(1,-1);
+        }
     },
     
     _isBrowserSupported: function(canvas) {
     	var browser = SimileAjax.Platform.browser;
-    	if (canvas.getContext && window.getComputedStyle) {
+    	if ((canvas.getContext && window.getComputedStyle) ||
+            (browser.isIE && browser.majorVersion >= 7)) {
         	return true;
     	} else {
     		return false;
