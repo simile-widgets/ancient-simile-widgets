@@ -395,17 +395,18 @@ Timeplot._Impl.prototype = {
     _prepareCanvas: function() {
         var canvas = this.getCanvas();
 
-        var s = SimileAjax.DOM.getSize(this._containerDiv);    
+        // using jQuery.  note we calculate the average padding; if your
+        // padding settings are not symmetrical, the labels will be off
+        // since they expect to be centered on the canvas.
+        var con = $('#' + this._containerDiv.id);
+        this._paddingX = (parseInt(con.css('paddingLeft')) +
+                          parseInt(con.css('paddingRight'))) / 2;
+        this._paddingY = (parseInt(con.css('paddingTop')) +
+                          parseInt(con.css('paddingBottom'))) / 2;
 
-	// bug in getsize, should also check for ie's "auto" value
-	if (s.w == 'auto' && this._containerDiv.offsetWidth) s.w = this._containerDiv.offsetWidth;
-	if (s.h == 'auto' && this._containerDiv.offsetHeight) s.h = this._containerDiv.offsetHeight;
-        canvas.width = s.w;
-        canvas.height = s.h;
-        
-        this._paddingX = (this.getWidth() - canvas.width) / 2;
-        this._paddingY = (this.getHeight() - canvas.height) / 2;
-    
+        canvas.width = this.getWidth() - (this._paddingX * 2);
+        canvas.height = this.getHeight() - (this._paddingY * 2);
+
         var ctx = canvas.getContext('2d');
         this._setUpright(ctx, canvas);
         ctx.globalCompositeOperation = 'source-over';
