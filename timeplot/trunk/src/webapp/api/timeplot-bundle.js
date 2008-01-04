@@ -348,7 +348,7 @@ ctx.scale(1,-1);
 _isBrowserSupported:function(canvas){
 var browser=SimileAjax.Platform.browser;
 if((canvas.getContext&&window.getComputedStyle)||
-(browser.isIE&&browser.majorVersion>=7)){
+(browser.isIE&&browser.majorVersion>=6)){
 return true;
 }else{
 return false;
