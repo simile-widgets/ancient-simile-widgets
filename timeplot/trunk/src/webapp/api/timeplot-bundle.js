@@ -60,6 +60,7 @@ foreground:[]
 };
 this._painter=null;
 this._active=false;
+this._upright=false;
 this._initialize();
 };
 
@@ -205,6 +206,7 @@ div.setAttribute("id",tid);
 container.appendChild(div);
 }
 div.setAttribute("class","timeplot-div "+clazz);
+div.setAttribute("className","timeplot-div "+clazz);
 this.placeDiv(div,styles);
 return div;
 },
@@ -315,23 +317,38 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 _prepareCanvas:function(){
 var canvas=this.getCanvas();
 
-var s=SimileAjax.DOM.getSize(this._containerDiv);
 
-canvas.width=s.w;
-canvas.height=s.h;
 
-this._paddingX=(this.getWidth()-canvas.width)/2;
-this._paddingY=(this.getHeight()-canvas.height)/2;
+
+var con=$('#'+this._containerDiv.id);
+this._paddingX=(parseInt(con.css('paddingLeft'))+
+parseInt(con.css('paddingRight')))/2;
+this._paddingY=(parseInt(con.css('paddingTop'))+
+parseInt(con.css('paddingBottom')))/2;
+
+canvas.width=this.getWidth()-(this._paddingX*2);
+canvas.height=this.getHeight()-(this._paddingY*2);
 
 var ctx=canvas.getContext('2d');
+this._setUpright(ctx,canvas);
+ctx.globalCompositeOperation='source-over';
+},
+
+_setUpright:function(ctx,canvas){
+
+
+if(!SimileAjax.Platform.browser.isIE)this._upright=false;
+if(!this._upright){
+this._upright=true;
 ctx.translate(0,canvas.height);
 ctx.scale(1,-1);
-ctx.globalCompositeOperation='source-over';
+}
 },
 
 _isBrowserSupported:function(canvas){
 var browser=SimileAjax.Platform.browser;
-if(canvas.getContext&&window.getComputedStyle){
+if((canvas.getContext&&window.getComputedStyle)||
+(browser.isIE&&browser.majorVersion>=7)){
 return true;
 }else{
 return false;
@@ -364,8 +381,12 @@ containerDiv.appendChild(labels);
 
 this._canvas=canvas;
 canvas.className="timeplot-canvas";
-this._prepareCanvas();
 containerDiv.appendChild(canvas);
+if(!canvas.getContext&&G_vmlCanvasManager){
+canvas=G_vmlCanvasManager.initElement(this._canvas);
+this._canvas=canvas;
+}
+this._prepareCanvas();
 
 
 var elmtCopyright=SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix+"images/copyright.png");
@@ -679,7 +700,12 @@ ctx.fill();
 if(this._plotInfo.lineColor){
 ctx.strokeStyle=this._plotInfo.lineColor.toString();
 ctx.beginPath();
+var first=true;
 this._plot(function(x,y){
+if(first){
+first=false;
+ctx.moveTo(x,y);
+}
 ctx.lineTo(x,y);
 });
 ctx.stroke();
