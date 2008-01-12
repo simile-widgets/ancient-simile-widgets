@@ -183,7 +183,7 @@ Timeplot._Impl.prototype = {
      *     return data;
      * };</pre></p>
      */
-    loadText: function(url, separator, eventSource, filter) {
+    loadText: function(url, separator, eventSource, filter, format) {
     	if (this._active) {
 	        var tp = this;
 	        
@@ -194,7 +194,7 @@ Timeplot._Impl.prototype = {
 	        
 	        var fDone = function(xmlhttp) {
 	            try {
-	                eventSource.loadText(xmlhttp.responseText, separator, url, filter);
+	                eventSource.loadText(xmlhttp.responseText, separator, url, filter, format);
 	            } catch (e) {
 	                SimileAjax.Debug.exception(e);
 	            } finally {

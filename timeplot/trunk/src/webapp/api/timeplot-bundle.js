@@ -137,7 +137,7 @@ return this._canvas;
 },
 
 
-loadText:function(url,separator,eventSource,filter){
+loadText:function(url,separator,eventSource,filter,format){
 if(this._active){
 var tp=this;
 
@@ -148,7 +148,7 @@ tp.hideLoadingMessage();
 
 var fDone=function(xmlhttp){
 try{
-eventSource.loadText(xmlhttp.responseText,separator,url,filter);
+eventSource.loadText(xmlhttp.responseText,separator,url,filter,format);
 }catch(e){
 SimileAjax.Debug.exception(e);
 }finally{
@@ -834,7 +834,7 @@ Timeline.DefaultEventSource.apply(this,arguments);
 Object.extend(Timeplot.DefaultEventSource.prototype,Timeline.DefaultEventSource.prototype);
 
 
-Timeplot.DefaultEventSource.prototype.loadText=function(text,separator,url,filter){
+Timeplot.DefaultEventSource.prototype.loadText=function(text,separator,url,filter,format){
 
 if(text==null){
 return;
@@ -843,8 +843,8 @@ return;
 this._events.maxValues=new Array();
 var base=this._getBaseURL(url);
 
-var dateTimeFormat='iso8601';
-var parseDateTimeFunction=this._events.getUnit().getParser(dateTimeFormat);
+if(!format)format='iso8601';
+var parseDateTimeFunction=this._events.getUnit().getParser(format);
 
 var data=this._parseText(text,separator);
 
@@ -858,12 +858,13 @@ if(data){
 for(var i=0;i<data.length;i++){
 var row=data[i];
 if(row.length>1){
-var evt=new Timeplot.DefaultEventSource.NumericEvent(
-parseDateTimeFunction(row[0]),
-row.slice(1)
-);
+var dateStr=$.trim(row[0]);
+var date=parseDateTimeFunction(dateStr);
+if(date){
+var evt=new Timeplot.DefaultEventSource.NumericEvent(date,row.slice(1));
 this._events.add(evt);
 added=true;
+}
 }
 }
 }

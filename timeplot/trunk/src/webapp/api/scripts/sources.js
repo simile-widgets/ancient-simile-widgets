@@ -21,7 +21,7 @@ Object.extend(Timeplot.DefaultEventSource.prototype, Timeline.DefaultEventSource
 /**
  * Function used by Timeplot to load time series data from a text file.
  */
-Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, filter) {
+Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, filter, format) {
 
     if (text == null) {
         return;
@@ -30,8 +30,8 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, 
     this._events.maxValues = new Array();
     var base = this._getBaseURL(url);
 
-    var dateTimeFormat = 'iso8601';
-    var parseDateTimeFunction = this._events.getUnit().getParser(dateTimeFormat);
+    if (!format) format = 'iso8601';
+    var parseDateTimeFunction = this._events.getUnit().getParser(format);
 
     var data = this._parseText(text, separator);
 
@@ -45,12 +45,13 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, 
         for (var i = 0; i < data.length; i++){
             var row = data[i];
             if (row.length > 1) {
-		        var evt = new Timeplot.DefaultEventSource.NumericEvent(
-		            parseDateTimeFunction(row[0]),
-		            row.slice(1)
-		        );
-		        this._events.add(evt);
-		        added = true;
+                var dateStr = $.trim(row[0]);
+                var date = parseDateTimeFunction(dateStr);
+                if (date) {
+                    var evt = new Timeplot.DefaultEventSource.NumericEvent(date,row.slice(1));
+                    this._events.add(evt);
+                    added = true;
+                }
             }
         }
     }
