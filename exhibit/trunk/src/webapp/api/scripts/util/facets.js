@@ -152,3 +152,155 @@ Exhibit.FacetUtilities.constructFlowingFacetItem = function(
     }
     return dom.elmt;
 };
+
+Exhibit.FacetUtilities.constructHierarchicalFacetItem = function(
+    label, 
+    count, 
+    color,
+    selected, 
+    hasChildren,
+    expanded,
+    facetHasSelection,
+    onSelect,
+    onSelectOnly,
+    onToggleChildren,
+    uiContext
+) {
+    if (Exhibit.params.safe) {
+        label = Exhibit.Formatter.encodeAngleBrackets(label);
+    }
+    
+    var dom = SimileAjax.DOM.createDOMFromString(
+        "div",
+        "<div class='exhibit-facet-value-count'>" + count + "</div>" +
+        "<div class='exhibit-facet-value-inner' id='inner'>" + 
+            (   "<div class='exhibit-facet-value-checkbox'>&nbsp;" +
+                    SimileAjax.Graphics.createTranslucentImageHTML(
+                        Exhibit.urlPrefix + 
+                        (   facetHasSelection ?
+                            (selected ? "images/black-check.png" : "images/no-check.png") :
+                            "images/no-check-no-border.png"
+                        )) +
+                "</div>"
+            ) +
+            "<a class='exhibit-facet-value-link' href='javascript:{}' id='link'></a>" +
+            (   hasChildren ?
+                (   "<a class='exhibit-facet-value-children-toggle' href='javascript:{}' id='toggle'>" + 
+                        SimileAjax.Graphics.createTranslucentImageHTML(
+                            Exhibit.urlPrefix + "images/down-arrow.png") +
+                        SimileAjax.Graphics.createTranslucentImageHTML(
+                            Exhibit.urlPrefix + "images/right-arrow.png") +
+                    "</a>"
+                ) :
+                ""
+            ) +
+        "</div>" +
+        (hasChildren ? "<div class='exhibit-facet-childrenContainer' id='childrenContainer'></div>" : "")
+    );
+    dom.elmt.className = selected ? "exhibit-facet-value exhibit-facet-value-selected" : "exhibit-facet-value";
+    if (typeof label == "string") {
+        dom.elmt.title = label;
+        dom.link.appendChild(document.createTextNode(label));
+        if (color != null) {
+            dom.link.style.color = color;
+        }
+    } else {
+        dom.link.appendChild(label);
+        if (color != null) {
+            label.style.color = color;
+        }
+    }
+    
+    SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelectOnly, SimileAjax.WindowManager.getBaseLayer());
+    if (facetHasSelection) {
+        SimileAjax.WindowManager.registerEvent(dom.inner.firstChild, "click", onSelect, SimileAjax.WindowManager.getBaseLayer());
+    }
+    if (hasChildren) {
+        dom.showChildren = function(show) {
+            dom.childrenContainer.style.display = show ? "block" : "none";
+            dom.toggle.childNodes[0].style.display = show ? "inline" : "none";
+            dom.toggle.childNodes[1].style.display = show ? "none" : "inline";
+        }
+        
+        SimileAjax.WindowManager.registerEvent(dom.toggle, "click", onToggleChildren, SimileAjax.WindowManager.getBaseLayer());
+        dom.showChildren(expanded);
+    }
+    
+    return dom;
+};
+
+Exhibit.FacetUtilities.constructFlowingHierarchicalFacetItem = function(
+    label, 
+    count, 
+    color,
+    selected, 
+    hasChildren,
+    expanded,
+    facetHasSelection,
+    onSelect,
+    onSelectOnly,
+    onToggleChildren,
+    uiContext
+) {
+    if (Exhibit.params.safe) {
+        label = Exhibit.Formatter.encodeAngleBrackets(label);
+    }
+    
+    var dom = SimileAjax.DOM.createDOMFromString(
+        "div",
+        (   "<div class='exhibit-flowingFacet-value-checkbox'>" +
+                SimileAjax.Graphics.createTranslucentImageHTML(
+                    Exhibit.urlPrefix + 
+                    (   facetHasSelection ?
+                        (selected ? "images/black-check.png" : "images/no-check.png") :
+                        "images/no-check-no-border.png"
+                    )) +
+            "</div>"
+        ) +
+        "<a class='exhibit-flowingFacet-value-link' href='javascript:{}' id='inner'></a>" +
+        " " +
+        "<span class='exhibit-flowingFacet-value-count'>(" + count + ")</span>" +
+        (   hasChildren ?
+            (   "<a class='exhibit-flowingFacet-value-children-toggle' href='javascript:{}' id='toggle'>" + 
+                    SimileAjax.Graphics.createTranslucentImageHTML(
+                        Exhibit.urlPrefix + "images/down-arrow.png") +
+                    SimileAjax.Graphics.createTranslucentImageHTML(
+                        Exhibit.urlPrefix + "images/right-arrow.png") +
+                "</a>"
+            ) :
+            ""
+        ) +
+        (hasChildren ? "<div class='exhibit-flowingFacet-childrenContainer' id='childrenContainer'></div>" : "")
+    );
+    
+    dom.elmt.className = selected ? "exhibit-flowingFacet-value exhibit-flowingFacet-value-selected" : "exhibit-flowingFacet-value";
+    if (typeof label == "string") {
+        dom.elmt.title = label;
+        dom.inner.appendChild(document.createTextNode(label));
+        if (color != null) {
+            dom.inner.style.color = color;
+        }
+    } else {
+        dom.inner.appendChild(label);
+        if (color != null) {
+            label.style.color = color;
+        }
+    }
+    
+    SimileAjax.WindowManager.registerEvent(dom.elmt, "click", onSelectOnly, SimileAjax.WindowManager.getBaseLayer());
+    if (facetHasSelection) {
+        SimileAjax.WindowManager.registerEvent(dom.elmt.firstChild, "click", onSelect, SimileAjax.WindowManager.getBaseLayer());
+    }
+    if (hasChildren) {
+        dom.showChildren = function(show) {
+            dom.childrenContainer.style.display = show ? "block" : "none";
+            dom.toggle.childNodes[0].style.display = show ? "inline" : "none";
+            dom.toggle.childNodes[1].style.display = show ? "none" : "inline";
+        }
+        
+        SimileAjax.WindowManager.registerEvent(dom.toggle, "click", onToggleChildren, SimileAjax.WindowManager.getBaseLayer());
+        dom.showChildren(expanded);
+    }
+    
+    return dom;
+};

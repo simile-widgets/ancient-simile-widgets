@@ -78,3 +78,21 @@ Exhibit.Set.prototype.visit = function(f) {
         }
     }
 }
+
+Exhibit.Set.createIntersection = function(set1, set2, result) {
+    var set = (result) ? result : new Exhibit.Set();
+    var setA, setB;
+    if (set1.size() < set2.size()) {
+        setA = set1;
+        setB = set2;
+    } else {
+        setA = set2;
+        setB = set1;
+    }
+    setA.visit(function (v) {
+        if (setB.contains(v)) {
+            set.add(v);
+        }
+    });
+    return set;
+}

@@ -72,6 +72,7 @@
             "ui/facets/numeric-range-facet.js",
             "ui/facets/text-search-facet.js",
             "ui/facets/cloud-facet.js",
+            "ui/facets/hierarchical-facet.js",
             
             "ui/coders/color-coder.js",
             "ui/coders/default-color-coder.js",

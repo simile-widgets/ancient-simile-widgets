@@ -170,3 +170,29 @@ span.exhibit-cloudFacet-value-selected {
     text-decoration: underline;
     background:      yellow;
 }
+
+/*==================================================
+ * Hierarchical facet
+ *==================================================
+ */
+ 
+a.exhibit-facet-value-children-toggle {
+    padding: 0px 5px;
+}
+a.exhibit-facet-value-children-toggle:hover {
+    background: #eee;
+}
+
+a.exhibit-flowingFacet-value-children-toggle {
+    padding: 0px 5px;
+}
+a.exhibit-flowingFacet-value-children-toggle:hover {
+    background: #eee;
+}
+
+div.exhibit-flowingFacet-childrenContainer {
+}
+
+div.exhibit-facet-childrenContainer {
+    padding-left: 16px;
+}
