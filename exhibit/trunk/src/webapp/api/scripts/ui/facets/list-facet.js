@@ -14,22 +14,6 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     
     this._settings = {};
     this._dom = null;
-    
-    var self = this;
-    this._listener = { 
-        onRootItemsChanged: function() {
-            if ("_itemToValue" in self) {
-                delete self._itemToValue;
-            }
-            if ("_valueToItem" in self) {
-                delete self._valueToItem;
-            }
-            if ("_missingItems" in self) {
-                delete self._missingItems;
-            }
-        }
-    };
-    uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.ListFacet._settingSpecs = {
@@ -133,12 +117,19 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
     if ("colorCoder" in facet._settings) {
         facet._colorCoder = facet._uiContext.getExhibit().getComponent(facet._settings.colorCoder);
     }
+    
+    facet._cache = new Exhibit.FacetUtilities.Cache(
+        facet._uiContext.getDatabase(),
+        facet._uiContext.getCollection(),
+        facet._expression
+    );
 }
 
 Exhibit.ListFacet.prototype.dispose = function() {
-    this._uiContext.getCollection().removeFacet(this);
+    this._cache.dispose();
+    this._cache = null;
     
-    this._uiContext.getCollection().removeListener(this._listener);
+    this._uiContext.getCollection().removeFacet(this);
     this._uiContext = null;
     this._colorCoder = null;
     
@@ -149,10 +140,6 @@ Exhibit.ListFacet.prototype.dispose = function() {
     this._expression = null;
     this._valueSet = null;
     this._settings = null;
-    
-    this._itemToValue = null;
-    this._valueToItem = null;
-    this._missingItems = null;
 };
 
 Exhibit.ListFacet.prototype.hasRestrictions = function() {
@@ -206,41 +193,9 @@ Exhibit.ListFacet.prototype.restrict = function(items) {
         return items;
     }
     
-    var set;
-    if (this._expression.isPath()) {
-        set = this._expression.getPath().walkBackward(
-            this._valueSet, 
-            "item", items, 
-            this._uiContext.getDatabase()
-        ).getSet();
-    } else {
-        this._buildMaps();
-        
-        set = new Exhibit.Set();
-        
-        var valueToItem = this._valueToItem;
-        this._valueSet.visit(function(value) {
-            if (value in valueToItem) {
-                var itemA = valueToItem[value];
-                for (var i = 0; i < itemA.length; i++) {
-                    var item = itemA[i];
-                    if (items.contains(item)) {
-                        set.add(item);
-                    }
-                }
-            }
-        });
-    }
-    
+    var set = this._cache.getItemsFromValues(this._valueSet, items);
     if (this._selectMissing) {
-        this._buildMaps();
-        
-        var missingItems = this._missingItems;
-        items.visit(function(item) {
-            if (item in missingItems) {
-                set.add(item);
-            }
-        });
+        this._cache.getItemsMissingValue(items, set);
     }
     
     return set;
@@ -255,38 +210,9 @@ Exhibit.ListFacet.prototype.update = function(items) {
 
 Exhibit.ListFacet.prototype._computeFacet = function(items) {
     var database = this._uiContext.getDatabase();
-    var entries = [];
-    var valueType = "text";
-    
-    if (this._expression.isPath()) {
-        var path = this._expression.getPath();
-        var facetValueResult = path.walkForward(items, "item", database);
-        valueType = facetValueResult.valueType;
-        
-        if (facetValueResult.size > 0) {
-            facetValueResult.forEachValue(function(facetValue) {
-                var itemSubcollection = path.evaluateBackward(facetValue, valueType, items, database);
-                entries.push({ value: facetValue, count: itemSubcollection.size });
-            });
-        };
-    } else {
-        this._buildMaps();
-        
-        valueType = this._valueType;
-        for (var value in this._valueToItem) {
-            var itemA = this._valueToItem[value];
-            var count = 0;
-            for (var i = 0; i < itemA.length; i++) {
-                if (items.contains(itemA[i])) {
-                    count++;
-                }
-            }
-            
-            if (count > 0) {
-                entries.push({ value: value, count: count });
-            }
-        }
-    }
+    var r = this._cache.getValueCountsFromItems(items);
+    var entries = r.entries;
+    var valueType = r.valueType;
     
     if (entries.length > 0) {
         var selection = this._valueSet;
@@ -300,59 +226,11 @@ Exhibit.ListFacet.prototype._computeFacet = function(items) {
             entry.selected = selection.contains(entry.value);
         }
         
-        var sortValueFunction = function(a, b) { return a.selectionLabel.localeCompare(b.selectionLabel); };
-        if ("_orderMap" in this) {
-            var orderMap = this._orderMap;
-            
-            sortValueFunction = function(a, b) {
-                if (a.selectionLabel in orderMap) {
-                    if (b.selectionLabel in orderMap) {
-                        return orderMap[a.selectionLabel] - orderMap[b.selectionLabel];
-                    } else {
-                        return -1;
-                    }
-                } else if (b.selectionLabel in orderMap) {
-                    return 1;
-                } else {
-                    return a.selectionLabel.localeCompare(b.selectionLabel);
-                }
-            }
-        } else if (valueType == "number") {
-            sortValueFunction = function(a, b) {
-                a = parseFloat(a.value);
-                b = parseFloat(b.value);
-                return a < b ? -1 : a > b ? 1 : 0;
-            }
-        }
-        
-        var sortFunction = sortValueFunction;
-        if (this._settings.sortMode == "count") {
-            sortFunction = function(a, b) {
-                var c = b.count - a.count;
-                return c != 0 ? c : sortValueFunction(a, b);
-            }
-        }
-
-        var sortDirectionFunction = sortFunction;
-        if (this._settings.sortDirection == "reverse"){
-            sortDirectionFunction = function(a, b) {
-                return sortFunction(b, a);
-            }
-        }
-
-        entries.sort(sortDirectionFunction);
+        entries.sort(this._createSortFunction(valueType));
     }
     
     if (this._settings.showMissing || this._selectMissing) {
-        this._buildMaps();
-        
-        var count = 0;
-        for (var item in this._missingItems) {
-            if (items.contains(item)) {
-                count++;
-            }
-        }
-        
+        var count = this._cache.countItemsMissingValue(items);
         if (count > 0 || this._selectMissing) {
             var span = document.createElement("span");
             span.innerHTML = ("missingLabel" in this._settings) ? 
@@ -512,40 +390,46 @@ Exhibit.ListFacet.prototype._clearSelections = function() {
     );
 };
 
-Exhibit.ListFacet.prototype._buildMaps = function() {
-    if (!("_itemToValue" in this)) {
-        var itemToValue = {};
-        var valueToItem = {};
-        var missingItems = {};
-        var valueType = "text";
+Exhibit.ListFacet.prototype._createSortFunction = function(valueType) {
+    var sortValueFunction = function(a, b) { return a.selectionLabel.localeCompare(b.selectionLabel); };
+    if ("_orderMap" in this) {
+        var orderMap = this._orderMap;
         
-        var insert = function(x, y, map) {
-            if (x in map) {
-                map[x].push(y);
+        sortValueFunction = function(a, b) {
+            if (a.selectionLabel in orderMap) {
+                if (b.selectionLabel in orderMap) {
+                    return orderMap[a.selectionLabel] - orderMap[b.selectionLabel];
+                } else {
+                    return -1;
+                }
+            } else if (b.selectionLabel in orderMap) {
+                return 1;
             } else {
-                map[x] = [ y ];
+                return a.selectionLabel.localeCompare(b.selectionLabel);
             }
-        };
-        
-        var expression = this._expression;
-        var database = this._uiContext.getDatabase();
-        
-        this._uiContext.getCollection().getAllItems().visit(function(item) {
-            var results = expression.evaluateOnItem(item, database);
-            if (results.values.size() > 0) {
-                valueType = results.valueType;
-                results.values.visit(function(value) {
-                    insert(item, value, itemToValue);
-                    insert(value, item, valueToItem);
-                });
-            } else {
-                missingItems[item] = true;
-            }
-        });
-        
-        this._itemToValue = itemToValue;
-        this._valueToItem = valueToItem;
-        this._missingItems = missingItems;
-        this._valueType = valueType;
+        }
+    } else if (valueType == "number") {
+        sortValueFunction = function(a, b) {
+            a = parseFloat(a.value);
+            b = parseFloat(b.value);
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
     }
-};
+    
+    var sortFunction = sortValueFunction;
+    if (this._settings.sortMode == "count") {
+        sortFunction = function(a, b) {
+            var c = b.count - a.count;
+            return c != 0 ? c : sortValueFunction(a, b);
+        }
+    }
+
+    var sortDirectionFunction = sortFunction;
+    if (this._settings.sortDirection == "reverse"){
+        sortDirectionFunction = function(a, b) {
+            return sortFunction(b, a);
+        }
+    }
+    
+    return sortDirectionFunction;
+}

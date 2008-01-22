@@ -47,12 +47,14 @@ Exhibit.Collection.create2 = function(id, configuration, uiContext) {
             uiContext.getExhibit().getCollection(configuration.baseCollectionID) : 
             uiContext.getCollection();
             
-        collection._update = Exhibit.Collection._basedCollection_update;
-        
-        collection._listener = { onItemsChanged: function() { collection._update(); } };
-        collection._baseCollection.addListener(collection._listener);
-        
-        collection._update();
+        collection._restrictBaseCollection = ("restrictBaseCollection" in configuration) ? 
+            configuration.restrictBaseCollection : false;
+            
+        if (collection._restrictBaseCollection) {
+            Exhibit.Collection._initializeRestrictingBasedCollection(collection);
+        } else {
+            Exhibit.Collection._initializeBasedCollection(collection);
+        }
         
         return collection;
     } else {
@@ -97,18 +99,36 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
             uiContext.getExhibit().getCollection(baseCollectionID) : 
             uiContext.getCollection();
             
-        collection._update = Exhibit.Collection._basedCollection_update;
-        
-        collection._listener = { onItemsChanged: function() { collection._update(); } };
-        collection._baseCollection.addListener(collection._listener);
-        
-        collection._update();
+        collection._restrictBaseCollection = Exhibit.getAttribute(elmt, "restrictBaseCollection") == "true";
+        if (collection._restrictBaseCollection) {
+            Exhibit.Collection._initializeRestrictingBasedCollection(collection);
+        } else {
+            Exhibit.Collection._initializeBasedCollection(collection);
+        }
         
         return collection;
     } else {
         return Exhibit.Collection.createFromDOM(id, elmt, database);
     }
 };
+
+Exhibit.Collection._initializeRestrictingBasedCollection = function(collection) {
+    collection._update = Exhibit.Collection._basedCollection_update;
+    
+    collection._listener = { onItemsChanged: function() { collection._update(); } };
+    collection._baseCollection.addListener(collection._listener);
+    
+    collection._update();
+}
+
+Exhibit.Collection._initializeBasedCollection = function(collection) {
+    collection._update = Exhibit.Collection._basedCollection_update;
+    
+    collection._listener = { onItemsChanged: function() { collection._update(); } };
+    collection._baseCollection.addListener(collection._listener);
+    
+    collection._update();
+}
 
 Exhibit.Collection.createAllItemsCollection = function(id, database) {
     var collection = new Exhibit.Collection(id, database);
