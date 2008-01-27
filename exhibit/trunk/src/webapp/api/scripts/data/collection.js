@@ -14,6 +14,15 @@ Exhibit.Collection = function(id, database) {
     this._restrictedItems = null;
 };
 
+Exhibit.Collection.createAllItemsCollection = function(id, database) {
+    var collection = new Exhibit.Collection(id, database);
+    collection._update = Exhibit.Collection._allItemsCollection_update;
+    
+    Exhibit.Collection._initializeBasicCollection(collection, database);
+    
+    return collection;
+};
+
 Exhibit.Collection.create = function(id, configuration, database) {
     var collection = new Exhibit.Collection(id, database);
     
@@ -24,14 +33,23 @@ Exhibit.Collection.create = function(id, configuration, database) {
         collection._update = Exhibit.Collection._allItemsCollection_update;
     }
     
-    var update = function() { collection._update(); };
-    collection._listener = { 
-        onAfterLoadingItems: update,
-        onAfterRemovingAllStatements: update
-    };
-    database.addListener(collection._listener);
+    Exhibit.Collection._initializeBasicCollection(collection, database);
     
-    collection._update();
+    return collection;
+};
+
+Exhibit.Collection.createFromDOM = function(id, elmt, database) {
+    var collection = new Exhibit.Collection(id, database);
+    
+    var itemTypes = Exhibit.getAttribute(elmt, "itemTypes", ",");
+    if (itemTypes != null && itemTypes.length > 0) {
+        collection._itemTypes = itemTypes;
+        collection._update = Exhibit.Collection._typeBasedCollection_update;
+    } else {
+        collection._update = Exhibit.Collection._allItemsCollection_update;
+    }
+    
+    Exhibit.Collection._initializeBasicCollection(collection, database);
     
     return collection;
 };
@@ -62,29 +80,6 @@ Exhibit.Collection.create2 = function(id, configuration, uiContext) {
     }
 };
 
-Exhibit.Collection.createFromDOM = function(id, elmt, database) {
-    var collection = new Exhibit.Collection(id, database);
-    
-    var itemTypes = Exhibit.getAttribute(elmt, "itemTypes", ",");
-    if (itemTypes != null && itemTypes.length > 0) {
-        collection._itemTypes = itemTypes;
-        collection._update = Exhibit.Collection._typeBasedCollection_update;
-    } else {
-        collection._update = Exhibit.Collection._allItemsCollection_update;
-    }
-    
-    var update = function() { collection._update(); };
-    collection._listener = { 
-        onAfterLoadingItems: update,
-        onAfterRemovingAllStatements: update
-    };
-    database.addListener(collection._listener);
-        
-    collection._update();
-    
-    return collection;
-};
-
 Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
     var database = uiContext.getDatabase();
     
@@ -101,7 +96,7 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
             
         collection._restrictBaseCollection = Exhibit.getAttribute(elmt, "restrictBaseCollection") == "true";
         if (collection._restrictBaseCollection) {
-            Exhibit.Collection._initializeRestrictingBasedCollection(collection);
+            Exhibit.Collection._initializeRestrictingBasedCollection(collection, database);
         } else {
             Exhibit.Collection._initializeBasedCollection(collection);
         }
@@ -112,14 +107,16 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
     }
 };
 
-Exhibit.Collection._initializeRestrictingBasedCollection = function(collection) {
-    collection._update = Exhibit.Collection._basedCollection_update;
-    
-    collection._listener = { onItemsChanged: function() { collection._update(); } };
-    collection._baseCollection.addListener(collection._listener);
-    
+Exhibit.Collection._initializeBasicCollection = function(collection, database) {
+    var update = function() { collection._update(); };
+    collection._listener = { 
+        onAfterLoadingItems: update,
+        onAfterRemovingAllStatements: update
+    };
+    database.addListener(collection._listener);
+        
     collection._update();
-}
+};
 
 Exhibit.Collection._initializeBasedCollection = function(collection) {
     collection._update = Exhibit.Collection._basedCollection_update;
@@ -128,22 +125,22 @@ Exhibit.Collection._initializeBasedCollection = function(collection) {
     collection._baseCollection.addListener(collection._listener);
     
     collection._update();
-}
+};
 
-Exhibit.Collection.createAllItemsCollection = function(id, database) {
-    var collection = new Exhibit.Collection(id, database);
+Exhibit.Collection._initializeRestrictingBasedCollection = function(collection, database) {
+    collection._cache = new Exhibit.FacetUtilities.Cache(
+        database,
+        collection._baseCollection,
+        collection._expression
+    );
+    collection._isUpdatingBaseCollection = false;
     
-    var update = function() { collection._update(); };
-    collection._listener = { 
-        onAfterLoadingItems: update,
-        onAfterRemovingAllStatements: update
-    };
-    database.addListener(collection._listener);
+    collection.onFacetUpdated = Exhibit.Collection._restrictingBasedCollection_onFacetUpdated;
+    collection.restrict = Exhibit.Collection._restrictingBasedCollection_restrict;
+    collection.update = Exhibit.Collection._restrictingBasedCollection_update;
+    collection.hasRestrictions = Exhibit.Collection._restrictingBasedCollection_hasRestrictions;
     
-    collection._update = Exhibit.Collection._allItemsCollection_update;
-    collection._update();
-    
-    return collection;
+    collection._baseCollection.addFacet(collection);
 };
 
 /*======================================================================
@@ -176,6 +173,55 @@ Exhibit.Collection._basedCollection_update = function() {
     this._onRootItemsChanged();
 };
 
+Exhibit.Collection._restrictingBasedCollection_onFacetUpdated = function(facetChanged) {
+    if (!this._updating) {
+        /*
+         *  This is called when one of our own facets is changed.
+         */
+        Exhibit.Collection.prototype.onFacetUpdated.call(this, facetChanged);
+        
+        /*
+         *  We need to restrict the base collection.
+         */
+        this._isUpdatingBaseCollection = true;
+        this._baseCollection.onFacetUpdated(this);
+        this._isUpdatingBaseCollection = false;
+    }
+};
+
+Exhibit.Collection._restrictingBasedCollection_restrict = function(items) {
+    /*
+     *  Restrict the base collection using our own restricted items
+     *  (as filtered by our own facets).
+     */
+    if (this._restrictedItems.size() == this._items.size()) {
+        return items;
+    }
+    
+    return this._cache.getItemsFromValues(this._restrictedItems, items);
+};
+
+Exhibit.Collection._restrictingBasedCollection_update = function(items) {
+    if (!this._isUpdatingBaseCollection) {
+        /*
+         *  This is called when the base collection is changed by
+         *  one of its other facets. This causes our root items to
+         *  change.
+         */
+        this._items = this._cache.getValuesFromItems(items);
+        this._onRootItemsChanged();
+    }
+};
+
+Exhibit.Collection._restrictingBasedCollection_hasRestrictions = function() {
+    return (this._items != null) && (this._restrictedItems != null) && 
+        (this._restrictedItems.size() != this._items.size());
+};
+
+/*======================================================================
+ *  Common Implementation
+ *======================================================================
+ */
 Exhibit.Collection.prototype.getID = function() {
     return this._id;
 };

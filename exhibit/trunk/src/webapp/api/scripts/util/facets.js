@@ -425,6 +425,27 @@ Exhibit.FacetUtilities.Cache.prototype.getValueCountsFromItems = function(items)
     return { entries: entries, valueType: valueType };
 }
 
+Exhibit.FacetUtilities.Cache.prototype.getValuesFromItems = function(items) {
+    if (this._expression.isPath()) {
+        return this._expression.getPath().walkForward(items, "item", database).getSet();
+    } else {
+        this._buildMaps();
+        
+        var set = new Exhibit.Set();
+        var itemToValue = this._itemToValue;
+        items.visit(function(item) {
+            if (item in itemToValue) {
+                var a = itemToValue[item];
+                for (var i = 0; i < a.length; i++) {
+                    set.add(a[i]);
+                }
+            }
+        });
+        
+        return set;
+    }
+}
+
 Exhibit.FacetUtilities.Cache.prototype.countItemsMissingValue = function(items) {
     this._buildMaps();
     
