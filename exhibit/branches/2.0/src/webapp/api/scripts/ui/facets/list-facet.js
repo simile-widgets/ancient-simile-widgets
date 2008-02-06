@@ -41,7 +41,8 @@ Exhibit.ListFacet._settingSpecs = {
     "missingLabel":     { type: "text" },
     "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
-    "colorCoder":       { type: "text", defaultValue: null }
+    "colorCoder":       { type: "text", defaultValue: null },
+    "collapsed":        { type: "boolean", defaultValue: false }
 };
 
 Exhibit.ListFacet.create = function(configuration, containerElmt, uiContext) {
@@ -387,6 +388,9 @@ Exhibit.ListFacet.prototype._initializeUI = function() {
     
     if ("height" in this._settings && this._settings.scroll) {
         this._dom.valuesContainer.style.height = this._settings.height;
+    }
+    if (this._settings.collapsed) {
+	Exhibit.FacetUtilities.toggleCollapse(this._dom);
     }
 };
 
