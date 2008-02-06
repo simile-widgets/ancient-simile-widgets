@@ -52,7 +52,7 @@ Exhibit.FacetUtilities.constructFacetItem = function(
         "div",
         "<div class='exhibit-facet-value-count'>" + count + "</div>" +
         "<div class='exhibit-facet-value-inner' id='inner'>" + 
-            (   "<div class='exhibit-facet-value-checkbox'>&nbsp;" +
+            (   "<div class='exhibit-facet-value-checkbox'>&#160;" +
                     SimileAjax.Graphics.createTranslucentImageHTML(
                         Exhibit.urlPrefix + 
                         (   facetHasSelection ?
@@ -174,7 +174,7 @@ Exhibit.FacetUtilities.constructHierarchicalFacetItem = function(
         "div",
         "<div class='exhibit-facet-value-count'>" + count + "</div>" +
         "<div class='exhibit-facet-value-inner' id='inner'>" + 
-            (   "<div class='exhibit-facet-value-checkbox'>&nbsp;" +
+            (   "<div class='exhibit-facet-value-checkbox'>&#160;" +
                     SimileAjax.Graphics.createTranslucentImageHTML(
                         Exhibit.urlPrefix + 
                         (   facetHasSelection ?

@@ -204,12 +204,12 @@ Exhibit.TextSearchFacet.constructFacetFrame = function(div, facetLabel) {
             "<div class='exhibit-facet-header'>" +
                 "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
             "</div>" +
-            "<div class='exhibit-text-facet'><input type='text' id='input'></div>"
+            "<div class='exhibit-text-facet'><input type='text' id='input' /></div>"
         );
     } else {
         return SimileAjax.DOM.createDOMFromString(
             div,
-            "<div class='exhibit-text-facet'><input type='text' id='input'></div>"
+            "<div class='exhibit-text-facet'><input type='text' id='input' /></div>"
         );
     }
 };
