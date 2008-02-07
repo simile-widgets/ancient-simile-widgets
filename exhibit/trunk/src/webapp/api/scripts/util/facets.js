@@ -15,6 +15,7 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
                 "<span id='filterCountSpan'></span>" +
                 "<img id='checkImage' />" +
             "</div>" +
+	    "<img src='"+Exhibit.urlPrefix+"images/collapse.png' class='exhibit-facet-header-collapse' id='collapseImg' />" +
             "<span class='exhibit-facet-header-title'>" + facetLabel + "</span>" +
         "</div>" +
         "<div class='exhibit-facet-body-frame' id='frameDiv'></div>",
@@ -30,8 +31,34 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
         this.clearSelectionsDiv.style.display = count > 0 ? "block" : "none";
     };
     SimileAjax.WindowManager.registerEvent(dom.clearSelectionsDiv, "click", onClearAllSelections);
+    SimileAjax.WindowManager.registerEvent(dom.collapseImg, "click", function() {Exhibit.FacetUtilities.toggleCollapse(dom)} );
     
     return dom;
+};
+
+Exhibit.FacetUtilities.toggleCollapse = function(dom) {
+    el = dom.valuesContainer;
+    if (dom.frameDiv) {
+	el = dom.frameDiv;
+    }
+
+    if(el.style.display != "none") {
+	el.style.display = "none";
+	dom.collapseImg.src = Exhibit.urlPrefix+"images/expand.png";
+    }
+    else {
+	el.style.display = "";
+	dom.collapseImg.src = Exhibit.urlPrefix+"images/collapse.png";
+    }
+};
+
+Exhibit.FacetUtilities.isCollapsed = function(facet) {
+    el = facet._dom.valuesContainer;
+    if (facet._dom.frameDiv) {
+	el = facet._dom.frameDiv;
+    }
+
+    return el.style.display == "none";
 };
 
 Exhibit.FacetUtilities.constructFacetItem = function(
@@ -90,6 +117,7 @@ Exhibit.FacetUtilities.constructFlowingFacetFrame = function(div, facetLabel, on
     var dom = SimileAjax.DOM.createDOMFromString(
         div,
         "<div class='exhibit-flowingFacet-header'>" +
+	    "<img src='"+Exhibit.urlPrefix+"images/collapse.png' class='exhibit-facet-header-collapse' id='collapseImg' />" +
             "<span class='exhibit-flowingFacet-header-title'>" + facetLabel + "</span>" +
         "</div>" +
         "<div class='exhibit-flowingFacet-body' id='valuesContainer'></div>"
@@ -98,6 +126,8 @@ Exhibit.FacetUtilities.constructFlowingFacetFrame = function(div, facetLabel, on
     dom.setSelectionCount = function(count) {
         // nothing
     };
+
+    SimileAjax.WindowManager.registerEvent(dom.collapseImg, "click", function() {Exhibit.FacetUtilities.toggleCollapse(dom)} );
     
     return dom;
 };

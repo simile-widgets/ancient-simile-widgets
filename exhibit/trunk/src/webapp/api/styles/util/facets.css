@@ -19,6 +19,12 @@ div.exhibit-facet-header-filterControl img {
     vertical-align: text-bottom;
 }
 
+img.exhibit-facet-header-collapse { 
+    border: 1px;
+    cursor: pointer;
+    padding-right: 3px;
+}
+
 span.exhibit-facet-header-title {
     font-weight:    bold;
 }
@@ -195,4 +201,26 @@ div.exhibit-flowingFacet-childrenContainer {
 
 div.exhibit-facet-childrenContainer {
     padding-left: 16px;
+}
+
+/*==================================================
+ * Slider facet
+ *==================================================
+ */
+
+div.exhibit-slider-bar { 
+    background: #999;
+    height: 10px;
+    width: 100px;
+}
+
+div.exhibit-slider-handle { 
+    background: cyan;
+    border: 1px solid blue;
+    float: left;
+    height: 10px;
+    left: 0px;
+    position: relative;
+    top: 0px;
+    width: 5px;
 }
