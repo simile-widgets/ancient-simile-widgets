@@ -35,7 +35,9 @@ Exhibit.HierarchicalFacet._settingSpecs = {
     "othersLabel":      { type: "text" },
     "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
-    "colorCoder":       { type: "text", defaultValue: null }
+    "colorCoder":       { type: "text", defaultValue: null },
+    "collapsible":      { type: "boolean", defaultValue: false },
+    "collapsed":        { type: "boolean", defaultValue: false }
 };
 
 Exhibit.HierarchicalFacet.create = function(configuration, containerElmt, uiContext) {
@@ -127,6 +129,10 @@ Exhibit.HierarchicalFacet._configure = function(facet, configuration) {
     
     if ("colorCoder" in facet._settings) {
         facet._colorCoder = facet._uiContext.getExhibit().getComponent(facet._settings.colorCoder);
+    }
+    
+    if (facet._settings.collapsed) {
+        facet._settings.collapsible = true;
     }
 }
 
@@ -433,7 +439,9 @@ Exhibit.HierarchicalFacet.prototype._initializeUI = function() {
         this._div,
         this._settings.facetLabel,
         function(elmt, evt, target) { self._clearSelections(); },
-        this._uiContext
+        this._uiContext,
+        this._settings.collapsible,
+        this._settings.collapsed
     );
     
     if ("height" in this._settings && this._settings.scroll) {

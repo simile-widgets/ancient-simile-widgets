@@ -80,7 +80,7 @@ Exhibit.JSONPImporter.load = function(
     Exhibit.JSONPImporter._callbacks[callbackName] = function(json) {
         try {
             cleanup(null);
-            database.loadData(fConvert ? fConvert(json, url) : json,
+            database.loadData(fConvert ? fConvert(json, url, link) : json,
                               Exhibit.Persistence.getBaseURL(url));
         } finally {
             if (cont) cont(json);
@@ -144,7 +144,15 @@ Exhibit.JSONPImporter.deliciousConverter = function(json, url) {
     return { items:items, properties:{ url:{ valueType:"url" } } };
 };
 
-Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
+Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url, link) {
+    var separator = ";";
+    if ((link) && (typeof link != "string")) {
+        var s = Exhibit.getAttribute(link, "separator");
+        if (s != null && s.length > 0) {
+            separator = s;
+        }
+    }
+    
     var items = [];
     var properties = {};
     var types = {};
@@ -220,7 +228,7 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url) {
                     
                     var property = properties[fieldName];
                     if (!property.single) {
-                        var fieldValues = cell.val.split(";");
+                        var fieldValues = cell.val.split(separator);
                         for (var v = 0; v < fieldValues.length; v++) {
                             fieldValues[v] = fieldValues[v].trim();
                         }

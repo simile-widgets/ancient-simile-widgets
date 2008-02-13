@@ -28,7 +28,7 @@
 
   and then point your browser to
   
-   http://127.0.0.1:9999/timeline/
+   http://127.0.0.1:8888/exhibit/
   
 
 

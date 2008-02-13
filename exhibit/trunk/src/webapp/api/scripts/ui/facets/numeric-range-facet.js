@@ -28,7 +28,9 @@ Exhibit.NumericRangeFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
     "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
-    "interval":         { type: "float", defaultValue: 10 }
+    "interval":         { type: "float", defaultValue: 10 },
+    "collapsible":      { type: "boolean", defaultValue: false },
+    "collapsed":        { type: "boolean", defaultValue: false }
 };
 
 Exhibit.NumericRangeFacet.create = function(configuration, containerElmt, uiContext) {
@@ -88,6 +90,10 @@ Exhibit.NumericRangeFacet._configure = function(facet, configuration) {
                 facet._settings.facetLabel = segment.forward ? property.getLabel() : property.getReverseLabel();
             }
         }
+    }
+    
+    if (facet._settings.collapsed) {
+        facet._settings.collapsible = true;
     }
 }
 
@@ -282,7 +288,9 @@ Exhibit.NumericRangeFacet.prototype._initializeUI = function() {
         this._div,
         this._settings.facetLabel,
         function(elmt, evt, target) { self._clearSelections(); },
-        this._uiContext
+        this._uiContext,
+        this._settings.collapsible,
+        this._settings.collapsed
     );
     
     if ("height" in this._settings) {
