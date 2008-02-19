@@ -3,7 +3,8 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     this._div = div;
     this._facet = facet;
     this._prec = precision || .1;
-    this._range = facet._maxRange;
+    this._range = {min: Exhibit.Util.round(facet._maxRange.min-precision/2, this._prec),  // round down
+		   max: Exhibit.Util.round(facet._maxRange.max+precision/2, this._prec)}; // round up
 
     this._scaleFactor = null;
     this._minSlider = {};
@@ -12,7 +13,7 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     this._dom = SimileAjax.DOM.createDOMFromString(
         div,
         '<div class="exhibit-slider-bar" id="bar">' +
-            '<div class="exhibit-slider-handle" id="minHandle"></div>' +
+	    '<div class="exhibit-slider-handle" id="minHandle"></div>' +
 	    '<div class="exhibit-slider-handle" id="maxHandle"></div>' +
 	'</div>' +
 	'<div>' +
@@ -29,26 +30,25 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     this._registerDragging();
 };
 
+// If you call this, it's up to you to notifyFacet if necessary
 Exhibit.SliderFacet.slider.prototype.resetSliders = function() {
     this._setSlider(this._minSlider, this._range.min);
     this._setSlider(this._maxSlider, this._range.max);
 };
 
+// If you call this, it's up to you to notifyFacet if necessary
 Exhibit.SliderFacet.slider.prototype._setSlider = function(slider, value) {
-    if (value >= this._range.max) {
-	slider.div.style.left = slider.max;
+    if (value > this._range.max) {
+	value = this._range.max
     }
-    if (value <= this._range.min) {
-	slider.div.style.left = slider.min;
+    else if (value < this._range.min) {
+	value = this._range.min
     }
-    slider.div.style.left = value/this._scaleFactor + 'px';
+    value = Exhibit.Util.round(value, this._prec);
 
-    if (slider == this._minSlider) {
-	this._range.min = value;
-    } else {
-	this._range.max = value;
-    }
-    this._notifyFacet();
+    slider.value = value;
+    slider.div.style.left = (value/this._scaleFactor-slider.offset) + 'px';
+    slider.display.innerHTML = value;
 };
 
 Exhibit.SliderFacet.slider.prototype._initSliders = function() {
@@ -60,25 +60,33 @@ Exhibit.SliderFacet.slider.prototype._initSliders = function() {
     var min = this._minSlider;
     min.value = this._range.min;
     min.div = this._dom.minHandle;
+    min.div.style.backgroundImage = 'url("'+Exhibit.urlPrefix+'images/right-arrow.png")';
+    min.div.style.top = -min.div.offsetHeight/2 + 'px';
     min.display = this._dom.minDisplay;
-    min.offset = min.div.offsetWidth/2;
+    min.offset = min.div.offsetWidth;
     min.min = function(){ return -min.offset; };
-    min.max = function(){ return parseInt(max.div.style.left) + max.offset - min.offset; };
+    min.max = function(){ return parseFloat(max.div.style.left) + max.offset - min.offset; };
 
     var max = this._maxSlider;
     max.value = this._range.max;
     max.div = this._dom.maxHandle;
+    max.div.style.backgroundImage = 'url("'+Exhibit.urlPrefix+'images/left-arrow.png")';
+    max.div.style.top = -max.div.offsetHeight/2 + 'px';
     max.display = this._dom.maxDisplay;
-    max.offset = max.div.offsetWidth/2 + min.div.offsetWidth;
-    max.min = function(){ return min.div.offsetLeft + min.offset - self._dom.bar.offsetLeft - max.offset; };
+    max.offset = min.div.offsetWidth;
+    max.min = function(){ return parseFloat(min.div.style.left) + min.offset - max.offset; };
     max.max = function(){ return self._dom.bar.offsetWidth - max.offset; };
 
     min.setDisplay = max.setDisplay = function(left) {
 	this.display.innerHTML = Exhibit.Util.round((left+this.offset)*self._scaleFactor+self._range.min, self._prec);
     };
+
+    this.resetSliders();
 };
 
 Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
+    self = this;
+
     var startDrag = function(slider) {
 	return function(e) {
 	    e = e || window.event;
@@ -89,6 +97,9 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 		document.addEventListener('mousemove', onMove, false);
 		document.addEventListener('mouseup', endDrag(slider, onMove), false);
 	    };
+
+	    SimileAjax.DOM.cancelEvent(e);
+	    return false;
 	};
     };
 
@@ -111,7 +122,9 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 	    }
 	    slider.div.style.left = newLeft + 'px';
 
-	    slider.setDisplay(newLeft);
+	    //setTimeout keeps setDisplay from slowing down the dragging
+	    //I'm not entirely sure why, but I think it might have something to do with it putting the call in a new environment
+	    setTimeout(function(){ slider.setDisplay(newLeft); }, 0);
 	};
     };
 
@@ -122,6 +135,9 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 		document.removeEventListener('mousemove', moveListener, false);
 		document.removeEventListener('mouseup', arguments.callee, false); //remove this function
 	    }
+
+	    slider.value = slider.display.innerHTML;
+	    self._notifyFacet();
 	};
     };
 
@@ -150,6 +166,7 @@ Exhibit.SliderFacet.slider.prototype._registerDragging2 = function() {
     var onDrag = function(slider) {
 	return function(dx, dy) {
 	    this.left += dx;
+	    left = this.left;
 	    if (this.left < this.min) {
 		this.left = this.min;
 	    }
@@ -157,6 +174,10 @@ Exhibit.SliderFacet.slider.prototype._registerDragging2 = function() {
 		this.left = this.max;
 	    }
 	    slider.div.style.left = this.left + 'px';
+
+	    //setTimeout keeps setDisplay from slowing down the dragging
+	    //I'm not entirely sure why, but I think it might have something to do with it putting the call in a new environment
+	    setTimeout(function(){ slider.setDisplay(left); }, 0);
 	};
     };
 
@@ -176,40 +197,20 @@ Exhibit.SliderFacet.slider.prototype._registerDragging2 = function() {
 
     //max slider
     SimileAjax.WindowManager.registerForDragging(
-         this._dom.maxHandle,
-         { onDragStart: function() {
-		 var minHandle = self._dom.minHandle;
-		 var bar = self._dom.bar;
-		 this._maxHandle = self._dom.maxHandle;
-		 this._offset = this._maxHandle.offsetWidth/2 + minHandle.offsetWidth;
+	 this._dom.maxHandle,
+         { onDragStart: dragStart(this._maxSlider),
 
-		 this._left = parseInt(this._maxHandle.style.left);
+	   onDragBy: onDrag(this._maxSlider),
 
-		 this._min = minHandle.offsetLeft + minHandle.offsetWidth/2 - bar.offsetLeft - this._offset;
-		 this._max = bar.offsetWidth - this._offset;
-	     },
-
-	     onDragBy: function(dx, dy) {
-		 this._left += dx;
-		 if (this._left < this._min) {
-		     this._left = this._min;
-		 } 
-		 else if (this._left > this._max) {
-		     this._left = this._max;
-		 }
-		 this._maxHandle.style.left = this._left + 'px';
-
-		 self._dom.maxDisplay.innerHTML = Exhibit.Util.round((this._left+this._offset)*self._scaleFactor+self._range.min, self._prec);
-	     },
-
-	     onDragEnd: function() {
-		 self._max = self._dom.maxDisplay.innerHTML;
-		 self._notifyFacet();
-	     }
+	   onDragEnd: function() {
+		self._min = self._minSlider.display.innerHTML;
+		self._notifyFacet();
+	   }
 	 }
     );
+
 };
 
 Exhibit.SliderFacet.slider.prototype._notifyFacet = function() {
-    this._facet.changeRange( {min: this._min, max: this._max} );
+    this._facet.changeRange( {min: this._minSlider.value, max: this._maxSlider.value} );
 };

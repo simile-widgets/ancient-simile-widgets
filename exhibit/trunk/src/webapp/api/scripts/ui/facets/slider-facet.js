@@ -127,3 +127,8 @@ Exhibit.SliderFacet.prototype.changeRange = function(range) {
 Exhibit.SliderFacet.prototype._notifyCollection = function() {
     this._uiContext.getCollection().onFacetUpdated(this);
 };
+
+Exhibit.SliderFacet.prototype.clearAllRestrictions = function() {
+    this._slider.resetSliders();
+    this._range = this._maxRange;
+};
