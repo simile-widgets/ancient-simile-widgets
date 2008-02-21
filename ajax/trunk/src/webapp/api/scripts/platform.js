@@ -3,6 +3,11 @@
  *==================================================
  */
 
+/*  This must be called after our jQuery has been loaded 
+    but before control returns to user-code.
+*/
+SimileAjax.jQuery = jQuery.noConflict(true); 
+
 SimileAjax.Platform.os = {
     isMac:   false,
     isWin:   false,

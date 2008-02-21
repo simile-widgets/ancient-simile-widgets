@@ -8,7 +8,7 @@
  *  autoCreate=false when you include exhibit-api.js.
  *======================================================================
  */
-$(document).ready(function() { 
+SimileAjax.jQuery(document).ready(function() { 
     var fDone = function() {
         window.exhibit = Exhibit.create();
         window.exhibit.configureFromDOM();
