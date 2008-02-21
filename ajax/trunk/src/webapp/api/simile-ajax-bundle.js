@@ -1043,7 +1043,8 @@ top+=parseInt(t)||0;
 
 /* platform.js */
 SimileAjax.jQuery=jQuery.noConflict(true);
-SimileAjax.Platform.os={isMac:false,isWin:false,isWin32:false,isUnix:false};
+if(typeof window["$"]=="undefined"){window.$=SimileAjax.jQuery;
+}SimileAjax.Platform.os={isMac:false,isWin:false,isWin32:false,isUnix:false};
 SimileAjax.Platform.browser={isIE:false,isNetscape:false,isMozilla:false,isFirefox:false,isOpera:false,isSafari:false,majorVersion:0,minorVersion:0};
 (function(){var C=navigator.appName.toLowerCase();
 var A=navigator.userAgent.toLowerCase();
