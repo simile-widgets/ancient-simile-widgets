@@ -1,0 +1,124 @@
+﻿<html>
+<head>
+    <title>SIMILE | Exhibit 2.0</title>
+    <link rel='stylesheet' href='styles.css' type='text/css' />
+    <link rel='stylesheet' href='index-styles.css' type='text/css' />
+    <link rel="alternate" type="application/rdf+xml" href="doap.rdf" />
+    <script type="text/javascript" src="index-script.js"></script>
+</head>
+<body onload="onLoad();">
+<!--#include virtual="sidebar.html" -->
+
+<ul id="path">
+  <img src="images/exhibit-logo.png" style="float: right; margin: 12px 15px;" />
+  <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+  <li><span>Exhibit</span></li>
+</ul>
+
+<div id="body">
+    
+    <h1>Exhibit 2.0</h1>
+    <p class="blurb">
+        Create <em>interactive</em> <em>data-rich</em> web pages like these ones below
+        without ever touching a database or a web server, or doing <em>any</em> 
+        programming:
+    </p>
+    
+    <div id="carousel" onmouseover="onCarouselMouseOver();">
+        <table id="carousel-content" border="0" cellspacing="0" cellpadding="0"><tr></tr></table>
+        <div id="carousel-message">
+            <i>click on screenshots to see live web sites</i>
+        </div>
+    </div>
+    
+    <p class="blurb">
+        Exhibit is a <em>three-tier web application framework</em> written
+        in Javascript, which you can include like you would include Google Maps.
+    </p>
+    <p class="blurb">
+        If you just want to show a few hundred records of data on maps, timelines, 
+        scatter plots, interactive tables, etc., why bother learning SQL, ASP, PHP,
+        CGI, or whatever when you can just use Exhibit?
+    </p>
+    <p class="blurb">To use Exhibit, you write: a simple data file, and an HTML file in 
+        which you specify how the data should be shown. Data + Presentation. 
+        That's all there is to publishing, as it should be.
+    </p>
+    
+    <h2>Documentation</h2>
+    
+    <p>It's easy to make your own exhibits! Here are:
+        <ul>
+            <li>a <a href="http://simile.mit.edu/wiki/Exhibit/Getting_Started_Tutorial">Getting Started tutorial</a> - must read first</li>
+            <li>a <a href="http://simile.mit.edu/wiki/Exhibit/How_to_make_an_exhibit_from_a_spreadsheet">tutorial for converting data from spreadsheets</a></li>
+            <li>a <a href="http://simile.mit.edu/wiki/Exhibit/How_to_make_a_publications_exhibit">tutorial for making exhibits out of bibtex files</a>
+        </ul>
+        <ul>
+            <li><a href="http://simile.mit.edu/wiki/Exhibit/2.0/Migration">Migrating from 1.0 to 2.0</a></li>
+        </ul>
+    </p>
+    <p>More documentation is <a href="/wiki/Exhibit">our wiki</a>.</p>
+    <p>We also provide a complementary service called 
+        <a href="http://simile.mit.edu/babel/">Babel</a> that lets you convert data
+        from various sources, including tab-separated values (copied straight from
+        spreadsheets) and Bibtex files, into formats that Exhibit understands.
+    </p>
+    
+    <h2>Download</h2>
+    <p>Actually, there is nothing to download&mdash;you didn't have to download Google Maps, did you?!
+        Exhibit is also a Web API. All you need is reference its Javascript. Nothing to download;
+        nothing to install. Welcome to a new era of software development.
+    </p>
+    <p>But if you absolutely have to download something just to feel better about it, or
+        if you have extra disk space to waste, sure, here's 
+        <a href="http://simile.mit.edu/wiki/Exhibit/Download_Exhibit%27s_Source_Code">how to download Exhibit's source code</a>.
+    </p>
+    
+    <h2>Feedback / Contribute</h2>
+    <ul>
+        <li>Send questions/comments/ideas/discussions/etc. to our 
+            <a href="mailto:general@simile.mit.edu">mailing list</a>
+            (<a href="http://simile.mit.edu/mailman/listinfo/general">archive/sign-up</a>)
+        </li>
+        <li>Contribute to Exhibit's <a href="http://simile.mit.edu/wiki/Exhibit">wiki</a>
+        </li>
+        <li>Log bugs/issues in our <a href="http://simile.mit.edu/issues/browse/EXHIBIT">issue tracker</a> 
+            (<a href="http://simile.mit.edu/issues/secure/Signup!default.jspa">sign-up</a>)
+        </li>
+    </ul>
+    
+    <h2>Licensing</h2>
+    <p>Exhibit is open source software and is licensed under the 
+        <a href="http://simile.mit.edu/license.html">BSD license</a>.
+        Basically, it's FREE.
+    </p>
+    
+    <h2>Credits</h2>
+    <p>This software is developed from the research in the 
+        <a href="http://haystack.csail.mit.edu/">Haystack group</a> and the 
+        <a href="http://groups.csail.mit.edu/uid/">User Interface Design group</a> at 
+        <a href="http://web.mit.edu/">MIT</a> 
+        <a href="http://csail.mit.edu/">CSAIL</a>, and maintained by the 
+        <a href="http://simile.mit.edu/">SIMILE project</a>.
+    </p>
+    <p>The development team for this software includes:
+        <ul>
+            <li>Pierre-Julien Bringer</li>
+            <li>Gabriel Durazo</li>
+            <li>Nina Guo</li>
+            <li><a href="http://simile.mit.edu/wiki/User:Dfhuynh">David Huynh</a> (original author)</li>
+            <li>Margaret Leibovic</li>
+            <li>Johan Sundström</li>
+            <li>Mason Tang</li>
+        </ul>
+    </p>
+    <p>This software is partially sponsored by 
+        <a href="http://mellon.org/">The Andrew W. Mellon Foundation</a>.
+    </p>
+    <p>Exhibit has been inspired by many people and many projects, including Tim Berners-Lee's 
+        <a href="http://www.w3.org/2005/ajar/tab">Tabulator</a>.</p>
+</div>
+
+<!--#include virtual="../footer.html" -->
+</body>
+</html>
