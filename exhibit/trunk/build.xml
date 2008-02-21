@@ -110,5 +110,11 @@
             <include name="**/*.js" />
         </fileset>
     </jsmin>
+    
+    <jsmin output="src/webapp/api/locales/de/exhibit-de-bundle.js">
+        <fileset dir="src/webapp/api/locales/de/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
   </target>
 </project>
