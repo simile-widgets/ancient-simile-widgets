@@ -77,7 +77,7 @@ Timeplot.DefaultValueGeometry.prototype = {
      * Called after changing ranges or canvas size to reset the grid values
      */
     reset: function() {
-    	this._clearLabels();
+        this._clearLabels();
         this._updateMappedValues();
         this._grid = this._calculateGrid();
     },
@@ -86,40 +86,40 @@ Timeplot.DefaultValueGeometry.prototype = {
      * Map the given value to a y screen coordinate.
      */
     toScreen: function(value) {
-    	if (this._canvas && this._maxValue) {
-	        var v = value - this._minValue;
-	        return this._canvas.height * (this._map.direct(v)) / this._mappedRange;
-    	} else {
-    		return -50;
-    	}
+        if (this._canvas && this._maxValue) {
+            var v = value - this._minValue;
+            return this._canvas.height * (this._map.direct(v)) / this._mappedRange;
+        } else {
+            return -50;
+        }
     },
 
     /**
      * Map the given y screen coordinate to a value
      */
     fromScreen: function(y) {
-    	if (this._canvas) {
+        if (this._canvas) {
             return this._map.inverse(this._mappedRange * y / this._canvas.height) + this._minValue;
-    	} else {
-    		return 0;
-    	}
+        } else {
+            return 0;
+        }
     },
 
     /**
      * Each geometry is also a painter and paints the value grid and grid labels.
      */
     paint: function() {
-    	if (this._timeplot) {
-	        var ctx = this._canvas.getContext('2d');
-	
-	        ctx.lineJoin = 'miter';
-	
+        if (this._timeplot) {
+            var ctx = this._canvas.getContext('2d');
+    
+            ctx.lineJoin = 'miter';
+    
             // paint grid
             if (this._gridColor) {        
                 var gridGradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
                 gridGradient.addColorStop(0, this._gridColor.toHexString());
-		        gridGradient.addColorStop(0.3, this._gridColor.toHexString());
-		        gridGradient.addColorStop(1, "rgba(255,255,255,0.5)");
+                gridGradient.addColorStop(0.3, this._gridColor.toHexString());
+                gridGradient.addColorStop(1, "rgba(255,255,255,0.5)");
 
                 ctx.lineWidth = this._gridLineWidth;
                 ctx.strokeStyle = gridGradient;
@@ -128,76 +128,76 @@ Timeplot.DefaultValueGeometry.prototype = {
                     var tick = this._grid[i];
                     var y = Math.floor(tick.y) + 0.5;
                     if (typeof tick.label != "undefined") {
-	                    if (this._axisLabelsPlacement == "left") {
-	                        var div = this._timeplot.putText(this._id + "-" + i, tick.label,"timeplot-grid-label",{
-	                            left: 4,
-	                            bottom: y + 2,
-	                            color: this._gridColor.toHexString(),
-	                            visibility: "hidden"
-	                        });
-	                    } else if (this._axisLabelsPlacement == "right") {
-	                        var div = this._timeplot.putText(this._id + "-" + i, tick.label, "timeplot-grid-label",{
-	                            right: 4,
-	                            bottom: y + 2,
-	                            color: this._gridColor.toHexString(),
-	                            visibility: "hidden"
-	                        });
-	                    }
-	                    if (y + div.clientHeight < this._canvas.height + 10) {
-	                        div.style.visibility = "visible"; // avoid the labels that would overflow
-	                    }
+                        if (this._axisLabelsPlacement == "left") {
+                            var div = this._timeplot.putText(this._id + "-" + i, tick.label,"timeplot-grid-label",{
+                                left: 4,
+                                bottom: y + 2,
+                                color: this._gridColor.toHexString(),
+                                visibility: "hidden"
+                            });
+                        } else if (this._axisLabelsPlacement == "right") {
+                            var div = this._timeplot.putText(this._id + "-" + i, tick.label, "timeplot-grid-label",{
+                                right: 4,
+                                bottom: y + 2,
+                                color: this._gridColor.toHexString(),
+                                visibility: "hidden"
+                            });
+                        }
+                        if (y + div.clientHeight < this._canvas.height + 10) {
+                            div.style.visibility = "visible"; // avoid the labels that would overflow
+                        }
                     }
 
                     // draw grid
                     ctx.beginPath();
                     if (this._gridType == "long" || tick.label == 0) {
-	                    ctx.moveTo(0, y);
-	                    ctx.lineTo(this._canvas.width, y);
+                        ctx.moveTo(0, y);
+                        ctx.lineTo(this._canvas.width, y);
                     } else if (this._gridType == "short") {
                         if (this._axisLabelsPlacement == "left") {
-	                        ctx.moveTo(0, y);
-	                        ctx.lineTo(this._gridShortSize, y);
+                            ctx.moveTo(0, y);
+                            ctx.lineTo(this._gridShortSize, y);
                         } else if (this._axisLabelsPlacement == "right") {
-	                        ctx.moveTo(this._canvas.width, y);
-	                        ctx.lineTo(this._canvas.width - this._gridShortSize, y);
-                        }                    	
+                            ctx.moveTo(this._canvas.width, y);
+                            ctx.lineTo(this._canvas.width - this._gridShortSize, y);
+                        }                       
                     }
                     ctx.stroke();
                 }
             }
-		
-	        // paint axis
+        
+            // paint axis
             var axisGradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
             axisGradient.addColorStop(0, this._axisColor.toString());
             axisGradient.addColorStop(0.5, this._axisColor.toString());
             axisGradient.addColorStop(1, "rgba(255,255,255,0.5)");
-	        
-	        ctx.lineWidth = 1;
+            
+            ctx.lineWidth = 1;
             ctx.strokeStyle = axisGradient;
-	
-	        // left axis
-	        ctx.beginPath();
-	        ctx.moveTo(0,this._canvas.height);
-	        ctx.lineTo(0,0);
-	        ctx.stroke();
-	        
-	        // right axis
-	        ctx.beginPath();
-	        ctx.moveTo(this._canvas.width,0);
-	        ctx.lineTo(this._canvas.width,this._canvas.height);
-	        ctx.stroke();
-    	}
+    
+            // left axis
+            ctx.beginPath();
+            ctx.moveTo(0,this._canvas.height);
+            ctx.lineTo(0,0);
+            ctx.stroke();
+            
+            // right axis
+            ctx.beginPath();
+            ctx.moveTo(this._canvas.width,0);
+            ctx.lineTo(this._canvas.width,this._canvas.height);
+            ctx.stroke();
+        }
     },
     
     /**
      * Removes all the labels that were added by this geometry
      */
     _clearLabels: function() {
-    	for (var i = 0; i < this._labels.length; i++) {
-    		var l = this._labels[i];
-    		var parent = l.parentNode;
-    		if (parent) parent.removeChild(l);
-    	}
+        for (var i = 0; i < this._labels.length; i++) {
+            var l = this._labels[i];
+            var parent = l.parentNode;
+            if (parent) parent.removeChild(l);
+        }
     },
     
     /*
@@ -210,45 +210,45 @@ Timeplot.DefaultValueGeometry.prototype = {
         if (!this._canvas || this._valueRange == 0) return grid;
                 
         var power = 0;
-    	if (this._valueRange > 1) {
-    		while (Math.pow(10,power) < this._valueRange) {
-    			power++;
-    		}
-    		power--;
-    	} else {
+        if (this._valueRange > 1) {
+            while (Math.pow(10,power) < this._valueRange) {
+                power++;
+            }
+            power--;
+        } else {
             while (Math.pow(10,power) > this._valueRange) {
                 power--;
             }
-    	}
+        }
 
         var unit = Math.pow(10,power);
         var inc = unit;
         while (true) {
             var dy = this.toScreen(this._minValue + inc);
 
-	        while (dy < this._gridSpacing) {
-	        	inc += unit;
+            while (dy < this._gridSpacing) {
+                inc += unit;
                 dy = this.toScreen(this._minValue + inc);
-	        }
+            }
 
-	        if (dy > 2 * this._gridSpacing) { // grids are too spaced out
-	        	unit /= 10;
-	        	inc = unit;
-	        } else {
-	        	break;
-	        }
+            if (dy > 2 * this._gridSpacing) { // grids are too spaced out
+                unit /= 10;
+                inc = unit;
+            } else {
+                break;
+            }
         }
         
         var v = 0;
         var y = this.toScreen(v);
         if (this._minValue >= 0) {
-        	while (y < this._canvas.height) {
-        		if (y > 0) {
-        			grid.push({ y: y, label: v });
-        		}
-        		v += inc;
-        		y = this.toScreen(v);
-        	}
+            while (y < this._canvas.height) {
+                if (y > 0) {
+                    grid.push({ y: y, label: v });
+                }
+                v += inc;
+                y = this.toScreen(v);
+            }
         } else if (this._maxValue <= 0) {
             while (y > 0) {
                 if (y < this._canvas.height) {
@@ -307,12 +307,12 @@ Timeplot.DefaultValueGeometry.prototype = {
 Timeplot.LogarithmicValueGeometry = function(params) {
     Timeplot.DefaultValueGeometry.apply(this, arguments);
     this._logMap = {
-    	direct: function(v) {
-			return Math.log(v + 1) / Math.log(10);
-    	},
-    	inverse: function(y) {
-			return Math.exp(Math.log(10) * y) - 1;
-    	}
+        direct: function(v) {
+            return Math.log(v + 1) / Math.log(10);
+        },
+        inverse: function(y) {
+            return Math.exp(Math.log(10) * y) - 1;
+        }
     }
     this._mode = "log";
     this._map = this._logMap;
@@ -352,7 +352,7 @@ Timeplot.LogarithmicValueGeometry.prototype.actLinear = function() {
     this._mode = "lin";
     this._map = this._linMap;
     this._calculateGrid = this._linearCalculateGrid;
-	this.reset();
+    this.reset();
 }
 
 /**
@@ -369,11 +369,11 @@ Timeplot.LogarithmicValueGeometry.prototype.actLogarithmic = function() {
  * Toggle logarithmic scaling seeting it to on if off and viceversa. 
  */
 Timeplot.LogarithmicValueGeometry.prototype.toggle = function() {
-	if (this._mode == "log") {
-		this.actLinear();
-	} else {
+    if (this._mode == "log") {
+        this.actLinear();
+    } else {
         this.actLogarithmic();
-	}
+    }
 }
 
 // -----------------------------------------------------
@@ -426,8 +426,8 @@ Timeplot.DefaultTimeGeometry.prototype = {
      * before we can paint using this geometry.
      */
     setTimeplot: function(timeplot) {
-    	this._timeplot = timeplot;
-    	this._canvas = timeplot.getCanvas();
+        this._timeplot = timeplot;
+        this._canvas = timeplot.getCanvas();
         this.reset();
     },
 
@@ -437,14 +437,14 @@ Timeplot.DefaultTimeGeometry.prototype = {
      * in the parameters, the biggest range will be used.
      */
     setRange: function(range) {
-    	if (this._min) {
-    		this._earliestDate = this._min;
-    	} else if (range.earliestDate && ((this._earliestDate == null) || ((this._earliestDate != null) && (range.earliestDate.getTime() < this._earliestDate.getTime())))) {
+        if (this._min) {
+            this._earliestDate = this._min;
+        } else if (range.earliestDate && ((this._earliestDate == null) || ((this._earliestDate != null) && (range.earliestDate.getTime() < this._earliestDate.getTime())))) {
             this._earliestDate = range.earliestDate;
         }
         
         if (this._max) {
-        	this._latestDate = this._max;
+            this._latestDate = this._max;
         } else if (range.latestDate && ((this._latestDate == null) || ((this._latestDate != null) && (range.latestDate.getTime() > this._latestDate.getTime())))) {
             this._latestDate = range.latestDate;
         }
@@ -452,7 +452,7 @@ Timeplot.DefaultTimeGeometry.prototype = {
         if (!this._earliestDate && !this._latestDate) {
             this._grid = [];
         } else {
-        	this.reset(); 
+            this.reset(); 
         }
     },
     
@@ -468,7 +468,7 @@ Timeplot.DefaultTimeGeometry.prototype = {
      * Map the given date to a x screen coordinate.
      */
     toScreen: function(time) {
-    	if (this._canvas && this._latestDate) {
+        if (this._canvas && this._latestDate) {
             var t = time - this._earliestDate.getTime();
             return this._canvas.width * this._map.direct(t) / this._mappedPeriod;
         } else {
@@ -480,25 +480,25 @@ Timeplot.DefaultTimeGeometry.prototype = {
      * Map the given x screen coordinate to a date.
      */
     fromScreen: function(x) {
-    	if (this._canvas) {
+        if (this._canvas) {
             return this._map.inverse(this._mappedPeriod * x / this._canvas.width) + this._earliestDate.getTime();
-    	} else {
-    		return 0;
-    	} 
+        } else {
+            return 0;
+        } 
     },
     
     /**
      * Get a period (in milliseconds) this time geometry spans.
      */
     getPeriod: function() {
-    	return this._period;
+        return this._period;
     },
     
     /**
      * Return the labeler that has been associated with this time geometry
      */
     getLabeler: function() {
-    	return this._labeler;
+        return this._labeler;
     },
 
     /**
@@ -512,24 +512,24 @@ Timeplot.DefaultTimeGeometry.prototype = {
     * Each geometry is also a painter and paints the value grid and grid labels.
     */
     paint: function() {
-    	if (this._canvas) {
-	    	var unit = this._unit;
-	        var ctx = this._canvas.getContext('2d');
-	
-	        var gradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
-	
-	        ctx.strokeStyle = gradient;
-	        ctx.lineWidth = this._gridLineWidth;
-	        ctx.lineJoin = 'miter';
-	
-	        // paint grid
-	        if (this._gridColor) {        
-	            gradient.addColorStop(0, this._gridColor.toString());
-	            gradient.addColorStop(1, "rgba(255,255,255,0.9)");
-	
-	            for (var i = 0; i < this._grid.length; i++) {
-	            	var tick = this._grid[i];
-	            	var x = Math.floor(tick.x) + 0.5;
+        if (this._canvas) {
+            var unit = this._unit;
+            var ctx = this._canvas.getContext('2d');
+    
+            var gradient = ctx.createLinearGradient(0,0,0,this._canvas.height);
+    
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = this._gridLineWidth;
+            ctx.lineJoin = 'miter';
+    
+            // paint grid
+            if (this._gridColor) {        
+                gradient.addColorStop(0, this._gridColor.toString());
+                gradient.addColorStop(1, "rgba(255,255,255,0.9)");
+    
+                for (var i = 0; i < this._grid.length; i++) {
+                    var tick = this._grid[i];
+                    var x = Math.floor(tick.x) + 0.5;
                     if (this._axisLabelsPlacement == "top") {
                         var div = this._timeplot.putText(this._id + "-" + i, tick.label,"timeplot-grid-label",{
                             left: x + 4,
@@ -552,21 +552,21 @@ Timeplot.DefaultTimeGeometry.prototype = {
                     ctx.moveTo(x,0);
                     ctx.lineTo(x,this._canvas.height);
                     ctx.stroke();
-	            }
-	        }
-	
-	        // paint axis
-	        gradient.addColorStop(0, this._axisColor.toString());
-	        gradient.addColorStop(1, "rgba(255,255,255,0.5)");
-	        
-	        ctx.lineWidth = 1;
-	        gradient.addColorStop(0, this._axisColor.toString());
-	
-	        ctx.beginPath();
-	        ctx.moveTo(0,0);
-	        ctx.lineTo(this._canvas.width,0);
-	        ctx.stroke();
-    	}
+                }
+            }
+    
+            // paint axis
+            gradient.addColorStop(0, this._axisColor.toString());
+            gradient.addColorStop(1, "rgba(255,255,255,0.5)");
+            
+            ctx.lineWidth = 1;
+            gradient.addColorStop(0, this._axisColor.toString());
+    
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.lineTo(this._canvas.width,0);
+            ctx.stroke();
+        }
     },
     
     /*
@@ -574,44 +574,44 @@ Timeplot.DefaultTimeGeometry.prototype = {
      * by this geometry to draw the grid in order to reduce clutter. 
      */
     _calculateGrid: function() {
-    	var grid = [];
-    	
-    	var time = SimileAjax.DateTime;
-    	var u = this._unit;
-    	var p = this._period;
+        var grid = [];
+        
+        var time = SimileAjax.DateTime;
+        var u = this._unit;
+        var p = this._period;
         
         if (p == 0) return grid;
         
         // find the time units nearest to the time period
         if (p > time.gregorianUnitLengths[time.MILLENNIUM]) {
-            unit = time.MILLENNIUM;	
+            unit = time.MILLENNIUM; 
         } else {
-	        for (var unit = time.MILLENNIUM; unit > 0; unit--) {
-	            if (time.gregorianUnitLengths[unit-1] <= p && p < time.gregorianUnitLengths[unit]) {
-	                unit--;
-	                break;
-	            }
-	        }
+            for (var unit = time.MILLENNIUM; unit > 0; unit--) {
+                if (time.gregorianUnitLengths[unit-1] <= p && p < time.gregorianUnitLengths[unit]) {
+                    unit--;
+                    break;
+                }
+            }
         }
 
         var t = u.cloneValue(this._earliestDate);
 
         do {
-	        time.roundDownToInterval(t, unit, this._timeZone, 1, 0);
-	        var x = this.toScreen(u.toNumber(t));
-	        switch (unit) {
-	        	case time.SECOND:
+            time.roundDownToInterval(t, unit, this._timeZone, 1, 0);
+            var x = this.toScreen(u.toNumber(t));
+            switch (unit) {
+                case time.SECOND:
                   var l = t.toLocaleTimeString();
-	        	  break;
-	        	case time.MINUTE:
-	        	  var m = t.getMinutes();
+                  break;
+                case time.MINUTE:
+                  var m = t.getMinutes();
                   var l = t.getHours() + ":" + ((m < 10) ? "0" : "") + m;
                   break;
                 case time.HOUR:
                   var l = t.getHours() + ":00";
                   break;
-	        	case time.DAY:
-	        	case time.WEEK:
+                case time.DAY:
+                case time.WEEK:
                 case time.MONTH:
                   var l = t.toLocaleDateString();
                   break;  
@@ -619,13 +619,13 @@ Timeplot.DefaultTimeGeometry.prototype = {
                 case time.DECADE:
                 case time.CENTURY:
                 case time.MILLENNIUM:
-	        	  var l = t.getUTCFullYear();
-	        	  break;
-	        }
-	        if (x > 0) { 
-		        grid.push({ x: x, label: l });
-	        }
-	        time.incrementByInterval(t, unit, this._timeZone);
+                  var l = t.getUTCFullYear();
+                  break;
+            }
+            if (x > 0) { 
+                grid.push({ x: x, label: l });
+            }
+            time.incrementByInterval(t, unit, this._timeZone);
         } while (t.getTime() < this._latestDate.getTime());
         
         return grid;
@@ -636,13 +636,13 @@ Timeplot.DefaultTimeGeometry.prototype = {
      * we don't have to calculate them at every repaint.
      */
     _updateMappedValues: function() {
-    	if (this._latestDate && this._earliestDate) {
-	        this._period = this._latestDate.getTime() - this._earliestDate.getTime();
-	        this._mappedPeriod = this._map.direct(this._period);
-    	} else {
-    		this._period = 0;
-    		this._mappedPeriod = 0;
-    	}
+        if (this._latestDate && this._earliestDate) {
+            this._period = this._latestDate.getTime() - this._earliestDate.getTime();
+            this._mappedPeriod = this._map.direct(this._period);
+        } else {
+            this._period = 0;
+            this._mappedPeriod = 0;
+        }
     }
     
 }
@@ -663,14 +663,14 @@ Timeplot.MagnifyingTimeGeometry = function(params) {
     var g = this;
     this._MagnifyingMap = {
         direct: function(t) {
-        	if (t < g._leftTimeMargin) {
-        		var x = t * g._leftRate;
-        	} else if ( g._leftTimeMargin < t && t < g._rightTimeMargin ) {
-        		var x = t * g._expandedRate + g._expandedTimeTranslation;
-        	} else {
-        		var x = t * g._rightRate + g._rightTimeTranslation;
-        	}
-        	return x;
+            if (t < g._leftTimeMargin) {
+                var x = t * g._leftRate;
+            } else if ( g._leftTimeMargin < t && t < g._rightTimeMargin ) {
+                var x = t * g._expandedRate + g._expandedTimeTranslation;
+            } else {
+                var x = t * g._rightRate + g._rightTimeTranslation;
+            }
+            return x;
         },
         inverse: function(x) {
             if (x < g._leftScreenMargin) {
@@ -727,8 +727,8 @@ Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
             geometry.actLinear();
             geometry._timeplot.paint();
         } else {
-	        geometry._lens.style.cursor = "move";
-	        magnifyWith(geometry._lens);
+            geometry._lens.style.cursor = "move";
+            magnifyWith(geometry._lens);
         }
     }
 
@@ -777,11 +777,11 @@ Timeplot.MagnifyingTimeGeometry.prototype.initialize = function(timeplot) {
     }
     
     if (!this._lens.instrumented) {
-	    SimileAjax.DOM.registerEvent(this._lens, "mousedown", lensMouseDown);
-	    SimileAjax.DOM.registerEvent(this._lens, "mousemove", lensMouseMove);
+        SimileAjax.DOM.registerEvent(this._lens, "mousedown", lensMouseDown);
+        SimileAjax.DOM.registerEvent(this._lens, "mousemove", lensMouseMove);
         SimileAjax.DOM.registerEvent(this._lens, "mouseup"  , lensMouseUp);
-    	SimileAjax.DOM.registerEvent(this._lens, "mouseup"  , canvasMouseUp);
-    	this._lens.instrumented = true;
+        SimileAjax.DOM.registerEvent(this._lens, "mouseup"  , canvasMouseUp);
+        this._lens.instrumented = true;
     }
 }
 

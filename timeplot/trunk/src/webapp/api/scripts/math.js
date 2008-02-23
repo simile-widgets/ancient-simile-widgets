@@ -173,21 +173,21 @@ Timeplot.Math = {
      * Return the hyperbolic tangent of x
      */
     tanh: function(x) {
-    	if (x > 5) {
-    		return 1;
-    	} else if (x < 5) {
-    		return -1;
-    	} else {
-	    	var expx2 = Math.exp(2 * x);
-	    	return (expx2 - 1) / (expx2 + 1);
-    	}
+        if (x > 5) {
+            return 1;
+        } else if (x < 5) {
+            return -1;
+        } else {
+            var expx2 = Math.exp(2 * x);
+            return (expx2 - 1) / (expx2 + 1);
+        }
     },
     
     /** 
      * Returns true if |a.x - b.x| < value && | a.y - b.y | < value
      */
     isClose: function(a,b,value) {
-    	return (a && b && Math.abs(a.x - b.x) < value && Math.abs(a.y - b.y) < value);
+        return (a && b && Math.abs(a.x - b.x) < value && Math.abs(a.y - b.y) < value);
     }
 
 }

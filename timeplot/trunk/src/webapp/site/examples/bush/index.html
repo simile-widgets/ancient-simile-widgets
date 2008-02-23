@@ -27,11 +27,13 @@
         }
     </style>
     
-    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+    <!-- script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script-->
+    <script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?local=true"></script>
 
     <script>
         var timeplot1;
-
+        var plotInfo1;
+        
         var fill = new Timeplot.Color('#D1DBBD');
         fill.transparency(0.75);
         var line = new Timeplot.Color('#193441');
@@ -58,7 +60,7 @@
             var eventSource2 = new Timeplot.DefaultEventSource();
             var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
             
-            var plotInfo1 = [
+            plotInfo1 = [
                 Timeplot.createPlotInfo({
                     id: "Ratings",
                     dataSource: dataSource1,
@@ -84,6 +86,12 @@
             timeplot1.loadXML("bush_events.xml", eventSource2);
         }            
         
+        function toggle() {
+            var checkbox = document.getElementById("toggler");
+            plotInfo1[0].showValues = checkbox.checked;
+            timeplot1.update();
+        }
+        
         var resizeTimerID = null;
         function onResize() {
             if (resizeTimerID == null) {
@@ -106,6 +114,7 @@
 <div id="body">
 	<h1>George W. Bush Ratings</h1>
     <div id="timeplot1" style="height: 300px" class="timeplot"></div>
+    <p style="float: right">Show values on the mouse location<input id="toggler" type="checkbox" checked="true" onchange="toggle()"/></p>
     <p class="sources">Source: <a href="http://www.pollingreport.com/BushJob1.htm">NBC News/Wall Street Journal</a></p>
 </div>
     

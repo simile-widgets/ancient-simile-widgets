@@ -63,7 +63,7 @@ Timeplot.createPlotInfo = function(params) {
  * @constructor 
  */
 Timeplot._Impl = function(elmt, plotInfos) {
-	this._id = "t" + Math.round(Math.random() * 1000000);
+    this._id = "t" + Math.round(Math.random() * 1000000);
     this._containerDiv = elmt;
     this._plotInfos = plotInfos;
     this._painters = {
@@ -91,7 +91,7 @@ Timeplot._Impl.prototype = {
      * Returns the main container div this timeplot is operating on.
      */
     getElement: function() {
-    	return this._containerDiv;
+        return this._containerDiv;
     },
     
     /**
@@ -149,7 +149,7 @@ Timeplot._Impl.prototype = {
      * Get the width in pixels of the area occupied by the entire timeplot in the page
      */
     getWidth: function() {
-    	return this._containerDiv.clientWidth;
+        return this._containerDiv.clientWidth;
     },
 
     /**
@@ -184,27 +184,27 @@ Timeplot._Impl.prototype = {
      * };</pre></p>
      */
     loadText: function(url, separator, eventSource, filter, format) {
-    	if (this._active) {
-	        var tp = this;
-	        
-	        var fError = function(statusText, status, xmlhttp) {
-	            alert("Failed to load data xml from " + url + "\n" + statusText);
-	            tp.hideLoadingMessage();
-	        };
-	        
-	        var fDone = function(xmlhttp) {
-	            try {
-	                eventSource.loadText(xmlhttp.responseText, separator, url, filter, format);
-	            } catch (e) {
-	                SimileAjax.Debug.exception(e);
-	            } finally {
-	                tp.hideLoadingMessage();
-	            }
-	        };
-	        
-	        this.showLoadingMessage();
-	        window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
-    	}
+        if (this._active) {
+            var tp = this;
+            
+            var fError = function(statusText, status, xmlhttp) {
+                alert("Failed to load data xml from " + url + "\n" + statusText);
+                tp.hideLoadingMessage();
+            };
+            
+            var fDone = function(xmlhttp) {
+                try {
+                    eventSource.loadText(xmlhttp.responseText, separator, url, filter, format);
+                } catch (e) {
+                    SimileAjax.Debug.exception(e);
+                } finally {
+                    tp.hideLoadingMessage();
+                }
+            };
+            
+            this.showLoadingMessage();
+            window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
+        }
     },
 
     /**
@@ -212,29 +212,29 @@ Timeplot._Impl.prototype = {
      * the Timeline XML event format.
      */
     loadXML: function(url, eventSource) {
-    	if (this._active) {
-	        var tl = this;
-	        
-	        var fError = function(statusText, status, xmlhttp) {
-	            alert("Failed to load data xml from " + url + "\n" + statusText);
-	            tl.hideLoadingMessage();
-	        };
-	        
-	        var fDone = function(xmlhttp) {
-	            try {
-	                var xml = xmlhttp.responseXML;
-	                if (!xml.documentElement && xmlhttp.responseStream) {
-	                    xml.load(xmlhttp.responseStream);
-	                } 
-	                eventSource.loadXML(xml, url);
-	            } finally {
-	                tl.hideLoadingMessage();
-	            }
-	        };
-	        
-	        this.showLoadingMessage();
-	        window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
-    	}
+        if (this._active) {
+            var tl = this;
+            
+            var fError = function(statusText, status, xmlhttp) {
+                alert("Failed to load data xml from " + url + "\n" + statusText);
+                tl.hideLoadingMessage();
+            };
+            
+            var fDone = function(xmlhttp) {
+                try {
+                    var xml = xmlhttp.responseXML;
+                    if (!xml.documentElement && xmlhttp.responseStream) {
+                        xml.load(xmlhttp.responseStream);
+                    } 
+                    eventSource.loadXML(xml, url);
+                } finally {
+                    tl.hideLoadingMessage();
+                }
+            };
+            
+            this.showLoadingMessage();
+            window.setTimeout(function() { SimileAjax.XmlHttp.get(url, fError, fDone); }, 0);
+        }
     },
     
     /**
@@ -252,14 +252,14 @@ Timeplot._Impl.prototype = {
      * This is used for labels and horizontal and vertical grids. 
      */
     putDiv: function(id, clazz, styles) {
-    	var tid = this._id + "-" + id;
-    	var div = document.getElementById(tid);
-    	if (!div) {
-	        var container = this._containerDiv.firstChild; // get the divs container
-	        div = document.createElement("div");
-	        div.setAttribute("id",tid);
-	        container.appendChild(div);
-    	}
+        var tid = this._id + "-" + id;
+        var div = document.getElementById(tid);
+        if (!div) {
+            var container = this._containerDiv.firstChild; // get the divs container
+            div = document.createElement("div");
+            div.setAttribute("id",tid);
+            container.appendChild(div);
+        }
         div.setAttribute("class","timeplot-div " + clazz);
         div.setAttribute("className","timeplot-div " + clazz);
         this.placeDiv(div,styles);
@@ -304,10 +304,10 @@ Timeplot._Impl.prototype = {
      * (that is, without the container padding)
      */
     locate: function(div) {
-    	return {
-    		x: div.offsetLeft - this._paddingX,
-    		y: div.offsetTop - this._paddingY
-    	}
+        return {
+            x: div.offsetLeft - this._paddingX,
+            y: div.offsetTop - this._paddingY
+        }
     },
     
     /**
@@ -317,20 +317,21 @@ Timeplot._Impl.prototype = {
      * modified.
      */
     update: function() {
-    	if (this._active) {
-	        for (var i = 0; i < this._plots.length; i++) {
-	            var plot = this._plots[i];
-	            var dataSource = plot.getDataSource();
-	            if (dataSource) {
-	                var range = dataSource.getRange();
-	                if (range) {
-	                	plot._valueGeometry.setRange(range);
-	                	plot._timeGeometry.setRange(range);
-	                }
-	            }
-	        }
-	        this.paint();
-    	}
+        if (this._active) {
+            for (var i = 0; i < this._plots.length; i++) {
+                var plot = this._plots[i];
+                var dataSource = plot.getDataSource();
+                if (dataSource) {
+                    var range = dataSource.getRange();
+                    if (range) {
+                        plot._valueGeometry.setRange(range);
+                        plot._timeGeometry.setRange(range);
+                    }
+                }
+                plot.hideValues();
+            }
+            this.paint();
+        }
     },
     
     /**
@@ -339,15 +340,15 @@ Timeplot._Impl.prototype = {
      * geometry of the page has changed or not. 
      */
     repaint: function() {
-    	if (this._active) {
-	        this._prepareCanvas();
-	        for (var i = 0; i < this._plots.length; i++) {
-	            var plot = this._plots[i];
-	            if (plot._timeGeometry) plot._timeGeometry.reset();
-	            if (plot._valueGeometry) plot._valueGeometry.reset();
-	        }
-	        this.paint();
-    	}
+        if (this._active) {
+            this._prepareCanvas();
+            for (var i = 0; i < this._plots.length; i++) {
+                var plot = this._plots[i];
+                if (plot._timeGeometry) plot._timeGeometry.reset();
+                if (plot._valueGeometry) plot._valueGeometry.reset();
+            }
+            this.paint();
+        }
     },
     
     /**
@@ -387,9 +388,17 @@ Timeplot._Impl.prototype = {
     },
 
     _clearCanvas: function() {
-    	var canvas = this.getCanvas();
-    	var ctx = canvas.getContext('2d');
+        var canvas = this.getCanvas();
+        var ctx = canvas.getContext('2d');
         ctx.clearRect(0,0,canvas.width,canvas.height);
+    },
+    
+    _clearLabels: function() {
+        var labels = document.getElementById("timeplot-labels");
+        if (labels) this._containerDiv.removeChild();
+        labels = document.createElement("div");
+        labels.id = "timeplot-labels";
+        this._containerDiv.appendChild(labels);
     },
     
     _prepareCanvas: function() {
@@ -424,21 +433,21 @@ Timeplot._Impl.prototype = {
     },
     
     _isBrowserSupported: function(canvas) {
-    	var browser = SimileAjax.Platform.browser;
-    	if ((canvas.getContext && window.getComputedStyle) ||
+        var browser = SimileAjax.Platform.browser;
+        if ((canvas.getContext && window.getComputedStyle) ||
             (browser.isIE && browser.majorVersion >= 6)) {
-        	return true;
-    	} else {
-    		return false;
-    	}
+            return true;
+        } else {
+            return false;
+        }
     },
     
     _initialize: function() {
-    	
-    	// initialize the window manager (used to handle the popups)
-    	// NOTE: this is a singleton and it's safe to call multiple times
-    	SimileAjax.WindowManager.initialize(); 
-    	
+        
+        // initialize the window manager (used to handle the popups)
+        // NOTE: this is a singleton and it's safe to call multiple times
+        SimileAjax.WindowManager.initialize(); 
+        
         var containerDiv = this._containerDiv;
         var doc = containerDiv.ownerDocument;
     
@@ -453,9 +462,7 @@ Timeplot._Impl.prototype = {
         var canvas = doc.createElement("canvas");
         
         if (this._isBrowserSupported(canvas)) {
-            // this is where we'll place the labels
-            var labels = doc.createElement("div");
-            containerDiv.appendChild(labels);
+            this._clearLabels();
 
             this._canvas = canvas;
             canvas.className = "timeplot-canvas";

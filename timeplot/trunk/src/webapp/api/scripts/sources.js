@@ -13,7 +13,7 @@
  * @constructor
  */
 Timeplot.DefaultEventSource = function(eventIndex) {
-	Timeline.DefaultEventSource.apply(this, arguments);
+    Timeline.DefaultEventSource.apply(this, arguments);
 };
 
 Object.extend(Timeplot.DefaultEventSource.prototype, Timeline.DefaultEventSource.prototype);
@@ -130,8 +130,8 @@ Timeplot.DefaultEventSource.prototype._parseText = function (text, separator) {
  * Return the range of the loaded data
  */
 Timeplot.DefaultEventSource.prototype.getRange = function() {
-	var earliestDate = this.getEarliestDate();
-	var latestDate = this.getLatestDate();
+    var earliestDate = this.getEarliestDate();
+    var latestDate = this.getLatestDate();
     return {
         earliestDate: (earliestDate) ? earliestDate : null,
         latestDate: (latestDate) ? latestDate : null,
@@ -223,15 +223,15 @@ Timeplot.DataSource.prototype = {
      * Return the value associated with the given time in this time series
      */
     getValue: function(t) {
-    	if (this._data) {
-	    	for (var i = 0; i < this._data.times.length; i++) {
-	    		var l = this._data.times[i];
-	    		if (l >= t) {
-	    			return this._data.values[i];
-	    		}
-	    	}
-    	}
-    	return 0;
+        if (this._data) {
+            for (var i = 0; i < this._data.times.length; i++) {
+                var l = this._data.times[i];
+                if (l >= t) {
+                    return this._data.values[i];
+                }
+            }
+        }
+        return 0;
     },
 
     /**

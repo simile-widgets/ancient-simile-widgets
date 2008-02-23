@@ -16,13 +16,12 @@
  * @constructor
  */
 Timeplot.Plot = function(timeplot, plotInfo) {
-	this._timeplot = timeplot;
+    this._timeplot = timeplot;
     this._canvas = timeplot.getCanvas();
     this._plotInfo = plotInfo;
     this._id = plotInfo.id;
     this._timeGeometry = plotInfo.timeGeometry;
     this._valueGeometry = plotInfo.valueGeometry;
-    this._showValues = plotInfo.showValues;
     this._theme = new Timeline.getDefaultTheme();
     this._dataSource = plotInfo.dataSource;
     this._eventSource = plotInfo.eventSource;
@@ -35,16 +34,16 @@ Timeplot.Plot.prototype = {
      * Initialize the plot layer
      */
     initialize: function() {
-	    if (this._showValues && this._dataSource && this._dataSource.getValue) {
+        if (this._dataSource && this._dataSource.getValue) {
             this._timeFlag = this._timeplot.putDiv("timeflag","timeplot-timeflag");
-	        this._valueFlag = this._timeplot.putDiv(this._id + "valueflag","timeplot-valueflag");
-	        this._valueFlagLineLeft = this._timeplot.putDiv(this._id + "valueflagLineLeft","timeplot-valueflag-line");
+            this._valueFlag = this._timeplot.putDiv(this._id + "valueflag","timeplot-valueflag");
+            this._valueFlagLineLeft = this._timeplot.putDiv(this._id + "valueflagLineLeft","timeplot-valueflag-line");
             this._valueFlagLineRight = this._timeplot.putDiv(this._id + "valueflagLineRight","timeplot-valueflag-line");
             if (!this._valueFlagLineLeft.firstChild) {
-            	this._valueFlagLineLeft.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/line_left.png"));
+                this._valueFlagLineLeft.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/line_left.png"));
                 this._valueFlagLineRight.appendChild(SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/line_right.png"));
             }
-	        this._valueFlagPole = this._timeplot.putDiv(this._id + "valuepole","timeplot-valueflag-pole");
+            this._valueFlagPole = this._timeplot.putDiv(this._id + "valuepole","timeplot-valueflag-pole");
 
             var opacity = this._plotInfo.valuesOpacity;
             
@@ -56,67 +55,69 @@ Timeplot.Plot.prototype = {
 
             var plot = this;
             
-		    var mouseOverHandler = function(elmt, evt, target) {
-		        plot._valueFlag.style.display = "block";
-		        mouseMoveHandler(elmt, evt, target);
-		    }
-		
-		    var day = 24 * 60 * 60 * 1000;
-		    var month = 30 * day;
-		    
-		    var mouseMoveHandler = function(elmt, evt, target) {
-		    	if (typeof SimileAjax != "undefined") {
+            var mouseOverHandler = function(elmt, evt, target) {
+                if (plot._plotInfo.showValues) { 
+	                plot._valueFlag.style.display = "block";
+	                mouseMoveHandler(elmt, evt, target);
+	            }
+            }
+        
+            var day = 24 * 60 * 60 * 1000;
+            var month = 30 * day;
+            
+            var mouseMoveHandler = function(elmt, evt, target) {
+                if (typeof SimileAjax != "undefined" && plot._plotInfo.showValues) {
                     var c = plot._canvas;
-			        var x = Math.round(SimileAjax.DOM.getEventRelativeCoordinates(evt,plot._canvas).x);
-			        if (x > c.width) x = c.width;
-			        if (isNaN(x) || x < 0) x = 0;
-			        var t = plot._timeGeometry.fromScreen(x);
-			        if (t == 0) { // something is wrong
+                    var x = Math.round(SimileAjax.DOM.getEventRelativeCoordinates(evt,plot._canvas).x);
+                    if (x > c.width) x = c.width;
+                    if (isNaN(x) || x < 0) x = 0;
+                    var t = plot._timeGeometry.fromScreen(x);
+                    if (t == 0) { // something is wrong
                         plot._valueFlag.style.display = "none";
-			        	return;
-			        }
-			        
-			        var v = plot._dataSource.getValue(t);
-			        if (plot._plotInfo.roundValues) v = Math.round(v);
-			        plot._valueFlag.innerHTML = new String(v);
-			        var d = new Date(t);
-			        var p = plot._timeGeometry.getPeriod(); 
-			        if (p < day) {
-			            plot._timeFlag.innerHTML = d.toLocaleTimeString();
-			        } else if (p > month) {
+                        return;
+                    }
+                    
+                    var v = plot._dataSource.getValue(t);
+                    if (plot._plotInfo.roundValues) v = Math.round(v);
+                    plot._valueFlag.innerHTML = new String(v);
+                    var d = new Date(t);
+                    var p = plot._timeGeometry.getPeriod(); 
+                    if (p < day) {
+                        plot._timeFlag.innerHTML = d.toLocaleTimeString();
+                    } else if (p > month) {
                         plot._timeFlag.innerHTML = d.toLocaleDateString();
-			        } else {
+                    } else {
                         plot._timeFlag.innerHTML = d.toLocaleString();
-			        }
-			        
-			        var tw = plot._timeFlag.clientWidth;
+                    }
+
+                    var tw = plot._timeFlag.clientWidth;
                     var th = plot._timeFlag.clientHeight;
                     var tdw = Math.round(tw / 2);
                     var vw = plot._valueFlag.clientWidth;
                     var vh = plot._valueFlag.clientHeight;
-			        var y = plot._valueGeometry.toScreen(v);
+                    var y = plot._valueGeometry.toScreen(v);
 
                     if (x + tdw > c.width) {
                         var tx = c.width - tdw;
                     } else if (x - tdw < 0) {
                         var tx = tdw;
                     } else {
-                    	var tx = x;
+                        var tx = x;
                     }
 
-			        if (plot._timeGeometry._timeValuePosition == "top") {
+                    if (plot._timeGeometry._timeValuePosition == "top") {
                         plot._timeplot.placeDiv(plot._valueFlagPole, {
                             left: x,
                             top: th - 5,
                             height: c.height - y - th + 6,
                             display: "block"
                         });
-				        plot._timeplot.placeDiv(plot._timeFlag,{
-				            left: tx - tdw,
-				            top: -6,
-				            display: "block"
-				        });
-			        } else {
+                        plot._timeplot.placeDiv(plot._timeFlag,{
+                            left: tx - tdw,
+                            top: -6,
+                            display: "block"
+                        });
+                    } else {
                         plot._timeplot.placeDiv(plot._valueFlagPole, {
                             left: x,
                             bottom: th - 5,
@@ -128,21 +129,21 @@ Timeplot.Plot.prototype = {
                             bottom: -6,
                             display: "block"
                         });
-			        }
-			        
-			        if (x + vw + 14 > c.width && y + vh + 4 > c.height) {
+                    }
+
+                    if (x + vw + 14 > c.width && y + vh + 4 > c.height) {
                         plot._valueFlagLineLeft.style.display = "none";
-	                    plot._timeplot.placeDiv(plot._valueFlagLineRight,{
-	                        left: x - 14,
-	                        bottom: y - 14,
-	                        display: "block"
-	                    });
-	                    plot._timeplot.placeDiv(plot._valueFlag,{
-	                        left: x - vw - 13,
-	                        bottom: y - vh - 13,
-	                        display: "block"
-	                    });
-			        } else if (x + vw + 14 > c.width && y + vh + 4 < c.height) {
+                        plot._timeplot.placeDiv(plot._valueFlagLineRight,{
+                            left: x - 14,
+                            bottom: y - 14,
+                            display: "block"
+                        });
+                        plot._timeplot.placeDiv(plot._valueFlag,{
+                            left: x - vw - 13,
+                            bottom: y - vh - 13,
+                            display: "block"
+                        });
+                    } else if (x + vw + 14 > c.width && y + vh + 4 < c.height) {
                         plot._valueFlagLineRight.style.display = "none";
                         plot._timeplot.placeDiv(plot._valueFlagLineLeft,{
                             left: x - 14,
@@ -166,7 +167,7 @@ Timeplot.Plot.prototype = {
                             bottom: y - 13,
                             display: "block"
                         });
-			        } else {
+                    } else {
                         plot._valueFlagLineLeft.style.display = "none";
                         plot._timeplot.placeDiv(plot._valueFlagLineRight,{
                             left: x,
@@ -178,14 +179,14 @@ Timeplot.Plot.prototype = {
                             bottom: y + 13,
                             display: "block"
                         });
-			        }
-		    	}
-		    }
+                    }
+                }
+            }
 
             var timeplotElement = this._timeplot.getElement();
             SimileAjax.DOM.registerEvent(timeplotElement, "mouseover", mouseOverHandler);
             SimileAjax.DOM.registerEvent(timeplotElement, "mousemove", mouseMoveHandler);
-	    }
+        }
     },
 
     /**
@@ -200,6 +201,17 @@ Timeplot.Plot.prototype = {
         }
     },
 
+    /**
+     * Hide the values
+     */
+    hideValues: function() {
+        if (this._valueFlag) this._valueFlag.style.display = "none";
+        if (this._timeFlag) this._timeFlag.style.display = "none";
+        if (this._valueFlagLineLeft) this._valueFlagLineLeft.style.display = "none";
+        if (this._valueFlagLineRight) this._valueFlagLineRight.style.display = "none";
+        if (this._valueFlagPole) this._valueFlagPole.style.display = "none";
+    },
+    
     /**
      * Return the data source of this plot layer (it could be either a DataSource or an EventSource)
      */
@@ -245,9 +257,9 @@ Timeplot.Plot.prototype = {
 
                 ctx.beginPath();
                 ctx.moveTo(0,0);
-	            this._plot(function(x,y) {
+                this._plot(function(x,y) {
                     ctx.lineTo(x,y);
-	            });
+                });
                 if (this._plotInfo.fillFrom == Number.NEGATIVE_INFINITY) {
                     ctx.lineTo(this._canvas.width, 0);
                 } else if (this._plotInfo.fillFrom == Number.POSITIVE_INFINITY) {
@@ -262,16 +274,16 @@ Timeplot.Plot.prototype = {
                     
             if (this._plotInfo.lineColor) {
                 ctx.strokeStyle = this._plotInfo.lineColor.toString();
-	            ctx.beginPath();
-                    var first = true;
-	            this._plot(function(x,y) {
+                ctx.beginPath();
+                var first = true;
+                this._plot(function(x,y) {
                         if (first) {
                              first = false;
                              ctx.moveTo(x,y);
                         }
-	                ctx.lineTo(x,y);
-	            });
-	            ctx.stroke();
+                    ctx.lineTo(x,y);
+                });
+                ctx.stroke();
             }
 
             if (this._plotInfo.dotColor) {
@@ -314,7 +326,7 @@ Timeplot.Plot.prototype = {
                     var x = start - 4;
                     var w = 7;
                 } else {
-                	var c = color.toString(0.5);
+                    var c = color.toString(0.5);
                     gradient.addColorStop(0, c);
                     var start = this._timeGeometry.toScreen(eventStart);
                     start = Math.floor(start) + 0.5; // center it between two pixels (makes the rendering nicer)
@@ -336,15 +348,15 @@ Timeplot.Plot.prototype = {
                 var clickHandler = function(event) { 
                     return function(elmt, evt, target) { 
                         var doc = plot._timeplot.getDocument();
-                    	plot._closeBubble();
-                    	var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
-                    	var elmtCoords = SimileAjax.DOM.getPageCoordinates(elmt);
+                        plot._closeBubble();
+                        var coords = SimileAjax.DOM.getEventPageCoordinates(evt);
+                        var elmtCoords = SimileAjax.DOM.getPageCoordinates(elmt);
                         plot._bubble = SimileAjax.Graphics.createBubbleForPoint(coords.x, elmtCoords.top + plot._canvas.height, plot._plotInfo.bubbleWidth, plot._plotInfo.bubbleHeight, "bottom");
                         event.fillInfoBubble(plot._bubble.content, plot._theme, plot._timeGeometry.getLabeler());
                     }
                 };
                 var mouseOverHandler = function(elmt, evt, target) {
-                	elmt.oldClass = elmt.className;
+                    elmt.oldClass = elmt.className;
                     elmt.className = elmt.className + " timeplot-event-box-highlight";
                 };
                 var mouseOutHandler = function(elmt, evt, target) {
@@ -353,10 +365,10 @@ Timeplot.Plot.prototype = {
                 }
                 
                 if (!div.instrumented) {
-	                SimileAjax.DOM.registerEvent(div, "click"    , clickHandler(event));
-	                SimileAjax.DOM.registerEvent(div, "mouseover", mouseOverHandler);
-	                SimileAjax.DOM.registerEvent(div, "mouseout" , mouseOutHandler);
-		            div.instrumented = true;
+                    SimileAjax.DOM.registerEvent(div, "click"    , clickHandler(event));
+                    SimileAjax.DOM.registerEvent(div, "mouseover", mouseOverHandler);
+                    SimileAjax.DOM.registerEvent(div, "mouseout" , mouseOutHandler);
+                    div.instrumented = true;
                 }
             }
         }
@@ -365,14 +377,14 @@ Timeplot.Plot.prototype = {
     _plot: function(f) {
         var data = this._dataSource.getData();
         if (data) {
-	        var times = data.times;
-	        var values = data.values;
-	        var T = times.length;
-	        for (var t = 0; t < T; t++) {
-	        	var x = this._timeGeometry.toScreen(times[t]);
-	        	var y = this._valueGeometry.toScreen(values[t]);
-	            f(x, y);
-	        }
+            var times = data.times;
+            var values = data.values;
+            var T = times.length;
+            for (var t = 0; t < T; t++) {
+                var x = this._timeGeometry.toScreen(times[t]);
+                var y = this._valueGeometry.toScreen(values[t]);
+                f(x, y);
+            }
         }
     },
     

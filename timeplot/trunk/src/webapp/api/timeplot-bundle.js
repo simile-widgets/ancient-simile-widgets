@@ -260,6 +260,7 @@ plot._valueGeometry.setRange(range);
 plot._timeGeometry.setRange(range);
 }
 }
+plot.hideValues();
 }
 this.paint();
 }
@@ -312,6 +313,14 @@ _clearCanvas:function(){
 var canvas=this.getCanvas();
 var ctx=canvas.getContext('2d');
 ctx.clearRect(0,0,canvas.width,canvas.height);
+},
+
+_clearLabels:function(){
+var labels=document.getElementById("timeplot-labels");
+if(labels)this._containerDiv.removeChild();
+labels=document.createElement("div");
+labels.id="timeplot-labels";
+this._containerDiv.appendChild(labels);
 },
 
 _prepareCanvas:function(){
@@ -375,9 +384,7 @@ containerDiv.removeChild(containerDiv.firstChild);
 var canvas=doc.createElement("canvas");
 
 if(this._isBrowserSupported(canvas)){
-
-var labels=doc.createElement("div");
-containerDiv.appendChild(labels);
+this._clearLabels();
 
 this._canvas=canvas;
 canvas.className="timeplot-canvas";
@@ -471,7 +478,6 @@ this._plotInfo=plotInfo;
 this._id=plotInfo.id;
 this._timeGeometry=plotInfo.timeGeometry;
 this._valueGeometry=plotInfo.valueGeometry;
-this._showValues=plotInfo.showValues;
 this._theme=new Timeline.getDefaultTheme();
 this._dataSource=plotInfo.dataSource;
 this._eventSource=plotInfo.eventSource;
@@ -482,7 +488,7 @@ Timeplot.Plot.prototype={
 
 
 initialize:function(){
-if(this._showValues&&this._dataSource&&this._dataSource.getValue){
+if(this._dataSource&&this._dataSource.getValue){
 this._timeFlag=this._timeplot.putDiv("timeflag","timeplot-timeflag");
 this._valueFlag=this._timeplot.putDiv(this._id+"valueflag","timeplot-valueflag");
 this._valueFlagLineLeft=this._timeplot.putDiv(this._id+"valueflagLineLeft","timeplot-valueflag-line");
@@ -504,15 +510,17 @@ SimileAjax.Graphics.setOpacity(this._valueFlagPole,opacity);
 var plot=this;
 
 var mouseOverHandler=function(elmt,evt,target){
+if(plot._plotInfo.showValues){
 plot._valueFlag.style.display="block";
 mouseMoveHandler(elmt,evt,target);
+}
 }
 
 var day=24*60*60*1000;
 var month=30*day;
 
 var mouseMoveHandler=function(elmt,evt,target){
-if(typeof SimileAjax!="undefined"){
+if(typeof SimileAjax!="undefined"&&plot._plotInfo.showValues){
 var c=plot._canvas;
 var x=Math.round(SimileAjax.DOM.getEventRelativeCoordinates(evt,plot._canvas).x);
 if(x>c.width)x=c.width;
@@ -643,6 +651,15 @@ this._paintingListener=null;
 this._dataSource.dispose();
 this._dataSource=null;
 }
+},
+
+
+hideValues:function(){
+if(this._valueFlag)this._valueFlag.style.display="none";
+if(this._timeFlag)this._timeFlag.style.display="none";
+if(this._valueFlagLineLeft)this._valueFlagLineLeft.style.display="none";
+if(this._valueFlagLineRight)this._valueFlagLineRight.style.display="none";
+if(this._valueFlagPole)this._valueFlagPole.style.display="none";
 },
 
 
