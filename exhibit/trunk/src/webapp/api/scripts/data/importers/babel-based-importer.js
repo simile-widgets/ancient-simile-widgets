@@ -17,7 +17,8 @@ Exhibit.BabelBasedImporter = {
         "application/x-xls" : "xls",
         
         "application/x-bibtex" : "bibtex"
-    }
+    },
+    babelTranslatorURL: "http://simile.mit.edu/babel/translator"
 };
 
 Exhibit.importers["application/rdf+xml"] = Exhibit.BabelBasedImporter;
@@ -47,7 +48,7 @@ Exhibit.BabelBasedImporter.load = function(link, database, cont) {
         writer = "bibtex-exhibit-jsonp";
     }
     
-    var babelURL = "http://simile.mit.edu/babel/translator?" + [
+    var babelURL = Exhibit.BabelBasedImporter.babelTranslatorURL + "?" + [
         "reader=" + reader,
         "writer=" + writer,
         "url=" + encodeURIComponent(url)
@@ -55,3 +56,17 @@ Exhibit.BabelBasedImporter.load = function(link, database, cont) {
 
     return Exhibit.JSONPImporter.load(babelURL, database, cont);
 };
+
+(function() {
+    var links = [];
+    var heads = document.documentElement.getElementsByTagName("head");
+    for (var h = 0; h < heads.length; h++) {
+        var linkElmts = heads[h].getElementsByTagName("link");
+        for (var l = 0; l < linkElmts.length; l++) {
+            var link = linkElmts[l];
+            if (link.rel.match(/\bexhibit\/babel-translator\b/)) {
+                Exhibit.BabelBasedImporter.babelTranslatorURL = link.href;
+            }
+        }
+    }
+})();

@@ -311,6 +311,16 @@ if(M==0){N.shadow=Exhibit.MapView._markerUrlPrefix+A.concat(J).join("&")+"&.png"
 N.shadowSize=new GSize(B*1.5,P-2);
 return N;
 };
+(function(){var B=[];
+var F=document.documentElement.getElementsByTagName("head");
+for(var C=0;
+C<F.length;
+C++){var E=F[C].getElementsByTagName("link");
+for(var A=0;
+A<E.length;
+A++){var D=E[A];
+if(D.rel.match(/\bexhibit\/map-painter\b/)){Exhibit.MapView._markerUrlPrefix=D.href+"?";
+}}}})();
 
 
 /* vemap-view.js */

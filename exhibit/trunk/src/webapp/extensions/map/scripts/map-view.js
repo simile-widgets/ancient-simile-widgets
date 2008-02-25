@@ -712,3 +712,17 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
     
     return icon;
 };
+
+(function() {
+    var links = [];
+    var heads = document.documentElement.getElementsByTagName("head");
+    for (var h = 0; h < heads.length; h++) {
+        var linkElmts = heads[h].getElementsByTagName("link");
+        for (var l = 0; l < linkElmts.length; l++) {
+            var link = linkElmts[l];
+            if (link.rel.match(/\bexhibit\/map-painter\b/)) {
+                Exhibit.MapView._markerUrlPrefix = link.href + "?";
+            }
+        }
+    }
+})();
