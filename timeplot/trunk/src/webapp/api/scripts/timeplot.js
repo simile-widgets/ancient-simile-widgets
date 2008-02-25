@@ -395,7 +395,7 @@ Timeplot._Impl.prototype = {
     
     _clearLabels: function() {
         var labels = document.getElementById("timeplot-labels");
-        if (labels) this._containerDiv.removeChild();
+        if (labels) this._containerDiv.removeChild(labels);
         labels = document.createElement("div");
         labels.id = "timeplot-labels";
         this._containerDiv.appendChild(labels);
