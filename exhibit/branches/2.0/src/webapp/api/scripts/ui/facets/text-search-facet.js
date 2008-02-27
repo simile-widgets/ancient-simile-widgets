@@ -27,8 +27,9 @@ Exhibit.TextSearchFacet = function(containerElmt, uiContext) {
 
 Exhibit.TextSearchFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
-    "queryParamName":   { type: "text" }
-};
+    "queryParamName":   { type: "text" },
+    "requiresEnter":    {type: "boolean", defaultValue: false}
+    };
 
 Exhibit.TextSearchFacet.create = function(configuration, containerElmt, uiContext) {
     var uiContext = Exhibit.UIContext.create(configuration, uiContext);
@@ -194,7 +195,7 @@ Exhibit.TextSearchFacet.prototype._initializeUI = function() {
     }
     
     SimileAjax.WindowManager.registerEvent(this._dom.input, "keyup",
-        function(elmt, evt, target) { self._onTextInputKeyUp(); });
+        function(elmt, evt, target) { self._onTextInputKeyUp(evt); });
 };
 
 Exhibit.TextSearchFacet.constructFacetFrame = function(div, facetLabel) {
@@ -214,13 +215,19 @@ Exhibit.TextSearchFacet.constructFacetFrame = function(div, facetLabel) {
     }
 };
 
-Exhibit.TextSearchFacet.prototype._onTextInputKeyUp = function() {
+Exhibit.TextSearchFacet.prototype._onTextInputKeyUp = function(evt) {
     if (this._timerID != null) {
         window.clearTimeout(this._timerID);
     }
-    
     var self = this;
-    this._timerID = window.setTimeout(function() { self._onTimeout(); }, 500);
+    if (this._settings.requiresEnter  == false) {
+    	this._timerID = window.setTimeout(function() { self._onTimeout(); }, 500);
+    } else {
+    	var newText = this._dom.input.value.trim(); 
+   		if (newText.length == 0 || evt.keyCode == 13) { // arbitrary
+    	this._timerID = window.setTimeout(function() { self._onTimeout(); }, 0);
+    } 
+  }
 };
 
 Exhibit.TextSearchFacet.prototype._onTimeout = function() {
