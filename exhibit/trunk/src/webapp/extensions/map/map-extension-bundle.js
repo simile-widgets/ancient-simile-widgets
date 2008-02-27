@@ -1,7 +1,8 @@
 ﻿
 
 /* map-view.js */
-Exhibit.MapView=function(C,B){this._div=C;
+Exhibit.MapView=function(C,B){Exhibit.MapView._initialize();
+this._div=C;
 this._uiContext=B;
 this._settings={};
 this._accessors={getProxy:function(F,E,D){D(F);
@@ -18,6 +19,17 @@ B.getCollection().addListener(this._listener);
 };
 Exhibit.MapView._settingSpecs={"center":{type:"float",defaultValue:[20,0],dimensions:2},"zoom":{type:"float",defaultValue:2},"size":{type:"text",defaultValue:"small"},"scaleControl":{type:"boolean",defaultValue:true},"overviewControl":{type:"boolean",defaultValue:false},"type":{type:"enum",defaultValue:"normal",choices:["normal","satellite","hybrid"]},"bubbleTip":{type:"enum",defaultValue:"top",choices:["top","bottom"]},"mapHeight":{type:"int",defaultValue:400},"mapConstructor":{type:"function",defaultValue:null},"color":{type:"text",defaultValue:"#FF9000"},"colorCoder":{type:"text",defaultValue:null},"sizeCoder":{type:"text",defaultValue:null},"iconCoder":{type:"text",defaultValue:null},"selectCoordinator":{type:"text",defaultValue:null},"iconSize":{type:"int",defaultValue:0},"iconFit":{type:"text",defaultValue:"smaller"},"iconScale":{type:"float",defaultValue:1},"iconOffsetX":{type:"float",defaultValue:0},"iconOffsetY":{type:"float",defaultValue:0},"shape":{type:"text",defaultValue:"circle"},"shapeWidth":{type:"int",defaultValue:24},"shapeHeight":{type:"int",defaultValue:24},"shapeAlpha":{type:"float",defaultValue:0.7},"pin":{type:"boolean",defaultValue:true},"pinHeight":{type:"int",defaultValue:6},"pinWidth":{type:"int",defaultValue:6},"sizeLegendLabel":{type:"text",defaultValue:null},"colorLegendLabel":{type:"text",defaultValue:null},"iconLegendLabel":{type:"text",defaultValue:null},"markerScale":{type:"text",defaultValue:null},"showHeader":{type:"boolean",defaultValue:true},"showSummary":{type:"boolean",defaultValue:true},"showFooter":{type:"boolean",defaultValue:true}};
 Exhibit.MapView._accessorSpecs=[{accessorName:"getProxy",attributeName:"proxy"},{accessorName:"getLatlng",alternatives:[{bindings:[{attributeName:"latlng",types:["float","float"],bindingNames:["lat","lng"]},{attributeName:"maxAutoZoom",type:"float",bindingName:"maxAutoZoom",optional:true}]},{bindings:[{attributeName:"lat",type:"float",bindingName:"lat"},{attributeName:"lng",type:"float",bindingName:"lng"},{attributeName:"maxAutoZoom",type:"float",bindingName:"maxAutoZoom",optional:true}]}]},{accessorName:"getColorKey",attributeName:"marker",type:"text"},{accessorName:"getColorKey",attributeName:"colorKey",type:"text"},{accessorName:"getSizeKey",attributeName:"sizeKey",type:"text"},{accessorName:"getIconKey",attributeName:"iconKey",type:"text"},{accessorName:"getIcon",attributeName:"icon",type:"url"}];
+Exhibit.MapView._initialize=function(){var B=[];
+var F=document.documentElement.getElementsByTagName("head");
+for(var C=0;
+C<F.length;
+C++){var E=F[C].getElementsByTagName("link");
+for(var A=0;
+A<E.length;
+A++){var D=E[A];
+if(D.rel.match(/\bexhibit\/map-painter\b/)){Exhibit.MapView._markerUrlPrefix=D.href+"?";
+}}}Exhibit.MapView._initialize=function(){};
+};
 Exhibit.MapView.create=function(D,C,B){var A=new Exhibit.MapView(C,Exhibit.UIContext.create(D,B));
 Exhibit.MapView._configure(A,D);
 A._internalValidate();
@@ -311,16 +323,6 @@ if(M==0){N.shadow=Exhibit.MapView._markerUrlPrefix+A.concat(J).join("&")+"&.png"
 N.shadowSize=new GSize(B*1.5,P-2);
 return N;
 };
-(function(){var B=[];
-var F=document.documentElement.getElementsByTagName("head");
-for(var C=0;
-C<F.length;
-C++){var E=F[C].getElementsByTagName("link");
-for(var A=0;
-A<E.length;
-A++){var D=E[A];
-if(D.rel.match(/\bexhibit\/map-painter\b/)){Exhibit.MapView._markerUrlPrefix=D.href+"?";
-}}}})();
 
 
 /* vemap-view.js */

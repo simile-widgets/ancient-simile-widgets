@@ -1378,7 +1378,17 @@ Exhibit.Functions["now"]={f:function(A){return new Exhibit.Expression._Collectio
 
 
 /* babel-based-importer.js */
-Exhibit.BabelBasedImporter={mimetypeToReader:{"application/rdf+xml":"rdf-xml","application/n3":"n3","application/msexcel":"xls","application/x-msexcel":"xls","application/x-ms-excel":"xls","application/vnd.ms-excel":"xls","application/x-excel":"xls","application/xls":"xls","application/x-xls":"xls","application/x-bibtex":"bibtex"},babelTranslatorURL:"http://simile.mit.edu/babel/translator"};
+Exhibit.BabelBasedImporter={mimetypeToReader:{"application/rdf+xml":"rdf-xml","application/n3":"n3","application/msexcel":"xls","application/x-msexcel":"xls","application/x-ms-excel":"xls","application/vnd.ms-excel":"xls","application/x-excel":"xls","application/xls":"xls","application/x-xls":"xls","application/x-bibtex":"bibtex"},babelTranslatorURL:"http://simile.mit.edu/babel/translator",_initialize:function(){var B=[];
+var F=document.documentElement.getElementsByTagName("head");
+for(var C=0;
+C<F.length;
+C++){var E=F[C].getElementsByTagName("link");
+for(var A=0;
+A<E.length;
+A++){var D=E[A];
+if(D.rel.match(/\bexhibit\/babel-translator\b/)){Exhibit.BabelBasedImporter.babelTranslatorURL=D.href;
+}}}Exhibit.BabelBasedImporter._initialize=function(){};
+}};
 Exhibit.importers["application/rdf+xml"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/n3"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/msexcel"]=Exhibit.BabelBasedImporter;
@@ -1388,7 +1398,8 @@ Exhibit.importers["application/x-excel"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/xls"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/x-xls"]=Exhibit.BabelBasedImporter;
 Exhibit.importers["application/x-bibtex"]=Exhibit.BabelBasedImporter;
-Exhibit.BabelBasedImporter.load=function(F,H,B){var D=(typeof F=="string")?Exhibit.Persistence.resolveURL(F):Exhibit.Persistence.resolveURL(F.href);
+Exhibit.BabelBasedImporter.load=function(F,H,B){Exhibit.BabelBasedImporter._initialize();
+var D=(typeof F=="string")?Exhibit.Persistence.resolveURL(F):Exhibit.Persistence.resolveURL(F.href);
 var A="rdf-xml";
 var G="exhibit-jsonp";
 if(typeof F!="string"){var C=F.type;
@@ -1397,16 +1408,6 @@ if(C in Exhibit.BabelBasedImporter.mimetypeToReader){A=Exhibit.BabelBasedImporte
 }var E=Exhibit.BabelBasedImporter.babelTranslatorURL+"?"+["reader="+A,"writer="+G,"url="+encodeURIComponent(D)].join("&");
 return Exhibit.JSONPImporter.load(E,H,B);
 };
-(function(){var B=[];
-var F=document.documentElement.getElementsByTagName("head");
-for(var C=0;
-C<F.length;
-C++){var E=F[C].getElementsByTagName("link");
-for(var A=0;
-A<E.length;
-A++){var D=E[A];
-if(D.rel.match(/\bexhibit\/babel-translator\b/)){Exhibit.BabelBasedImporter.babelTranslatorURL=D.href;
-}}}})();
 
 
 /* exhibit-json-importer.js */
