@@ -3526,7 +3526,7 @@ this._range=this._maxRange;
 Exhibit.SliderFacet.slider=function(C,B,A){this._div=C;
 this._facet=B;
 this._prec=A||0.1;
-this._range={min:Exhibit.Util.round(B._maxRange.min-A/2,this._prec),max:Exhibit.Util.round(B._maxRange.max+A/2,this._prec)};
+this._range={min:parseFloat(Exhibit.Util.round(B._maxRange.min-A/2,this._prec)),max:parseFloat(Exhibit.Util.round(B._maxRange.max+A/2,this._prec))};
 this._scaleFactor=null;
 this._minSlider={};
 this._maxSlider={};
@@ -3577,8 +3577,7 @@ C.setDisplay=A.setDisplay=function(D){this.display.innerHTML=Exhibit.Util.round(
 this.resetSliders();
 };
 Exhibit.SliderFacet.slider.prototype._registerDragging=function(){var B=this;
-var A=function(F){return function(G){G=G||window.event;
-onMove=C(G,F);
+var A=function(F){return function(G){onMove=C(G,F);
 if(addEventListener){document.addEventListener("mousemove",onMove,false);
 document.addEventListener("mouseup",E(F,onMove),false);
 }SimileAjax.DOM.cancelEvent(G);
