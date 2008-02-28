@@ -17,7 +17,7 @@ div.exhibit-facet-header-filterControl {
 }
 div.exhibit-facet-header-filterControl img {
     vertical-align: text-bottom;
-}
+n}
 
 img.exhibit-facet-header-collapse { 
     border: 1px;
@@ -210,17 +210,16 @@ div.exhibit-facet-childrenContainer {
 
 div.exhibit-slider-bar { 
     background: #999;
-    height: 10px;
-    width: 100px;
+    height: 1px;
+    margin: 10px;
+    width: 150px;
 }
 
 div.exhibit-slider-handle { 
-    background: cyan;
-    border: 1px solid blue;
     float: left;
-    height: 10px;
+    height: 14px;
     left: 0px;
     position: relative;
     top: 0px;
-    width: 5px;
+    width: 7px;
 }
