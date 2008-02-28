@@ -85,7 +85,7 @@ Exhibit.SliderFacet.slider.prototype._initSliders = function() {
 };
 
 Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
-    self = this;
+    var self = this;
 
     var startDrag = function(slider) {
 	return function(e) {
