@@ -3,8 +3,8 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     this._div = div;
     this._facet = facet;
     this._prec = precision || .1;
-    this._range = {min: Exhibit.Util.round(facet._maxRange.min-precision/2, this._prec),  // round down
-		   max: Exhibit.Util.round(facet._maxRange.max+precision/2, this._prec)}; // round up
+    this._range = {min: parseFloat(Exhibit.Util.round(facet._maxRange.min-precision/2, this._prec)),  // round down
+		   max: parseFloat(Exhibit.Util.round(facet._maxRange.max+precision/2, this._prec))}; // round up
 
     this._scaleFactor = null;
     this._minSlider = {};
@@ -89,7 +89,7 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 
     var startDrag = function(slider) {
 	return function(e) {
-	    e = e || window.event;
+	    //e = e || window.event;
 	    
 	    onMove = onDrag(e, slider);
 
