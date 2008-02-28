@@ -444,6 +444,10 @@ div.exhibit-slider-handle {
     position: relative;
     top: 0px;
     width: 7px;
+}
+
+div.exhibit-slider-display { 
+
 }/*==================================================
  * Common styles for views
  *==================================================

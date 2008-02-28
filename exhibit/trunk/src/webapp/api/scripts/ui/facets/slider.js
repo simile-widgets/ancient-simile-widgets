@@ -16,7 +16,7 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
 	    '<div class="exhibit-slider-handle" id="minHandle"></div>' +
 	    '<div class="exhibit-slider-handle" id="maxHandle"></div>' +
 	'</div>' +
-	'<div>' +
+	'<div class="exhibit-slider-display">' +
 	    '<span id="minDisplay"></span> - <span id="maxDisplay"></span>' +
 	'</div>'
     );
