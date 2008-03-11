@@ -209,8 +209,10 @@ div.exhibit-facet-childrenContainer {
  */
 
 div.exhibit-slider-bar { 
-    background: #999;
+    
+    border-top: 1px #999 solid;
     height: 1px;
+    line-height: 0;
     margin: 10px;
     width: 150px;
 }

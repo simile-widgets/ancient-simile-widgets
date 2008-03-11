@@ -89,14 +89,17 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 
     var startDrag = function(slider) {
 	return function(e) {
-	    //e = e || window.event;
+	    e = e || window.event;
 	    
 	    onMove = onDrag(e, slider);
-
-	    if(addEventListener) {
+	    
+	    if (document.attachEvent) {
+		document.attachEvent('onmousemove', onMove);
+		document.attachEvent('onmouseup', endDrag(slider, onMove));
+	    } else {
 		document.addEventListener('mousemove', onMove, false);
 		document.addEventListener('mouseup', endDrag(slider, onMove), false);
-	    };
+	    }
 
 	    SimileAjax.DOM.cancelEvent(e);
 	    return false;
@@ -131,7 +134,10 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
     var endDrag = function(slider, moveListener) {
 	return function(e) {
 	    
-	    if(removeEventListener) {
+	    if(document.detachEvent) {
+		document.detachEvent('onmousemove', moveListener);
+		document.detachEvent('onmouseup', arguments.callee);
+	    } else {
 		document.removeEventListener('mousemove', moveListener, false);
 		document.removeEventListener('mouseup', arguments.callee, false); //remove this function
 	    }
@@ -142,7 +148,9 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
     };
 
     var attachListeners = function(slider) {
-	if (addEventListener) {
+	if (document.attachEvent) {
+	    slider.div.attachEvent('onmousedown', startDrag(slider));
+	} else {
 	    slider.div.addEventListener('mousedown', startDrag(slider), false);
 	}
     };
