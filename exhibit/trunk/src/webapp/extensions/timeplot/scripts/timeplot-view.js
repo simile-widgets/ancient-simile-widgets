@@ -55,10 +55,6 @@ Exhibit.TimeplotView._accessorSpecs = [
         type:           "text"
     },
     {   accessorName:   "getColorKey",
-        attributeName:  "marker", // backward compatibility
-        type:           "text"
-    },
-    {   accessorName:   "getColorKey",
         attributeName:  "colorKey",
         type:           "text"
     },
@@ -183,26 +179,61 @@ Exhibit.TimeplotView.prototype._reconstructTimeplot = function(newEvents) {
         timeplotDiv.className = "exhibit-timeplotView-timeplot";
         timeplotDiv.id = "timeplot-" + Math.floor(Math.random() * 1000);
 
+        var hasColorKey = (this._accessors.getColorKey != null);
+        var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+
         var gridColor  = new Timeplot.Color(settings.gridColor);
         var timeGeometry = settings.timeGeometry(gridColor);
         var geometry = settings.valueGeometry(gridColor);
 
         var plotInfos  = [];
         for (var i = 0; i < this._legend.length; i++) {
+            var color = null;
+            if (hasColorKey) {
+                var colorKeys = new Exhibit.Set();
+                colorKeys.add(this._legend[i]);
+                color = this._colorCoder.translateSet(colorKeys, colorCodingFlags);
+            }
+
             this._columnSources.push(new Timeplot.ColumnSource(this._eventSource,i+1));
             plotInfos.push(Timeplot.createPlotInfo({
                 id: this._legend[i],
                 dataSource: this._columnSources[i],
                 timeGeometry: timeGeometry,
                 valueGeometry: geometry,
-                lineColor: new Timeplot.Color("#333333"),
-                dotColor: new Timeplot.Color("#cccccc"),
+                lineColor: new Timeplot.Color(color),
+                dotColor: new Timeplot.Color(color),
                 showValues: true,
                 roundValues: false
             }));
         }
         this._timeplot = Timeplot.create(timeplotDiv, plotInfos);
         setTimeout(this._timeplot.paint, 100);
+
+        if (hasColorKey) {
+            var legendWidget = this._dom.legendWidget;
+            var colorCoder = this._colorCoder;
+            var keys = colorCodingFlags.keys.toArray().sort();
+            if(this._colorCoder._gradientPoints != null) {
+                legendWidget.addGradient(this._colorCoder._gradientPoints);
+            } else {
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    var color = colorCoder.translate(key);
+                    legendWidget.addEntry(color, key);
+                }
+            }
+
+            if (colorCodingFlags.others) {
+                legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
+            }
+            if (colorCodingFlags.mixed) {
+                legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
+            }
+            if (colorCodingFlags.missing) {
+                legendWidget.addEntry(colorCoder.getMissingColor(), colorCoder.getMissingLabel());
+            }
+        }
     }
 };
 
