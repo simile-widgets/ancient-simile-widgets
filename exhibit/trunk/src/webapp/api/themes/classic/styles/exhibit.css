@@ -73,3 +73,30 @@ a.exhibit-menu-item div img {
     vertical-align:     middle;
     margin-right:       2px;
 }
+
+/*
+ *  Copy Button and Dialog Box
+ */
+button.exhibit-copy-button {
+}
+
+div.exhibit-copy-dialog {
+    position:       fixed;
+    z-index:        1000;
+    background:     #B2E8FF;
+    border:         1px solid #aaa;
+    padding:        2em;
+    left:           25%;
+    right:          25%;
+    top:            10em;
+}
+
+div.exhibit-copy-dialog textarea {
+    width:          100%;
+    font-size:      90%;
+    color:          #888;
+}
+
+div.exhibit-copy-dialog button {
+    float:          right;
+}

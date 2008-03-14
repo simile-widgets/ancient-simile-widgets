@@ -25,6 +25,13 @@ Exhibit.BrowsePanel = function(exhibit, div, configuration) {
     this._initializeUI();
 };
 
+Exhibit.BrowsePanel.prototype.getState = function() {
+    return null;
+};
+
+Exhibit.BrowsePanel.prototype.setState = function(state) {
+};
+
 Exhibit.BrowsePanel.prototype._configure = function(configuration) {
     if ("BrowsePanel" in configuration) {
         var myConfig = configuration["BrowsePanel"];

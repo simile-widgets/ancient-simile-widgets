@@ -85,6 +85,13 @@ Exhibit.ViewPanel = function(exhibit, div, configuration) {
     this._initializeUI();
 }
 
+Exhibit.ViewPanel.prototype.getState = function() {
+    return null;
+};
+
+Exhibit.ViewPanel.prototype.setState = function(state) {
+};
+
 Exhibit.ViewPanel.prototype._initializeUI = function() {
     this._div.innerHTML = "";
     

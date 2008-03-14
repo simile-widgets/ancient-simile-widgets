@@ -4,6 +4,9 @@
  */
  
 Exhibit.SemanticWikitextExporter = {
+    getLabel: function() {
+        return Exhibit.l10n.smwExporterLabel;
+    },
     icon: {
         url:    Exhibit.urlPrefix + "images/rdf-copy-button.png",
         width:  16,

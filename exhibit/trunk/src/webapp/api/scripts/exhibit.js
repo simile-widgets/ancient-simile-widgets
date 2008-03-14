@@ -33,12 +33,51 @@ Exhibit._Impl = function(controlDiv, browseDiv, viewDiv, configuration) {
     this._exporters["smw"] = {
         exporter:   Exhibit.SemanticWikitextExporter
     };
+    
+    var self = this;
+    this._focusID = null;
+    this._listener = {
+        onAfterLoadingItems: function() {
+            self._tryToFocusOnItem();
+        }
+    };
+    this._database.addListener(this._listener);
+    
+    this._parseURL();
 };
 
 Exhibit._Impl.prototype.getDatabase = function() { return this._database; };
 Exhibit._Impl.prototype.getBrowseEngine = function() { return this._engine; };
 Exhibit._Impl.prototype.getBrowsePanel = function() { return this._browsePanel; };
 Exhibit._Impl.prototype.getViewPanel = function() { return this._viewPanel; };
+
+Exhibit._Impl.prototype.dispose = function() {
+};
+
+Exhibit._Impl.prototype.getPermanentLink = function() {
+    var state = {};
+    
+    var engineState = this._engine.getState();
+    if (engineState != null) {
+        state["browseEngine"] = engineState;
+    }
+    var browsePanelState = this._browsePanel.getState();
+    if (browsePanelState != null) {
+        state["browsePanel"] = browsePanelState;
+    }
+    var viewPanelState = this._viewPanel.getState();
+    if (viewPanelState != null) {
+        state["viewPanel"] = viewPanelState;
+    }
+    
+    var stateString = this._serializeState(state);
+    
+    return Exhibit._getURLWithoutQuery() + "?exhibit-state=" + encodeURIComponent(stateString);
+};
+
+Exhibit._Impl.prototype.getItemLink = function(itemID) {
+    return Exhibit._getURLWithoutQuery() + "#" + encodeURIComponent(itemID);
+};
 
 Exhibit._Impl.prototype.loadJSON = function(urls, fDone) {
     var exhibit = this;
@@ -161,7 +200,7 @@ Exhibit._Impl.prototype.makeItemSpan = function(itemID, label, layer) {
     }
     
     var a = document.createElement("a");
-    a.href = "javascript:";
+    a.href = this.getItemLink(itemID);
     a.className = "exhibit-item";
     a.innerHTML = label;
     
@@ -210,6 +249,18 @@ Exhibit._Impl.prototype.showItemView = function(itemID, elmt) {
     bubble.content.appendChild(itemViewDiv);
 };
 
+Exhibit._Impl.prototype.makeCopyButton = function(itemID) {
+    var self = this;
+    var button = Exhibit.Theme.createCopyButton(itemID == null);
+    var handler = function(elmt, evt, target) {
+        self._showCopyMenu(elmt, itemID);
+        SimileAjax.DOM.cancelEvent(evt);
+        return false;
+    }
+    SimileAjax.WindowManager.registerEvent(button, "click", handler);
+    return button;
+};
+
 Exhibit._Impl.prototype.getExporters = function() {
     return this._exporters;
 };
@@ -253,6 +304,117 @@ Exhibit._Impl.prototype._loadJSON = function(o, url) {
     }
     if ("items" in o) {
         this._database.loadItems(o.items, url);
+    }
+};
+
+Exhibit._Impl.prototype._parseURL = function() {
+    var params = SimileAjax.parseURLParameters(document.location.href);
+    for (var i = 0; i < params.length; i++) {
+        var p = params[i];
+        if (p.name == "exhibit-state") {
+            var state = this._deserializeState(p.value);
+            if ("browseEngine" in state) {
+                this._engine.setState(state["browseEngine"]);
+            }
+            if ("browsePanel" in state) {
+                this._browsePanel.setState(state["browsePanel"]);
+            }
+            if ("viewPanel" in state) {
+                this._viewPanel.setState(state["viewPanel"]);
+            }
+        }
+    }
+    
+    var hash = document.location.hash;
+    if (hash.length > 1) {
+        this._focusID = hash.substr(1);
+    }
+};
+
+Exhibit._Impl.prototype._tryToFocusOnItem = function() {
+    if (this._focusID != null) {
+        alert(this._focusID);
+    }
+};
+
+Exhibit._Impl.prototype._deserializeState = function(s) {
+    return eval(s);
+};
+
+Exhibit._Impl.prototype._serializeState = function(state) {
+    return Exhibit._anythingToJSON(state);
+};
+
+Exhibit._getURLWithoutQuery = function() {
+    var url = document.location.href;
+    var question = url.indexOf("?");
+    if (question >= 0) {
+        url = url.substr(0, question);
+    }
+    return url;
+};
+
+Exhibit._Impl.prototype._showCopyMenu = function(elmt, itemID) {
+    var exhibit = this;
+    var popupDom = Exhibit.Theme.createPopupMenuDom(elmt);
+    
+    var makeMenuItem = function(exporter) {
+        popupDom.appendMenuItem(
+            exporter.getLabel(),
+            null,
+            function() {
+                var text = (itemID) ?
+                    exporter.exportOne(itemID, exhibit) :
+                    exporter.exportMany(
+                        exhibit.getBrowseEngine().getCurrentCollection().getCurrentSet(), exhibit);
+                        
+                Exhibit.Theme.createCopyDialogBox(text).open();
+            }
+        );
+    }
+    
+    var exporters = exhibit.getExporters();
+    for (format in exporters) {
+        makeMenuItem(exporters[format].exporter);
+    }
+    popupDom.open();
+};
+
+Exhibit._anythingToJSON = function(x) {
+    if (typeof x == "string") {
+        return '"' + x + '"';
+    } else if (typeof x == "boolean") {
+        return x ? "true" : "false";
+    } else if (typeof x == "number") {
+        return x.toString();
+    } else if (typeof x == "object") {
+        if (x instanceof Array) {
+            var s = "[";
+            for (var i = 0; i < x.length; i++) {
+                if (i > 0) s += ",";
+                s += Exhibit._anythingToJSON(x[i]);
+            }
+            s += "]";
+            return s;
+        } else {
+            var s = "{";
+            var first = true;
+            for (m in x) {
+                if (first) {
+                    first = false;
+                } else {
+                    s += ",";
+                }
+                
+                s += m + ":" + Exhibit._anythingToJSON(x[m]);
+            }
+            s += "}";
+            return s;
+        }
+    } else if (x == null) {
+        return "null";
+    } else {
+        return "undefined";
     }
 };
 

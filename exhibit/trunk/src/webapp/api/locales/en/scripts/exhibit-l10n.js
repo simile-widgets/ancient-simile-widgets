@@ -7,6 +7,24 @@ Exhibit.l10n = {
     missingLabel:   "missing",
     missingSortKey: "(missing)",
     
+    /*
+     *  Copy button and dialog box
+     */
+    copyButtonLabel:                "Copy",
+    copyAllButtonLabel:             "Copy All",
+    copyDialogBoxCloseButtonLabel:  "Close",
+    copyDialogBoxPrompt:            
+        "Copy this code to your clipboard as you would copy any text. Press ESC to close this dialog box.",
+        
+    /*
+     *  Common exporters' labels
+     */
+    rdfXmlExporterLabel:            "Semantic Web (RDF/XML) format",
+    smwExporterLabel:               "Semantic MediaWiki Extension wikitext",
+    
+    /*
+     *  List composition
+     */
     composeListString: function(a) {
         var s = "";
         for (var i = 0; i < a.length; i++) {

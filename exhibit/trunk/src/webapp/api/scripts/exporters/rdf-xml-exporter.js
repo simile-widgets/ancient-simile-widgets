@@ -4,6 +4,9 @@
  */
  
 Exhibit.RdfXmlExporter = {
+    getLabel: function() {
+        return Exhibit.l10n.rdfXmlExporterLabel;
+    },
     icon: {
         url:    Exhibit.urlPrefix + "images/rdf-copy-button.png",
         width:  16,

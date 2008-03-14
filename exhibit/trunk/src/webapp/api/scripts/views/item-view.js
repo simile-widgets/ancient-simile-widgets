@@ -184,7 +184,7 @@ Exhibit.ItemView._trimString = function(s) {
 Exhibit.ItemView._processTemplateElement = function(elmt) {
     var templateNode = {
         tag:                elmt.tagName,
-        controls:           null,
+        control:            null,
         condition:          null,
         content:            null,
         contentAttributes:  null,
@@ -199,8 +199,8 @@ Exhibit.ItemView._processTemplateElement = function(elmt) {
         var name = attribute.nodeName;
         var value = attribute.nodeValue;
         
-        if (name == "controls") {
-            templateNode.controls = value;
+        if (name == "control") {
+            templateNode.control = value;
         } else if (name == "content") {
             templateNode.content = Exhibit.Expression.parse(value);
         } else if (name == "if-exists") {
@@ -307,21 +307,12 @@ Exhibit.ItemView._constructFromViewTemplateNode = function(
     }
     
     var children = templateNode.children;
-    if (templateNode.controls != null) {
-        switch (templateNode.controls) {
-        case "exporters":
-            var exporters = exhibit.getExporters();
-            var exportButtons = [];
-            for (format in exporters) {
-                var exporter = exporters[format].exporter;
-                var icon = exporter.icon;
-                elmt.appendChild(SimileAjax.Graphics.createStructuredDataCopyButton(
-                    icon.url, icon.width, icon.height, function() {
-                        return exporter.exportOne(value, exhibit);
-                    }
-                ));
-            }
+    if (templateNode.control != null) {
+        switch (templateNode.control) {
+        case "copy-button":
+            elmt.appendChild(exhibit.makeCopyButton(value));
             break;
+        case "link":
         }
     } else if (templateNode.content != null) {
         var results = templateNode.content.evaluate(

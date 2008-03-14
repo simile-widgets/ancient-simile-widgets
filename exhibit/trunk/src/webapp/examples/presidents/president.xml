@@ -1,9 +1,10 @@
 <div class="item">
+    <span control="copy-button" style="float: right" />
     <table cellspacing="5">
         <tr>
             <td><img src-content=".imageURL" /></td>
             <td>
-                <a href-content=".url"><span content=".label" /></a><span controls="exporters" />
+                <a href-content=".url"><span content=".label" /></a>
                 <div>Terms: <span content=".term" />, <span content=".party" /></div>
                 <div>Religions: <span content=".religion" /></div>
                 <div>Birth: <span content=".birth" />, <span content=".birthPlace" /></div>

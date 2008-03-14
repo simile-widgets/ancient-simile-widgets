@@ -43,6 +43,13 @@ Exhibit.BrowseEngine.prototype.removeListener = function(listener) {
     this._listeners.remove(listener);
 };
 
+Exhibit.BrowseEngine.prototype.getState = function() {
+    return null;
+};
+
+Exhibit.BrowseEngine.prototype.setState = function(state) {
+};
+
 Exhibit.BrowseEngine.prototype.getFocus = function() {
     for (var i = 0; i < this._collections.length; i++) {
         var c = this._collections[i];
