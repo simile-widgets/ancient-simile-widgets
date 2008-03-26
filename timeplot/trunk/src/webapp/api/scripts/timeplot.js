@@ -406,7 +406,7 @@ Timeplot._Impl.prototype = {
         // using jQuery.  note we calculate the average padding; if your
         // padding settings are not symmetrical, the labels will be off
         // since they expect to be centered on the canvas.
-        var con = $('#' + this._containerDiv.id);
+        var con = SimileAjax.jQuery(this._containerDiv);
         this._paddingX = (parseInt(con.css('paddingLeft')) +
                           parseInt(con.css('paddingRight'))) / 2;
         this._paddingY = (parseInt(con.css('paddingTop')) +
