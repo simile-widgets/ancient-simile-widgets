@@ -45,7 +45,7 @@ Timeplot.DefaultEventSource.prototype.loadText = function(text, separator, url, 
         for (var i = 0; i < data.length; i++){
             var row = data[i];
             if (row.length > 1) {
-                var dateStr = $.trim(row[0]);
+                var dateStr = SimileAjax.jQuery.trim(row[0]);
                 var date = parseDateTimeFunction(dateStr);
                 if (date) {
                     var evt = new Timeplot.DefaultEventSource.NumericEvent(date,row.slice(1));
