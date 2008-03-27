@@ -28,7 +28,7 @@ No.  This is the main branch.  In fact simile.mit.edu code repository for this p
 
 * How do I stay informed of what's happening?
 
-Join the mailing lists!
+[http://groups.google.com/group/simile-widgets/ Join the mailing lists!]
 
 * Do I need to listen in on the simile.mit.edu lists?
 
