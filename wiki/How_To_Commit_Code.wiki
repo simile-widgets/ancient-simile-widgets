@@ -1,0 +1,52 @@
+#summary Describes the work flow for committing code to SVN.
+
+= Introduction =
+
+This article describes 2 ways of committing code
+  * Using SVN command line
+  * Using Eclipse
+
+= Using SVN Command Line =
+
+Download and install:
+  * Subversion: [http://subversion.tigris.org/project_packages.html]
+  * Ant: [http://ant.apache.org/bindownload.cgi]
+
+Check out the code (example for Exhibit):
+  * change to the parent directory of where you want to put the Exhibit code base
+  * run at the command line
+   svn checkout https://simile-widgets.googlecode.com/svn/exhibit/trunk/ exhibit --username your-google-code-id
+  * once that's done, you have a new directory "exhibit"
+
+Working with the code:
+  * make changes to the code, test locally, etc.
+  * inside the "exhibit" directory, run
+   ant
+  That should generate the bundle files.
+
+Preparing to commit the code:
+  * inside the "exhibit" directory, run
+   svn status
+  That should list files that have changed and files that are new (i.e., not in SVN). New files are shown with "?" in front.
+  * for each new file or new directory, run svn add. For example
+   svn add src/webapp/api/locales/es-co
+  Note that adding a new directory automatically adds its files.
+  * you might want to run svn status again and check that there is no file with "?" in front.
+
+Committing your changes:
+  * in the "exhibit" directory, run
+   svn commit -m "a comment to describe your changes here" 
+
+= Using Eclipse =
+
+Download and install
+  * Subclipse plugin for Eclipse: [http://subclipse.tigris.org/]
+
+Adding a new Subversion repository location:
+  * In Eclipse, invoke menu Window -> Show View -> Other, select SVN -> SVN Repository, and click OK. You should then see the SVN Repository view in the Eclipse window.
+  * Right-click anywhere inside the SVN Repository view and choose New -> Repository Location...
+  * Enter https://simile-widgets.googlecode.com/svn/ for the Url field and click Finish.
+
+Checking out the code (example for Exhibit):
+  * In the SVN Repository view, expand the https://simile-widgets.googlecode.com/svn/ location, then find "exhibit", and expand it.
+  * Right-click on "trunk" in "exhibit" and choose Checkout... Go through that process; it should be straightforward.
