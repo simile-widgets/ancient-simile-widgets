@@ -6,6 +6,8 @@ This article describes 2 ways of committing code
   * Using SVN command line
   * Using Eclipse
 
+Note: to obtain your password for committing code, in this very Google Code project web site, click on the Source tab. It should contain a link to retrieve your generated password.
+
 = Using SVN Command Line =
 
 Download and install:
@@ -22,9 +24,10 @@ Working with the code:
   * make changes to the code, test locally, etc.
   * inside the "exhibit" directory, run
    ant
-  That should generate the bundle files.
+  That should generate the bundle files. This is important. If you don't do this step, then the bundle files don't contain your latest changes.
 
 Preparing to commit the code:
+  * I'd recommend running svn update in the "exhibit" directory when you're ready to commit. This would get the latest code out (that other people checked in) and alert you to any merge conflicts.
   * inside the "exhibit" directory, run
    svn status
   That should list files that have changed and files that are new (i.e., not in SVN). New files are shown with "?" in front.
@@ -41,6 +44,7 @@ Committing your changes:
 
 Download and install
   * Subclipse plugin for Eclipse: [http://subclipse.tigris.org/]
+  * Ant: [http://ant.apache.org/bindownload.cgi]
 
 Adding a new Subversion repository location:
   * In Eclipse, invoke menu Window -> Show View -> Other, select SVN -> SVN Repository, and click OK. You should then see the SVN Repository view in the Eclipse window.
@@ -50,3 +54,14 @@ Adding a new Subversion repository location:
 Checking out the code (example for Exhibit):
   * In the SVN Repository view, expand the https://simile-widgets.googlecode.com/svn/ location, then find "exhibit", and expand it.
   * Right-click on "trunk" in "exhibit" and choose Checkout... Go through that process; it should be straightforward.
+
+Working with the code:
+  * make changes to the code, test locally, etc.
+  * inside the "exhibit" directory, run
+   ant
+  That should generate the bundle files. This is important. If you don't do this step, then the bundle files don't contain your latest changes.
+
+Preparing to commit the code:
+  * In Eclipse, in the Package Explorer view or the Navigator view, right-click on the "exhibit" project and choose Refresh. This makes sure Eclipse is updated with all the changes you made to the code in external editors.
+  * I'd also recommend right-clicking on the "exhibit" project and invoke Team -> Update... This would get the latest code out (that other people checked in) and alert you to any merge conflicts.
+  * Right-click on the "exhibit" project and invoke Team -> Commit... and remember to provide a comment describing the changes you made.
