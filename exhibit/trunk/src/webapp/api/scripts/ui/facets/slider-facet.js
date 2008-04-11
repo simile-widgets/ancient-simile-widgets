@@ -18,7 +18,8 @@ Exhibit.SliderFacet._settingsSpecs = {
     "facetLabel":       { type: "text" },
     "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
-    "precision":        { type: "float", defaultValue: 1 }
+    "precision":        { type: "float", defaultValue: 1 },
+    "histogram":        { type: "boolean", defaultValue: true }
 };
 
 Exhibit.SliderFacet.create = function(configuration, containerElmt, uiContext) {
@@ -97,7 +98,20 @@ Exhibit.SliderFacet.prototype.hasRestrictions = function() {
 };
 
 Exhibit.SliderFacet.prototype.update = function(items) {
-    // do nothing
+    if (this._settings.histogram) {
+	var data = [];
+	var n = 75; //number of bars on histogram
+	var range = (this._maxRange.max - this._maxRange.min)/n //range represented by each bar
+    
+	var database = this._uiContext.getDatabase();
+	var path = this._expression.getPath();
+	
+	for(var i=0; i<n; i++) {
+	    data[i] = path.rangeBackward(i*range, (i+1)*range, items, database).values.size();
+	}
+
+	this._slider.updateHistogram(data);
+    }
 };
 
 Exhibit.SliderFacet.prototype.restrict = function(items) {
