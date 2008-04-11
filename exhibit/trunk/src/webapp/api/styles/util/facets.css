@@ -17,7 +17,7 @@ div.exhibit-facet-header-filterControl {
 }
 div.exhibit-facet-header-filterControl img {
     vertical-align: text-bottom;
-}
+n}
 
 img.exhibit-facet-header-collapse { 
     border: 1px;
@@ -209,23 +209,24 @@ div.exhibit-facet-childrenContainer {
  */
 
 div.exhibit-slider-bar { 
-    
-    border-top: 1px #999 solid;
-    height: 1px;
+    background: #eee;
     line-height: 0;
     margin: 10px;
     width: 150px;
 }
 
 div.exhibit-slider-handle { 
+    cursor: pointer;
     float: left;
-    height: 14px;
+    height: 20px;
     left: 0px;
     position: relative;
     top: 0px;
-    width: 7px;
+    width: 11px;
+    z-index: 1;
 }
 
-div.exhibit-slider-display { 
-
+canvas.exhibit-slider-histogram { 
+    height: 14px;
+    margin-top: -14px;
 }
