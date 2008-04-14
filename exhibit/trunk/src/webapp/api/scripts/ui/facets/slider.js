@@ -12,22 +12,21 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
 
     this._dom = SimileAjax.DOM.createDOMFromString(
         div,
+	'<div class="exhibit-slider-display">' +
+	    '<div id="minDisplay" class="exhibit-slider-minDisplay"></div>' +
+	    '<div id="maxDisplay" class="exhibit-slider-maxDisplay"></div>' +
+	'</div>' +
         '<div class="exhibit-slider-bar" id="bar">' +
 	    '<div class="exhibit-slider-handle" id="slider1"></div>' +
 	    '<div class="exhibit-slider-handle" id="slider2"></div>' +
 	    (this._facet._settings.histogram? '<canvas class="exhibit-slider-histogram" id="histogram"></canvas>' : '') +
-	'</div>' +
-	'<div class="exhibit-slider-display">' +
-	    '<span id="display1"></span> - <span id="display2"></span>' +
 	'</div>'
     );
-    this._dom.display1.innerHTML = this._range.min;
-    this._dom.display2.innerHTML = this._range.max;
 
     this._scaleFactor = (this._range.max - this._range.min)/this._dom.bar.offsetWidth;
 
-    this._slider1 = new Exhibit.SliderFacet.slider.slider(this._dom.slider1, this._dom.display1, this);
-    this._slider2 = new Exhibit.SliderFacet.slider.slider(this._dom.slider2, this._dom.display2, this);
+    this._slider1 = new Exhibit.SliderFacet.slider.slider(this._dom.slider1, this);
+    this._slider2 = new Exhibit.SliderFacet.slider.slider(this._dom.slider2, this);
     this._setSlider(this._slider1, this._range.min);
     this._setSlider(this._slider2, this._range.max);
 
@@ -43,8 +42,8 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
 
 // If you call this, it's up to you to notifyFacet if necessary
 Exhibit.SliderFacet.slider.prototype.resetSliders = function(){ 
-    this._setSlider(this._minSlider, this._range.min);
-    this._setSlider(this._maxSlider, this._range.max);
+    this._setSlider(this._slider1, this._range.min);
+    this._setSlider(this._slider2, this._range.max);
 };
 
 // If you call this, it's up to you to notifyFacet if necessary
@@ -59,66 +58,34 @@ Exhibit.SliderFacet.slider.prototype._setSlider = function(slider, value) {
 
     slider.value = value;
     slider.div.style.left = (value/this._scaleFactor-slider.offset) + 'px';
-    slider.display.innerHTML = value;
+    this._setDisplays(slider);
 };
 
-Exhibit.SliderFacet.slider.slider = function(div, displayEl, self) { // individual slider handle that can be dragged
+// Updates displays based on slider's value (i.e., slider's value should have changed recently)
+Exhibit.SliderFacet.slider.prototype._setDisplays = function(slider) {
+    var other = (slider == this._slider1)? this._slider2 : this._slider1;
+
+    var min = Math.min(slider.value, other.value);
+    var max = Math.max(slider.value, other.value);
+
+    this._dom.minDisplay.innerHTML = min;
+    this._dom.maxDisplay.innerHTML = max;
+};
+
+Exhibit.SliderFacet.slider.slider = function(div, self) { // individual slider handle that can be dragged
     var barEl = self._dom.bar;
 
-    this.div = div;
+    this.div = div; // containing div of handle
     this.div.style.backgroundImage = 'url("'+Exhibit.urlPrefix+'images/slider-handle.png")';
-    this.display = displayEl;
     this.offset = (this.div.offsetLeft - barEl.offsetLeft) + this.div.offsetWidth/2;
     this.min = -this.offset; // slider's middle can reach left edge of bar
     this.max = barEl.offsetWidth - this.offset; //slider's middle can reach right edge of bar
-    this.setDisplay = function(left) {
-	var position = parseInt(this.div.style.left) + this.offset;
-	this.display.innerHTML = Exhibit.Util.round(position*self._scaleFactor+self._range.min, self.prec);
-    }
 
     if (self._facet._settings.histogram) {
-	this.div.style.top = this.div.offsetHeight+'px';
+	this.div.style.top = (this.div.offsetHeight-4)+'px';
     }
-}
-
-Exhibit.SliderFacet.slider.prototype._initSliders = function() {
-    this._dom.minHandle.style.left = 0;
-    this._dom.maxHandle.style.left = 0;
-
-    var self = this;
-
-    var min = this._minSlider;
-    min.value = this._range.min;
-    min.div = this._dom.minHandle;
-    min.div.style.backgroundImage = 'url("'+Exhibit.urlPrefix+'images/right-arrow.png")';
-    min.display = this._dom.minDisplay;
-    min.offset = min.div.offsetWidth;
-    min.min = function(){ return -min.offset; };
-    min.max = function(){ return parseFloat(max.div.style.left) + max.offset - min.offset; };
-
-    if (!this._facet._settings.histogram) {
-	min.div.style.top = -min.div.offsetHeight/2 + 'px';
-    }
-
-    var max = this._maxSlider;
-    max.value = this._range.max;
-    max.div = this._dom.maxHandle;
-    max.div.style.backgroundImage = 'url("'+Exhibit.urlPrefix+'images/left-arrow.png")';
-    max.display = this._dom.maxDisplay;
-    max.offset = min.div.offsetWidth;
-    max.min = function(){ return parseFloat(min.div.style.left) + min.offset - max.offset; };
-    max.max = function(){ return self._dom.bar.offsetWidth - max.offset; };
-
-    if (!this._facet._settings.histogram) {
-	max.div.style.top = -max.div.offsetHeight/2 + 'px';
-    }
-
-    min.setDisplay = max.setDisplay = function(left) {
-	this.display.innerHTML = Exhibit.Util.round((left+this.offset)*self._scaleFactor+self._range.min, self._prec);
-    };
-
-    this.resetSliders();
 };
+
 
 Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
     var self = this;
@@ -149,7 +116,7 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 	var max = slider.max;
 
 	return function(e) {
-	    e = e || window.event; // CHECK IN IE!!!!!!!
+	    e = e || window.event
 
 	    var dx = e.screenX - origX;
 	    var newLeft = origLeft + dx;
@@ -163,7 +130,9 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 
 	    //setTimeout keeps setDisplay from slowing down the dragging
 	    //I'm not entirely sure why, but I think it might have something to do with it putting the call in a new environment
-	    setTimeout(function(){ slider.setDisplay(); }, 0);
+	    setTimeout(function(){ var position = parseInt(slider.div.style.left) + slider.offset;
+		                   slider.value = parseFloat(Exhibit.Util.round(position*self._scaleFactor+self._range.min, self._prec));
+				   self._setDisplays(slider); }, 0);
 	};
     };
 
@@ -178,7 +147,6 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 		document.removeEventListener('mouseup', arguments.callee, false); //remove this function
 	    }
 
-	    slider.value = slider.display.innerHTML;
 	    self._notifyFacet();
 	};
     };
@@ -196,64 +164,6 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 	
 };
 
-Exhibit.SliderFacet.slider.prototype._registerDragging2 = function() {
-    var self = this;
-
-    var dragStart = function(slider) {
-	return function() {
-	    this.left = parseInt(slider.div.style.left);
-	    this.min = slider.min();
-	    this.max = slider.max();
-	};
-    };
-
-    var onDrag = function(slider) {
-	return function(dx, dy) {
-	    this.left += dx;
-	    left = this.left;
-	    if (this.left < this.min) {
-		this.left = this.min;
-	    }
-	    if (this.left > this.max) {
-		this.left = this.max;
-	    }
-	    slider.div.style.left = this.left + 'px';
-
-	    //setTimeout keeps setDisplay from slowing down the dragging
-	    //I'm not entirely sure why, but I think it might have something to do with it putting the call in a new environment
-	    setTimeout(function(){ slider.setDisplay(left); }, 0);
-	};
-    };
-
-    //min slider
-    SimileAjax.WindowManager.registerForDragging(
-         this._dom.minHandle,
-           { onDragStart: dragStart(this._minSlider),
-		 
-	     onDragBy: onDrag(this._minSlider),
-	     
-	     onDragEnd: function() {
-		 self._min = self._dom.minDisplay.innerHTML;
-		 self._notifyFacet();
-	     }
-	 }
-    );
-
-    //max slider
-    SimileAjax.WindowManager.registerForDragging(
-	 this._dom.maxHandle,
-         { onDragStart: dragStart(this._maxSlider),
-
-	   onDragBy: onDrag(this._maxSlider),
-
-	   onDragEnd: function() {
-		self._min = self._minSlider.display.innerHTML;
-		self._notifyFacet();
-	   }
-	 }
-    );
-
-};
 
 Exhibit.SliderFacet.slider.prototype._notifyFacet = function() {
     var val1 = this._slider1.value;
