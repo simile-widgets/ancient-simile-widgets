@@ -239,7 +239,7 @@ div.exhibit-facet-header-filterControl {
 }
 div.exhibit-facet-header-filterControl img {
     vertical-align: text-bottom;
-n}
+}
 
 img.exhibit-facet-header-collapse { 
     border: 1px;
@@ -433,24 +433,37 @@ div.exhibit-facet-childrenContainer {
 div.exhibit-slider-bar { 
     background: #eee;
     line-height: 0;
-    margin: 10px;
+    margin: 0 10px 20px 10px;
     width: 150px;
 }
 
 div.exhibit-slider-handle { 
     cursor: pointer;
     float: left;
-    height: 20px;
+    height: 19px;
     left: 0px;
     position: relative;
     top: 0px;
-    width: 11px;
+    width: 12px;
     z-index: 1;
 }
 
 canvas.exhibit-slider-histogram { 
     height: 14px;
     margin-top: -14px;
+}
+
+div.exhibit-slider-display { 
+    font-size: 12px;
+    height: 14px;
+}
+
+div.exhibit-slider-minDisplay { 
+    float: left;
+}
+
+div.exhibit-slider-maxDisplay { 
+    float: right;
 }/*==================================================
  * Common styles for views
  *==================================================
