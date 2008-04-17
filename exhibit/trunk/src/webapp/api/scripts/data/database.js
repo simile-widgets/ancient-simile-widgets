@@ -432,7 +432,7 @@ Exhibit.Database._Impl.prototype._ensureTypeExists = function(typeID, baseURI) {
 
 Exhibit.Database._Impl.prototype._ensurePropertyExists = function(propertyID, baseURI) {
     if (!(propertyID in this._properties)) {
-        var property = new Exhibit.Database._Property(propertyID);
+        var property = new Exhibit.Database._Property(propertyID, this);
         
         property._uri = baseURI + "property#" + encodeURIComponent(propertyID);
         property._valueType = "text";

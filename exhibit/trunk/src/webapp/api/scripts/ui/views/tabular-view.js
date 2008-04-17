@@ -159,7 +159,8 @@ Exhibit.TabularView._configure = function(view, configuration) {
                     expression: expression,
                     styler:     styler,
                     label:      label,
-                    format:     format
+                    format:     format,
+                    uiContext:  view._uiContext 
                 });
             }
         }
