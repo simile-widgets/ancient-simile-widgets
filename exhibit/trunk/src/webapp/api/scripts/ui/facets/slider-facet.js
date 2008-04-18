@@ -19,7 +19,8 @@ Exhibit.SliderFacet._settingsSpecs = {
     "scroll":           { type: "boolean", defaultValue: true },
     "height":           { type: "text" },
     "precision":        { type: "float", defaultValue: 1 },
-    "histogram":        { type: "boolean", defaultValue: true }
+    "histogram":        { type: "boolean", defaultValue: true },
+    "horizontal":	{ type: "boolean", defaultValue: true }
 };
 
 Exhibit.SliderFacet.create = function(configuration, containerElmt, uiContext) {
@@ -64,20 +65,20 @@ Exhibit.SliderFacet._configure = function(facet, configuration) {
     Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.SliderFacet._settingsSpecs, facet._settings);
 
     if ("expression" in configuration) {
-	facet._expression = Exhibit.ExpressionParser.parse(configuration.expression);
+		facet._expression = Exhibit.ExpressionParser.parse(configuration.expression);
     }
 
     if (!("facetLabel" in facet._settings)) {
-	facet._settings.facetLabel = "missing ex:facetLabel";
-	if (facet._expression != null && facet._expression.isPath()) {
-	    var segment = facet._expression.getPath().getLastSegment();
-	    var property = facet._uiContext.getDatabase().getProperty(segment.property);
-	    if (property != null) {
-		facet._settings.facetLabel = segment.forward ? property.getLabel() : property.getReverseLabel();
-	    }
-	}
+		facet._settings.facetLabel = "missing ex:facetLabel";
+		if (facet._expression != null && facet._expression.isPath()) {
+		    var segment = facet._expression.getPath().getLastSegment();
+		    var property = facet._uiContext.getDatabase().getProperty(segment.property);
+		    if (property != null) {
+				facet._settings.facetLabel = segment.forward ? property.getLabel() : property.getReverseLabel();
+		    }
+		}
     }
-
+    
     facet._maxRange = facet._getMaxRange();
 };
 
@@ -90,7 +91,7 @@ Exhibit.SliderFacet.prototype._initializeUI = function() {
        "<div class='exhibit-slider' id='slider'></div>"
     );
 
-    this._slider = new Exhibit.SliderFacet.slider(this._dom.slider, this, this._settings.precision);
+    this._slider = new Exhibit.SliderFacet.slider(this._dom.slider, this, this._settings.precision, this._settings.horizontal);
 };
 
 Exhibit.SliderFacet.prototype.hasRestrictions = function() {
@@ -99,18 +100,18 @@ Exhibit.SliderFacet.prototype.hasRestrictions = function() {
 
 Exhibit.SliderFacet.prototype.update = function(items) {
     if (this._settings.histogram) {
-	var data = [];
-	var n = 75; //number of bars on histogram
-	var range = (this._maxRange.max - this._maxRange.min)/n //range represented by each bar
-    
-	var database = this._uiContext.getDatabase();
-	var path = this._expression.getPath();
+		var data = [];
+		var n = 75; //number of bars on histogram
+		var range = (this._maxRange.max - this._maxRange.min)/n //range represented by each bar
+	    
+		var database = this._uiContext.getDatabase();
+		var path = this._expression.getPath();
+		
+		for(var i=0; i<n; i++) {
+		    data[i] = path.rangeBackward(this._maxRange.min+i*range, this._maxRange.min+(i+1)*range, items, database).values.size();
+		}
 	
-	for(var i=0; i<n; i++) {
-	    data[i] = path.rangeBackward(i*range, (i+1)*range, items, database).values.size();
-	}
-
-	this._slider.updateHistogram(data);
+		this._slider.updateHistogram(data);
     }
 };
 
@@ -145,4 +146,20 @@ Exhibit.SliderFacet.prototype._notifyCollection = function() {
 Exhibit.SliderFacet.prototype.clearAllRestrictions = function() {
     this._slider.resetSliders();
     this._range = this._maxRange;
+};
+
+Exhibit.SliderFacet.prototype.dispose = function() {
+    this._uiContext.getCollection().removeFacet(this);
+    this._uiContext = null;
+    this._colorCoder = null;
+    
+    this._div.innerHTML = "";
+    this._div = null;
+    this._dom = null;
+    
+    this._expression = null;
+    this._settings = null;
+    
+    this._range = null; //currently selected range
+    this._maxRange = null; //total range of slider
 };
