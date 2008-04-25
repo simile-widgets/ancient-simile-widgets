@@ -491,6 +491,11 @@ Exhibit.Database._indexPutList = function(index, x, y, list) {
 };
 
 Exhibit.Database._indexRemove = function(index, x, y, z) {
+    function isEmpty(obj) {
+        for (p in obj) { return false; } 
+        return true;
+    }
+    
     var hash = index[x];
     if (!hash) {
         return false;
@@ -504,8 +509,14 @@ Exhibit.Database._indexRemove = function(index, x, y, z) {
     for (var i = 0; i < array.length; i++) {
         if (z == array[i]) {
             array.splice(i, 1);
+            
+            // prevent accumulation of empty arrays/hashes in indices
             if (array.length == 0) {
                 delete hash[y];
+
+                if (isEmpty(hash)) { 
+                    delete index[x];
+                }
             }
             return true;
         }
@@ -806,6 +817,7 @@ Exhibit.Database._Property.prototype._buildRangeIndex = function() {
     var p = this._id;
     
     switch (this.getValueType()) {
+    case "currency":
     case "number":
         getter = function(item, f) {
             database.getObjects(item, p, null, null).visit(function(value) {
