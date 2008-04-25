@@ -45,8 +45,9 @@ Exhibit.SliderFacet.slider = function(div, facet, precision, horizontal) {
 	    this._slider1 = new Exhibit.SliderFacet.slider.slider(this._dom.slider1, this);
 	    this._slider2 = new Exhibit.SliderFacet.slider.slider(this._dom.slider2, this);
 	    
-	    this._setSlider(this._slider1, Math.max(facet._selection.min, this._range.min));
-    	this._setSlider(this._slider2, Math.min(facet._selection.max, this._range.max));
+	    console.log(Math.max(facet._selection.min, this._range.min)+" "+Math.min(facet._selection.max, this._range.max));
+	    this._setSlider(this._slider1, (facet._selection.min!=null)?Math.max(facet._selection.min, this._range.min):this._range.min);
+    	this._setSlider(this._slider2, (facet._selection.max!=null)?Math.min(facet._selection.max, this._range.max):this._range.max);
 	    this._registerDragging();
 	    
 	    SimileAjax.WindowManager.registerEvent(self._dom.minDisplay, "change", 
