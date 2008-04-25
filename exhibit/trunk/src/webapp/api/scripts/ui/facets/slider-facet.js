@@ -165,6 +165,7 @@ Exhibit.SliderFacet.prototype.dispose = function() {
     this._expression = null;
     this._settings = null;
     
+    this._selection = null;
     this._range = null; //currently selected range
     this._maxRange = null; //total range of slider
 };
