@@ -10,6 +10,7 @@ Exhibit.SliderFacet = function(containerElmt, uiContext) {
     this._expression = null;
     this._settings = {};
 
+	this._selection = {min: null, max: null};
     this._range = {min: null, max: null}; //currently selected range
     this._maxRange = {min: null, max: null}; //total range of slider
 };
@@ -20,7 +21,7 @@ Exhibit.SliderFacet._settingsSpecs = {
     "height":           { type: "text" },
     "precision":        { type: "float", defaultValue: 1 },
     "histogram":        { type: "boolean", defaultValue: true },
-    "horizontal":	{ type: "boolean", defaultValue: true }
+    "horizontal":	{ type: "boolean", defaultValue: false }
 };
 
 Exhibit.SliderFacet.create = function(configuration, containerElmt, uiContext) {
@@ -66,6 +67,10 @@ Exhibit.SliderFacet._configure = function(facet, configuration) {
 
     if ("expression" in configuration) {
 		facet._expression = Exhibit.ExpressionParser.parse(configuration.expression);
+    }
+    if ("selection" in configuration) {
+        var selection = configuration.selection;
+        facet._selection = {min: selection[0], max: selection[1]};
     }
 
     if (!("facetLabel" in facet._settings)) {
@@ -116,9 +121,9 @@ Exhibit.SliderFacet.prototype.update = function(items) {
 };
 
 Exhibit.SliderFacet.prototype.restrict = function(items) {
-    if (!this.hasRestrictions()) {
+    /*if (!this.hasRestrictions()) {
 	return items;
-    }
+    }*/
     var path = this._expression.getPath();
     var database = this._uiContext.getDatabase();
     return path.rangeBackward(this._range.min, this._range.max, items, database).values;
