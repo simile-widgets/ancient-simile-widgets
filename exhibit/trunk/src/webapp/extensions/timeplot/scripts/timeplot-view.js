@@ -9,7 +9,7 @@ Exhibit.TimeplotView = function(containerElmt, uiContext) {
 
     this._settings = {};
     this._accessors = {
-        getEventLabel:  function(itemID, database, visitor) { visitor(database.getObject(itemID, "label")); },
+        getLabel:  function(itemID, database, visitor) { visitor(database.getObject(itemID, "label")); },
         getProxy:       function(itemID, database, visitor) { visitor(itemID); },
         getColorKey:    null
     };
@@ -43,15 +43,23 @@ Exhibit.TimeplotView._accessorSpecs = [
         attributeName:  "proxy"
     },
     {   accessorName:   "getTime",
-        attributeName:  "time",
+        attributeName:  "pointTime",
         type:           "date"
     },
     {   accessorName:   "getValue",
-        attributeName:  "value",
+        attributeName:  "pointValue",
         type:           "float"
     },
     {   accessorName:   "getSeriesConnector",
         attributeName:  "seriesConnector",
+        type:           "text"
+    },
+    {   accessorName:   "getSeriesTime",
+        attributeName:  "seriesTime",
+        type:           "text"
+    },
+    {   accessorName:   "getSeriesValue",
+        attributeName:  "seriesValue",
         type:           "text"
     },
     {   accessorName:   "getColorKey",
@@ -62,8 +70,7 @@ Exhibit.TimeplotView._accessorSpecs = [
         attributeName:  "eventLabel",
         type:           "text"
     }
-];    
-
+];
 
 Exhibit.TimeplotView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.TimeplotView(
@@ -265,6 +272,46 @@ Exhibit.TimeplotView.prototype._reconstruct = function() {
         var times  = new SimileAjax.Set([]);
         var seriesSet = new SimileAjax.Set([]);
 
+        // There are two ways to specify a series, either by including all
+        // the data in one DB item or by connecting one value across several
+        // items.  Across several is checked first during the set.visit() and
+        // addEvent is called if found; if not, addSeries is called.
+        var addSeries = function(itemID) {
+            // data is semicolon separated
+            var seriesTimeString;
+            accessors.getSeriesTime(itemID, database, function(v) { seriesTimeString = v; return true; });
+            var seriesValueString;
+            accessors.getSeriesValue(itemID, database, function(v) { seriesValueString = v; return true; });
+            var series;
+            accessors.getLabel(itemID, database, function(v) { series = v; return true; });
+            var seriesTime = seriesTimeString.split(";");
+            var seriesValue = seriesValueString.split(";");
+            if (seriesTime.length != seriesValue.length) {
+                throw "Exhibit-Timeplot Exception: time and value arrays of unequal size, unplottable";
+            }
+            for (var i = 0; i < seriesTime.length; i++) {
+                var idx, value;
+                try {
+                    idx = SimileAjax.DateTime.parseIso8601DateTime(seriesTime[i]).getTime();
+                } catch (e) {
+                    throw "Exhibit-Timeplot Exception: cannot parse time";
+                }
+                try {
+                    var value = parseFloat(seriesValue[i]);
+                } catch (e) {
+                    throw "Exhibit-Timeplot Exception: cannot parse value";
+                }
+                times.add(idx);
+                if (!table[idx]) {
+                    table[idx] = {};
+                    table[idx][series] = value;
+                } else {
+                    table[idx][series] = value;
+                }
+            }
+            seriesSet.add(series);
+        }
+
         var addEvent = function(itemID, time) {
             var value;
             accessors.getValue(itemID, database, function(v) { value = v; return true; });
@@ -287,7 +334,11 @@ Exhibit.TimeplotView.prototype._reconstruct = function() {
             if (time) {
                 addEvent(itemID, time);
             } else {
-                unplottableItems.push(itemID);
+                try {
+                    addSeries(itemID);
+                } catch(e) {
+                    unplottableItems.push(itemID);
+                }
             }
         });
 
