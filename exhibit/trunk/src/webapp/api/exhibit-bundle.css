@@ -429,12 +429,20 @@ div.exhibit-facet-childrenContainer {
  * Slider facet
  *==================================================
  */
-
 div.exhibit-slider-bar { 
-    background: #eee;
+    background: #000;
     line-height: 0;
     margin: 0 10px 20px 10px;
-    width: 150px;
+    position: relative;
+}
+
+div.exhibit-slider-bar2 { 
+    background: #eee;
+    line-height: 0;
+    margin: 15px 10px 10px 5px;
+    height: 150px;
+    width: 20px;
+    position: relative;
 }
 
 div.exhibit-slider-handle { 
@@ -442,15 +450,29 @@ div.exhibit-slider-handle {
     float: left;
     height: 19px;
     left: 0px;
-    position: relative;
+    position: absolute;
     top: 0px;
     width: 12px;
     z-index: 1;
 }
 
-canvas.exhibit-slider-histogram { 
-    height: 14px;
-    margin-top: -14px;
+div.exhibit-slider-histogram {
+    background: #eee;
+}
+
+div.exhibit-slider-handle2 { 
+    cursor: pointer;
+    float: left;
+    height: 12px;
+    left: 0px;
+    position: absolute;
+    top: 0px;
+    width: 19px;
+    z-index: 1;
+}
+
+div.exhibit-slider-histogram div { 
+    background: #999;
 }
 
 div.exhibit-slider-display { 
