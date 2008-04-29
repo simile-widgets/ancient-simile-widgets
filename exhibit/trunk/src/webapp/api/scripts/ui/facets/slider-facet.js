@@ -21,7 +21,8 @@ Exhibit.SliderFacet._settingsSpecs = {
     "height":           { type: "text" },
     "precision":        { type: "float", defaultValue: 1 },
     "histogram":        { type: "boolean", defaultValue: true },
-    "horizontal":	{ type: "boolean", defaultValue: false }
+    "height":           { type: "int", defaultValue: false },
+    "horizontal":       { type: "boolean", defaultValue: true }
 };
 
 Exhibit.SliderFacet.create = function(configuration, containerElmt, uiContext) {
@@ -121,9 +122,9 @@ Exhibit.SliderFacet.prototype.update = function(items) {
 };
 
 Exhibit.SliderFacet.prototype.restrict = function(items) {
-    /*if (!this.hasRestrictions()) {
+    if (!this.hasRestrictions()) {
 	return items;
-    }*/
+    }
     var path = this._expression.getPath();
     var database = this._uiContext.getDatabase();
     return path.rangeBackward(this._range.min, this._range.max, items, database).values;
