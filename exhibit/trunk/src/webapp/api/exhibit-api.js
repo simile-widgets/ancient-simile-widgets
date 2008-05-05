@@ -36,6 +36,7 @@
             "persistence.js",
             
             "util/set.js",
+            "util/ordered-dictionary.js",
             "util/util.js",
             "util/settings.js",
             "util/views.js",
