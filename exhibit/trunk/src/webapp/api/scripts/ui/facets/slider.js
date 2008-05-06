@@ -3,7 +3,7 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     this._div = div;
     this._facet = facet;
     this._prec = precision || .1;
-    this._range = {min: parseFloat(Exhibit.Util.round(facet._maxRange.min-precision/2, this._prec)),  // round down
+    this._maxRange = {min: parseFloat(Exhibit.Util.round(facet._maxRange.min-precision/2, this._prec)),  // round down
 		   max: parseFloat(Exhibit.Util.round(facet._maxRange.max+precision/2, this._prec))}; // round up
     this._horizontal = this._facet._settings.horizontal;
 
@@ -13,14 +13,14 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
 
     this._dom = SimileAjax.DOM.createDOMFromString(
         div,
-	'<div class="exhibit-slider-display">' +
-	    '<div id="minDisplay" class="exhibit-slider-minDisplay"></div>' +
-	    '<div id="maxDisplay" class="exhibit-slider-maxDisplay"></div>' +
-	'</div>' +
         '<div class="exhibit-slider-bar" id="bar">' +
 	    '<div id="slider1"></div>' +
 	    '<div id="slider2"></div>' +
 	    (this._facet._settings.histogram? '<div class="exhibit-slider-histogram" id="histogram"></div>':'') +
+	'</div>' +
+	'<div class="exhibit-slider-display">' +
+	(this._facet._settings.inputText? '<input type="text" id="minDisplay"></input> - <input type="text" id="maxDisplay"></input> '
+	      : '<span id="minDisplay"></span> - <span id="maxDisplay"></span>')  +
 	'</div>'
     );
 
@@ -58,36 +58,41 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     }
 
     if (horizontal) {
-	this._scaleFactor = (this._range.max - this._range.min)/this._dom.bar.offsetWidth;
+	this._scaleFactor = (this._maxRange.max - this._maxRange.min)/this._dom.bar.offsetWidth;
     } else {
-	this._scaleFactor = (this._range.max - this._range.min)/this._dom.bar.offsetHeight;
+	this._scaleFactor = (this._maxRange.max - this._maxRange.min)/this._dom.bar.offsetHeight;
     }
 
     // init sliders
     this._slider1 = new Exhibit.SliderFacet.slider.slider(this._dom.slider1, this);
     this._slider2 = new Exhibit.SliderFacet.slider.slider(this._dom.slider2, this);
-    this._setSlider(this._slider1, this._range.min);
-    this._setSlider(this._slider2, this._range.max);
+    this._setSlider(this._slider1, this._maxRange.min);
+    this._setSlider(this._slider2, this._maxRange.max);
 
     this._registerDragging();
+
+    if (this._facet._settings.inputText) {
+	this._registerInputs();
+    }
     
 };
 
 // If you call this, it's up to you to notifyFacet if necessary
 Exhibit.SliderFacet.slider.prototype.resetSliders = function(){ 
-    this._setSlider(this._slider1, this._range.min);
-    this._setSlider(this._slider2, this._range.max);
+    this._setSlider(this._slider1, this._maxRange.min);
+    this._setSlider(this._slider2, this._maxRange.max);
 };
 
 // If you call this, it's up to you to notifyFacet if necessary
 Exhibit.SliderFacet.slider.prototype._setSlider = function(slider, value) {
-    if (value > this._range.max) {
-	value = this._range.max
+    if (value > this._maxRange.max) {
+	value = this._maxRange.max
     }
-    else if (value < this._range.min) {
-	value = this._range.min
+    else if (value < this._maxRange.min) {
+	value = this._maxRange.min
     }
-    value = Exhibit.Util.round(value, this._prec);
+
+    value = parseFloat(Exhibit.Util.round(value, this._prec));
 
     slider.value = value;
     
@@ -100,6 +105,40 @@ Exhibit.SliderFacet.slider.prototype._setSlider = function(slider, value) {
     this._setDisplays(slider);
 };
 
+// If you call this, it's up to you to notifyFacet if necessary
+Exhibit.SliderFacet.slider.prototype._setMin = function(value) {
+    var slider = this._slider1.value < this._slider2.value? this._slider1 : this._slider2;
+    var other = (slider == this._slider1)? this._slider2 : this._slider1;
+
+    value = parseFloat(value);
+    if (isNaN(value)) {
+	return;
+    }
+
+    if (value > other.value) {
+	value = other.value;
+    }
+
+    this._setSlider(slider, value);
+};
+
+// If you call this, it's up to you to notifyFacet if necessary
+Exhibit.SliderFacet.slider.prototype._setMax = function(value) {
+    var slider = this._slider1.value > this._slider2.value? this._slider1 : this._slider2;
+    var other = (slider == this._slider1)? this._slider2 : this._slider1;
+
+    value = parseFloat(value);
+    if (isNaN(value)) {
+	return;
+    }
+
+    if (value < other.value) {
+	value = other.value;
+    }
+
+    this._setSlider(slider, value);
+};
+
 // Updates displays based on slider's value (i.e., slider's value should have changed recently)
 Exhibit.SliderFacet.slider.prototype._setDisplays = function(slider) {
     var other = (slider == this._slider1)? this._slider2 : this._slider1;
@@ -107,8 +146,13 @@ Exhibit.SliderFacet.slider.prototype._setDisplays = function(slider) {
     var min = Math.min(slider.value, other.value);
     var max = Math.max(slider.value, other.value);
 
-    this._dom.minDisplay.innerHTML = min;
-    this._dom.maxDisplay.innerHTML = max;
+    if (this._facet._settings.inputText) {
+	this._dom.minDisplay.value = min;
+	this._dom.maxDisplay.value = max;
+    } else {
+	this._dom.minDisplay.innerHTML = min;
+	this._dom.maxDisplay.innerHTML = max;
+    }
 };
 
 Exhibit.SliderFacet.slider.slider = function(div, self) { // individual slider handle that can be dragged
@@ -180,7 +224,7 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 	    //setTimeout keeps setDisplay from slowing down the dragging
 	    //I'm not entirely sure why, but I think it might have something to do with it putting the call in a new environment
 	    setTimeout(function(){ var position = parseInt(slider.div.style.left) + slider.offset;
-		                   slider.value = parseFloat(Exhibit.Util.round(position*self._scaleFactor+self._range.min, self._prec));
+		                   slider.value = parseFloat(Exhibit.Util.round(position*self._scaleFactor+self._maxRange.min, self._prec));
 				   self._setDisplays(slider); }, 0);
 	};
     };
@@ -207,7 +251,7 @@ Exhibit.SliderFacet.slider.prototype._registerDragging = function() {
 	    //setTimeout keeps setDisplay from slowing down the dragging
 	    //I'm not entirely sure why, but I think it might have something to do with it putting the call in a new environment
 	    setTimeout(function(){ var position = parseInt(slider.div.style.top) + slider.offset;
-		                   slider.value = parseFloat(Exhibit.Util.round(position*self._scaleFactor+self._range.min, self._prec));
+		                   slider.value = parseFloat(Exhibit.Util.round(position*self._scaleFactor+self._maxRange.min, self._prec));
 				   self._setDisplays(slider); }, 0);
 	};
     };
@@ -301,3 +345,14 @@ Exhibit.SliderFacet.slider.prototype.updateHistogram = function(data, n) {
 
 };
 
+Exhibit.SliderFacet.slider.prototype._registerInputs = function() {
+    var self = this;
+
+    if (document.attachEvent) {
+	this._dom.minDisplay.attachEvent('onchange', function(e) {self._setMin(this.value); self._notifyFacet()});
+	this._dom.maxDisplay.attachEvent('onchange', function(e) {self._setMax(this.value); self._notifyFacet()});
+    } else {
+	this._dom.minDisplay.addEventListener('change', function(e) {self._setMin(this.value); self._notifyFacet()}, false);
+	this._dom.maxDisplay.addEventListener('change', function(e) {self._setMax(this.value); self._notifyFacet()}, false);
+    }
+};
