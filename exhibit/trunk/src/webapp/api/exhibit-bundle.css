@@ -429,10 +429,15 @@ div.exhibit-facet-childrenContainer {
  * Slider facet
  *==================================================
  */
+
+div.exhibit-slider { 
+    padding-left: 10px;
+}
+
 div.exhibit-slider-bar { 
     background: #000;
     line-height: 0;
-    margin: 0 10px 20px 10px;
+    margin: 5px 0 15px 0;
     position: relative;
 }
 
@@ -475,17 +480,10 @@ div.exhibit-slider-histogram div {
     background: #999;
 }
 
-div.exhibit-slider-display { 
-    font-size: 12px;
-    height: 14px;
-}
-
-div.exhibit-slider-minDisplay { 
-    float: left;
-}
-
-div.exhibit-slider-maxDisplay { 
-    float: right;
+.exhibit-slider-display input { 
+    background: #eee;
+    font-size: 10px;
+    width: 40px;
 }/*==================================================
  * Common styles for views
  *==================================================

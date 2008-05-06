@@ -22,7 +22,9 @@ Exhibit.SliderFacet._settingsSpecs = {
     "precision":        { type: "float", defaultValue: 1 },
     "histogram":        { type: "boolean", defaultValue: true },
     "height":           { type: "int", defaultValue: false },
-    "horizontal":       { type: "boolean", defaultValue: true }
+    "width":            { type: "int", defaultValue: false },
+    "horizontal":       { type: "boolean", defaultValue: true },
+    "inputText":        { type: "boolean", defaultValue: true } 
 };
 
 Exhibit.SliderFacet.create = function(configuration, containerElmt, uiContext) {
