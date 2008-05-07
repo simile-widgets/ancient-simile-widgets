@@ -5,6 +5,24 @@
  */
 Exhibit.Functions = {};
 
+Exhibit.FunctionUtilities = {};
+Exhibit.FunctionUtilities.registerSimpleMappingFunction = function(name, f, valueType) {
+    Exhibit.Functions[name] = {
+        f: function(args) {
+            var set = new Exhibit.Set();
+            for (var i = 0; i < args.length; i++) {
+                args[i].forEachValue(function(v) {
+                    var v2 = f(v);
+                    if (v2 != undefined) {
+                        set.add(v2);
+                    }
+                });
+            }
+            return new Exhibit.Expression._Collection(set, valueType);
+        }
+    };
+};
+
 Exhibit.Functions["union"] = {
     f: function(args) {
         var set = new Exhibit.Set();
@@ -57,6 +75,26 @@ Exhibit.Functions["count"] = {
 Exhibit.Functions["not"] = {
     f: function(args) {
         return new Exhibit.Expression._Collection([ !args[0].contains(true) ], "boolean");
+    }
+};
+
+Exhibit.Functions["and"] = {
+    f: function(args) {
+        var r = true;
+        for (var i = 0; r && i < args.length; i++) {
+            r = r && args[i].contains(true);
+        }
+        return new Exhibit.Expression._Collection([ r ], "boolean");
+    }
+};
+
+Exhibit.Functions["or"] = {
+    f: function(args) {
+        var r = false;
+        for (var i = 0; r && i < args.length; i++) {
+            r = r || args[i].contains(true);
+        }
+        return new Exhibit.Expression._Collection([ r ], "boolean");
     }
 };
 

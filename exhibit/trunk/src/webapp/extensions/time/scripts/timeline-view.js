@@ -468,7 +468,15 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
 
 Exhibit.TimelineView.prototype._select = function(selection) {
     var itemID = selection.itemIDs[0];
-    this._timeline.getBand(0).showBubbleForEvent(itemID);
+    var c = this._timeline.getBandCount();
+    for (var i = 0; i < c; i++) {
+        var band = this._timeline.getBand(i);
+        var evt = band.getEventSource().getEvent(itemID);
+        if (evt) {
+            band.showBubbleForEvent(itemID);
+            break;
+        }
+    }
 };
 
 Exhibit.TimelineView.prototype._fillInfoBubble = function(evt, elmt, theme, labeller) {

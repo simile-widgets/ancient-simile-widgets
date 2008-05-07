@@ -96,7 +96,7 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     dom.elmt.className = selected ? "exhibit-facet-value exhibit-facet-value-selected" : "exhibit-facet-value";
     if (typeof label == "string") {
         dom.elmt.title = label;
-        dom.link.appendChild(document.createTextNode(label));
+        dom.link.innerHTML = label;
         if (color != null) {
             dom.link.style.color = color;
         }
@@ -177,7 +177,7 @@ Exhibit.FacetUtilities.constructFlowingFacetItem = function(
     dom.elmt.className = selected ? "exhibit-flowingFacet-value exhibit-flowingFacet-value-selected" : "exhibit-flowingFacet-value";
     if (typeof label == "string") {
         dom.elmt.title = label;
-        dom.inner.appendChild(document.createTextNode(label));
+        dom.inner.innerHTML = label;
         if (color != null) {
             dom.inner.style.color = color;
         }
