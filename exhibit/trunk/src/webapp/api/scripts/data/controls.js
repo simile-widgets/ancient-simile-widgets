@@ -81,3 +81,35 @@ Exhibit.Controls["default"] = {
         return new Exhibit.Expression._Collection([], "text");
     }
 };
+
+Exhibit.Controls["filter"] = {
+    f: function(
+        args,
+        roots,
+        rootValueTypes,
+        defaultRootName,
+        database
+    ) {
+        var collection = args[0].evaluate(roots, rootValueTypes, defaultRootName, database);
+       
+        var oldValue = roots["value"];
+        var oldValueType = rootValueTypes["value"];
+       
+        var results = new Exhibit.Set();
+        rootValueTypes["value"] = collection.valueType;
+       
+        collection.forEachValue(function(element) {
+            roots["value"] = element;
+           
+            var collection2 = args[1].evaluate(roots, rootValueTypes, defaultRootName, database);
+            if (collection2.size > 0 && collection2.contains("true")) {
+                results.add(element);
+            }
+        });
+       
+        roots["value"] = oldValue;
+        rootValueTypes["value"] = oldValueType;
+       
+        return new Exhibit.Expression._Collection(results, collection.valueType);
+    }
+};

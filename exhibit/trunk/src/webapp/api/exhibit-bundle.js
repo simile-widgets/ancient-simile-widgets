@@ -215,6 +215,19 @@ D++){var F=C[D].evaluate(A,B,G,E);
 if(F.size>0){return F;
 }}return new Exhibit.Expression._Collection([],"text");
 }};
+Exhibit.Controls["filter"]={f:function(F,H,I,B,G){var D=F[0].evaluate(H,I,B,G);
+var A=H["value"];
+var E=I["value"];
+var C=new Exhibit.Set();
+I["value"]=D.valueType;
+D.forEachValue(function(J){H["value"]=J;
+var K=F[1].evaluate(H,I,B,G);
+if(K.size>0&&K.contains("true")){C.add(J);
+}});
+H["value"]=A;
+I["value"]=E;
+return new Exhibit.Expression._Collection(C,D.valueType);
+}};
 
 
 /* database.js */
@@ -1251,6 +1264,16 @@ Exhibit.Expression._ControlCall.prototype.evaluate=function(A,B,D,C){return Exhi
 
 /* functions.js */
 Exhibit.Functions={};
+Exhibit.FunctionUtilities={};
+Exhibit.FunctionUtilities.registerSimpleMappingFunction=function(A,B,C){Exhibit.Functions[A]={f:function(D){var F=new Exhibit.Set();
+for(var E=0;
+E<D.length;
+E++){D[E].forEachValue(function(G){var H=B(G);
+if(H!=undefined){F.add(H);
+}});
+}return new Exhibit.Expression._Collection(F,C);
+}};
+};
 Exhibit.Functions["union"]={f:function(B){var E=new Exhibit.Set();
 var D=null;
 if(B.length>0){var D=B[0].valueType;
@@ -1273,6 +1296,18 @@ Exhibit.Functions["exists"]={f:function(A){return new Exhibit.Expression._Collec
 Exhibit.Functions["count"]={f:function(A){return new Exhibit.Expression._Collection([A[0].size],"number");
 }};
 Exhibit.Functions["not"]={f:function(A){return new Exhibit.Expression._Collection([!A[0].contains(true)],"boolean");
+}};
+Exhibit.Functions["and"]={f:function(A){var C=true;
+for(var B=0;
+C&&B<A.length;
+B++){C=C&&A[B].contains(true);
+}return new Exhibit.Expression._Collection([C],"boolean");
+}};
+Exhibit.Functions["or"]={f:function(A){var C=false;
+for(var B=0;
+C&&B<A.length;
+B++){C=C||A[B].contains(true);
+}return new Exhibit.Expression._Collection([C],"boolean");
 }};
 Exhibit.Functions["add"]={f:function(A){var C=0;
 for(var B=0;
@@ -6471,7 +6506,7 @@ Exhibit.FacetUtilities.constructFacetItem=function(H,F,B,D,I,G,A,E){if(Exhibit.p
 }var C=SimileAjax.DOM.createDOMFromString("div","<div class='exhibit-facet-value-count'>"+F+"</div><div class='exhibit-facet-value-inner' id='inner'>"+("<div class='exhibit-facet-value-checkbox'>&#160;"+SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix+(I?(D?"images/black-check.png":"images/no-check.png"):"images/no-check-no-border.png"))+"</div>")+"<a class='exhibit-facet-value-link' href='javascript:{}' id='link'></a></div>");
 C.elmt.className=D?"exhibit-facet-value exhibit-facet-value-selected":"exhibit-facet-value";
 if(typeof H=="string"){C.elmt.title=H;
-C.link.appendChild(document.createTextNode(H));
+C.link.innerHTML=H;
 if(B!=null){C.link.style.color=B;
 }}else{C.link.appendChild(H);
 if(B!=null){H.style.color=B;
@@ -6491,7 +6526,7 @@ Exhibit.FacetUtilities.constructFlowingFacetItem=function(H,F,B,D,I,G,A,E){if(Ex
 }var C=SimileAjax.DOM.createDOMFromString("div",("<div class='exhibit-flowingFacet-value-checkbox'>"+SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix+(I?(D?"images/black-check.png":"images/no-check.png"):"images/no-check-no-border.png"))+"</div>")+"<a class='exhibit-flowingFacet-value-link' href='javascript:{}' id='inner'></a> <span class='exhibit-flowingFacet-value-count'>("+F+")</span>");
 C.elmt.className=D?"exhibit-flowingFacet-value exhibit-flowingFacet-value-selected":"exhibit-flowingFacet-value";
 if(typeof H=="string"){C.elmt.title=H;
-C.inner.appendChild(document.createTextNode(H));
+C.inner.innerHTML=H;
 if(B!=null){C.inner.style.color=B;
 }}else{C.inner.appendChild(H);
 if(B!=null){H.style.color=B;
