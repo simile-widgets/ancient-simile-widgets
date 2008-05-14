@@ -14,10 +14,14 @@ Exhibit.OrderedDictionary = function() {
     this._keyOrder = [];
 }
 
+Exhibit.OrderedDictionary.prototype.size = function() {
+    return this._keyOrder.length;
+}
+
 Exhibit.OrderedDictionary.prototype.put = function(key, val) {
-    if (!val) { throw new TypeError() }
+    if (!key || !val) { throw new TypeError() }
     if (!this._values[key]) {
-        this._keyOrder.push(key); // only add to _keyOrder if key is a new key
+        this._keyOrder.push(key); // only add to _keyOrder if key is new
     }
     this._values[key] = val;
 }
@@ -31,6 +35,10 @@ Exhibit.OrderedDictionary.prototype.get = function(key, alt) {
 
 Exhibit.OrderedDictionary.prototype.values = function() {
     return this._keyOrder.map(this.get, this);
+}
+
+Exhibit.OrderedDictionary.prototype.forEach = function(f) {
+    this.values().map(f);
 }
 
 Exhibit.OrderedDictionary.prototype.remove = function(key) {
@@ -102,12 +110,15 @@ if (!Array.prototype.filter)
 
 Exhibit.OrderedDictionary.test = function() {
     function assert(is, expected) {
-        if (is != expected) { throw new Error("expected " + expected + ", is " + is) }
+        if (is != expected) { 
+            throw new Error("expected " + expected + ", is " + is) 
+        }
     }
     
     var dict = new Exhibit.OrderedDictionary();
     
     assert(dict.get('test'), null);
+    assert(dict.size(), 0);
     assert(dict.values().length, 0);
     
     dict.put('foo', 'bar');
@@ -119,6 +130,7 @@ Exhibit.OrderedDictionary.test = function() {
     
     var vals = dict.values();
     
+    assert(dict.size(), 2);
     assert(vals.length, 2);
     assert(vals[0], 'baz');
     assert(vals[1], 'default value');
@@ -128,6 +140,5 @@ Exhibit.OrderedDictionary.test = function() {
     vals = dict.values();
     
     assert(vals.length, 1);
-    assert(vals[0], 'default value')
-    
+    assert(vals[0], 'default value')  
 }
