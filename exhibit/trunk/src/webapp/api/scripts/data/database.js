@@ -82,18 +82,7 @@ Exhibit.Database._Impl.prototype.removeListener = function(listener) {
 };
 
 Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
-    var links = [];
-    var heads = document.documentElement.getElementsByTagName("head");
-    for (var h = 0; h < heads.length; h++) {
-        var linkElmts = heads[h].getElementsByTagName("link");
-        for (var l = 0; l < linkElmts.length; l++) {
-            var link = linkElmts[l];
-            if (link.rel.match(/\bexhibit\/data\b/)) {
-                links.push(link);
-            }
-        }
-    }
-    
+    var links = $('head > link[rel=exhibit/data]').get()
     this._loadLinks(links, fDone);
 };
 
