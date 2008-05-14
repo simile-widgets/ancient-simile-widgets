@@ -19,6 +19,8 @@ Exhibit.NumericRangeFacet = function(containerElmt, uiContext) {
             if ("_rangeIndex" in self) {
                 delete self._rangeIndex;
             }
+            var items = self._uiContext.getDatabase().getAllItems();
+            self.update(items);
         }
     };
     uiContext.getCollection().addListener(this._listener);
