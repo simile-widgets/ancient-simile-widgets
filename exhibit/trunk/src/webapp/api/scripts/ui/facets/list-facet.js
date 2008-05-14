@@ -14,6 +14,15 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     
     this._settings = {};
     this._dom = null;
+    
+    var self = this;
+    this._listener = { 
+        onRootItemsChanged: function() {
+            var items = self._uiContext.getDatabase().getAllItems();
+            self.update(items);
+        }
+    };
+    uiContext.getCollection().addListener(this._listener);
 };
 
 Exhibit.ListFacet._settingSpecs = {

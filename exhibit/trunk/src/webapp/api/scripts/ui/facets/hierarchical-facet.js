@@ -22,6 +22,8 @@ Exhibit.HierarchicalFacet = function(containerElmt, uiContext) {
             if ("_cache" in self) {
                 delete self._cache;
             }
+            var items = self._uiContext.getDatabase().getAllItems();
+            self.update(items);
         }
     };
     uiContext.getCollection().addListener(this._listener);
