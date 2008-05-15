@@ -75,7 +75,10 @@
             "ui/facets/hierarchical-facet.js",
 	    "ui/facets/slider-facet.js",
 	    "ui/facets/slider.js",
-            
+            "ui/facets/date-picker-facet.js",
+      	    "ui/facets/date-picker.js",
+      	    "ui/facets/date-util.js",
+      	    
             "ui/coders/color-coder.js",
             "ui/coders/default-color-coder.js",
             "ui/coders/color-gradient-coder.js",

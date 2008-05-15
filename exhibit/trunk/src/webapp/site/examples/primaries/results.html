@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>2008 Democratic Primary Results</title>
+
+    <link href="results.js" type="application/json" rel="exhibit/data" />
+
+    <script src="http://localhost:8888/exhibit/api/exhibit-api.js" type="text/javascript"></script>
+    <style>
+        body {
+            font-family:    Tahoma, Arial, sans serif;
+            font-size:      12px;
+            margin:         0;
+            padding:        5px;
+        }
+        table { font-size: 100%; border-collapse: collapse; }
+        tr { vertical-align: top; }
+
+    </style>
+</head> 
+<body>
+<div ex:role="collection" ex:itemTypes="Contest"></div>
+<div id="content">
+    <div id="title-panel">
+        <h1>2008 Democratic Primary Results</h1>
+    </div>
+    <table width="100%" cellpadding="10">
+      <tr>
+        <td ex:role="viewPanel">
+          <div ex:role="view"
+              ex:viewClass="Tabular"
+              ex:label="Details"
+              ex:columns=".label, .Date, concat(.Clinton+Popular, ' / ', .Clinton+Delegates), concat(.Obama+Popular, ' / ', .Obama+Delegates), concat(.Votes, ' / ', .Pledged+Delegates)"
+              ex:columnLabels="State, Date, Clinton (Popular / Delegates), Obama (Popular / Delegates), Total (Popular / Delegates)"
+              ex:formats="date { mode: medium; show: date }, number { decimal-digits: 0 }, item {title: .Name }"
+              ex:sortColumn="1">
+          </div>
+        </td>
+        <td width="200">
+            <div ex:role="facet" ex:expression=".Date" ex:facetLabel="Primary/Caucus Date" ex:facetClass="DatePicker"></div>
+            <div ex:role="facet" ex:expression=".Winner" ex:facetLabel="Winner"></div>
+        </td>
+      </tr>
+    </table>
+</div>
+</body>
+</html>
