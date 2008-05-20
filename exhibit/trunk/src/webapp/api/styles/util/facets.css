@@ -209,12 +209,12 @@ div.exhibit-facet-childrenContainer {
  */
 
 div.exhibit-slider { 
+    font-size: 0; /* IE sucks */
     padding-left: 10px;
 }
 
 div.exhibit-slider-bar { 
     background: #000;
-    line-height: 0;
     margin: 5px 0 15px 0;
     position: relative;
 }
@@ -256,6 +256,10 @@ div.exhibit-slider-handle2 {
 
 div.exhibit-slider-histogram div { 
     background: #999;
+}
+
+div.exhibit-slider-display {
+    font-size: 16px;
 }
 
 .exhibit-slider-display input { 

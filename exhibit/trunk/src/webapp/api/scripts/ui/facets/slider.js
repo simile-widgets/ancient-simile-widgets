@@ -292,11 +292,12 @@ Exhibit.SliderFacet.slider.prototype._notifyFacet = function() {
 };
 
 
-Exhibit.SliderFacet.slider.prototype.updateHistogram = function(data, n) {
-    // data ([numbers]): the values to graphed, in this case the attribute value of all unrestricted items
-    // n (int): the number of bars in the histogram (default 75)
-    var n = n? n : 75;
-    var histogram = this._dom.histogram;
+Exhibit.SliderFacet.slider.prototype.updateHistogram = function(data) {
+    // data ([numbers]): the values to graphed (essentially specifies the relative height of each bar)
+    // data.length = # of bars
+    
+    var n = data.length;
+    var histogram = this._dom.histogram; //data = [0,1,2]; n = 4;
 
     var maxVal = Math.max.apply(Math, data); //find the max of an array
     if (!maxVal) {
@@ -314,13 +315,16 @@ Exhibit.SliderFacet.slider.prototype.updateHistogram = function(data, n) {
 	    var height = Math.round(data[i]*ratio);
 	    
 	    var bar = document.createElement('div');
-	    bar.style.width = width;
-	    bar.style.height = height;
+	    histogram.appendChild(bar);
+	    bar.style.width = width+'px';
+	    bar.style.height = height+'px';
+	    bar.style.display = height? '' : 'none'; //IE, even with font-size:0, 
+	                                             //will still render divs with height:0
+	                                             //as several pixels tall
 	    bar.style.position = 'absolute';
 	    bar.style.top = (maxHeight-height)+'px';
-	    bar.style.left = i*width;
+	    bar.style.left = i*width+'px';
 	    
-	    histogram.appendChild(bar);
 	}
     } else {                                   // vertical (height and width are essentially flipped)
 	var width = histogram.offsetHeight/n;  // width of each bar
