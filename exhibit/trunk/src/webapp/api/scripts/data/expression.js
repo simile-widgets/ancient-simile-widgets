@@ -312,6 +312,7 @@ Exhibit.Expression.Path.prototype._walkBackward = function(collection, filter, d
 Exhibit.Expression.Path.prototype.rangeBackward = function(
     from,
     to,
+    inclusive,
     filter,
     database
 ) {
@@ -320,7 +321,7 @@ Exhibit.Expression.Path.prototype.rangeBackward = function(
     if (this._segments.length > 0) {
         var segment = this._segments[this._segments.length - 1];
         if (segment.forward) {
-            database.getSubjectsInRange(segment.property, from, to, false, set, this._segments.length == 1 ? filter : null);
+            database.getSubjectsInRange(segment.property, from, to, inclusive, set, this._segments.length == 1 ? filter : null);
         } else {
             throw new Error("Last path of segment must be forward");
         }
