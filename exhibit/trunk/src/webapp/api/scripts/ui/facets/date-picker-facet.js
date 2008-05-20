@@ -152,7 +152,7 @@ Exhibit.DatePickerFacet.prototype.restrict = function(items) {
       var set = new Exhibit.Set();
       min = SimileAjax.DateTime.parseIso8601DateTime(this._range.min);
       max = SimileAjax.DateTime.parseIso8601DateTime(this._range.max);
-      set.addSet(path.rangeBackward(min, max.setUTCDate(max.getUTCDate() + 1), items, database).values);
+      set.addSet(path.rangeBackward(min, max.setUTCDate(max.getUTCDate() + 1), false, items, database).values);
       this._dom.setSelectionCount(this.hasRestrictions(), set.size());
       return set;
     }
@@ -279,5 +279,5 @@ Exhibit.DatePickerFacet.prototype.dateHasItems = function(date) {
   var items = database.getAllItems();
   var toDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   toDate = new Date(toDate.setDate(toDate.getDate()+1));
-  return path.rangeBackward(date, toDate, items, database).count > 0;
+  return path.rangeBackward(date, toDate, false, items, database).count > 0;
 };

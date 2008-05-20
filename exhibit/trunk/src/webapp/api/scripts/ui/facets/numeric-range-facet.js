@@ -162,7 +162,7 @@ Exhibit.NumericRangeFacet.prototype.restrict = function(items) {
         var set = new Exhibit.Set();
         for (var i = 0; i < this._ranges.length; i++) {
             var range = this._ranges[i];
-            set.addSet(path.rangeBackward(range.from, range.to, items, database).values);
+            set.addSet(path.rangeBackward(range.from, range.to, false, items, database).values);
         }
         return set;
     } else {
@@ -203,7 +203,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
         
         rangeIndex = property.getRangeIndex();
         countItems = function(range) {
-            return path.rangeBackward(range.from, range.to, items, database).values.size();
+            return path.rangeBackward(range.from, range.to, false, items, database).values.size();
         }
     } else {
         this._buildRangeIndex();
@@ -217,7 +217,7 @@ Exhibit.NumericRangeFacet.prototype._reconstruct = function(items) {
     var min = rangeIndex.getMin();
     var max = rangeIndex.getMax();
     min = Math.floor(min / this._settings.interval) * this._settings.interval;
-    max = Math.ceil(max / this._settings.interval) * this._settings.interval;
+    max = Math.ceil((max + this._settings.interval) / this._settings.interval) * this._settings.interval;
     
     for (var x = min; x < max; x += this._settings.interval) {
         var range = { 

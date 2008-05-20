@@ -116,7 +116,7 @@ Exhibit.SliderFacet.prototype.update = function(items) {
 		var path = this._expression.getPath();
 		
 		for(var i=0; i<n; i++) {
-		    data[i] = path.rangeBackward(this._maxRange.min+i*range, this._maxRange.min+(i+1)*range, items, database).values.size();
+		    data[i] = path.rangeBackward(this._maxRange.min+i*range, this._maxRange.min+(i+1)*range, false, items, database).values.size();
 		}
 	
 		this._slider.updateHistogram(data);
@@ -129,7 +129,7 @@ Exhibit.SliderFacet.prototype.restrict = function(items) {
     }
     var path = this._expression.getPath();
     var database = this._uiContext.getDatabase();
-    return path.rangeBackward(this._range.min, this._range.max, items, database).values;
+    return path.rangeBackward(this._range.min, this._range.max, false, items, database).values;
 };
 
 Exhibit.SliderFacet.prototype._getMaxRange = function() {
