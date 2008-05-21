@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ex="http://simile.mit.edu/2006/11/exhibit#" xmlns:pg="http://simile.mit.edu/2007/10/playground#" xml:lang="en">
+<head><META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Mushrooms</title>
+    <link href="shrooms.json" rel="exhibit/data" type="application/json">
+
+    <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js"></script>
+
+    <style>
+body {
+    margin:      0;
+    padding:     0;
+}
+
+table {
+    font-size: 100%;
+}
+
+
+#main-layout {
+    height:     100%;
+}
+
+#left-column {
+    padding:    1em;
+    width:      15em;
+    min-width:  15em !important;
+    vertical-align: top;
+}
+
+#main-column {
+    padding:    2em;
+    vertical-align: top;
+}
+
+#right-column {
+    padding:    1em;
+    width:      15em;
+    min-width:  15em !important;
+    vertical-align: top;
+}
+
+div.exhibit-lens-body {
+    width:      100%;
+    overflow:   hidden;
+    position:   relative;
+}
+
+
+ </style>
+</head>
+<body>
+<div ex:role="collection" ex:itemTypes="Mushroom"></div>
+
+    <table border="0" cellpadding="0" cellspacing="0" id="main-layout" width="100%">
+        <tr>
+            <td id="left-column">
+                <div id="the-facets2">
+					<DIV ex:facetclass="TextSearch" ex:facetlabel="Search" ex:role="facet" id="facet1211341960513"></DIV>
+					<DIV ex:expression=".capshape" 
+					     ex:facetclass="Image" 
+					     ex:image=".depiction" 
+					     ex:tooltip="value" 
+					     ex:height="122px" 
+					     ex:role="facet" id="facet1211341972384"></DIV>
+					<DIV ex:expression=".ecologicaltype" 
+					     ex:facetclass="Image" 
+					     ex:image=".depiction" 
+					     ex:tooltip="value" 
+					     ex:height="122px" 
+					     ex:role="facet" id="facet1211341986916"></DIV>
+					<DIV ex:expression=".howedible" 
+					     ex:facetclass="Image" 
+					     ex:image=".depiction" 
+					     ex:tooltip="value" 
+					     ex:height="122px" 
+					     ex:role="facet" id="facet1211341998714"></DIV>
+					<DIV ex:expression=".hymeniumtype" 
+					     ex:facetclass="Image" 
+					     ex:image=".depiction" 
+					     ex:tooltip="value" 
+					     ex:height="122px" 
+					     ex:role="facet" id="facet1211342009292"></DIV>
+					<DIV ex:expression=".sporeprintcolor" 
+					     ex:facetclass="Image" 
+					     ex:image=".depiction" 
+					     ex:tooltip="value" 
+					     ex:height="122px" 
+					     ex:role="facet" id="facet1211342014964"></DIV>
+					<DIV ex:expression=".stipecharacter" 
+					     ex:facetclass="Image" 
+					     ex:image=".depiction" 
+					     ex:tooltip="value" 
+					     ex:height="122px" 
+					     ex:role="facet" id="facet1211342042260"></DIV>
+				</div>
+            </td>
+            <td id="main-column">
+                <h1 id="the-title">Mushrooms</h1>
+                <table ex:role="lens" style="background: lightgray; vertical-align: top; margin: 30px 0px; width: 500px" ex:itemTypes="Mushroom">
+					<tr><td><a ex:href-content=".wikipage" target="_top"><img style="width: 250px" ex:src-content=".depiction"></img></a></td><td>
+						<table>
+						<tr><td><img ex:src-content=".stipecharacter.depiction"></img></td><td><span class="bold">stipecharacter</span> is <span ex:content=".stipecharacter"></span></td></tr>
+						<tr><td><img ex:src-content=".hymeniumtype.depiction"></img></td><td><span class="bold">hymeniumtype</span> is <span ex:content=".hymeniumtype"></span></div></td></tr>
+						<tr><td><img ex:src-content=".sporeprintcolor.depiction"></img></td><td><span class="bold">sporeprintcolor</span> is <span ex:content=".sporeprintcolor"></span></div></td></tr>
+						<tr><td><img ex:src-content=".ecologicaltype.depiction"></img></td><td><span class="bold">ecologicaltype</span> is <span ex:content=".ecologicaltype"></span></div></td></tr>
+						<tr><td><img ex:src-content=".capshape.depiction"></img></td><td><span class="bold">capshape</span> is <span ex:content=".capshape"></span></div></td></tr>
+						<tr><td><img ex:src-content=".howedible.depiction"></img></td><td><span class="bold">howedible</span> is <span ex:content=".howedible"></span></div></td></tr>
+						<tr><td><img ex:src-content=".stipecharacter.depiction"></img></td><td><span class="bold">stipecharacter</span> is <span ex:content=".stypecharacter"></span></div></td></tr>
+						</table>
+					</td></tr>
+				</table>
+                <div ex:initialview="0" ex:role="viewPanel" id="the-views"><DIV ex:role="view" ex:viewclass="Thumbnail" id="view1211341960556"></DIV></div>
+            </td>
+            <td id="right-column">
+                <div id="the-facets"></div>
+            </td>
+        </tr>
+    </table>
+</body></html>
