@@ -4,50 +4,54 @@
     <title>Mushrooms</title>
     <link href="shrooms.json" rel="exhibit/data" type="application/json">
 	
-    <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js"></script>
-
+    <script src="http://127.0.0.1:8888/exhibit/api/exhibit-api.js"></script>
     <style>
-body {
-    margin:      0;
-    padding:     0;
-}
+        body {
+            margin:      0;
+            padding:     0;
+            font-family: Trebuchet MS, Gill Sans, Helvetica, Arial, sans serif;
+            font-size:   9pt;
+        }
 
-table {
-    font-size: 100%;
-}
+        table {
+            font-size: 100%;
+        }
+        
+        tr, td {
+            vertical-align: top;
+        }
 
+        #main-layout {
+            height:     100%;
+        }
 
-#main-layout {
-    height:     100%;
-}
+        #left-column {
+            padding:    1em;
+            width:      20em;
+            min-width:  20em !important;
+            background: #eee;
+        }
 
-#left-column {
-    padding:    1em;
-    width:      15em;
-    min-width:  15em !important;
-    vertical-align: top;
-}
-
-#main-column {
-    padding:    2em;
-    vertical-align: top;
-}
-
-#right-column {
-    padding:    1em;
-    width:      15em;
-    min-width:  15em !important;
-    vertical-align: top;
-}
-
-div.exhibit-lens-body {
-    width:      100%;
-    overflow:   hidden;
-    position:   relative;
-}
-
-
- </style>
+        #main-column {
+            padding:    2em;
+            vertical-align: top;
+        }
+        
+        div.thumbnail-lens {
+            width: 400px;
+            height: 300px;
+            overflow: hidden;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+        
+        div.exhibit-flowingFacet {
+            margin-top: 10px;
+            padding:    10px;
+            background: white;
+        }
+    </style>
 </head>
 <body>
 <div ex:role="collection" ex:itemTypes="Mushroom"></div>
@@ -59,6 +63,7 @@ div.exhibit-lens-body {
 					<DIV ex:facetclass="TextSearch" ex:facetlabel="Search" ex:role="facet" id="facet1211341960513"></DIV>
 					<DIV ex:expression=".capshape" 
 					     ex:facetclass="Image" 
+                         ex:facetLabel="Cap Shape"
 					     ex:image=".depiction" 
 					     ex:tooltip="value" 
 					     ex:height="122px" 
@@ -66,6 +71,7 @@ div.exhibit-lens-body {
 					     ex:role="facet" id="facet1211341972384"></DIV>
 					<DIV ex:expression=".ecologicaltype" 
 					     ex:facetclass="Image" 
+                         ex:facetLabel="Ecological Type"
 					     ex:image=".depiction" 
 					     ex:tooltip="value" 
 					     ex:height="122px"
@@ -73,6 +79,7 @@ div.exhibit-lens-body {
 					     ex:role="facet" id="facet1211341986916"></DIV>
 					<DIV ex:expression=".howedible" 
 					     ex:facetclass="Image" 
+                         ex:facetLabel="How Edible?"
 					     ex:image=".depiction" 
 					     ex:tooltip="value" 
 					     ex:height="122px"
@@ -80,6 +87,7 @@ div.exhibit-lens-body {
 					     ex:role="facet" id="facet1211341998714"></DIV>
 					<DIV ex:expression=".hymeniumtype" 
 					     ex:facetclass="Image" 
+                         ex:facetLabel="Hymenium Type"
 					     ex:image=".depiction" 
 					     ex:tooltip="value" 
 					     ex:height="122px"
@@ -87,6 +95,7 @@ div.exhibit-lens-body {
 					     ex:role="facet" id="facet1211342009292"></DIV>
 					<DIV ex:expression=".sporeprintcolor" 
 					     ex:facetclass="Image" 
+                         ex:facetLabel="Spore Print Color"
 					     ex:image=".depiction" 
 					     ex:tooltip="value" 
 					     ex:height="122px"
@@ -94,6 +103,7 @@ div.exhibit-lens-body {
 					     ex:role="facet" id="facet1211342014964"></DIV>
 					<DIV ex:expression=".stipecharacter" 
 					     ex:facetclass="Image" 
+                         ex:facetLabel="Stipe Character"
 					     ex:image=".depiction" 
 					     ex:tooltip="value" 
 					     ex:height="122px"
@@ -103,22 +113,21 @@ div.exhibit-lens-body {
             </td>
             <td id="main-column">
                 <h1 id="the-title">Mushrooms</h1>
-                <table ex:role="lens" style="background: lightgray; vertical-align: top; margin: 30px 0px; width: 500px" ex:itemTypes="Mushroom">
-					<tr><td><a ex:href-content=".wikipage" target="_top"><img style="width: 250px" ex:src-content=".depiction"></img></a></td><td>
-						<table>
-						<tr><td><img ex:src-content=".stipecharacter.depiction"></img></td><td><span class="bold">stipecharacter</span> is <span ex:content=".stipecharacter"></span></td></tr>
-						<tr><td><img ex:src-content=".hymeniumtype.depiction"></img></td><td><span class="bold">hymeniumtype</span> is <span ex:content=".hymeniumtype"></span></div></td></tr>
-						<tr><td><img ex:src-content=".sporeprintcolor.depiction"></img></td><td><span class="bold">sporeprintcolor</span> is <span ex:content=".sporeprintcolor"></span></div></td></tr>
-						<tr><td><img ex:src-content=".ecologicaltype.depiction"></img></td><td><span class="bold">ecologicaltype</span> is <span ex:content=".ecologicaltype"></span></div></td></tr>
-						<tr><td><img ex:src-content=".capshape.depiction"></img></td><td><span class="bold">capshape</span> is <span ex:content=".capshape"></span></div></td></tr>
-						<tr><td><img ex:src-content=".howedible.depiction"></img></td><td><span class="bold">howedible</span> is <span ex:content=".howedible"></span></div></td></tr>
-						</table>
-					</td></tr>
-				</table>
-                <div ex:initialview="0" ex:role="viewPanel" id="the-views"><DIV ex:role="view" ex:viewclass="Thumbnail" id="view1211341960556"></DIV></div>
-            </td>
-            <td id="right-column">
-                <div id="the-facets"></div>
+                <div ex:role="lens" class="thumbnail-lens" ex:itemTypes="Mushroom">
+                    <table cellspacing="10">
+    					<tr><td><a ex:href-content=".wikipage" target="_top"><img style="width: 150px" ex:src-content=".depiction"></img></a></td><td>
+    						<table>
+        						<tr><td><img ex:src-content=".stipecharacter.depiction"></img></td><td><span class="bold">stipe character</span>: <span ex:content=".stipecharacter"></span></td></tr>
+        						<tr><td><img ex:src-content=".hymeniumtype.depiction"></img></td><td><span class="bold">hymenium type</span>: <span ex:content=".hymeniumtype"></span></div></td></tr>
+        						<tr><td><img ex:src-content=".sporeprintcolor.depiction"></img></td><td><span class="bold">spore print color</span>: <span ex:content=".sporeprintcolor"></span></div></td></tr>
+        						<tr><td><img ex:src-content=".ecologicaltype.depiction"></img></td><td><span class="bold">ecological type</span>: <span ex:content=".ecologicaltype"></span></div></td></tr>
+        						<tr><td><img ex:src-content=".capshape.depiction"></img></td><td><span class="bold">cap shape</span>: <span ex:content=".capshape"></span></div></td></tr>
+        						<tr><td><img ex:src-content=".howedible.depiction"></img></td><td><span class="bold">how edible?</span>: <span ex:content=".howedible"></span></div></td></tr>
+    						</table>
+    					</td></tr>
+    				</table>
+                </div>
+                <div id="the-views"><div ex:role="view" ex:viewclass="Thumbnail" id="view1211341960556"></div></div>
             </td>
         </tr>
     </table>
