@@ -73,6 +73,7 @@
             "ui/facets/text-search-facet.js",
             "ui/facets/cloud-facet.js",
             "ui/facets/hierarchical-facet.js",
+            "ui/facets/image-facet.js",
 	    "ui/facets/slider-facet.js",
 	    "ui/facets/slider.js",
             "ui/facets/date-picker-facet.js",
