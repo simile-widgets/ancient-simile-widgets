@@ -607,7 +607,21 @@ table.exhibit-date-picker td.highlight {
 
 div.exhibit-date-picker-text {
   text-align: center;
-}/*==================================================
+}
+
+/*==================================================
+ * Image facet
+ *==================================================
+ */
+img.exhibit-imageFacet-value {
+	margin: 2px;
+	padding: 2px 3px 4px 3px;
+}
+
+img.exhibit-imageFacet-value-selected {
+	background: gray;
+}
+/*==================================================
  * Common styles for views
  *==================================================
  */
