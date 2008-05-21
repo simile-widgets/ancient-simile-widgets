@@ -614,12 +614,13 @@ div.exhibit-date-picker-text {
  *==================================================
  */
 img.exhibit-imageFacet-value {
-	margin: 2px;
-	padding: 2px 3px 4px 3px;
+	margin:     2px;
+	padding:    4px;
+    cursor:     pointer;
 }
 
 img.exhibit-imageFacet-value-selected {
-	background: gray;
+	background: #fcc;
 }
 /*==================================================
  * Common styles for views
