@@ -1030,7 +1030,8 @@
 			"uri" : "http://dbpedia.org/property/capshape"
 		},
 		"Mushroom" :        {
-			"uri" : "http://dbpedia.org/resource/Mushroom"
+			"uri" : "http://dbpedia.org/resource/Mushroom",
+			"pluralLabel": "Mushrooms"
 		},
 		"ecologicaltype" :  {
 			"uri" : "http://dbpedia.org/property/ecologicaltype"
