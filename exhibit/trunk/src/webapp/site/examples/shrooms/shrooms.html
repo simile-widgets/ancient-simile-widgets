@@ -1,8 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ex="http://simile.mit.edu/2006/11/exhibit#" xmlns:pg="http://simile.mit.edu/2007/10/playground#" xml:lang="en">
-<head><META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Mushrooms</title>
-    <link href="shrooms.json" rel="exhibit/data" type="application/json">
+    <link href="shrooms.json" rel="exhibit/data" type="application/json" />
 	
     <script src="http://static.simile.mit.edu/exhibit/api-dev/exhibit-api.js"></script>
     <style>
@@ -52,6 +52,10 @@
             background: white;
         }
         h3 { margin-top: 0px;}
+        
+        img.small-photo {
+            width: 150px;
+        }
     </style>
 </head>
 <body>
@@ -119,10 +123,9 @@
                 <h1 id="the-title">Mushrooms</h1>
                 <div ex:role="lens" class="thumbnail-lens" ex:itemTypes="Mushroom">
 	                 <table cellspacing="10">
-    					<tr><td><a ex:href-content=".wikipage" target="_blank"><img style="width: 150px" ex:src-content=".depiction"></img></a></td><td>
-	
+    					<tr><td><a ex:href-content=".wikipage" target="_blank"><img class="small-photo" ex:src-content=".depiction"></img></a></td><td>
+                            <h3 ex:content=".name"></h3>
     						<table>
-	                            <tr><td colspan="2"><h3 ex:content=".name"></h3></td></tr>
         						<tr><td><img ex:src-content=".stipecharacter.depiction"></img></td><td><span class="bold">stipe character</span>: <span ex:content=".stipecharacter"></span></td></tr>
         						<tr><td><img ex:src-content=".hymeniumtype.depiction"></img></td><td><span class="bold">hymenium type</span>: <span ex:content=".hymeniumtype"></span></div></td></tr>
         						<tr><td><img ex:src-content=".sporeprintcolor.depiction"></img></td><td><span class="bold">spore print color</span>: <span ex:content=".sporeprintcolor"></span></div></td></tr>
