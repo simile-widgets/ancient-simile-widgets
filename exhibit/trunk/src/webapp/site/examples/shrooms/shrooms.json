@@ -844,7 +844,7 @@
 			"uri" :       "http://dbpedia.org/resource/saprophytic"
 		},
 		{
-			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Poisonous_toxicity_icon.png/30px-Poisonous_toxicity_icon.png",
+			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Hazard_T.svg/30px-Hazard_T.svg.png",
 			"label" :     "deadly",
 			"type" :      "howedible",
 			"uri" :       "http://dbpedia.org/resource/deadly"

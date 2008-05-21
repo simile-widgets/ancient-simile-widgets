@@ -18,7 +18,7 @@
 :psychoactive foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Psychoactive_toxicity_icon.png/30px-Psychoactive_toxicity_icon.png> .
 :choice foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Choice_toxicity_icon.png/30px-Choice_toxicity_icon.png> .
 :poisonous foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Poisonous_toxicity_icon.png/30px-Poisonous_toxicity_icon.png> .
-:deadly foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Poisonous_toxicity_icon.png/30px-Poisonous_toxicity_icon.png> .
+:deadly foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Hazard_T.svg/30px-Hazard_T.svg.png> .
 :unknown foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Unknown_toxicity_icon.png/30px-Unknown_toxicity_icon.png> .
 :edible foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edible_toxicity_icon.png/30px-Edible_toxicity_icon.png> .
 
