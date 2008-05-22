@@ -105,8 +105,14 @@
 			"uri" :       "http://dbpedia.org/resource/ring"
 		},
 		{
+			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Ring_and_volva_stipe_icon.png/30px-Ring_and_volva_stipe_icon.png",
+			"label" :     "ring and volva",
+			"type" :      "stipecharacter",
+			"uri" :       "http://dbpedia.org/resource/ring"
+		},
+		{
 			"name" :            "Amanita muscaria",
-			"stipecharacter" :  ["ring", "volva"],
+			"stipecharacter" :  "ring and volva",
 			"uri" :             "http://dbpedia.org/resource/Amanita_muscaria",
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : "white",
@@ -337,6 +343,12 @@
 		{
 			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Brown_spore_print_icon.png/30px-Brown_spore_print_icon.png",
 			"label" :     "brown",
+			"type" :      "sporeprintcolor",
+			"uri" :       "http://dbpedia.org/resource/brown"
+		},
+		{
+			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Reddish-brown_spore_print_icon.png/30px-Reddish-brown_spore_print_icon.png",
+			"label" :     "reddish brown",
 			"type" :      "sporeprintcolor",
 			"uri" :       "http://dbpedia.org/resource/brown"
 		},
@@ -722,7 +734,7 @@
 		},
 		{
 			"name" :            "Amanita citrina",
-			"stipecharacter" :  ["ring", "volva"],
+			"stipecharacter" :  "ring and volva",
 			"uri" :             "http://dbpedia.org/resource/Amanita_citrina",
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : "white",
@@ -773,7 +785,7 @@
 		},
 		{
 			"name" :            "Death cap",
-			"stipecharacter" :  ["ring", "volva"],
+			"stipecharacter" :  "ring and volva",
 			"uri" :             "http://dbpedia.org/resource/Amanita_phalloides",
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : "white",
