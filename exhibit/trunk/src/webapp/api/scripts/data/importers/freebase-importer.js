@@ -87,13 +87,12 @@ var imageURLPrefix = 'http://www.freebase.com/api/trans/raw';
 var imageType = "/common/topic/image";
 
 function extractImage(item, attr) {
-    var images = item[imageType];
+    var image = item[imageType];
     
-    if (images && images.length > 0) { 
-        var image = images[0];
+    if (image && image.id) { 
         item[attr] = imageURLPrefix + image['id'];
     }
-
+    
     delete item[imageType];
 }
 
