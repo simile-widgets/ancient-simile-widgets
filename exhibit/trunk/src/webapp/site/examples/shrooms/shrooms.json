@@ -26,7 +26,7 @@
 			"sporeprintcolor" : "brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Hypholoma_fasciculare_040926w.jpg/220px-Hypholoma_fasciculare_040926w.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "convex",
 			"label" :           "Hypholoma_fasciculare",
 			"howedible" :       "poisonous",
@@ -72,7 +72,7 @@
 			"sporeprintcolor" : "white",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Laetiporus_sulphureus_big.jpg/210px-Laetiporus_sulphureus_big.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"no",
 				"offset"
@@ -106,7 +106,7 @@
 		},
 		{
 			"name" :            "Amanita muscaria",
-			"stipecharacter" :  "ring and volva",
+			"stipecharacter" :  ["ring", "volva"],
 			"uri" :             "http://dbpedia.org/resource/Amanita_muscaria",
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : "white",
@@ -164,7 +164,7 @@
 			"sporeprintcolor" : "salmon",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/en/thumb/c/c1/Pluteus_cervinus_spores.jpg/250px-Pluteus_cervinus_spores.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"flat",
 				"umbonate"
@@ -184,7 +184,7 @@
 			],
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Psilocybe_caerulipes_range_map.jpg/240px-Psilocybe_caerulipes_range_map.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"conical",
 				"convex"
@@ -286,7 +286,7 @@
 			"sporeprintcolor" : "white",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/1/18/EnokitakeJapaneseMushroom.jpg/250px-EnokitakeJapaneseMushroom.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "convex",
 			"label" :           "Enokitake",
 			"howedible" :       "choice",
@@ -300,7 +300,7 @@
 			"sporeprintcolor" : "brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Horse_mushroom_%28Agaricus_arvensis%29.jpg/200px-Horse_mushroom_%28Agaricus_arvensis%29.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "convex",
 			"label" :           "Agaricus_arvensis",
 			"howedible" :       "edible",
@@ -314,7 +314,7 @@
 			"sporeprintcolor" : "brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Agaricus_subrufescens.jpg/280px-Agaricus_subrufescens.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "convex",
 			"label" :           "Agaricus_subrufescens",
 			"howedible" :       "edible",
@@ -328,7 +328,7 @@
 			"sporeprintcolor" : "white",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Marasmius_oreades_garden_050829B.JPG/200px-Marasmius_oreades_garden_050829B.JPG",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "convex",
 			"label" :           "Marasmius",
 			"howedible" :       "unknown",
@@ -433,7 +433,7 @@
 			"sporeprintcolor" : "white",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Pseudohydnum_gelatinosum.jpg/180px-Pseudohydnum_gelatinosum.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "depressed",
 			"label" :           "Pseudohydnum_gelatinosum",
 			"howedible" :       "edible",
@@ -478,7 +478,7 @@
 			],
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/en/thumb/1/17/Psilocybe_cyanescens_range-map.png/240px-Psilocybe_cyanescens_range-map.png",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "flat",
 			"label" :           "Psilocybe_cyanescens",
 			"howedible" :       "psychoactive",
@@ -535,7 +535,7 @@
 			"sporeprintcolor" : "white",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Auricularia_polytricha.jpg/200px-Auricularia_polytricha.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "no",
 			"label" :           "Cloud_ear_fungus",
 			"howedible" :       "edible",
@@ -549,7 +549,7 @@
 			"sporeprintcolor" : "brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Agaricus_campestris.jpg/180px-Agaricus_campestris.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"convex",
 				"flat"
@@ -569,7 +569,7 @@
 			],
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Conocybe_lactea.jpg/260px-Conocybe_lactea.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "conical",
 			"label" :           "Conocybe_albipes",
 			"howedible" :       "inedible",
@@ -617,7 +617,7 @@
 			"sporeprintcolor" : "brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Stockschwaemmchen.jpg/180px-Stockschwaemmchen.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "sapprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "convex",
 			"label" :           "Kuehneromyces_mutabilis",
 			"howedible" :       "edible",
@@ -651,7 +651,7 @@
 			"sporeprintcolor" : "purple brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Psilocybe.aucklandii.2.jpg/180px-Psilocybe.aucklandii.2.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"conical",
 				"umbonate"
@@ -688,7 +688,7 @@
 		},
 		{
 			"name" :            "Inocybe hystrix",
-			"stipecharacter" :  "bare and cortina",
+			"stipecharacter" :  [ "bare" , "cortina" ],
 			"uri" :             "http://dbpedia.org/resource/Inocybe_hystrix",
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : "brown",
@@ -722,7 +722,7 @@
 		},
 		{
 			"name" :            "Amanita citrina",
-			"stipecharacter" :  "ring and volva",
+			"stipecharacter" :  ["ring", "volva"],
 			"uri" :             "http://dbpedia.org/resource/Amanita_citrina",
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : "white",
@@ -745,7 +745,7 @@
 			],
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Craterellus_cornucopioides_JPG1.jpg/200px-Craterellus_cornucopioides_JPG1.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "infundibuliform",
 			"label" :           "Craterellus",
 			"howedible" :       "choice",
@@ -773,7 +773,7 @@
 		},
 		{
 			"name" :            "Death cap",
-			"stipecharacter" :  "ring and volva",
+			"stipecharacter" :  ["ring", "volva"],
 			"uri" :             "http://dbpedia.org/resource/Amanita_phalloides",
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : "white",
@@ -825,10 +825,10 @@
 			"stipecharacter" :  "bare",
 			"uri" :             "http://dbpedia.org/resource/Psilocybe_australiana",
 			"hymeniumtype" :    "gills",
-			"sporeprintcolor" : "Purple-brown",
+			"sporeprintcolor" : "purple brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/en/thumb/5/51/Paustraliana2.jpg/200px-Paustraliana2.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"convex",
 				"flat"
@@ -836,12 +836,6 @@
 			"label" :           "Psilocybe_australiana",
 			"howedible" :       "psychoactive",
 			"wikipage" :        "http://en.wikipedia.org/wiki/Psilocybe_australiana"
-		},
-		{
-			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Saprotrophic_ecology_icon.png/30px-Saprotrophic_ecology_icon.png",
-			"label" :     "saprophytic",
-			"type" :      "ecologicaltype",
-			"uri" :       "http://dbpedia.org/resource/saprophytic"
 		},
 		{
 			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Hazard_T.svg/30px-Hazard_T.svg.png",
@@ -867,11 +861,6 @@
 			"wikipage" :        "http://en.wikipedia.org/wiki/Gymnopilus_junonius"
 		},
 		{
-			"label" : "saprotrophic",
-			"type" :  "ecologicaltype",
-			"uri" :   "http://dbpedia.org/resource/saprotrophic"
-		},
-		{
 			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Inedible_toxicity_icon.png/30px-Inedible_toxicity_icon.png",
 			"label" :     "inedible",
 			"type" :      "howedible",
@@ -888,10 +877,10 @@
 			"stipecharacter" :  "ring",
 			"uri" :             "http://dbpedia.org/resource/Galerina",
 			"hymeniumtype" :    "gills",
-			"sporeprintcolor" : "reddish-brown",
+			"sporeprintcolor" : "reddish brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Galerina_marginata.jpg/180px-Galerina_marginata.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "convex",
 			"label" :           "Galerina",
 			"howedible" :       "deadly",
@@ -918,11 +907,11 @@
 			"hymeniumtype" :    "gills",
 			"sporeprintcolor" : [
 				"brown",
-				"reddish-brown"
+				"reddish brown"
 			],
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/en/thumb/8/8f/Conocybe_filaris.jpg/260px-Conocybe_filaris.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"conical",
 				"flat"
@@ -939,7 +928,7 @@
 			"sporeprintcolor" : "purple",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Psilocybe-cubensis-range-map.png/300px-Psilocybe-cubensis-range-map.png",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"convex",
 				"flat"
@@ -956,9 +945,9 @@
 		},
 		{
 			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Saprotrophic_ecology_icon.png/30px-Saprotrophic_ecology_icon.png",
-			"label" :     "sapprophytic",
+			"label" :     "saprotrophic",
 			"type" :      "ecologicaltype",
-			"uri" :       "http://dbpedia.org/resource/sapprophytic"
+			"uri" :       "http://dbpedia.org/resource/saprotrophic"
 		},
 		{
 			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Depressed_cap_icon.svg/30px-Depressed_cap_icon.svg.png",
@@ -980,7 +969,7 @@
 			"sporeprintcolor" : "purple brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Psilocybe_atlantis_range.png/100px-Psilocybe_atlantis_range.png",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        [
 				"conical",
 				"convex"
@@ -997,7 +986,7 @@
 			"sporeprintcolor" : "brown",
 			"depiction" :       "http://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Samtfusskrempling.jpg/180px-Samtfusskrempling.jpg",
 			"type" :            "Mushroom",
-			"ecologicaltype" :  "saprophytic",
+			"ecologicaltype" :  "saprotrophic",
 			"capshape" :        "depressed",
 			"label" :           "Tapinella_atrotomentosa",
 			"howedible" :       "inedible",
@@ -1005,7 +994,7 @@
 		},
 		{
 			"depiction" : "http://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Reddish-brown_spore_print_icon.png/30px-Reddish-brown_spore_print_icon.png",
-			"label" :     "Purple-brown",
+			"label" :     "purple brown",
 			"type" :      "sporeprintcolor",
 			"uri" :       "http://dbpedia.org/resource/Purple-brown"
 		}

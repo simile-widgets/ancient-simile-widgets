@@ -23,7 +23,7 @@
 :edible foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edible_toxicity_icon.png/30px-Edible_toxicity_icon.png> .
 
 :mycorrhizal foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Mycorrhizal_ecology_icon.png/30px-Mycorrhizal_ecology_icon.png> .
-:saprophytic foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Saprotrophic_ecology_icon.png/30px-Saprotrophic_ecology_icon.png> .
+:saprotrophic foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Saprotrophic_ecology_icon.png/30px-Saprotrophic_ecology_icon.png> .
 :sapprophytic foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Saprotrophic_ecology_icon.png/30px-Saprotrophic_ecology_icon.png> .
 :saprophytic foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Saprotrophic_ecology_icon.png/30px-Saprotrophic_ecology_icon.png> .
 :parasitic foaf:depiction <http://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Parasitic_ecology_icon.png/30px-Parasitic_ecology_icon.png> .
