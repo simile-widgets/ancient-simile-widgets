@@ -1494,9 +1494,8 @@ function rename(item,oldAttr,newAttr){if(item&&item[oldAttr]){item[newAttr]=item
 delete item[oldAttr];
 }}var imageURLPrefix="http://www.freebase.com/api/trans/raw";
 var imageType="/common/topic/image";
-function extractImage(item,attr){var images=item[imageType];
-if(images&&images.length>0){var image=images[0];
-item[attr]=imageURLPrefix+image["id"];
+function extractImage(item,attr){var image=item[imageType];
+if(image&&image.id){item[attr]=imageURLPrefix+image.id;
 }delete item[imageType];
 }var defaultResponseTransformer=function(response){return response.map(function(item){extractImage(item,"image");
 rename(item,"name","label");
@@ -1512,16 +1511,16 @@ var processedResponse=respTransformer(resp);
 var baseURL=Exhibit.Persistence.getBaseURL("freebase");
 var data={"items":processedResponse};
 database.loadData(data,baseURL);
-}catch(e){SimileAjax.Debug.exception(e,"Error handling Freebase reponse "+resp);
+}catch(e){SimileAjax.Debug.exception(e);
 }finally{if(cont){cont();
 }}};
 };
 Exhibit.FreebaseImporter.load=function(link,database,cont){var query=parseQuery(link);
-var respTransformer=$(link).attr("ex:handler")||defaultResponseTransformer;
+var respTransformer=parseTransformer(link);
 try{Exhibit.UI.showBusyIndicator();
 var handler=makeResponseHandler(database,respTransformer,cont);
 Metaweb.read(query,handler);
-}catch(e){SimileAjax.Debug.exception(e,"Error performing Freebase query "+e);
+}catch(e){SimileAjax.Debug.exception(e);
 if(cont){cont();
 }}};
 })();
@@ -1755,7 +1754,7 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter.preprocessURL=function(A){retu
 
 /* rdfa-importer.js */
 var RDFA=new Object();
-RDFA.url="t";
+RDFA.url="http://www.w3.org/2006/07/SWD/RDFa/impl/js/20070301/rdfa.js";
 Exhibit.RDFaImporter={};
 Exhibit.importers["application/RDFa"]=Exhibit.RDFaImporter;
 Exhibit.RDFaImporter.load=function(B,C,A){try{if((B.getAttribute("href")||"").length==0){Exhibit.RDFaImporter.loadRDFa(null,document,C);
