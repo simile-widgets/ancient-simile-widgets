@@ -1462,6 +1462,71 @@ SimileAjax.XmlHttp.get(url,fError,fDone);
 };
 
 
+/* freebase-importer.js */
+Exhibit.FreebaseImporter={};
+Exhibit.importers["application/freebase"]=Exhibit.FreebaseImporter;
+Metaweb={};
+(function(){var JSON=SimileAjax.JSON;
+JSON.serialize=JSON.toJSONString;
+Metaweb.HOST="http://www.freebase.com";
+Metaweb.QUERY_SERVICE="/api/service/mqlread";
+Metaweb.counter=0;
+Metaweb.read=function(q,f){var callbackName="_"+Metaweb.counter++;
+Metaweb[callbackName]=function(outerEnvelope){var innerEnvelope=outerEnvelope.qname;
+if(innerEnvelope.code.indexOf("/api/status/ok")!=0){var error=innerEnvelope.messages[0];
+throw error.code+": "+error.message;
+}var result=innerEnvelope.result;
+document.body.removeChild(script);
+delete Metaweb[callbackName];
+f(result);
+};
+envelope={qname:{query:q}};
+var querytext=encodeURIComponent(JSON.serialize(envelope));
+var url=Metaweb.HOST+Metaweb.QUERY_SERVICE+"?queries="+querytext+"&callback=Metaweb."+callbackName;
+var script=document.createElement("script");
+script.src=url;
+document.body.appendChild(script);
+};
+var $=SimileAjax.jQuery;
+var parseQuery=function(link){return eval($(link).attr("ex:query"));
+};
+function rename(item,oldAttr,newAttr){if(item&&item[oldAttr]){item[newAttr]=item[oldAttr];
+delete item[oldAttr];
+}}var imageURLPrefix="http://www.freebase.com/api/trans/raw";
+var imageType="/common/topic/image";
+function extractImage(item,attr){var images=item[imageType];
+if(images&&images.length>0){var image=images[0];
+item[attr]=imageURLPrefix+image["id"];
+}delete item[imageType];
+}var defaultResponseTransformer=function(response){return response.map(function(item){extractImage(item,"image");
+rename(item,"name","label");
+item.type="item";
+return item;
+});
+};
+var parseTransformer=function(link){var transformer=$(link).attr("ex:transformer");
+return transformer?eval(transformer):defaultResponseTransformer;
+};
+var makeResponseHandler=function(database,respTransformer,cont){return function(resp){try{Exhibit.UI.hideBusyIndicator();
+var processedResponse=respTransformer(resp);
+var baseURL=Exhibit.Persistence.getBaseURL("freebase");
+var data={"items":processedResponse};
+database.loadData(data,baseURL);
+}catch(e){SimileAjax.Debug.exception(e,"Error handling Freebase reponse "+resp);
+}finally{if(cont){cont();
+}}};
+};
+Exhibit.FreebaseImporter.load=function(link,database,cont){var query=parseQuery(link);
+var respTransformer=$(link).attr("ex:handler")||defaultResponseTransformer;
+try{Exhibit.UI.showBusyIndicator();
+var handler=makeResponseHandler(database,respTransformer,cont);
+Metaweb.read(query,handler);
+}catch(e){SimileAjax.Debug.exception(e,"Error performing Freebase query "+e);
+if(cont){cont();
+}}};
+})();
+
+
 /* html-table-importer.js */
 Exhibit.HtmlTableImporter={};
 Exhibit.importers["text/html"]=Exhibit.HtmlTableImporter;
@@ -1690,7 +1755,7 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter.preprocessURL=function(A){retu
 
 /* rdfa-importer.js */
 var RDFA=new Object();
-RDFA.url="http://www.w3.org/2006/07/SWD/RDFa/impl/js/20070301/rdfa.js";
+RDFA.url="t";
 Exhibit.RDFaImporter={};
 Exhibit.importers["application/RDFa"]=Exhibit.RDFaImporter;
 Exhibit.RDFaImporter.load=function(B,C,A){try{if((B.getAttribute("href")||"").length==0){Exhibit.RDFaImporter.loadRDFa(null,document,C);
