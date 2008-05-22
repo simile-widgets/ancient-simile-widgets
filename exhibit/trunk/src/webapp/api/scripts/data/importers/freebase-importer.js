@@ -6,7 +6,7 @@
 Exhibit.FreebaseImporter = {};
 Exhibit.importers["application/freebase"] = Exhibit.FreebaseImporter;
 
-Metaweb = {}; // use global namespace for callback functions
+Metaweb = {}; // Metaweb needs global namespace for callback functions
 
 (function() {
 
@@ -90,7 +90,7 @@ function extractImage(item, attr) {
     var image = item[imageType];
     
     if (image && image.id) { 
-        item[attr] = imageURLPrefix + image['id'];
+        item[attr] = imageURLPrefix + image.id;
     }
     
     delete item[imageType];
@@ -124,7 +124,7 @@ var makeResponseHandler = function(database, respTransformer, cont) {
             
             database.loadData(data, baseURL);
         } catch (e) {
-            SimileAjax.Debug.exception(e, "Error handling Freebase reponse " + resp);
+            SimileAjax.Debug.exception(e);
         } finally {
             if (cont) { cont(); }
         }
@@ -134,13 +134,13 @@ var makeResponseHandler = function(database, respTransformer, cont) {
 
 Exhibit.FreebaseImporter.load = function(link, database, cont) {
     var query = parseQuery(link);
-    var respTransformer = $(link).attr('ex:handler') || defaultResponseTransformer;
+    var respTransformer = parseTransformer(link);
     try {
         Exhibit.UI.showBusyIndicator();
         var handler = makeResponseHandler(database, respTransformer, cont);
         Metaweb.read(query, handler);
     } catch (e) {
-        SimileAjax.Debug.exception(e, "Error performing Freebase query " + e);
+        SimileAjax.Debug.exception(e);
         if (cont) { cont(); }
     }
 };
