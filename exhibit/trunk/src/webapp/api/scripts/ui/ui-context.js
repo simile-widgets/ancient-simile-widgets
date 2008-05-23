@@ -199,7 +199,7 @@ Exhibit.UIContext.registerLensFromDOM = function(elmt, lensRegistry) {
         template = url;
     } else {
         var id = Exhibit.getAttribute(elmt, "template");
-        var elmt2 = document.getElementById(id);
+        var elmt2 = id && document.getElementById(id);
         if (elmt2 != null) {
             template = elmt2;
         } else {

@@ -5457,7 +5457,7 @@ var F=null;
 var A=Exhibit.getAttribute(D,"templateFile");
 if(A!=null&&A.length>0){F=A;
 }else{var H=Exhibit.getAttribute(D,"template");
-var E=document.getElementById(H);
+var E=H&&document.getElementById(H);
 if(E!=null){F=E;
 }else{F=D;
 }}if(F!=null){if(G==null||G.length==0||(G.length==1&&G[0]=="")){B.registerDefaultLens(F);
