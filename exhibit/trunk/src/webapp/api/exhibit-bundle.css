@@ -635,12 +635,12 @@ div.exhibit-date-picker-text {
 
 .exhibit-imageFacet-value .countDiv div.text {
 	position: absolute;
-	bottom: .4em;
-	right: .4em;
+	bottom: .1em;
+	left: .3em;
 }
 .exhibit-imageFacet-value .countDiv {
 	position: absolute;
-	border: thin solid black;
+	border: 1px solid black;
 	bottom: 0px;
 	right: 5px;
 	width: 2em;
