@@ -328,11 +328,13 @@ Exhibit.ImageFacet.prototype._constructBody = function(entries) {
 		if(shouldOverlayCounts == true) {
 			var countDiv = document.createElement("div");
 			countDiv.className = "countDiv";
-			var countImage = document.createElement("img");
-			countImage.src = "http://simile.mit.edu/painter/painter?renderer=map-marker&shape=square&alpha=0.7&width=20&height=20&background=FF9000&label=&pin=false&.png"
-			countImage.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="http://simile.mit.edu/painter/painter?renderer=map-marker&shape=circle&alpha=0.7&width=31&height=31&background=FF9000&label=&pin=false&.png");'
-			countDiv.appendChild(countImage);
+			var countBackground = document.createElement("div");
+			countBackground.className = "countBackground";
+			//countImage.src = "http://simile.mit.edu/painter/painter?renderer=map-marker&shape=square&alpha=0.7&width=20&height=20&background=FF9000&label=&pin=false&.png"
+			//countImage.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="http://simile.mit.edu/painter/painter?renderer=map-marker&shape=circle&alpha=0.7&width=31&height=31&background=FF9000&label=&pin=false&.png");'
+			countDiv.appendChild(countBackground);
 			var innerCount = document.createElement("div");
+			innerCount.className = "text";
 			innerCount.innerHTML = entry.count;
 			countDiv.appendChild(innerCount);
 			wrapper.appendChild(countDiv);
