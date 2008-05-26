@@ -19,6 +19,7 @@ Exhibit.ImageFacet = function(containerElmt, uiContext) {
 Exhibit.ImageFacet._settingSpecs = {
     "facetLabel":       { type: "text" },
     "thumbNail":        { type: "uri" },
+    "overlayCounts":    { type: "boolean", defaultValue: true },
     "fixedOrder":       { type: "text" },
     "sortMode":         { type: "text", defaultValue: "value" },
     "sortDirection":    { type: "text", defaultValue: "forward" },
@@ -306,6 +307,7 @@ Exhibit.ImageFacet.prototype._initializeUI = function() {
 
 Exhibit.ImageFacet.prototype._constructBody = function(entries) {
     var self = this;
+    var shouldOverlayCounts = this._settings.overlayCounts;
     var containerDiv = this._dom.valuesContainer;
     
     containerDiv.style.display = "none";
@@ -316,9 +318,29 @@ Exhibit.ImageFacet.prototype._constructBody = function(entries) {
             SimileAjax.DOM.cancelEvent(evt);
             return false;
         };
-		var elmt = document.createElement("img");
-		elmt.src = entry.image;
-		elmt.className = entry.selected ? "exhibit-imageFacet-value exhibit-imageFacet-value-selected" : "exhibit-imageFacet-value";
+		var elmt = document.createElement("span");
+		var wrapper = document.createElement("div");
+		wrapper.className = "wrapper";
+		var image = document.createElement("img");
+		image.src = entry.image;
+		wrapper.appendChild(image);
+		
+		if(shouldOverlayCounts == true) {
+			var countDiv = document.createElement("div");
+			countDiv.className = "countDiv";
+			var countImage = document.createElement("img");
+			countImage.src = "http://simile.mit.edu/painter/painter?renderer=map-marker&shape=square&alpha=0.7&width=20&height=20&background=FF9000&label=&pin=false&.png"
+			countImage.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="http://simile.mit.edu/painter/painter?renderer=map-marker&shape=circle&alpha=0.7&width=31&height=31&background=FF9000&label=&pin=false&.png");'
+			countDiv.appendChild(countImage);
+			var innerCount = document.createElement("div");
+			innerCount.innerHTML = entry.count;
+			countDiv.appendChild(innerCount);
+			wrapper.appendChild(countDiv);
+		}
+		
+		elmt.appendChild(wrapper);
+		
+		elmt.className = entry.selected ? "inline-block exhibit-imageFacet-value exhibit-imageFacet-value-selected" : "inline-block exhibit-imageFacet-value";
 
 		elmt.title = entry.count + " " + entry.tooltip;
 
