@@ -2,12 +2,6 @@
  *  Exhibit.OrderedDictionary
  *==================================================
  */
- 
- 
-//=============================================================================
-// OrderedDictionary functionality
-//=============================================================================
- 
 
 Exhibit.OrderedDictionary = function() {
     this._values = {};
@@ -33,12 +27,18 @@ Exhibit.OrderedDictionary.prototype.get = function(key, alt) {
     return this._values[key];
 }
 
-Exhibit.OrderedDictionary.prototype.values = function() {
-    return this._keyOrder.map(this.get, this);
+Exhibit.OrderedDictionary.prototype.rekey = function(old, newKey) {
+    var i = this._keyOrder.indexOf(old);
+    if (i == -1) { throw new Error("Cannot find key " + old) }
+
+    this._keyOrder[i] = newKey;
+    var val = this._values[old];
+    delete this._values[old];
+    this._values[newKey] = val;
 }
 
-Exhibit.OrderedDictionary.prototype.forEach = function(f) {
-    this.values().map(f);
+Exhibit.OrderedDictionary.prototype.values = function() {
+    return this._keyOrder.map(this.get, this);
 }
 
 Exhibit.OrderedDictionary.prototype.remove = function(key) {
@@ -49,57 +49,6 @@ Exhibit.OrderedDictionary.prototype.remove = function(key) {
         this._keyOrder = this._keyOrder.filter(not(key));
         return val;
     }
-}
-
-
-//=============================================================================
-// Javascript 1.6 extensions
-//=============================================================================
-
-
-if (!Array.prototype.map)
-{
-  Array.prototype.map = function(fun /*, thisp*/)
-  {
-    var len = this.length;
-    if (typeof fun != "function")
-      throw new TypeError();
-
-    var res = new Array(len);
-    var thisp = arguments[1];
-    for (var i = 0; i < len; i++)
-    {
-      if (i in this)
-        res[i] = fun.call(thisp, this[i], i, this);
-    }
-
-    return res;
-  };
-}
-
-
-if (!Array.prototype.filter)
-{
-  Array.prototype.filter = function(fun /*, thisp*/)
-  {
-    var len = this.length;
-    if (typeof fun != "function")
-      throw new TypeError();
-
-    var res = new Array();
-    var thisp = arguments[1];
-    for (var i = 0; i < len; i++)
-    {
-      if (i in this)
-      {
-        var val = this[i]; // in case fun mutates this
-        if (fun.call(thisp, val, i, this))
-          res.push(val);
-      }
-    }
-
-    return res;
-  };
 }
 
 
@@ -140,5 +89,8 @@ Exhibit.OrderedDictionary.test = function() {
     vals = dict.values();
     
     assert(vals.length, 1);
-    assert(vals[0], 'default value')  
+    assert(vals[0], 'default value');
+    
+    dict.rekey('foo', 'new key');
+    assert(dict.get('new key'), 'default value');
 }
