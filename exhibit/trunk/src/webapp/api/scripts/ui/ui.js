@@ -31,6 +31,8 @@ Exhibit.UI.create = function(configuration, elmt, uiContext) {
             return Exhibit.ViewPanel.create(configuration, elmt, uiContext);
         case "logo":
             return Exhibit.Logo.create(configuration, elmt, uiContext);
+        case "itemCreator":
+            return Exhibit.UI.createItemCreator(configuration, elmt, uiContext);
         case "hiddenContent":
             elmt.style.display = "none";
             return null;
@@ -57,6 +59,8 @@ Exhibit.UI.createFromDOM = function(elmt, uiContext) {
         return Exhibit.ViewPanel.createFromDOM(elmt, uiContext);
     case "logo":
         return Exhibit.Logo.createFromDOM(elmt, uiContext);
+    case "itemCreator":
+        return Exhibit.UI.createItemCreatorFromDOM(elmt, uiContext);
     case "hiddenContent":
         elmt.style.display = "none";
         return null;
@@ -145,6 +149,45 @@ Exhibit.UI.createCoordinator = function(configuration, uiContext) {
 Exhibit.UI.createCoordinatorFromDOM = function(elmt, uiContext) {
     return Exhibit.Coordinator.createFromDOM(elmt, uiContext);
 };
+
+Exhibit.UI.createItemCreator = function(configuration, elmt, uiContext) {
+    var db = uiContext.getDatabase();
+    var itemType = configuration.itemType || 'item';
+    var itemTypeLabel = db.getType(itemType).getLabel();
+
+    var makeNewItemID = function() {
+        var seed = "Untitled " + itemTypeLabel;
+        var count = "";
+        var name = seed;
+        while (db.containsItem(name)) {
+            count++;
+            name = seed + ' ' + count;
+        }
+        return name;
+    };
+
+    if (elmt.nodeName.toLowerCase() == 'a') {
+        elmt.href = "javascript:";
+    }
+    var itemCreationHandler = function() {
+        var id = makeNewItemID();
+        var item = { type: itemType, id: id, label: id };
+        db.loadItems([item], ''); // TODO: what URI?
+        db._listeners.fire('onItemAdded', [id]);
+    }
+    
+    SimileAjax.jQuery(elmt).click(itemCreationHandler);
+    return elmt;
+};
+
+Exhibit.UI.createItemCreatorFromDOM = function(elmt, uiContext) {
+    var configuration = {}
+    var itemType = Exhibit.getAttribute(elmt, 'itemType');
+    if (itemType)
+        configuration.itemType = itemType;
+
+    return Exhibit.UI.createItemCreator(configuration, elmt, uiContext);
+}
 
 Exhibit.UI._stringToObject = function(name, suffix) {
     if (!name.startsWith("Exhibit.")) {

@@ -11,8 +11,6 @@ Exhibit.CurateExtension = {
 
 (function() {
     var javascriptFiles = [
-        "db-extensions.js",
-        "editing.js",
         "edit-log-view.js",
         "curate-view.js"
     ];
