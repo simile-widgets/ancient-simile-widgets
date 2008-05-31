@@ -11,11 +11,11 @@ Exhibit.CurateExtension = {
 
 (function() {
     var javascriptFiles = [
-        "edit-log-view.js",
+        "edit-view.js",
         "curate-view.js"
     ];
     var cssFiles = [
-        "edit-log-view.css"
+        "edit-view.css"
     ];
         
     var url = SimileAjax.findScript(document, "/curate-extension.js");

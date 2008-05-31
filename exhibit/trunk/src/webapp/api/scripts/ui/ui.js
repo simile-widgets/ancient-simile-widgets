@@ -173,7 +173,7 @@ Exhibit.UI.createItemCreator = function(configuration, elmt, uiContext) {
         var id = makeNewItemID();
         var item = { type: itemType, id: id, label: id };
         db.loadItems([item], ''); // TODO: what URI?
-        db._listeners.fire('onItemAdded', [id]);
+        db._listeners.fire('onItemAdded', [id, itemType]);
     }
     
     SimileAjax.jQuery(elmt).click(itemCreationHandler);

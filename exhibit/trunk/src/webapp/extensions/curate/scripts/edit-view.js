@@ -1,5 +1,5 @@
 //=============================================================================
-// EditLogView
+// EditView
 // Tracks changes made to Exhibit items through item changing interfaces, and
 // provides an interface for enabling/disabling changes, and submitting the
 // changes to a backend data source.
@@ -10,98 +10,101 @@
 
 var $ = SimileAjax.jQuery;
 
-
-//=============================================================================
-// Utility functions
-//=============================================================================
-
-
-function link(click, text, cssClass) {
-    var link = $('<a>').text(text).click(click);
-    link.attr('href', 'javascript:');
-    if (cssClass) { link.addClass(cssClass) }
-    return link;
-};
-
-
 //=============================================================================
 // Exhibit View Boilerplate
 //=============================================================================
 
+function stripWhitespace(s) {
+    return s.replace(/\s{2,}/g, ' ');
+}
 
-Exhibit.EditLogView = function(containerElmt, uiContext) {
+function addMockData(view) {
+    view._uiContext.getDatabase().addStatement('Gone With The Wind', 'label', 'Gone With The Wind')
+    view.onItemAdded('Gone With The Wind', 'book');
+    view.onItemModified('Gone With The Wind', 'author', '', 'Margaret Mitchell');
+    view.onItemModified('Gone With The Wind', 'year', '', '1936');
+    view.onItemModified('Gone With The Wind', 'availability', '', 'available');
+    view.onItemModified('Gone With The Wind', 'owner', '', 'Sarah');
+    view.onItemModified('Gone With The Wind', 'description', '', 'Going down south.');
+}
+
+Exhibit.EditView = function(containerElmt, uiContext) {
     this._div = $(containerElmt);
     this._uiContext = uiContext;
     this._settings = {};
     this._accessors = {};
-
-    this._postTo = this._settings.submitTo;
-
-    this._log = new Exhibit.OrderedDictionary();
-    this._comment = "";
     
-    uiContext.getCollection().addListener(this);
+    if (this._div.children().length == 0) {
+        this._template = $(stripWhitespace(Exhibit.EditView.defaultTemplate));
+    } else {
+        this._template = this._div.children().clone();
+        this._div.empty();
+    }
+
+    this._changes = new Exhibit.OrderedDictionary();
+    this._submissionInfo = {};
+    
+    uiContext.getDatabase().addListener(this);
+    // addMockData(this);
 }
 
 
-Exhibit.EditLogView._settingSpecs = {
-    submitTo:        { type: "text", defaultValue: "admin/submit.py" },
-    headerText:      { type: "text", defaultValue: "Edit Log" },
-    placeholderText: { type: "text", defaultValue: "To start editing this " +
-        "exhibit, click 'edit' on the items above" },
-    submitCallback: { type: "text" }
+Exhibit.EditView._settingSpecs = {
+    submitTo:       { type: "text", defaultValue: "gdocbackend.py" },
+    exhibitName:    { type: "text" }
 };
 
-Exhibit.EditLogView.create = function(configuration, containerElmt, uiContext) {
-    var view = new Exhibit.EditLogView(
+Exhibit.EditView.create = function(configuration, containerElmt, uiContext) {
+    var view = new Exhibit.EditView(
         containerElmt,
         Exhibit.UIContext.create(configuration, uiContext)
     );
 
     Exhibit.SettingsUtilities.collectSettings(
         configuration,
-        Exhibit.EditLogView._settingSpecs,
+        Exhibit.EditView._settingSpecs,
         view._settings);
 
     view._initializeUI();
     return view;
 };
 
-Exhibit.EditLogView.createFromDOM = function(configElmt, containerElmt, uiContext) {
+Exhibit.EditView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var view = new Exhibit.EditLogView(
+    var view = new Exhibit.EditView(
         containerElmt != null ? containerElmt : configElmt, 
         Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
 
     Exhibit.SettingsUtilities.collectSettingsFromDOM(
         configElmt, 
-        Exhibit.EditLogView._settingSpecs, 
+        Exhibit.EditView._settingSpecs, 
         view._settings);
 
     Exhibit.SettingsUtilities.collectSettings(
         configuration, 
-        Exhibit.EditLogView._settingSpecs, 
+        Exhibit.EditView._settingSpecs, 
         view._settings);
 
     view._initializeUI();
     return view;
 };
 
-Exhibit.EditLogView.prototype.dispose = function() {
+Exhibit.EditView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this);
     this._div.innerHTML = "";
     this._div = null;
     this._uiContext = null;
     this._settings = null;
     this._accessors = null;
-    this._log = null;
+    this._changes = null;
+    this._submissionInfo = null;
 }
 
-Exhibit.EditLogView.prototype.reset = function() {
-    this._log = new Exhibit.OrderedDictionary();
-    this._comment = "";
+Exhibit.EditView.prototype.reset = function() {
+    this._changes = new Exhibit.OrderedDictionary();
     this._initializeUI();
+    this._submissionInfo = {};
 }
 
 
@@ -109,170 +112,124 @@ Exhibit.EditLogView.prototype.reset = function() {
 // Item Change Listener methods
 //=============================================================================
 
-function itemChange(itemID, type) {
-    return { 
-        label: itemID,
-        initialLabel: itemID,
-        type:  type, 
-        edits: new Exhibit.OrderedDictionary()
+function makeItemChange(itemID, changeType, itemType) {
+    var c = { 
+        id: itemID,
+        type: changeType,
+        enabled: true,
+        changes: new Exhibit.OrderedDictionary()
     };
+    if (itemType) { c.itemType = itemType }
+    return c;
 }
 
-function propertyChange(prop, origVal) {
+function makePropertyChange(prop, origVal, newVal) {
     return {
-        property: prop,
-        originalValue: origVal
+        prop: prop,
+        origVal: origVal,
+        newVal: newVal
     };
 }
 
-Exhibit.EditLogView.prototype.onItemAdded = function(itemID) {
-    this._log.put(itemID, itemChange(itemID, 'added'));
+Exhibit.EditView.prototype.onItemAdded = function(itemID, itemType) {
+    this._changes.put(itemID, makeItemChange(itemID, 'added', itemType));
     this._initializeUI();
 }
 
-Exhibit.EditLogView.prototype.onItemModified = function(itemID, prop, oldVal, newVal) {
-    var defaultItem = itemChange(itemID, 'modified');
-    
-    var item = this._log.get(itemID, defaultItem);
-    var allEdits = item.edits;
-    var edit = allEdits.get(prop, propertyChange(prop, oldVal));
-    
-    // need to rename links in log structure
-    if (prop == 'label') {
-        this._log.rekey(oldVal, newVal);
-        item.label = newVal;
-        itemID = newVal;
+Exhibit.EditView.prototype.onItemModified = function(itemID, prop, prevVal, newVal) {
+    if (!this._changes.has(itemID)) {
+        this._changes.put(itemID, makeItemChange(itemID, 'modified'));
     }
+    var itemChange = this._changes.get(itemID);
+    var origChange = itemChange.changes.get(prop);
 
-    edit.value = newVal;
-    
-    if (edit.originalValue == newVal) {
-        allEdits.remove(prop);
-        
-        if (allEdits.size() == 0) {
-            this._log.remove(itemID);
-        }
-    }
-    
-    this._initializeUI();
-}
-
-
-//=============================================================================
-// UI functionality
-//=============================================================================
-
-
-function makePlaceholder(view) {
-    return $('<span>')
-        .addClass('placeholderText')
-        .text(view._settings.placeholderText);
-}
-
-function highlight(text) {
-    return $('<span>').addClass('highlight').text(text);
-}
-
-function makeItemHeader(item) {
-    var header = $('<ul>');
-    var headerLabel = ' was ' + item.type;
-    
-    var headerText = $('<span>')
-        .attr('itemID', item.label)
-        .text(item.label + headerLabel)
-        .addClass('headerText');
-
-    header.append(headerText);
-    return header;
-}
-
-function makeRevertFunc(label, prop, currentVal, desiredVal) {
-    return function() {    
-        try {
-            Exhibit.Curate.modifyItem(label, prop, desiredVal);
-        } catch (e if e instanceof Exhibit.Database.LabelUniquenessError) {
-            alert('Cannot revert name of ' + currentVal +
-                ' to ' + desiredVal + ', as another ' +
-                'item now has that name.');
-        }
-    }
-}
-
-function makeRevertLink(item, edit) {
-    var f = makeRevertFunc(
-        item.label, edit.property,
-        edit.value, edit.originalValue);
-    return link(f, '[revert]', 'revertEditLink');
-}
-
-function makeChangedPropertyDescription(item, edit) {
-    var list = $('<li>');
-    
-    if (item.type == 'modified') {
-        list.append(
-            highlight(edit.property), ' was changed from ', 
-            highlight(edit.originalValue), ' to ', 
-            highlight(edit.value));
+    if (!origChange) {
+        var propChange = makePropertyChange(prop, prevVal, newVal);
+        itemChange.changes.put(prop, propChange);
     } else {
-        list.append(
-            highlight(edit.property), ' was set to ', 
-            highlight(edit.value));
+        if (origChange.origVal == newVal) {
+            itemChange.changes.remove(prop);
+            if (itemChange.type =='modified' && itemChange.size() == 0) {
+                this._changes.remove(itemID);
+            }
+        } else {
+            origChange.newVal = newVal;
+        }
     }
-    
-    if (edit.originalValue) {
-        list.append(makeRevertLink(item, edit));
-    }
-    
-    return list;
+    this._initializeUI();
 }
 
-function makeItemChangeList(item) {
-    var header = makeItemHeader(item);
-         
-    item.edits.values().forEach(function(edit) {
-        makeChangedPropertyDescription(item, edit).appendTo(header);
-    });
-    
-    return header;
-}
 
-function makeChangeList(view) {
-    var list = $('<div>').addClass('ChangeList');
-    
-    view._log.values().forEach(function(item) {
-        list.append(makeItemChangeList(item));
-    });
-    
-    return list;
-}
+//=============================================================================
+// UI templating
+//=============================================================================
 
-function makeEditLog(view) {    
-    var editLog = $('<div>')
-        .addClass('ListContainer')
-        .append(makeChangeList(view));
-    
-    var commentInput = $('<input>')
-        .val(view._comment || "enter a comment describing your changes")
-        .addClass('commentField')
-        .change(function() { view._comment = $(this).val() });
+Exhibit.EditView.defaultTemplate = '                                        \
+<span class="editView-header">Changes</span>                                \
+<div class="editView-changeList">                                           \
+    <div class="changeList-placeholder">                                    \
+        To begin editing this Exhibit, click on the edit link.              \
+    </div>                                                                  \
+    <div class="changeList-item">                                           \
+        <div class="item-label"></div>                                      \
+        <div class="item-edit">                                             \
+            <span class="edit-property"></span>                             \
+            changed to                                                      \
+            <span class="edit-newValue"></span>                             \
+        </div>                                                              \
+    </div>                                                                  \
+</div>                                                                      \
+<input type="button" class="editView-submitButton"                          \
+       value="Submit Changes" />                                            \
+';
 
-    var submitButton = $('<input type="submit">')
-        .val('Submit Changes')
-        .addClass('submitButton')
-        .click(function() { view.submitChanges() })
+Exhibit.EditView.prototype.makeViewFromTemplate = function() {
+    var view = this;
+    var db = this._uiContext.getDatabase();
+    var template = this._template.clone();
+
+    if (this._changes.size() == 0) {
+        template.find('.changeList-item').remove();
+    } else {
+        template.find('.changeList-placeholder').remove();
+        var changeContainer = $('<div>');
         
-    editLog.append(commentInput, submitButton);
-    return editLog;
+        template.find('[submissionInfo]').each(function() {
+            var attr = $(this).attr('submissionInfo');
+            $(this).val(view._submissionInfo[attr]);
+            $(this).change(function(){
+                view._submissionInfo[attr] = $(this).val();
+            });
+        });
+        
+        this._changes.values().forEach(function(item) {
+            var i = template.find('.changeList-item').clone();
+            var label = db.getObject(item.id, 'label') || db.getObject(item.id, 'id');
+            i.find('.item-label').text(label)
+
+            var editContainer = $('<div>');
+            
+            item.changes.values().forEach(function(edit) {
+                var e = i.find('.item-edit').clone();
+                e.find('.edit-property').text(edit.prop)
+                e.find('.edit-newValue').text(edit.newVal);
+                e.find('.edit-origValue').text(edit.origVal);
+                editContainer.append(e);
+            });
+            
+            i.find('.item-edit').replaceWith(editContainer);
+            changeContainer.append(i);
+        });
+        
+        template.find('.changeList-item').replaceWith(changeContainer);
+    }
+    template.find('.editView-submitButton').click(function() { view.submitChanges() });
+    return template;
 }
 
-Exhibit.EditLogView.prototype._initializeUI = function() {
-    var header = $('<h1>').text(this._settings.headerText);
-    var errorMsg = $('<p>').addClass('errorMessage').hide();
-    var editLog = this._log.size() > 0
-        ? makeEditLog(this)
-        : makePlaceholder(this);
-    
-    this._div.empty().append(header, errorMsg, editLog);
+Exhibit.EditView.prototype._initializeUI = function() {
+    this._div.empty();
+    this._div.append(this.makeViewFromTemplate());
 }
 
 
@@ -280,79 +237,54 @@ Exhibit.EditLogView.prototype._initializeUI = function() {
 // Change submission
 //=============================================================================
 
-
-function attr(name) {
-    return function() { return this[name] };
-}
-
-function findExhibitDataURL() {
-    var dataString = 'head link[rel=exhibit/data]';
-    return $(dataString).map(attr('href'))[0];
-}
-
-function assert(obj, msg) {
-    if (obj) { return obj } 
-    else { SimileAjax.Debug.log(msg) }
-}
-
-Exhibit.EditLogView.prototype.submissionLocation = function() {
-    return assert(this._settings.submitTo || findExhibitDataURL(),
-        "no location to submit changes to");
-}
-
-Exhibit.EditLogView.prototype.makeSubmissionMessage = function() {
-    var message = {};
+Exhibit.EditView.prototype.makeSubmissionMessage = function() {
+    var view = this;
+    var message = []
     
-    if (this._comment) {
-        message.comment = this._comment;
-    }
-    
-    var edits = this._log.values().map(function(item) {
-        // because curators are familiar with existing items,
-        // the original item label is used if the item is not new
-        var label = item.type == 'modified' ? 
-            item.initialLabel : 
-            item.label;
-        
-        return { 
-            label: label,
-            type: item.type, 
-            values: item.edits.values()
+    var changes = this._changes.values().forEach(function(item) {  
+        var submission = {
+            type: item.itemType,
+            id: item.id
         };
+        
+        for (var i in view._submissionInfo) {
+            submission[i] = view._submissionInfo[i];
+        }
+        
+        item.changes.values().forEach(function(edit){
+            submission[edit.prop] = edit.newVal;
+        });
+        if (!submission.label) {
+            submission.label = submission.id;
+        }
+        message.push(submission);
     });
     
-    message.edits = edits;
     return message;
 }
 
-function handleSubmitError(resp) {
-    SimileAjax.Debug.log(resp)
-    $('.EditLog > .errorMessage')
-        .text('Unable to submit changes: ' + resp).show();
-    $('.EditLog input.submitButton').attr('disabled', false);
-}
-
-function makeSuccessHandler(view) {
-    return function(resp) {
-        view.reset(); // this triggers redraw
-        var successMsg = 'Submission successful! Feel free to edit further.';
-        $('.placeholderText').text(successMsg);
-    }
-}
-
-Exhibit.EditLogView.prototype.submitChanges = function() {
+Exhibit.EditView.prototype.submitChanges = function() {
+    var view = this;
+    var url = this._settings.submitTo + '?callback=?';
+    var exhibitName = this._settings.exhibitName;
     var message = this.makeSubmissionMessage();
-    var json = SimileAjax.JSON.toJSONString(message);
+    var str = SimileAjax.JSON.toJSONString(message);
     
-    $('.EditLog input.submitButton').attr('disabled', false);
+    var err = function(xhr) {
+        alert("Error submitting changes: " + xhr.responseText);
+        view._div.find('editView-submitButton').attr('disabled', false);
+    };
     
-    $.ajax({
-        type: "POST",
-        data: "message=" + json,
-        url: this._settings.submitTo,
-        success: makeSuccessHandler(this),
-        error: handleSubmitError
-    });
+    this._div.find('.editView-submitButton').attr('disabled', true);
+    
+    $.getJSON(url, 'exhibitName='+exhibitName+'&message='+str,
+        function(data) {
+            view.reset(); // trigger redraw
+            view._div.find('.editView-submitButton').attr('disabled', false);
+            var successMsg = 'Submission successful! Feel free to edit further.';
+            view._div.find('.changeList-placeholder').text(successMsg);
+        }
+    );
 }
 
 })();

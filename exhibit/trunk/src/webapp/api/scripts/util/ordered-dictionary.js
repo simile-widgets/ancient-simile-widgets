@@ -20,10 +20,11 @@ Exhibit.OrderedDictionary.prototype.put = function(key, val) {
     this._values[key] = val;
 }
 
-Exhibit.OrderedDictionary.prototype.get = function(key, alt) {
-    if (!this._values[key] && alt) {
-        this.put(key, alt);
-    }
+Exhibit.OrderedDictionary.prototype.has = function(key) {
+    return key in this._values;
+}
+
+Exhibit.OrderedDictionary.prototype.get = function(key) {
     return this._values[key];
 }
 
@@ -66,31 +67,27 @@ Exhibit.OrderedDictionary.test = function() {
     
     var dict = new Exhibit.OrderedDictionary();
     
-    assert(dict.get('test'), null);
+    assert(dict.get('test'));
     assert(dict.size(), 0);
     assert(dict.values().length, 0);
     
     dict.put('foo', 'bar');
-    dict.get('default', 'default value');
     dict.put('foo', 'baz')
     
     assert(dict.get('foo'), 'baz');
-    assert(dict.get('default'), 'default value');
     
     var vals = dict.values();
     
-    assert(dict.size(), 2);
-    assert(vals.length, 2);
+    assert(dict.size(), 1);
+    assert(vals.length, 1);
     assert(vals[0], 'baz');
-    assert(vals[1], 'default value');
     
     dict.remove('foo');
     
     vals = dict.values();
     
-    assert(vals.length, 1);
-    assert(vals[0], 'default value');
+    assert(vals.length, 0);
     
     dict.rekey('foo', 'new key');
-    assert(dict.get('new key'), 'default value');
+    assert(dict.get('foo'), 'new key');
 }
