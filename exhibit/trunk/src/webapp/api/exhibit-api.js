@@ -50,7 +50,6 @@
             "data/collection.js",
             
             "data/importers/exhibit-json-importer.js",
-            "data/importers/freebase-importer.js",
             "data/importers/html-table-importer.js",
             "data/importers/jsonp-importer.js",
             "data/importers/babel-based-importer.js",
