@@ -1,0 +1,34 @@
+.editView-header {
+    font-weight: bold;
+}
+
+.editView-changeList {
+    border: 1px solid #DDDDDD;
+    padding: 0.5em;
+    margin: 0 0 1em 0;
+}
+
+.item-label {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.changeList-item {
+    margin-top:0.5em;
+}
+
+.changeList-item:first-child {
+    margin-top:0em;
+}
+
+.item-edit {
+    margin-left: 1.5em;
+}
+
+.editView-submitButton {
+    margin-top: 0.2em;
+}
+
+.edit-property, .edit-newValue {
+    text-decoration: underline;
+}
