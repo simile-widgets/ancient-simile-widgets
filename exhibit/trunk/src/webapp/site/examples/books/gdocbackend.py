@@ -45,9 +45,10 @@ class Spreadsheet(object):
         ws = None
         if name != None:
             for e in entry:
-                ws = e if e.title.text == ws_name else None
+                if e.title.text.lower() == ws_name.lower(): 
+                    ws = e
         elif index != None:
-            ws = entry[index] if entry[index] else None
+            if entry[index]: ws = entry[index]
         else:
             raise Exception()
         if ws:
@@ -102,7 +103,7 @@ except Exception, e:
 
 try:
     manager = SheetManager(gdata_login())
-    worksheet = manager.get_spreadsheet('Books').get_worksheet(index=1)
+    worksheet = manager.get_spreadsheet('Books').get_worksheet(name='submissions')
     for r in message:
         r['added'] = '="' + str(date.today().isoformat()) + '"'
         worksheet.insert_row(r)
