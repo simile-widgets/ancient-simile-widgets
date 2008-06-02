@@ -1,17 +1,42 @@
 #!/usr/bin/env python
 
-import sys
-import cgi
-from datetime import date
-import simplejson
-import gdata.spreadsheet.service
+# HTTP Responses
+
+def output_response(status, content_type, text):
+    print "Status: " + status
+    print "Content-type: " + content_type
+    print
+    print text
+
+def output_error(msg):
+    output_response('400 Bad Request', 'text/plain', msg)
+    sys.exit()
+
+try: 
+    import sys
+    import cgi
+    from datetime import date
+    import simplejson
+    import gdata.spreadsheet.service
+except Exception, e:
+    output_error('error handling imports: %s' % (str(e)))
+
+def output_object(obj, callback):
+    resp = simplejson.dumps(obj, indent=4)
+    if callback:
+        resp = "%s(%s)" % (callback, resp)
+    output_response('200 Ok', 'text/javascript', resp)
+
+# configuration loading
+# config file should have gmail account on first line, password on second
+email, password = [l.rstrip('\n') for l in open('config.cgi').readlines()]
 
 # GData Handling
 
 def gdata_login():
     gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-    gd_client.email = 'email'
-    gd_client.password = 'password'
+    gd_client.email = email
+    gd_client.password = password
     gd_client.source = 'Exhibit Submitter'
     gd_client.ProgrammaticLogin()
     return gd_client
@@ -45,7 +70,7 @@ class Spreadsheet(object):
         ws = None
         if name != None:
             for e in entry:
-                if e.title.text.lower() == ws_name.lower(): 
+                if e.title.text.lower() == name.lower(): 
                     ws = e
         elif index != None:
             if entry[index]: ws = entry[index]
@@ -65,30 +90,18 @@ class Worksheet(object):
     def insert_row(self, obj):
         return self.client.InsertRow(obj, self.ss_key, self.ws_key)
 
-# HTTP Responses
-
-def output_response(status, content_type, text):
-    print "Status: " + status
-    print "Content-type: " + content_type
-    print
-    print text
-    sys.exit()
-
-def output_error(msg):
-    output_response('400 Bad Request', 'text/plain', msg)
-
-def output_object(obj, callback):
-    resp = simplejson.dumps(obj, indent=4)
-    if callback:
-        resp = "%s(%s)" % (callback, resp)
-    output_response('200 Ok', 'text/javascript', resp)
-
 # Request handling
 
-form = cgi.FieldStorage()
-callback = form.getvalue('callback', None)
-exhibit_name = form.getvalue('exhibitName')
-json = form.getvalue('message')
+if len(sys.argv) > 1 and sys.argv[1] == 'test':
+    callback = None
+    exhibit_name = "Books"
+    json = '[{"id":"The Great Gatsby","email":"sostler@mit.edu","comment":"dummy","year":"1926","label":"The Great Gatsby"}]'
+else:
+    form = cgi.FieldStorage()
+    callback = form.getvalue('callback', None)
+    exhibit_name = form.getvalue('exhibitName')
+    json = form.getvalue('message')
+
 
 if not json:
     output_error('no message object provided')
@@ -110,4 +123,3 @@ try:
     output_object({'status': 'ok'}, callback)
 except Exception, e:
     output_error(str(e) + "\n" + str(message))
-
