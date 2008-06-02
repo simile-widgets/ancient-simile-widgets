@@ -50,7 +50,7 @@ Exhibit.EditView = function(containerElmt, uiContext) {
 
 
 Exhibit.EditView._settingSpecs = {
-    submitTo:       { type: "text", defaultValue: "gdocbackend.py" },
+    submitTo:       { type: "text" },
     exhibitName:    { type: "text" }
 };
 
@@ -265,26 +265,33 @@ Exhibit.EditView.prototype.makeSubmissionMessage = function() {
 
 Exhibit.EditView.prototype.submitChanges = function() {
     var view = this;
-    var url = this._settings.submitTo + '?callback=?';
     var exhibitName = this._settings.exhibitName;
     var message = this.makeSubmissionMessage();
     var str = SimileAjax.JSON.toJSONString(message);
     
-    var err = function(xhr) {
+    var error = function(xhr, textStatus, errorThrown) {
         alert("Error submitting changes: " + xhr.responseText);
-        view._div.find('editView-submitButton').attr('disabled', false);
+        view._div.find('.editView-submitButton').attr('disabled', false);
+    };
+    
+    var success = function(data) {
+        view.reset(); // trigger redraw
+        view._div.find('.editView-submitButton').attr('disabled', false);
+
+        var successMsg = 'Submission successful! Feel free to edit further.';
+        view._div.find('.changeList-placeholder').text(successMsg);
     };
     
     this._div.find('.editView-submitButton').attr('disabled', true);
     
-    $.getJSON(url, 'exhibitName='+exhibitName+'&message='+str,
-        function(data) {
-            view.reset(); // trigger redraw
-            view._div.find('.editView-submitButton').attr('disabled', false);
-            var successMsg = 'Submission successful! Feel free to edit further.';
-            view._div.find('.changeList-placeholder').text(successMsg);
-        }
-    );
+    $.ajax({
+        url: this._settings.submitTo,
+        dataType: 'jsonp',
+        jsonp: 'callback',
+        data: 'exhibitName='+exhibitName+'&message='+str,
+        success: success,
+        error: error  
+    });
 }
 
 })();

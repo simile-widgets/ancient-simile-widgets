@@ -11,7 +11,8 @@ Exhibit.FreebaseExtension = {
 
 (function() {
     var javascriptFiles = [
-        "freebase-importer.js"
+        "freebase-importer.js",
+        "metaweb.js"
     ];
     var cssFiles = [
     ];
