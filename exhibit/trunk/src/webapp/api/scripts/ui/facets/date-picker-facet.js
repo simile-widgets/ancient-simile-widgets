@@ -153,7 +153,7 @@ Exhibit.DatePickerFacet.prototype.restrict = function(items) {
       min = SimileAjax.DateTime.parseIso8601DateTime(this._range.min);
       max = SimileAjax.DateTime.parseIso8601DateTime(this._range.max);
       set.addSet(path.rangeBackward(min, max.setUTCDate(max.getUTCDate() + 1), false, items, database).values);
-      this._dom.setSelectionCount(this.hasRestrictions(), set.size());
+      this._dom.setSelectionCount(this.hasRestrictions(), Math.floor((max - min)/(24*60*60*1000)));
       return set;
     }
 };
