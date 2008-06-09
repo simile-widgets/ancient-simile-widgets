@@ -335,7 +335,6 @@ Exhibit.ChangeListView.prototype.submitChanges = function() {
     this._div.find('.editView-submitButton').attr('disabled', true);
     
     var params = parseSubmissionParams();
-    console.log(params)
     params['message'] = str;
     
     $.ajax({
