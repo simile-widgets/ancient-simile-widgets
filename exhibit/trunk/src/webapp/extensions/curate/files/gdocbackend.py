@@ -119,7 +119,7 @@ try:
     client = gdata_login()
     worksheet = Spreadsheet(client, ss_key).get_worksheet(name='submissions')
     for r in message:
-        r['__added__'] = '="' + str(date.today().isoformat()) + '"'
+        r['added'] = '="' + str(date.today().isoformat()) + '"'
         worksheet.insert_row(r)
     output_object({'status': 'ok'}, callback)
 except Exception, e:
