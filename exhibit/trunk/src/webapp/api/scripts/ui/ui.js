@@ -14,7 +14,6 @@ Exhibit.UI.create = function(configuration, elmt, uiContext) {
         if (role != null && role.startsWith("exhibit-")) {
             role = role.substr("exhibit-".length);
         }
-        
         switch (role) {
         case "lens":
             Exhibit.UIContext.registerLens(configuration, uiContext.getLensRegistry());
@@ -31,7 +30,7 @@ Exhibit.UI.create = function(configuration, elmt, uiContext) {
             return Exhibit.ViewPanel.create(configuration, elmt, uiContext);
         case "logo":
             return Exhibit.Logo.create(configuration, elmt, uiContext);
-        case "itemCreator":
+        case "item-creator":
             return Exhibit.UI.createItemCreator(configuration, elmt, uiContext);
         case "hiddenContent":
             elmt.style.display = "none";
@@ -59,7 +58,7 @@ Exhibit.UI.createFromDOM = function(elmt, uiContext) {
         return Exhibit.ViewPanel.createFromDOM(elmt, uiContext);
     case "logo":
         return Exhibit.Logo.createFromDOM(elmt, uiContext);
-    case "itemCreator":
+    case "item-creator":
         return Exhibit.UI.createItemCreatorFromDOM(elmt, uiContext);
     case "hiddenContent":
         elmt.style.display = "none";
@@ -150,10 +149,13 @@ Exhibit.UI.createCoordinatorFromDOM = function(elmt, uiContext) {
     return Exhibit.Coordinator.createFromDOM(elmt, uiContext);
 };
 
+
+
 Exhibit.UI.createItemCreator = function(configuration, elmt, uiContext) {
     var db = uiContext.getDatabase();
     var itemType = configuration.itemType || 'item';
     var itemTypeLabel = db.getType(itemType).getLabel();
+    var $ = SimileAjax.jQuery;
 
     var makeNewItemID = function() {
         var seed = "Untitled " + itemTypeLabel;
@@ -169,11 +171,66 @@ Exhibit.UI.createItemCreator = function(configuration, elmt, uiContext) {
     if (elmt.nodeName.toLowerCase() == 'a') {
         elmt.href = "javascript:";
     }
+    
     var itemCreationHandler = function() {
         var id = makeNewItemID();
         var item = { type: itemType, id: id, label: id };
-        db.loadItems([item], ''); // TODO: what URI?
-        db._listeners.fire('onItemAdded', [id, itemType]);
+
+        var popupDiv = $('<div>');
+        var itemDiv = $('<div>').appendTo(popupDiv);
+        
+        var cancelButton = $('<button>').text('Cancel');
+        var submitButton = $('<button>').text('Add to Exhibit');
+
+        $('<table>').append($('<tr>').append(
+            $('<td>').append(cancelButton),
+            $('<td>').append(submitButton)
+        )).appendTo(popupDiv).css({'text-align': 'center', width: '100%' });
+
+        // item's type isn't in DB, so LensRegistry.createLens won't work                
+        var template = uiContext.getLensRegistry()._typeToLens[item.type + '-editor'];
+        var lens = new Exhibit.Lens();
+        
+        // passing a struct with type 'temporaryItem' to _constructFromLensTemplateDOM
+        // results in _constructEditableContent using a special changeHandler for
+        // the item lens' form elements.
+        var mockID = {
+            type: 'temporaryItem',
+            values: item
+        };
+
+        lens._constructFromLensTemplateDOM(
+            mockID, 
+            itemDiv.get(0), 
+            uiContext, 
+            template);
+                
+        // attribute on div is mechanism for tracking WindowManager's layers
+        popupDiv.attr('exibit_inpop', true);
+        var closePopup = function() {
+            SimileAjax.WindowManager._layers.forEach(function(layer) {
+                if ($(layer.elmt).find("[exibit_inpop]").length > 0) {
+                    SimileAjax.WindowManager.popLayer(layer);
+                }
+            });
+        }
+        
+        var addToExhibit = function() {
+            closePopup();
+            db.loadItems([item], ''); // TODO: what URI?
+            db._listeners.fire('onItemAdded', [item.id, item.type]);
+        }
+        
+        cancelButton.click(closePopup);
+        submitButton.click(addToExhibit);
+        
+        var coords = SimileAjax.DOM.getPageCoordinates(elmt);
+        SimileAjax.Graphics.createBubbleForContentAndPoint(
+            popupDiv.get(0),
+            coords.left + Math.round(elmt.offsetWidth / 2), 
+            coords.top + Math.round(elmt.offsetHeight / 2),
+            uiContext.getSetting("bubbleWidth")
+        );        
     }
     
     SimileAjax.jQuery(elmt).click(itemCreationHandler);

@@ -1,8 +1,8 @@
-.editView-header {
+.header {
     font-weight: bold;
 }
 
-.editView-changeList {
+.changeList {
     border: 1px solid #DDDDDD;
     padding: 0.5em;
     margin: 0 0 1em 0;
@@ -13,22 +13,23 @@
     font-size: 1.2em;
 }
 
-.changeList-item {
+.edit-item {
     margin-top:0.5em;
 }
 
-.changeList-item:first-child {
+.edit-item:first-child {
     margin-top:0em;
 }
 
-.item-edit {
+.edit-entry {
     margin-left: 1.5em;
 }
 
-.editView-submitButton {
-    margin-top: 0.2em;
+.buttonContainer {
+    margin-top: 0.4em;
+    text-align: right;
 }
 
-.edit-property, .edit-newValue {
+.edit-property, .edit-new-value {
     text-decoration: underline;
 }

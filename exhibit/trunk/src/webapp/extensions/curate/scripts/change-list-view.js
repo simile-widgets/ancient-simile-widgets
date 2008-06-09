@@ -1,5 +1,5 @@
 //=============================================================================
-// EditView
+// ChangeListView
 // Tracks changes made to Exhibit items through item changing interfaces, and
 // provides an interface for enabling/disabling changes, and submitting the
 // changes to a backend data source.
@@ -28,14 +28,14 @@ function addMockData(view) {
     view.onItemModified('Gone With The Wind', 'description', '', 'Going down south.');
 }
 
-Exhibit.EditView = function(containerElmt, uiContext) {
+Exhibit.ChangeListView = function(containerElmt, uiContext) {
     this._div = $(containerElmt);
     this._uiContext = uiContext;
     this._settings = {};
     this._accessors = {};
     
     if (this._div.children().length == 0) {
-        this._template = $(stripWhitespace(Exhibit.EditView.defaultTemplate));
+        this._template = $(stripWhitespace(Exhibit.ChangeListView.defaultTemplate));
     } else {
         this._template = this._div.children().clone();
         this._div.empty();
@@ -45,52 +45,53 @@ Exhibit.EditView = function(containerElmt, uiContext) {
     this._submissionInfo = {};
     
     uiContext.getDatabase().addListener(this);
-    // addMockData(this);
+    addMockData(this);
 }
 
 
-Exhibit.EditView._settingSpecs = {
-    submitTo:       { type: "text" },
-    exhibitName:    { type: "text" }
+Exhibit.ChangeListView._settingSpecs = {
+    submitTo:        { type: "text", defaultValue: "http://valinor.mit.edu/sostler/gdocbackend.cgi" },
+    spreadsheetKey:  { type: "text" },
+    worksheetName:   { type: "text", defaultValue: "submissions"}
 };
 
-Exhibit.EditView.create = function(configuration, containerElmt, uiContext) {
-    var view = new Exhibit.EditView(
+Exhibit.ChangeListView.create = function(configuration, containerElmt, uiContext) {
+    var view = new Exhibit.ChangeListView(
         containerElmt,
         Exhibit.UIContext.create(configuration, uiContext)
     );
 
     Exhibit.SettingsUtilities.collectSettings(
         configuration,
-        Exhibit.EditView._settingSpecs,
+        Exhibit.ChangeListView._settingSpecs,
         view._settings);
 
     view._initializeUI();
     return view;
 };
 
-Exhibit.EditView.createFromDOM = function(configElmt, containerElmt, uiContext) {
+Exhibit.ChangeListView.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var view = new Exhibit.EditView(
+    var view = new Exhibit.ChangeListView(
         containerElmt != null ? containerElmt : configElmt, 
         Exhibit.UIContext.createFromDOM(configElmt, uiContext)
     );
 
     Exhibit.SettingsUtilities.collectSettingsFromDOM(
         configElmt, 
-        Exhibit.EditView._settingSpecs, 
+        Exhibit.ChangeListView._settingSpecs, 
         view._settings);
 
     Exhibit.SettingsUtilities.collectSettings(
         configuration, 
-        Exhibit.EditView._settingSpecs, 
+        Exhibit.ChangeListView._settingSpecs, 
         view._settings);
 
     view._initializeUI();
     return view;
 };
 
-Exhibit.EditView.prototype.dispose = function() {
+Exhibit.ChangeListView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this);
     this._div.innerHTML = "";
     this._div = null;
@@ -101,7 +102,7 @@ Exhibit.EditView.prototype.dispose = function() {
     this._submissionInfo = null;
 }
 
-Exhibit.EditView.prototype.reset = function() {
+Exhibit.ChangeListView.prototype.reset = function() {
     this._changes = new Exhibit.OrderedDictionary();
     this._initializeUI();
     this._submissionInfo = {};
@@ -131,12 +132,23 @@ function makePropertyChange(prop, origVal, newVal) {
     };
 }
 
-Exhibit.EditView.prototype.onItemAdded = function(itemID, itemType) {
-    this._changes.put(itemID, makeItemChange(itemID, 'added', itemType));
+Exhibit.ChangeListView.prototype.onItemAdded = function(itemID, itemType) {
+    var db = this._uiContext.getDatabase();
+    var itemChange = makeItemChange(itemID, 'added', itemType);
+
+    db.getAllProperties().forEach(function(prop) {
+        var value = db.getObject(itemID, prop);
+        if (value) {
+            var propChange = makePropertyChange(prop, null, value);
+            itemChange.changes.put(prop, propChange);
+        }
+    });
+    
+    this._changes.put(itemID, itemChange);
     this._initializeUI();
 }
 
-Exhibit.EditView.prototype.onItemModified = function(itemID, prop, prevVal, newVal) {
+Exhibit.ChangeListView.prototype.onItemModified = function(itemID, prop, prevVal, newVal) {
     if (!this._changes.has(itemID)) {
         this._changes.put(itemID, makeItemChange(itemID, 'modified'));
     }
@@ -149,7 +161,7 @@ Exhibit.EditView.prototype.onItemModified = function(itemID, prop, prevVal, newV
     } else {
         if (origChange.origVal == newVal) {
             itemChange.changes.remove(prop);
-            if (itemChange.type =='modified' && itemChange.size() == 0) {
+            if (itemChange.type =='modified' && itemChange.changes.size() == 0) {
                 this._changes.remove(itemID);
             }
         } else {
@@ -164,7 +176,20 @@ Exhibit.EditView.prototype.onItemModified = function(itemID, prop, prevVal, newV
 // UI templating
 //=============================================================================
 
-Exhibit.EditView.defaultTemplate = '                                        \
+
+function getByAttr(parent, attr, value) {
+    var f = function( ) { 
+        if (value === undefined) {
+            return $(this).attr(attr) !== undefined;
+        } else {
+            return $(this).attr(attr) == value;
+        }
+    }
+    return parent.find('*').filter(f);
+}
+
+
+Exhibit.ChangeListView.defaultTemplate = '                                  \
 <span class="editView-header">Changes</span>                                \
 <div class="editView-changeList">                                           \
     <div class="changeList-placeholder">                                    \
@@ -183,15 +208,17 @@ Exhibit.EditView.defaultTemplate = '                                        \
        value="Submit Changes" />                                            \
 ';
 
-Exhibit.EditView.prototype.makeViewFromTemplate = function() {
+Exhibit.ChangeListView.ignoredProperties = ['id', 'uri', 'type']
+
+Exhibit.ChangeListView.prototype.makeViewFromTemplate = function() {
     var view = this;
     var db = this._uiContext.getDatabase();
     var template = this._template.clone();
 
     if (this._changes.size() == 0) {
-        template.find('.changeList-item').remove();
+        getByAttr(template, 'ex:role', 'item').remove();
     } else {
-        template.find('.changeList-placeholder').remove();
+        getByAttr(template, 'ex:role', 'placeholder').remove();
         var changeContainer = $('<div>');
         
         template.find('[submissionInfo]').each(function() {
@@ -201,33 +228,37 @@ Exhibit.EditView.prototype.makeViewFromTemplate = function() {
                 view._submissionInfo[attr] = $(this).val();
             });
         });
-        
         this._changes.values().forEach(function(item) {
-            var i = template.find('.changeList-item').clone();
+            var itemTemplate = getByAttr(template, 'ex:role', 'item').addClass('edit-item').clone();
             var label = db.getObject(item.id, 'label') || db.getObject(item.id, 'id');
-            i.find('.item-label').text(label)
-
             var editContainer = $('<div>');
             
+            getByAttr(itemTemplate, 'ex:itemRole', 'label').text(label);
+            
             item.changes.values().forEach(function(edit) {
-                var e = i.find('.item-edit').clone();
-                e.find('.edit-property').text(edit.prop)
-                e.find('.edit-newValue').text(edit.newVal);
-                e.find('.edit-origValue').text(edit.origVal);
-                editContainer.append(e);
+                if (Exhibit.ChangeListView.ignoredProperties.indexOf(edit.prop) == -1) {
+                    var editTemplate = getByAttr(itemTemplate, 'ex:itemRole', 'edit').clone().addClass('edit-entry');
+
+                    getByAttr(editTemplate, 'ex:editRole', 'property').addClass('edit-property').text(edit.prop);
+                    getByAttr(editTemplate, 'ex:editRole', 'old-value').addClass('edit-old-value').text(edit.origVal);
+                    getByAttr(editTemplate, 'ex:editRole', 'new-value').addClass('edit-new-value').text(edit.newVal);
+
+                    editContainer.append(editTemplate);
+                }
             });
             
-            i.find('.item-edit').replaceWith(editContainer);
-            changeContainer.append(i);
+            getByAttr(itemTemplate, 'ex:itemRole', 'edit').replaceWith(editContainer);
+            changeContainer.append(itemTemplate);
         });
         
-        template.find('.changeList-item').replaceWith(changeContainer);
+        getByAttr(template, 'ex:role', 'item').replaceWith(changeContainer);
+        
     }
-    template.find('.editView-submitButton').click(function() { view.submitChanges() });
+    getByAttr(template, 'ex:role', 'submit-button').click(function() { view.submitChanges() });
     return template;
 }
 
-Exhibit.EditView.prototype._initializeUI = function() {
+Exhibit.ChangeListView.prototype._initializeUI = function() {
     this._div.empty();
     this._div.append(this.makeViewFromTemplate());
 }
@@ -237,7 +268,7 @@ Exhibit.EditView.prototype._initializeUI = function() {
 // Change submission
 //=============================================================================
 
-Exhibit.EditView.prototype.makeSubmissionMessage = function() {
+Exhibit.ChangeListView.prototype.makeSubmissionMessage = function() {
     var view = this;
     var message = []
     
@@ -263,9 +294,28 @@ Exhibit.EditView.prototype.makeSubmissionMessage = function() {
     return message;
 }
 
-Exhibit.EditView.prototype.submitChanges = function() {
+var ignoredParams = ['rel'];
+
+function parseSubmissionParams() {
+    var sub = $('head link[rel="exhibit/submission"]').get(0);
+    if (!sub) { return {} };
+    var params = {};
+
+    for (var i in sub.attributes) {
+        if (sub.attributes.hasOwnProperty(i)) {
+            var node = sub.attributes[i];   
+            if (ignoredParams.indexOf(node.nodeName) == -1) {
+                params[node.nodeName] = node.nodeValue;
+            }
+        }
+    }
+    return params;
+}
+
+Exhibit.ChangeListView.prototype.submitChanges = function() {
     var view = this;
-    var exhibitName = this._settings.exhibitName;
+    var ss = this._settings.spreadsheetKey;
+    var wkname = this._settings.worksheetName;
     var message = this.makeSubmissionMessage();
     var str = SimileAjax.JSON.toJSONString(message);
     
@@ -284,11 +334,15 @@ Exhibit.EditView.prototype.submitChanges = function() {
     
     this._div.find('.editView-submitButton').attr('disabled', true);
     
+    var params = parseSubmissionParams();
+    console.log(params)
+    params['message'] = str;
+    
     $.ajax({
         url: this._settings.submitTo,
         dataType: 'jsonp',
         jsonp: 'callback',
-        data: 'exhibitName='+exhibitName+'&message='+str,
+        data: params, //'ss='+ ss + '&wkname=' + wkname + '&message='+str,
         success: success,
         error: error  
     });
