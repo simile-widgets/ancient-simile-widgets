@@ -237,6 +237,7 @@ Exhibit.ChangeListView.prototype.makeViewFromTemplate = function() {
 
         getByAttr(template, 'ex:submissionProperty').each(function() {
             var attr = $(this).attr('ex:submissionProperty');
+            $(this).attr('disabled', false);
             $(this).val(view._submissionProperty[attr]);
             $(this).change(function(){
                 view._submissionProperty[attr] = $(this).val();
