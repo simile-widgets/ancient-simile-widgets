@@ -45,7 +45,7 @@ Exhibit.ChangeListView = function(containerElmt, uiContext) {
     this._submissionInfo = {};
     
     uiContext.getDatabase().addListener(this);
-    addMockData(this);
+    // addMockData(this);
 }
 
 
