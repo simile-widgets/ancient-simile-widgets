@@ -8,8 +8,10 @@ Exhibit.LensRegistry = function(parentRegistry) {
     this._defaultLens = null;
     this._typeToLens = {};
     this._lensSelectors = [];
-    this._editModeRegistry = {};
 };
+
+// Use a global registry to allow for global changes to edit-mode status.
+Exhibit.LensRegistry.EditModeRegistry = {};
 
 Exhibit.LensRegistry.prototype.registerDefaultLens = function(elmtOrURL) {
     this._defaultLens = (typeof elmtOrURL == "string") ? elmtOrURL : elmtOrURL.cloneNode(true);
@@ -84,14 +86,14 @@ Exhibit.LensRegistry.prototype.createLens = function(itemID, div, uiContext) {
 
 Exhibit.LensRegistry.prototype.setEditMode = function(itemID, val) {
     if (val) {
-        this._editModeRegistry[itemID] = true;
+        Exhibit.LensRegistry.EditModeRegistry[itemID] = true;
     } else {
-        delete this._editModeRegistry[itemID];
+        delete Exhibit.LensRegistry.EditModeRegistry[itemID];
     }
 }
 
 Exhibit.LensRegistry.prototype.isBeingEdited = function(itemID) {
-    return this._editModeRegistry[itemID];
+    return Exhibit.LensRegistry.EditModeRegistry[itemID];
 }
  
 /*==================================================
@@ -381,8 +383,8 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
             templateNode.control = value;
         } else if (name == "content") {
             templateNode.content = Exhibit.ExpressionParser.parse(value);
-        } else if (name == "editablecontent") {
-            templateNode.editableContent = value;
+        } else if (name == "edit") {
+            templateNode.edit = value;
         } else if (name == "editvalues") {
             templateNode.editValues = value;
         } else if (name == "tag") {
@@ -728,16 +730,20 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             }
             break;
         case "stop-editing":
-            if (templateNode.tag == 'a')
-                elmt.href = 'javascript:';
-            SimileAjax.jQuery(elmt).click(function() {
-                uiContext.getLensRegistry().setEditMode(itemID, false);
-                uiContext.getCollection()._listeners.fire("onItemsChanged", []);
-            });
-            if (children != null) {
-                for (var i = 0; i < children.length; i++) {
-                    Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt);
-                }
+            if ((typeof itemID) != "string") { // lens is in 'add new item' bubble
+                parentElmt.removeChild(elmt);
+            } else {
+                if (templateNode.tag == 'a')
+                    elmt.href = 'javascript:';
+                SimileAjax.jQuery(elmt).click(function() {
+                    uiContext.getLensRegistry().setEditMode(itemID, false);
+                    uiContext.getCollection()._listeners.fire("onItemsChanged", []);
+                });
+                if (children != null) {
+                    for (var i = 0; i < children.length; i++) {
+                        Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt);
+                    }
+                }   
             }
             break;
         }
@@ -769,7 +775,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
         } else {
             Exhibit.Lens._constructDefaultValueList(results.values, results.valueType, elmt, templateNode.uiContext);
         }
-    } else if (templateNode.editableContent != null) {
+    } else if (templateNode.edit != null) {
         // TODO: handle editType
 
         // process children first, because we need 
@@ -838,8 +844,24 @@ Exhibit.Lens._constructElmtWithAttributes = function(templateNode, parentElmt, d
 
 Exhibit.Lens._constructEditableContent = function(templateNode, elmt, itemID, uiContext) {
     var db = uiContext.getDatabase();
-    var attr = templateNode.editableContent;
-    var value = db.getObject(itemID, attr);
+    var attr = templateNode.edit;
+    
+    if (itemID.type == 'temporaryItem') {
+        var value = itemID.values[attr] || "";
+        var changeHandler = function() {
+            itemID.values[attr] = this.value;
+        }
+    } else {
+        var value = db.getObject(itemID, attr);
+        var changeHandler = function() {
+            var prevVal = db.getObject(itemID, attr);
+            db.removeObjects(itemID, attr);
+            db.addStatement(itemID, attr, this.value);
+            db.getProperty(attr)._onNewData(); // flush property cache
+            db._listeners.fire('onItemModified', [itemID, attr, prevVal, this.value]);
+            uiContext.getExhibit().getDefaultCollection()._update();
+        }   
+    }    
     
     if (templateNode.tag == 'select') {
         for (var i in elmt.options) {
@@ -849,15 +871,6 @@ Exhibit.Lens._constructEditableContent = function(templateNode, elmt, itemID, ui
         }
     } else {
         elmt.value = value;        
-    }
-    
-    var changeHandler = function() {
-        var prevVal = db.getObject(itemID, attr);
-        db.removeObjects(itemID, attr);
-        db.addStatement(itemID, attr, this.value);
-        db.getProperty(attr)._onNewData(); // flush property cache
-        db._listeners.fire('onItemModified', [itemID, attr, prevVal, this.value]);
-        uiContext.getExhibit().getDefaultCollection()._update();
     }
     
     if (templateNode.tag == 'select') {

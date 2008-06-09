@@ -74,18 +74,18 @@ span[availability="unavailable"] {
     text-align: center;
 }
 
-.infoBox-header {
+.infoBoxHeader {
     margin-top: 1em;
     font-weight: bold;
 }
 
-.editView-infoBox {
+.infoBox {
     width: 100%;
     padding: 0.5em;
     border: 1px solid #DDDDDD;
 }
 
-.editView-infoBox label {
+.infoBox label {
     font-size: 80%;
     font-weight: bold;
 }
