@@ -42,7 +42,7 @@ Exhibit.ChangeListView = function(containerElmt, uiContext) {
     }
 
     this._changes = new Exhibit.OrderedDictionary();
-    this._submissionInfo = {};
+    this._submissionProperty = {};
     
     uiContext.getDatabase().addListener(this);
     // addMockData(this);
@@ -99,13 +99,13 @@ Exhibit.ChangeListView.prototype.dispose = function() {
     this._settings = null;
     this._accessors = null;
     this._changes = null;
-    this._submissionInfo = null;
+    this._submissionProperty = null;
 }
 
 Exhibit.ChangeListView.prototype.reset = function() {
     this._changes = new Exhibit.OrderedDictionary();
     this._initializeUI();
-    this._submissionInfo = {};
+    this._submissionProperty = {};
 }
 
 
@@ -188,25 +188,8 @@ function getByAttr(parent, attr, value) {
     return parent.find('*').filter(f);
 }
 
-
-Exhibit.ChangeListView.defaultTemplate = '                                  \
-<span class="editView-header">Changes</span>                                \
-<div class="editView-changeList">                                           \
-    <div class="changeList-placeholder">                                    \
-        To begin editing this Exhibit, click on the edit link.              \
-    </div>                                                                  \
-    <div class="changeList-item">                                           \
-        <div class="item-label"></div>                                      \
-        <div class="item-edit">                                             \
-            <span class="edit-property"></span>                             \
-            changed to                                                      \
-            <span class="edit-newValue"></span>                             \
-        </div>                                                              \
-    </div>                                                                  \
-</div>                                                                      \
-<input type="button" class="editView-submitButton"                          \
-       value="Submit Changes" />                                            \
-';
+// TODO: replace default template
+Exhibit.ChangeListView.defaultTemplate = null;
 
 Exhibit.ChangeListView.ignoredProperties = ['id', 'uri', 'type']
 
@@ -217,17 +200,16 @@ Exhibit.ChangeListView.prototype.makeViewFromTemplate = function() {
 
     if (this._changes.size() == 0) {
         getByAttr(template, 'ex:role', 'item').remove();
+        getByAttr(template, 'ex:role', 'submit-button').attr('disabled', true);
+        getByAttr(template, 'ex:submissionProperty').each(function() {
+            var attr = $(this).attr('ex:submissionProperty');
+            $(this).val(view._submissionProperty[attr]);
+            $(this).attr('disabled', true);
+        });
     } else {
         getByAttr(template, 'ex:role', 'placeholder').remove();
         var changeContainer = $('<div>');
-        
-        template.find('[submissionInfo]').each(function() {
-            var attr = $(this).attr('submissionInfo');
-            $(this).val(view._submissionInfo[attr]);
-            $(this).change(function(){
-                view._submissionInfo[attr] = $(this).val();
-            });
-        });
+                
         this._changes.values().forEach(function(item) {
             var itemTemplate = getByAttr(template, 'ex:role', 'item').addClass('edit-item').clone();
             var label = db.getObject(item.id, 'label') || db.getObject(item.id, 'id');
@@ -252,9 +234,18 @@ Exhibit.ChangeListView.prototype.makeViewFromTemplate = function() {
         });
         
         getByAttr(template, 'ex:role', 'item').replaceWith(changeContainer);
-        
+
+        getByAttr(template, 'ex:submissionProperty').each(function() {
+            var attr = $(this).attr('ex:submissionProperty');
+            $(this).val(view._submissionProperty[attr]);
+            $(this).change(function(){
+                view._submissionProperty[attr] = $(this).val();
+            });
+        });
+
+        getByAttr(template, 'ex:role', 'submit-button').click(function() { view.submitChanges() });
     }
-    getByAttr(template, 'ex:role', 'submit-button').click(function() { view.submitChanges() });
+
     return template;
 }
 
@@ -278,8 +269,8 @@ Exhibit.ChangeListView.prototype.makeSubmissionMessage = function() {
             id: item.id
         };
         
-        for (var i in view._submissionInfo) {
-            submission[i] = view._submissionInfo[i];
+        for (var i in view._submissionProperty) {
+            submission[i] = view._submissionProperty[i];
         }
         
         item.changes.values().forEach(function(edit){
@@ -321,18 +312,19 @@ Exhibit.ChangeListView.prototype.submitChanges = function() {
     
     var error = function(xhr, textStatus, errorThrown) {
         alert("Error submitting changes: " + xhr.responseText);
-        view._div.find('.editView-submitButton').attr('disabled', false);
+        getByAttr(view._div, 'ex:role', 'submit-button').attr('disabled', false);
     };
     
     var success = function(data) {
         view.reset(); // trigger redraw
-        view._div.find('.editView-submitButton').attr('disabled', false);
+
+        getByAttr(view._div, 'ex:role', 'submit-button').attr('disabled', false);
 
         var successMsg = 'Submission successful! Feel free to edit further.';
-        view._div.find('.changeList-placeholder').text(successMsg);
+        getByAttr(view._div, 'ex:role', 'placeholder').text(successMsg);
     };
     
-    this._div.find('.editView-submitButton').attr('disabled', true);
+    getByAttr(view._div, 'ex:role', 'submit-button').attr('disabled', true);
     
     var params = parseSubmissionParams();
     params['message'] = str;
