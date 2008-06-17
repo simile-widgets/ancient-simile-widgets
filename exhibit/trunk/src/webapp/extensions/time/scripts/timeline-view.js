@@ -80,6 +80,11 @@ Exhibit.TimelineView._accessorSpecs = [
     {   accessorName:   "getEventLabel",
         attributeName:  "eventLabel",
         type:           "text"
+    },
+    {
+        accessorName:   "getHoverText",
+        attributeName:  "hoverText",
+        type:           "text"
     }
 ];    
 
@@ -333,11 +338,12 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
         var currentSet = collection.getRestrictedItems();
         var hasColorKey = (this._accessors.getColorKey != null);
         var hasIconKey = (this._accessors.getIconKey != null && this._iconCoder != null);
+        var hasHoverText = (this._accessors.getHoverText != null);
         var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
         var iconCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
         var events = [];
 
-        var addEvent = function(itemID, duration, color, icon) {
+        var addEvent = function(itemID, duration, color, icon, hoverText) {
             var label;
             accessors.getEventLabel(itemID, database, function(v) { label = v; return true; });
 
@@ -354,7 +360,8 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                 null,   // link url
                 icon,   // icon url
                 color,
-                color
+                color,
+                hoverText
             );
             evt._itemID = itemID;
             evt.getProperty = function(name) {
@@ -374,6 +381,7 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             if (durations.length > 0) {
                 var color = null;
                 var icon = null;
+                var hoverText = null;
                 if (hasColorKey) {
                     var colorKeys = new Exhibit.Set();
                     accessors.getColorKey(itemID, database, function(key) { colorKeys.add(key); });
@@ -389,8 +397,15 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
                     icon = self._iconCoder.translateSet(iconKeys, iconCodingFlags);
                 }
 
+                if(hasHoverText) {
+                    var hoverKeys = new Exhibit.Set();
+                    accessors.getHoverText(itemID, database, function(key) { hoverKeys.add(key); });
+                    for(var i in hoverKeys._hash)
+                        hoverText = i;
+                }
+
                 for (var i = 0; i < durations.length; i++) {
-                    addEvent(itemID, durations[i], color, icon);
+                    addEvent(itemID, durations[i], color, icon, hoverText);
                 }
             } else {
                 unplottableItems.push(itemID);

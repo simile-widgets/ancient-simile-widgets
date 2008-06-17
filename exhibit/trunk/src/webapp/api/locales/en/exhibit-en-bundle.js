@@ -117,7 +117,7 @@ if(!("l10n" in Exhibit.TabularView)){Exhibit.TabularView.l10n={};
 Exhibit.TabularView.l10n.viewTooltip="View items in a table";
 Exhibit.TabularView.l10n.columnHeaderSortTooltip="Click to sort by this column";
 Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Click to sort in the reverse order";
-Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"sorted ascending by ":"sorted descending by ")+A;
+Exhibit.TabularView.l10n.makeSortActionTitle=function(B,A){return(A?"sorted ascending by ":"sorted descending by ")+B;
 };
 
 
@@ -175,6 +175,6 @@ Exhibit.FacetUtilities.l10n.missingThisField="(missing this field)";
 
 /* views-l10n.js */
 if(!("l10n" in Exhibit.ViewUtilities)){Exhibit.ViewUtilities.l10n={};
-}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(B,A,C){var D=A.length;
-return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> out of <class class='exhibit-views-totalCount'>%1</span> cannot be plotted.",[D==1?(D+" result"):(D+" results"),B]);
+}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(C,D,A){var B=D.length;
+return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> out of <class class='exhibit-views-totalCount'>%1</span> cannot be plotted.",[B==1?(B+" result"):(B+" results"),C]);
 };
