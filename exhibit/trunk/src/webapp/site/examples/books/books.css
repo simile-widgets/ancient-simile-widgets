@@ -9,14 +9,26 @@ body {
     vertical-align: top;
 }
 
+.column:first-child {
+    width: 20%;
+}
+
 .pageSidebar {
     font-size: 80%;
-    margin: 2em 0.5em 2em 1em;
+    margin: 2em 0.5em 2em 0em;
 }
 
 .addItemBox {
     margin-top: 1em;
     margin-bottom: 1em;
+}
+
+.scraperBox {
+    margin-top: 1em;
+}
+
+.scraperBox input {
+    margin-top: 0.25em;
 }
 
 .bookContainer {
@@ -50,6 +62,10 @@ body {
     font-size: 80%;
 }
 
+.editLink :first-child {
+    margin-right: 0.5em;
+}
+
 .bookTitle { font-size:1.5em; }
 
 span[availability="available"] {
@@ -62,21 +78,8 @@ span[availability="unavailable"] {
     padding: 0.1em;
 }
 
-.changeListView {
-    font-size: 80%;
-    margin-left: 0.5em;
+.changesContainer {
     margin-top: 2em;
-    width: 20em;
-}
-
-.editView-buttonContainer {
-    padding-top: 1em;
-    text-align: center;
-}
-
-.infoBoxHeader {
-    margin-top: 1em;
-    font-weight: bold;
 }
 
 .infoBox {
@@ -85,7 +88,20 @@ span[availability="unavailable"] {
     border: 1px solid #DDDDDD;
 }
 
-.infoBox label {
+.header {
     font-size: 80%;
     font-weight: bold;
+    margin-top: 0.5em;
+}
+
+.changes, .property-box {
+    font-size: 80%;
+    border: 1px solid #DDDDDD;
+    padding: 0.5em;
+    margin-bottom: 1em;
+}
+
+.submit-box {
+    margin-right: 1em;
+    text-align: right;
 }

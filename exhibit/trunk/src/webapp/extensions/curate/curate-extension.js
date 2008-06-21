@@ -12,7 +12,10 @@ Exhibit.CurateExtension = {
 (function() {
     var javascriptFiles = [
         "change-list-view.js",
-        "curate-view.js"
+        "curate-view.js",
+        "item-creator.js",
+        "scraper.js",
+        "submission.js"
     ];
     var cssFiles = [
         "change-list-view.css"

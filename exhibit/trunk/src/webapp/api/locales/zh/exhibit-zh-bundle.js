@@ -7,14 +7,14 @@ Exhibit.Database.l10n.labelProperty={label:"label",pluralLabel:"labels",reverseL
 Exhibit.Database.l10n.typeProperty={label:"type",pluralLabel:"types",reverseLabel:"type of",reversePluralLabel:"types of"};
 Exhibit.Database.l10n.uriProperty={label:"URI",pluralLabel:"URIs",reverseLabel:"URI of",reversePluralLabel:"URIs of"};
 Exhibit.Database.l10n.sortLabels={"text":{ascending:"a - z",descending:"z - a"},"number":{ascending:"smallest first",descending:"largest first"},"date":{ascending:"earliest first",descending:"latest first"},"boolean":{ascending:"false first",descending:"true first"},"item":{ascending:"a - z",descending:"z - a"}};
-Exhibit.Database.l10n.labelItemsOfType=function(E,C,I,D){var G=Exhibit.Database.l10n.itemType.label;
-var B="个";
-var F=I.getType(C);
+Exhibit.Database.l10n.labelItemsOfType=function(D,B,I,A){var G=Exhibit.Database.l10n.itemType.label;
+var C="个";
+var F=I.getType(B);
 if(F){G=F.getLabel();
-var A=F.getProperty("measureWord");
-if(A){B=A;
+var E=F.getProperty("measureWord");
+if(E){C=E;
 }}var H=document.createElement("span");
-H.innerHTML="<span class='"+D+"'>"+E+"</span>"+B+G;
+H.innerHTML="<span class='"+A+"'>"+D+"</span>"+C+G;
 return H;
 };
 
@@ -118,7 +118,7 @@ if(!("l10n" in Exhibit.TabularView)){Exhibit.TabularView.l10n={};
 Exhibit.TabularView.l10n.viewTooltip="View items in a table";
 Exhibit.TabularView.l10n.columnHeaderSortTooltip="Click to sort by this column";
 Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Click to sort in the reverse order";
-Exhibit.TabularView.l10n.makeSortActionTitle=function(B,A){return(A?"sorted ascending by ":"sorted descending by ")+B;
+Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"sorted ascending by ":"sorted descending by ")+A;
 };
 
 
@@ -176,6 +176,6 @@ Exhibit.FacetUtilities.l10n.missingThisField="(missing this field)";
 
 /* views-l10n.js */
 if(!("l10n" in Exhibit.ViewUtilities)){Exhibit.ViewUtilities.l10n={};
-}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(C,D,A){var B=D.length;
-return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> out of <class class='exhibit-views-totalCount'>%1</span> cannot be plotted.",[B==1?(B+" result"):(B+" results"),C]);
+}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(B,A,C){var D=A.length;
+return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> out of <class class='exhibit-views-totalCount'>%1</span> cannot be plotted.",[D==1?(D+" result"):(D+" results"),B]);
 };
