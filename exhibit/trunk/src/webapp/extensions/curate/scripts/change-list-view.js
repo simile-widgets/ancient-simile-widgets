@@ -18,157 +18,51 @@ function stripWhitespace(s) {
     return s.replace(/\s{2,}/g, ' ');
 }
 
-function addMockData(view) {
-    view._uiContext.getDatabase().addStatement('Gone With The Wind', 'label', 'Gone With The Wind')
-    view.onItemAdded('Gone With The Wind', 'book');
-    view.onItemModified('Gone With The Wind', 'author', '', 'Margaret Mitchell');
-    view.onItemModified('Gone With The Wind', 'year', '', '1936');
-    view.onItemModified('Gone With The Wind', 'availability', '', 'available');
-    view.onItemModified('Gone With The Wind', 'owner', '', 'Sarah');
-    view.onItemModified('Gone With The Wind', 'description', '', 'Going down south.');
-}
-
-Exhibit.ChangeListView = function(containerElmt, uiContext) {
-    this._div = $(containerElmt);
+Exhibit.ChangeList = function(elmt, uiContext, settings) {
+    this._div = $(elmt);
     this._uiContext = uiContext;
-    this._settings = {};
-    this._accessors = {};
-    
-    if (this._div.children().length == 0) {
-        this._template = $(stripWhitespace(Exhibit.ChangeListView.defaultTemplate));
-    } else {
-        this._template = this._div.children().clone();
-        this._div.empty();
-    }
-
-    this._changes = new Exhibit.OrderedDictionary();
-    this._submissionProperty = {};
-    
+    this._justSubmitted = false; // true after successful submission; triggers displaying of submissionText
     uiContext.getDatabase().addListener(this);
-    // addMockData(this);
+    this.addMockData();
+    this._initializeUI();
 }
 
 
-Exhibit.ChangeListView._settingSpecs = {
-    submitTo:        { type: "text", defaultValue: "http://valinor.mit.edu/sostler/gdocbackend.cgi" },
-    spreadsheetKey:  { type: "text" },
-    worksheetName:   { type: "text", defaultValue: "submissions"}
+Exhibit.ChangeList._settingSpecs = {
+    submissionText:  { type: "text", defaultValue: "Thanks for your submission! It has been sent to \
+        exhibit author for approval." },
+    placeholderText: { type: "text", defaultValue: "To begin editing this exhibit, click the \"edit\" \
+        links on the exhibit items." }
 };
 
-Exhibit.ChangeListView.create = function(configuration, containerElmt, uiContext) {
-    var view = new Exhibit.ChangeListView(
-        containerElmt,
-        Exhibit.UIContext.create(configuration, uiContext)
-    );
+Exhibit.UI.generateCreationMethods(Exhibit.ChangeList);
+Exhibit.UI.registerComponent('change-list', Exhibit.ChangeList);
 
-    Exhibit.SettingsUtilities.collectSettings(
-        configuration,
-        Exhibit.ChangeListView._settingSpecs,
-        view._settings);
-
-    view._initializeUI();
-    return view;
-};
-
-Exhibit.ChangeListView.createFromDOM = function(configElmt, containerElmt, uiContext) {
-    var configuration = Exhibit.getConfigurationFromDOM(configElmt);
-    var view = new Exhibit.ChangeListView(
-        containerElmt != null ? containerElmt : configElmt, 
-        Exhibit.UIContext.createFromDOM(configElmt, uiContext)
-    );
-
-    Exhibit.SettingsUtilities.collectSettingsFromDOM(
-        configElmt, 
-        Exhibit.ChangeListView._settingSpecs, 
-        view._settings);
-
-    Exhibit.SettingsUtilities.collectSettings(
-        configuration, 
-        Exhibit.ChangeListView._settingSpecs, 
-        view._settings);
-
-    view._initializeUI();
-    return view;
-};
-
-Exhibit.ChangeListView.prototype.dispose = function() {
+Exhibit.ChangeList.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this);
     this._div.innerHTML = "";
     this._div = null;
     this._uiContext = null;
     this._settings = null;
-    this._accessors = null;
-    this._changes = null;
-    this._submissionProperty = null;
 }
 
-Exhibit.ChangeListView.prototype.reset = function() {
-    this._changes = new Exhibit.OrderedDictionary();
+Exhibit.ChangeList.prototype.reset = function() {
     this._initializeUI();
-    this._submissionProperty = {};
 }
 
-
-//=============================================================================
-// Item Change Listener methods
-//=============================================================================
-
-function makeItemChange(itemID, changeType, itemType) {
-    var c = { 
-        id: itemID,
-        type: changeType,
-        enabled: true,
-        changes: new Exhibit.OrderedDictionary()
-    };
-    if (itemType) { c.itemType = itemType }
-    return c;
-}
-
-function makePropertyChange(prop, origVal, newVal) {
-    return {
-        prop: prop,
-        origVal: origVal,
-        newVal: newVal
-    };
-}
-
-Exhibit.ChangeListView.prototype.onItemAdded = function(itemID, itemType) {
-    var db = this._uiContext.getDatabase();
-    var itemChange = makeItemChange(itemID, 'added', itemType);
-
-    db.getAllProperties().forEach(function(prop) {
-        var value = db.getObject(itemID, prop);
-        if (value) {
-            var propChange = makePropertyChange(prop, null, value);
-            itemChange.changes.put(prop, propChange);
-        }
+Exhibit.ChangeList.prototype.addMockData = function(view) {
+    this._uiContext.getDatabase().addItem({
+        label: 'Gone With The Wind',
+        type: 'book',
+        author: 'Margaret Mitchell',
+        year: '1936',
+        availability: 'available',
+        owner: 'Sarah',
+        description: 'Goin\' down south'
     });
-    
-    this._changes.put(itemID, itemChange);
-    this._initializeUI();
-}
-
-Exhibit.ChangeListView.prototype.onItemModified = function(itemID, prop, prevVal, newVal) {
-    if (!this._changes.has(itemID)) {
-        this._changes.put(itemID, makeItemChange(itemID, 'modified'));
-    }
-    var itemChange = this._changes.get(itemID);
-    var origChange = itemChange.changes.get(prop);
-
-    if (!origChange) {
-        var propChange = makePropertyChange(prop, prevVal, newVal);
-        itemChange.changes.put(prop, propChange);
-    } else {
-        if (origChange.origVal == newVal) {
-            itemChange.changes.remove(prop);
-            if (itemChange.type =='modified' && itemChange.changes.size() == 0) {
-                this._changes.remove(itemID);
-            }
-        } else {
-            origChange.newVal = newVal;
-        }
-    }
-    this._initializeUI();
+    this._uiContext.getDatabase().editItem('White Noise', 'year', '1990');
+    this._uiContext.getDatabase().editItem('White Noise', 'author', 'Don DeMan');
+    this._uiContext.getDatabase().removeItem('Objectif Lune');
 }
 
 
@@ -176,168 +70,64 @@ Exhibit.ChangeListView.prototype.onItemModified = function(itemID, prop, prevVal
 // UI templating
 //=============================================================================
 
-
-function getByAttr(parent, attr, value) {
-    var f = function( ) { 
-        if (value === undefined) {
-            return $(this).attr(attr) !== undefined;
-        } else {
-            return $(this).attr(attr) == value;
-        }
-    }
-    return parent.find('*').filter(f);
-}
-
-// TODO: replace default template
-Exhibit.ChangeListView.defaultTemplate = null;
-
-Exhibit.ChangeListView.ignoredProperties = ['id', 'uri', 'type']
-
-Exhibit.ChangeListView.prototype.makeViewFromTemplate = function() {
-    var view = this;
-    var db = this._uiContext.getDatabase();
-    var template = this._template.clone();
-
-    if (this._changes.size() == 0) {
-        getByAttr(template, 'ex:role', 'item').remove();
-        getByAttr(template, 'ex:role', 'submit-button').attr('disabled', true);
-        getByAttr(template, 'ex:submissionProperty').each(function() {
-            var attr = $(this).attr('ex:submissionProperty');
-            $(this).val(view._submissionProperty[attr]);
-            $(this).attr('disabled', true);
-        });
+Exhibit.ChangeList.prototype.makePlaceholder = function() {
+    var placeHolder = $('<span>').addClass('placeholderMessage')
+    if (this._justSubmitted) {
+        this._justSubmitted = false;
+        placeHolder.text(this._settings.submissionText);
     } else {
-        getByAttr(template, 'ex:role', 'placeholder').remove();
-        var changeContainer = $('<div>');
-                
-        this._changes.values().forEach(function(item) {
-            var itemTemplate = getByAttr(template, 'ex:role', 'item').addClass('edit-item').clone();
-            var label = db.getObject(item.id, 'label') || db.getObject(item.id, 'id');
-            var editContainer = $('<div>');
-            
-            getByAttr(itemTemplate, 'ex:itemRole', 'label').text(label);
-            
-            item.changes.values().forEach(function(edit) {
-                if (Exhibit.ChangeListView.ignoredProperties.indexOf(edit.prop) == -1) {
-                    var editTemplate = getByAttr(itemTemplate, 'ex:itemRole', 'edit').clone().addClass('edit-entry');
-
-                    getByAttr(editTemplate, 'ex:editRole', 'property').addClass('edit-property').text(edit.prop);
-                    getByAttr(editTemplate, 'ex:editRole', 'old-value').addClass('edit-old-value').text(edit.origVal);
-                    getByAttr(editTemplate, 'ex:editRole', 'new-value').addClass('edit-new-value').text(edit.newVal);
-
-                    editContainer.append(editTemplate);
-                }
-            });
-            
-            getByAttr(itemTemplate, 'ex:itemRole', 'edit').replaceWith(editContainer);
-            changeContainer.append(itemTemplate);
-        });
-        
-        getByAttr(template, 'ex:role', 'item').replaceWith(changeContainer);
-
-        getByAttr(template, 'ex:submissionProperty').each(function() {
-            var attr = $(this).attr('ex:submissionProperty');
-            $(this).attr('disabled', false);
-            $(this).val(view._submissionProperty[attr]);
-            $(this).change(function(){
-                view._submissionProperty[attr] = $(this).val();
-            });
-        });
-
-        getByAttr(template, 'ex:role', 'submit-button').click(function() { view.submitChanges() });
+        placeHolder.text(this._settings.placeholderText);
     }
-
-    return template;
+    return placeHolder;
 }
 
-Exhibit.ChangeListView.prototype._initializeUI = function() {
+Exhibit.ChangeList.prototype.renderPropChange = function(prop, oldVal, newVal) {
+    var t = function(t, c) { return $('<span>').text(t).addClass(c) }
+    var div = $('<div>').addClass('property-change');
+
+    if (oldVal) {
+        div.append(
+            t(prop, 'property-name'), ' was changed from ', 
+            t(oldVal, 'old-value'), ' to ', 
+            t(newVal, 'new-value'));
+    } else {
+        div.append(
+            t(prop, 'property-name'), ' was set to ', 
+            t(newVal, 'new-value'));
+    }
+
+    return div;
+}
+
+Exhibit.ChangeList.prototype.renderItem = function(item) {
+    var labelText = item.label + " was " + item.change;
+    var div = $('<div>').append(
+        $('<div>').text(labelText).addClass('change-label')
+    );
+    
+    if (item.change != 'deleted') {
+        for (var prop in item.vals) {
+            var v = item.vals[prop];
+            div.append(this.renderPropChange(prop, v.oldVal, v.newVal));
+        }
+    }
+    return div;
+}
+
+Exhibit.ChangeList.prototype._initializeUI = function() {
     this._div.empty();
-    this._div.append(this.makeViewFromTemplate());
-}
-
-
-//=============================================================================
-// Change submission
-//=============================================================================
-
-Exhibit.ChangeListView.prototype.makeSubmissionMessage = function() {
     var view = this;
-    var message = []
+    var changes = this._uiContext.getDatabase().collectChanges();
     
-    var changes = this._changes.values().forEach(function(item) {  
-        var submission = {
-            type: item.itemType,
-            id: item.id
-        };
-        
-        for (var i in view._submissionProperty) {
-            submission[i] = view._submissionProperty[i];
-        }
-        
-        item.changes.values().forEach(function(edit){
-            submission[edit.prop] = edit.newVal;
+    changes.sort(function(a,b) { return a.label > b.label });
+
+    if (changes.length == 0) {
+        this._div.append(makePlaceholder());
+    } else {
+        changes.forEach(function(item) {
+            view._div.append(view.renderItem(item));
         });
-        if (!submission.label) {
-            submission.label = submission.id;
-        }
-        message.push(submission);
-    });
-    
-    return message;
-}
-
-var ignoredParams = ['rel'];
-
-function parseSubmissionParams() {
-    var sub = $('head link[rel="exhibit/submission"]').get(0);
-    if (!sub) { return {} };
-    var params = {};
-
-    for (var i in sub.attributes) {
-        if (sub.attributes.hasOwnProperty(i)) {
-            var node = sub.attributes[i];   
-            if (ignoredParams.indexOf(node.nodeName) == -1) {
-                params[node.nodeName] = node.nodeValue;
-            }
-        }
     }
-    return params;
-}
-
-Exhibit.ChangeListView.prototype.submitChanges = function() {
-    var view = this;
-    var ss = this._settings.spreadsheetKey;
-    var wkname = this._settings.worksheetName;
-    var message = this.makeSubmissionMessage();
-    var str = SimileAjax.JSON.toJSONString(message);
-    
-    var error = function(xhr, textStatus, errorThrown) {
-        alert("Error submitting changes: " + xhr.responseText);
-        getByAttr(view._div, 'ex:role', 'submit-button').attr('disabled', false);
-    };
-    
-    var success = function(data) {
-        view.reset(); // trigger redraw
-
-        getByAttr(view._div, 'ex:role', 'submit-button').attr('disabled', false);
-
-        var successMsg = 'Submission successful! Feel free to edit further.';
-        getByAttr(view._div, 'ex:role', 'placeholder').text(successMsg);
-    };
-    
-    getByAttr(view._div, 'ex:role', 'submit-button').attr('disabled', true);
-    
-    var params = parseSubmissionParams();
-    params['message'] = str;
-    
-    $.ajax({
-        url: this._settings.submitTo,
-        dataType: 'jsonp',
-        jsonp: 'callback',
-        data: params, //'ss='+ ss + '&wkname=' + wkname + '&message='+str,
-        success: success,
-        error: error  
-    });
 }
 
 })();

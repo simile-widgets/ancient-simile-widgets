@@ -94,7 +94,8 @@ class Worksheet(object):
 
 if len(sys.argv) > 1 and sys.argv[1] == 'test':
     callback = None
-    exhibit_name = "Books"
+    ss_key = "pHCVS1LwNriVBoIRKJryCeg"
+    wk_name = "submissions"
     json = '[{"id":"The Great Gatsby","email":"sostler@mit.edu","comment":"dummy","year":"1926","label":"The Great Gatsby"}]'
 else:
     form = cgi.FieldStorage()
@@ -119,7 +120,6 @@ try:
     client = gdata_login()
     worksheet = Spreadsheet(client, ss_key).get_worksheet(name='submissions')
     for r in message:
-        r['added'] = '="' + str(date.today().isoformat()) + '"'
         worksheet.insert_row(r)
     output_object({'status': 'ok'}, callback)
 except Exception, e:

@@ -8,14 +8,39 @@ Exhibit.UI = new Object();
  *  Component instantiation functions
  *----------------------------------------------------------------------
  */
+ 
+Exhibit.UI.componentMap = {};
+
+Exhibit.UI.registerComponent = function(name, comp) {
+    var msg = "Cannot register component " + name + " -- ";
+    if (name in Exhibit.UI.componentMap) {
+        SimileAjax.Debug.warn(msg + 'another component has taken that name');
+    } else if (!comp) {
+        SimileAjax.Debug.warn(msg + 'no component object provided')
+    } else if (!comp.create) {
+        SimileAjax.Debug.warn(msg + "component has no create function");
+    } else if (!comp.createFromDOM) {
+        SimileAjax.Debug.warn(msg + "component has no createFromDOM function");
+    } else {
+        Exhibit.UI.componentMap[name] = comp;
+    }
+};
+
 Exhibit.UI.create = function(configuration, elmt, uiContext) {
     if ("role" in configuration) {
         var role = configuration.role;
         if (role != null && role.startsWith("exhibit-")) {
             role = role.substr("exhibit-".length);
         }
+        
+        if (role in Exhibit.UI.componentMap) {
+            var createFunc = Exhibit.UI.componentMap[role].create;
+            return createFunc(configuration, elmt, uiContext);
+        }
+        
         switch (role) {
         case "lens":
+        case "edit-lens":
             Exhibit.UIContext.registerLens(configuration, uiContext.getLensRegistry());
             return null;
         case "view":
@@ -30,8 +55,6 @@ Exhibit.UI.create = function(configuration, elmt, uiContext) {
             return Exhibit.ViewPanel.create(configuration, elmt, uiContext);
         case "logo":
             return Exhibit.Logo.create(configuration, elmt, uiContext);
-        case "item-creator":
-            return Exhibit.UI.createItemCreator(configuration, elmt, uiContext);
         case "hiddenContent":
             elmt.style.display = "none";
             return null;
@@ -42,8 +65,15 @@ Exhibit.UI.create = function(configuration, elmt, uiContext) {
 
 Exhibit.UI.createFromDOM = function(elmt, uiContext) {
     var role = Exhibit.getRoleAttribute(elmt);
+    
+    if (role in Exhibit.UI.componentMap) {
+        var createFromDOMFunc = Exhibit.UI.componentMap[role].createFromDOM;
+        return createFromDOMFunc(elmt, uiContext);
+    }
+    
     switch (role) {
     case "lens":
+    case "edit-lens":
         Exhibit.UIContext.registerLensFromDOM(elmt, uiContext.getLensRegistry());
         return null;
     case "view":
@@ -58,13 +88,37 @@ Exhibit.UI.createFromDOM = function(elmt, uiContext) {
         return Exhibit.ViewPanel.createFromDOM(elmt, uiContext);
     case "logo":
         return Exhibit.Logo.createFromDOM(elmt, uiContext);
-    case "item-creator":
-        return Exhibit.UI.createItemCreatorFromDOM(elmt, uiContext);
     case "hiddenContent":
         elmt.style.display = "none";
         return null;
     }
     return null;
+};
+
+
+Exhibit.UI.generateCreationMethods = function(constructor) {
+    constructor.create = function(configuration, elmt, uiContext) {
+        var newContext = Exhibit.UIContext.create(configuration, uiContext);
+        var settings = {};
+        
+        Exhibit.SettingsUtilities.collectSettings(
+            configuration, 
+            constructor._settingSpecs || {}, 
+            settings);
+            
+        return new constructor(elmt, newContext, settings);
+    };
+    constructor.createFromDOM = function(elmt, uiContext) {
+        var newContext = Exhibit.UIContext.createFromDOM(elmt, uiContext);
+        var settings = {};
+        
+        Exhibit.SettingsUtilities.collectSettingsFromDOM(
+            elmt, 
+            constructor._settingSpecs || {},
+            settings);
+        
+        return new constructor(elmt, newContext, settings);
+    };
 };
 
 Exhibit.UI.createView = function(configuration, elmt, uiContext) {
@@ -148,103 +202,6 @@ Exhibit.UI.createCoordinator = function(configuration, uiContext) {
 Exhibit.UI.createCoordinatorFromDOM = function(elmt, uiContext) {
     return Exhibit.Coordinator.createFromDOM(elmt, uiContext);
 };
-
-
-
-Exhibit.UI.createItemCreator = function(configuration, elmt, uiContext) {
-    var db = uiContext.getDatabase();
-    var itemType = configuration.itemType || 'item';
-    var itemTypeLabel = db.getType(itemType).getLabel();
-    var $ = SimileAjax.jQuery;
-
-    var makeNewItemID = function() {
-        var seed = "Untitled " + itemTypeLabel;
-        var count = "";
-        var name = seed;
-        while (db.containsItem(name)) {
-            count++;
-            name = seed + ' ' + count;
-        }
-        return name;
-    };
-
-    if (elmt.nodeName.toLowerCase() == 'a') {
-        elmt.href = "javascript:";
-    }
-    
-    var itemCreationHandler = function() {
-        var id = makeNewItemID();
-        var item = { type: itemType, id: id, label: id };
-
-        var popupDiv = $('<div>');
-        var itemDiv = $('<div>').appendTo(popupDiv);
-        
-        var cancelButton = $('<button>').text('Cancel');
-        var submitButton = $('<button>').text('Add to Exhibit');
-
-        $('<table>').append($('<tr>').append(
-            $('<td>').append(cancelButton),
-            $('<td>').append(submitButton)
-        )).appendTo(popupDiv).css({'text-align': 'center', width: '100%' });
-
-        // item's type isn't in DB, so LensRegistry.createLens won't work                
-        var template = uiContext.getLensRegistry()._typeToLens[item.type + '-editor'];
-        var lens = new Exhibit.Lens();
-        
-        // passing a struct with type 'temporaryItem' to _constructFromLensTemplateDOM
-        // results in _constructEditableContent using a special changeHandler for
-        // the item lens' form elements.
-        var mockID = {
-            type: 'temporaryItem',
-            values: item
-        };
-
-        lens._constructFromLensTemplateDOM(
-            mockID, 
-            itemDiv.get(0), 
-            uiContext, 
-            template);
-                
-        // attribute on div is mechanism for tracking WindowManager's layers
-        popupDiv.attr('exibit_inpop', true);
-        var closePopup = function() {
-            SimileAjax.WindowManager._layers.forEach(function(layer) {
-                if ($(layer.elmt).find("[exibit_inpop]").length > 0) {
-                    SimileAjax.WindowManager.popLayer(layer);
-                }
-            });
-        }
-        
-        var addToExhibit = function() {
-            closePopup();
-            db.loadItems([item], ''); // TODO: what URI?
-            db._listeners.fire('onItemAdded', [item.id, item.type]);
-        }
-        
-        cancelButton.click(closePopup);
-        submitButton.click(addToExhibit);
-        
-        var coords = SimileAjax.DOM.getPageCoordinates(elmt);
-        SimileAjax.Graphics.createBubbleForContentAndPoint(
-            popupDiv.get(0),
-            coords.left + Math.round(elmt.offsetWidth / 2), 
-            coords.top + Math.round(elmt.offsetHeight / 2),
-            uiContext.getSetting("bubbleWidth")
-        );        
-    }
-    
-    SimileAjax.jQuery(elmt).click(itemCreationHandler);
-    return elmt;
-};
-
-Exhibit.UI.createItemCreatorFromDOM = function(elmt, uiContext) {
-    var configuration = {}
-    var itemType = Exhibit.getAttribute(elmt, 'itemType');
-    if (itemType)
-        configuration.itemType = itemType;
-
-    return Exhibit.UI.createItemCreator(configuration, elmt, uiContext);
-}
 
 Exhibit.UI._stringToObject = function(name, suffix) {
     if (!name.startsWith("Exhibit.")) {
@@ -621,3 +578,13 @@ Exhibit.UI.createTranslucentImage = function(relativeUrl, verticalAlign) {
 Exhibit.UI.createTranslucentImageHTML = function(relativeUrl, verticalAlign) {
     return SimileAjax.Graphics.createTranslucentImageHTML(Exhibit.urlPrefix + relativeUrl, verticalAlign);
 };
+
+// jQuery can't search for attributes with colons in them
+Exhibit.UI.findAttribute = function(attr, value, parent) {
+    var parent = SimileAjax.jQuery(parent || document.body);
+    var f = function( ) {
+        var v = this.getAttribute(attr);
+        return value ? value == v : !!v;
+    }
+    return parent.find('*').add(parent).filter(f);
+}

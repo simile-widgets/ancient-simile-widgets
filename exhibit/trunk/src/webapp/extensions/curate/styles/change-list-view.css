@@ -1,35 +1,12 @@
-.header {
+.change-label {
     font-weight: bold;
 }
 
-.changeList {
-    border: 1px solid #DDDDDD;
-    padding: 0.5em;
-    margin: 0 0 1em 0;
-}
-
-.item-label {
-    font-weight: bold;
-    font-size: 1.2em;
-}
-
-.edit-item {
-    margin-top:0.5em;
-}
-
-.edit-item:first-child {
-    margin-top:0em;
-}
-
-.edit-entry {
+.property-change {
     margin-left: 1.5em;
+    font-size: 90%;
 }
 
-.buttonContainer {
-    margin-top: 0.4em;
-    text-align: right;
-}
-
-.edit-property, .edit-new-value {
+.property-name, .old-value, .new-value {
     text-decoration: underline;
 }

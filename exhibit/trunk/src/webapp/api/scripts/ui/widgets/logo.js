@@ -12,10 +12,10 @@ Exhibit.Logo.create = function(configuration, elmt, exhibit) {
     var logo = new Exhibit.Logo(elmt, exhibit);
     
     if ("color" in configuration) {
-        this._color = configuration.color;
+        logo._color = configuration.color;
     }
     
-    Logo._initializeUI();
+    logo._initializeUI();
     return logo;
 };
 

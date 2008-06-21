@@ -117,7 +117,7 @@ if(!("l10n" in Exhibit.TabularView)){Exhibit.TabularView.l10n={};
 Exhibit.TabularView.l10n.viewTooltip="Voir les items dans un tableau";
 Exhibit.TabularView.l10n.columnHeaderSortTooltip="Cliquer pour trier sur cette colonne";
 Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Cliquer pour trier dans l'ordre inverse";
-Exhibit.TabularView.l10n.makeSortActionTitle=function(B,A){return(A?"triés par ordre croissant selon ":"triés par ordre décroissant selon ")+B;
+Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"triés par ordre croissant selon ":"triés par ordre décroissant selon ")+A;
 };
 
 
@@ -175,6 +175,6 @@ Exhibit.FacetUtilities.l10n.missingThisField="(missing this field)";
 
 /* views-l10n.js */
 if(!("l10n" in Exhibit.ViewUtilities)){Exhibit.ViewUtilities.l10n={};
-}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(C,D,A){var B=D.length;
-return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> sur <class class='exhibit-views-totalCount'>%1</span> ne peuvent pas être tracés.",[B==1?(B+" résultat"):(B+" résultats"),C]);
+}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(B,A,C){var D=A.length;
+return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> sur <class class='exhibit-views-totalCount'>%1</span> ne peuvent pas être tracés.",[D==1?(D+" résultat"):(D+" résultats"),B]);
 };

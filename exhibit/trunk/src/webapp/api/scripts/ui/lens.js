@@ -7,18 +7,24 @@ Exhibit.LensRegistry = function(parentRegistry) {
     this._parentRegistry = parentRegistry;
     this._defaultLens = null;
     this._typeToLens = {};
+    this._editLensTemplates = {};
     this._lensSelectors = [];
 };
-
-// Use a global registry to allow for global changes to edit-mode status.
-Exhibit.LensRegistry.EditModeRegistry = {};
 
 Exhibit.LensRegistry.prototype.registerDefaultLens = function(elmtOrURL) {
     this._defaultLens = (typeof elmtOrURL == "string") ? elmtOrURL : elmtOrURL.cloneNode(true);
 };
 
 Exhibit.LensRegistry.prototype.registerLensForType = function(elmtOrURL, type) {
-    this._typeToLens[type] = (typeof elmtOrURL == "string") ? elmtOrURL : elmtOrURL.cloneNode(true);
+    if (typeof elmtOrURL == 'string') {
+        this._typeToLens[type] = elmtOrURL;
+    } else if (elmtOrURL.getAttribute('ex:role') == 'lens') {
+        this._typeToLens[type] = elmtOrURL.cloneNode(true);
+    } else if (elmtOrURL.getAttribute('ex:role') == 'edit-lens') {
+        this._editLensTemplates[type] = elmtOrURL.cloneNode(true);;
+    } else {
+        SimileAjax.Debug.log('Unknown lens type ', elmtOrURL);
+    }
 };
 
 Exhibit.LensRegistry.prototype.addLensSelector = function(lensSelector) {
@@ -26,6 +32,12 @@ Exhibit.LensRegistry.prototype.addLensSelector = function(lensSelector) {
 };
 
 Exhibit.LensRegistry.prototype.getLens = function(itemID, database) {    
+    return database.isBeingEdited(itemID) 
+        ? this.getEditLens(itemID, database)
+        : this.getNormalLens(itemID, database);
+};
+
+Exhibit.LensRegistry.prototype.getNormalLens = function(itemID, database) {
     for (var i = 0; i < this._lensSelectors.length; i++) {
         var lens = this._lensSelectors[i](itemID, database);
         if (lens != null) {
@@ -44,33 +56,28 @@ Exhibit.LensRegistry.prototype.getLens = function(itemID, database) {
         return this._parentRegistry.getLens(itemID, database);
     }
     return null;
-};
+}
 
 Exhibit.LensRegistry.prototype.getEditLens = function(itemID, database) {
-    var type = database.getObject(itemID, "type") + '-editor';
-    if (type in this._typeToLens) {
-        return this._typeToLens[type];
+    var type = database.getObject(itemID, "type");
+    if (type in this._editLensTemplates) {
+        return this._editLensTemplates[type];
+    } else {
+        return this._parentRegistry && this._parentRegistry.getEditLens(itemID, database);
     }
-    if (this._parentRegistry) {
-        return this._parentRegistry.getEditLens(itemID, database);
-    }
-    return null;
 }
 
 Exhibit.LensRegistry.prototype.createLens = function(itemID, div, uiContext) {
     var lens = new Exhibit.Lens();
-    var editing = this.isBeingEdited(itemID);
     
-    var lensTemplate = editing
-        ? this.getEditLens(itemID, uiContext.getDatabase())
-        : this.getLens(itemID, uiContext.getDatabase());
+    if (uiContext.getDatabase().isNewItem(itemID)) {
+        SimileAjax.jQuery(div).addClass('newItem');
+    }
+
+    var lensTemplate = this.getLens(itemID, uiContext.getDatabase());
     
     if (lensTemplate == null) {
-        if (editing) {
-            lens._constructDefaultEditingUI(itemID, div, uiContext);
-        } else {
-            lens._constructDefaultUI(itemID, div, uiContext);
-        }
+        lens._constructDefaultUI(itemID, div, uiContext);
     } else if (typeof lensTemplate == "string") {
         lens._constructFromLensTemplateURL(itemID, div, uiContext, lensTemplate);
     } else {
@@ -78,23 +85,7 @@ Exhibit.LensRegistry.prototype.createLens = function(itemID, div, uiContext) {
     }
     return lens;
 };
- 
-/*==================================================.
- *  Edit Mode Support
- *==================================================
- */
 
-Exhibit.LensRegistry.prototype.setEditMode = function(itemID, val) {
-    if (val) {
-        Exhibit.LensRegistry.EditModeRegistry[itemID] = true;
-    } else {
-        delete Exhibit.LensRegistry.EditModeRegistry[itemID];
-    }
-}
-
-Exhibit.LensRegistry.prototype.isBeingEdited = function(itemID) {
-    return Exhibit.LensRegistry.EditModeRegistry[itemID];
-}
  
 /*==================================================
  *  Exhibit.Lens
@@ -572,7 +563,7 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
 
 Exhibit.Lens._constructFromLensTemplateNode = function(
     roots, rootValueTypes, templateNode, parentElmt
-) {
+) {    
     if (typeof templateNode == "string") {
         parentElmt.appendChild(document.createTextNode(templateNode));
         return;
@@ -580,6 +571,15 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
     var uiContext = templateNode.uiContext;
     var database = uiContext.getDatabase();
     var children = templateNode.children;
+    
+    function processChildren() {
+        if (children != null) {
+            for (var i = 0; i < children.length; i++) {
+                Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt);
+            }
+        }   
+    }
+    
     if (templateNode.condition != null) {
         if (templateNode.condition.test == "if-exists") {
             if (!templateNode.condition.expression.testExists(
@@ -715,19 +715,18 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             a.target = "_blank";
             elmt.appendChild(a);
             break;
+        case "remove-item":
+            if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
+            SimileAjax.jQuery(elmt).click(function() { database.removeItem(itemID) });
+            processChildren();
+            break;
         case "start-editing":
-            if (templateNode.tag == 'a')
-                elmt.href = 'javascript:';
+            if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
             SimileAjax.jQuery(elmt).click(function(){ 
-                uiContext.getLensRegistry().setEditMode(itemID, true);
+                database.setEditMode(itemID, true);
                 uiContext.getCollection()._listeners.fire("onItemsChanged", []);
-                
             });
-            if (children != null) {
-                for (var i = 0; i < children.length; i++) {
-                    Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt);
-                }
-            }
+            processChildren();
             break;
         case "stop-editing":
             if ((typeof itemID) != "string") { // lens is in 'add new item' bubble
@@ -736,14 +735,10 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 if (templateNode.tag == 'a')
                     elmt.href = 'javascript:';
                 SimileAjax.jQuery(elmt).click(function() {
-                    uiContext.getLensRegistry().setEditMode(itemID, false);
+                    database.setEditMode(itemID, true);
                     uiContext.getCollection()._listeners.fire("onItemsChanged", []);
                 });
-                if (children != null) {
-                    for (var i = 0; i < children.length; i++) {
-                        Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt);
-                    }
-                }   
+                processChildren();
             }
             break;
         }
@@ -778,13 +773,8 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
     } else if (templateNode.edit != null) {
         // TODO: handle editType
 
-        // process children first, because we need 
-        // access to the OPTION children of SELECT tags
-        if (children != null) {
-            for (var i = 0; i < children.length; i++) {
-                Exhibit.Lens._constructFromLensTemplateNode(roots, rootValueTypes, children[i], elmt);
-            }
-        }
+        // process children first, to get access to OPTION children of SELECT elements
+        processChildren();
         Exhibit.Lens._constructEditableContent(templateNode, elmt, itemID, uiContext);
     } else if (children != null) {
         for (var i = 0; i < children.length; i++) {
@@ -854,14 +844,9 @@ Exhibit.Lens._constructEditableContent = function(templateNode, elmt, itemID, ui
     } else {
         var value = db.getObject(itemID, attr);
         var changeHandler = function() {
-            var prevVal = db.getObject(itemID, attr);
-            db.removeObjects(itemID, attr);
-            db.addStatement(itemID, attr, this.value);
-            db.getProperty(attr)._onNewData(); // flush property cache
-            db._listeners.fire('onItemModified', [itemID, attr, prevVal, this.value]);
-            uiContext.getExhibit().getDefaultCollection()._update();
+            db.editItem(itemID, attr, this.value);
         }   
-    }    
+    }
     
     if (templateNode.tag == 'select') {
         for (var i in elmt.options) {

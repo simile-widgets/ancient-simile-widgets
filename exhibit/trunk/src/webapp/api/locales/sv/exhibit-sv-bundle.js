@@ -108,7 +108,7 @@ if(!("l10n" in Exhibit.TabularView)){Exhibit.TabularView.l10n={};
 Exhibit.TabularView.l10n.viewTooltip="Visa i tabell";
 Exhibit.TabularView.l10n.columnHeaderSortTooltip="Klicka för att sortera efter den här kolumnen";
 Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Klicka för att välja omvänd ordning";
-Exhibit.TabularView.l10n.makeSortActionTitle=function(B,A){return"sortera efter "+(A?"stigande ":"fallande ")+B;
+Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return"sortera efter "+(B?"stigande ":"fallande ")+A;
 };
 
 
@@ -166,6 +166,6 @@ Exhibit.FacetUtilities.l10n.missingThisField="(missing this field)";
 
 /* views-l10n.js */
 if(!("l10n" in Exhibit.ViewUtilities)){Exhibit.ViewUtilities.l10n={};
-}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(C,D,A){var B=D.length;
-return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> out of <class class='exhibit-views-totalCount'>%1</span> cannot be plotted.",[B==1?(B+" result"):(B+" results"),C]);
+}Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(B,A,C){var D=A.length;
+return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> out of <class class='exhibit-views-totalCount'>%1</span> cannot be plotted.",[D==1?(D+" result"):(D+" results"),B]);
 };

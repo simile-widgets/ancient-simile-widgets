@@ -19,6 +19,12 @@ Exhibit.Database._Impl = function() {
     this._properties = {};
     this._propertyArray = {};
     
+    this._editRegistry = {};
+    
+    this._originalValues = {};
+    this._deletedItems = {};
+    this._newItems = {};
+    
     this._listeners = new SimileAjax.ListenerQueue();
     
     this._spo = {};
@@ -952,3 +958,134 @@ Exhibit.Database._RangeIndex.prototype._indexOf = function(v) {
     
     return to;
 };
+
+
+//=============================================================================
+// Editable Database Support
+//=============================================================================
+
+
+Exhibit.Database._Impl.prototype.setEditMode = function(itemID, val) {
+    if (val) {
+        this._editRegistry[itemID] = true;
+    } else {
+        delete this._editRegistry[itemID];
+    }
+}
+
+Exhibit.Database._Impl.prototype.isBeingEdited = function(id) {
+    return !!this._editRegistry[id];
+}
+
+Exhibit.Database._Impl.prototype.isNewItem = function(id) {
+    return id in this._newItems;
+}
+
+Exhibit.Database._Impl.prototype.getItem = function(id) {
+    var item = { id: id };
+    var properties = this.getAllProperties();
+    for (var i in properties) {
+        var prop = properties[i];
+        var val = this.getObject(id, prop);
+        if (val) { item[prop] = val };
+    }
+    return item;
+}
+
+Exhibit.Database._Impl.prototype.addItem = function(item) {
+    if (!item.id) { item.id = item.label };
+    this.loadItems([item], '');
+    this.setEditMode(item.id, true);
+
+    delete this._deletedItems[item.id];
+    this._newItems[item.id] = true;
+    
+    this._listeners.fire('onAfterLoadingItems', []);
+}
+
+Exhibit.Database._Impl.prototype.editItem = function(id, prop, value) {
+    if (prop.toLowerCase() == 'id') {
+        throw "can't change ID of " + id;
+    }
+    var prevValue = this.getObject(id, prop);
+    this._originalValues[id] = this._originalValues[id] || {};
+    this._originalValues[id][prop] = this._originalValues[id][prop] || prevValue;
+    
+    this.removeObjects(id, prop);
+    this.addStatement(id, prop, value);
+    this.getProperty(prop)._onNewData(); // flush property cache
+    this._listeners.fire('onAfterLoadingItems', []);
+}
+
+Exhibit.Database._Impl.prototype.removeItem = function(id) {
+    if (!this.containsItem(id)) {
+        throw "Removing non-existent item " + id;
+    }
+
+    this._items.remove(id);
+    delete this._spo[id];
+    this.setEditMode(id, false);
+    
+    // when new items are deleted, they disappear
+    if (this._newItems[id]) {
+        delete this._deletedItems[id];
+    } else {
+        this._deletedItems[id] = this.getItem(id);
+    }
+
+    var properties = this.getAllProperties();
+    for (var i in properties) {
+        var prop = properties[i];
+        this.removeObjects(id, prop);
+    }
+
+    this._listeners.fire('onAfterLoadingItems', []);
+}
+
+Exhibit.Database.defaultIgnoredProperties = ['id', 'uri', 'type'];
+
+Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
+    ignoredProperties = ignoredProperties || Exhibit.Database.defaultIgnoredProperties;
+    var ret = [];
+    
+    for (var id in this._newItems) {
+        var type = this.getObject(id, 'type');
+        var label = this.getObject(id, 'label') || id;
+        var item = { id: id, label: label,change: 'added', type: type, vals: {} };
+        var properties = this.getAllProperties();
+        
+        for (var i in properties) {
+            var prop = properties[i];
+            if (ignoredProperties.indexOf(prop) != -1) { continue; }
+            var val = this.getObject(id, prop);
+            if (val) { item.vals[prop] = { newVal: val } };
+        }
+        ret.push(item);
+    }
+    
+    for (var id in this._originalValues) {
+        if (id in this._newItems) { continue; }
+        
+        var type = this.getObject(id, 'type');
+        var label = this.getObject(id, 'label') || id;
+        var item = { id: id, label: label, change: 'modified', type: type, vals: {} };
+        var vals = this._originalValues[id];
+        
+        for (var prop in vals) {
+            if (ignoredProperties.indexOf(prop) != -1) { continue; }
+            
+            var oldVal = this._originalValues[id][prop];
+            var newVal = this.getObject(id, prop);
+            item.vals[prop] = { oldVal: oldVal, newVal: newVal };
+        }
+        ret.push(item);
+    }
+    
+    for (var id in this._deletedItems) {
+        var type = this._deletedItems[id].type;
+        var label = this._deletedItems[id].label || id;
+        ret.push({id: id, label: label, change: 'deleted', type: type });
+    }
+    
+    return ret;
+}

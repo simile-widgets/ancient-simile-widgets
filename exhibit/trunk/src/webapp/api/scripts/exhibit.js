@@ -47,6 +47,22 @@ Exhibit.getConfigurationFromDOM = function(elmt) {
     return {};
 };
 
+Exhibit.extractOptionsFromElement = function(elmt) {
+    var opts = {};
+    var attrs = elmt.attributes;
+    for (var i in attrs) {
+        if (attrs.hasOwnProperty(i)) {
+            var name = attrs[i].nodeName;
+            var value = attrs[i].nodeValue;
+            if (name.indexOf('ex:') == 0) {
+                name = name.substring(3);
+            }
+            opts[name] = value;
+        }
+    }
+    return opts;
+}
+
 Exhibit.getExporters = function() {
     Exhibit._initializeExporters();
     return [].concat(Exhibit._exporters);
@@ -228,7 +244,8 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
             case "collection":  collectionElmts.push(elmt); break;
             case "coder":       coderElmts.push(elmt); break;
             case "coordinator": coordinatorElmts.push(elmt); break;
-            case "lens":        lensElmts.push(elmt); break;
+            case "lens":
+            case "edit-lens":   lensElmts.push(elmt); break;
             case "facet":       facetElmts.push(elmt); break;
             default: 
                 otherElmts.push(elmt);
@@ -249,7 +266,7 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
     for (var i = 0; i < collectionElmts.length; i++) {
         var elmt = collectionElmts[i];
         var id = elmt.id;
-        if (id==null || id.length == 0) {
+        if (id == null || id.length == 0) {
             id = "default";
         }
         this.setCollection(id, Exhibit.Collection.createFromDOM2(id, elmt, uiContext));
