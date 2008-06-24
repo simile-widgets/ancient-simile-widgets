@@ -6,47 +6,41 @@
 //=============================================================================
 
 
-(function() {
-
-var $ = SimileAjax.jQuery;
-
 //=============================================================================
-// Exhibit View Boilerplate
+// Setup
 //=============================================================================
-
-function stripWhitespace(s) {
-    return s.replace(/\s{2,}/g, ' ');
-}
 
 Exhibit.ChangeList = function(elmt, uiContext, settings) {
-    this._div = $(elmt);
+    this._div = SimileAjax.jQuery(elmt);
     this._uiContext = uiContext;
+    this._settings = settings;
+    
     this._justSubmitted = false; // true after successful submission; triggers displaying of submissionText
     uiContext.getDatabase().addListener(this);
+    
     this.addMockData();
     this._initializeUI();
 }
 
-
 Exhibit.ChangeList._settingSpecs = {
-    submissionText:  { type: "text", defaultValue: "Thanks for your submission! It has been sent to \
-        exhibit author for approval." },
-    placeholderText: { type: "text", defaultValue: "To begin editing this exhibit, click the \"edit\" \
-        links on the exhibit items." }
+    submissionText:  { type: "text", defaultValue: "Thanks for your submission! \
+        It has been sent to the exhibit author for approval." },
+    placeholderText: { type: "text", defaultValue: "To begin editing this exhibit, \
+        click the 'edit' links on the exhibit items." }
 };
 
 Exhibit.UI.generateCreationMethods(Exhibit.ChangeList);
 Exhibit.UI.registerComponent('change-list', Exhibit.ChangeList);
 
 Exhibit.ChangeList.prototype.dispose = function() {
-    this._uiContext.getCollection().removeListener(this);
+    this._uiContext.getDatabase().removeListener(this);
     this._div.innerHTML = "";
     this._div = null;
     this._uiContext = null;
     this._settings = null;
 }
 
-Exhibit.ChangeList.prototype.reset = function() {
+Exhibit.ChangeList.prototype.onAfterLoadingItems = function() {
     this._initializeUI();
 }
 
@@ -61,7 +55,7 @@ Exhibit.ChangeList.prototype.addMockData = function(view) {
         description: 'Goin\' down south'
     });
     this._uiContext.getDatabase().editItem('White Noise', 'year', '1990');
-    this._uiContext.getDatabase().editItem('White Noise', 'author', 'Don DeMan');
+    this._uiContext.getDatabase().editItem('White Noise', 'label', 'White Noice');
     this._uiContext.getDatabase().removeItem('Objectif Lune');
 }
 
@@ -71,7 +65,7 @@ Exhibit.ChangeList.prototype.addMockData = function(view) {
 //=============================================================================
 
 Exhibit.ChangeList.prototype.makePlaceholder = function() {
-    var placeHolder = $('<span>').addClass('placeholderMessage')
+    var placeHolder = SimileAjax.jQuery('<span>').addClass('placeholderMessage')
     if (this._justSubmitted) {
         this._justSubmitted = false;
         placeHolder.text(this._settings.submissionText);
@@ -82,27 +76,31 @@ Exhibit.ChangeList.prototype.makePlaceholder = function() {
 }
 
 Exhibit.ChangeList.prototype.renderPropChange = function(prop, oldVal, newVal) {
-    var t = function(t, c) { return $('<span>').text(t).addClass(c) }
-    var div = $('<div>').addClass('property-change');
+    var span = function(t, c) { 
+        return SimileAjax.jQuery('<span>').text(t).addClass(c) 
+    };
+    var div = SimileAjax.jQuery('<div>').addClass('property-change');
 
     if (oldVal) {
         div.append(
-            t(prop, 'property-name'), ' was changed from ', 
-            t(oldVal, 'old-value'), ' to ', 
-            t(newVal, 'new-value'));
+            span(prop, 'property-name'), ' was changed from ', 
+            span(oldVal, 'old-value'), ' to ', 
+            span(newVal, 'new-value'));
     } else {
         div.append(
-            t(prop, 'property-name'), ' was set to ', 
-            t(newVal, 'new-value'));
+            span(prop, 'property-name'), ' was set to ', 
+            span(newVal, 'new-value'));
     }
 
     return div;
 }
 
 Exhibit.ChangeList.prototype.renderItem = function(item) {
-    var labelText = item.label + " was " + item.change;
-    var div = $('<div>').append(
-        $('<div>').text(labelText).addClass('change-label')
+    var labelText = item.label + " was " + item.changeType;
+    var div = SimileAjax.jQuery('<div>').append(
+        SimileAjax.jQuery('<div>')
+            .text(labelText)
+            .addClass('change-label')
     );
     
     if (item.change != 'deleted') {
@@ -122,12 +120,10 @@ Exhibit.ChangeList.prototype._initializeUI = function() {
     changes.sort(function(a,b) { return a.label > b.label });
 
     if (changes.length == 0) {
-        this._div.append(makePlaceholder());
+        this._div.append(this.makePlaceholder());
     } else {
         changes.forEach(function(item) {
             view._div.append(view.renderItem(item));
         });
     }
 }
-
-})();

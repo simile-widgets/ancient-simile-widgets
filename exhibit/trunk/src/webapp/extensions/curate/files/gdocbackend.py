@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+import sys
+import cgi
+from datetime import date
+
+
 # HTTP Responses
 
 def output_response(status, content_type, text):
@@ -12,14 +17,16 @@ def output_error(msg):
     output_response('400 Bad Request', 'text/plain', msg)
     sys.exit()
 
-try: 
-    import sys
-    import cgi
-    from datetime import date
+try:
     import simplejson
+except Exception, e: 
+    output_error('error loading simplejson library: %s' % (str(e)))
+
+try:
     import gdata.spreadsheet.service
 except Exception, e:
-    output_error('error handling imports: %s' % (str(e)))
+    output_error('error loading gdata library: %s' % (str(e)))
+
 
 def output_object(obj, callback):
     resp = simplejson.dumps(obj, indent=4)
@@ -106,10 +113,10 @@ else:
 
 
 if not json:
-    output_error('no message object provided')
+    output_error('no message provided')
     
 if not ss_key:
-    output_error('no spreadsheet key given')
+    output_error('no spreadsheet key provided')
 
 try:
     message = simplejson.loads(json)

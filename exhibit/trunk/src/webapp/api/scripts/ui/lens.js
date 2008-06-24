@@ -735,7 +735,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 if (templateNode.tag == 'a')
                     elmt.href = 'javascript:';
                 SimileAjax.jQuery(elmt).click(function() {
-                    database.setEditMode(itemID, true);
+                    database.setEditMode(itemID, false);
                     uiContext.getCollection()._listeners.fire("onItemsChanged", []);
                 });
                 processChildren();
