@@ -34,7 +34,6 @@
         var javascriptFiles = [
             "exhibit.js",
             "persistence.js",
-            "util/ordered-dictionary.js",
             "util/set.js",
             "util/util.js",
             "util/settings.js",

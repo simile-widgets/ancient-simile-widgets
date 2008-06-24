@@ -17,7 +17,8 @@ Exhibit.CurateExtension = {
         "submission.js"
     ];
     var cssFiles = [
-        "change-list-view.css"
+        "change-list.css",
+        'scraper.css'
     ];
         
     var url = SimileAjax.findScript(document, "/curate-extension.js");

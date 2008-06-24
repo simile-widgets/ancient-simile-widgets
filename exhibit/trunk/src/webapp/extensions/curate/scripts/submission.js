@@ -1,9 +1,43 @@
 Exhibit.Submission = {};
 
+// Submission Properties are user-defined properties that apply to all
+// submitted changes -- e.g. the submitter's email address.
 Exhibit.Submission.Properties = {};
 
-Exhibit.Submission.submitChanges = function() {
-    var message = this.makeSubmissionMessage();
+// Called when a submission property overlaps with an item's property. 
+Exhibit.Submission.handleNamingConflict = function(uiContext, item, prop) {
+    SimileAjax.Debug.warn('error for item ' + item.id + ': item property ' + prop 
+        + ' conflicts with submission property.');
+    throw "naming conflict for " + item.id + ' -- ' + prop;
+}
+
+Exhibit.Submission.formatChangesForSubmission = function(uiContext) {
+    return uiContext.getDatabase().collectChanges().map(function(change) {
+        var item = { id: change.id, changeType: change.changeType }
+        
+        SimileAjax.jQuery.each(change.vals || {}, function(prop, val) {
+            item[prop] = val.newVal;
+        });
+        
+        SimileAjax.jQuery.each(Exhibit.Submission.Properties, function(prop, val) {
+            if (prop in item) {
+                Exhibit.Submission.handleNamingConflict(uiContext, item, prop);
+            } else {
+                item[prop] = val;
+            }
+        });
+
+        return item;
+    });
+}
+
+Exhibit.Submission.getSubmissionLinkOptions = function(link) {
+    
+}
+
+Exhibit.Submission.submitChanges = function(uiContext, settings) {
+    var changes = Exhibit.Submission.formatChangesForSubmission(uiContext);
+
     var str = SimileAjax.JSON.toJSONString(message);
     
     var error = function(xhr, textStatus, errorThrown) {
@@ -34,12 +68,16 @@ Exhibit.Submission.submitChanges = function() {
     });
 }
 
+Exhibit.Submission.submissionWidgets = ['submission-property', 'submission-button'];
+
 Exhibit.Submission.enableWidgets = function() {
-    
+    Exhibit.UI.findAttribute('ex:role', Exhibit.Submission.submissionWidgets)
+        .attr('disabled', false);
 }
 
 Exhibit.Submission.disableWidgets = function() {
-    
+    Exhibit.UI.findAttribute('ex:role', Exhibit.Submission.submissionWidgets)
+        .attr('disabled', true);
 }
 
 
@@ -49,12 +87,20 @@ Exhibit.Submission.disableWidgets = function() {
 
 
 Exhibit.SubmissionProperty = function(elmt, uiContext, settings) {
-    
+    if (!settings.propertyName) {
+        SimileAjax.Debug.warn("No propertyName given for SubmissionProperty");
+    } else if (settings.propertyType == 'timestamp') {
+        Exhibit.Submission.Properties[settings.propertyName] = new Date().toString();
+    } else {
+        SimileAjax.jQuery(elmt).change(function(){
+            Exhibit.Submission.Properties[settings.propertyName] = elmt.value;
+        });
+    }
 };
 
 Exhibit.SubmissionProperty._settingSpecs = {
-    "propertyName": { type: "text" },
-    "propertyType": { type: "text", defaultValue: "normal" }
+    propertyName: { type: "text" },
+    propertyType: { type: "text", defaultValue: "normal" }
 };
 
 Exhibit.UI.generateCreationMethods(Exhibit.SubmissionProperty);
@@ -67,11 +113,12 @@ Exhibit.UI.registerComponent('submission-property', Exhibit.SubmissionProperty);
 
 
 Exhibit.SubmissionButton = function(elmt, uiContext, settings) {
-    
+    var f = function() { Exhibit.Submission.submitChanges(uiContext, settings) };
+    SimileAjax.jQuery(elmt).click(f);
 }
 
 Exhibit.SubmissionButton._settingSpecs = {
-    submitTo:        { type: "text", defaultValue: "http://valinor.mit.edu/sostler/gdocbackend.cgi" },
+    submitTo:        { type: "text", defaultValue: "http://valinor.mit.edu/sostler/gdocbackend.cgi" }
     // spreadsheetKey:  { type: "text" },
     // worksheetName:   { type: "text", defaultValue: "submissions"},
 };

@@ -1051,7 +1051,7 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
     for (var id in this._newItems) {
         var type = this.getObject(id, 'type');
         var label = this.getObject(id, 'label') || id;
-        var item = { id: id, label: label,change: 'added', type: type, vals: {} };
+        var item = { id: id, label: label, changeType: 'added', type: type, vals: {} };
         var properties = this.getAllProperties();
         
         for (var i in properties) {
@@ -1068,7 +1068,7 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
         
         var type = this.getObject(id, 'type');
         var label = this.getObject(id, 'label') || id;
-        var item = { id: id, label: label, change: 'modified', type: type, vals: {} };
+        var item = { id: id, label: label, changeType: 'modified', type: type, vals: {} };
         var vals = this._originalValues[id];
         
         for (var prop in vals) {
@@ -1084,7 +1084,7 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
     for (var id in this._deletedItems) {
         var type = this._deletedItems[id].type;
         var label = this._deletedItems[id].label || id;
-        ret.push({id: id, label: label, change: 'deleted', type: type });
+        ret.push({id: id, label: label, changeType: 'deleted', type: type });
     }
     
     return ret;

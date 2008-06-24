@@ -584,7 +584,13 @@ Exhibit.UI.findAttribute = function(attr, value, parent) {
     var parent = SimileAjax.jQuery(parent || document.body);
     var f = function( ) {
         var v = this.getAttribute(attr);
-        return value ? value == v : !!v;
+        if (value === undefined) {
+            return !!v;
+        } else if (value instanceof Array) {
+            return value.indexOf(v) != -1;
+        } else {
+            return value.toString() == v;
+        }
     }
     return parent.find('*').add(parent).filter(f);
 }
