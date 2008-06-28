@@ -85,16 +85,36 @@ SimileAjax.DOM.getStyle = function(elmt, styleProp) {
 
 SimileAjax.DOM.getEventRelativeCoordinates = function(evt, elmt) {
     if (SimileAjax.Platform.browser.isIE) {
-        return {
-            x: evt.offsetX,
-            y: evt.offsetY
-        };
-    } else {
+      if (evt.type == "mousewheel") {
         var coords = SimileAjax.DOM.getPageCoordinates(elmt);
         return {
-            x: evt.pageX - coords.left,
-            y: evt.pageY - coords.top
+          x: evt.clientX - coords.left, 
+          y: evt.clientY - coords.top
+        };        
+      } else {
+        return {
+          x: evt.offsetX,
+          y: evt.offsetY
         };
+      }
+    } else {
+        var coords = SimileAjax.DOM.getPageCoordinates(elmt);
+
+        if ((evt.type == "DOMMouseScroll") &&
+          SimileAjax.Platform.browser.isFirefox &&
+          (SimileAjax.Platform.browser.majorVersion == 2)) {
+          // Due to: https://bugzilla.mozilla.org/show_bug.cgi?id=352179                  
+
+          return {
+            x: evt.screenX - coords.left,
+            y: evt.screenY - coords.top 
+          };
+        } else {
+          return {
+              x: evt.pageX - coords.left,
+              y: evt.pageY - coords.top
+          };
+        }
     }
 };
 
