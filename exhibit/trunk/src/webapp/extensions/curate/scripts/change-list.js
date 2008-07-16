@@ -5,7 +5,6 @@
 // changes to a backend data source.
 //=============================================================================
 
-
 //=============================================================================
 // Setup
 //=============================================================================
@@ -15,10 +14,9 @@ Exhibit.ChangeList = function(elmt, uiContext, settings) {
     this._uiContext = uiContext;
     this._settings = settings;
     
-    this._justSubmitted = false; // true after successful submission; triggers displaying of submissionText
     uiContext.getDatabase().addListener(this);
     
-    this.addMockData();
+    // this.addMockData();
     this._initializeUI();
 }
 
@@ -31,6 +29,9 @@ Exhibit.ChangeList._settingSpecs = {
 
 Exhibit.UI.generateCreationMethods(Exhibit.ChangeList);
 Exhibit.UI.registerComponent('change-list', Exhibit.ChangeList);
+
+// set to true after successful submission; triggers displaying of submissionText
+Exhibit.ChangeList.showSubmissionText = false;
 
 Exhibit.ChangeList.prototype.dispose = function() {
     this._uiContext.getDatabase().removeListener(this);
@@ -52,11 +53,10 @@ Exhibit.ChangeList.prototype.addMockData = function(view) {
         year: '1936',
         availability: 'available',
         owner: 'Sarah',
-        description: 'Goin\' down south'
+        description: "Goin' down south"
     });
     this._uiContext.getDatabase().editItem('White Noise', 'year', '1990');
     this._uiContext.getDatabase().editItem('White Noise', 'label', 'White Noice');
-    this._uiContext.getDatabase().removeItem('Objectif Lune');
 }
 
 
@@ -66,8 +66,8 @@ Exhibit.ChangeList.prototype.addMockData = function(view) {
 
 Exhibit.ChangeList.prototype.makePlaceholder = function() {
     var placeHolder = SimileAjax.jQuery('<span>').addClass('placeholderMessage')
-    if (this._justSubmitted) {
-        this._justSubmitted = false;
+    if (Exhibit.ChangeList.showSubmissionText) {
+        Exhibit.ChangeList.showSubmissionText = false;
         placeHolder.text(this._settings.submissionText);
     } else {
         placeHolder.text(this._settings.placeholderText);
@@ -103,12 +103,11 @@ Exhibit.ChangeList.prototype.renderItem = function(item) {
             .addClass('change-label')
     );
     
-    if (item.change != 'deleted') {
-        for (var prop in item.vals) {
-            var v = item.vals[prop];
-            div.append(this.renderPropChange(prop, v.oldVal, v.newVal));
-        }
+    for (var prop in item.vals) {
+        var v = item.vals[prop];
+        div.append(this.renderPropChange(prop, v.oldVal, v.newVal));
     }
+
     return div;
 }
 
@@ -121,7 +120,13 @@ Exhibit.ChangeList.prototype._initializeUI = function() {
 
     if (changes.length == 0) {
         this._div.append(this.makePlaceholder());
+        if (Exhibit.Submission) {
+            Exhibit.Submission.disableWidgets();   
+        }
     } else {
+        if (Exhibit.Submission) {
+            Exhibit.Submission.enableWidgets();   
+        }
         changes.forEach(function(item) {
             view._div.append(view.renderItem(item));
         });

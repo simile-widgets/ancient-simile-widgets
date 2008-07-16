@@ -27,7 +27,12 @@ SimileAjax.jQuery(document).ready(function() {
     } catch (e) {
         // silent
     }
+
+    var fLoadSubmissions = function() {
+        window.database.loadSubmissionLinks(fDone);
+    };
     
     window.database = Exhibit.Database.create();
-    window.database.loadDataLinks(fDone);
+    window.database.loadDataLinks(fLoadSubmissions);
 });
+

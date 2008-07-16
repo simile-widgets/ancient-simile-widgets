@@ -48,6 +48,7 @@
             "data/controls.js",
             "data/collection.js",
             
+            "data/importers/authenticated-importer.js",
             "data/importers/exhibit-json-importer.js",
             "data/importers/html-table-importer.js",
             "data/importers/jsonp-importer.js",

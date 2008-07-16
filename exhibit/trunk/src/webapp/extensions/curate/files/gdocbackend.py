@@ -97,20 +97,24 @@ class Worksheet(object):
     def insert_row(self, obj):
         return self.client.InsertRow(obj, self.ss_key, self.ws_key)
 
+# Actions
+
 # Request handling
 
-if len(sys.argv) > 1 and sys.argv[1] == 'test':
+if len(sys.argv) > 1:
+    action = sys.argv[1]
     callback = None
     ss_key = "pHCVS1LwNriVBoIRKJryCeg"
     wk_name = "submissions"
     json = '[{"id":"The Great Gatsby","email":"sostler@mit.edu","comment":"dummy","year":"1926","label":"The Great Gatsby"}]'
+    json = '	[{"id":"Atlas Shrugged","label":"Atlas Shrugged","availability":"available","__added":"Tue Jul 15 2008 01:10:22 GMT-0400 (EDT)","__comment":"","__email":"john"}]'
 else:
+    action = cgi.FieldStorage('action')
     form = cgi.FieldStorage()
-    callback = form.getvalue('callback', None)
+    callback = form.getvalue('callback')
     ss_key = form.getvalue('spreadsheetkey')
     wk_name = form.getvalue('worksheetname', 'submissions')
     json = form.getvalue('message')
-
 
 if not json:
     output_error('no message provided')
@@ -123,8 +127,9 @@ try:
 except Exception, e:
     output_error('invalid message: %s' % (str(e)))
 
+client = gdata_login()
+
 try:
-    client = gdata_login()
     worksheet = Spreadsheet(client, ss_key).get_worksheet(name='submissions')
     for r in message:
         worksheet.insert_row(r)

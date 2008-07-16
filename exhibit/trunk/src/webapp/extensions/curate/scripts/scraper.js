@@ -1,25 +1,46 @@
 Exhibit.Scraper = function(elmt, uiContext, settings) {    
-    if (!settings.urlInput) {
-        SimileAjax.Debug.warn('Scraper not given a urlInput!');
+    if (!settings.scraperInput) {
+        SimileAjax.Debug.warn('Scraper not given an input!');
         return;
     }
     
-    var input = this._input = SimileAjax.jQuery('#' + settings.urlInput);
+    var input = this._input = SimileAjax.jQuery('#' + settings.scraperInput);
     var elmt = this._elmt = SimileAjax.jQuery(elmt);
     this._uiContext = uiContext;
     this._settings = settings;
     
-    this.enableUI();
+    elmt.attr('href', 'javascript:');
+    
+    var scraper = this;
+    elmt.click(function(){ scraper.activate() });
 }
 
 Exhibit.Scraper._settingSpecs = {
-    "urlInput":  { type: "text" },
+    "scraperInput":  { type: "text" },
     "itemType":  { type: "text", defaultValue: "item" },
-    "submitTo":  { type: "text", defaultValue: "http://valinor.mit.edu/sostler/scraper.cgi" }
+    "inputType": { type: "text", defaultValue: "auto" },
+    "scraperService":  { type: "text", defaultValue: "http://valinor.mit.edu/sostler/scraper.cgi" }
 };
 
 Exhibit.UI.generateCreationMethods(Exhibit.Scraper);
 Exhibit.UI.registerComponent('scraper', Exhibit.Scraper);
+
+Exhibit.Scraper.prototype.activate = function() {
+    var input = this._input.val();
+    if (this._settings.inputType == 'auto') {
+        if (input.startsWith('http://')) {
+            this.scrapeURL(input);
+        } else {
+            this.scrapeText(input);
+        }
+    } else if (this._settings.inputType == 'text') {
+        this.scrapeText(input);        
+    } else if (this._settings.inputType.toLowerCase() == 'url') {
+        this.scrapeURL(input);
+    } else {
+        SimileAjax.Debug.warn('Unknown scraper input type ' + this._settings.inputType);
+    }
+}
 
 Exhibit.Scraper.prototype.disableUI = function() {
     this._input.attr('disabled', true);
@@ -33,10 +54,11 @@ Exhibit.Scraper.prototype.enableUI = function() {
     this._input.attr('disabled', false);
     this._elmt.attr('href', 'javascript:');
     this._elmt.css('color', '');
-    SimileAjax.jQuery(this._elmt).click(function() { scraper.submitURL() });
+    SimileAjax.jQuery(this._elmt).click(function() { scraper.activate() });
 }
 
-Exhibit.Scraper.prototype.submitURL = function() {
+Exhibit.Scraper.prototype.scrapeURL = function(url) {
+    this.disableUI();
     var scraper = this;
     
     var success = function(resp) {
@@ -44,7 +66,7 @@ Exhibit.Scraper.prototype.submitURL = function() {
         var obj = resp.obj;
         
         if (status == 'ok') {
-            var item = scraper.scrapeText(obj);
+            var item = scraper.performScraping(obj);
             scraper.makeNewItemBox(item);
             scraper.enableUI();            
         } else if (status == 'error') {
@@ -52,23 +74,26 @@ Exhibit.Scraper.prototype.submitURL = function() {
         } else {
             alert('Unknown response from scraper service:\n\n' + status);
         }
-        
         scraper.enableUI();
     }
 
     this.disableUI();
     
     SimileAjax.jQuery.ajax({
-        url: this._settings.submitTo,
+        url: this._settings.scraperService,
         dataType: 'jsonp',
         jsonp: 'callback',
-        data: { url: this._input.val() },
+        data: { url: url },
         success: success
     });
 }
 
-
 Exhibit.Scraper.prototype.scrapeText = function(text) {
+    var item = this.performScraping(text);
+    this.makeNewItemBox(item);
+}
+
+Exhibit.Scraper.prototype.performScraping = function(text) {
     var item = { type: this._settings.itemType };
     var db = this._uiContext.getDatabase();
     

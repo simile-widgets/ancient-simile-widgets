@@ -8,6 +8,7 @@ Exhibit.LensRegistry = function(parentRegistry) {
     this._defaultLens = null;
     this._typeToLens = {};
     this._editLensTemplates = {};
+    this._submissionLensTemplates = {};
     this._lensSelectors = [];
 };
 
@@ -15,15 +16,21 @@ Exhibit.LensRegistry.prototype.registerDefaultLens = function(elmtOrURL) {
     this._defaultLens = (typeof elmtOrURL == "string") ? elmtOrURL : elmtOrURL.cloneNode(true);
 };
 
-Exhibit.LensRegistry.prototype.registerLensForType = function(elmtOrURL, type) {
+Exhibit.LensRegistry.prototype.registerLensForType = function(elmtOrURL, type) { 
     if (typeof elmtOrURL == 'string') {
         this._typeToLens[type] = elmtOrURL;
-    } else if (elmtOrURL.getAttribute('ex:role') == 'lens') {
+    } 
+    
+    var role = elmtOrURL.getAttribute('ex:role').replace('/^exhibit-/');
+    
+    if (role == 'lens') {
         this._typeToLens[type] = elmtOrURL.cloneNode(true);
-    } else if (elmtOrURL.getAttribute('ex:role') == 'edit-lens') {
-        this._editLensTemplates[type] = elmtOrURL.cloneNode(true);;
+    } else if (role == 'edit-lens') {
+        this._editLensTemplates[type] = elmtOrURL.cloneNode(true);
+    } else if (role == 'submission-lens') {
+        this._submissionLensTemplates[type] = elmtOrURL.cloneNode(true);
     } else {
-        SimileAjax.Debug.log('Unknown lens type ', elmtOrURL);
+        SimileAjax.Debug.warn('Unknown lens type ' + elmtOrURL);
     }
 };
 
@@ -56,6 +63,10 @@ Exhibit.LensRegistry.prototype.getNormalLens = function(itemID, database) {
         return this._parentRegistry.getLens(itemID, database);
     }
     return null;
+}
+
+Exhibit.LensRegistry.prototype.getSubmissionLens = function(itemID, database) {
+    
 }
 
 Exhibit.LensRegistry.prototype.getEditLens = function(itemID, database) {
@@ -716,9 +727,14 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             elmt.appendChild(a);
             break;
         case "remove-item":
-            if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
-            SimileAjax.jQuery(elmt).click(function() { database.removeItem(itemID) });
-            processChildren();
+            // only new items can be deleted from an exhibit
+            if (database.isNewItem(itemID)) {
+                if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
+                SimileAjax.jQuery(elmt).click(function() { database.removeItem(itemID) });
+                processChildren();                
+            } else {
+                parentElmt.removeChild(elmt);
+            }
             break;
         case "start-editing":
             if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
@@ -739,6 +755,19 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                     uiContext.getCollection()._listeners.fire("onItemsChanged", []);
                 });
                 processChildren();
+            }
+            break;
+        case "accept-changes":
+            if (database.isSubmission(itemID)) {
+                if (templateNode.tag == 'a')
+                    elmt.href = 'javascript:';
+                SimileAjax.jQuery(elmt).click(function() {
+                    database.acceptChanges(itemID);
+                });
+                processChildren();
+            } else {
+                SimileAjax.Debug.warn('accept-changes element in non-submission item');
+                parentElmt.removeChild(elmt);
             }
             break;
         }
@@ -844,7 +873,8 @@ Exhibit.Lens._constructEditableContent = function(templateNode, elmt, itemID, ui
     } else {
         var value = db.getObject(itemID, attr);
         var changeHandler = function() {
-            db.editItem(itemID, attr, this.value);
+            if (value != this.value) 
+                db.editItem(itemID, attr, this.value);
         }   
     }
     

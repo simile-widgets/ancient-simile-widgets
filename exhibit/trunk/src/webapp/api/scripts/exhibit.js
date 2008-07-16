@@ -245,6 +245,7 @@ Exhibit._Impl.prototype.configureFromDOM = function(root) {
             case "coder":       coderElmts.push(elmt); break;
             case "coordinator": coordinatorElmts.push(elmt); break;
             case "lens":
+            case "submission-lens":
             case "edit-lens":   lensElmts.push(elmt); break;
             case "facet":       facetElmts.push(elmt); break;
             default: 
