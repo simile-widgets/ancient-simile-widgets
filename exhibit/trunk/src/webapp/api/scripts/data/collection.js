@@ -115,7 +115,8 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
         }
     } else {
         var collection = Exhibit.Collection.createFromDOM(id, elmt, database);
-    }    
+    }
+    return collection;
 };
 
 Exhibit.Collection._initializeBasicCollection = function(collection, database) {
