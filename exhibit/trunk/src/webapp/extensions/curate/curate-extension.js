@@ -14,7 +14,8 @@ Exhibit.CurateExtension = {
         "change-list.js",
         "item-creator.js",
         "scraper.js",
-        "submission.js"
+        "submission-backend.js",
+        "submission-widgets.js"
     ];
     var cssFiles = [
         "change-list.css",

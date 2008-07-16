@@ -23,6 +23,15 @@ Exhibit.Collection.createAllItemsCollection = function(id, database) {
     return collection;
 };
 
+Exhibit.Collection.createSubmissionsCollection = function(id, database) {
+    var collection = new Exhibit.Collection(id, database);
+    collection._update = Exhibit.Collection._submissionCollection_update;
+    
+    Exhibit.Collection._initializeBasicCollection(collection, database);
+    
+    return collection;
+}
+
 Exhibit.Collection.create = function(id, configuration, database) {
     var collection = new Exhibit.Collection(id, database);
     
@@ -82,6 +91,10 @@ Exhibit.Collection.create2 = function(id, configuration, uiContext) {
 
 Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
     var database = uiContext.getDatabase();
+
+    if (Exhibit.getAttribute(elmt, 'submissionsCollection')) {
+        return Exhibit.Collection.createSubmissionsCollection(id, database);
+    }
     
     var expressionString = Exhibit.getAttribute(elmt, "expression");
     if (expressionString != null && expressionString.length > 0) {
@@ -100,11 +113,9 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
         } else {
             Exhibit.Collection._initializeBasedCollection(collection);
         }
-        
-        return collection;
     } else {
-        return Exhibit.Collection.createFromDOM(id, elmt, database);
-    }
+        var collection = Exhibit.Collection.createFromDOM(id, elmt, database);
+    }    
 };
 
 Exhibit.Collection._initializeBasicCollection = function(collection, database) {
@@ -148,9 +159,15 @@ Exhibit.Collection._initializeRestrictingBasedCollection = function(collection, 
  *======================================================================
  */
 Exhibit.Collection._allItemsCollection_update = function() {
-    this._items = this._database.getAllItems();
+    this.setItems(this._database.getAllItems());
     this._onRootItemsChanged();
 };
+
+Exhibit.Collection._submissionCollection_update = function() {
+    this.setItems(this._database.getAllSubmissions());
+    this._onRootItemsChanged();
+};
+
 
 Exhibit.Collection._typeBasedCollection_update = function() {
     var newItems = new Exhibit.Set();
@@ -158,17 +175,17 @@ Exhibit.Collection._typeBasedCollection_update = function() {
         this._database.getSubjects(this._itemTypes[i], "type", newItems);
     }
     
-    this._items = newItems;
+    this.setItems(newItems);
     this._onRootItemsChanged();
 };
 
 Exhibit.Collection._basedCollection_update = function() {
-    this._items = this._expression.evaluate(
+    this.setItems(this._expression.evaluate(
         { "value" : this._baseCollection.getRestrictedItems() }, 
         { "value" : "item" }, 
         "value",
         this._database
-    ).values;
+    ).values);
     
     this._onRootItemsChanged();
 };
@@ -208,7 +225,7 @@ Exhibit.Collection._restrictingBasedCollection_update = function(items) {
          *  one of its other facets. This causes our root items to
          *  change.
          */
-        this._items = this._cache.getValuesFromItems(items);
+        this.setItems(this._cache.getValuesFromItems(items));
         this._onRootItemsChanged();
     }
 };
@@ -370,3 +387,7 @@ Exhibit.Collection.prototype._computeRestrictedItems = function() {
         }
     }
 };
+
+Exhibit.Collection.prototype.setItems = function(items) {
+    this._items = items;
+}

@@ -19,7 +19,8 @@ Exhibit.Database._Impl = function() {
     this._properties = {};
     this._propertyArray = {};
     
-    this._editRegistry = {};
+    this._editRegistry = {}; // tracks which items are being edited
+    this._submissionRegistry = {}; // stores unmodified copies of submissions
     
     this._originalValues = {};
     this._deletedItems = {};
@@ -41,7 +42,7 @@ Exhibit.Database._Impl = function() {
     itemType._custom = Exhibit.Database.l10n.itemType;
     this._types["Item"] = itemType;
 
-    var labelProperty = new Exhibit.Database._Property("label");
+    var labelProperty = new Exhibit.Database._Property("label", this);
     labelProperty._uri                  = "http://www.w3.org/2000/01/rdf-schema#label";
     labelProperty._valueType            = "text";
     labelProperty._label                = l10n.labelProperty.label;
@@ -73,6 +74,23 @@ Exhibit.Database._Impl = function() {
     uriProperty._groupingLabel          = "URIs";
     uriProperty._reverseGroupingLabel   = "things named by these URIs";
     this._properties["uri"]             = uriProperty;
+    
+    var changeProperty = new Exhibit.Database._Property("change", this);
+    changeProperty._valueType              = "text";
+    changeProperty._label                  = "change type";
+    changeProperty._pluralLabel            = "change types";
+    changeProperty._reverseLabel           = "change type of";
+    changeProperty._reversePluralLabel     = "change types of";
+    changeProperty._groupingLabel          = "change types";
+    changeProperty._reverseGroupingLabel   = "changes of this type";
+    this._properties["change"]             = changeProperty;
+    
+    var changedItemProperty = new Exhibit.Database._Property("changedItem", this);
+    changedItemProperty._valueType              = "text";
+    changedItemProperty._label                  = "changed item";
+    changedItemProperty._pluralLabel            = "changed item";
+    changedItemProperty._groupingLabel          = "changed items";
+    this._properties["changedItem"]             = changedItemProperty;
 };
 
 Exhibit.Database._Impl.prototype.createDatabase = function() {
@@ -89,12 +107,52 @@ Exhibit.Database._Impl.prototype.removeListener = function(listener) {
 
 Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
     var links = SimileAjax.jQuery('head > link[rel=exhibit/data]').get()
-    this._loadLinks(links, fDone);
+    this._loadLinks(links, this, fDone);
 };
 
-Exhibit.Database._Impl.prototype._loadLinks = function(links, fDone) {
+Exhibit.Database._Impl.prototype.loadSubmissionLinks = function(fDone) {
+    var db = this;
+    var dbProxy = {
+        loadData: function(o, baseURI) {
+            if ("types" in o) {
+                db.loadTypes(o.types, baseURI);
+            }
+            if ("properties" in o) {
+                db.loadProperties(o.properties, baseURI);
+            }
+            if ("items" in o) {
+                db._listeners.fire("onBeforeLoadingItems", []);
+                o.items.forEach(function(item) {
+                    var oldID = item.id || item.label;
+                    var newID = oldID + Math.floor(Math.random() * 1000000);
+                    db._submissionRegistry[newID] = true;
+                    
+                    item.id = newID;
+                    item.changedItem = oldID;
+                    
+                    if (db.containsItem(oldID)) {
+                        item.change = 'modification';
+                        
+                        if (!item.type) {
+                            item.type = db.getObject(oldID, 'type');
+                        }
+                    } else {
+                        item.change = 'addition';
+                    }
+                });
+                db.loadItems(o.items, baseURI);
+                db._listeners.fire("onAfterLoadingItems", []);            
+            }
+        }
+        
+    };
+    
+    var links = SimileAjax.jQuery('head > link[rel=exhibit/submissions]').get()
+    this._loadLinks(links, dbProxy, fDone);
+};
+
+Exhibit.Database._Impl.prototype._loadLinks = function(links, database, fDone) {
     links = [].concat(links);
-    var database = this;
     var fNext = function() {
         while (links.length > 0) {
             var link = links.shift();
@@ -288,12 +346,37 @@ Exhibit.Database._Impl.prototype.getAllProperties = function() {
     return [].concat(this._propertyArray);
 };
 
+Exhibit.Database._Impl.prototype.isSubmission = function(id) {
+    return id in this._submissionRegistry;
+}
+
 Exhibit.Database._Impl.prototype.getAllItems = function() {
-    var items = new Exhibit.Set();
-    items.addSet(this._items);
-    
-    return items;
+    var ret = new Exhibit.Set();
+    var itemList = this._items.toArray();
+
+    for (var i in itemList) {
+        var item = itemList[i];
+        if (!this.isSubmission(item)) {
+            ret.add(item);
+        }
+    }
+
+    return ret;
 };
+
+Exhibit.Database._Impl.prototype.getAllSubmissions = function() {
+    var ret = new Exhibit.Set();
+    var itemList = this._items.toArray();
+
+    for (var i in itemList) {
+        var item = itemList[i];
+        if (this.isSubmission(item)) {
+            ret.add(item);
+        }
+    }
+
+    return ret;
+}
 
 Exhibit.Database._Impl.prototype.getAllItemsCount = function() {
     return this._items.size();
@@ -1040,9 +1123,15 @@ Exhibit.Database._Impl.prototype.removeItem = function(id) {
     }
 
     this._listeners.fire('onAfterLoadingItems', []);
-}
+};
 
 Exhibit.Database.defaultIgnoredProperties = ['id', 'uri', 'type'];
+
+Exhibit.Database._Impl.prototype.resetChanges = function() {
+    this._originalValues = {};
+    this._deletedItems = {};
+    this._newItems = {};
+};
 
 Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
     ignoredProperties = ignoredProperties || Exhibit.Database.defaultIgnoredProperties;
@@ -1064,7 +1153,7 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
     }
     
     for (var id in this._originalValues) {
-        if (id in this._newItems) { continue; }
+        if (id in this._newItems || this.isSubmission(id)) { continue; }
         
         var type = this.getObject(id, 'type');
         var label = this.getObject(id, 'label') || id;
@@ -1088,4 +1177,28 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
     }
     
     return ret;
+}
+
+
+
+//=============================================================================
+// Submissions Support
+//=============================================================================
+
+Exhibit.Database._Impl.prototype.acceptChanges = function(itemID) {
+    if (!this.isSubmission(itemID)){
+        throw itemID + " is not a submission!";
+    }
+    var change = this.getObject(itemID, 'change');
+    if (change == 'modification') {
+        
+        
+        
+    } else if (change == 'addition') {
+        delete this._submissionRegistry[itemID];
+        this._newItems[itemID] = true;
+    } else {
+        throw "unknown change type " + change;
+    }
+    this._listeners.fire('onAfterLoadingItems', []);
 }
