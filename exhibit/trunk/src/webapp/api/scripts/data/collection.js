@@ -91,6 +91,7 @@ Exhibit.Collection.create2 = function(id, configuration, uiContext) {
 
 Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
     var database = uiContext.getDatabase();
+    var collection;
 
     if (Exhibit.getAttribute(elmt, 'submissionsCollection')) {
         return Exhibit.Collection.createSubmissionsCollection(id, database);
@@ -98,7 +99,7 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
     
     var expressionString = Exhibit.getAttribute(elmt, "expression");
     if (expressionString != null && expressionString.length > 0) {
-        var collection = new Exhibit.Collection(id, database);
+        collection = new Exhibit.Collection(id, database);
     
         collection._expression = Exhibit.ExpressionParser.parse(expressionString);
         
@@ -114,7 +115,7 @@ Exhibit.Collection.createFromDOM2 = function(id, elmt, uiContext) {
             Exhibit.Collection._initializeBasedCollection(collection);
         }
     } else {
-        var collection = Exhibit.Collection.createFromDOM(id, elmt, database);
+        collection = Exhibit.Collection.createFromDOM(id, elmt, database);
     }
     return collection;
 };

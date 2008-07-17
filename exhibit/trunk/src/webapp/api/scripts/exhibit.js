@@ -165,8 +165,6 @@ Exhibit._Impl.prototype.setCollection = function(id, c) {
             SimileAjax.Debug.exception(e);
         }
     }
-    console.log('setting ' + id)
-    console.log(c)
     this._collectionMap[id] = c;
 };
 
