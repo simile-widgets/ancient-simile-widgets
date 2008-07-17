@@ -1,0 +1,6 @@
+#summary This page describes a side hack originally by Johan Sundström (with some aid from Stephen Paul Weber), where an XPath based web scraper and Exhibit gets invasively injected into any web page of choice.
+
+= Developer's overview =
+
+   * [http://code.google.com/p/ecmanaut/source/list?path=/trunk/sites/everywhere/exhibit-scraper.user.js&start=689 list of all Exhibit scraper checkins]
+   * [http://simile.mit.edu/mail/ReadMsg?listName=Dev&msgId=25619 2008-07-15 Simile-dev post for hackers about the present state of the Exhibit scraper]
