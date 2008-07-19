@@ -28,9 +28,8 @@ Exhibit.getAttribute = function(elmt, name, splitOn) {
 };
 
 Exhibit.getRoleAttribute = function(elmt) {
-    var role = Exhibit.getAttribute(elmt, "role");
-    role = role != null ? role : "";
-    role = role.startsWith("exhibit-") ? role.substr("exhibit-".length) : role;
+    var role = Exhibit.getAttribute(elmt, "role") || "";
+    role = role.replace(/^exhibit-/, "");
     return role;
 };
 

@@ -21,7 +21,9 @@ Exhibit.LensRegistry.prototype.registerLensForType = function(elmtOrURL, type) {
         this._typeToLens[type] = elmtOrURL;
     } 
     
-    var role = elmtOrURL.getAttribute('ex:role').replace('/^exhibit-/');
+    var role = Exhibit.getRoleAttribute(elmtOrURL);
+    
+    console.log('registering ' + role + ' for type ' + type)
     
     if (role == 'lens') {
         this._typeToLens[type] = elmtOrURL.cloneNode(true);
@@ -66,11 +68,12 @@ Exhibit.LensRegistry.prototype.getNormalLens = function(itemID, database) {
 }
 
 Exhibit.LensRegistry.prototype.getSubmissionLens = function(itemID, database) {
-    
+    // todo
 }
 
 Exhibit.LensRegistry.prototype.getEditLens = function(itemID, database) {
     var type = database.getObject(itemID, "type");
+        console.log('getting type ' + type)
     if (type in this._editLensTemplates) {
         return this._editLensTemplates[type];
     } else {
