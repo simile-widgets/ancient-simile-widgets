@@ -239,7 +239,7 @@ Exhibit.UIContext.registerLensesFromDOM = function(parentNode, lensRegistry) {
     while (node != null) {
         if (node.nodeType == 1) {
             var role = Exhibit.getRoleAttribute(node);
-            if (role == "lens") {
+            if (role == "lens" || role == "edit-lens") {
                 Exhibit.UIContext.registerLensFromDOM(node, lensRegistry);
             }
         }
