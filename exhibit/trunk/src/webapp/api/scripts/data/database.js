@@ -1191,7 +1191,7 @@ Exhibit.Database._Impl.prototype.acceptChanges = function(itemID) {
     }
     var change = this.getObject(itemID, 'change');
     if (change == 'modification') {
-        
+        var realItemID = this.getObject(itemID, 'changedItem');
         
         
     } else if (change == 'addition') {
