@@ -12,6 +12,11 @@ Exhibit.UIContext = function() {
     
     this._formatters = {};
     this._listFormatter = null;
+    
+    this._editModeRegistry = {};    
+    this._editModeListeners = {};
+    
+    this._popupFunc = null;
 };
 
 Exhibit.UIContext.createRootContext = function(configuration, exhibit) {
@@ -134,6 +139,52 @@ Exhibit.UIContext.prototype.formatList = function(iterator, count, valueType, ap
     }
     this._listFormatter.formatList(iterator, count, valueType, appender);
 };
+
+Exhibit.UIContext.prototype.setEditMode = function(itemID, val) {
+    if (val) {
+        this._editModeRegistry[itemID] = true;        
+    } else {
+        this._editModeRegistry[itemID] = false;
+    }
+
+    if (itemID in this._editModeListeners) {
+        var f = this._editModeListeners[itemID];
+        f();
+    }
+}
+
+Exhibit.UIContext.prototype.isBeingEdited = function(itemID) {
+    return !!this._editModeRegistry[itemID];
+}
+
+Exhibit.UIContext.prototype.addEditModeListener = function(itemID, f) {
+    if (itemID in this._editModeListeners) {
+        SimileAjax.Debug.warn('Overwriting edit mode listener for ' + itemID);
+    }
+    this._editModeListeners[itemID] = f;
+}
+
+// Popup mode is used to record whether the item is being 
+// rendered in a popup created by the Exhibit.UI.showItemInPopup
+// function. When enabling popup mode here, a function must be
+// provided that redraws that specific popup.
+
+Exhibit.UIContext.prototype.inPopupMode = function() {
+    return this._popupFunc != null;
+}
+
+Exhibit.UIContext.prototype.getPopupFunc = function() {
+    return this._popupFunc;
+}
+
+Exhibit.UIContext.prototype.enablePopupMode = function(popupFunc) {
+    this._popupFunc = popupFunc;
+}
+
+Exhibit.UIContext.prototype.disablePopupMode = function() {
+    this._popupFunc = null;
+}
+
 
 /*----------------------------------------------------------------------
  *  Internal implementation

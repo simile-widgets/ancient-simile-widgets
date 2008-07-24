@@ -393,9 +393,21 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
 };
 
 Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext) {
+    SimileAjax.WindowManager.popAllLayers();
+    
     var coords = SimileAjax.DOM.getPageCoordinates(elmt);
     var itemLensDiv = document.createElement("div");
+
+    var popupFunc = function() {
+        Exhibit.UI.showItemInPopup(itemID, elmt, uiContext);
+    }
+
+    // popup mode ensures that start and stop edit links clicked in the popup
+    // lens don't affect the outer view.
+    uiContext.enablePopupMode(popupFunc);
     var itemLens = uiContext.getLensRegistry().createLens(itemID, itemLensDiv, uiContext);
+    uiContext.disablePopupMode();
+    
     SimileAjax.Graphics.createBubbleForContentAndPoint(
         itemLensDiv, 
         coords.left + Math.round(elmt.offsetWidth / 2), 

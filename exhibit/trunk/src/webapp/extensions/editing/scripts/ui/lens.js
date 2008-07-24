@@ -1,6 +1,6 @@
 
 Exhibit.LensRegistry.prototype.createLens = function(itemID, div, uiContext, editing) {
-    var lensTemplate = this.getLens(itemID, uiContext.getDatabase());
+    var lensTemplate = this.getLens(itemID, uiContext);
     var create = function(ilens) {
         if (lensTemplate == null) {
             ilens._constructDefaultUI(itemID, div, uiContext);
