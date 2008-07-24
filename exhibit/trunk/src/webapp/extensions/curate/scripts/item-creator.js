@@ -34,7 +34,7 @@ Exhibit.ItemCreator.makeNewItemID = function(db, type) {
     return name;
 }
 
-Exhibit.ItemCreator.createItem = function(db, item) {
+Exhibit.ItemCreator.createItem = function(uiContext, item) {
     var db = uiContext.getDatabase();
     
     item = item || {};
@@ -42,7 +42,7 @@ Exhibit.ItemCreator.createItem = function(db, item) {
     item.id = item.id || Exhibit.ItemCreator.makeNewItemID(db, item.type);
     item.label = item.label || item.id;
     
-    uiContext.setEditMode(item.id, true);
+    // TODO: make global edits
     db.addItem(item);
     
     var elmt = Exhibit.UI.findAttribute('ex:itemid', item.id).get(0);

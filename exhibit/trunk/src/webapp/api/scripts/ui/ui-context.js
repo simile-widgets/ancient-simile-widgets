@@ -141,6 +141,7 @@ Exhibit.UIContext.prototype.formatList = function(iterator, count, valueType, ap
 };
 
 Exhibit.UIContext.prototype.setEditMode = function(itemID, val) {
+    console.log('set edit mode for item ' + itemID + ": " + val)
     if (val) {
         this._editModeRegistry[itemID] = true;        
     } else {
@@ -154,6 +155,7 @@ Exhibit.UIContext.prototype.setEditMode = function(itemID, val) {
 }
 
 Exhibit.UIContext.prototype.isBeingEdited = function(itemID) {
+    window.console.log("checking edit status for " + itemID + ': ' + !!this._editModeRegistry[itemID]);
     return !!this._editModeRegistry[itemID];
 }
 
