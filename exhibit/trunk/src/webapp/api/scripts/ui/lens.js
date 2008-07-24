@@ -37,21 +37,23 @@ Exhibit.LensRegistry.prototype.addLensSelector = function(lensSelector) {
     this._lensSelectors.unshift(lensSelector);
 };
 
-Exhibit.LensRegistry.prototype.getLens = function(itemID, database) {    
-    return database.isBeingEdited(itemID) 
-        ? this.getEditLens(itemID, database)
-        : this.getNormalLens(itemID, database);
+Exhibit.LensRegistry.prototype.getLens = function(itemID, uiContext) {
+    return uiContext.isBeingEdited(itemID)
+        ? this.getEditLens(itemID, uiContext)
+        : this.getNormalLens(itemID, uiContext);
 };
 
-Exhibit.LensRegistry.prototype.getNormalLens = function(itemID, database) {
+Exhibit.LensRegistry.prototype.getNormalLens = function(itemID, uiContext) {
+    var db = uiContext.getDatabase();
+
     for (var i = 0; i < this._lensSelectors.length; i++) {
-        var lens = this._lensSelectors[i](itemID, database);
+        var lens = this._lensSelectors[i](itemID, db);
         if (lens != null) {
             return lens;
         }
     }
     
-    var type = database.getObject(itemID, "type");
+    var type = db.getObject(itemID, "type");
     if (type in this._typeToLens) {
         return this._typeToLens[type];
     }
@@ -59,7 +61,7 @@ Exhibit.LensRegistry.prototype.getNormalLens = function(itemID, database) {
         return this._defaultLens;
     }
     if (this._parentRegistry) {
-        return this._parentRegistry.getLens(itemID, database);
+        return this._parentRegistry.getLens(itemID, uiContext);
     }
     return null;
 }
@@ -68,12 +70,13 @@ Exhibit.LensRegistry.prototype.getSubmissionLens = function(itemID, database) {
     // todo
 }
 
-Exhibit.LensRegistry.prototype.getEditLens = function(itemID, database) {
-    var type = database.getObject(itemID, "type");
+Exhibit.LensRegistry.prototype.getEditLens = function(itemID, uiContext) {
+    var type = uiContext.getDatabase().getObject(itemID, "type");
+    
     if (type in this._editLensTemplates) {
         return this._editLensTemplates[type];
     } else {
-        return this._parentRegistry && this._parentRegistry.getEditLens(itemID, database);
+        return this._parentRegistry && this._parentRegistry.getEditLens(itemID, uiContext);
     }
 }
 
@@ -84,7 +87,7 @@ Exhibit.LensRegistry.prototype.createLens = function(itemID, div, uiContext) {
         SimileAjax.jQuery(div).addClass('newItem');
     }
 
-    var lensTemplate = this.getLens(itemID, uiContext.getDatabase());
+    var lensTemplate = this.getLens(itemID, uiContext);
     
     if (lensTemplate == null) {
         lens._constructDefaultUI(itemID, div, uiContext);
@@ -737,22 +740,44 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             break;
         case "start-editing":
             if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
-            SimileAjax.jQuery(elmt).click(function(){ 
-                database.setEditMode(itemID, true);
-                uiContext.getCollection()._listeners.fire("onItemsChanged", []);
-            });
+            
+            if (uiContext.inPopupMode()) {
+                var popupFunc = uiContext.getPopupFunc();
+                SimileAjax.jQuery(elmt).click(function() { 
+                    var old = uiContext.isBeingEdited(itemID);
+                    uiContext.setEditMode(itemID, true);
+                    popupFunc();
+                    uiContext.setEditMode(itemID, old);
+                });
+            } else {
+                SimileAjax.jQuery(elmt).click(function() { 
+                    uiContext.setEditMode(itemID, true);
+                    uiContext.getCollection()._listeners.fire("onItemsChanged", []);
+                });   
+            }
             processChildren();
             break;
         case "stop-editing":
             if ((typeof itemID) != "string") { // lens is in 'add new item' bubble
                 parentElmt.removeChild(elmt);
             } else {
-                if (templateNode.tag == 'a')
-                    elmt.href = 'javascript:';
-                SimileAjax.jQuery(elmt).click(function() {
-                    database.setEditMode(itemID, false);
-                    uiContext.getCollection()._listeners.fire("onItemsChanged", []);
-                });
+                if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
+                
+                if (uiContext.inPopupMode()) {
+                    var popupFunc = uiContext.getPopupFunc();
+
+                    SimileAjax.jQuery(elmt).click(function() { 
+                        var old = uiContext.isBeingEdited(itemID);
+                        uiContext.setEditMode(itemID, false);
+                        popupFunc();
+                        uiContext.setEditMode(itemID, old);
+                    });
+                } else {
+                    SimileAjax.jQuery(elmt).click(function() { 
+                        uiContext.setEditMode(itemID, false);
+                        uiContext.getCollection()._listeners.fire("onItemsChanged", []);
+                    });
+                }
                 processChildren();
             }
             break;

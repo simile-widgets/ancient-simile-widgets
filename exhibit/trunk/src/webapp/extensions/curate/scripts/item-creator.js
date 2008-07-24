@@ -7,7 +7,7 @@ Exhibit.ItemCreator = function(elmt, uiContext, settings) {
     
     SimileAjax.jQuery(elmt).click(function() {
         var item = { type: settings.itemType };
-        Exhibit.ItemCreator.createItem(db, item);
+        Exhibit.ItemCreator.createItem(uiContext, item);
     });
     return elmt;
 }
@@ -35,12 +35,14 @@ Exhibit.ItemCreator.makeNewItemID = function(db, type) {
 }
 
 Exhibit.ItemCreator.createItem = function(db, item) {
+    var db = uiContext.getDatabase();
+    
     item = item || {};
     item.type = item.type || 'item';
     item.id = item.id || Exhibit.ItemCreator.makeNewItemID(db, item.type);
     item.label = item.label || item.id;
-            
-    db.setEditMode(item.id, true);
+    
+    uiContext.setEditMode(item.id, true);
     db.addItem(item);
     
     var elmt = Exhibit.UI.findAttribute('ex:itemid', item.id).get(0);

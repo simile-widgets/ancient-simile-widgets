@@ -19,7 +19,6 @@ Exhibit.Database._Impl = function() {
     this._properties = {};
     this._propertyArray = {};
     
-    this._editRegistry = {}; // tracks which items are being edited
     this._submissionRegistry = {}; // stores unmodified copies of submissions
     
     this._originalValues = {};
@@ -1047,19 +1046,6 @@ Exhibit.Database._RangeIndex.prototype._indexOf = function(v) {
 // Editable Database Support
 //=============================================================================
 
-
-Exhibit.Database._Impl.prototype.setEditMode = function(itemID, val) {
-    if (val) {
-        this._editRegistry[itemID] = true;
-    } else {
-        delete this._editRegistry[itemID];
-    }
-}
-
-Exhibit.Database._Impl.prototype.isBeingEdited = function(id) {
-    return !!this._editRegistry[id];
-}
-
 Exhibit.Database._Impl.prototype.isNewItem = function(id) {
     return id in this._newItems;
 }
@@ -1078,7 +1064,6 @@ Exhibit.Database._Impl.prototype.getItem = function(id) {
 Exhibit.Database._Impl.prototype.addItem = function(item) {
     if (!item.id) { item.id = item.label };
     this.loadItems([item], '');
-    this.setEditMode(item.id, true);
 
     delete this._deletedItems[item.id];
     this._newItems[item.id] = true;
@@ -1107,7 +1092,6 @@ Exhibit.Database._Impl.prototype.removeItem = function(id) {
 
     this._items.remove(id);
     delete this._spo[id];
-    this.setEditMode(id, false);
     
     // when new items are deleted, they disappear
     if (this._newItems[id]) {
