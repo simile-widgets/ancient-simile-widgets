@@ -560,7 +560,7 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
         var onshow = Exhibit.getAttribute(node, "onshow");
         if (onshow != null && onshow.length > 0) {
             try {
-                eval("(function() { " + onshow + " })").call(node);
+                (new Function(onshow)).call(node);
             } catch (e) {
                 SimileAjax.Debug.log(e);
             }
