@@ -27,7 +27,8 @@ Exhibit.ListFacet._settingSpecs = {
     "height":           { type: "text" },
     "colorCoder":       { type: "text", defaultValue: null },
     "collapsible":      { type: "boolean", defaultValue: false },
-    "collapsed":        { type: "boolean", defaultValue: false }
+    "collapsed":        { type: "boolean", defaultValue: false },
+    "formatter":        { type: "text", defaultValue: null}
 };
 
 Exhibit.ListFacet.create = function(configuration, containerElmt, uiContext) {
@@ -122,6 +123,17 @@ Exhibit.ListFacet._configure = function(facet, configuration) {
     
     if (facet._settings.collapsed) {
         facet._settings.collapsible = true;
+    }
+    
+    if ("formatter" in facet._settings) {
+        var formatter = facet._settings.formatter;
+        if (formatter != null && formatter.length > 0) {
+            try {
+                facet._formatter = eval(formatter);
+            } catch (e) {
+                SimileAjax.Debug.log(e);
+            }
+        }
     }
     
     facet._cache = new Exhibit.FacetUtilities.Cache(
@@ -305,6 +317,8 @@ Exhibit.ListFacet.prototype._constructBody = function(entries) {
             onSelectOnly,
             self._uiContext
         );
+        
+        if (self._formatter) self._formatter(elmt);
         
         containerDiv.appendChild(elmt);
     };
