@@ -392,7 +392,7 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
         } else if (name == "editvalues") {
             templateNode.editValues = value;
         } else if (name == "tag") {
-            /*≈
+            /*
                 This is a hack for 2 cases:
                 1.  See http://simile.mit.edu/mail/ReadMsg?listName=General&msgId=22328
                 2.  IE7 throws a "Not enough storage is available to complete this operation" 
