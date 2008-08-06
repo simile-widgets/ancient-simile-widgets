@@ -869,8 +869,7 @@ var C=this._spo[D];
 SimileAjax.jQuery.each(C,function(F,G){if(Exhibit.Database.defaultIgnoredSubmissionProperties.indexOf(F)!=-1){return ;
 }if(G.length==1){SimileAjax.Debug.log(F+"->"+G[0]);
 B.editItem(A,F,G[0]);
-}else{SimileAjax.Debug.warn("Exhibit.Database._Impl.prototype.acceptChanges 
-                cannot handle multiple values for attribute "+F+": "+G);
+}else{SimileAjax.Debug.warn("Exhibit.Database._Impl.prototype.acceptChanges cannot handle multiple values for attribute "+F+": "+G);
 }});
 delete this._submissionRegistry[D];
 }else{if(E=="addition"){delete this._submissionRegistry[D];

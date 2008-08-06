@@ -1207,8 +1207,8 @@ Exhibit.Database._Impl.prototype.acceptChanges = function(itemID) {
                 SimileAjax.Debug.log(attr + '->' + val[0]);
                 db.editItem(realItemID, attr, val[0]);
             } else {
-                SimileAjax.Debug.warn("Exhibit.Database._Impl.prototype.acceptChanges \
-                cannot handle multiple values for attribute " + attr + ": " + val);
+                SimileAjax.Debug.warn("Exhibit.Database._Impl.prototype.acceptChanges cannot handle " + 
+                "multiple values for attribute " + attr + ": " + val);
             };
         });
         delete this._submissionRegistry[itemID];
