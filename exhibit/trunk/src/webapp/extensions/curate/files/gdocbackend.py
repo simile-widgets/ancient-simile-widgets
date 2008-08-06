@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import cgi
 from datetime import date
 
+# Configuration Loading
+
+# config file should have gmail account name on first line, password on second
+config_path = 'config.cgi'
+email = None
+password = None
+
+if os.path.exists(config_path):
+    email, password = [l.rstrip('\n') for l in open(config_path).readlines()]
 
 # HTTP Responses
 
@@ -27,27 +37,28 @@ try:
 except Exception, e:
     output_error('error loading gdata library: %s' % (str(e)))
 
-
 def output_object(obj, callback):
     resp = simplejson.dumps(obj, indent=4)
     if callback:
         resp = "%s(%s)" % (callback, resp)
     output_response('200 Ok', 'text/javascript', resp)
 
-# configuration loading
-# config file should have gmail account on first line, password on second
-email, password = [l.rstrip('\n') for l in open('config.cgi').readlines()]
+# Google Spreadsheets Code
 
-# GData Handling
-
-def gdata_login():
+def gdata_login(token=None, session_token=None):
     gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-    gd_client.email = email
-    gd_client.password = password
-    gd_client.source = 'Exhibit Submitter'
-    gd_client.ProgrammaticLogin()
+    if session_token:
+        gd_client.SetAuthSubToken(session_token)
+    elif token:
+        gd_client.SetAuthSubToken(token)
+        gd_client.UpgradeToSessionToken()
+    else:
+        gd_client.email = email
+        gd_client.password = password
+        gd_client.source = 'Exhibit Submitter'
+        gd_client.ProgrammaticLogin()
     return gd_client
-
+    
 def print_feed(feed):
   for entry in feed.entry:
     if isinstance(feed, gdata.spreadsheet.SpreadsheetsCellsFeed):
@@ -97,6 +108,13 @@ class Worksheet(object):
     def insert_row(self, obj):
         return self.client.InsertRow(obj, self.ss_key, self.ws_key)
 
+try:
+
+except Exception, e:
+    output_error('error handling request: %s' % (str(e)))
+
+
+
 # Actions
 
 # Request handling
@@ -106,15 +124,16 @@ if len(sys.argv) > 1:
     callback = None
     ss_key = "pHCVS1LwNriVBoIRKJryCeg"
     wk_name = "submissions"
-    json = '[{"id":"The Great Gatsby","email":"sostler@mit.edu","comment":"dummy","year":"1926","label":"The Great Gatsby"}]'
-    json = '	[{"id":"Atlas Shrugged","label":"Atlas Shrugged","availability":"available","__added":"Tue Jul 15 2008 01:10:22 GMT-0400 (EDT)","__comment":"","__email":"john"}]'
+    json = '[{"id":"Atlas Shrugged","label":"Atlas Shrugged","availability":"available"}, {"label": "The Crying of Lot 49", "author": "Thomas Pynchon"}]'
 else:
     action = cgi.FieldStorage('action')
     form = cgi.FieldStorage()
     callback = form.getvalue('callback')
     ss_key = form.getvalue('spreadsheetkey')
     wk_name = form.getvalue('worksheetname', 'submissions')
-    json = form.getvalue('message')
+    json = form.getvalue('json')
+    token = form.getvalue('token', None)
+    session_token = form.getvalue('session', None)
 
 if not json:
     output_error('no message provided')
@@ -127,12 +146,16 @@ try:
 except Exception, e:
     output_error('invalid message: %s' % (str(e)))
 
-client = gdata_login()
+client = gdata_login(token=token, session_token=session_token)
+response_message = { 'status': 'ok' }
+
+if session:
+    response_message['session'] = client.GetAuthSubToken()
 
 try:
-    worksheet = Spreadsheet(client, ss_key).get_worksheet(name='submissions')
+    worksheet = Spreadsheet(client, ss_key).get_worksheet(wk_name)
     for r in message:
         worksheet.insert_row(r)
-    output_object({'status': 'ok'}, callback)
+    output_object(response_message, callback)
 except Exception, e:
     output_error(str(e) + "\n" + str(message))

@@ -24,7 +24,9 @@ Exhibit.ChangeList._settingSpecs = {
     submissionText:  { type: "text", defaultValue: "Thanks for your submission! \
         It has been sent to the exhibit author for approval." },
     placeholderText: { type: "text", defaultValue: "To begin editing this exhibit, \
-        click the 'edit' links on the exhibit items." }
+        click the 'edit' links on the exhibit items." },
+    maxValueLength:     { type: "int", defaultValue: 50 },
+    trunctationString:  { type: "text", defaultValue: "..." }
 };
 
 Exhibit.UI.generateCreationMethods(Exhibit.ChangeList);
@@ -64,6 +66,9 @@ Exhibit.ChangeList.prototype.addMockData = function(view) {
 // UI templating
 //=============================================================================
 
+Exhibit.ChangeList.defaultMaxValueLength = 50;
+Exhibit.ChangeList.defaultTrunctationString = "...";
+
 Exhibit.ChangeList.prototype.makePlaceholder = function() {
     var placeHolder = SimileAjax.jQuery('<span>').addClass('placeholderMessage')
     if (Exhibit.ChangeList.showSubmissionText) {
@@ -76,20 +81,32 @@ Exhibit.ChangeList.prototype.makePlaceholder = function() {
 }
 
 Exhibit.ChangeList.prototype.renderPropChange = function(prop, oldVal, newVal) {
-    var span = function(t, c) { 
-        return SimileAjax.jQuery('<span>').text(t).addClass(c) 
+    var span = function(t, c, title) { 
+        if (title) {
+            return SimileAjax.jQuery('<span>').text(t).addClass(c).attr('title', title);            
+        } else {
+            return SimileAjax.jQuery('<span>').text(t).addClass(c);
+        }
+
     };
     var div = SimileAjax.jQuery('<div>').addClass('property-change');
+
+    var title;
+    var truncLength = this._settings.trunctationString.length;
+    if (newVal.length - truncLength > this._settings.maxValueLength) {
+        title = newVal;
+        newVal = newVal.slice(0, this._settings.maxValueLength - truncLength) + '...';
+    }
 
     if (oldVal) {
         div.append(
             span(prop, 'property-name'), ' was changed from ', 
             span(oldVal, 'old-value'), ' to ', 
-            span(newVal, 'new-value'));
+            span(newVal, 'new-value', title));
     } else {
         div.append(
             span(prop, 'property-name'), ' was set to ', 
-            span(newVal, 'new-value'));
+            span(newVal, 'new-value', title));
     }
 
     return div;

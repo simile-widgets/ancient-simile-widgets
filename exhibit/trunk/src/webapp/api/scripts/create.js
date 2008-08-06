@@ -8,7 +8,7 @@
  *  autoCreate=false when you include exhibit-api.js.
  *======================================================================
  */
-SimileAjax.jQuery(document).ready(function() { 
+SimileAjax.jQuery(document).ready(function() {     
     var fDone = function() {
         window.exhibit = Exhibit.create();
         window.exhibit.configureFromDOM();
@@ -32,6 +32,7 @@ SimileAjax.jQuery(document).ready(function() {
         window.database.loadSubmissionLinks(fDone);
     };
     
+    Exhibit.Authentication.authenticate();
     window.database = Exhibit.Database.create();
     window.database.loadDataLinks(fLoadSubmissions);
 });
