@@ -9,12 +9,18 @@
 
 (function() {
     var useLocalResources = false;
+    var noAuthentication = false;
+    
     if (document.location.search.length > 0) {
         var params = document.location.search.substr(1).split("&");
         for (var i = 0; i < params.length; i++) {
             if (params[i] == "exhibit-use-local-resources") {
                 useLocalResources = true;
             }
+            if (params[i] == 'exhibit-no-authentication') {
+                noAuthentication = true;
+            }
+            
         }
     }
     
@@ -25,7 +31,7 @@
     
         window.Exhibit = {
             loaded:     false,
-            params:     { bundle: !useLocalResources, autoCreate: true, safe: false },
+            params:     { bundle: !useLocalResources, authenticated: !noAuthentication, autoCreate: true, safe: false },
             namespace:  "http://simile.mit.edu/2006/11/exhibit#",
             importers:  {},
             locales:    [ "en" ]
@@ -34,6 +40,7 @@
         var javascriptFiles = [
             "exhibit.js",
             "persistence.js",
+            "authentication.js",
             "util/set.js",
             "util/util.js",
             "util/settings.js",

@@ -53,9 +53,32 @@ Exhibit.SubmissionBackend.getOutputOptions = function() {
     return opts;
 };
 
+Exhibit.SubmissionBackend.googleAuthSuccessWrapper = function(fSuccess) {
+    return function(resp) {
+        SimileAjax.Debug.log('wrapped');
+        SimileAjax.Debug.log(resp);
+        if (resp.session) {
+            Exhibit.Authentication.GoogleSessionToken = resp.session;
+        }
+        fSuccess(resp);
+    };
+}
+
 Exhibit.SubmissionBackend.submitChanges = function(changes, fSuccess, fError) {
     var options = Exhibit.SubmissionBackend.getOutputOptions();
-    options.data.message = SimileAjax.JSON.toJSONString(changes);
+    options.data.json = SimileAjax.JSON.toJSONString(changes);
+    
+    // if authentication is enabled, authentication token must be provided.
+    if (Exhibit.Authentication.Enabled) {
+        if (Exhibit.Authentication.GoogleSessionToken) {
+            options.data.session = Exhibit.Authentication.GoogleSessionToken;
+        } else if (Exhibit.Authentication.GoogleToken) {
+            options.data.token = Exhibit.Authentication.GoogleToken;
+            fSuccess = Exhibit.SubmissionBackend.googleAuthSuccessWrapper(fSuccess);
+        } else {
+            SimileAjax.Debug.warn('Authentication is enabled, but no tokens are present');
+        }
+    }
     
     $.ajax({
         url: options.url,

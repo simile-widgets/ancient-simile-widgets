@@ -7,7 +7,20 @@
 Exhibit.Database = new Object();
 
 Exhibit.Database.create = function() {
+    Exhibit.Database.handleAuthentication();
     return new Exhibit.Database._Impl();
+};
+
+Exhibit.Database.handleAuthentication = function() {
+    if (window.Exhibit.params.authenticated) {
+        var links = document.getElementsByTagName('head')[0].childNodes;
+        for (var i = 0; i < links.length; i++) {
+            var link = links[i];
+            if (link.rel == 'exhibit/output' && link.getAttribute('ex:authenticated')) {
+                
+            }
+        }
+    }
 };
 
 /*==================================================
@@ -1075,7 +1088,11 @@ Exhibit.Database._Impl.prototype.editItem = function(id, prop, value) {
     if (prop.toLowerCase() == 'id') {
         throw "can't change ID of " + id;
     }
+    
     var prevValue = this.getObject(id, prop);
+    
+    if (prevValue == value) { return; }
+    
     this._originalValues[id] = this._originalValues[id] || {};
     this._originalValues[id][prop] = this._originalValues[id][prop] || prevValue;
     
@@ -1109,7 +1126,7 @@ Exhibit.Database._Impl.prototype.removeItem = function(id) {
     this._listeners.fire('onAfterLoadingItems', []);
 };
 
-Exhibit.Database.defaultIgnoredProperties = ['id', 'uri', 'type'];
+Exhibit.Database.defaultIgnoredSubmissionProperties = ['id', 'uri', 'type', 'change', 'changedItem'];
 
 Exhibit.Database._Impl.prototype.resetChanges = function() {
     this._originalValues = {};
@@ -1118,7 +1135,7 @@ Exhibit.Database._Impl.prototype.resetChanges = function() {
 };
 
 Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
-    ignoredProperties = ignoredProperties || Exhibit.Database.defaultIgnoredProperties;
+    ignoredProperties = ignoredProperties || Exhibit.Database.defaultIgnoredSubmissionProperties;
     var ret = [];
     
     for (var id in this._newItems) {
@@ -1170,13 +1187,31 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
 //=============================================================================
 
 Exhibit.Database._Impl.prototype.acceptChanges = function(itemID) {
+    var db = this;
+    
     if (!this.isSubmission(itemID)){
         throw itemID + " is not a submission!";
     }
+    
     var change = this.getObject(itemID, 'change');
     if (change == 'modification') {
         var realItemID = this.getObject(itemID, 'changedItem');
+        var vals = this._spo[itemID];
         
+        SimileAjax.jQuery.each(vals, function(attr, val) {
+            if (Exhibit.Database.defaultIgnoredSubmissionProperties.indexOf(attr) != -1) {
+                return;
+            }
+            
+            if (val.length == 1) {
+                SimileAjax.Debug.log(attr + '->' + val[0]);
+                db.editItem(realItemID, attr, val[0]);
+            } else {
+                SimileAjax.Debug.warn("Exhibit.Database._Impl.prototype.acceptChanges \
+                cannot handle multiple values for attribute " + attr + ": " + val);
+            };
+        });
+        delete this._submissionRegistry[itemID];
         
     } else if (change == 'addition') {
         delete this._submissionRegistry[itemID];

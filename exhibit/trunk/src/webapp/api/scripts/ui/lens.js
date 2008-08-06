@@ -389,6 +389,8 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
             templateNode.content = Exhibit.ExpressionParser.parse(value);
         } else if (name == "edit") {
             templateNode.edit = value;
+        } else if (name == 'options') {
+            templateNode.options = value;
         } else if (name == "editvalues") {
             templateNode.editValues = value;
         } else if (name == "tag") {
@@ -885,39 +887,64 @@ Exhibit.Lens._constructElmtWithAttributes = function(templateNode, parentElmt, d
     return elmt;
 };
 
+
 Exhibit.Lens._constructEditableContent = function(templateNode, elmt, itemID, uiContext) {
     var db = uiContext.getDatabase();
     var attr = templateNode.edit;
+    var itemValue = null;
     
     if (itemID.type == 'temporaryItem') {
-        var value = itemID.values[attr] || "";
+        itemValue = itemID.values[attr] || "";
         var changeHandler = function() {
             itemID.values[attr] = this.value;
         }
     } else {
-        var value = db.getObject(itemID, attr);
+        itemValue = db.getObject(itemID, attr);
         var changeHandler = function() {
-            if (value != this.value) 
+            if (this.value != itemValue) 
                 db.editItem(itemID, attr, this.value);
         }   
     }
     
     if (templateNode.tag == 'select') {
-        for (var i in elmt.options) {
-            if (elmt.options.hasOwnProperty(i) && elmt.options[i].value == value) {
-                elmt.selectedIndex = i;
-            }
-        }
-    } else {
-        elmt.value = value;        
-    }
-    
-    if (templateNode.tag == 'select') {
+        Exhibit.Lens._constructEditableSelect(templateNode, elmt, itemID, uiContext, itemValue);
         SimileAjax.jQuery(elmt).blur(changeHandler);
     } else {
+        elmt.value = itemValue;
         SimileAjax.jQuery(elmt).change(changeHandler);
     }
 }
+
+
+// helper function to handle special-case rules for editable select tags
+Exhibit.Lens._constructEditableSelect = function(templateNode, elmt, itemID, uiContext, itemValue) {
+    if (templateNode.options) {
+        var expr = Exhibit.ExpressionParser.parse(templateNode.options);
+        var allItems = uiContext.getDatabase().getAllItems();
+        var results = expr.evaluate({'value': allItems}, {value: 'item'}, 'value', uiContext.getDatabase());
+        var sortedResults = results.values.toArray().sort();
+        
+        for (var i in sortedResults) {
+            var newOptionIndex = elmt.options.length;
+            var newOptionText = sortedResults[i];
+            var newOption = new Option(newOptionText, newOptionText);
+
+            elmt.options[newOptionIndex] = newOption;
+        }
+    }
+    
+    if (!itemValue) {
+        var newOptionIndex = elmt.options.length;
+        elmt.options[newOptionIndex] = new Option("", "", true);
+    } else {
+        for (var i in elmt.options) {
+            if (elmt.options.hasOwnProperty(i) && elmt.options[i].value == itemValue) {
+                elmt.selectedIndex = i;
+            }
+        }   
+    }
+}
+
 
 Exhibit.Lens._constructDefaultValueList = function(values, valueType, parentElmt, uiContext) {
     uiContext.formatList(values, values.size(), valueType, function(elmt) {
