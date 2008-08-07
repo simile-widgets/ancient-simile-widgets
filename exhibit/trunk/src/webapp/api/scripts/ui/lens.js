@@ -936,7 +936,7 @@ Exhibit.Lens._constructEditableSelect = function(templateNode, elmt, itemID, uiC
             var optText = sortedResults[i];
             if (!Exhibit.Lens.doesSelectContain(elmt, optText)) {
                 var newOption = new Option(sortedResults[i], sortedResults[i]);
-                elmt.add(newOption);
+                elmt.add(newOption, null);
             }            
         }
     }

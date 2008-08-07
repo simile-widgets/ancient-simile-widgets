@@ -5625,7 +5625,7 @@ var G=L.evaluate({"value":I},{value:"item"},"value",E.getDatabase());
 var K=G.values.toArray().sort();
 for(var F in K){var J=K[F];
 if(!Exhibit.Lens.doesSelectContain(C,J)){var H=new Option(K[F],K[F]);
-C.add(H);
+C.add(H,null);
 }}}if(!D){if(!Exhibit.Lens.doesSelectContain(C,"")){var H=new Option("","",true);
 C.add(H,C.options[0]);
 }}else{for(var F in C.options){if(C.options.hasOwnProperty(F)&&C.options[F].value==D){C.selectedIndex=F;
