@@ -891,17 +891,16 @@ Exhibit.Lens._constructElmtWithAttributes = function(templateNode, parentElmt, d
 Exhibit.Lens._constructEditableContent = function(templateNode, elmt, itemID, uiContext) {
     var db = uiContext.getDatabase();
     var attr = templateNode.edit;
-    var itemValue = null;
     
     if (itemID.type == 'temporaryItem') {
-        itemValue = itemID.values[attr] || "";
+        var itemValue = itemID.values[attr] || "";
         var changeHandler = function() {
             itemID.values[attr] = this.value;
         }
     } else {
-        itemValue = db.getObject(itemID, attr);
+        var itemValue = db.getObject(itemID, attr);
         var changeHandler = function() {
-            if (this.value != itemValue) 
+            if (this.value && this.value != itemValue)
                 db.editItem(itemID, attr, this.value);
         }   
     }

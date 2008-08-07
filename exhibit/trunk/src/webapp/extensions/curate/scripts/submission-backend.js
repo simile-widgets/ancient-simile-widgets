@@ -38,18 +38,14 @@ Exhibit.SubmissionBackend.getOutputOptions = function() {
     } else if (links.length > 1) {
         SimileAjax.Debug.warn('Multiple output links provided; ignoring all but the first');
     }
-    
-    var type = links.attr('type').toString().toLowerCase();
+
     var opts = { url: null, data: {}};
     
-    if (type == 'gdoc') {
-        opts.url = links.attr('ex:url') || Exhibit.SubmissionBackend.SubmissionDefaults.gdoc.url;
-        opts.data.spreadsheetkey = links.attr('ex:spreadsheetKey');
-        opts.data.worksheetindex = links.attr('ex:worksheetIndex');
-    } else {
-        throw "Unknown output link of type " + type;
-    }
-    
+    opts.url = links.attr('ex:url') || Exhibit.SubmissionBackend.SubmissionDefaults.gdoc.url;
+    opts.data.spreadsheetkey = links.attr('ex:spreadsheetKey');
+    opts.data.worksheetindex = links.attr('ex:worksheetIndex');
+    opts.data.worksheetname = links.attr('ex:worksheetName');
+        
     return opts;
 };
 
