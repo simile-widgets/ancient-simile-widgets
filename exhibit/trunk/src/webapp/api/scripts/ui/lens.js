@@ -914,6 +914,15 @@ Exhibit.Lens._constructEditableContent = function(templateNode, elmt, itemID, ui
     }
 }
 
+Exhibit.Lens.doesSelectContain = function(select, text) {
+    for (var i in select.options) {
+        var opt = select.options[i];
+        if (opt.text == text || opt.value == text) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // helper function to handle special-case rules for editable select tags
 Exhibit.Lens._constructEditableSelect = function(templateNode, elmt, itemID, uiContext, itemValue) {
@@ -924,17 +933,19 @@ Exhibit.Lens._constructEditableSelect = function(templateNode, elmt, itemID, uiC
         var sortedResults = results.values.toArray().sort();
         
         for (var i in sortedResults) {
-            var newOptionIndex = elmt.options.length;
-            var newOptionText = sortedResults[i];
-            var newOption = new Option(newOptionText, newOptionText);
-
-            elmt.options[newOptionIndex] = newOption;
+            var optText = sortedResults[i];
+            if (!Exhibit.Lens.doesSelectContain(elmt, optText)) {
+                var newOption = new Option(sortedResults[i], sortedResults[i]);
+                elmt.add(newOption);
+            }            
         }
     }
     
     if (!itemValue) {
-        var newOptionIndex = elmt.options.length;
-        elmt.options[newOptionIndex] = new Option("", "", true);
+        if (!Exhibit.Lens.doesSelectContain(elmt, '')) {
+            var newOption = new Option("", "", true);
+            elmt.add(newOption, elmt.options[0]);
+        }
     } else {
         for (var i in elmt.options) {
             if (elmt.options.hasOwnProperty(i) && elmt.options[i].value == itemValue) {
