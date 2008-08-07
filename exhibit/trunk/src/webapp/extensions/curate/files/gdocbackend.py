@@ -108,54 +108,54 @@ class Worksheet(object):
     def insert_row(self, obj):
         return self.client.InsertRow(obj, self.ss_key, self.ws_key)
 
-try:
-
-except Exception, e:
-    output_error('error handling request: %s' % (str(e)))
-
-
 
 # Actions
 
 # Request handling
 
-if len(sys.argv) > 1:
-    action = sys.argv[1]
-    callback = None
-    ss_key = "pHCVS1LwNriVBoIRKJryCeg"
-    wk_name = "submissions"
-    json = '[{"id":"Atlas Shrugged","label":"Atlas Shrugged","availability":"available"}, {"label": "The Crying of Lot 49", "author": "Thomas Pynchon"}]'
-else:
-    action = cgi.FieldStorage('action')
+def get_form_values():
     form = cgi.FieldStorage()
-    callback = form.getvalue('callback')
-    ss_key = form.getvalue('spreadsheetkey')
-    wk_name = form.getvalue('worksheetname', 'submissions')
-    json = form.getvalue('json')
-    token = form.getvalue('token', None)
-    session_token = form.getvalue('session', None)
-
-if not json:
-    output_error('no message provided')
-    
-if not ss_key:
-    output_error('no spreadsheet key provided')
+    vals = {}
+    vals['callback'] = form.getvalue('callback')
+    vals['json'] = form.getvalue('json')
+    vals['ss_key'] = form.getvalue('spreadsheetkey')
+    vals['wk_name'] = form.getvalue('worksheetname', 'submissions')
+    vals['wk_index'] = form.getvalue('worksheetindex')
+    vals['token'] = form.getvalue('token')
+    vals['session_token'] = form.getvalue('session')
+    return vals
 
 try:
-    message = simplejson.loads(json)
+    vals = get_form_values()
 except Exception, e:
-    output_error('invalid message: %s' % (str(e)))
+    output_error('error getting form values: %s' % (str(e)))
 
-client = gdata_login(token=token, session_token=session_token)
+if 'json' not in vals:
+    output_error('no message provided')
+    
+if 'ss_key' not in vals:
+    output_error('no spreadsheet key provided')
+
+if not 'wk_name' in vals and not 'wk_index' in vals:
+    output_error('no worksheet name or index provided')
+
+try:
+    message = simplejson.loads(vals['json'])
+except Exception, e:
+    output_error('invalid json: %s' % (str(e)))
+
+
+client = gdata_login(token=vals['token'], session_token=vals['session_token'])
 response_message = { 'status': 'ok' }
 
-if session:
+if 'session' in vals:
     response_message['session'] = client.GetAuthSubToken()
 
 try:
-    worksheet = Spreadsheet(client, ss_key).get_worksheet(wk_name)
+    ss = Spreadsheet(client, vals['ss_key'])
+    ws = ss.get_worksheet(name=vals['wk_name'], index=vals['wk_index'])
     for r in message:
-        worksheet.insert_row(r)
-    output_object(response_message, callback)
+        ws.insert_row(r)
+    output_object(response_message, vals['callback'])
 except Exception, e:
     output_error(str(e) + "\n" + str(message))

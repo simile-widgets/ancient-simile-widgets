@@ -1098,7 +1098,15 @@ Exhibit.Database._Impl.prototype.editItem = function(id, prop, value) {
     
     this.removeObjects(id, prop);
     this.addStatement(id, prop, value);
-    this.getProperty(prop)._onNewData(); // flush property cache
+    
+    var propertyObject = this.getProperty(prop);
+    
+    if (propertyObject) {
+        propertyObject._onNewData(); // flush property cache
+    } else {
+        SimileAjax.Debug.warn("No property object for " + prop);
+    }
+
     this._listeners.fire('onAfterLoadingItems', []);
 }
 
