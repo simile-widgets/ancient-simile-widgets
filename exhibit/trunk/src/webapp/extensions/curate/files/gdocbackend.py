@@ -91,6 +91,7 @@ class Spreadsheet(object):
                 if e.title.text.lower() == name.lower(): 
                     ws = e
         elif index != None:
+            index = int(index)
             if entry[index]: ws = entry[index]
         else:
             raise Exception()
@@ -119,7 +120,7 @@ def get_form_values():
     vals['callback'] = form.getvalue('callback')
     vals['json'] = form.getvalue('json')
     vals['ss_key'] = form.getvalue('spreadsheetkey')
-    vals['wk_name'] = form.getvalue('worksheetname', 'submissions')
+    vals['wk_name'] = form.getvalue('worksheetname')
     vals['wk_index'] = form.getvalue('worksheetindex')
     vals['token'] = form.getvalue('token')
     vals['session_token'] = form.getvalue('session')
