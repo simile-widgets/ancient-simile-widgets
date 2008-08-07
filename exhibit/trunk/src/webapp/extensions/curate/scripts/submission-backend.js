@@ -42,9 +42,19 @@ Exhibit.SubmissionBackend.getOutputOptions = function() {
     var opts = { url: null, data: {}};
     
     opts.url = links.attr('ex:url') || Exhibit.SubmissionBackend.SubmissionDefaults.gdoc.url;
-    opts.data.spreadsheetkey = links.attr('ex:spreadsheetKey');
-    opts.data.worksheetindex = links.attr('ex:worksheetIndex');
-    opts.data.worksheetname = links.attr('ex:worksheetName');
+    
+    
+    if (links.attr('ex:spreadsheetKey')) {
+        opts.data.spreadsheetkey = links.attr('ex:spreadsheetKey');        
+    }
+    
+    if (links.attr('ex:worksheetIndex')) {
+        opts.data.worksheetindex = links.attr('ex:worksheetIndex');        
+    }
+
+    if (links.attr('ex:worksheetName')) {
+        opts.data.worksheetname = links.attr('ex:worksheetName');
+    }
         
     return opts;
 };
