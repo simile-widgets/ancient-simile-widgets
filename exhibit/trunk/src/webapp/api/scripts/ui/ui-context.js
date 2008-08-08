@@ -3,6 +3,7 @@
  *======================================================================
  */
 Exhibit.UIContext = function() {
+    this._id = Math.random();
     this._parent = null;
     
     this._exhibit = null;
@@ -13,8 +14,7 @@ Exhibit.UIContext = function() {
     this._formatters = {};
     this._listFormatter = null;
     
-    this._editModeRegistry = {};    
-    this._editModeListeners = {};
+    this._editModeRegistry = {};
     
     this._popupFunc = null;
 };
@@ -142,26 +142,15 @@ Exhibit.UIContext.prototype.formatList = function(iterator, count, valueType, ap
 
 Exhibit.UIContext.prototype.setEditMode = function(itemID, val) {
     if (val) {
+        SimileAjax.Debug.log('setting edit mode for ' + this._id)
         this._editModeRegistry[itemID] = true;        
     } else {
         this._editModeRegistry[itemID] = false;
-    }
-
-    if (itemID in this._editModeListeners) {
-        var f = this._editModeListeners[itemID];
-        f();
     }
 }
 
 Exhibit.UIContext.prototype.isBeingEdited = function(itemID) {
     return !!this._editModeRegistry[itemID];
-}
-
-Exhibit.UIContext.prototype.addEditModeListener = function(itemID, f) {
-    if (itemID in this._editModeListeners) {
-        SimileAjax.Debug.warn('Overwriting edit mode listener for ' + itemID);
-    }
-    this._editModeListeners[itemID] = f;
 }
 
 // Popup mode is used to record whether the item is being 

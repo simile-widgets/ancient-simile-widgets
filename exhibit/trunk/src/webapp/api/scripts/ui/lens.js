@@ -741,18 +741,20 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             }
             break;
         case "start-editing":
+            SimileAjax.Debug.log('creating start-edit for ' + uiContext._id)
             if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
             
             if (uiContext.inPopupMode()) {
                 var popupFunc = uiContext.getPopupFunc();
-                SimileAjax.jQuery(elmt).click(function() { 
-                    var old = uiContext.isBeingEdited(itemID);
+                SimileAjax.jQuery(elmt).click(function() {
+                    SimileAjax.Debug.log('in popup mode')
+                    var previousEditMode = uiContext.isBeingEdited(itemID);
                     uiContext.setEditMode(itemID, true);
                     popupFunc();
-                    uiContext.setEditMode(itemID, old);
+                    uiContext.setEditMode(itemID, previousEditMode);
                 });
             } else {
-                SimileAjax.jQuery(elmt).click(function() { 
+                SimileAjax.jQuery(elmt).click(function() {
                     uiContext.setEditMode(itemID, true);
                     uiContext.getCollection()._listeners.fire("onItemsChanged", []);
                 });   

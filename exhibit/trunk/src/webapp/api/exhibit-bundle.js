@@ -5523,9 +5523,11 @@ case"remove-item":if(Q.isNewItem(E)){if(f.tag=="a"){L.href="javascript:";
 R();
 }else{D.removeChild(L);
 }break;
-case"start-editing":if(f.tag=="a"){L.href="javascript:";
+case"start-editing":SimileAjax.Debug.log("creating start-edit for "+K._id);
+if(f.tag=="a"){L.href="javascript:";
 }if(K.inPopupMode()){var P=K.getPopupFunc();
-SimileAjax.jQuery(L).click(function(){var a=K.isBeingEdited(E);
+SimileAjax.jQuery(L).click(function(){SimileAjax.Debug.log("in popup mode");
+var a=K.isBeingEdited(E);
 K.setEditMode(E,true);
 P();
 K.setEditMode(E,a);
@@ -5639,7 +5641,8 @@ Exhibit.Lens._attributeValueIsSafe=function(A,B){if(Exhibit.params.safe){if((A==
 
 
 /* ui-context.js */
-Exhibit.UIContext=function(){this._parent=null;
+Exhibit.UIContext=function(){this._id=Math.random();
+this._parent=null;
 this._exhibit=null;
 this._collection=null;
 this._lensRegistry=new Exhibit.LensRegistry();
@@ -5647,7 +5650,6 @@ this._settings={};
 this._formatters={};
 this._listFormatter=null;
 this._editModeRegistry={};
-this._editModeListeners={};
 this._popupFunc=null;
 };
 Exhibit.UIContext.createRootContext=function(F,B){var C=new Exhibit.UIContext();
@@ -5702,15 +5704,11 @@ if(D in this._formatters){B=this._formatters[D];
 Exhibit.UIContext.prototype.formatList=function(B,C,D,A){if(this._listFormatter==null){this._listFormatter=new Exhibit.Formatter._ListFormatter(this);
 }this._listFormatter.formatList(B,C,D,A);
 };
-Exhibit.UIContext.prototype.setEditMode=function(B,C){if(C){this._editModeRegistry[B]=true;
-}else{this._editModeRegistry[B]=false;
-}if(B in this._editModeListeners){var A=this._editModeListeners[B];
-A();
+Exhibit.UIContext.prototype.setEditMode=function(A,B){if(B){SimileAjax.Debug.log("setting edit mode for "+this._id);
+this._editModeRegistry[A]=true;
+}else{this._editModeRegistry[A]=false;
 }};
 Exhibit.UIContext.prototype.isBeingEdited=function(A){return !!this._editModeRegistry[A];
-};
-Exhibit.UIContext.prototype.addEditModeListener=function(B,A){if(B in this._editModeListeners){SimileAjax.Debug.warn("Overwriting edit mode listener for "+B);
-}this._editModeListeners[B]=A;
 };
 Exhibit.UIContext.prototype.inPopupMode=function(){return this._popupFunc!=null;
 };
@@ -6774,7 +6772,8 @@ return A;
 
 
 /* tile-view.js */
-Exhibit.TileView=function(C,B){this._div=C;
+Exhibit.TileView=function(C,B){SimileAjax.Debug.log("tileview being created w/ uiContext "+B._id);
+this._div=C;
 this._uiContext=B;
 this._settings={};
 var A=this;
