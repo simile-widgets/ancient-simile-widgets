@@ -127,7 +127,16 @@ def get_form_values():
     return vals
 
 try:
-    vals = get_form_values()
+    vals = {
+        'token':None,
+        'session_token':None,
+        'callback':None,
+        'ss_key':'pHCVS1LwNriVBoIRKJryCeg',
+        'wk_index':'1',
+        'wk_name': None,
+        'json':'[{"id":"Atlas Shrugged","label":"Atlas Shrugged","availability":"unavailable","submitteremail":"test@","submittercomment":"test comment"}]'
+    }
+    # vals = get_form_values()
 except Exception, e:
     output_error('error getting form values: %s' % (str(e)))
 
@@ -137,8 +146,9 @@ if 'json' not in vals:
 if 'ss_key' not in vals:
     output_error('no spreadsheet key provided')
 
+# we default to using the first worksheet in the spreadsheet
 if not 'wk_name' in vals and not 'wk_index' in vals:
-    output_error('no worksheet name or index provided')
+    vals['wk_index'] = 0
 
 try:
     message = simplejson.loads(vals['json'])

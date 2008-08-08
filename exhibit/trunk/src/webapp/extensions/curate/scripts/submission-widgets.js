@@ -21,23 +21,19 @@ Exhibit.Submission.resetAfterSubmission = function(uiContext) {
     uiContext.getDatabase()._listeners.fire("onAfterLoadingItems", []);
 };
 
-
 //=============================================================================
 // Submission Properties
 //=============================================================================
 
 // Submission Properties are user-defined properties that apply to all
-// submitted changes -- e.g. the submitter's email address.
+// submitted changes -- timestamp
 Exhibit.Submission.Properties = {};
 
 Exhibit.SubmissionProperty = function(elmt, uiContext, settings) {
+    elmt.value = ""; // clear bogus autocompletion
+    
     if (!settings.propertyName) {
         SimileAjax.Debug.warn("No propertyName given for SubmissionProperty");
-    } else if (settings.propertyType == 'timestamp') {
-        var pad = function(i) { return i > 9 ? i.toString() : '0'+i };
-        var date = new Date();
-        var s = '="' + date.getFullYear() + '-' + pad(date.getMonth() +1) + '-' + pad(date.getDate()) + '"';
-        Exhibit.Submission.Properties[settings.propertyName] = s;
     } else {
         SimileAjax.jQuery(elmt).change(function(){
             Exhibit.Submission.Properties[settings.propertyName] = elmt.value;
@@ -62,9 +58,12 @@ Exhibit.UI.registerComponent('submission-property', Exhibit.SubmissionProperty);
 Exhibit.SubmissionButton = function(elmt, uiContext, settings) {
     var f = function() { 
         Exhibit.Submission.disableWidgets();
+        
+        var options = Exhibit.SubmissionBackend.getOutputOptions();
         var itemChanges = uiContext.getDatabase().collectChanges();
         var submissionProperties = Exhibit.Submission.Properties;
-        var changes = Exhibit.SubmissionBackend.formatChanges(itemChanges, submissionProperties);
+        
+        var changes = Exhibit.SubmissionBackend.formatChanges(itemChanges, submissionProperties, options.timestampName);
         
         var fSuccess = function() {
             alert("Changes successfully made!");
@@ -76,7 +75,7 @@ Exhibit.SubmissionButton = function(elmt, uiContext, settings) {
             Exhibit.Submission.enableWidgets();
         };
         
-        Exhibit.SubmissionBackend.submitChanges(changes, fSuccess, fError);
+        Exhibit.SubmissionBackend.submitChanges(changes, options, fSuccess, fError);
     };
     SimileAjax.jQuery(elmt).click(f);
 }

@@ -1,21 +1,29 @@
 Exhibit.SubmissionBackend = {};
 
-Exhibit.SubmissionBackend.formatChanges = function(itemChanges, submissionProperties, nameCollisionHandler) {
+Exhibit.SubmissionBackend.formatChanges = function(itemChanges, submissionProperties, timestampName) {
     return itemChanges.map(function(change) {
         var item = { id: change.id, label: change.label || change.id };
         
+        if (timestampName) {
+            var pad = function(i) { return i > 9 ? i.toString() : '0'+i };
+            var date = new Date();
+            var s = '="' + date.getFullYear() + '-' + pad(date.getMonth() +1) + '-' + pad(date.getDate()) + '"';
+            
+            item[timestampName.toLowerCase()] = s;
+        }
+        
+        // google data API only accepts lower-case property names
+        
         SimileAjax.jQuery.each(change.vals || {}, function(prop, val) {
+            prop = prop.toLowerCase();
             item[prop] = val.newVal;
         });
         
         SimileAjax.jQuery.each(submissionProperties, function(prop, val) {
+            prop = prop.toLowerCase();
             if (prop in item) {
-                if (nameCollisionHandler) {
-                    nameCollisionHandler(item, prop, val);
-                } else {
-                    throw "Collision between change property and submission property "
+                throw "Collision between change property and submission property "
                         + prop + ": " + item[prop] + ", " + val;
-                }
             } else {
                 item[prop] = val;
             }
@@ -43,17 +51,20 @@ Exhibit.SubmissionBackend.getOutputOptions = function() {
     
     opts.url = links.attr('ex:url') || Exhibit.SubmissionBackend.SubmissionDefaults.gdoc.url;
     
+    if (links.attr('ex:timestampName')) {
+        opts.timestampName = links.attr('ex:timestampName');
+    }
     
     if (links.attr('ex:spreadsheetKey')) {
         opts.data.spreadsheetkey = links.attr('ex:spreadsheetKey');        
     }
     
     if (links.attr('ex:worksheetIndex')) {
-        opts.data.worksheetindex = links.attr('ex:worksheetIndex');        
-    }
-
-    if (links.attr('ex:worksheetName')) {
+        opts.data.worksheetindex = links.attr('ex:worksheetIndex');
+    } else if (links.attr('ex:worksheetName')) {
         opts.data.worksheetname = links.attr('ex:worksheetName');
+    } else {
+        opts.data.worksheetindex = '0'; // default to first worksheet in spreadsheet
     }
         
     return opts;
@@ -70,8 +81,7 @@ Exhibit.SubmissionBackend.googleAuthSuccessWrapper = function(fSuccess) {
     };
 }
 
-Exhibit.SubmissionBackend.submitChanges = function(changes, fSuccess, fError) {
-    var options = Exhibit.SubmissionBackend.getOutputOptions();
+Exhibit.SubmissionBackend.submitChanges = function(changes, options, fSuccess, fError) {
     options.data.json = SimileAjax.JSON.toJSONString(changes);
     
     // if authentication is enabled, authentication token must be provided.
