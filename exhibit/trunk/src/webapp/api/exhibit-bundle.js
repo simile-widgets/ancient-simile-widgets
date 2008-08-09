@@ -5523,8 +5523,7 @@ case"remove-item":if(Q.isNewItem(E)){if(f.tag=="a"){L.href="javascript:";
 R();
 }else{D.removeChild(L);
 }break;
-case"start-editing":SimileAjax.Debug.log("creating start-edit for "+K._id);
-if(f.tag=="a"){L.href="javascript:";
+case"start-editing":if(f.tag=="a"){L.href="javascript:";
 }if(K.inPopupMode()){var P=K.getPopupFunc();
 SimileAjax.jQuery(L).click(function(){SimileAjax.Debug.log("in popup mode");
 var a=K.isBeingEdited(E);
@@ -6772,8 +6771,7 @@ return A;
 
 
 /* tile-view.js */
-Exhibit.TileView=function(C,B){SimileAjax.Debug.log("tileview being created w/ uiContext "+B._id);
-this._div=C;
+Exhibit.TileView=function(C,B){this._div=C;
 this._uiContext=B;
 this._settings={};
 var A=this;

@@ -4,7 +4,6 @@
  */
 
 Exhibit.TileView = function(containerElmt, uiContext) {
-    SimileAjax.Debug.log('tileview being created w/ uiContext ' + uiContext._id)
     this._div = containerElmt;
     this._uiContext = uiContext;
     this._settings = {};
