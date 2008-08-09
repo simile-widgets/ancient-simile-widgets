@@ -741,7 +741,6 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             }
             break;
         case "start-editing":
-            SimileAjax.Debug.log('creating start-edit for ' + uiContext._id)
             if (templateNode.tag == 'a') { elmt.href = 'javascript:'; }
             
             if (uiContext.inPopupMode()) {
