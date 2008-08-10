@@ -1212,7 +1212,6 @@ Exhibit.Database._Impl.prototype.acceptChanges = function(itemID) {
             }
             
             if (val.length == 1) {
-                SimileAjax.Debug.log(attr + '->' + val[0]);
                 db.editItem(realItemID, attr, val[0]);
             } else {
                 SimileAjax.Debug.warn("Exhibit.Database._Impl.prototype.acceptChanges cannot handle " + 
