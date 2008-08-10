@@ -5,6 +5,10 @@ Exhibit.Scraper = function(elmt, uiContext, settings) {
     }
     
     var input = this._input = SimileAjax.jQuery('#' + settings.scraperInput);
+
+    input.val('');
+    input.attr('disabled', false);
+
     var elmt = this._elmt = SimileAjax.jQuery(elmt);
     this._uiContext = uiContext;
     this._settings = settings;
@@ -63,14 +67,10 @@ Exhibit.Scraper.prototype.scrapeURL = function(url) {
     
     var success = function(resp) {
         var status = resp.status;
-        var obj = resp.obj;
-        
         if (status == 'ok') {
-            var item = scraper.performScraping(obj);
-            scraper.makeNewItemBox(item);
-            scraper.enableUI();            
+            scraper.scrapePageSource(resp.obj);
         } else if (status == 'error') {
-            alert("Error using scraper service!\n\n" + obj);
+            alert("Error using scraper service!\n\n" + resp.obj);
         } else {
             alert('Unknown response from scraper service:\n\n' + status);
         }
@@ -89,47 +89,34 @@ Exhibit.Scraper.prototype.scrapeURL = function(url) {
 }
 
 Exhibit.Scraper.prototype.scrapeText = function(text) {
-    var item = this.performScraping(text);
-    this.makeNewItemBox(item);
+    var title = null;
+    var item = Exhibit.ScraperBackend.extractItemFromText(
+        text, this._settings.itemType, this._uiContext.getDatabase());
+
+    this.makeNewItemBox(title, item);
 }
 
-Exhibit.Scraper.prototype.performScraping = function(text) {
-    var item = { type: this._settings.itemType };
-    var db = this._uiContext.getDatabase();
+Exhibit.Scraper.prototype.scrapePageSource = function(pageSource) {
+    var text = Exhibit.ScraperBackend.getTextFromPageSource(pageSource);
     
-    var div = document.createElement('div');
-    div.innerHTML = text.replace(/\s+/g, ' ');
+    var title = Exhibit.ScraperBackend.getTitleFromPageSource(pageSource);
+    var item = Exhibit.ScraperBackend.extractItemFromText(
+        text, this._settings.itemType, this._uiContext.getDatabase());
     
-    var dom = SimileAjax.jQuery(div);
-    
-    var title = dom.find('title').text();
-    
-    
-    var typeSet = new Exhibit.Set();
-    typeSet.add(this._settings.itemType);
-    
-    var subjects = db.getSubjectsUnion(typeSet, 'type');
-    
-    db.getAllProperties().forEach(function(prop) {
-        var objects = db.getObjectsUnion(subjects, prop, objects).toArray();
-        objects.forEach(function(o) {
-            if (text.indexOf(o) != -1) {
-                item[prop] = o;
-            }
-        });
-    });
-   
-    return { title: title, item: item };
+    this.makeNewItemBox(title, item);
 }
 
-Exhibit.Scraper.prototype.makeNewItemBox = function(box) {
+Exhibit.Scraper.prototype.makeNewItemBox = function(title, item) {
     var scraper = this;
     var $ = SimileAjax.jQuery;
     var div = $('<div>').addClass('scraperBox');
-    var title = box.title || this._input.val();
-    var item = box.item;
     
-    div.append($('<h3>').text(this._settings.itemType + ' scraped from ' + title));
+    var headerText = 'New ' + this._settings.itemType;
+    if (title) { 
+        headerText += (' scraped from ' + title);
+    }
+    
+    div.append($('<h3>').text(headerText));
     
     var table = $('<table>').appendTo(div);
     var elmt = this._elmt.get(0);
@@ -157,5 +144,87 @@ Exhibit.Scraper.prototype.makeNewItemBox = function(box) {
         coords.left + Math.round(elmt.offsetWidth / 2), 
         coords.top + Math.round(elmt.offsetHeight / 2), 
         this._uiContext.getSetting("bubbleWidth"));
+}
+
+Exhibit.ScraperBackend = {};
+
+Exhibit.ScraperBackend.getTitleFromPageSource = function(pageSource) {
+    var div = document.createElement('div');
+    div.innerHTML = pageSource.replace(/\s+/g, ' ');
     
+    var dom = SimileAjax.jQuery(div);
+    var title = dom.find('title').text();
+    
+    return title;
+}
+
+// returns contents of all children textnodes of node argument
+// from JavaScript: the Definitive Guide, by David Flanagan
+Exhibit.ScraperBackend.getTextContents = function(node) {
+    function getStrings(n, strings) {
+        if (n.nodeType == 3) {
+            strings.push(n.data);
+        } else if (n.nodeType == 1) {
+            for (var m = n.firstChild; m != null; m = m.nextSibling) {
+                getStrings(m, strings)
+            }
+        }
+    }
+    var strings = [];
+    getStrings(node, strings);
+    return strings.join('');
+}
+
+Exhibit.ScraperBackend.getTextFromPageSource = function(pageSource) {
+    var div = document.createElement('div');
+    div.innerHTML = pageSource.replace(/\s+/g, ' ');
+    return Exhibit.ScraperBackend.getTextContents(div);
+}
+
+Exhibit.ScraperBackend.findMostCommon = function(substrings, text) {
+    var maxCount = 0; // if none have more than 0, return null
+    var maxSubstring = null;
+    
+    function countSubstrings(str, text) {
+        str = str.toLowerCase();
+        var count = 0;
+        var index = null;
+
+        while ((index = text.indexOf(str, index)) != -1) {
+            count++;
+            index += 1;
+        }
+        return count;
+    }
+    
+    for (var i=0; i < substrings.length; i++) {
+        var s = substrings[i];
+        var count = countSubstrings(s, text);
+        if (count > maxCount) {
+            maxCount = count;
+            maxSubstring = s;
+        }
+    };
+    return maxSubstring;
+}
+
+Exhibit.ScraperBackend.extractItemFromText = function(text, itemType, db) {
+    var item = { type: itemType };    
+    var typeSet = new Exhibit.Set();
+    typeSet.add(itemType);
+    
+    var subjects = db.getSubjectsUnion(typeSet, 'type');
+
+    text = text.toLowerCase(); // ignore cases
+    
+    db.getAllProperties().forEach(function(prop) {
+        var itemVals = db.getObjectsUnion(subjects, prop).toArray();
+        var mostCommonItemValue = Exhibit.ScraperBackend.findMostCommon(itemVals, text);
+        
+        if (mostCommonItemValue) {
+            item[prop] = mostCommonItemValue;
+        }
+    });
+   
+    return item;
 }

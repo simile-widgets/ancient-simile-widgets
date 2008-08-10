@@ -142,7 +142,6 @@ Exhibit.UIContext.prototype.formatList = function(iterator, count, valueType, ap
 
 Exhibit.UIContext.prototype.setEditMode = function(itemID, val) {
     if (val) {
-        SimileAjax.Debug.log('setting edit mode for ' + this._id)
         this._editModeRegistry[itemID] = true;        
     } else {
         this._editModeRegistry[itemID] = false;

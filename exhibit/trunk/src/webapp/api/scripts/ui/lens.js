@@ -746,7 +746,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
             if (uiContext.inPopupMode()) {
                 var popupFunc = uiContext.getPopupFunc();
                 SimileAjax.jQuery(elmt).click(function() {
-                    SimileAjax.Debug.log('in popup mode')
+                    // SimileAjax.Debug.log('in popup mode')
                     var previousEditMode = uiContext.isBeingEdited(itemID);
                     uiContext.setEditMode(itemID, true);
                     popupFunc();
