@@ -1,6 +1,6 @@
 Exhibit.Scraper = function(elmt, uiContext, settings) {    
     if (!settings.scraperInput) {
-        SimileAjax.Debug.warn('Scraper not given an input!');
+        SimileAjax.Debug.warn('Scraper not given an input element!');
         return;
     }
     
@@ -178,6 +178,16 @@ Exhibit.ScraperBackend.getTextContents = function(node) {
 Exhibit.ScraperBackend.getTextFromPageSource = function(pageSource) {
     var div = document.createElement('div');
     div.innerHTML = pageSource.replace(/\s+/g, ' ');
+    
+    // we ignore contents of style/script tags
+    var children = div.childNodes;
+    for (i=0; i < children.length; i++) {
+        var node = children[i];
+        if (node.nodeName.toLowerCase() == 'style' || node.nodeName.toLowerCase() == 'script') {
+            div.removeChild(node);
+        }
+    }
+    
     return Exhibit.ScraperBackend.getTextContents(div);
 }
 
