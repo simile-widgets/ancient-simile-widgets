@@ -1098,6 +1098,7 @@ Exhibit.Database._Impl.prototype.addItem = function(item) {
     this._listeners.fire('onAfterLoadingItems', []);
 }
 
+// TODO: cleanup item editing logic
 Exhibit.Database._Impl.prototype.editItem = function(id, prop, value) {
     if (prop.toLowerCase() == 'id') {
         Exhibit.UI.showHelp("We apologize, but changing the IDs of items in the Exhibit isn't supported at the moment.");
@@ -1111,10 +1112,10 @@ Exhibit.Database._Impl.prototype.editItem = function(id, prop, value) {
     
     var origVal = this._originalValues[id][prop];
     
-    if (origVal == value) { 
+    if (origVal == value) {
         this.removeObjects(id, "modified");
         this.addStatement(id, "modified", 'no');
-        return;
+        delete this._originalValues[id][prop];
     } else if (this.getObject(id, "modified") != "yes") {
         this.removeObjects(id, "modified");
         this.addStatement(id, "modified", "yes");
@@ -1199,10 +1200,12 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
         var label = this.getObject(id, 'label') || id;
         var item = { id: id, label: label, changeType: "modified", type: type, vals: {} };
         var vals = this._originalValues[id];
+        var hasModification = false;
         
         for (var prop in vals) {
             if (ignoredProperties.indexOf(prop) != -1) { continue; }
             
+            hasModification = true;
             var oldVal = this._originalValues[id][prop];
             var newVal = this.getObject(id, prop);
             
@@ -1212,7 +1215,10 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
                 item.vals[prop] = { oldVal: oldVal, newVal: newVal };   
             }
         }
-        ret.push(item);
+        
+        if (hasModification) {
+            ret.push(item);
+        }
     }
     
     return ret;
