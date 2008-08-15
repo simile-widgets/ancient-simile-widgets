@@ -392,26 +392,41 @@ Exhibit.UI.makeValueSpan = function(label, valueType, layer) {
     return span;
 };
 
-Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext) {
+Exhibit.UI.calculatePopupPosition = function(elmt) {
+    var coords = SimileAjax.DOM.getPageCoordinates(elmt);
+    return {
+        x: coords.left + Math.round(elmt.offsetWidth / 2),
+        y: coords.top + Math.round(elmt.offsetHeight / 2),
+    };
+}
+
+Exhibit.UI.showItemInPopup = function(itemID, elmt, uiContext, opts) {
     SimileAjax.WindowManager.popAllLayers();
     
-    var coords = SimileAjax.DOM.getPageCoordinates(elmt);
+    opts = opts || {};
+    opts.coords = opts.coords || Exhibit.UI.calculatePopupPosition(elmt);
+    
     var itemLensDiv = document.createElement("div");
 
-    var popupFunc = function() {
-        Exhibit.UI.showItemInPopup(itemID, elmt, uiContext);
+    var lensOpts = {
+        inPopup: true,
+        coords: opts.coords
+    };
+
+    if (opts.lensType == 'normal') {
+        lensOpts.lensTemplate = uiContext.getLensRegistry().getNormalLens(itemID, uiContext);
+    } else if (opts.lensType == 'edit') {
+        lensOpts.lensTemplate = uiContext.getLensRegistry().getEditLens(itemID, uiContext);
+    } else if (opts.lensType) {
+        SimileAjax.Debug.warn('Unknown Exhibit.UI.showItemInPopup opts.lensType: ' + opts.lensType);
     }
 
-    // popup mode ensures that start and stop edit links clicked in the popup
-    // lens don't affect the outer view.
-    uiContext.enablePopupMode(popupFunc);
-    var itemLens = uiContext.getLensRegistry().createLens(itemID, itemLensDiv, uiContext);
-    uiContext.disablePopupMode();
+    uiContext.getLensRegistry().createLens(itemID, itemLensDiv, uiContext, lensOpts);
     
     SimileAjax.Graphics.createBubbleForContentAndPoint(
         itemLensDiv, 
-        coords.left + Math.round(elmt.offsetWidth / 2), 
-        coords.top + Math.round(elmt.offsetHeight / 2), 
+        opts.coords.x,
+        opts.coords.y, 
         uiContext.getSetting("bubbleWidth")
     );
 };

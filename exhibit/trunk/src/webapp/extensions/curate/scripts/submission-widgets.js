@@ -15,7 +15,7 @@ Exhibit.Submission.disableWidgets = function() {
 Exhibit.Submission.resetAfterSubmission = function(uiContext) {
     Exhibit.UI.findAttribute('ex:role', 'submission-property').val("");
     Exhibit.Submission.Properties = {};
-    uiContext.getDatabase().resetChanges();
+    uiContext.getDatabase().fixAllChanges();
     Exhibit.Submission.enableWidgets();
     Exhibit.ChangeList.showSubmissionText = true;
     uiContext.getDatabase()._listeners.fire("onAfterLoadingItems", []);
@@ -42,8 +42,7 @@ Exhibit.SubmissionProperty = function(elmt, uiContext, settings) {
 };
 
 Exhibit.SubmissionProperty._settingSpecs = {
-    propertyName: { type: "text" },
-    propertyType: { type: "text", defaultValue: "normal" }
+    propertyName: { type: "text" }
 };
 
 Exhibit.UI.generateCreationMethods(Exhibit.SubmissionProperty);
