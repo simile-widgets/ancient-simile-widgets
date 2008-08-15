@@ -7,7 +7,7 @@ Exhibit.ItemCreator = function(elmt, uiContext, settings) {
     
     SimileAjax.jQuery(elmt).click(function() {
         var item = { type: settings.itemType };
-        Exhibit.ItemCreator.createItem(db, item);
+        Exhibit.ItemCreator.makeNewItemBox(uiContext, item);
     });
     return elmt;
 }
@@ -34,17 +34,52 @@ Exhibit.ItemCreator.makeNewItemID = function(db, type) {
     return name;
 }
 
-Exhibit.ItemCreator.createItem = function(db, item) {
-    item = item || {};
+Exhibit.ItemCreator.makeNewItemBox = function(uiContext, item, opts) {
+    var db = uiContext.getDatabase();
+    opts = opts || {};
+    
+    var box = $("<div>" +
+        "<h1 class='exhibit-focusDialog-header' id='boxHeader'></h1>" +
+        "<div class='exhibit-focusDialog-viewContainer' id='itemContainer'></div>" +
+        "<div class='exhibit-focusDialog-controls'>" +
+            "<button id='removeButton' style='margin-right: 2em'>Remove Item</button>" +
+            "<button id='addButton' style='margin-left: 2em'>Create Item</button>" +
+        "</div>" +
+    "</div>");
+
+    if (opts.title) {
+        box.find('#boxHeader').text(opts.title);
+    } else {
+        box.find('#boxHeader').remove();
+    }
+
+    box.addClass('exhibit-focusDialog').addClass("exhibit-ui-protection");
+    box.css({
+      top: document.body.scrollTop + 100 + 'px',
+      background: "#EEE repeat",
+      position: "fixed"
+    });
+
     item.type = item.type || 'item';
     item.id = item.id || Exhibit.ItemCreator.makeNewItemID(db, item.type);
     item.label = item.label || item.id;
-    
+
     db.addItem(item);
+
+    var itemDiv = box.find('#itemContainer').get(0);
+        
+    uiContext.getLensRegistry().createEditLens(item.id, itemDiv, uiContext, {
+        disableEditWidgets: true
+    });
     
-    var elmt = Exhibit.UI.findAttribute('ex:itemid', item.id).get(0);
-    if (elmt) {
-        var coords = SimileAjax.DOM.getPageCoordinates(elmt);
-        window.scrollTo(coords.left, coords.top - 100); // 100px of space seems to look good
-    }
+    box.find('#removeButton').click(function() {
+        box.remove();
+        database.removeItem(item.id);
+    });
+    
+    box.find('#addButton').click(function() {
+       box.remove(); 
+    });
+    
+    box.appendTo(document.body);
 }

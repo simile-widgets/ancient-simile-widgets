@@ -16,7 +16,7 @@ Exhibit.Scraper = function(elmt, uiContext, settings) {
     elmt.attr('href', 'javascript:');
     
     var scraper = this;
-    elmt.click(function(){ scraper.activate() });
+    elmt.click(function() { scraper.activate() });
 }
 
 Exhibit.Scraper._settingSpecs = {
@@ -93,7 +93,7 @@ Exhibit.Scraper.prototype.scrapeText = function(text) {
     var item = Exhibit.ScraperBackend.extractItemFromText(
         text, this._settings.itemType, this._uiContext.getDatabase());
 
-    this.makeNewItemBox(title, item);
+    Exhibit.ItemCreator.makeNewItemBox(this._uiContext, item);
 }
 
 Exhibit.Scraper.prototype.scrapePageSource = function(pageSource) {
@@ -103,49 +103,10 @@ Exhibit.Scraper.prototype.scrapePageSource = function(pageSource) {
     var item = Exhibit.ScraperBackend.extractItemFromText(
         text, this._settings.itemType, this._uiContext.getDatabase());
     
-    this.makeNewItemBox(title, item);
+    Exhibit.ItemCreator.makeNewItemBox(this._uiContext, item, { title: title });
 }
 
-Exhibit.Scraper.prototype.makeNewItemBox = function(title, item) {
-    var scraper = this;
-    var $ = SimileAjax.jQuery;
-    var div = $('<div>').addClass('scraperBox');
-    
-    var headerText = 'New ' + this._settings.itemType;
-    if (title) { 
-        headerText += (' scraped from ' + title);
-    }
-    
-    div.append($('<h3>').text(headerText));
-    
-    var table = $('<table>').appendTo(div);
-    var elmt = this._elmt.get(0);
-    var coords = SimileAjax.DOM.getPageCoordinates(elmt);
-    
-    SimileAjax.jQuery.each(item, function(prop, value) {
-        var row = $('<tr>').appendTo(table);
-        row.append($('<td>').append($('<span>').text(prop)));
-        row.append($('<td>').append($('<input>').val(value)
-            .change(function() { 
-                if (this.value) { item[prop] = this.value }})));
-    });
-    
-    var submit = function() {
-        Exhibit.ItemCreator.createItem(scraper._uiContext.getDatabase(), item);
-        SimileAjax.WindowManager.popAllLayers();
-    };
-    
-    div.append(
-        $('<div>').addClass('buttonContainer').append(
-            $('<button>').text('Create New Item').click(submit)));
-    
-    SimileAjax.Graphics.createBubbleForContentAndPoint(
-        div.get(0), 
-        coords.left + Math.round(elmt.offsetWidth / 2), 
-        coords.top + Math.round(elmt.offsetHeight / 2), 
-        this._uiContext.getSetting("bubbleWidth"));
-}
-
+// The backend performs content extraction
 Exhibit.ScraperBackend = {};
 
 Exhibit.ScraperBackend.getTitleFromPageSource = function(pageSource) {

@@ -6,6 +6,7 @@
 Exhibit.ViewPanel = function(div, uiContext) {
     this._uiContext = uiContext;
     this._div = div;
+    this._uiContextCache = {};
     
     this._viewConstructors = [];
     this._viewConfigs = [];
@@ -146,6 +147,8 @@ Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
 };
 
 Exhibit.ViewPanel.prototype.dispose = function() {
+    this._uiContext.getCollection().removeListener(this._listener);
+
     if (this._view != null) {
         this._view.dispose();
         this._view = null;
@@ -205,24 +208,28 @@ Exhibit.ViewPanel.prototype._createView = function() {
     viewContainer.appendChild(viewDiv);
     
     var index = this._viewIndex;
+    var context = this._uiContextCache[index] || this._uiContext;
     try {
         if (this._viewDomConfigs[index] != null) {
             this._view = this._viewConstructors[index].createFromDOM(
                 this._viewDomConfigs[index],
                 viewContainer, 
-                this._uiContext
+                context
             );
         } else {
             this._view = this._viewConstructors[index].create(
                 this._viewConfigs[index],
                 viewContainer, 
-                this._uiContext
+                context
             );
         }
     } catch (e) {
         SimileAjax.Debug.log("Failed to create view " + this._viewLabels[index]);
         SimileAjax.Debug.exception(e);
     }
+    
+    this._uiContextCache[index] = this._view._uiContext;
+
     this._uiContext.getExhibit().setComponent(this._viewIDs[index], this._view);
     this._dom.setViewIndex(index);
 };

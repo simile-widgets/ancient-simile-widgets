@@ -3,7 +3,6 @@
  *======================================================================
  */
 Exhibit.UIContext = function() {
-    this._id = Math.random();
     this._parent = null;
     
     this._exhibit = null;
@@ -152,27 +151,6 @@ Exhibit.UIContext.prototype.isBeingEdited = function(itemID) {
     return !!this._editModeRegistry[itemID];
 }
 
-// Popup mode is used to record whether the item is being 
-// rendered in a popup created by the Exhibit.UI.showItemInPopup
-// function. When enabling popup mode here, a function must be
-// provided that redraws that specific popup.
-
-Exhibit.UIContext.prototype.inPopupMode = function() {
-    return this._popupFunc != null;
-}
-
-Exhibit.UIContext.prototype.getPopupFunc = function() {
-    return this._popupFunc;
-}
-
-Exhibit.UIContext.prototype.enablePopupMode = function(popupFunc) {
-    this._popupFunc = popupFunc;
-}
-
-Exhibit.UIContext.prototype.disablePopupMode = function() {
-    this._popupFunc = null;
-}
-
 
 /*----------------------------------------------------------------------
  *  Internal implementation
@@ -184,6 +162,7 @@ Exhibit.UIContext._createWithParent = function(parent) {
     context._parent = parent;
     context._exhibit = parent._exhibit;
     context._lensRegistry = new Exhibit.LensRegistry(parent.getLensRegistry());
+    context._editModeRegistry = parent._editModeRegistry;
     
     return context;
 };
