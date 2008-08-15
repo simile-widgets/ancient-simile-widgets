@@ -56,8 +56,7 @@ Exhibit.ItemCreator.makeNewItemBox = function(uiContext, item, opts) {
     box.addClass('exhibit-focusDialog').addClass("exhibit-ui-protection");
     box.css({
       top: document.body.scrollTop + 100 + 'px',
-      background: "#EEE repeat",
-      position: "fixed"
+      background: "#EEE repeat"
     });
 
     item.type = item.type || 'item';
