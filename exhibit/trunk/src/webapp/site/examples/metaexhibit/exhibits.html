@@ -15,11 +15,45 @@
 
    	<script src="http://simile-widgets.googlecode.com/svn/exhibit/trunk/src/webapp/extensions/curate/curate-extension.js" type='text/javascript'></script>
 
+      <script>
+         Exhibit.Functions["monthsOld"] = {
+               f: function(args) {
+                   var set = new Exhibit.Set();
+
+                   args[0].forEachValue(function(v) {
+                      try {
+                         var then = SimileAjax.DateTime.parseIso8601DateTime(v);
+                         var now = new Date();
+
+                         var diff = (now.getFullYear() - then.getFullYear()) * 12;
+                         diff += now.getMonth() - then.getMonth();
+
+                         if (diff <= 0) { diff = 1 };
+
+                         set.add(diff);
+                      } catch(e) {} // ignore errors
+                   });
+
+                   return new Exhibit.Expression._Collection(set, "number");
+               }
+           };
+         
+      
+      </script>
+
    </head>
 
    <body>
       
       <div class="facets">
+
+         <div ex:role="facet" 
+            ex:expression="monthsOld(.createdOn)" 
+            ex:facetClass="NumericRange"
+            ex:facetLabel="months old"
+            ex:interval="6"
+            ex:height="5em">
+         </div>
 
          <div ex:role="facet" 
             ex:expression=".country" 
@@ -37,6 +71,7 @@
             ex:expression=".typeCount"
             ex:facetClass="NumericRange"
             ex:facetLabel="number of types"
+            ex:interval="5"
             ex:height="5em">
          </div>
          
@@ -44,6 +79,7 @@
             ex:expression=".itemCount"
             ex:facetClass="NumericRange"
             ex:facetLabel="number of items"
+            ex:interval="5"
             ex:height="5em">
          </div>
          
@@ -51,6 +87,7 @@
             ex:expression=".propertyCount"
             ex:facetClass="NumericRange"
             ex:facetLabel="number of properties"
+            ex:interval="5"
             ex:height="5em">
          </div>
 
@@ -58,6 +95,7 @@
             ex:expression=".viewCount"
             ex:facetClass="NumericRange"
             ex:facetLabel="number of views"
+            ex:interval="5"
             ex:height="5em">
          </div>
          
@@ -65,6 +103,7 @@
             ex:expression=".facetCount"
             ex:facetClass="NumericRange"
             ex:facetLabel="number of facets"
+            ex:interval="5"
             ex:height="5em">
          </div>
 
@@ -127,7 +166,7 @@
             	</div>
             	
             	<div class="item-entry-field">
-                  <div class="field-label">When was your exhibit created?</div>
+                  <div class="field-label">When was your exhibit created?</br>(YYYY-MM format please, i.e. 2008-08 for August 2008.)</div>
                   <span class="field"><input ex:edit="createdOn"></input></span>
             	</div>
             	
