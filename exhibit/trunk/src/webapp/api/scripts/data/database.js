@@ -1170,7 +1170,7 @@ Exhibit.Database._Impl.prototype.removeItem = function(id) {
 Exhibit.Database.defaultIgnoredProperties = ['uri', 'modified'];
 
 // this makes all changes become "permanent"
-// i.e. after change set is commited to server
+// i.e. after change set is committed to server
 Exhibit.Database._Impl.prototype.fixAllChanges = function() {
     this._originalValues = {};
     this._newItems = {};
