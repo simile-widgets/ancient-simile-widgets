@@ -131,7 +131,7 @@ Exhibit.ChangeList.prototype.renderItem = function(item) {
 Exhibit.ChangeList.prototype._initializeUI = function() {
     this._div.empty();
     var view = this;
-    var changes = this._uiContext.getDatabase().collectChanges();
+    var changes = this._uiContext.getDatabase().collectAllChanges();
     
     changes.sort(function(a,b) { return a.label > b.label });
 

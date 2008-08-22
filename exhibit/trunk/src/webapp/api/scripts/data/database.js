@@ -23,6 +23,15 @@ Exhibit.Database.handleAuthentication = function() {
     }
 };
 
+Exhibit.Database.makeISO8601DateString = function(date) {
+    date = date || new Date();
+    var pad = function(i) { return i > 9 ? i.toString() : '0'+i };
+    var s = date.getFullYear() + '-' + pad(date.getMonth() +1) + '-' + pad(date.getDate());
+    return s;
+}
+
+Exhibit.Database.TimestampPropertyName = "addedOn";
+
 /*==================================================
  *  Exhibit.Database._Impl
  *==================================================
@@ -103,7 +112,7 @@ Exhibit.Database._Impl = function() {
     changedItemProperty._groupingLabel          = "changed items";
     this._properties["changedItem"]             = changedItemProperty;
     
-    var modifiedProperty = new Exhibit.Database._Property("modified", this);
+    var modifiedProperty = new Exhibit.Database._Property(Exhibit.Database.ModifiedPropertyName, this);
     modifiedProperty._valueType                 = "text";
     modifiedProperty._label                     = "modified";
     modifiedProperty._pluralLabel               = "modified";
@@ -506,7 +515,7 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
         
         if (p != "uri" && p != "label" && p != "id" && p != "type") {
             this._ensurePropertyExists(p, baseURI)._onNewData();
-            
+                                    
             var v = itemEntry[p];
             if (v instanceof Array) {
                 for (var j = 0; j < v.length; j++) {
@@ -1091,6 +1100,9 @@ Exhibit.Database._Impl.prototype.addItem = function(item) {
         item.modified = "yes";
     }
     
+    this._ensurePropertyExists(Exhibit.Database.TimestampPropertyName);
+    item[Exhibit.Database.TimestampPropertyName] = Exhibit.Database.makeISO8601DateString();
+    
     this.loadItems([item], '');
 
     this._newItems[item.id] = true;
@@ -1124,13 +1136,8 @@ Exhibit.Database._Impl.prototype.editItem = function(id, prop, value) {
     this.removeObjects(id, prop);
     this.addStatement(id, prop, value);
     
-    var propertyObject = this.getProperty(prop);
-    
-    if (propertyObject) {
-        propertyObject._onNewData(); // flush property cache
-    } else {
-        SimileAjax.Debug.warn("No property object for " + prop);
-    }
+    var propertyObject = this._ensurePropertyExists(prop);
+    propertyObject._onNewData();
 
     this._listeners.fire('onAfterLoadingItems', []);
 }
@@ -1160,7 +1167,7 @@ Exhibit.Database._Impl.prototype.removeItem = function(id) {
     this._listeners.fire('onAfterLoadingItems', []);
 };
 
-Exhibit.Database.defaultIgnoredSubmissionProperties = ['id', 'uri', 'type', 'change', 'changedItem', "modified"];
+Exhibit.Database.defaultIgnoredProperties = ['uri', 'modified'];
 
 // this makes all changes become "permanent"
 // i.e. after change set is commited to server
@@ -1168,37 +1175,45 @@ Exhibit.Database._Impl.prototype.fixAllChanges = function() {
     this._originalValues = {};
     this._newItems = {};
     
-    for (var id in this._items) {
+    var items = this._items.toArray();
+    for (var i in items) {
+        var id = items[i];
         this.removeObjects(id, "modified");
         this.addStatement(id, "modified", "no");
     }
 };
 
-Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
-    ignoredProperties = ignoredProperties || Exhibit.Database.defaultIgnoredSubmissionProperties;
-    var ret = [];
+Exhibit.Database._Impl.prototype.fixChangesForItem = function(id) {
+    delete this._originalValues[id];
+    delete this._newItems[id];
     
-    for (var id in this._newItems) {
-        var type = this.getObject(id, 'type');
-        var label = this.getObject(id, 'label') || id;
-        var item = { id: id, label: label, changeType: 'added', type: type, vals: {} };
+    this.removeObjects(id, "modified");
+    this.addStatement(id, "modified", "no");
+};
+
+Exhibit.Database._Impl.prototype.collectChangesForItem = function(id, ignoredProperties) {
+    ignoredProperties = ignoredProperties || Exhibit.Database.defaultIgnoredProperties;
+    
+    var type = this.getObject(id, 'type');
+    var label = this.getObject(id, 'label') || id;
+    var item = { id: id, label: label, type: type, vals: {} };
+    
+    if (id in this._newItems) {
+        item.changeType = 'added';
+
         var properties = this.getAllProperties();
         
         for (var i in properties) {
             var prop = properties[i];
             if (ignoredProperties.indexOf(prop) != -1) { continue; }
+            
             var val = this.getObject(id, prop);
-            if (val) { item.vals[prop] = { newVal: val } };
+            if (val) { 
+                item.vals[prop] = { newVal: val }
+            };
         }
-        ret.push(item);
-    }
-    
-    for (var id in this._originalValues) {
-        if (id in this._newItems || this.isSubmission(id)) { continue; }
-        
-        var type = this.getObject(id, 'type');
-        var label = this.getObject(id, 'label') || id;
-        var item = { id: id, label: label, changeType: "modified", type: type, vals: {} };
+    } else if (id in this._originalValues && !this.isSubmission(id)) {
+        item.changeType = 'modified';
         var vals = this._originalValues[id];
         var hasModification = false;
         
@@ -1216,7 +1231,26 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
             }
         }
         
-        if (hasModification) {
+        if (!hasModification) return null;
+    } else {
+        return null;
+    }
+    
+    if (!item[Exhibit.Database.TimestampPropertyName]) {
+        item[Exhibit.Database.TimestampPropertyName] = Exhibit.Database.makeISO8601DateString();
+    }
+    
+    return item;
+}
+
+Exhibit.Database._Impl.prototype.collectAllChanges = function(ignoredProperties) {
+    var ret = [];
+    var items = this._items.toArray();
+    
+    for (var i in items) {
+        var id = items[i];
+        var item = this.collectChangesForItem(id, ignoredProperties);
+        if (item) {
             ret.push(item);
         }
     }
@@ -1224,23 +1258,21 @@ Exhibit.Database._Impl.prototype.collectChanges = function(ignoredProperties) {
     return ret;
 }
 
-
-
 //=============================================================================
 // Submissions Support
 //=============================================================================
 
-Exhibit.Database._Impl.prototype.commitChangeToItem = function(itemID) {
+Exhibit.Database._Impl.prototype.mergeSubmissionIntoItem = function(submissionID) {
     var db = this;
     
-    if (!this.isSubmission(itemID)){
-        throw itemID + " is not a submission!";
+    if (!this.isSubmission(submissionID)){
+        throw submissionID + " is not a submission!";
     }
     
-    var change = this.getObject(itemID, 'change');
+    var change = this.getObject(submissionID, 'change');
     if (change == 'modification') {
-        var realItemID = this.getObject(itemID, 'changedItem');
-        var vals = this._spo[itemID];
+        var itemID = this.getObject(submissionID, 'changedItem');
+        var vals = this._spo[submissionID];
         
         SimileAjax.jQuery.each(vals, function(attr, val) {
             if (Exhibit.Database.defaultIgnoredSubmissionProperties.indexOf(attr) != -1) {
@@ -1248,17 +1280,17 @@ Exhibit.Database._Impl.prototype.commitChangeToItem = function(itemID) {
             }
             
             if (val.length == 1) {
-                db.editItem(realItemID, attr, val[0]);
+                db.editItem(itemID, attr, val[0]);
             } else {
                 SimileAjax.Debug.warn("Exhibit.Database._Impl.prototype.commitChangeToItem cannot handle " + 
                 "multiple values for attribute " + attr + ": " + val);
             };
         });
-        delete this._submissionRegistry[itemID];
+        delete this._submissionRegistry[submissionID];
         
     } else if (change == 'addition') {
-        delete this._submissionRegistry[itemID];
-        this._newItems[itemID] = true;
+        delete this._submissionRegistry[submissionID];
+        this._newItems[submissionID] = true;
     } else {
         throw "unknown change type " + change;
     }

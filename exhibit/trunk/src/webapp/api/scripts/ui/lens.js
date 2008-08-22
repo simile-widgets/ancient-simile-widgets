@@ -804,7 +804,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 if (templateNode.tag == 'a')
                     elmt.href = 'javascript:';
                 SimileAjax.jQuery(elmt).click(function() {
-                    database.commitChangeToItem(itemID);
+                    database.mergeSubmissionIntoItem(itemID);
                 });
                 processChildren();
             } else {
