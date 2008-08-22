@@ -113,9 +113,9 @@
       <div class="header">
          <a ex:role="item-creator" ex:itemType="exhibit" 
             ex:automaticallySubmit="true"
-            ex:submissionMessage="Thanks for submitting your exhibit! Your submission has been added to a queue, and we will look at it soon."
+            ex:submissionMessage="Thanks for submitting your exhibit! We will look at it soon."
             ex:cancelButtonText="Cancel"
-            ex:createButtonText="Submit Item"
+            ex:createButtonText="Submit Exhibit"
             >
              &rarr; Add your own exhibit!
 
@@ -207,6 +207,18 @@
             	   <input ex:edit="facetCount"></input>
             	</div>
             	
+            	<div class="item-entry-field"></div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">What are the important types in your exhibit? <br>(Please seperate them with semicolons.)</div>
+            	   <input ex:edit="types"></input>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">What are the important properties in your exhibit? <br>(Please seperate them with semicolons.)</div>
+            	   <input ex:edit="properties"></input>
+            	</div>
+            	
             </div>
          </a>
       </div>
@@ -273,6 +285,19 @@
             </div>
             
             <p></p>
+            
+            <div class="entry-header" ex:if-exists=".types">
+               <span><b>Important types:</b></span>
+               <span ex:content=".types"></span>
+            </div>
+            
+            <div class="entry-header" ex:if-exists=".properties">
+               <span><b>Important properties:</b></span>
+               <span ex:content=".properties"></span>
+            </div>
+            
+            <p></p>
+            
             
             <div class="entry-header" ex:if-exists=".desiredFeature">
                <div><b>Most desired Exhibit feature:</b></div>
