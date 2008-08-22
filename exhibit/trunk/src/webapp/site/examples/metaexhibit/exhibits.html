@@ -22,13 +22,6 @@
       <div class="facets">
 
          <div ex:role="facet" 
-            ex:expression=".monthsOld"
-            ex:facetClass="NumericRange"
-            ex:facetLabel="months old"
-            ex:height="5em">
-         </div>
-
-         <div ex:role="facet" 
             ex:expression=".country" 
             ex:facetLabel="country" 
             ex:height="5em">
@@ -134,8 +127,8 @@
             	</div>
             	
             	<div class="item-entry-field">
-                  <div class="field-label">How many months old is your exhibit?</div>
-                  <span class="field"><input ex:edit="monthsOld"></input></span>
+                  <div class="field-label">When was your exhibit created?</div>
+                  <span class="field"><input ex:edit="createdOn"></input></span>
             	</div>
             	
             	<div class="item-entry-field">
@@ -192,8 +185,8 @@
                <span>added </span><span ex:content=".addedOn"></span>
             </div>
             
-            <div ex:if-exists=".monthsOld">
-               <span ex:content=".monthsOld"></span><span> months old</span>
+            <div ex:if-exists=".createdOn">
+               <span>created on </span><span ex:content=".createdOn"></span>
             </div>
             
             <p ex:content=".description"></p>

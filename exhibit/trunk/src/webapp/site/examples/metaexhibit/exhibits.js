@@ -6,8 +6,8 @@
         facetCount: {
             valueType: "number"
         },
-        monthsOld: {
-            valueType: "number"
+        createdOn: {
+            valueType: "date"
         },
         itemCount: {
             valueType: "number"
