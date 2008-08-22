@@ -7,7 +7,7 @@
       <link rel="exhibit/data" type="application/jsonp" 	href="http://spreadsheets.google.com/feeds/list/o02715122730018153756.6384702511379608279/od6/public/basic?alt=json-in-script"
    			ex:converter="googleSpreadsheets" />
       
-      <link rel="exhibit/output" ex:spreadsheetKey="pHCVS1LwNriX6_ETTq9qJEw" ex:timestampName="addedOn"></link>
+      <link rel="exhibit/output" ex:spreadsheetKey="pHCVS1LwNriX6_ETTq9qJEw"></link>
 
       <link href="exhibits.js" type="application/json" rel="exhibit/data"></link>
 
@@ -123,14 +123,19 @@
             	
             	<div class="item-entry-field">
             	   <div class="field-label">Language of the exhibit</div>
-            	   <span class="field"><input ex:edit="url"></input></span>
+            	   <span class="field"><input ex:edit="language"></input></span>
             	</div>
             	
-            	<div class="item-entry-field"></div>
+            	<p></p>
             	
             	<div class="item-entry-field">
             	   <div class="field-label">Brief description of your exhibit</div>
             	   <span class="field"><textarea ex:edit="description"></textarea></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+                  <div class="field-label">How many months old is your exhibit?</div>
+                  <span class="field"><input ex:edit="monthsOld"></input></span>
             	</div>
             	
             	<div class="item-entry-field">
@@ -146,8 +151,18 @@
             	<div class="item-entry-field"></div>
             	
             	<div class="item-entry-field">
+            	   <div class="field-label">How many types are in your exhibit?</div>
+            	   <input ex:edit="typeCount"></input>
+            	</div>
+            	
+            	<div class="item-entry-field">
             	   <div class="field-label">How many items are in your exhibit?</div>
             	   <input ex:edit="itemCount"></input>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">How many properties are in your exhibit?</div>
+            	   <input ex:edit="propertyCount"></input>
             	</div>
             	
             	<div class="item-entry-field">
@@ -158,11 +173,6 @@
             	<div class="item-entry-field">
             	   <div class="field-label">How many facets are in your exhibit?</div>
             	   <input ex:edit="facetCount"></input>
-            	</div>
-            	
-            	<div class="item-entry-field">
-            	   <div class="field-label">How many properties are in your exhibit?</div>
-            	   <input ex:edit="propertyCount"></input>
             	</div>
             	
             </div>
@@ -201,6 +211,13 @@
             <div class="entry-header" ex:if-exists=".purpose">
                <span><b>Purpose of the exhibit:</b></span>
                <span ex:content=".purpose"></span>
+            </div>
+            
+            <p></p>
+            
+            <div class="entry-header" ex:if-exists=".typeCount">
+               <span><b>Types in the exhibit:</b></span>
+               <span ex:content=".typeCount"></span>
             </div>
             
             <div class="entry-header" ex:if-exists=".itemCount">
