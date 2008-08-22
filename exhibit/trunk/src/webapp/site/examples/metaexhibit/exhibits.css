@@ -1,0 +1,96 @@
+body {
+    position: relative;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 120%;
+    margin: 0px;
+    width: 100%;
+    min-height: 50em;
+}
+
+.header {
+    padding: 0.5em;
+    overflow: hidden;
+    border: 1px solid gray;
+    background-color: #EEE;
+    position: fixed;
+    right: 0.5em;
+    bottom: 0.5em;
+}
+
+.viewContainer {
+    margin-left: 10em;
+    margin-right: 3em;
+}
+
+.exhibit-tileView-body {
+    list-style: none;
+}
+
+.exhibit-focusDialog div.exhibit-lens {
+    border: 0px;
+}
+
+.div.exhibit-lens {
+    border: 1px solid #333;
+}
+
+
+.facets {
+    font-size: 80%;
+    float: left;
+    left: 0.5em;
+    top: 0.5em;
+    width: 10em;
+    border: 1px solid gray;
+    background-color: #EEE;
+    padding: 0.5em;
+}
+
+.exhibit-facet-body {
+    background-color: white;
+}
+
+.editTable {
+    padding-top: 1em;
+}
+
+.editTable .label {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.exhibit-ui-protection .title {
+    font-size: 130%;
+    text-align: center;
+}
+
+.exhibit-ui-protection div.item-entry-field {
+    padding: 1em 0.5em 0 0.5em;
+}
+
+.exhibit-ui-protection div.item-entry-field .field-label {
+    font-size: 110%;
+}
+
+.exhibit-ui-protection div.item-entry-field .field {
+    padding-left: 0em;
+}
+
+.exhibit-ui-protection div.item-entry-field input {
+    font-size: large;
+    width: 15em;
+}
+
+.exhibit-ui-protection div.item-entry-field textarea {
+    font-size: large;
+    width: 20em;
+    height: 7em;
+}
+
+.exhibit-tileView-body li {
+    padding-bottom: 1em;
+}
+
+.entry-header {
+    padding-bottom: 0.0em;
+}

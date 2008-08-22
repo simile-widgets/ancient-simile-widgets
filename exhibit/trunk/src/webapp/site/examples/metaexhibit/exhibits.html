@@ -1,0 +1,236 @@
+<html>
+   <head>
+      <title>Metaexhibit: An Exhibit of Exhibits</title>
+      
+      <link rel='stylesheet' href='exhibits.css' type='text/css'></link>	
+      
+      <link rel="exhibit/data" type="application/jsonp" 	href="http://spreadsheets.google.com/feeds/list/o02715122730018153756.6384702511379608279/od6/public/basic?alt=json-in-script"
+   			ex:converter="googleSpreadsheets" />
+      
+      <link rel="exhibit/output" ex:spreadsheetKey="pHCVS1LwNriX6_ETTq9qJEw" ex:timestampName="addedOn"></link>
+
+      <link href="exhibits.js" type="application/json" rel="exhibit/data"></link>
+
+   	<script src="../../../api/exhibit-api.js?exhibit-use-local-resources&bundle=false" type='text/javascript'></script>
+
+   	<script src="../../../extensions/curate/curate-extension.js" type='text/javascript'></script>
+
+   </head>
+
+   <body>
+      
+      <div class="facets">
+
+         <div ex:role="facet" 
+            ex:expression=".monthsOld"
+            ex:facetClass="NumericRange"
+            ex:facetLabel="months old"
+            ex:height="5em">
+         </div>
+
+         <div ex:role="facet" 
+            ex:expression=".country" 
+            ex:facetLabel="country" 
+            ex:height="5em">
+         </div>
+         
+         <div ex:role="facet" 
+            ex:expression=".language" 
+            ex:facetLabel="language"
+            ex:height="5em">
+         </div>
+         
+         <div ex:role="facet" 
+            ex:expression=".typeCount"
+            ex:facetClass="NumericRange"
+            ex:facetLabel="number of types"
+            ex:height="5em">
+         </div>
+         
+         <div ex:role="facet" 
+            ex:expression=".itemCount"
+            ex:facetClass="NumericRange"
+            ex:facetLabel="number of items"
+            ex:height="5em">
+         </div>
+         
+         <div ex:role="facet" 
+            ex:expression=".propertyCount"
+            ex:facetClass="NumericRange"
+            ex:facetLabel="number of properties"
+            ex:height="5em">
+         </div>
+
+         <div ex:role="facet" 
+            ex:expression=".viewCount"
+            ex:facetClass="NumericRange"
+            ex:facetLabel="number of views"
+            ex:height="5em">
+         </div>
+         
+         <div ex:role="facet" 
+            ex:expression=".facetCount"
+            ex:facetClass="NumericRange"
+            ex:facetLabel="number of facets"
+            ex:height="5em">
+         </div>
+
+         
+      </div>
+      
+      <div class="header">
+         <a ex:role="item-creator" ex:itemType="exhibit" 
+            ex:automaticallySubmit="true"
+            ex:submissionMessage="Thanks for submitting your exhibit! Your submission has been added to a queue, and we will look at it soon."
+            ex:cancelButtonText="Cancel"
+            ex:createButtonText="Submit Item"
+            >
+             &rarr; Add your own exhibit!
+
+            <div ex:role="edit-lens" style="display: none">
+               <div class="title">
+            		<span>Add your Exhibit!</span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">Exhibit name <b>*</b></div>
+            	   <span class="field"><input ex:edit="label"></input></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">Exhibit URL <b>*</b></div>
+            	   <span class="field"><input ex:edit="url"></input></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">Your name <b>*</b></div>
+            	   <span class="field"><input ex:edit="author"></input></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">Your email <b>*</b></div>
+            	   <span class="field"><input ex:edit="email"></input></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	  <b>*</b>: these are the important ones.
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">Your country</div>
+            	   <span class="field"><input ex:edit="country"></input></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">Language of the exhibit</div>
+            	   <span class="field"><input ex:edit="url"></input></span>
+            	</div>
+            	
+            	<div class="item-entry-field"></div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">Brief description of your exhibit</div>
+            	   <span class="field"><textarea ex:edit="description"></textarea></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+                  <div class="field-label">What purpose does your exhibit serve? (academic, personal, corporate, etc.)</div>
+                  <span class="field"><input ex:edit="purpose"></input></span>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">What feature would you most like added to Exhibit?</div>
+            	   <span class="field"><textarea ex:edit="desiredFeature"></textarea></span>
+            	</div>
+            	
+            	<div class="item-entry-field"></div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">How many items are in your exhibit?</div>
+            	   <input ex:edit="itemCount"></input>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">How many views are in your exhibit?</div>
+            	   <input ex:edit="viewCount"></input>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">How many facets are in your exhibit?</div>
+            	   <input ex:edit="facetCount"></input>
+            	</div>
+            	
+            	<div class="item-entry-field">
+            	   <div class="field-label">How many properties are in your exhibit?</div>
+            	   <input ex:edit="propertyCount"></input>
+            	</div>
+            	
+            </div>
+         </a>
+      </div>
+      
+      <div ex:role="view" class="viewContainer" ex:formats="date { template : 'MMM yy' }">
+         <div ex:role="lens" style="border: 1px solid #333; padding: 0.5em" style="display: none">
+
+            <div>
+               <a ex:href-content=".url" ex:content=".label"></a>
+               <span> by </span>
+               <a ex:href-subcontent="mailto:{{.email}}" ex:content=".author"></a>
+            </div>
+            
+            <div ex:if-exists=".addedOn">
+               <span>added </span><span ex:content=".addedOn"></span>
+            </div>
+            
+            <div ex:if-exists=".monthsOld">
+               <span ex:content=".monthsOld"></span><span> months old</span>
+            </div>
+            
+            <p ex:content=".description"></p>
+
+            <div class="entry-header" ex:if-exists=".country">
+               <span><b>Country:</b></span>
+               <span ex:content=".country"></span>
+            </div>
+            
+            <div class="entry-header" ex:if-exists=".language">
+               <span><b>Language:</b></span>
+               <span ex:content=".language"></span>
+            </div>
+            
+            <div class="entry-header" ex:if-exists=".purpose">
+               <span><b>Purpose of the exhibit:</b></span>
+               <span ex:content=".purpose"></span>
+            </div>
+            
+            <div class="entry-header" ex:if-exists=".itemCount">
+               <span><b>Items in the exhibit:</b></span>
+               <span ex:content=".itemCount"></span>
+            </div>
+            
+            <div class="entry-header" ex:if-exists=".propertyCount">
+               <span><b>Properties in the exhibit:</b></span>
+               <span ex:content=".propertyCount"></span>
+            </div>
+            
+            <div class="entry-header" ex:if-exists=".viewCount">
+               <span><b>Views in the exhibit:</b></span>
+               <span ex:content=".viewCount"></span>
+            </div>
+            
+            <div class="entry-header" ex:if-exists=".facetCount">
+               <span><b>Facets in the exhibit:</b></span>
+               <span ex:content=".facetCount"></span>
+            </div>
+            
+            <p></p>
+            
+            <div class="entry-header" ex:if-exists=".desiredFeature">
+               <div><b>Most desired Exhibit feature:</b></div>
+               <span ex:content=".desiredFeature"></span>
+            </div>
+            
+         </div>
+      </div>
+   </body>
+</html>

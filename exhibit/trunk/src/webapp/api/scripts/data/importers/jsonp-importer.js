@@ -156,9 +156,9 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url, link) {
     var items = [];
     var properties = {};
     var types = {};
-    var valueTypes = { "text" : true, "number" : true, "item" : true, "url" : true, "boolean" : true };
+    var valueTypes = { "text" : true, "number" : true, "item" : true, "url" : true, "boolean" : true, "date" : true };
 
-    var entries = json.feed.entry;
+    var entries = json.feed.entry || []; // if no entries in feed
     for (var i = 0; i < entries.length; i++) {
         var entry = entries[i];
         var id = entry.id.$t;
@@ -224,6 +224,13 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter = function(json, url, link) {
                 var cell = row[i];
                 var fieldName = propertiesByColumn[cell.col];
                 if (typeof fieldName == "string") {
+
+                    // ensure round-trip iso8601 date strings through google docs
+                    var googleDocsDateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+                    if (googleDocsDateRegex.exec(cell.val)) {
+                        cell.val = Exhibit.Database.makeISO8601DateString(new Date(cell.val));
+                    }
+
                     item[fieldName] = cell.val;
                     
                     var property = properties[fieldName];

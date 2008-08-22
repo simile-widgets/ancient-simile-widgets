@@ -1,17 +1,9 @@
 Exhibit.SubmissionBackend = {};
 
-Exhibit.SubmissionBackend.formatChanges = function(itemChanges, submissionProperties, timestampName) {
+Exhibit.SubmissionBackend.formatChanges = function(itemChanges, submissionProperties) {
     return itemChanges.map(function(change) {
         var item = { id: change.id, label: change.label || change.id };
-        
-        if (timestampName) {
-            var pad = function(i) { return i > 9 ? i.toString() : '0'+i };
-            var date = new Date();
-            var s = '="' + date.getFullYear() + '-' + pad(date.getMonth() +1) + '-' + pad(date.getDate()) + '"';
-            
-            item[timestampName.toLowerCase()] = s;
-        }
-        
+                
         // google data API only accepts lower-case property names
         
         SimileAjax.jQuery.each(change.vals || {}, function(prop, val) {
@@ -50,11 +42,7 @@ Exhibit.SubmissionBackend.getOutputOptions = function() {
     var opts = { url: null, data: {}};
     
     opts.url = links.attr('ex:url') || Exhibit.SubmissionBackend.SubmissionDefaults.gdoc.url;
-    
-    if (links.attr('ex:timestampName')) {
-        opts.timestampName = links.attr('ex:timestampName');
-    }
-    
+        
     if (links.attr('ex:spreadsheetKey')) {
         opts.data.spreadsheetkey = links.attr('ex:spreadsheetKey');        
     }
@@ -81,7 +69,7 @@ Exhibit.SubmissionBackend.googleAuthSuccessWrapper = function(fSuccess) {
     };
 }
 
-Exhibit.SubmissionBackend.submitChanges = function(changes, options, fSuccess, fError) {
+Exhibit.SubmissionBackend._submitChanges = function(changes, options, fSuccess, fError) {
     options.data.json = SimileAjax.JSON.toJSONString(changes);
     
     // if authentication is enabled, authentication token must be provided.
@@ -104,4 +92,26 @@ Exhibit.SubmissionBackend.submitChanges = function(changes, options, fSuccess, f
         success: fSuccess,
         error: fError
     });
+}
+
+Exhibit.SubmissionBackend.submitAllChanges = function(uiContext, fSuccess, fError) {
+    var opts = Exhibit.SubmissionBackend.getOutputOptions();
+    var changes = uiContext.getDatabase().collectAllChanges();
+    
+    var formattedChanges = Exhibit.SubmissionBackend.formatChanges(
+        changes, 
+        Exhibit.Submission.Properties);
+        
+    Exhibit.SubmissionBackend._submitChanges(formattedChanges, opts, fSuccess, fError);
+}
+
+Exhibit.SubmissionBackend.submitItemChanges = function(uiContext, itemID, fSuccess, fError) {
+    var opts = Exhibit.SubmissionBackend.getOutputOptions();
+    var changes = uiContext.getDatabase().collectChangesForItem(itemID);
+    
+    var formattedChanges = Exhibit.SubmissionBackend.formatChanges(
+        [changes],
+        Exhibit.Submission.Properties);
+        
+    Exhibit.SubmissionBackend._submitChanges(formattedChanges, opts, fSuccess, fError);
 }

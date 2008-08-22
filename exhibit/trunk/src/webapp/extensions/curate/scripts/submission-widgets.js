@@ -4,7 +4,7 @@ Exhibit.Submission.submissionWidgets = ['submission-property', 'submission-butto
 
 Exhibit.Submission.enableWidgets = function() {
     Exhibit.UI.findAttribute('ex:role', Exhibit.Submission.submissionWidgets)
-        .attr('disabled', false);
+        .removeAttr('disabled');
 }
 
 Exhibit.Submission.disableWidgets = function() {
@@ -58,12 +58,6 @@ Exhibit.SubmissionButton = function(elmt, uiContext, settings) {
     var f = function() { 
         Exhibit.Submission.disableWidgets();
         
-        var options = Exhibit.SubmissionBackend.getOutputOptions();
-        var itemChanges = uiContext.getDatabase().collectChanges();
-        var submissionProperties = Exhibit.Submission.Properties;
-        
-        var changes = Exhibit.SubmissionBackend.formatChanges(itemChanges, submissionProperties, options.timestampName);
-        
         var fSuccess = function() {
             alert("Changes successfully made!");
             Exhibit.Submission.resetAfterSubmission(uiContext);
@@ -74,7 +68,7 @@ Exhibit.SubmissionButton = function(elmt, uiContext, settings) {
             Exhibit.Submission.enableWidgets();
         };
         
-        Exhibit.SubmissionBackend.submitChanges(changes, options, fSuccess, fError);
+        Exhibit.SubmissionBackend.submitAllChanges(uiContext, fSuccess, fError);
     };
     SimileAjax.jQuery(elmt).click(f);
 }
