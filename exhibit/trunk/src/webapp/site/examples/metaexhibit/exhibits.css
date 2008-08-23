@@ -1,25 +1,48 @@
 body {
     position: relative;
     font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 120%;
     margin: 0px;
+    padding: 0px;
     width: 100%;
-    min-height: 50em;
 }
 
 .header {
-    padding: 0.5em;
-    overflow: hidden;
-    border: 1px solid gray;
+    margin: 0px;
+    padding: 2em;
+    padding-bottom: 1em;
+    padding-top: 0.1em;
     background-color: #EEE;
-    position: fixed;
-    right: 0.5em;
-    bottom: 0.5em;
+    border-bottom: 1px solid #333333;
+}
+
+.creator {
+    font-size: x-large;
+    padding: 0.5em;
+}
+
+.colorKey {
+    padding: 0.5em;
+    margin: 0em;
+    text-align: center;
+}
+
+[purpose] {
+    background-color: #C7D8E2;
+}
+
+[purpose=personal], [purpose=Personal] {
+    background-color: #E7E085;
+}
+
+[purpose=academic], [purpose=Academic] {
+    background-color: #C2E0C3;
+}
+
+[purpose=business], [purpose=Business] {
+    background-color: #D5A5A5;
 }
 
 .viewContainer {
-    margin-left: 10em;
-    margin-right: 3em;
 }
 
 .exhibit-tileView-body {
@@ -35,15 +58,31 @@ body {
 }
 
 
-.facets {
-    font-size: 80%;
-    float: left;
-    left: 0.5em;
-    top: 0.5em;
+.mainTable {
+    vertical-align: top;
+    border-collapse: collapse;
+    height: 100%;
+}
+
+.column1 {
+    padding-left: 2em;
+    padding-right: 1em;
+}
+
+.column2 {
+    padding-right: 1em;
+}
+
+.column3 {
+    padding: 1em 2em 2em 2em;
+}
+
+.column1, .column2 {
+    padding-top: 3em;
+    height: 100%;
     width: 10em;
-    border: 1px solid gray;
-    background-color: #EEE;
-    padding: 0.5em;
+    font-size: 80%;
+/*    background-color: #EEE;*/
 }
 
 .exhibit-facet-body {
@@ -69,7 +108,7 @@ body {
 }
 
 .exhibit-ui-protection div.item-entry-field .field-label {
-    font-size: 110%;
+    font-size: 105%;
 }
 
 .exhibit-ui-protection div.item-entry-field .field {
@@ -77,12 +116,12 @@ body {
 }
 
 .exhibit-ui-protection div.item-entry-field input {
-    font-size: large;
+    font-size: 105%;
     width: 15em;
 }
 
 .exhibit-ui-protection div.item-entry-field textarea {
-    font-size: large;
+    font-size: 105%;
     width: 20em;
     height: 7em;
 }
