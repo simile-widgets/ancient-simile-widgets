@@ -74,7 +74,7 @@ body {
 }
 
 .column3 {
-    padding: 1em 2em 2em 2em;
+    padding: 0em 2em 2em 2em;
 }
 
 .column1, .column2 {
@@ -83,6 +83,10 @@ body {
     width: 10em;
     font-size: 80%;
 /*    background-color: #EEE;*/
+}
+
+.viewContainer {
+    padding-top: 2em;
 }
 
 .exhibit-facet-body {
