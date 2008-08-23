@@ -12,7 +12,8 @@
             label: "number of facets"
         },
         createdOn: {
-            valueType: "date"
+            valueType: "date",
+            label: "created on"
         },
         itemCount: {
             valueType: "number",
@@ -36,8 +37,8 @@
         types: {
             label: 'types in the exhibit'
         },
-        authorContact: {
-            label: "author contact information"
+        authorEmail: {
+            label: "author email"
         }
     },
     types: {
