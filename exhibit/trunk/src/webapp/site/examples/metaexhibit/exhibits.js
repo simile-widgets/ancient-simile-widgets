@@ -1,29 +1,43 @@
 {
     properties: {
+        desiredFeature: {
+            label: "most desired feature"
+        },
         viewCount: {
-            valueType: "number"
+            valueType: "number",
+            label: "number of views"
         },
         facetCount: {
-            valueType: "number"
+            valueType: "number",
+            label: "number of facets"
         },
         createdOn: {
             valueType: "date"
         },
         itemCount: {
-            valueType: "number"
+            valueType: "number",
+            label: "number of items"
         },
         propertyCount: {
-            valueType: "number"
+            valueType: "number",
+            label: "number of properties"
         },
         typeCount: {
-            valueType: "number"
+            valueType: "number",
+            label: "number of types"
         },
         label: {
-            label: "title"
+            label: "exhibit title"
         },
         addedOn: {
             valueType: "date",
             label: "added on"
+        },
+        types: {
+            label: 'types in the exhibit'
+        },
+        authorContact: {
+            label: "author contact information"
         }
     },
     types: {
