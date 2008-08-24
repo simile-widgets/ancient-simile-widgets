@@ -1,11 +1,16 @@
 <html>
    <head>
-      <title>Metaexhibit: An Exhibit of Exhibits</title>
+      <title>Exhibits on Parade</title>
       
       <link rel='stylesheet' href='exhibits.css' type='text/css'></link>	
       
       <link rel="exhibit/data" type="application/jsonp" 	href="http://spreadsheets.google.com/feeds/list/o02715122730018153756.6384702511379608279/od6/public/basic?alt=json-in-script"
    			ex:converter="googleSpreadsheets" />
+   			
+   	<link rel="exhibit/data" type="application/jsonp" 	href="http://spreadsheets.google.com/feeds/list/o02715122730018153756.1407896790048767226/od6/public/basic?alt=json-in-script"
+         			ex:converter="googleSpreadsheets" />
+
+      
       
       <link rel="exhibit/output" ex:spreadsheetKey="pHCVS1LwNriX6_ETTq9qJEw"></link>
 
@@ -65,18 +70,21 @@
    </head>
 
    <body>
+
       
       <div class="header">
          
          <h1 class="headerTitle">
-            Metaexhibit: An Exhibit of Exhibits
+            Exhibits On Parade: An exhibition of exhibits
          </h1>
          
          <span class="description">
             This <a href="http://code.google.com/p/simile-widgets/">exhibit</a> lists 
-            published exhibits that are out there in the world, along with information about
-            who created them, for what purpose, and what they contain. <a href="mailto:sbostler@gmail.com">Have questions or corrections?</a>
+            published exhibits out there in the world. We record a description of the
+            exhibit, information about the author, and a few statistics about what's in it.
+            <a href="mailto:sbostler@gmail.com">Have questions or corrections?</a>
          </span>
+
          
          <div class="creator">
             <a ex:role="item-creator" ex:itemType="exhibit" 
@@ -93,6 +101,7 @@
                	</div>
 
                	<div class="item-entry-field">
+
                	   <div class="field-label">Exhibit name <b>*</b></div>
                	   <span class="field"><input ex:edit="label"></input></span>
                	</div>
@@ -100,6 +109,7 @@
                	<div class="item-entry-field">
                	   <div class="field-label">Exhibit URL <b>*</b></div>
                	   <span class="field"><input ex:edit="url"></input></span>
+
                	</div>
 
                	<div class="item-entry-field">
@@ -109,6 +119,7 @@
 
                	<div class="item-entry-field">
                	   <div class="field-label">Your email <b>*</b></div>
+
                	   <span class="field"><input ex:edit="authorEmail"></input></span>
                	</div>
 
@@ -118,6 +129,7 @@
 
                	<div class="item-entry-field">
                	   <div class="field-label">Your country</div>
+
                	   <span class="field"><input ex:edit="country"></input></span>
                	</div>
 
@@ -135,6 +147,7 @@
 
                	<div class="item-entry-field">
                      <div class="field-label">When was your exhibit created?</br>(YYYY-MM format please, i.e. 2008-08 for August 2008.)</div>
+
                      <span class="field"><input ex:edit="createdOn"></input></span>
                	</div>
 
@@ -144,6 +157,7 @@
                	</div>
 
                	<div class="item-entry-field">
+
                	   <div class="field-label">What feature would you most like added to Exhibit?</div>
                	   <span class="field"><textarea ex:edit="desiredFeature"></textarea></span>
                	</div>
@@ -152,6 +166,7 @@
 
                	<div class="item-entry-field">
                	   <div class="field-label">How many types are in your exhibit?</div>
+
                	   <input ex:edit="typeCount"></input>
                	</div>
 
@@ -161,6 +176,7 @@
                	</div>
 
                	<div class="item-entry-field">
+
                	   <div class="field-label">How many properties are in your exhibit?</div>
                	   <input ex:edit="propertyCount"></input>
                	</div>
@@ -179,6 +195,7 @@
 
                	<div class="item-entry-field">
                	   <div class="field-label">What are the important types in your exhibit? <br>(Please seperate them with semicolons)</div>
+
                	   <input ex:edit="types"></input>
                	</div>
 
@@ -188,6 +205,7 @@
                	</div>
 
                </div>
+
             </a>
          </div>
          
@@ -201,11 +219,13 @@
             
             <div class="colorKey">
                <h3>Type of Exhibit</h3>
+
                <span purpose="personal" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> Personal &nbsp;
                <span purpose="academic" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> Academic &nbsp;
                <span purpose="business" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> Business &nbsp;
                <span purpose="other">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> Other &nbsp;
             </div>
+
             
             <p></p>
             
@@ -219,6 +239,7 @@
                   <div>
                      <a ex:href-content=".url" ex:content=".label"></a>
                      <span ex:if-exists=".author"> by </span>
+
                      <a ex:href-subcontent="mailto:{{.authorEmail}}" ex:content=".author"></a>
                   </div>
 
@@ -240,6 +261,7 @@
                   <p></p>
 
                   <div><b>Info:</b></div>
+
                   <div class="entry-header">
                      <span ex:if-exists=".country"><span ex:content=".country"></span>,</span>
                      in <span ex:content=".language"></span>,
@@ -249,6 +271,7 @@
 
                   <div class="entry-header">
                      <span ex:if-exists=".typeCount"><span ex:content=".typeCount"></span> types, </span>
+
                      <span ex:if-exists=".itemCount"><span ex:content=".itemCount"></span> items, </span>
                      <span ex:if-exists=".propertyCount"><span ex:content=".propertyCount"></span> properties, </span>
                      <span ex:if-exists=".viewCount"><span ex:content=".viewCount"></span> views, </span>
@@ -264,6 +287,7 @@
 
                   <div class="entry-header" ex:if-exists=".properties">
                      <span><b>Important properties:</b></span>
+
                      <span ex:content=".properties"></span>
                   </div>
 
@@ -320,45 +344,90 @@
          </td>
          
          <td class="column2">
+
+            
             <div ex:role="facet" 
+               ex:facetClass="Slider" 
+               ex:horizontal="true" 
+               ex:expression=".typeCount" 
+               ex:facetLabel="# of types" 
+               ></div>
+            
+            <!-- <div ex:role="facet" 
                ex:expression=".typeCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of types"
                ex:interval="5"
                ex:height="8em">
-            </div>
+            </div> -->
+            
+            <p></p><p></p>
 
             <div ex:role="facet" 
+               ex:facetClass="Slider" 
+               ex:horizontal="true" 
+               ex:expression=".itemCount" 
+               ex:facetLabel="# of items" 
+               ></div>
+
+            <!-- <div ex:role="facet" 
                ex:expression=".itemCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of items"
                ex:interval="5"
                ex:height="8em">
-            </div>
+            </div> -->
+            
+            <p></p><p></p>
 
             <div ex:role="facet" 
-               ex:expression=".propertyCount"
-               ex:facetClass="NumericRange"
-               ex:facetLabel="# of properties"
-               ex:interval="5"
-               ex:height="8em">
-            </div>
+               ex:facetClass="Slider" 
+               ex:horizontal="true" 
+               ex:expression=".propertyCount" 
+               ex:facetLabel="# of properties" 
+               ></div>
+
+            <!-- <div ex:role="facet" 
+                           ex:expression=".propertyCount"
+                           ex:facetClass="NumericRange"
+                           ex:facetLabel="# of properties"
+                           ex:interval="5"
+                           ex:height="8em">
+                        </div> -->
+
+            <p></p><p></p>
 
             <div ex:role="facet" 
-               ex:expression=".viewCount"
+               ex:facetClass="Slider" 
+               ex:horizontal="true" 
+               ex:expression=".viewCount" 
+               ex:facetLabel="# of views" 
+               ></div>
+
+            <!-- <div ex:role="facet" 
+               <!-- ex:expression=".viewCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of views"
                ex:interval="5"
                ex:height="8em">
-            </div>
-
+            </div> -->
+            
+            <p></p><p></p>
+            
             <div ex:role="facet" 
+               ex:facetClass="Slider" 
+               ex:horizontal="true" 
+               ex:expression=".facetCount" 
+               ex:facetLabel="# of facets" 
+               ></div>
+
+            <!-- <div ex:role="facet" 
                ex:expression=".facetCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of facets"
                ex:interval="5"
                ex:height="8em">
-            </div>
+            </div> -->
          
          </td>
          
