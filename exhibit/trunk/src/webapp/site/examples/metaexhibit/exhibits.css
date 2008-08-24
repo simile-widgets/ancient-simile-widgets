@@ -84,8 +84,8 @@ body {
 }
 
 .column1, .column2 {
+    padding-top: 1.5em;
     font-size: 80%;
-/*    background-color: #EEE;*/
 }
 
 .viewContainer {
