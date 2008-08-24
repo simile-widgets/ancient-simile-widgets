@@ -15,15 +15,19 @@ body {
     border-bottom: 1px solid #333333;
 }
 
+
+.description {
+    width: 75%;
+}
+
 .creator {
     font-size: x-large;
-    padding: 0.5em;
+    padding-top: 1em;
 }
 
 .colorKey {
-    padding: 0.5em;
-    margin: 0em;
     text-align: center;
+    padding: 0.5em;
 }
 
 [purpose] {
@@ -67,10 +71,12 @@ body {
 .column1 {
     padding-left: 2em;
     padding-right: 1em;
+    width: 12em;
 }
 
 .column2 {
-    padding-right: 4em;
+    padding-right: 3em;
+    min-width: 12em;
 }
 
 .column3 {
@@ -78,9 +84,6 @@ body {
 }
 
 .column1, .column2 {
-    padding-top: 3em;
-    height: 100%;
-    width: 10em;
     font-size: 80%;
 /*    background-color: #EEE;*/
 }
