@@ -558,6 +558,7 @@ A._reversePluralLabel="reverse of "+A._pluralLabel;
 A._groupingLabel=A._label;
 A._reverseGroupingLabel=A._reverseLabel;
 this._properties[B]=A;
+this._propertyArray=null;
 return A;
 }else{return this._properties[B];
 }};

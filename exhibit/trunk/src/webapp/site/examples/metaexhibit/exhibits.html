@@ -37,9 +37,9 @@
          }
       </script>
 
-      <script src="http://simile-widgets.googlecode.com/svn/exhibit/trunk/src/webapp/api/exhibit-api.js" type='text/javascript'></script>
+      <script src="http://valinor.mit.edu/~sostler/exhibit/src/webapp/api/exhibit-api.js" type='text/javascript'></script>
 
-      <script src="http://simile-widgets.googlecode.com/svn/exhibit/trunk/src/webapp/extensions/curate/curate-extension.js" type='text/javascript'></script>
+      <script src="http://valinor.mit.edu/~sostler/exhibit/src/webapp/extensions/curate/curate-extension.js" type='text/javascript'></script>
 
       <script>
          Exhibit.Functions["monthsOld"] = {
@@ -75,16 +75,35 @@
       <div class="header">
          
          <h2 class="headerTitle">
-            Exhibits On Parade: An exhibition of exhibits
+            Exhibits On Parade: An exhibit of exhibits
          </h2>
          
          <div class="description">
-            This <a href="http://code.google.com/p/simile-widgets/">exhibit</a> lists 
-            published exhibits out there in the world. We record a description of the
-            exhibit, information about the author, and a few statistics about what's in it.
-            <a href="mailto:sbostler@gmail.com">Have questions or corrections?</a>
-         </div>
+            <p>
+               This is a list of published <a href="http://code.google.com/p/simile-widgets/">exhibits</a> 
+            out there in the world. We record a description of the exhibit, the author, and a 
+            few statistics about what's in it.</p>
+         
+            
+            <p>
+               This page showcases a new feature that lets exhibit 
+            authors create data entry forms in their exhibits, for visitors to submit new
+            items with. When items are created, they're saved to a Google Spreadsheet 
+            owned by the author. These new items can either be included in the exhibit
+            automatically, or individually approved by the author.</p>
+            
+            <p>
+               Want to make an editable exhibit like this?
+               I'm currently doing a study on integrating item submission forms 
+               into existing exhibits, and would love
+               to help users add this feature to their own exhibit. 
+               <a href="mailto:sbostler@gmail.com">Contact me if you'd like 
+               to be involved!</a> 
+               The first ten participants will be given a $20 Amazon gift
+               certificate as thanks :)
+            </p>
 
+         </div>
          
          <div class="creator">
             <a ex:role="item-creator" ex:itemType="exhibit" 
@@ -230,21 +249,23 @@
             <p></p>
             
             <div ex:role="viewPanel" class="viewContainer">
-            <div ex:role="view" ex:label="Exhibits" ex:formats="date { template : 'MMM \'yy' }">
-               <div ex:role="lens" style="border: 1px solid #333; padding: 0.5em" style="display: none" 
+            <div ex:role="view" ex:label="Exhibits" 
+               ex:formats="date { template : 'MMM \'yy' }" 
+               ex:orders=".addedOn" ex:directions="descending">
+               
+               <div ex:role="lens" style="padding: 0.5em" style="display: none" 
                   ex:purpose-content=".purpose"
                   ex:onshow="removeNullEmails(this)"
                   >
 
                   <div>
-                     <a ex:href-content=".url" ex:content=".label"></a>
-                     <span ex:if-exists=".author"> by </span>
-
-                     <a ex:href-subcontent="mailto:{{.authorEmail}}" ex:content=".author"></a>
+                     <a class="itemHeader" ex:href-content=".url" ex:content=".label" target="_blank"></a> <br />
+                     <span ex:if-exists=".author"> by <a ex:href-subcontent="mailto:{{.authorEmail}}" ex:content=".author"></a>,</span>
+                     <span ex:if-exists=".addedOn">added <span ex:content=".addedOn"></span></span>
                   </div>
 
                   <div>
-                     <span ex:if-exists=".addedOn">added <span ex:content=".addedOn"></span></span><span ex:if-exists=".createdOn">, created <span ex:content=".createdOn"></span></span>
+                     <span ex:if-exists=".createdOn">created <span ex:content=".createdOn"></span></span>
                   </div>
 
                   <span ex:if-exists=".createdOn">
@@ -254,12 +275,12 @@
                   
 
                   <div class="entry-header">
-                     <div><b>Description:</b></div>
                      <span ex:content=".description"></span>
                   </div>
                   
                   <p></p>
-
+                  
+                  <div style="color: dimgray">
                   <div><b>Info:</b></div>
 
                   <div class="entry-header">
@@ -297,6 +318,8 @@
                   <div class="entry-header" ex:if-exists=".desiredFeature">
                      <div><b>Most desired Exhibit feature:</b></div>
                      <span ex:content=".desiredFeature"></span>
+                  </div>
+
                   </div>
 
                </div>
@@ -346,88 +369,80 @@
          <td class="column2">
 
             
-            <div ex:role="facet" 
+            <!-- <div ex:role="facet" 
                ex:facetClass="Slider" 
                ex:horizontal="true" 
                ex:expression=".typeCount" 
                ex:facetLabel="# of types" 
-               ></div>
+               ></div> -->
             
-            <!-- <div ex:role="facet" 
+            <div ex:role="facet" 
                ex:expression=".typeCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of types"
                ex:interval="5"
                ex:height="8em">
-            </div> -->
-            
-            <p></p><p></p>
+            </div>
 
-            <div ex:role="facet" 
+            <!-- <div ex:role="facet" 
                ex:facetClass="Slider" 
                ex:horizontal="true" 
                ex:expression=".itemCount" 
                ex:facetLabel="# of items" 
-               ></div>
+               ></div> -->
 
-            <!-- <div ex:role="facet" 
+            <div ex:role="facet" 
                ex:expression=".itemCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of items"
                ex:interval="5"
                ex:height="8em">
-            </div> -->
+            </div>
             
-            <p></p><p></p>
-
-            <div ex:role="facet" 
+            <!-- <div ex:role="facet" 
                ex:facetClass="Slider" 
                ex:horizontal="true" 
                ex:expression=".propertyCount" 
                ex:facetLabel="# of properties" 
-               ></div>
+               ></div> -->
 
-            <!-- <div ex:role="facet" 
+            <div ex:role="facet" 
                            ex:expression=".propertyCount"
                            ex:facetClass="NumericRange"
                            ex:facetLabel="# of properties"
                            ex:interval="5"
                            ex:height="8em">
-                        </div> -->
+                        </div>
 
-            <p></p><p></p>
-
-            <div ex:role="facet" 
+            <!-- <div ex:role="facet" 
                ex:facetClass="Slider" 
                ex:horizontal="true" 
                ex:expression=".viewCount" 
                ex:facetLabel="# of views" 
-               ></div>
+               ></div> -->
 
-            <!-- <div ex:role="facet" 
-               <!-- ex:expression=".viewCount"
+            <div ex:role="facet" 
+               ex:expression=".viewCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of views"
                ex:interval="5"
                ex:height="8em">
-            </div> -->
+            </div>
             
-            <p></p><p></p>
-            
-            <div ex:role="facet" 
+            <!-- <div ex:role="facet" 
                ex:facetClass="Slider" 
                ex:horizontal="true" 
                ex:expression=".facetCount" 
                ex:facetLabel="# of facets" 
-               ></div>
+               ></div> -->
 
-            <!-- <div ex:role="facet" 
+            <div ex:role="facet" 
                ex:expression=".facetCount"
                ex:facetClass="NumericRange"
                ex:facetLabel="# of facets"
                ex:interval="5"
                ex:height="8em">
-            </div> -->
+            </div>
          
          </td>
          
