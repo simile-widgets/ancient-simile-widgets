@@ -75,7 +75,7 @@ body {
 }
 
 .column2 {
-    padding-right: 3em;
+    padding-right: 1.5em;
     min-width: 12em;
 }
 
@@ -139,4 +139,8 @@ body {
 
 .entry-header {
     padding-bottom: 0.0em;
+}
+
+.itemHeader {
+    font-size: large;
 }

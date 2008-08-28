@@ -557,6 +557,7 @@ Exhibit.Database._Impl.prototype._ensurePropertyExists = function(propertyID, ba
         
         this._properties[propertyID] = property;
         
+        this._propertyArray = null;
         return property;
     } else {
         return this._properties[propertyID];
