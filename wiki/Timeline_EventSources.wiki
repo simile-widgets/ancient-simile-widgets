@@ -1,6 +1,6 @@
 = Event Source =
 
-Timeline can be populated from different type of data sources.
+Timelines can be populated from different type of data sources (including [Timeline_ProgrammableEventCreation manual entry).
 
  # XML format
  # JSON format
