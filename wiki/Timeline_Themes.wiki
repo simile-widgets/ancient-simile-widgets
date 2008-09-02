@@ -1,5 +1,3 @@
-#How to change themes.
-
 = How to change Themes =
 This is just a draft written after some successful tests in changing the Timeline theme.
 
