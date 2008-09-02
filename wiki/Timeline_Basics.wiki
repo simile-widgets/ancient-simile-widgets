@@ -1,0 +1,23 @@
+= Timeline Basics =
+
+http://simile.mit.edu/mediawiki/images/3/33/Timeline-sample.jpg
+
+A timeline contains one or more [Timeline_BandClass Bands], which can be panned infinitely by dragging with the mouse pointer. A band can be configured to synchronize with another band such that panning one band also scrolls the other.
+
+A timeline is implemented as a <tt>div</tt> element that contains inner <tt>div</tt> elements as its bands. The band <tt>div</tt>s are cropped and positioned relative to the timeline <tt>div</tt>.
+
+http://simile.mit.edu/mediawiki/images/4/49/Timeline-band-illustration.jpg
+
+A band <tt>div</tt> itself contains several inner elements that implements various parts of the band. For example, the two timelines above show labels for days, weeks, months, and years. The bands also have different background colors, and the weekly band of the second timeline has weekend markings. All of these visual elements are "painted" by adding HTML elements to the band <tt>div</tt>s at the appropriate positions.
+
+As a band is panned, its <tt>div</tt> is shifted horizontally or vertically, carrying all of its visual elements along. When either end of the band <tt>div</tt> approaches the visible (non-cropped) area, the band <tt>div</tt> is re-centered, its coordinate origin is changed, and then its various visual elements are re-"painted" relative to the new coordinate origin. All of this "paging" is done as seamlessly as possible so that the user experiences smooth, '''infinite''' panning.
+
+A band is responsible for supporting panning as well as coordinating its various sub-components:
+ * an [Timeline_EtherClass ether], whose sole responsibility is mapping between pixel coordinates and dates/times;
+ * an [Timeline_EtherPainterClass ether painter], which paints date/time labels and the background of the band as well as the highlight (the lighter part of the lower band in the first timeline above);
+ * zero or more [Timeline_DecoratorClass decorators], which further decorate the background of the band; and
+ * an [Timeline_EventPainterClass event painter], which paints the events.
+
+The band also takes an [Timeline_EventSourceClass event source] which provides events to be displayed in that band. Different bands can have different event sources. This flexibility allows for '''timeline mashups''', as exemplified [http://simile.mit.edu/timeline/examples/religions/religions.html here]. Various sub-components that do painting take a [Timeline_ThemeClass theme], which stores default visual and behavioral settings.
+
+*see also:* [Timeline_GettingStarted Getting started]
