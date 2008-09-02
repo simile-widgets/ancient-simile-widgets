@@ -1,0 +1,3 @@
+= Ether = 
+
+The Ether of a band dictates how time is mapped onto the pixel space: how many pixels a time span takes up. The [Timeline_EtherPainterClass ether painter] makes this mapping visible to the user by painting various markings on the background of the band, e.g., "Jun", "Jul", "2005", "2006". The [Timeline_EventPainterClass event painter], obviously, paints the events that are fed to it by the [Timeline_EtherSourceClass ether source]. The *`Timeline.DurationEventPainter`* uses a [Timeline_LayoutClass layout] to determine how to distribute the events among several [Timeline_Tracks tracks]] such that events don't overlap one another.
