@@ -15,7 +15,7 @@ We need '''your''' help to make this documentation better.  If you have informat
  * [Timeline_EventSources Creating event sources] -- overview of event sources XML, JSON or SPARQL
  * [Timeline_Themes How to Change the Themes]
 
-=== [Time_Examples Examples] page
+=== [Time_Examples Examples] page ===
 
 === API ===
  * [Timeline_TimelineClass Timelines]
