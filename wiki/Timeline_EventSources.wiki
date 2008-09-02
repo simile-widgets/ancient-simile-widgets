@@ -17,7 +17,7 @@ The XML format used for Timeline goes somewhat like this:
  # wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
  # wiki-section - MediaWiki wiki section
  # events *`<event>`* - Any number of of these elements are supported, the order of these is unimportant.  Each <event> element can have the following attributes:
- # start -- in full date format (e.g. "May 20 1961 00:00:00 GMT-0600"")
+ ## start -- in full date format (e.g. "May 20 1961 00:00:00 GMT-0600"")
  # latestStart - for imprecise beginnings...
  # earliestEnd - for imprecise ends...
  # end - same date format as start
