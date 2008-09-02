@@ -1,0 +1,121 @@
+= Event Source =
+
+Timeline can be populated from different type of data sources.
+
+ # XML format
+ # JSON format
+ # 
+
+An [Timeline_EventSourceClass Event Source] controls the loading of data sources into a timeline.  
+
+== XML files ==
+
+The XML format used for Timeline goes somewhat like this:
+
+ Everything is contained within a *`<data>`* element
+ The *`<data>`* element can have the following attributes:
+ # wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
+ # wiki-section - MediaWiki wiki section
+ # events *`<event>`* - Any number of of these elements are supported, the order of these is unimportant.  Each <event> element can have the following attributes:
+ # start -- in full date format (e.g. "May 20 1961 00:00:00 GMT-0600"")
+ # latestStart - for imprecise beginnings...
+ # earliestEnd - for imprecise ends...
+ # end - same date format as start
+ # isDuration - either "true" or "false", if false the item will be drawn as a dot with a pale bar drawn behind it
+ # title - text title that goes next to the bar in the timeline
+ # description - more text for the bubble
+ # image - url to an image that will be displayed in the bubble
+ # link - the bubble's title text will become a hyper-link to this address.
+ # icon - this image will appear next to the title text in the bubble.
+ # color - color of the bar to display in the timeline
+ # textColor - color of the text to display next to the bars
+ # The "content" of the element *`<event>_content_</event>`* is what will be displayed inside the bubble that pops up when the event is clicked.  The info should be escaped/formated HTML.
+
+The xml document must be served with a content-type that the browser thinks is xml: "text/xml, application/xml or ends in +xml" (per [http://www.w3.org/TR/XMLHttpRequest/#xml-response-entity-body the XMLHttpRequest spec]). If it's not, you could get this cryptic error, which I include here as search bait:
+
+TypeError: xml has no properties "XmlHttp: Error handling onReadyStateChange"
+[Exception... "'XmlHttp: Error handling onReadyStateChange' when calling method: [nsIOnReadyStateChangeHandler::handleEvent]" nsresult: "0x8057001e (NS_ERROR_XPC_JS_THREW_STRING)" location: "<unknown>" data: no]
+fDone(XMLHttpRequest readyState=4 status=200)timeplot-bundle.j... (line 177)
+_onReadyStateChange(XMLHttpRequest readyState=4 status=200, function(), function())simile-ajax-bundl... (line 2429)
+onreadystatechange()
+
+=== Examples ===
+
+{{{
+<data 
+  wiki-url="http://simile.mit.edu/shelf/" 
+  wiki-section="Simile JFK Timeline">
+    <event 
+       start="Sat May 20 1961 00:00:00 GMT-0600" 
+       title="'Bay of Pigs' Invasion">
+    </event>
+    <event 
+       start="Wed May 01 1963 00:00:00 GMT-0600" 
+       end="Sat Jun 01 1963 00:00:00 GMT-0600" 
+       isDuration="true" 
+       title="Oswald moves to New Orleans">
+         Oswald moves to New Orleans, and finds employment at the William <!-- This is "content" -->
+         B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>  <!-- This is "content" -->
+    </event>
+    <event>
+      ...
+    </event>
+</data>
+}}}
+
+== JSON files  ==
+
+The JSON format used for Timeline goes somewhat like this:
+
+ Everything is contained in *`{}`*
+ The base element can have the following attributes:
+ # wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
+ # wiki-section - MediaWiki wiki section
+ # dateTimeFormat - format of the date time (i.e.'iso8601')
+ # events - Inside 'events' goes an array of elements, the order of these is unimportant.  Each event element can have the following attributes:
+ # start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600"")
+ # [Timeline_EventSourceJSON JSON Event Source - _use_js_Date%28%29_objects]] can make dates easier
+ # latestStart - for imprecise beginnings...
+ # earliestEnd - for imprecise ends...
+ # end - same date format as start
+ # isDuration - either "true" or "false", if false the item will be drawn as a dot with a pale bar drawn behind it
+ # title - text title that goes next to the bar in the timeline
+ # description - more text for the bubble
+ # image - url to an image that will be displayed in the bubble
+ # link - the bubble's title text will become a hyper-link to this address.
+ # icon - this image will appear next to the title text in the bubble.
+ # color - color of the bar to display in the timeline
+ # textColor - color of the text to display next to the bars
+ # description - what will be displayed inside the bubble that pops up when the event is clicked.  It should be escaped/formated HTML.
+
+The xml document must be served with a content-type that the browser thinks is xml: "text/xml, application/xml or ends in +xml" (per [http://www.w3.org/TR/XMLHttpRequest/#xml-response-entity-body the XMLHttpRequest spec]). If it's not, you could get this cryptic error, which I include here as search bait:
+
+TypeError: xml has no properties "XmlHttp: Error handling onReadyStateChange"
+[Exception... "'XmlHttp: Error handling onReadyStateChange' when calling method: [nsIOnReadyStateChangeHandler::handleEvent]" nsresult: "0x8057001e (NS_ERROR_XPC_JS_THREW_STRING)" location: "<unknown>" data: no]
+fDone(XMLHttpRequest readyState=4 status=200)timeplot-bundle.j... (line 177)
+_onReadyStateChange(XMLHttpRequest readyState=4 status=200, function(), function())simile-ajax-bundl... (line 2429)
+onreadystatechange()
+
+=== Examples ===
+
+{{{
+{ 
+  'wiki-url':"http://simile.mit.edu/shelf/", 
+  'wiki-section':"Simile JFK Timeline", 
+  'dateTimeFormat': 'iso8601',
+  'events': [
+    {
+       'start':"Sat May 20 1961 00:00:00 GMT-0600",
+       'title':"'Bay of Pigs' Invasion",
+     }, {
+       'start':"Wed May 01 1963 00:00:00 GMT-0600" ,
+       'end':"Sat Jun 01 1963 00:00:00 GMT-0600" ,
+       'isDuration':"true" ,
+       'title':"Oswald moves to New Orleans",
+       'description':"Oswald moves to New Orleans, and finds employment at the William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>",
+     }, {
+      ...
+     } ]
+}
+
+}}}
