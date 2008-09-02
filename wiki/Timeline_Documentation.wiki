@@ -11,6 +11,7 @@ We need '''your''' help to make this documentation better.  If you have informat
 === Getting Started ===
  * [Timeline_Basics The Basics], briefly how timelines work
  * [Timeline_GettingStarted Getting started], a step by step tutorial 
+ * [Timeline_UnderstandingInitialization Understanding Initialization] - walk through of Timeline initialization and defaults
  * [Timeline_CreatingHotzones Creating Hotzones] -- as this topic is complicated enough to be separated from the previous article
  * [Timeline_EventSources Creating event sources] -- overview of event sources XML, JSON or SPARQL
  * [Timeline_Themes How to Change the Themes]
