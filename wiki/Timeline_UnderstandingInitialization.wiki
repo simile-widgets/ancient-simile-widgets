@@ -6,33 +6,33 @@
  Timeline.createBandInfo = function(params) {
    return {
      width:          params.width,
-     eventSource:    params.eventSource '''(or null by default),'''
-     timeZone:       params.timeZone '''(or 0 by default),'''
+     eventSource:    params.eventSource, //(or null by default)
+     timeZone:       params.timeZone, //offset from GMT (default is 0)
      ether:          new Timeline.LinearEther({
-                       interval:          '''the number of milliseconds in <span style="background:#FFFFE0">params.intervalUnit</span>,'''
+                       interval: f(params.intervalUnit), //the number of milliseconds in params.intervalUnit 
                        pixelsPerInterval: params.intervalPixels,
-                       centersOn:         params.date '''(or the current date by default)'''
+                       centersOn: params.date  //or the current date by defaul
                      }),
      etherPainter:   new Timeline.GregorianEtherPainter({
-                       unit:              <span style="background:#FFFFE0">params.intervalUnit</span>,
-                       theme:             params.theme '''(or the default theme)'''
+                       unit:      params.intervalUnit,
+                       theme:     params.theme, //or the default theme
                      }),
      eventPainter:   new Timeline.DurationEventPainter({
-                       showText:          params.showEventText '''(or true by default)''',
-                       theme:             '''the same theme above''',
-                       trackHeight:       params.trackHeight '''(or the default track height in the theme)''',
-                       trackGap:          params.trackHeight '''(or the default track gap in the theme)''',
-                       layout:            new Timeline.StaticTrackBasedLayout({
-                                            eventSource: '''the same eventSource above''',
-                                            ether:       '''the same ether above''',
-                                            showText:    '''the same showText value above''',
-                                            theme:       '''the same theme above'''
-                                          })
+                       showText:  params.showEventText, //or true by default
+                       theme:     params.theme, //or the default theme...same theme above
+                       trackHeight: params.trackHeight, //orr the default track height in the theme
+                       trackGap:    params.trackHeight, //or the default track gap in the theme
+                       layout:     new Timeline.StaticTrackBasedLayout({
+                                      eventSource: //same as the same eventSource above
+                                      ether:       //same ether above
+                                      showText:    //same showText value above
+                                      theme:       //same theme above
+                                    })
                      })
    }
  };
 }}}
 
-In other words, *`Timeline.createBandInfo()`* takes an object whose fields store initialization settings and returns yet another object whose fields stores initialization settings that *`Timeline.create()`* can understand. *`Timeline.createBandInfo()`* does the work of routing each initialization setting that you give it to the appropriate place(s). For example, <span style="background:#FFFFE0">*`params.intervalUnit`*</span> is used referenced twice above, once to construct an [[ether]] and once to construct an [[ether painter]]. Whatever default setting that *`Timeline.createBandInfo()`* doesn't provide is provided by the [Timeline_ThemeClass theme].
+In other words, *`Timeline.createBandInfo()`* takes an object whose fields store initialization settings and returns yet another object whose fields stores initialization settings that *`Timeline.create()`* can understand. 
 
-The [Timeline_EtherClass ether] of a band dictates how time is mapped onto the pixel space: how many pixels a time span takes up. The [Timeline_EtherPainterClass ether painter] makes this mapping visible to the user by painting various markings on the background of the band, e.g., "Jun", "Jul", "2005", "2006". The [Timeline_EventPainterClass event painter], obviously, paints the events that are fed to it by the [Timeline_EtherSourceClass ether source]. The *`Timeline.DurationEventPainter`* uses a [Timeline_LayoutClass layout] to determine how to distribute the events among several [Timeline_Tracks tracks]] such that events don't overlap one another.
+*`Timeline.createBandInfo()`* does the work of routing each initialization setting that you give it to the appropriate place(s). For example, *`params.intervalUnit`* is referenced twice above, once to construct an [Timeline_EtherClass ether] and once to construct an [Timeling_EtherPainter ether painter]. Whatever default setting that *`Timeline.createBandInfo()`* doesn't provide is provided by the [Timeline_ThemeClass theme].
