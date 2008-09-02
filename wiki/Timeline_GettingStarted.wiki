@@ -81,7 +81,7 @@ To make the two bands scroll in synchrony, and then to make the bottom band high
    bandInfos[1].highlight = true;
 }}}
 
-Give you this... 
+Gives you this... 
 
 {{{
  function onLoad() {
@@ -113,6 +113,7 @@ http://simile.mit.edu/mediawiki/images/a/ad/Timeline-howto-image2.jpg
 To add events to the timeline, create an [Timeline_EventSourceClass event source] and load it with data from an XML file.  Add the following code:
 
 {{{ 
+   ...
    var eventSource = new Timeline.DefaultEventSource();
    ...
          eventSource:    eventSource,
@@ -124,7 +125,7 @@ To add events to the timeline, create an [Timeline_EventSourceClass event source
    Timeline.loadXML("example1.xml", function(xml, url) { eventSource.loadXML(xml, url); })
 }}}
 
-Give you this... 
+Gives you this... 
 
 {{{
  function onLoad() {
@@ -175,7 +176,7 @@ Looking at the previous timeline, it is obvious that the lower band looks denser
          trackGap:       0.2,
 }}}
 
-Give you this... 
+Gives you this... 
 
 {{{
  function onLoad() {
@@ -214,17 +215,16 @@ http://simile.mit.edu/mediawiki/images/3/3a/Timeline-howto-image4.jpg
 For more background on how a timeline is initialized including how to override defaults check out [Timeline_UnderstandingInitialization Understanding Initialization]
 
 
-=== Step 7. Align the events on multiple bands ===
+=== Step 7. Align the events across multiple bands ===
 
-The object returned by *`Timeline.createBandInfo()`* can be changed before we feed it into *`Timeline.create()`*. We have already done that in Step 4 to keep the bands in sync. This time, we will take the layout from the upper band and set it into the lower band so that the event is positioned on the same track in both bandsAdd the following code:
+The object returned by *`Timeline.createBandInfo()`* can be changed before we feed it into *`Timeline.create()`*. We have already done that in Step 4 to keep the bands in sync. This time, we will take the layout from the upper band and set it into the lower band so that the event is positioned on the same track in both bands.  Add the following code:
 
 {{{ 
    ...
    bandInfos[1].eventPainter.setLayout(bandInfos[0].eventPainter.getLayout());
 }}}
 
-Give you this... 
-
+Gives you this... 
 
 {{{
  function onLoad() {
@@ -254,7 +254,7 @@ Give you this...
  }
 }}}
 
-Now note that the last event is on its own track in the lower band (just like in the upper band) although it can stay on the same track as the first even in the lower band without resulting in any overlap.
+Now note that the last event is on its own track in the lower band (just like in the upper band) although it could have stayed on the same track as the first even in the lower band without resulting in any overlap, aligning the events across multiple bands makes it more intuitive for the user as their eyes more from band to band.
 
 http://simile.mit.edu/mediawiki/images/e/e4/Timeline-howto-image5.jpg
 
