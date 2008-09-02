@@ -72,7 +72,7 @@ Note that we put the code to construct the timeline in the *`onload`* handler to
 
 http://simile.mit.edu/mediawiki/images/2/2c/Timeline-howto-image1.jpg
 
-=== Step 4. Keeping the bands in sync ===
+=== Step 4. Keep the bands in sync ===
 
 To make the two bands scroll in synchrony, and then to make the bottom band highlights the visible time span of the top band, add the following code:
 
@@ -164,7 +164,7 @@ Take a look at [Timeline_Example_XML1 example1.xml]. There are 3 types of events
 
 Click on the events to see how their bubbles are rendered based on the data in the XML file. For the exact format of such XML files, refer to the documentation on [Timeline_EventSourceClass event sources]. '''Note that loading XML files is only one way in which you can add events to timelines.'''
 
-=== Step 6. Differentiating the Two Bands ==
+=== Step 6. Differentiate the two bands ==
 
 Looking at the previous timeline, it is obvious that the lower band looks denser, and it will become a lot denser a lot quicker than the upper band should we add more events. Usually, a lower band usually acts as a zoomed-out overview for an upper band and it does not have to show as much detail as the upper band. We can turn off the rendering of text as well as condense the event markings vertically...  Add the following code:
 
@@ -214,7 +214,7 @@ http://simile.mit.edu/mediawiki/images/3/3a/Timeline-howto-image4.jpg
 For more background on how a timeline is initialized including how to override defaults check out [Timeline_UnderstandingInitialization Understanding Initialization]
 
 
-=== Step 7. Aligning Events on Multiple Bands ===
+=== Step 7. Align the events on multiple bands ===
 
 The object returned by *`Timeline.createBandInfo()`* can be changed before we feed it into *`Timeline.create()`*. We have already done that in Step 4 to keep the bands in sync. This time, we will take the layout from the upper band and set it into the lower band so that the event is positioned on the same track in both bandsAdd the following code:
 
@@ -258,4 +258,4 @@ Now note that the last event is on its own track in the lower band (just like in
 
 http://simile.mit.edu/mediawiki/images/e/e4/Timeline-howto-image5.jpg
 
-That's it for getting started.  To continue with this tutorial check out adding _hotzones_ when your events get too cramped.
+That's it for getting started.  To continue with this tutorial check out [Timeline_CreatingHotzones creating Hot Zones] when your events get too cramped.
