@@ -1,0 +1,38 @@
+= Understanding Initialization = 
+
+*`Timeline.createBandInfo()`* fills in default settings, for constructing a band in a timeline. Defaults can be changed using parms.  What *`Timeline.createBandInfo()`* does is something like this (in pseudo-code):
+
+{{{
+ Timeline.createBandInfo = function(params) {
+   return {
+     width:          params.width,
+     eventSource:    params.eventSource '''(or null by default),'''
+     timeZone:       params.timeZone '''(or 0 by default),'''
+     ether:          new Timeline.LinearEther({
+                       interval:          '''the number of milliseconds in <span style="background:#FFFFE0">params.intervalUnit</span>,'''
+                       pixelsPerInterval: params.intervalPixels,
+                       centersOn:         params.date '''(or the current date by default)'''
+                     }),
+     etherPainter:   new Timeline.GregorianEtherPainter({
+                       unit:              <span style="background:#FFFFE0">params.intervalUnit</span>,
+                       theme:             params.theme '''(or the default theme)'''
+                     }),
+     eventPainter:   new Timeline.DurationEventPainter({
+                       showText:          params.showEventText '''(or true by default)''',
+                       theme:             '''the same theme above''',
+                       trackHeight:       params.trackHeight '''(or the default track height in the theme)''',
+                       trackGap:          params.trackHeight '''(or the default track gap in the theme)''',
+                       layout:            new Timeline.StaticTrackBasedLayout({
+                                            eventSource: '''the same eventSource above''',
+                                            ether:       '''the same ether above''',
+                                            showText:    '''the same showText value above''',
+                                            theme:       '''the same theme above'''
+                                          })
+                     })
+   }
+ };
+}}}
+
+In other words, *`Timeline.createBandInfo()`* takes an object whose fields store initialization settings and returns yet another object whose fields stores initialization settings that *`Timeline.create()`* can understand. *`Timeline.createBandInfo()`* does the work of routing each initialization setting that you give it to the appropriate place(s). For example, <span style="background:#FFFFE0">*`params.intervalUnit`*</span> is used referenced twice above, once to construct an [[ether]] and once to construct an [[ether painter]]. Whatever default setting that *`Timeline.createBandInfo()`* doesn't provide is provided by the [Timeline_ThemeClass theme].
+
+The [Timeline_EtherClass ether] of a band dictates how time is mapped onto the pixel space: how many pixels a time span takes up. The [Timeline_EtherPainterClass ether painter] makes this mapping visible to the user by painting various markings on the background of the band, e.g., "Jun", "Jul", "2005", "2006". The [Timeline_EventPainterClass event painter], obviously, paints the events that are fed to it by the [Timeline_EtherSourceClass ether source]. The *`Timeline.DurationEventPainter`* uses a [Timeline_LayoutClass layout] to determine how to distribute the events among several [Timeline_Tracks tracks]] such that events don't overlap one another.
