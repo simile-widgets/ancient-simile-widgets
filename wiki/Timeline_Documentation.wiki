@@ -8,7 +8,7 @@ Timeline allows web site creators to embed interactive timelines into their site
 
 == Call for Help ==
 
-We need '''your''' help to make this documentation better.  If you have information or examples, please contribute.
+We need your help to make this documentation better.  If you have information or examples, please contribute.
 
 === [Time_Examples Examples] page ===
 
