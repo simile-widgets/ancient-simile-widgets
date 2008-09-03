@@ -1,3 +1,5 @@
+#summary A brief description of object initialization, defaulting, overrides, etc.
+
 = Understanding Initialization = 
 
 *`Timeline.createBandInfo()`* fills in default settings, for constructing a band in a timeline. Defaults can be changed using parms.  What *`Timeline.createBandInfo()`* does is something like this (in pseudo-code):
