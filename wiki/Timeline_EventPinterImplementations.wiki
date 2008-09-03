@@ -1,4 +1,4 @@
-#summary A list of available Event Painter Implementations
+#summary A list of Event Painter Implementations
 
 = Event Painter Implementations =
 
