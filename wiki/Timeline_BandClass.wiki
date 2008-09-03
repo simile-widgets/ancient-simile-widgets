@@ -1,3 +1,5 @@
+#summary Information and JSDoc
+
 = Timeline Band Class =
 
 Note that you cannot directly create a Band object. You can only retrieve Band objects from a [Timeline_TimelineClass Timeline] object.
