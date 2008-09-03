@@ -1,8 +1,8 @@
-#summary Information about Event Sources including XML and JSON formats
+#summary Information about Event Sources including XML, JSON and SPARQL formats
 
 = Event Source =
 
-Timelines can be populated from different type of data sources (including [Timeline_ProgrammableEventCreation manual entry).
+Timelines can be populated from different type of data sources.  For more info about data loading check out [Timeline_LoadEventsDynamically loading events dynamically]).
 
  # XML format
  # JSON format
@@ -77,7 +77,7 @@ The JSON format used for Timeline has the following format:
  # events - Inside 'events' goes an array of elements, the order of these is unimportant.  
 
 Each event element can have the following attributes:
- # start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600") [Timeline_EventSourceJSON JSON Event Source - use_js_Date_objects] can make dates easier
+ # start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600") [Timeline_EventSourceJSON_jsDate use_js_Date_objects] can make event loading faster.
  # latestStart - for imprecise beginnings - same date format as start
  # earliestEnd - for imprecise ends - same date format as start 
  # end - same date format as start
