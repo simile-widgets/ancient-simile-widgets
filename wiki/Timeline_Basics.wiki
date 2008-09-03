@@ -1,3 +1,5 @@
+#summary An introduction to Timeline
+
 = Timeline Basics =
 
 http://simile.mit.edu/mediawiki/images/3/33/Timeline-sample.jpg
