@@ -39,8 +39,8 @@ We need '''your''' help to make this documentation better.  If you have informat
  * [http://www.semanticweb.gr/SWEvents/timeline_ics.php?icsurl=http://www.semanticweb.gr/SWEvents/SWEvents.ics View an iCal (.ics) URL as a Timeline]
  * [http://code.google.com/apis/gdata/cal_simile_sample.html View Google Calendar using JSON feed source]
  * [Timeline_EditGridXSLT EditGrid as a data source] - Use an EditGrid spreadsheet as a data source
- * [Timeline_GnomePlanner - Gnome Planner] - Howto convert plans from the Gnome project management tool "Planner"
- * [Timeline_SharePoint Sharepoint ] - Howto take SharePoint List into Timeline
+ * [Timeline_GnomePlanner Gnome Planner] - Convert plans from the Gnome project management tool "Planner"
+ * [Timeline_SharePointList Sharepoint List ] - Convert SharePoint List into Timeline SML format
 
 === API ===
  * [Timeline_TimelineClass Timelines]
