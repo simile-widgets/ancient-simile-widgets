@@ -30,15 +30,13 @@ We need your help to make this documentation better.  If you have information or
  * [Timeline_CustomDateRanges  Custom Date Ranges] - How to create additional date/time range units
  * [http://timeline.to/ Universal Timeline Aggregator]
 
-=== Feeding Timeline Data in Different Ways ===
+=== Loading data ===
  * [Timeline_LoadEventsDynamically Load Events Dynamically]
  * [Timeline_EventSourceJSON_jsDate use js Date()] with JSON
  * [http://www.mytimelines.net/ Display Atom, RDF and RSS feeds using Timeline]
  * [http://www.mytimelines.net/create-an-icalendar-timeline/ Display iCalendar files using Timeline]
  * [http://apassant.net/home/2006/07/rss2timeline/ RSS feeds in Timeline]
  * [http://www.semanticweb.gr/SWEvents/timeline_ics.php?icsurl=http://www.semanticweb.gr/SWEvents/SWEvents.ics View an iCal (.ics) URL as a Timeline]
-
-=== Converting data to a Timeline format ===
  * [http://code.google.com/apis/gdata/cal_simile_sample.html Google Calendar] - View Google Calendar using JSON feed source
  * [Timeline_EditGridXSLT EditGrid] - Convert an EditGrid spreadsheet to Timeline XML format
  * [Timeline_GnomePlanner Gnome Planner] - Convert plans from the Gnome project management tool "Planner" to Timeline XML format
