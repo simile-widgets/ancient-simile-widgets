@@ -32,7 +32,7 @@ We need '''your''' help to make this documentation better.  If you have informat
 
 === Feeding Timeline Data in Different Ways ===
  * [Timeline_LoadEventsDynamically Load Events Dynamically]
- * [Timeline_EventSourceJSON JSON event source] - use js Date() objects with JSON
+ * [Timeline_EventSourceJSON_jsDate use js Date()] with JSON
  * [http://www.mytimelines.net/ Display Atom, RDF and RSS feeds using Timeline]
  * [http://www.mytimelines.net/create-an-icalendar-timeline/ Display iCalendar files using Timeline]
  * [http://apassant.net/home/2006/07/rss2timeline/ RSS feeds in Timeline]
