@@ -1,3 +1,5 @@
+#summary Information about Event Sources including XML and JSON formats
+
 = Event Source =
 
 Timelines can be populated from different type of data sources (including [Timeline_ProgrammableEventCreation manual entry).
