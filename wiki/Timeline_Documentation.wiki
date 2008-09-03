@@ -31,7 +31,6 @@ We need '''your''' help to make this documentation better.  If you have informat
  * [http://timeline.to/ Universal Timeline Aggregator]
 
 === Feeding Timeline Data in Different Ways ===
- * [http://simile.mit.edu/mail/ReadMsg?listName=General&msgNo=1148 Initialize Timeline dynamically] - should put back in the code
  * [Timeline_LoadEventsDynamically Load Events Dynamically]
  * [Timeline_EventSourceJSON JSON event source] - use js Date() objects with JSON
  * [http://www.mytimelines.net/ Display Atom, RDF and RSS feeds using Timeline]
