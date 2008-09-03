@@ -27,7 +27,7 @@ We need '''your''' help to make this documentation better.  If you have informat
  * [Timeline_CustomEventDetailDisplay Custom Detail display] - Customizing the popup bubble
  * [Timeline_DayLabel Add a day label] - Adding a day label with your month when your interval unit are days
  * [Timeline_VerticalScrollbar Vertical Scrollbar] - Adding a vertical scrollbar
- * [Timeline_DateRanges  Date Ranges] - How to create additional date/time range units
+ * [Timeline_CustomDateRanges  Custom Date Ranges] - How to create additional date/time range units
  * [http://timeline.to/ Universal Timeline Aggregator]
 
 === Feeding Timeline Data in Different Ways ===
