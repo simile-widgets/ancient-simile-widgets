@@ -2,15 +2,20 @@
 
 =Timeline Documentation=
 
-This page will be the entry point to the documentation of the [http://code.google.com/p/simile-widgets/ Simile Widgets] *Timeline* component. To reference the previous documentation hosted at MIT please refer to [http://simile.mit.edu/timeline/docs/ html] or [http://simile.mit.edu/wiki/Timeline wiki].  We'll try to move all existing (as of September 2nd, 2007) over by September 5th and we'll update the wiki to point to his new site.
+http://simile.mit.edu/mediawiki/images/1/15/Sundial.png || 
 
-Timeline allows web site creators to embed interactive timelines into their sites.  It requires only that visitors have Javascript enabled.
+This page serves as an entry point to the documentation of the [http://code.google.com/p/simile-widgets/ Simile Widgets] *Timeline* component. To reference the previous documentation hosted at MIT please refer to [http://simile.mit.edu/timeline/docs/ html] or [http://simile.mit.edu/wiki/Timeline wiki].  We'll try to move all existing (as of September 2nd, 2007) over by September 5th and we'll update that wiki to point here.  
+
+Timeline allows web site creators to embed interactive timelines into their sites.  It requires only that visitors have Javascript enabled.  It's often referred to as "Google Maps" for time.
 
 == Call for Help ==
 
 We need your help to make this documentation better.  If you have information or examples, please contribute.
 
-=== [Time_Examples Examples] page ===
+This wiki still references images and examples from the MIT site.  Almost all the content was migrated from that site.  Overtime those artifacts will be migrated here as well.
+
+== Examples ==
+ * http://simile.mit.edu/mediawiki/index.php?title=Special:ask&query=%0A++%5B%5BCategory%3AExample+timeline%5D%5D%0A&sort=&order=ASC  link to MIT examples
 
 == How-Tos ==
 
