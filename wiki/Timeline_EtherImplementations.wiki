@@ -1,4 +1,4 @@
-#summary A list of available Ether Implementations
+#summary A list of Ether Implementations
 
 = Ether Implementations =
 
@@ -7,4 +7,3 @@ Ether classes provided by default:
  # [Timeline_HotZoneEtherClass Timeline.HotZoneEther]. 
 
 They all expose the [Timeline_EtherClass ether interface], but they differ in their initialization parameters.
-
