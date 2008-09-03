@@ -73,11 +73,6 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * [Timeline_PlatformUtilities Platform Utilities]
  * [Timeline_XmlHttpUtilities XmlHttp Utilities]
 
-=== Development ===
- * [Timeline_Dev_SourceDownload Download The Source]
- * [Timeline_Dev_ModifySource How to Modify the Source Code]
- * [Timeline_Dev_SubmitPatches How to submit patches]
-
 == Guidelines ==
  * [Timeline_Accessibility Accessibility Guidelines]
  * [Timeline_Usability Usability Guidelines]
