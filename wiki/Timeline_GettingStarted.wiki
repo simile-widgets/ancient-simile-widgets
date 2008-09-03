@@ -1,3 +1,5 @@
+#summary Developers start here... 5 simple steps to creating your first Timeline
+
 = Getting Started = 
 
 Here are a few easy steps to create a simple timeline. Open up your favorite text or HTML editor and start creating an HTML file.
