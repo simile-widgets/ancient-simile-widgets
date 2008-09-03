@@ -1,3 +1,5 @@
+#summary Timeline documentation index page.
+
 =Timeline Documentation=
 
 This page will be the entry point to the documentation of the [http://code.google.com/p/simile-widgets/ Simile Widgets] *Timeline* component. To reference the previous documentation hosted at MIT please refer to [http://simile.mit.edu/timeline/docs/ html] or [http://simile.mit.edu/wiki/Timeline wiki].  We'll try to move all existing (as of September 2nd, 2007) over by September 5th and we'll update the wiki to point to his new site.
