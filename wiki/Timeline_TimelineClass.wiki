@@ -1,3 +1,5 @@
+#summary Information and JSDoc
+
 = Timeline Class = 
 
 == *`HORIZONTAL`* ==
