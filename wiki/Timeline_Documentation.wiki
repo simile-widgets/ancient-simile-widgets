@@ -16,9 +16,34 @@ We need '''your''' help to make this documentation better.  If you have informat
  * [Timeline_UnderstandingInitialization Understanding Initialization] - walk through of Timeline initialization and defaults
  * [Timeline_CreatingHotzones Creating Hotzones] -- as this topic is complicated enough to be separated from the previous article
  * [Timeline_EventSources Creating event sources] -- overview of event sources XML, JSON or SPARQL
- * [Timeline_CreatingNewThemes How to create and change the Themes]
 
 === [Time_Examples Examples] page ===
+
+== How-Tos ==
+
+=== Controlling Timeline Appearance ===
+ * [Timeline_CreatingNewThemes How to create and change the Themes]
+ * [Timeline_CustomHandler Custom Handler] - Using your own handler instead of showing a bubble
+ * [Timeline_CustomBubble Custom Bubble] - Customizing the popup bubble
+ * [Timeline_DayLabel Add a day label] - Adding a day label with your month when your interval unit are days
+ * [Timeline_VerticalScrollbar Vertical Scrollbar] - Adding a vertical scrollbar
+
+=== Advanced ===
+ * [Timeline_LoadEventsDynamically Load Events Dynamically]
+ * [Timeline_EventSourceJSON JSON event source] - use js Date() objects with JSON
+ * [Timeline_DateRanges  Date Ranges] - How to create additional date/time range units
+ * [http://simile.mit.edu/mail/ReadMsg?listName=General&msgNo=1148 Initialize Timeline dynamically] - should put back in the code
+ * [http://timeline.to/ Universal Timeline Aggregator]
+
+=== Feeding Timeline Data in Different Ways ===
+ * [http://www.mytimelines.net/ Display Atom, RDF and RSS feeds using Timeline]
+ * [http://www.mytimelines.net/create-an-icalendar-timeline/ Display iCalendar files using Timeline]
+ * [http://apassant.net/home/2006/07/rss2timeline/ RSS feeds in Timeline]
+ * [http://www.semanticweb.gr/SWEvents/timeline_ics.php?icsurl=http://www.semanticweb.gr/SWEvents/SWEvents.ics View an iCal (.ics) URL as a Timeline]
+ * [http://code.google.com/apis/gdata/cal_simile_sample.html View Google Calendar using JSON feed source]
+ * [Timeline_EditGridXSLT EditGrid as a data source] - Use an EditGrid spreadsheet as a data source
+ * [Timeline_GnomePlanner - Gnome Planner] - Howto convert plans from the Gnome project management tool "Planner"
+ * [Timeline_SharePoint Sharepoint ] - Howto take SharePoint List into Timeline
 
 === API ===
  * [Timeline_TimelineClass Timelines]
@@ -40,31 +65,6 @@ We need '''your''' help to make this documentation better.  If you have informat
  * [Timeline_GraphicsUtilities Graphics Utilities]
  * [Timeline_PlatformUtilities Platform Utilities]
  * [Timeline_XmlHttpUtilities XmlHttp Utilities]
-
-== How-Tos ==
-
-=== Controlling Timeline Appearance ===
- * [Timeline_customHandler Custom Handler] - Using your own handler instead of showing a bubble
- * [Timeline_customBubble Custom Bubble] - Customizing the popup bubble
- * [Timeline_dayLabel Custom interval label] - Adding a day label with your month when your interval unit are days
- * [Timeline_verticalScrollbar Vertical Scrollbar] - Adding a vertical scrollbar
-
-=== Advanced ===
- * [Timeline_loadEventsDynamically Load Events Dynamically]
- * [Timeline_eventSourceJSON JSON event source] - use js Date() objects with JSON
- * [Timeline_dateRanges  Date Ranges] - How to create additional date/time range units
- * [http://simile.mit.edu/mail/ReadMsg?listName=General&msgNo=1148 Initialize Timeline dynamically] - should put back in the code
- * [http://timeline.to/ Universal Timeline Aggregator]
-
-=== Feeding Timeline Data in Different Ways ===
- * [http://www.mytimelines.net/ Display Atom, RDF and RSS feeds using Timeline]
- * [http://www.mytimelines.net/create-an-icalendar-timeline/ Display iCalendar files using Timeline]
- * [http://apassant.net/home/2006/07/rss2timeline/ RSS feeds in Timeline]
- * [http://www.semanticweb.gr/SWEvents/timeline_ics.php?icsurl=http://www.semanticweb.gr/SWEvents/SWEvents.ics View an iCal (.ics) URL as a Timeline]
- * [http://code.google.com/apis/gdata/cal_simile_sample.html View Google Calendar using JSON feed source]
- * [Timeline_EditGridXSLT EditGrid as a data source] - Use an EditGrid spreadsheet as a data source
- * [Timeline_GnomePlanner - Gnome Planner] - Howto convert plans from the Gnome project management tool "Planner"
- * [Timeline_SharePoint Sharepoint ] - Howto take SharePoint List into Timeline
 
 === Development ===
  * [Timeline_Dev_SourceDownload Download The Source]
