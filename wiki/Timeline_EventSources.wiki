@@ -6,7 +6,7 @@ Timelines can be populated from different type of data sources (including [Timel
 
  # XML format
  # JSON format
- # 
+ # SPARQL [http://www.wasab.dk/morten/2006/07/sparql-timeline/ more info]
 
 An [Timeline_EventSourceClass Event Source] controls the loading of data sources into a timeline.  
 
