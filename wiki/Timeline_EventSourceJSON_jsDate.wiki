@@ -1,0 +1,34 @@
+#summary Benefits of using js Date in JSON eventsource
+
+== Introduction ==
+ 
+Using the js Date() object in a json eventsource can offer substantial  performance improvements over XML  eventsource or json using iso8601 strings for the dates.
+
+{{{
+{'start': new Date(1216,2,15),
+'end': new Date(1216,2,18)
+}
+}}}
+
+'''Note:''' using Date() objects obviates the need for an explicit  'dateTimeFormat': 'iso8601', declaration at the top of the file. so just:
+
+{{{
+{'events' : [
+{'start': new Date(1211,3,12),
+}
+.
+.
+.
+]}
+}}}
+
+'''Note especially:''' the js Date() object takes three arguments: 
+*`Date(year,mo,day)`* and '''it uses zero-indexed months:'''
+0 => Jan, 1 => Feb, ..., 11 => Dec
+
+'''Note also''' the bug as of 8/7/07: to display solid bars for duration events you must use:
+{{{
+{'isDuration': false,
+}
+}}}
+'''Or''', as I just discovered:  use no isDuration property at all.
