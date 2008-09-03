@@ -1,3 +1,5 @@
+#summary Overview on creating hotzones - continuation of the Getting Started
+
 = Hotzones =
 
 This was a part of getting started but was broken out because it's a more advanced topic and hopefully this page will grow beyond this initial simple example
