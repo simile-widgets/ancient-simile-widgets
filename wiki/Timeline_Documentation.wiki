@@ -40,9 +40,9 @@ We need your help to make this documentation better.  If you have information or
  * http://code.google.com/apis/gdata/cal_simile_sample.html Google Calendar - Display Google Calendar using JSON feed source
 
 === Timeline generators as a service ===
- * http://www.mytimelines.net/ - Display Atom, RDF and RSS feeds
- * http://www.mytimelines.net/create-an-icalendar-timeline/ - Display iCalendar files
- * http://timeline.to/ - Display Atom and RSS feeds (was Universal Timeline Aggregator)
+ * http://www.mytimelines.net/ - Displays Atom, RDF and RSS feeds
+ * http://www.mytimelines.net/create-an-icalendar-timeline/ - Displays iCalendar files
+ * http://timeline.to/ - Universal Timeline Aggregator - Displays Atom and RSS feeds
 
 === API ===
  * [Timeline_TimelineClass Timelines]
