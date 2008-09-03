@@ -37,10 +37,12 @@ We need '''your''' help to make this documentation better.  If you have informat
  * [http://www.mytimelines.net/create-an-icalendar-timeline/ Display iCalendar files using Timeline]
  * [http://apassant.net/home/2006/07/rss2timeline/ RSS feeds in Timeline]
  * [http://www.semanticweb.gr/SWEvents/timeline_ics.php?icsurl=http://www.semanticweb.gr/SWEvents/SWEvents.ics View an iCal (.ics) URL as a Timeline]
+
+=== Converting data to a Timeline format ===
  * [http://code.google.com/apis/gdata/cal_simile_sample.html View Google Calendar using JSON feed source]
- * [Timeline_EditGridXSLT EditGrid as a data source] - Use an EditGrid spreadsheet as a data source
- * [Timeline_GnomePlanner Gnome Planner] - Convert plans from the Gnome project management tool "Planner"
- * [Timeline_SharePointList Sharepoint List ] - Convert SharePoint List into Timeline SML format
+ * [Timeline_EditGridXSLT EditGrid] - Convert an EditGrid spreadsheet to Timeline XML format
+ * [Timeline_GnomePlanner Gnome Planner] - Convert plans from the Gnome project management tool "Planner" to Timeline XML format
+ * [Timeline_SharePointLists Sharepoint Lists ] - Convert SharePoint List into Timeline XML format
 
 === API ===
  * [Timeline_TimelineClass Timelines]
