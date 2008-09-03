@@ -24,7 +24,7 @@ We need '''your''' help to make this documentation better.  If you have informat
 === Controlling Timeline Appearance ===
  * [Timeline_CreatingNewThemes How to create and change the Themes]
  * [Timeline_CustomEventClickHandler Custom Event Click Handler] - Using your own handler instead of showing a bubble
- * [Timeline_CustomBubble Custom Bubble] - Customizing the popup bubble
+ * [Timeline_CustomEventDetailDisplay Custom Detail display] - Customizing the popup bubble
  * [Timeline_DayLabel Add a day label] - Adding a day label with your month when your interval unit are days
  * [Timeline_VerticalScrollbar Vertical Scrollbar] - Adding a vertical scrollbar
  * [Timeline_DateRanges  Date Ranges] - How to create additional date/time range units
