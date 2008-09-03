@@ -1,0 +1,11 @@
+#summary A list of Ether Painter Implementations
+
+= Ether Painter Implemenations =
+
+Ether painter classes provided by default: 
+ # [Timeline_GregorianEtherPainterClass Timeline.GregorianEtherPainter]
+ # [Timeline_HotZoneGregorianEtherPainterClass Timeline.HotZoneGregorianEtherPainter]. 
+
+They all expose the [Timeline_EtherPainterClass ether painter interface], but they differ in their initialization parameters.
+
+There is also an undocumented [Timeline_JapaneseEraEtherPainterClass Timeline.JapaneseEraEtherPainter]. 
