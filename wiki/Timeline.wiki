@@ -44,6 +44,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * http://apassant.net/home/2006/07/rss2timeline/ - Display RSS feeds
  * http://www.semanticweb.gr/SWEvents/timeline_ics.php?icsurl=http://www.semanticweb.gr/SWEvents/SWEvents.ics - Display an iCal (.ics) URL
  * http://code.google.com/apis/gdata/cal_simile_sample.html Google Calendar - Display Google Calendar using JSON feed source
+ * http://code.google.com/p/timemap/ - Load JSON or KML onto both a google map and a timeline simultaneously 
 
 === Timeline generators as a service ===
  * http://www.mytimelines.net/ - Displays Atom, RDF and RSS feeds
