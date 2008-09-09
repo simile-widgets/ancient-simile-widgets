@@ -53,6 +53,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
 
 === Sites incorporating Timelines ===
  * http://mqlx.com/~david/parallax/ - search engine for freebase.org
+ * http://semantic-mediawiki.org/wiki/Help:Timeline_format - Semantic MediaWiki 
 
 === Language or Framework Support ===
  * http://code.google.com/p/gwtsimiletimeline/ - GWT API library to support SIMILE Timeline within the GWT framework. 
@@ -80,3 +81,5 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * The Historical Event Markup and Linking Project http://www.heml.org generates SVG [http://www.heml.org/heml-cocoon/sample-timeline timelines], [http://www.heml.org/heml-cocoon/sample-map maps] and animated maps from documents conforming to its XML markup language for historical events. The markup language, defined in XML Schemas http://heml.mta.ca/Schemas/2003-09-17/heml.xsd, associates events with persons, locations, and keywords, employs multiple calendrical schemes and is multilingual. There is a Heml [http://www.heml.org/heml-cocoon/sample-xhtml xhtml language] available, too. The project's past five years of development are recorded in its SVN server [http://heml.mta.ca/viewsvn/?do=browse&project=heml_svn&path=/]. RDF/Heml ideas were presented at the WWW2006 conference [http://www2006.org/programme/files/xhtml/p199/pp199-robertson-xhtml.html].
 
  * [http://www.longnow.org/about/longview.php LongView], a project of the [http://www.longnow.org/ The Long Now Foundation], is a server side python script for generating HTML timelines from simple datafiles of comma separated values. It requires Python version 2.3. For generating its graphical elements, LongView also depends on the python [http://newcenturycomputers.net/projects/gdmodule.html GD module], which itself depends on Thomas Boutell's GD library (linked to from the python GD module home page). [http://redpuma.net/longview/tree/biotech-html/ Biotechnology Milestones 08000BC - 02022] is an example of LongView in use. Detailed instructions for installation and use are to be found at [http://www.longnow.org/about/LongViewReadMe.php http://www.longnow.org/about/LongViewReadMe.php].
+
+ * [http://www.mediawiki.org/wiki/Extension:WikiTimeLine WikiTimeLine] a WikiMedia extension.  See an example [http://www.wikitimescale.org WikiTimeScale.org]
