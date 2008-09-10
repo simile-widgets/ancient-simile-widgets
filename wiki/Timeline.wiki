@@ -26,11 +26,12 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * [Timeline_CreatingHotzones Creating Hotzones] -- as this topic is complicated enough to be separated from the previous article
  * [Timeline_EventSources Creating event sources] -- overview of event sources XML, JSON or SPARQL
 
-=== Controlling Timeline Appearance ===
+=== Controlling Timeline Appearance and Behavior ===
  * [Timeline_CreatingNewThemes How to create and change the Themes]
  * [Timeline_CustomEventClickHandler Custom Event Click Handler] - Using your own handler instead of showing a bubble
  * [Timeline_CustomEventDetailDisplay Custom Detail display] - Customizing the popup bubble
  * [Timeline_DayLabel Add a day label] - Adding a day label with your month when your interval unit are days
+ * [MouseWheelScrollingAndZooming Mouse-wheel Scrolling and Zooming] - Use the mouse-wheel to zoom your Timeline--an alternative to Hotzones
  * [Timeline_VerticalScrollbar Vertical Scrollbar] - Adding a vertical scrollbar
  * [Timeline_CustomDateRanges  Custom Date Ranges] - How to create additional date/time range units
  * [http://www.linuxjournal.com/article/9301 http://www.linuxjournal.com/article/9301] -- good info on changing themes AND some good info on loading data
