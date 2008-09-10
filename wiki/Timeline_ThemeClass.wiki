@@ -21,6 +21,12 @@ The opacity of the highlight, which is a value between 0 (not visible) to 100 (f
 
 === *`interval`* ===
 
+=== *`mouseWheel`* ===
+The behavior of the mouse-wheel when over a band. Set to one of:
+  * scroll -- _default value in the default theme._ The mouse-wheel will move the Timeline forward/backward in time. Similar effect as the arrow keys.
+  * zoom -- The mouse-wheel will change the scale of the Timeline. An alternative to Hotzones. See MouseWheelScrollingAndZooming
+  * default -- mouse wheel controls vertical scrolling (if there is a vertical scrollbar)
+
 == *`event`* ==
 Controls the appearance of events for this theme.
 === *`track`* ===
