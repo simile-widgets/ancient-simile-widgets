@@ -38,7 +38,8 @@ Preparing to commit the code:
 
 Committing your changes:
   * in the "exhibit" directory, run
-   svn commit -m "a comment to describe your changes here" 
+   svn commit -m "EXHIBIT: a comment to describe your changes here" 
+  * Please prepend the name of the project to the commit message. Will make it much easier to see which commit messages affected which project. Thanks.
 
 = Using Eclipse =
 
@@ -64,4 +65,4 @@ Working with the code:
 Preparing to commit the code:
   * In Eclipse, in the Package Explorer view or the Navigator view, right-click on the "exhibit" project and choose Refresh. This makes sure Eclipse is updated with all the changes you made to the code in external editors.
   * I'd also recommend right-clicking on the "exhibit" project and invoke Team -> Update... This would get the latest code out (that other people checked in) and alert you to any merge conflicts.
-  * Right-click on the "exhibit" project and invoke Team -> Commit... and remember to provide a comment describing the changes you made.
+  * Right-click on the "exhibit" project and invoke Team -> Commit... and remember to provide a comment describing the changes you made. As noted above, please prepend the comment with the project name. Eg "TIMELINE: added x feature" or "EXHIBIT: fixed y bug" Thanks.
