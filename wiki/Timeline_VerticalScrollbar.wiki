@@ -23,6 +23,9 @@ to
 this._div.style.height = "100%";
 }}}
 
+Change the mouseWheel setting in your theme to 'default'
+See MouseWheelScrollingAndZooming and Timeline_ThemeClass
+
 thats it!
 
 here's what it looks like now:
