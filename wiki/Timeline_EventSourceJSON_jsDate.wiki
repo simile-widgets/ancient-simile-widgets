@@ -22,8 +22,8 @@ Using the js Date() object in a json eventsource can offer substantial  performa
 ]}
 }}}
 
-'''Note especially:''' the js Date() object takes three arguments: 
-*`Date(year,mo,day)`* and '''it uses zero-indexed months:'''
+'''Note especially:''' the js Date() object takes seven arguments, first three are required: 
+*`Date(year, month, day, hours, minutes, seconds, milliseconds)`* and '''it uses zero-indexed months:'''
 0 => Jan, 1 => Feb, ..., 11 => Dec
 
 '''Note also''' the bug as of 8/7/07: to display solid bars for duration events you must use:
