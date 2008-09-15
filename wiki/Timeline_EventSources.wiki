@@ -2,37 +2,67 @@
 
 = Event Source =
 
-Timelines can be populated from different type of data sources.  For more info about data loading check out [Timeline_LoadEventsDynamically loading events dynamically]).
+Timelines can be populated from different types of data source formats.  For more information about data loading check out [Timeline_LoadEventsDynamically loading events dynamically].
 
- # XML format
- # JSON format
- # SPARQL [http://www.wasab.dk/morten/2006/07/sparql-timeline/ more info]
+ * XML format
+ * JSON format
+ * SPARQL [http://www.wasab.dk/morten/2006/07/sparql-timeline/ more info]
 
-An [Timeline_EventSourceClass Event Source] controls the loading of data sources into a timeline.  
+An [Timeline_EventSourceClass Event Source] controls the loading of data sources into a timeline.
 
-== XML files ==
+= Data attributes and data formats =
+There is only one underlying meaning of Timeline data attributes. But the data attributes are arranged slightly differently in the different data transport formats. Each format's adapter reads the incoming data and stores it in the Timeline. For example, in the XML format, the events are a series of elements under the root element. In JSON, the root hash has an _events_ array, whose order is not important. In the two sections below, the data attributes are described. The placement of the attributes is described in the XML and JSON Data Formats sections.
 
-The XML format used for Timeline has the following format:
+== Which Data Format? ==
+If another department will be creating the data file for you, your choices may be limited. For example, XML may be the preferred data exchange format for your organization. If you have more control over the data source, you may wish to try the JSON format with calls to the Date object. This format will give you the fastest load times. You can also write a Javascript adapter (similar to the existing XML, JSON and SPARCL adapters) to directly interpret a different data format. 
 
-Everything is contained within a *`<data>`* element.  The *`<data>`* element can have the following attributes:
- # wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
- # wiki-section - MediaWiki wiki section
- # events - contains any number of *`<event>`* elements, the order is unimportant.  
+== Timeline data attributes ==
+ * wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
+ * wiki-section - MediaWiki wiki section
 
-Each *`<event>`* element can have the following attributes:
- # start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600")
- # latestStart - for imprecise beginnings - same date format as start
- # earliestEnd - for imprecise ends - same date format as start
- # end - same date format as start
- # isDuration - either "true" or "false", if false the item will be drawn as a dot with a pale bar drawn behind it
- # title - text title that goes next to the bar in the timeline
- # description - more text for the bubble
- # image - url to an image that will be displayed in the bubble
- # link - the bubble's title text will become a hyper-link to this address.
- # icon - this image will appear next to the title text in the bubble.
- # color - color of the bar to display in the timeline
- # textColor - color of the text to display next to the bars
- # The "content" of the element *`<event>`* _content_ *`</event>`* is what will be displayed inside the bubble that pops up when the event is clicked.  The info should be escaped/formatted HTML.
+== Event data attributes ==
+Defaults are used if an event does not specify an attribute value. start or latestStart are required.
+
+ * start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600") Note, the JSON format can use a JS Date method call to speed loading. See [Timeline_EventSourceJSON_jsDate use_js_Date_objects]
+ * latestStart - for imprecise beginnings - same date format as start
+ * earliestEnd - for imprecise ends - same date format as start
+ * end - same date format as start
+ * isDuration - either "true" or "false", if false the item will be drawn as a dot with a pale bar drawn behind it
+ * title - text title that goes next to the bar in the timeline. Also shown in the bubble.
+ * image - url to an image that will be displayed in the bubble
+ * link - url. The bubble's title text be a hyper-link to this address.
+ * icon - url. The this image will appear next to the title text in the timeline.
+ * color - color of the bar to display in the timeline
+ * textColor - color of the text to display next to the bars
+ * description - will be displayed inside the bubble with the event's title and image.
+ ** XML Format: the description is stored as the text content of the event element (see below). Note: the XML standard requires that an element's text content must be escaped/formatted HTML.
+ ** JSON Format: the description key of the event hash
+
+url's can be absolute or relative. The base address for relative urls is the directory of the html file that includes the Timeline library. 
+
+== XML Data Format ==
+The XML format used for Timeline includes the above attributes in the following format:
+
+Everything is contained within a *`<data>`* element.  The *`<data>`* element can have the Timeline attributes listed above:
+ * wiki-url 
+ * wiki-section
+
+The data element contains one or more child elements of type *`<event>`*, the order is not significant.  
+
+Each *`<event>`* element can have the attributes listed above:
+ * start
+ * latestStart
+ * earliestEnd
+ * end
+ * isDuration
+ * title
+ * description
+ * image
+ * link
+ * icon
+ * color
+ * textColor
+ * The _text content_ of the event element is the event's _description._ The information must be escaped/formatted HTML. Note in the example below that <i> is encoded as &lt;i&gt;
 
 The xml document must be served with a content-type that the browser thinks is xml: "text/xml, application/xml or ends in +xml" (per [http://www.w3.org/TR/XMLHttpRequest/#xml-response-entity-body the XMLHttpRequest spec]). If it's not, you could get this cryptic error, which I include here as search bait:
 
@@ -57,8 +87,8 @@ onreadystatechange()
        end="Sat Jun 01 1963 00:00:00 GMT-0600" 
        isDuration="true" 
        title="Oswald moves to New Orleans">
-         Oswald moves to New Orleans, and finds employment at the William <!-- This is "content" -->
-         B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>  <!-- This is "content" -->
+         Oswald moves to New Orleans, and finds employment at the William <!-- The event's description -->
+         B. Riley Coffee Company. &lt;i&gt;ref. Treachery in Dallas, p 320&lt;/i&gt;
     </event>
     <event>
       ...
@@ -66,38 +96,32 @@ onreadystatechange()
 </data>
 }}}
 
-== JSON files  ==
+== JSON Data Format ==
 
-The JSON format used for Timeline has the following format:
+The JSON format used for Timeline includes the above attributes in the following format:
 
- Everything is contained in *`{}`* The base element can have the following attributes:
- # wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
- # wiki-section - MediaWiki wiki section
- # dateTimeFormat - format of the date time (i.e.'iso8601')
- # events - Inside 'events' goes an array of elements, the order of these is unimportant.  
+Everything is contained in a single anonymous base hash *`{}`* The base hash can include the Timeline attributes listed above as key : value pairs:
+ * wiki-url 
+ * wiki-section
+ 
+The base hash also contains the key _events_. Its value is an array of _event_ hash elements. The event elements can be in any order. Each event hash can include the event attributes listed above as key : value pairs
 
 Each event element can have the following attributes:
- # start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600") [Timeline_EventSourceJSON_jsDate use_js_Date_objects] can make event loading faster.
- # latestStart - for imprecise beginnings - same date format as start
- # earliestEnd - for imprecise ends - same date format as start 
- # end - same date format as start
- # isDuration - either "true" or "false", if false the item will be drawn as a dot with a pale bar drawn behind it
- # title - text title that goes next to the bar in the timeline
- # description - more text for the bubble
- # image - url to an image that will be displayed in the bubble
- # link - the bubble's title text will become a hyper-link to this address.
- # icon - this image will appear next to the title text in the bubble.
- # color - color of the bar to display in the timeline
- # textColor - color of the text to display next to the bars
- # description - what will be displayed inside the bubble that pops up when the event is clicked.  It should be escaped/formatted HTML.
+ * start
+ * latestStart
+ * earliestEnd
+ * end
+ * isDuration
+ * title
+ * description
+ * image
+ * link
+ * icon
+ * color
+ * textColor
+ * description 
 
-The xml document must be served with a content-type that the browser thinks is xml: "text/xml, application/xml or ends in +xml" (per [http://www.w3.org/TR/XMLHttpRequest/#xml-response-entity-body the XMLHttpRequest spec]). If it's not, you could get this cryptic error, which I include here as search bait:
-
-TypeError: xml has no properties "XmlHttp: Error handling onReadyStateChange"
-\[Exception... "'XmlHttp: Error handling onReadyStateChange' when calling method: \[nsIOnReadyStateChangeHandler::handleEvent]" nsresult: "0x8057001e (NS_ERROR_XPC_JS_THREW_STRING)" location: "<unknown>" data: no]
-fDone(XMLHttpRequest readyState=4 status=200)timeplot-bundle.j... (line 177)
-_onReadyStateChange(XMLHttpRequest readyState=4 status=200, function(), function())simile-ajax-bundl... (line 2429)
-onreadystatechange()
+As noted in the Event attributes section above, the JSON data format will accept references to the Javascript Date object as an alternative to date strings. 
 
 === JSON Examples ===
 
