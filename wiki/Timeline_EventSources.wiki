@@ -56,7 +56,6 @@ Each *`<event>`* element can have the attributes listed above:
  * end
  * isDuration
  * title
- * description
  * image
  * link
  * icon
