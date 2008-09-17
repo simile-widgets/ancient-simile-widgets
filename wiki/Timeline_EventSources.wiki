@@ -40,10 +40,12 @@ Defaults are used if an event does not specify an attribute value. start or late
  * hoverText - additional event information shown when mouse is hovered over the Timeline bar or label. Uses the html _title_ property. Looks like a tooltip. Plain text only. See the cubism example.
  * classname - The event's Timeline label's div will be set to this classname, instead of the default, _timeline-event-label_
  * description - will be displayed inside the bubble with the event's title and image.
- ** XML Format: the description is stored as the text content of the event element (see below). Note: the XML standard requires that an element's text content must be escaped/formatted HTML.
- ** JSON Format: the description key of the event hash
+   * XML Format: the description is stored as the text content of the event element (see below). Note: the XML standard requires that an element's text content must be escaped/formatted HTML.
+   * JSON Format: the description key of the event hash
 
-url's can be absolute or relative. The base address for relative urls is the directory of the html file that includes the Timeline library. 
+Notes:
+ * url's can be absolute or relative. The base address for relative urls is the directory of the html file that includes the Timeline library. 
+
 
 == XML Data Format ==
 The XML format used for Timeline includes the above attributes in the following format:
