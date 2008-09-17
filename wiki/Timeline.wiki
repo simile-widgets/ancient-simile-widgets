@@ -55,7 +55,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
 === Sites incorporating Timelines ===
  * http://mqlx.com/~david/parallax/ - search engine for freebase.org
  * http://semantic-mediawiki.org/wiki/Help:Timeline_format - Semantic MediaWiki 
- * Google Docs Spreedsheet - has a timeline gadget based on Timeline
+ * http://jrochelle.googlepages.com/97g-timeline-about.html Google Spreadsheet - has a timeline gadget based on Timeline
 
 === Language or Framework Support ===
  * http://code.google.com/p/gwtsimiletimeline/ - GWT API library to support SIMILE Timeline within the GWT framework. 
