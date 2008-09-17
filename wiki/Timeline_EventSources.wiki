@@ -27,13 +27,18 @@ Defaults are used if an event does not specify an attribute value. start or late
  * latestStart - for imprecise beginnings - same date format as start
  * earliestEnd - for imprecise ends - same date format as start
  * end - same date format as start
- * isDuration - either "true" or "false", if false the item will be drawn as a dot with a pale bar drawn behind it
+ * isDuration - "true" or "false". Only applies to events with start/end times.
+   * *true* the event will be drawn as a blue dot icon (default) with a pale blue bar. The bar is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
+   * *false or missing* event will be drawn as a dark blue bar. The bar color is set with the _color attribute_. No icon. Default color is #58A0DC
  * title - text title that goes next to the bar in the timeline. Also shown in the bubble.
  * image - url to an image that will be displayed in the bubble
  * link - url. The bubble's title text be a hyper-link to this address.
- * icon - url. The this image will appear next to the title text in the timeline.
- * color - color of the bar to display in the timeline
- * textColor - color of the text to display next to the bars
+ * icon - url. The this image will appear next to the title text in the timeline if (no end date) or (isDuration = true). If a start and end date are supplied, and isDuration is false, the icon is not shown.
+ * color - color of the text and bar (duration events) to display in the timeline. If the event has isDuration = true, then the bar's opacity will be applied (default 20%). See isDuration, above.
+ * textColor - color of the label text on the timeline. If not set, then the _color property_ will be used.
+ * barImage and barRepeat Sets the background image and repeat style for the event's bar on the Timeline. Overrides the color setting for the bar. Repeat style should be one of {repeat | repeat-x | repeat-y}, repeat is the default. See the Cubism example for a demonstration. 
+ * hoverText - additional event information shown when mouse is hovered over the Timeline bar or label. Uses the html _title_ property. Looks like a tooltip. Plain text only. See the cubism example.
+ * classname - The event's Timeline label's div will be set to this classname, instead of the default, _timeline-event-label_
  * description - will be displayed inside the bubble with the event's title and image.
  ** XML Format: the description is stored as the text content of the event element (see below). Note: the XML standard requires that an element's text content must be escaped/formatted HTML.
  ** JSON Format: the description key of the event hash
