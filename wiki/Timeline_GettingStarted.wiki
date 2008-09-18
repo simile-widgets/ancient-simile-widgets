@@ -112,7 +112,9 @@ http://simile.mit.edu/mediawiki/images/a/ad/Timeline-howto-image2.jpg
 
 === Step 5. Add Events ===
 
-To add events to the timeline, create an [Timeline_EventSourceClass event source] and load it with data from an XML file.  Add the following code:
+To add events to the timeline, create a !DefaultEventSource as shown below. Then load the event source with data from your XML, JSON or SPARCL event file. See [Timeline_EventSources Event attributes and loading event files]. It is not hard for developers to add additional loaders for other event file formats.
+Additional information on [Timeline_EventSourceClass event source].
+Add the following code:
 
 {{{ 
    ...
