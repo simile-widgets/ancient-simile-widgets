@@ -34,6 +34,7 @@ Defaults are used if an event does not specify an attribute value. start or late
  * tapeImage and tapeRepeat Sets the background image and repeat style for the event's _tape_ (or 'bar') on the Timeline. Overrides the color setting for the tape. Repeat style should be one of {repeat | repeat-x | repeat-y}, repeat is the default. See the Cubism example for a demonstration. Only applies to duration events.
  * caption - additional event information shown when mouse is hovered over the Timeline tape or label. Uses the html _title_ property. Looks like a tooltip. Plain text only. See the cubism example.
  * classname - added to the HTML classnames for the event's label and tape divs. Eg classname attribute 'hot_event' will result in div classes of 'timeline-event-label hot_event' and 'timeline-event-tape hot_event' for the event's Timeline label and tape, respectively.
+ * eventID - a _cookie_ attribute that is stored, not used by the Timeline library. If you write a custom labeller or event bubble filler, the attribute can be obtained using the getEventID() method on the event object. 
  * description - will be displayed inside the bubble with the event's title and image.
    * XML Format: the description is stored as the text content of the event element (see below). Note: the XML standard requires that an element's text content must be escaped/formatted HTML.
    * JSON Format: the description key of the event hash
