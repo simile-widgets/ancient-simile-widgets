@@ -24,7 +24,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * [Timeline_GettingStarted Getting started], a step by step tutorial 
  * [Timeline_UnderstandingInitialization Understanding Initialization] - walk through of Timeline initialization and defaults
  * [Timeline_CreatingHotzones Creating Hotzones] -- as this topic is complicated enough to be separated from the previous article
- * [Timeline_EventSources Creating event sources] -- overview of event sources XML, JSON or SPARQL
+ * [Timeline_EventSources Creating event sources] -- Describes event attributes and how to load event sources using XML, JSON or SPARQL
 
 === Controlling Timeline Appearance and Behavior ===
  * [Timeline_CreatingNewThemes How to create and change the Themes]
