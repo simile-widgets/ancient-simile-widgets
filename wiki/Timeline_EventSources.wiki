@@ -1,44 +1,39 @@
-#summary Information about Event Sources including XML, JSON and SPARQL formats
+#summary Information about Event Attributes and Data formats XML, JSON and SPARQL
 
-= Event Source =
+= Event Attributes and Data Formats=
 
-Timelines can be populated from different types of data source formats.  For more information about data loading check out [Timeline_LoadEventsDynamically loading events dynamically].
-
- * XML format
- * JSON format
+Timeline Event data can use any of the following popular formats: 
+ * XML
+ * JSON
  * SPARQL [http://www.wasab.dk/morten/2006/07/sparql-timeline/ more info]
 
-An [Timeline_EventSourceClass Event Source] controls the loading of data sources into a timeline.
+An [Timeline_EventSourceClass Event Source] controls the loading of data sources into a timeline. Also see [Timeline_LoadEventsDynamically loading events dynamically].
 
-= Event attributes and data formats =
-There is only one underlying meaning of Timeline data attributes. But the data attributes are arranged slightly differently in the different data transport formats. Each format's adapter reads the incoming data and stores it in the Timeline. For example, in the XML format, the events are a series of elements under the root element. In JSON, the root hash has an _events_ array, whose order is not important. In the two sections below, the data attributes are described. The placement of the attributes is described in the XML and JSON Data Formats sections.
+== Event attributes and data formats ==
+There is only one underlying meaning of Timeline event attributes. But the event attributes are arranged slightly differently in the different data transport formats. Each format's adapter reads the incoming data and stores it in the Timeline. For example, in the XML format, the events are a series of elements under the root element. In JSON, the root hash has an _events_ array, whose order is not important. In the sections below, the data attributes are described. The placement of the attributes is described in the XML and JSON Data Formats sections.
 
-== Which Data Format? ==
-If another department will be creating the data file for you, your choices may be limited. For example, XML may be the preferred data exchange format for your organization. If you have more control over the data source, you may wish to try the JSON format with calls to the Date object. This format will give you the fastest load times. You can also write a Javascript adapter (similar to the existing XML, JSON and SPARCL adapters) to directly interpret a different data format. 
-
-== Timeline data attributes ==
- * wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
- * wiki-section - MediaWiki wiki section
-
-== Event data attributes ==
+== Event attributes ==
 Defaults are used if an event does not specify an attribute value. start or latestStart are required.
 
+=== Basic Event Attributes ===
  * start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600") Note, the JSON format can use a JS Date method call to speed loading. See [Timeline_EventSourceJSON_jsDate use_js_Date_objects]
  * latestStart - for imprecise beginnings - same date format as start
  * earliestEnd - for imprecise ends - same date format as start
  * end - same date format as start
  * isDuration - "true" or "false". Only applies to events with start/end times.
-   * *true* the event will be drawn as a blue dot icon (default) with a pale blue bar. The bar is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
-   * *false or missing* event will be drawn as a dark blue bar. The bar color is set with the _color attribute_. No icon. Default color is #58A0DC
+   * *true* -- the event will be drawn as a blue dot icon (default) with a pale blue bar. The bar is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
+   * *false or missing* -- the event will be drawn as a dark blue bar. The bar color is set with the _color attribute_. No icon. Default color is #58A0DC
  * title - text title that goes next to the bar in the timeline. Also shown in the bubble.
+
+=== Additional Event Attributes ===
  * image - url to an image that will be displayed in the bubble
  * link - url. The bubble's title text be a hyper-link to this address.
  * icon - url. The this image will appear next to the title text in the timeline if (no end date) or (isDuration = true). If a start and end date are supplied, and isDuration is false, the icon is not shown.
- * color - color of the text and bar (duration events) to display in the timeline. If the event has isDuration = true, then the bar's opacity will be applied (default 20%). See isDuration, above.
- * textColor - color of the label text on the timeline. If not set, then the _color property_ will be used.
- * barImage and barRepeat Sets the background image and repeat style for the event's bar on the Timeline. Overrides the color setting for the bar. Repeat style should be one of {repeat | repeat-x | repeat-y}, repeat is the default. See the Cubism example for a demonstration. 
- * hoverText - additional event information shown when mouse is hovered over the Timeline bar or label. Uses the html _title_ property. Looks like a tooltip. Plain text only. See the cubism example.
- * classname - The event's Timeline label's div will be set to this classname, instead of the default, _timeline-event-label_
+ * color - color of the text and tape (duration events) to display in the timeline. If the event has isDuration = true, then the bar's opacity will be applied (default 20%). See isDuration, above.
+ * textColor - color of the label text on the timeline. If not set, then the _color_ attribute will be used.
+ * tapeImage and tapeRepeat Sets the background image and repeat style for the event's _tape_ (or 'bar') on the Timeline. Overrides the color setting for the tape. Repeat style should be one of {repeat | repeat-x | repeat-y}, repeat is the default. See the Cubism example for a demonstration. Only applies to duration events.
+ * caption - additional event information shown when mouse is hovered over the Timeline tape or label. Uses the html _title_ property. Looks like a tooltip. Plain text only. See the cubism example.
+ * classname - added to the HTML classnames for the event's label and tape divs. Eg classname attribute 'hot_event' will result in div classes of 'timeline-event-label hot_event' and 'timeline-event-tape hot_event' for the event's Timeline label and tape, respectively.
  * description - will be displayed inside the bubble with the event's title and image.
    * XML Format: the description is stored as the text content of the event element (see below). Note: the XML standard requires that an element's text content must be escaped/formatted HTML.
    * JSON Format: the description key of the event hash
@@ -46,6 +41,23 @@ Defaults are used if an event does not specify an attribute value. start or late
 Notes:
  * url's can be absolute or relative. The base address for relative urls is the directory of the html file that includes the Timeline library. 
 
+=== Organizing event types ===
+You have two options for translating your event types to the user. For example, suppose most of your events are of type 'regular,' and some are of type 'special.' You want the special events to be visually distinct on the Timeline. Two options:
+ * Special events would have attribute classname = 'special'. Regular events would not set classname or set it to 'regular'. Then use CSS rules to change the color, font, background image, etc of the special event's labels and tapes on the Timeline. The additional CSS rules can be specified in your HTML file or a CSS file.
+ * Special events would explicitly use the event attributes color, textColor, tapeImage and tapeRepeat to change the look of the special events. Attribute icon could also be used to change the icon image. 
+
+=== Deprecated Event attributes ===
+The following event attributes are still supported, but you should not use them for new event sources. Support may be removed at the next major release.
+ * hoverText - superseded by the caption attribute
+
+
+== Timeline attributes ==
+These attributes are specified once per Timeline. They are then used for all events in the Timeline. Both are optional.
+ * wiki-url - Base url used to gin up url's for each event; by appending the wiki-section and the event's title; often a MediaWiki wiki URL 
+ * wiki-section - MediaWiki wiki section
+
+== Which Data Format? ==
+If another department will be creating the data file for you, your choices may be limited. For example, XML may be the preferred data exchange format for your organization. If you have more control over the data source, you may wish to try the JSON format with calls to the Date object. This format will give you the fastest load times. You can also write a Javascript adapter (similar to the existing XML, JSON and SPARCL adapters) to directly interpret a different data format. 
 
 == XML Data Format ==
 The XML format used for Timeline includes the above attributes in the following format:
@@ -56,18 +68,8 @@ Everything is contained within a *`<data>`* element.  The *`<data>`* element can
 
 The data element contains one or more child elements of type *`<event>`*, the order is not significant.  
 
-Each *`<event>`* element can have the attributes listed above:
- * start
- * latestStart
- * earliestEnd
- * end
- * isDuration
- * title
- * image
- * link
- * icon
- * color
- * textColor
+Each *`<event>`* element can include any of the event attributes listed above. For example:
+ * start, latestStart, end, etc
  * The _text content_ of the event element is the event's _description._ The information must be escaped/formatted HTML. Note in the example below that <i> is encoded as &lt;i&gt;
 
 The xml document must be served with a content-type that the browser thinks is xml: "text/xml, application/xml or ends in +xml" (per [http://www.w3.org/TR/XMLHttpRequest/#xml-response-entity-body the XMLHttpRequest spec]). If it's not, you could get this cryptic error, which I include here as search bait:
@@ -112,20 +114,9 @@ Everything is contained in a single anonymous base hash *`{}`* The base hash can
  
 The base hash also contains the key _events_. Its value is an array of _event_ hash elements. The event elements can be in any order. Each event hash can include the event attributes listed above as key : value pairs
 
-Each event element can have the following attributes:
- * start
- * latestStart
- * earliestEnd
- * end
- * isDuration
- * title
- * description
- * image
- * link
- * icon
- * color
- * textColor
- * description 
+Each event element can include any of the event attributes listed above. For example:
+ * start, latestStart, earliestEnd, etc
+ * description is also stored as member of the event hash. 
 
 As noted in the Event attributes section above, the JSON data format will accept references to the Javascript Date object as an alternative to date strings. 
 
