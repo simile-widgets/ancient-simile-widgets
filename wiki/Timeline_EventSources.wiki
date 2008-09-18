@@ -10,7 +10,7 @@ Timelines can be populated from different types of data source formats.  For mor
 
 An [Timeline_EventSourceClass Event Source] controls the loading of data sources into a timeline.
 
-= Data attributes and data formats =
+= Event attributes and data formats =
 There is only one underlying meaning of Timeline data attributes. But the data attributes are arranged slightly differently in the different data transport formats. Each format's adapter reads the incoming data and stores it in the Timeline. For example, in the XML format, the events are a series of elements under the root element. In JSON, the root hash has an _events_ array, whose order is not important. In the two sections below, the data attributes are described. The placement of the attributes is described in the XML and JSON Data Formats sections.
 
 == Which Data Format? ==
