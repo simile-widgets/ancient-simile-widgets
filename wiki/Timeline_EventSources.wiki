@@ -40,7 +40,7 @@ Defaults are used if an event does not specify an attribute value. start or late
    * JSON Format: the description key of the event hash
 
 Notes:
- * url's can be absolute or relative. The base address for relative urls is the directory of the html file that includes the Timeline library. 
+ * url's can be absolute or relative. The base address for relative urls is the directory of event file. 
 
 === Organizing event types ===
 You have two options for translating your event types to the user. For example, suppose most of your events are of type 'regular,' and some are of type 'special.' You want the special events to be visually distinct on the Timeline. Two options:
