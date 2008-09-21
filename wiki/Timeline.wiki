@@ -34,6 +34,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * [MouseWheelScrollingAndZooming Mouse-wheel Scrolling and Zooming] - Use the mouse-wheel to zoom your Timeline--an alternative to Hotzones
  * [Timeline_VerticalScrollbar Vertical Scrollbar] - Adding a vertical scrollbar
  * [Timeline_CustomDateRanges  Custom Date Ranges] - How to create additional date/time range units
+ * [Timeline_Moving_the_Timeline_via_Javascript Moving the Timeline via Javascript]
  * [http://www.linuxjournal.com/article/9301 http://www.linuxjournal.com/article/9301] -- good info on changing themes AND some good info on loading data
 
 === Loading data ===
