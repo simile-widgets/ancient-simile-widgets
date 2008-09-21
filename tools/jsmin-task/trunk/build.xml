@@ -1,0 +1,27 @@
+<!-- 
+	JSMinTask Buildfile 
+	@author Edward Benson <eob@mit.edu>
+-->
+
+<project default="build" basedir="." name="JSMinTask">
+
+  <property name="src.dir"  value="src"/>
+  <property name="lib.dir"     value="classes"/>
+  <property name="output.dir"    value="build"/>
+  
+  <target name="compile" >
+	<javac srcdir="${src.dir}"
+	      destdir="${output.dir}"
+	     classpath="${lib.dir}"
+	  />  
+  </target>
+
+
+  <target name="build" >
+	<jar destfile="jsminTask.jar">
+		<fileset dir="${output.dir}" />
+	    <fileset dir="${lib.dir}" />
+	</jar>
+  </target>
+  
+</project>
