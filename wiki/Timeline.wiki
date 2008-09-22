@@ -62,6 +62,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * http://code.google.com/p/gwtsimiletimeline/ - GWT API library to support SIMILE Timeline within the GWT framework. 
  * http://code.google.com/p/similetimelinerailshelper/ - Rails helper
  * http://project.dahukanna.net/tiddlywiki/timeline/sampletimeline220b5.html - TiddlyWiki Integration
+ * http://www.zkoss.org/smalltalks/timeline1/timeline1.dsp - integrated into ZK OOS 
 
 === API ===
  * [Timeline_TimelineClass Timelines]
