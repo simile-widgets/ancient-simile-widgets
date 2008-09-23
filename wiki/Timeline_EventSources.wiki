@@ -21,9 +21,9 @@ Defaults are used if an event does not specify an attribute value. start or late
  * earliestEnd - for imprecise ends - same date format as start
  * end - same date format as start
  * isDuration - "true" or "false". Only applies to events with start/end times.
-   * *true* -- the event will be drawn as a blue dot icon (default) with a pale blue tape. The tapeis the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
+   * *true* -- the event will be drawn as a blue dot icon (default) with a pale blue tape. The tape is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
    * *false or missing* -- the event will be drawn as a dark blue tape. The tape color is set with the _color attribute_. No icon. Default color is #58A0DC
- * title - text title that goes next to the tape in the timeline. Also shown in the bubble.
+ * title - text title that goes next to the tape in the Timeline. Also shown in the bubble.
 
 === Additional Event Attributes ===
  * image - url to an image that will be displayed in the bubble
@@ -121,7 +121,7 @@ Each event element can include any of the event attributes listed above. For exa
 
 As noted in the Event attributes section above, the JSON data format will accept references to the Javascript Date object as an alternative to date strings.
 
-JSON arrays and hashes should _not_ have trailing commas before closing braces or brackets. They will cause problems on with some JS engines. Eg, the one in Internet Explorer. 
+JSON arrays and hashes should _not_ have trailing commas before closing brackets or braces. If present, they will cause problems with some JS engines. Eg, the one in Internet Explorer. 
 
 === JSON Examples ===
 
