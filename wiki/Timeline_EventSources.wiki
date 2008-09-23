@@ -21,9 +21,9 @@ Defaults are used if an event does not specify an attribute value. start or late
  * earliestEnd - for imprecise ends - same date format as start
  * end - same date format as start
  * isDuration - "true" or "false". Only applies to events with start/end times.
-   * *true* -- the event will be drawn as a blue dot icon (default) with a pale blue bar. The bar is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
-   * *false or missing* -- the event will be drawn as a dark blue bar. The bar color is set with the _color attribute_. No icon. Default color is #58A0DC
- * title - text title that goes next to the bar in the timeline. Also shown in the bubble.
+   * *true* -- the event will be drawn as a blue dot icon (default) with a pale blue tape. The tapeis the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
+   * *false or missing* -- the event will be drawn as a dark blue tape. The tape color is set with the _color attribute_. No icon. Default color is #58A0DC
+ * title - text title that goes next to the tape in the timeline. Also shown in the bubble.
 
 === Additional Event Attributes ===
  * image - url to an image that will be displayed in the bubble
@@ -71,7 +71,7 @@ The data element contains one or more child elements of type *`<event>`*, the or
 
 Each *`<event>`* element can include any of the event attributes listed above. For example:
  * start, latestStart, end, etc
- * The _text content_ of the event element is the event's _description._ The information must be escaped/formatted HTML. Note in the example below that <i> is encoded as &lt;i&gt;
+ * The _text content_ of the event element is the event's _description._ The information must be escaped/formatted HTML. Note in the example below how <i> is properly encoded as &lt;i&gt;
 
 The xml document must be served with a content-type that the browser thinks is xml: "text/xml, application/xml or ends in +xml" (per [http://www.w3.org/TR/XMLHttpRequest/#xml-response-entity-body the XMLHttpRequest spec]). If it's not, you could get this cryptic error, which I include here as search bait:
 
@@ -119,7 +119,9 @@ Each event element can include any of the event attributes listed above. For exa
  * start, latestStart, earliestEnd, etc
  * description is also stored as member of the event hash. 
 
-As noted in the Event attributes section above, the JSON data format will accept references to the Javascript Date object as an alternative to date strings. 
+As noted in the Event attributes section above, the JSON data format will accept references to the Javascript Date object as an alternative to date strings.
+
+JSON arrays and hashes should _not_ have trailing commas before closing braces or brackets. They will cause problems on with some JS engines. Eg, the one in Internet Explorer. 
 
 === JSON Examples ===
 
@@ -131,13 +133,13 @@ As noted in the Event attributes section above, the JSON data format will accept
   'events': [
     {
        'start':"Sat May 20 1961 00:00:00 GMT-0600",
-       'title':"'Bay of Pigs' Invasion",
+       'title':"'Bay of Pigs' Invasion"
      }, {
        'start':"Wed May 01 1963 00:00:00 GMT-0600" ,
        'end':"Sat Jun 01 1963 00:00:00 GMT-0600" ,
        'isDuration':"true" ,
        'title':"Oswald moves to New Orleans",
-       'description':"Oswald moves to New Orleans, and finds employment at the William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>",
+       'description':"Oswald moves to New Orleans, and finds employment at the William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>"
      }, {
       ...
      } ]
