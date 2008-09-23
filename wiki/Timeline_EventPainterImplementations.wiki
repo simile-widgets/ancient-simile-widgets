@@ -3,6 +3,8 @@
 = Event Painter Implementations =
 
 Event Painter classes provided by default: 
- # [Timeline_DurationEtherPainterClass Timeline.DurationEtherPainterClass]
+ # [Timeline_Original-PainterClass Timeline.Original-PainterClass]
+ # [Timeline_Original-PainterClass Timeline.Overview-PainterClass]
+ # [Timeline_Original-PainterClass Timeline.Detailed-PainterClass]
 
 They all expose the [Timeline_EventPainterClass event painter interface], but they differ in their initialization parameters.
