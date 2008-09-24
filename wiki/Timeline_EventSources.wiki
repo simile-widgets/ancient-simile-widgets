@@ -23,7 +23,7 @@ Defaults are used if an event does not specify an attribute value. start or late
  * isDuration - "true" or "false". Only applies to events with start/end times.
    * *true* -- the event will be drawn as a blue dot icon (default) with a pale blue tape. The tape is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
    * *false or missing* -- the event will be drawn as a dark blue tape. The tape color is set with the _color attribute_. No icon. Default color is #58A0DC
- * title - text title that goes next to the tape in the Timeline. Also shown in the bubble.
+ * title - text title that goes next to the tape in the Timeline. Also shown in the bubble. The title attribute is optional. Leave it out if you want just an icon or icon and tape. The description will be shown in the bubble when the icon or tape is clicked.
 
 === Additional Event Attributes ===
  * image - url to an image that will be displayed in the bubble
