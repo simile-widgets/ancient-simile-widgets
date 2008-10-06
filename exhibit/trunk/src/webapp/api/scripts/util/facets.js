@@ -6,7 +6,7 @@
  */
 Exhibit.FacetUtilities = new Object();
 
-Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAllSelections, uiContext, collapsible, collapsed) {
+Exhibit.FacetUtilities.constructFacetFrame = function(forFacet, div, facetLabel, onClearAllSelections, uiContext, collapsible, collapsed) {
     div.className = "exhibit-facet";
     var dom = SimileAjax.DOM.createDOMFromString(
         div,
@@ -36,18 +36,18 @@ Exhibit.FacetUtilities.constructFacetFrame = function(div, facetLabel, onClearAl
     
     if (collapsible) {
         SimileAjax.WindowManager.registerEvent(dom.collapseImg, "click", function() {
-            Exhibit.FacetUtilities.toggleCollapse(dom);
+            Exhibit.FacetUtilities.toggleCollapse(dom, forFacet);
         });
         
         if (collapsed) {
-            Exhibit.FacetUtilities.toggleCollapse(dom);
+            Exhibit.FacetUtilities.toggleCollapse(dom, forFacet);
         }
     }
     
     return dom;
 };
 
-Exhibit.FacetUtilities.toggleCollapse = function(dom) {
+Exhibit.FacetUtilities.toggleCollapse = function(dom, facet) {
     var el = dom.frameDiv;
     if (el.style.display != "none") {
         el.style.display = "none";
@@ -55,6 +55,10 @@ Exhibit.FacetUtilities.toggleCollapse = function(dom) {
     } else {
         el.style.display = "block";
         dom.collapseImg.src = Exhibit.urlPrefix + "images/collapse.png";
+		// Try to call onUncollapse but don't sweat it if it isn't there.
+		if (typeof facet.onUncollapse == 'function') {
+			facet.onUncollapse();			
+		}
     }
 };
 
@@ -114,7 +118,7 @@ Exhibit.FacetUtilities.constructFacetItem = function(
     return dom.elmt;
 };
 
-Exhibit.FacetUtilities.constructFlowingFacetFrame = function(div, facetLabel, onClearAllSelections, uiContext, collapsible, collapsed) {
+Exhibit.FacetUtilities.constructFlowingFacetFrame = function(forFacet, div, facetLabel, onClearAllSelections, uiContext, collapsible, collapsed) {
     div.className = "exhibit-flowingFacet";
     var dom = SimileAjax.DOM.createDOMFromString(
         div,
@@ -133,11 +137,11 @@ Exhibit.FacetUtilities.constructFlowingFacetFrame = function(div, facetLabel, on
 
     if (collapsible) {
         SimileAjax.WindowManager.registerEvent(dom.collapseImg, "click", function() {
-            Exhibit.FacetUtilities.toggleCollapse(dom);
+            Exhibit.FacetUtilities.toggleCollapse(dom, forFacet);
         });
         
         if (collapsed) {
-            Exhibit.FacetUtilities.toggleCollapse(dom);
+            Exhibit.FacetUtilities.toggleCollapse(dom, forFacet);
         }
     }
     

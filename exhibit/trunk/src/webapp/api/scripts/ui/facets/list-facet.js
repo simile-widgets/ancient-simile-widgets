@@ -11,6 +11,8 @@ Exhibit.ListFacet = function(containerElmt, uiContext) {
     this._expression = null;
     this._valueSet = new Exhibit.Set();
     this._selectMissing = false;
+
+	this._delayedUpdateItems = null;
     
     this._settings = {};
     this._dom = null;
@@ -219,12 +221,25 @@ Exhibit.ListFacet.prototype.restrict = function(items) {
     return set;
 };
 
+Exhibit.ListFacet.prototype.onUncollapse = function() {
+	if (this._delayedUpdateItems != null) {
+		this.update(this._delayedUpdateItems);
+		this._delayedUpdateItems = null;
+	}
+}
+
 Exhibit.ListFacet.prototype.update = function(items) {
+	if (Exhibit.FacetUtilities.isCollapsed(this)) {
+		this._delayedUpdateItems = items;
+		return;
+	}
     this._dom.valuesContainer.style.display = "none";
     this._dom.valuesContainer.innerHTML = "";
     this._constructBody(this._computeFacet(items));
     this._dom.valuesContainer.style.display = "block";
 };
+
+
 
 Exhibit.ListFacet.prototype._computeFacet = function(items) {
     var database = this._uiContext.getDatabase();
@@ -275,6 +290,7 @@ Exhibit.ListFacet.prototype._notifyCollection = function() {
 Exhibit.ListFacet.prototype._initializeUI = function() {
     var self = this;
     this._dom = Exhibit.FacetUtilities[this._settings.scroll ? "constructFacetFrame" : "constructFlowingFacetFrame"](
+		this,
         this._div,
         this._settings.facetLabel,
         function(elmt, evt, target) { self._clearSelections(); },
