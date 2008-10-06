@@ -292,6 +292,7 @@ Exhibit.ImageFacet.prototype._notifyCollection = function() {
 Exhibit.ImageFacet.prototype._initializeUI = function() {
     var self = this;
     this._dom = Exhibit.FacetUtilities[this._settings.scroll ? "constructFacetFrame" : "constructFlowingFacetFrame"](
+		this,
         this._div,
         this._settings.facetLabel,
         function(elmt, evt, target) { self._clearSelections(); },
