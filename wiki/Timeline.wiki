@@ -24,6 +24,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * [Timeline_GettingStarted Getting started], a step by step tutorial 
  * [Timeline_UnderstandingInitialization Understanding Initialization] - walk through of Timeline initialization and defaults
  * [Timeline_EventSources Event Attributes and Data Formats] -- Describes event attributes and how to load event sources using XML, JSON or SPARQL
+ * [Timeline_Problems Common problems and solutions]
 
 === Controlling Timeline Appearance and Behavior ===
  * [Timeline_CreatingHotzones Creating Hotzones] -- A Hotzone is a section of the Timeline with a different resolution, usually higher resolution. Depending on your project, an alternative is to enable mouse-wheel zooming.
@@ -88,3 +89,5 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * [http://www.longnow.org/about/longview.php LongView], a project of the [http://www.longnow.org/ The Long Now Foundation], is a server side python script for generating HTML timelines from simple datafiles of comma separated values. It requires Python version 2.3. For generating its graphical elements, LongView also depends on the python [http://newcenturycomputers.net/projects/gdmodule.html GD module], which itself depends on Thomas Boutell's GD library (linked to from the python GD module home page). [http://redpuma.net/longview/tree/biotech-html/ Biotechnology Milestones 08000BC - 02022] is an example of LongView in use. Detailed instructions for installation and use are to be found at [http://www.longnow.org/about/LongViewReadMe.php http://www.longnow.org/about/LongViewReadMe.php].
 
  * [http://www.mediawiki.org/wiki/Extension:WikiTimeLine WikiTimeLine] a WikiMedia extension.  See an example [http://www.wikitimescale.org WikiTimeScale.org]
+
+* If you have questions, please use the [http://groups.google.com/group/simile-widgets/ mailing list]. Comments posted here are NOT read *
