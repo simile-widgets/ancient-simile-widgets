@@ -6,13 +6,13 @@ http://simile.mit.edu/mediawiki/images/3/33/Timeline-sample.jpg
 
 A timeline contains one or more [Timeline_BandClass Bands], which can be panned infinitely by dragging with the mouse pointer. A band can be configured to synchronize with another band such that panning one band also scrolls the other.
 
-A timeline is implemented as a <tt>div</tt> element that contains inner <tt>div</tt> elements as its bands. The band <tt>div</tt>s are cropped and positioned relative to the timeline <tt>div</tt>.
+A timeline is implemented as a _div_ element that contains inner _div_ elements as its bands. The band _div's_ are cropped and positioned relative to the timeline _div_.
 
 http://simile.mit.edu/mediawiki/images/4/49/Timeline-band-illustration.jpg
 
-A band <tt>div</tt> itself contains several inner elements that implements various parts of the band. For example, the two timelines above show labels for days, weeks, months, and years. The bands also have different background colors, and the weekly band of the second timeline has weekend markings. All of these visual elements are "painted" by adding HTML elements to the band <tt>div</tt>s at the appropriate positions.
+A band _div_ itself contains several inner elements that implements various parts of the band. For example, the two timelines above show labels for days, weeks, months, and years. The bands also have different background colors, and the weekly band of the second timeline has weekend markings. All of these visual elements are "painted" by adding HTML elements to the band _div's_ at the appropriate positions.
 
-As a band is panned, its <tt>div</tt> is shifted horizontally or vertically, carrying all of its visual elements along. When either end of the band <tt>div</tt> approaches the visible (non-cropped) area, the band <tt>div</tt> is re-centered, its coordinate origin is changed, and then its various visual elements are re-"painted" relative to the new coordinate origin. All of this "paging" is done as seamlessly as possible so that the user experiences smooth, '''infinite''' panning.
+As a band is panned, its _div_ is shifted horizontally or vertically, carrying all of its visual elements along. When either end of the band _div_ approaches the visible (non-cropped) area, the band _div_ is re-centered, its coordinate origin is changed, and then its various visual elements are re-"painted" relative to the new coordinate origin. All of this "paging" is done as seamlessly as possible so that the user experiences smooth, '''infinite''' panning.
 
 A band is responsible for supporting panning as well as coordinating its various sub-components:
  * an [Timeline_EtherClass ether], whose sole responsibility is mapping between pixel coordinates and dates/times;
