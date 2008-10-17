@@ -142,7 +142,7 @@ JSON arrays and hashes should _not_ have trailing commas before closing brackets
        'description':"Oswald moves to New Orleans, and finds employment at the William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>"
      }, {
       ...
-     } ]
+     } ]    // Note: Do NOT include a trailing comma! (Breaks on IE)
 }
 
 }}}
