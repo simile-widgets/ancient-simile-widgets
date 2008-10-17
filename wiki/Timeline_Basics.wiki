@@ -23,3 +23,5 @@ A band is responsible for supporting panning as well as coordinating its various
 The band also takes an [Timeline_EventSourceClass event source] which provides events to be displayed in that band. Different bands can have different event sources. This flexibility allows for '''timeline mashups''', as exemplified [http://simile.mit.edu/timeline/examples/religions/religions.html here]. Various sub-components that do painting take a [Timeline_ThemeClass theme], which stores default visual and behavioral settings.
 
 *see also:* [Timeline_GettingStarted Getting started]
+
+* If you have questions, please use the [http://groups.google.com/group/simile-widgets/ mailing list]. Comments posted here are NOT read *
