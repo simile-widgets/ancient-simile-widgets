@@ -14,7 +14,7 @@ We need your help to make this documentation better.  If you have information or
 This wiki still references images and examples from the MIT site.  Almost all the content was migrated from that site.  Overtime those artifacts will be migrated here as well.
 
 == Examples ==
- * http://simile.mit.edu/mediawiki/index.php?title=Special:ask&query=%0A++%5B%5BCategory%3AExample+timeline%5D%5D%0A&sort=&order=ASC  link to MIT examples
+ * [http://simile-widgets.googlecode.com/svn/timeline/tags/latest/src/webapp/examples/index.html Timeline examples]
 
 == How-Tos ==
 
