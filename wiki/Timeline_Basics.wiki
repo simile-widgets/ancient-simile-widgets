@@ -4,8 +4,12 @@
 
 http://simile.mit.edu/mediawiki/images/3/33/Timeline-sample.jpg
 
-A timeline contains one or more [Timeline_BandClass Bands], which can be panned infinitely by dragging with the mouse pointer. A band can be configured to synchronize with another band such that panning one band also scrolls the other.
+A timeline contains one or more [Timeline_BandClass Bands], which can be panned infinitely by dragging with the mouse pointer, using the mouse scroll-wheel or the keyboard's arrow buttons. A band can be configured to synchronize with another band such that panning one band also scrolls the other.
 
+== Creating your own Timeline ==
+See [Timeline_GettingStarted Getting started]
+
+== Implementation Details ==
 A timeline is implemented as a _div_ element that contains inner _div_ elements as its bands. The band _div's_ are cropped and positioned relative to the timeline _div_.
 
 http://simile.mit.edu/mediawiki/images/4/49/Timeline-band-illustration.jpg
@@ -21,7 +25,5 @@ A band is responsible for supporting panning as well as coordinating its various
  * an [Timeline_EventPainterClass event painter], which paints the events.
 
 The band also takes an [Timeline_EventSourceClass event source] which provides events to be displayed in that band. Different bands can have different event sources. This flexibility allows for '''timeline mashups''', as exemplified [http://simile.mit.edu/timeline/examples/religions/religions.html here]. Various sub-components that do painting take a [Timeline_ThemeClass theme], which stores default visual and behavioral settings.
-
-*see also:* [Timeline_GettingStarted Getting started]
 
 * If you have questions, please use the [http://groups.google.com/group/simile-widgets/ mailing list]. Comments posted here are NOT read *
