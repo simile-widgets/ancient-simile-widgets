@@ -1,0 +1,72 @@
+CHANGES.txt
+
+Version 2.2.0 -- September 23, 2008
+* Prep for 2.2.0: updated RELEASE_NOTES -- LarryK
+* Added comments per MPS in timeline-api.js that bundle=true
+  is needed unless you've installed full source -- LarryK
+* Added comments to original-painter.js -- LarryK
+* Re-built to pick up new simile-ajax that includes jquery 1.2.6
+  -- eob rev 1589
+  
+Version 2.1.0 -- September 19, 2008
+* Prep for 2.1.0: updated examples, readme. created RELEASE_NOTES LarryK
+* Added timeline_libraries.zip to build file. Removed install.sh
+  -- LarryK rev 1579  
+* Event attribute classname is added to the classnames for the event's label
+  and tape divs. Eg classname of 'hot_event' will result in div classes of
+  'timeline-event-label hot_event' and 'timeline-event-tape hot_event' for
+  the event's Timeline label and tape, respectively. Change is that classname
+  is now added to the tape's div. -- LarryK rev 1576
+* Re-worked function Timeline.DefaultEventSource.Event in sources.js to use
+  named arguments (via a hash/anon object) rather than positional arguments.
+  19 positional arguments are too many! Now much easier and cleaner to add
+  additional event attributes.  
+  Note: this is a breaking change for anyone who calls Event directly. But since
+  the wiki page about dynamic events recommends calling loadXML, etc, I
+  hoping that this won't cause anyone much pain. And the new format is
+  MUCH easier to use as a developer.  -- LarryK rev 1576
+* New event attribute eventID is a 'cookie' attribute that is stored, not used
+  by the Timeline library. If you write a custom labeller or event bubble
+  filler, the attribute can be obtained using the getEventID() method on the
+  event object.  -- LarryK rev 1576
+* New event attribute caption superceedes hoverText. hoverText is deprecated.
+  For now, it will live on for backwards compatibility.  -- LarryK rev 1576
+* Event attributes barImage and barRepeat renamed to tapeImage and tapeRepeat.
+  No backwards compatibility. (Breaking change from previous checkin)
+   -- LarryK rev 1576
+* Fix: Event color attribute now properly sets the background color of the bar.
+  Note that events (where isDuration = true) have opacity applied. See 
+  http://code.google.com/p/simile-widgets/wiki/Timeline_EventSources (LarryK) rev 1569
+* New event attribute barImage sets the event's bar div background-image.
+  New event attribute barRepeat sets the background-repeat. Default is 'repeat'
+  Cubism example updated to demonstrate color, textColor, barImage, barRepeat and
+  hoverText attributes. For a handy stripe generator, see
+  http://www.stripegenerator.com (LarryK) rev 1569
+* Fix: Event attribute hoverText was not properly processed by JSON or SPARCL sources
+  (LarryK) rev 1569
+* Build process now creates timeline_source.zip which has source, examples and the
+  jetty web server. Enables easy access with for folks without svn. (LarryK) rev 1569
+* Added copy of JFK timeline in examples with Dutch locale set.
+  (LarryK) rev 1560
+* Added forceLocale parameter to timeline-api.js to force a locale for testing
+  (LarryK) rev 1560
+* Added Dutch localization (Marko) rev 1560
+* Added mouse-wheel scroll. Mouse-wheel acts as left and right arrow keys. Theme
+  controls whether the mouse-wheel scrolls, zooms or moves the page (if the page
+  has a scroll-bar). Docs: see webapp/docs/create-timelines.html
+  (LarryK) rev 1553
+* Additional support in timeline-api for using your own server for Timeline
+  libraries (LarryK) rev 1553
+* Separation of javascript and css (gm.marko) rev 1326
+* Added mouse-wheel zoom functionality. It operates on a per-band basis, keeping
+  the date under the mouse cursor static while the timeline around it scales. 
+  Zoom is specified as user-defined steps. Documentation and a working demo in 
+  the webapp/docs/create-timelines.html page (halcyon1981) rev 1418
+* Added support for 'hoverText' - title pop-ups on Exhibit-based timelines
+  (Vincent.Vazzo) rev 1411
+
+
+Version 2.0
+* Software changes
+* Moved svn repository to Google code
+
