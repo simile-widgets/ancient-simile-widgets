@@ -29,7 +29,7 @@ Note: to obtain your password for committing code, in this very Google Code proj
 === New Timeline features ===
   * Features for a Timeline band should be controlled by the theme file. Per-event features should be controlled by adding a new event attribute. 
   * Please create an example file that demonstrates your new feature. Create the file as a  new example in the examples directory.
-  * *Docment* your new feature in the wiki
+  * *Document* your new feature in the wiki
 
 == Preparing to commit your changes ==
   * Run svn update in the "exhibit" directory when you're ready to commit. This will fetch  the latest code (that other people have checked in since your checkout) and alert you to any merge conflicts.
