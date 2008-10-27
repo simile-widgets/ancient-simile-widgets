@@ -1,0 +1,11 @@
+CHANGES.txt
+
+Version 2.1
+ * JQuery updated to v1.2.6
+ * Snapshot of software
+ * Added Changes, Release_notes, Readme and License files
+
+Version 2.0
+ * Software changes
+ * Moved svn repository to Google code
+
