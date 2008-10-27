@@ -1961,11 +1961,21 @@ SimileAjax.Graphics._FontRenderingContext.prototype.dispose=function(){this._elm
 SimileAjax.Graphics._FontRenderingContext.prototype.update=function(){this._elmt.innerHTML="A";
 this._lineHeight=this._elmt.offsetHeight;
 };
-SimileAjax.Graphics._FontRenderingContext.prototype.computeSize=function(A){this._elmt.innerHTML=A;
-return{width:this._elmt.offsetWidth,height:this._elmt.offsetHeight};
+SimileAjax.Graphics._FontRenderingContext.prototype.computeSize=function(F,B){var D=this._elmt;
+D.innerHTML=F;
+D.className=B===undefined?"":B;
+var A,C;
+if(D.getBoundingClientRect===null){A=D.offsetWidth;
+C=D.offsetHeight;
+}else{var E=elem.getBoundingClientRect();
+A=Math.ceil(E.right-E.left);
+C=Math.ceil(E.bottom-E.top);
+}D.className="";
+return{width:A,height:C};
 };
 SimileAjax.Graphics._FontRenderingContext.prototype.getLineHeight=function(){return this._lineHeight;
 };
+var labelSize=this._frc.computeSize(text,labelDivClassName);
 
 
 /* history.js */
