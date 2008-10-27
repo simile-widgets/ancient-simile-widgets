@@ -1,5 +1,13 @@
 CHANGES.txt
 
+Version 2.2
+ * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
+   to take optional second paramenter of classname for computing size on
+   screen. See issue 30. -- LarryK rev 1635
+ * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
+   to use getBoundingClientRect if available. See issue 13
+   -- LarryK rev 1635
+
 Version 2.1
  * JQuery updated to v1.2.6
  * Snapshot of software

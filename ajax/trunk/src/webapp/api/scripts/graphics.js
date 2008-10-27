@@ -559,14 +559,36 @@ SimileAjax.Graphics._FontRenderingContext.prototype.update = function() {
     this._lineHeight = this._elmt.offsetHeight;
 };
 
-SimileAjax.Graphics._FontRenderingContext.prototype.computeSize = function(text) {
-    this._elmt.innerHTML = text;
+SimileAjax.Graphics._FontRenderingContext.prototype.computeSize = function(text, className) {
+    // className arg is optional
+    var el = this._elmt;
+    el.innerHTML = text;
+    el.className = className === undefined ? '' : className;
+    var w, h;
+    
+    // offsetWidth rounds on FF, so doesn't work for us.
+    // See https://bugzilla.mozilla.org/show_bug.cgi?id=458617
+    if (el.getBoundingClientRect === null) {
+    	// use offsetWidth
+      w = el.offsetWidth;
+      h = el.offsetHeight;
+    } else {
+    	// use getBoundingClientRect
+      var rect = elem.getBoundingClientRect();
+      w = Math.ceil(rect.right - rect.left);
+    	h = Math.ceil(rect.bottom - rect.top);
+    }
+    
+    el.className = ''; // reset for the next guy
+    
     return {
-        width:  this._elmt.offsetWidth,
-        height: this._elmt.offsetHeight
+        width:  w,
+        height: h
     };
 };
 
 SimileAjax.Graphics._FontRenderingContext.prototype.getLineHeight = function() {
     return this._lineHeight;
 };
+
+    var labelSize = this._frc.computeSize(text, labelDivClassName);
