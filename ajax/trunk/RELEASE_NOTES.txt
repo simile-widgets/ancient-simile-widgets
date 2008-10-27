@@ -1,0 +1,20 @@
+RELEASE_NOTES.txt
+
+
+Version 2.1.0 -- October 27, 2008
+
+  Known Issues
+  Firefox 3.x on Macintosh -- width of event labels on the Timeline
+  are not calculated correctly, causes some labels to wrap.
+  Problem is in
+  SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
+  file: /ajax/trunk/src/webapp/api/scripts/graphics.js
+  
+  Issue # 13 on the issues tracker
+  http://code.google.com/p/simile-widgets/issues
+    
+PREVIOUS RELEASES
+
+Version numbering was not consistent prior to Version 2.1.0
+In general, the trunk tends to be stable
+
