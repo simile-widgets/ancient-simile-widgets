@@ -574,7 +574,7 @@ SimileAjax.Graphics._FontRenderingContext.prototype.computeSize = function(text,
       h = el.offsetHeight;
     } else {
     	// use getBoundingClientRect
-      var rect = elem.getBoundingClientRect();
+      var rect = el.getBoundingClientRect();
       w = Math.ceil(rect.right - rect.left);
     	h = Math.ceil(rect.bottom - rect.top);
     }
@@ -591,4 +591,3 @@ SimileAjax.Graphics._FontRenderingContext.prototype.getLineHeight = function() {
     return this._lineHeight;
 };
 
-    var labelSize = this._frc.computeSize(text, labelDivClassName);
