@@ -1967,7 +1967,7 @@ D.className=B===undefined?"":B;
 var A,C;
 if(D.getBoundingClientRect===null){A=D.offsetWidth;
 C=D.offsetHeight;
-}else{var E=elem.getBoundingClientRect();
+}else{var E=D.getBoundingClientRect();
 A=Math.ceil(E.right-E.left);
 C=Math.ceil(E.bottom-E.top);
 }D.className="";
@@ -1975,7 +1975,6 @@ return{width:A,height:C};
 };
 SimileAjax.Graphics._FontRenderingContext.prototype.getLineHeight=function(){return this._lineHeight;
 };
-var labelSize=this._frc.computeSize(text,labelDivClassName);
 
 
 /* history.js */
