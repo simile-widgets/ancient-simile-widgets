@@ -536,6 +536,37 @@ SimileAjax.Graphics.createStructuredDataCopyButton = function(image, width, heig
     return div;
 };
 
+/*==================================================
+ *  getWidthHeight
+ *==================================================
+ */
+SimileAjax.Graphics.getWidthHeight = function(el) {
+    // RETURNS hash {width:  w, height: h} in pixels
+    
+    var w, h;
+    // offsetWidth rounds on FF, so doesn't work for us.
+    // See https://bugzilla.mozilla.org/show_bug.cgi?id=458617
+    if (el.getBoundingClientRect === null) {
+    	// use offsetWidth
+      w = el.offsetWidth;
+      h = el.offsetHeight;
+    } else {
+    	// use getBoundingClientRect
+      var rect = el.getBoundingClientRect();
+      w = Math.ceil(rect.right - rect.left);
+    	h = Math.ceil(rect.bottom - rect.top);
+    }
+    return {
+        width:  w,
+        height: h
+    };
+};
+ 
+
+/*==================================================
+ *  FontRenderingContext
+ *==================================================
+ */
 SimileAjax.Graphics.getFontRenderingContext = function(elmt, width) {
     return new SimileAjax.Graphics._FontRenderingContext(elmt, width);
 };
@@ -564,27 +595,10 @@ SimileAjax.Graphics._FontRenderingContext.prototype.computeSize = function(text,
     var el = this._elmt;
     el.innerHTML = text;
     el.className = className === undefined ? '' : className;
-    var w, h;
-    
-    // offsetWidth rounds on FF, so doesn't work for us.
-    // See https://bugzilla.mozilla.org/show_bug.cgi?id=458617
-    if (el.getBoundingClientRect === null) {
-    	// use offsetWidth
-      w = el.offsetWidth;
-      h = el.offsetHeight;
-    } else {
-    	// use getBoundingClientRect
-      var rect = el.getBoundingClientRect();
-      w = Math.ceil(rect.right - rect.left);
-    	h = Math.ceil(rect.bottom - rect.top);
-    }
-    
+    var wh = SimileAjax.Graphics.getWidthHeight(el);
     el.className = ''; // reset for the next guy
     
-    return {
-        width:  w,
-        height: h
-    };
+    return wh;
 };
 
 SimileAjax.Graphics._FontRenderingContext.prototype.getLineHeight = function() {
