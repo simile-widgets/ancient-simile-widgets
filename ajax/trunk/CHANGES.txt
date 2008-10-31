@@ -9,7 +9,8 @@ Version 2.2
    -- LarryK rev 1635 and 1637
  * Added SimileAjax.Graphics.getWidthHeight(el) RETURNS hash {width:  w, height: h}
    in pixels. File: graphics.js
-   -- LarryK 
+   -- LarryK rev 1641
+ * Updated License to refer to JQuery -- LarryK rev 1641
 
 Version 2.1
  * JQuery updated to v1.2.6
