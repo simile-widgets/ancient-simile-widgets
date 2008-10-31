@@ -7,6 +7,9 @@ Version 2.2
  * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
    to use getBoundingClientRect if available. See issue 13
    -- LarryK rev 1635 and 1637
+ * Added SimileAjax.Graphics.getWidthHeight(el) RETURNS hash {width:  w, height: h}
+   in pixels. File: graphics.js
+   -- LarryK 
 
 Version 2.1
  * JQuery updated to v1.2.6
