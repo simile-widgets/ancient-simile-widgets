@@ -20,27 +20,31 @@ Defaults are used if an event does not specify an attribute value. start or late
  * latestStart - for imprecise beginnings - same date format as start
  * earliestEnd - for imprecise ends - same date format as start
  * end - same date format as start
- * isDuration - "true" or "false". Only applies to events with start/end times.
-   * *true* -- the event will be drawn as a blue dot icon (default) with a pale blue tape. The tape is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
-   * *false or missing* -- the event will be drawn as a dark blue tape. The tape color is set with the _color attribute_. No icon. Default color is #58A0DC
+ * durationEvent - XML and SPARQL: "true" or "false". JSON: true or false. Only applies to events with start/end times.
+   * *true* -- the event occurs over a time duration. No icon. The event will be drawn as a dark blue tape. The tape color is set with the _color attribute_. Default color is #58A0DC
+   * *false* -- the event is focused on a specific "instant" (shown with the icon). The event will be drawn as a blue dot icon (default) with a pale blue tape. The tape is the default color (or _color attribute_ color), with opacity set to 20. To change the opacity, change the theme's instant: {impreciseOpacity:  20} value. Maximum 100.
  * title - text title that goes next to the tape in the Timeline. Also shown in the bubble. The title attribute is optional. Leave it out if you want just an icon or icon and tape. The description will be shown in the bubble when the icon or tape is clicked.
 
 === Additional Event Attributes ===
+ * icon - url. The this image will appear next to the title text in the timeline if (no end date) or (durationEvent = false). If a start and end date are supplied, and durationEvent is true, the icon is not shown. The icon will not be shown if the value is 'none'
  * image - url to an image that will be displayed in the bubble
  * link - url. The bubble's title text be a hyper-link to this address.
- * icon - url. The this image will appear next to the title text in the timeline if (no end date) or (isDuration = true). If a start and end date are supplied, and isDuration is false, the icon is not shown.
- * color - color of the text and tape (duration events) to display in the timeline. If the event has isDuration = true, then the bar's opacity will be applied (default 20%). See isDuration, above.
+ * color - color of the text and tape (duration events) to display in the timeline. If the event has durationEvent = false, then the bar's opacity will be applied (default 20%). See durationEvent, above.
  * textColor - color of the label text on the timeline. If not set, then the _color_ attribute will be used.
  * tapeImage and tapeRepeat Sets the background image and repeat style for the event's _tape_ (or 'bar') on the Timeline. Overrides the color setting for the tape. Repeat style should be one of {repeat | repeat-x | repeat-y}, repeat is the default. See the Cubism example for a demonstration. Only applies to duration events.
  * caption - additional event information shown when mouse is hovered over the Timeline tape or label. Uses the html _title_ property. Looks like a tooltip. Plain text only. See the cubism example.
  * classname - added to the HTML classnames for the event's label and tape divs. Eg classname attribute 'hot_event' will result in div classes of 'timeline-event-label hot_event' and 'timeline-event-tape hot_event' for the event's Timeline label and tape, respectively.
- * eventID - a _cookie_ attribute that is stored, not used by the Timeline library. If you write a custom labeller or event bubble filler, the attribute can be obtained using the getEventID() method on the event object. 
  * description - will be displayed inside the bubble with the event's title and image.
    * XML Format: the description is stored as the text content of the event element (see below). Note: the XML standard requires that an element's text content must be escaped/formatted HTML.
    * JSON Format: the description key of the event hash
 
 Notes:
  * url's can be absolute or relative. The base address for relative urls is the directory of event file. 
+
+=== Event Attributes for Developers ===
+ * trackNum - used to override the automatic layout of events on the Timeline. 
+ * eventID - a _cookie_ attribute that is stored, not used by the Timeline library. If you write a custom labeller or event bubble filler, the attribute can be obtained using the getEventID() method on the event object. 
+
 
 === Organizing event types ===
 You have two options for translating your event types to the user. For example, suppose most of your events are of type 'regular,' and some are of type 'special.' You want the special events to be visually distinct on the Timeline. Two options:
@@ -50,7 +54,7 @@ You have two options for translating your event types to the user. For example, 
 === Deprecated Event attributes ===
 The following event attributes are still supported, but you should not use them for new event sources. Support may be removed at the next major release.
  * hoverText - superseded by the caption attribute
-
+ * isDuration - "true" or "false". Only applies to events with start/end times. This attribute is correctly interpreted by the XML and SPARQL format handlers. It's negated (a bug) by the JSON format handler. See issue 33. This attribute is replaced by attribute durationEvent
 
 == Timeline attributes ==
 These attributes are specified once per Timeline. They are then used for all events in the Timeline. Both are optional.
@@ -121,6 +125,8 @@ Each event element can include any of the event attributes listed above. For exa
 
 As noted in the Event attributes section above, the JSON data format will accept references to the Javascript Date object as an alternative to date strings.
 
+JSON true, false values must not include quotes. See durationEvent, below.
+
 JSON arrays and hashes should _not_ have trailing commas before closing brackets or braces. If present, they will cause problems with some JS engines. Eg, the one in Internet Explorer. 
 
 === JSON Examples ===
@@ -134,10 +140,11 @@ JSON arrays and hashes should _not_ have trailing commas before closing brackets
     {
        'start':"Sat May 20 1961 00:00:00 GMT-0600",
        'title':"'Bay of Pigs' Invasion"
+       'durationEvent':false,
      }, {
        'start':"Wed May 01 1963 00:00:00 GMT-0600" ,
        'end':"Sat Jun 01 1963 00:00:00 GMT-0600" ,
-       'isDuration':"true" ,
+       'durationEvent':true,
        'title':"Oswald moves to New Orleans",
        'description':"Oswald moves to New Orleans, and finds employment at the William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>"
      }, {
