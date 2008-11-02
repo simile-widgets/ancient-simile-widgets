@@ -14,6 +14,7 @@ There is only one underlying meaning of Timeline event attributes. But the event
 
 == Event attributes ==
 Defaults are used if an event does not specify an attribute value. start or latestStart are required.
+See [Timeline_Event_Display Event Display options] for examples of the different ways to display an event on a Timeline
 
 === Basic Event Attributes ===
  * start - in full date format (e.g. "May 20 1961 00:00:00 GMT-0600") Note, the JSON format can use a JS Date method call to speed loading. See [Timeline_EventSourceJSON_jsDate use_js_Date_objects]
