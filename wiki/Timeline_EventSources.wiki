@@ -27,7 +27,7 @@ See [Timeline_Event_Display Event Display options] for examples of the different
  * title - text title that goes next to the tape in the Timeline. Also shown in the bubble. The title attribute is optional. Leave it out if you want just an icon or icon and tape. The description will be shown in the bubble when the icon or tape is clicked.
 
 === Additional Event Attributes ===
- * icon - url. The this image will appear next to the title text in the timeline if (no end date) or (durationEvent = false). If a start and end date are supplied, and durationEvent is true, the icon is not shown. The icon will not be shown if the value is 'none'
+ * icon - url. The this image will appear next to the title text in the timeline if (no end date) or (durationEvent = false). If a start and end date are supplied, and durationEvent is true, the icon is not shown.
  * image - url to an image that will be displayed in the bubble
  * link - url. The bubble's title text be a hyper-link to this address.
  * color - color of the text and tape (duration events) to display in the timeline. If the event has durationEvent = false, then the bar's opacity will be applied (default 20%). See durationEvent, above.
