@@ -546,7 +546,7 @@ SimileAjax.Graphics.getWidthHeight = function(el) {
     var w, h;
     // offsetWidth rounds on FF, so doesn't work for us.
     // See https://bugzilla.mozilla.org/show_bug.cgi?id=458617
-    if (el.getBoundingClientRect === null) {
+    if (el.getBoundingClientRect == null) {
     	// use offsetWidth
       w = el.offsetWidth;
       h = el.offsetHeight;
