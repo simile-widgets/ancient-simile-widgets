@@ -11,6 +11,8 @@ Version 2.2
    in pixels. File: graphics.js
    -- LarryK rev 1641
  * Updated License to refer to JQuery -- LarryK rev 1641
+ * Updated SimileAjax.Graphics.getWidthHeight to better test availability of 
+   getBoundingClientRect -- LarryK rev 1657
 
 Version 2.1
  * JQuery updated to v1.2.6

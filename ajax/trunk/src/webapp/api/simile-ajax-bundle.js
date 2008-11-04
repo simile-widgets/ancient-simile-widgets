@@ -1950,7 +1950,7 @@ C.select();
 return G;
 };
 SimileAjax.Graphics.getWidthHeight=function(C){var A,B;
-if(C.getBoundingClientRect===null){A=C.offsetWidth;
+if(C.getBoundingClientRect==null){A=C.offsetWidth;
 B=C.offsetHeight;
 }else{var D=C.getBoundingClientRect();
 A=Math.ceil(D.right-D.left);
