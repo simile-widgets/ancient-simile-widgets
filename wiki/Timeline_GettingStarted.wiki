@@ -12,7 +12,7 @@ In your HTML code, link to Timeline's Javascript API code as follows:
  <html>
    <head>
      ...
-     <span style="background:#FFFFE0"><script src="http://simile.mit.edu/timeline/api/timeline-api.js" type="text/javascript"></script></span>
+     <span style="background:#FFFFE0"><script src="http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js" type="text/javascript"></script></span>
      ...
    </head>
    <body>
