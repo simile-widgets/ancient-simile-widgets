@@ -127,12 +127,18 @@ SimileAjax.Graphics._halfArrowWidth = 18;
  * @param {Number} contentWidth a suggested width of the content
  * @param {String} orientation a string ("top", "bottom", "left", or "right")
  *   that describes the orientation of the arrow on the bubble
+ * @param {Number} maxHeight. Add a scrollbar div if bubble would be too tall.
+ *   Default of 0 or null means no maximum
  */
-SimileAjax.Graphics.createBubbleForContentAndPoint = function(div, pageX, pageY, contentWidth, orientation) {
+SimileAjax.Graphics.createBubbleForContentAndPoint = function(
+       div, pageX, pageY, contentWidth, orientation, maxHeight) {
     if (typeof contentWidth != "number") {
         contentWidth = 300;
     }
-    
+    if (typeof maxHeight != "number") {
+        maxHeight = 0;
+    }
+
     div.style.position = "absolute";
     div.style.left = "-5000px";
     div.style.top = "0px";
@@ -142,15 +148,30 @@ SimileAjax.Graphics.createBubbleForContentAndPoint = function(div, pageX, pageY,
     window.setTimeout(function() {
         var width = div.scrollWidth + 10;
         var height = div.scrollHeight + 10;
-        
+        var scrollDivW = 0; // width of the possible inner container when we want vertical scrolling
+        if (maxHeight > 0 && height > maxHeight) {
+          height = maxHeight;
+          scrollDivW = width - 25;
+        }  
+       
         var bubble = SimileAjax.Graphics.createBubbleForPoint(pageX, pageY, width, height, orientation);
         
         document.body.removeChild(div);
         div.style.position = "static";
         div.style.left = "";
         div.style.top = "";
-        div.style.width = width + "px";
-        bubble.content.appendChild(div);
+        
+        // create a scroll div if needed
+        if (scrollDivW > 0) {
+          var scrollDiv = document.createElement("div");
+          div.style.width = "";
+          scrollDiv.style.width = scrollDivW + "px";
+          scrollDiv.appendChild(div);
+          bubble.content.appendChild(scrollDiv);
+        } else {
+          div.style.width = width + "px";
+          bubble.content.appendChild(div);
+        }
     }, 200);
 };
 

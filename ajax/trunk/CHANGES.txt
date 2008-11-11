@@ -13,6 +13,10 @@ Version 2.2
  * Updated License to refer to JQuery -- LarryK rev 1641
  * Updated SimileAjax.Graphics.getWidthHeight to better test availability of 
    getBoundingClientRect -- LarryK rev 1657
+ * Added new param, maxHeight to SimileAjax.Graphics.createBubbleForContentAndPoint
+   Added as last param for backwards compatibility. If used, maxHeight inserts
+   a div with a scrollbar in bubble so it won't be taller than maxHeight.
+   Bubbles shorter than maxHeight do not get a scrollbar. -- LarryK rev 1666
 
 Version 2.1
  * JQuery updated to v1.2.6
