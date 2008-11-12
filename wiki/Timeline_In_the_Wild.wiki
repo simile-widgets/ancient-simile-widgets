@@ -1,0 +1,10 @@
+#summary Examples of Timeline usage around the world
+
+= Introduction =
+
+Timeline is in use everywhere.
+Please send additional examples to the mailing list
+
+= Timeline in the Wild =
+
+  * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
