@@ -15,6 +15,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
 
 == Examples ==
  * [http://simile-widgets.googlecode.com/svn/timeline/tags/latest/src/webapp/examples/index.html Timeline examples]
+ * [Timeline_In_the_Wild In the Wild] Examples of Timeline in use around the world.
 
 == How-Tos ==
 
