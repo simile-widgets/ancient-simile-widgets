@@ -33,7 +33,7 @@ The default date time parser uses the Javascript Date parser built into the brow
  * The format of "May 10 1961 00:00:00 GMT-0600" is unambiguous and is the default.
  * The RFC 2822 format of "Thu, 21 Dec 2000 16:01:07 +0200" also works fine by default.
  * The JSON data format used by Timeline supports explicit date objects. Eg new Date(Date.UTC(2008,0,17,20,00,00,0)). See [Timeline_EventSourceJSON_jsDate Using JS Date objects]. This format also loads in the least time since no parsing is needed.
- * A subset of the ISO 8601 format. Examples: "1995-02-04 10:20:01Z", "1995-02-04T10:20:01Z", "1995-02-04T10:20:01+5:00". To use this date format, your data file must specify the date-time-format. See the Timeline attributes section, below. The ISO 8601 parser used by Timeline is from Dojo Toolkit. [http://api.dojotoolkit.org/jsdoc/dojo/1.2/dojo.date.stamp.fromISOString Documentation.]
+ * A subset of the ISO 8601 format. This is also the [http://books.xmlschemata.org/relaxng/ch19-77049.html xsd:dateTime] format from XML. Examples: "1995-02-04 10:20:01Z", "1995-02-04T10:20:01Z", "1995-02-04T10:20:01+5:00". To use this date format, your data file must specify the date-time-format. See the Timeline attributes section, below. The ISO 8601 parser used by Timeline is from Dojo Toolkit. [http://api.dojotoolkit.org/jsdoc/dojo/1.2/dojo.date.stamp.fromISOString Documentation.]
 
 *Formats that are not recommended*
  * The format "5/10/1961 00:00:00 GMT-0600" is ambiguous. (May 10 or October 5). It may work differently depending on the locale settings of the computer the browser is running on and the sophistication of the browser.
