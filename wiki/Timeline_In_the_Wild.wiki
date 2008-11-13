@@ -23,4 +23,4 @@ Please send additional examples to the mailing list
  * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
 
 = Services using Timeline =
- * [timefo.com] Timefo.com
+ * [http://timefo.com] Timefo.com
