@@ -9,12 +9,18 @@ Please send additional examples to the mailing list
 
 == History ==
  * [http://home.myuw.net/jjcrump/Timelines/itinerary/JohnItinerary.html The Itinerary of King John] Demonstrates integration with Google Maps to show King John's itinerary. 
+ * [http://aotw.org/timeline.php The Maryland Campaign of 1862]
 
 == Media == 
+ * [http://news.alexeysmirnov.name/ Latest news on a Timeline]
  * [http://www.tvschedules.org/ TVSchedules.org]
 
 == Politics ==
  * [http://debatehub.c-span.org/ C-SPAN] C-SPAN 2008 Presidential debate Timeline
 
 == Science ==
+ * [http://www.astronomer.me.uk/logs/by-timeline/ Astronomy Observation logs]
  * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
+
+= Services using Timeline =
+ * [timefo.com] Timefo.com
