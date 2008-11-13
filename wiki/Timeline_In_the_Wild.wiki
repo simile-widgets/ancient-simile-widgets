@@ -7,8 +7,14 @@ Please send additional examples to the mailing list
 
 = Timeline in the Wild =
 
-== Science ==
- * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
+== History ==
+ * [http://home.myuw.net/jjcrump/Timelines/itinerary/JohnItinerary.html The Itinerary of King John] Demonstrates integration with Google Maps to show King John's itinerary. 
+
+== Media == 
+ * [http://www.tvschedules.org/ TVSchedules.org]
 
 == Politics ==
  * [http://debatehub.c-span.org/ C-SPAN] C-SPAN 2008 Presidential debate Timeline
+
+== Science ==
+ * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
