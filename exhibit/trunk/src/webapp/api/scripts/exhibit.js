@@ -11,8 +11,11 @@ Exhibit.create = function(database) {
 Exhibit.getAttribute = function(elmt, name, splitOn) {
     try {
         var value = elmt.getAttribute(name);
-        if (value == null) {
+        if (value == null || value.length == 0) {
             value = elmt.getAttribute("ex:" + name);
+            if (value != null && value.length == 0) {
+                return null;
+            }
         }
         if (splitOn == null) {
             return value;

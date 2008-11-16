@@ -137,7 +137,7 @@ var S=function(i,h,d,f,g){var e;
 Z.getEventLabel(i,M,function(j){e=j;
 return true;
 });
-var c=new Timeline.DefaultEventSource.Event(i,h.start,h.end,null,null,h.end==null,e,"",null,null,f,d,d,g);
+var c=new Timeline.DefaultEventSource.Event({id:i,eventID:i,start:h.start,end:h.end,instant:h.end==null,text:e,description:"",icon:f,color:d,textColor:d,hoverText:g});
 c._itemID=i;
 c.getProperty=function(j){return M.getObject(this._itemID,j);
 };

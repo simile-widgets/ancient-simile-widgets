@@ -347,22 +347,19 @@ Exhibit.TimelineView.prototype._reconstruct = function() {
             var label;
             accessors.getEventLabel(itemID, database, function(v) { label = v; return true; });
 
-            var evt = new Timeline.DefaultEventSource.Event(
-                itemID,
-                duration.start,
-                duration.end,
-                null,
-                null,
-                duration.end == null, // is instant?
-                label,
-                "",     // description
-                null,   // image url
-                null,   // link url
-                icon,   // icon url
-                color,
-                color,
-                hoverText
-            );
+            var evt = new Timeline.DefaultEventSource.Event({
+                id:             itemID,
+                eventID:        itemID,
+                start:          duration.start,
+                end:            duration.end,
+                instant:        duration.end == null,
+                text:           label,
+                description:    "",
+                icon:           icon,
+                color:          color,
+                textColor:      color,
+                hoverText:      hoverText
+            });
             evt._itemID = itemID;
             evt.getProperty = function(name) {
                 return database.getObject(this._itemID, name);
