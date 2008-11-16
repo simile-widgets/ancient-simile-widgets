@@ -1,0 +1,15 @@
+RELEASE_NOTES.txt
+
+Version 2.1.0 -- November 16, 2008
+
+- Fixed bug on IE 8 caused by element.getAttribute() as used in Exhibit.getAttribute() 
+  returning an empty string rather than null as in previous versions of IE. This
+  bug caused all exhibits using Exhibit 2.0 to break on IE 8.
+
+- Switched over to using SimileAjax 2.1.0.
+  
+- Switched over to using Timeline 2.2.0.
+
+- Performance enhancements related to collapsed facet calculation (by eob).
+
+- Curate extension (by sbostler).

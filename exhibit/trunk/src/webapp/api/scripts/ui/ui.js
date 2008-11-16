@@ -396,7 +396,7 @@ Exhibit.UI.calculatePopupPosition = function(elmt) {
     var coords = SimileAjax.DOM.getPageCoordinates(elmt);
     return {
         x: coords.left + Math.round(elmt.offsetWidth / 2),
-        y: coords.top + Math.round(elmt.offsetHeight / 2),
+        y: coords.top + Math.round(elmt.offsetHeight / 2)
     };
 }
 

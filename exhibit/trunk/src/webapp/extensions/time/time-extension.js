@@ -27,7 +27,7 @@ Exhibit.TimeExtension = {
     var paramTypes = { bundle: Boolean };
     SimileAjax.parseURLParameters(url, Exhibit.TimeExtension.params, paramTypes);
         
-    var scriptURLs = [ "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js" ];
+    var scriptURLs = [ "http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" ];
     var cssURLs = [];
         
     if (Exhibit.TimeExtension.params.bundle) {
