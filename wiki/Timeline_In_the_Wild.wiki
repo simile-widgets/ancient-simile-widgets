@@ -11,6 +11,9 @@ Please send additional examples to the mailing list
  * [http://home.myuw.net/jjcrump/Timelines/itinerary/JohnItinerary.html The Itinerary of King John] Demonstrates integration with Google Maps to show King John's itinerary. 
  * [http://aotw.org/timeline.php The Maryland Campaign of 1862]
 
+== Industry ==
+ * [http://www.semi-directory.com/events.asp Calendar of Semiconductor Industry events] 
+
 == Media == 
  * [http://news.alexeysmirnov.name/ Latest news on a Timeline]
  * [http://www.tvschedules.org/ TVSchedules.org]
