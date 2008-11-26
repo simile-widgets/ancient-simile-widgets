@@ -24,7 +24,7 @@ Please send additional examples to the mailing list
 == Science ==
  * [http://www.astronomer.me.uk/logs/by-timeline/ Astronomy Observation logs]
  * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
- *[http://www.oe-files.de/gmaps/eqmashup.html Mashup] of an Earthquake Timeline with Google map of the locations by Jörn Clausen
+ * [http://www.oe-files.de/gmaps/eqmashup.html Mashup] of an Earthquake Timeline with Google map of the locations by Jörn Clausen
 
 = Services using Timeline =
  * [http://timefo.com] Timefo.com
