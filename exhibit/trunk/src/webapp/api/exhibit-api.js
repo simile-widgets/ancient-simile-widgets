@@ -84,6 +84,7 @@
             "ui/facets/image-facet.js",
 	          "ui/facets/slider-facet.js",
 	          "ui/facets/slider.js",
+	          "ui/facets/alpha-range-facet.js",
       	    
             "ui/coders/color-coder.js",
             "ui/coders/default-color-coder.js",
