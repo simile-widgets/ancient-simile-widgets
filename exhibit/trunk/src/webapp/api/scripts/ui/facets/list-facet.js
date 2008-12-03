@@ -471,3 +471,19 @@ Exhibit.ListFacet.prototype._createSortFunction = function(valueType) {
     
     return sortDirectionFunction;
 }
+
+Exhibit.ListFacet.prototype.exportFacetSelection = function() { 
+  var s = []; 
+  this._valueSet.visit(function(v) { 
+    s.push(v); 
+  }); 
+  if (s.length > 0) {
+    return s.join(',');  
+  }
+}; 
+ 
+Exhibit.ListFacet.prototype.importFacetSelection = function(settings) { 
+  var self = this; 
+   
+  self.applyRestrictions({ selection: settings.split(','), selectMissing: self._selectMissing }); 
+}

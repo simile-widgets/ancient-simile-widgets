@@ -67,6 +67,7 @@
             "data/exporters/exhibit-json-exporter.js",
             "data/exporters/tsv-exporter.js",
             "data/exporters/bibtex-exporter.js",
+            "data/exporters/facet-selection-exporter.js",
             
             "ui/ui.js",
             "ui/ui-context.js",

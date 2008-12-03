@@ -1004,6 +1004,20 @@ Exhibit.ExhibitJsonExporter._wrap=function(A){return'{\n "items":[\n'+A+" ]\n}";
 };
 
 
+/* facet-selection-exporter.js */
+Exhibit.FacetSelectionExporter={getLabel:function(){return"Facet Selections";
+},exportOne:function(B,A){return Exhibit.FacetSelectionExporter._exportUrl();
+},exportMany:function(B,A){return Exhibit.FacetSelectionExporter._exportUrl();
+}};
+Exhibit.FacetSelectionExporter._exportUrl=function(){var A=window.exhibit.exportSettings();
+var C=window.location.href.split("?")[0]+"?";
+var B="";
+for(id in A){C+=B+id+"="+escape(A[id]);
+if(B===""){B="&";
+}}return C;
+};
+
+
 /* rdf-xml-exporter.js */
 Exhibit.RdfXmlExporter={getLabel:function(){return Exhibit.l10n.rdfXmlExporterLabel;
 }};
@@ -2024,7 +2038,7 @@ return[].concat(Exhibit._exporters);
 Exhibit.addExporter=function(A){Exhibit._initializeExporters();
 Exhibit._exporters.push(A);
 };
-Exhibit._initializeExporters=function(){if(!("_exporters" in Exhibit)){Exhibit._exporters=[Exhibit.RdfXmlExporter,Exhibit.SemanticWikitextExporter,Exhibit.TSVExporter,Exhibit.ExhibitJsonExporter];
+Exhibit._initializeExporters=function(){if(!("_exporters" in Exhibit)){Exhibit._exporters=[Exhibit.RdfXmlExporter,Exhibit.SemanticWikitextExporter,Exhibit.TSVExporter,Exhibit.ExhibitJsonExporter,Exhibit.FacetSelectionExporter];
 }};
 Exhibit._Impl=function(A){this._database=A!=null?A:("database" in window?window.database:Exhibit.Database.create());
 this._uiContext=Exhibit.UIContext.createRootContext({},this);
@@ -2136,6 +2150,7 @@ processElmts(coderElmts);
 processElmts(lensElmts);
 processElmts(facetElmts);
 processElmts(otherElmts);
+this.importSettings();
 var exporters=Exhibit.getAttribute(document.body,"exporters");
 if(exporters!=null){exporters=exporters.split(";");
 for(var i=0;
@@ -2162,6 +2177,19 @@ document.body.appendChild(C.elmt);
 SimileAjax.WindowManager.registerEvent(C.closeButton,"click",function(E,D,F){SimileAjax.WindowManager.popLayer(C.layer);
 },C.layer);
 };
+Exhibit._Impl.prototype.exportSettings=function(){var A={},B="";
+for(var C in this._componentMap){if(typeof this._componentMap[C].exportFacetSelection!=="undefined"){B=this._componentMap[C].exportFacetSelection()||false;
+if(B){A[C]=B;
+}}}return A;
+};
+Exhibit._Impl.prototype.importSettings=function(){if(window.location.search.length>0){searchComponents=window.location.search.substr(1,window.location.search.length-1).split("&");
+for(var A=0;
+A<searchComponents.length;
+A++){var C=searchComponents[A].split("=");
+var B=C[0];
+var D=unescape(C[1]);
+if(this._componentMap[B]&&(typeof this._componentMap[B].importFacetSelection!=="undefined")){this._componentMap[B].importFacetSelection(D);
+}}}};
 
 
 /* persistence.js */
@@ -3801,6 +3829,14 @@ if(this._settings.sortDirection=="reverse"){B=function(G,F){return A(F,G);
 };
 }return B;
 };
+Exhibit.ListFacet.prototype.exportFacetSelection=function(){var A=[];
+this._valueSet.visit(function(B){A.push(B);
+});
+if(A.length>0){return A.join(",");
+}};
+Exhibit.ListFacet.prototype.importFacetSelection=function(B){var A=this;
+A.applyRestrictions({selection:B.split(","),selectMissing:A._selectMissing});
+};
 
 
 /* numeric-range-facet.js */
@@ -4403,6 +4439,10 @@ H++){D.getObjects(G,E[H]).visit(function(I){F.push(I.toLowerCase());
 });
 }this._itemToValue=A;
 }};
+Exhibit.TextSearchFacet.prototype.exportFacetSelection=function(){return this._text;
+};
+Exhibit.TextSearchFacet.prototype.importFacetSelection=function(A){this.setText(A);
+};
 
 
 /* format-parser.js */
