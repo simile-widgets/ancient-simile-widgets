@@ -284,3 +284,11 @@ Exhibit.TextSearchFacet.prototype._buildMaps = function() {
         this._itemToValue = itemToValue;
     }
 };
+
+Exhibit.TextSearchFacet.prototype.exportFacetSelection = function() { 
+  return this._text;
+}; 
+ 
+Exhibit.TextSearchFacet.prototype.importFacetSelection = function(settings) { 
+  this.setText(settings);
+}
