@@ -976,14 +976,14 @@ Exhibit.Database._RangeIndex = function(items, getter) {
     
     pairs.sort(function(p1, p2) {
         var c = p1.value - p2.value;
-        return c != 0 ? c : p1.item.localeCompare(p2.item);
+        return (isNaN(c) === false && c != 0) ? c : p1.value.localeCompare(p2.value);
     });
     
     this._pairs = pairs;
 };
 
 Exhibit.Database._RangeIndex.prototype.getCount = function() {
-    return this._pairs.count();
+    return this._pairs.length;
 };
 
 Exhibit.Database._RangeIndex.prototype.getMin = function() {
