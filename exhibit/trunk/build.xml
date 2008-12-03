@@ -80,6 +80,18 @@
         </fileset>
     </concat>
     
+    <!-- Calendar extension -->
+    <jsmin output="src/webapp/extensions/calendar/calendar-extension-bundle.js">
+        <fileset dir="src/webapp/extensions/calendar/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/extensions/calendar/calendar-extension-bundle.css">
+        <fileset dir="src/webapp/extensions/calendar/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+
       <!-- ========== Locales ========== -->
     <jsmin output="src/webapp/api/locales/en/exhibit-en-bundle.js">
         <fileset dir="src/webapp/api/locales/en/scripts">
