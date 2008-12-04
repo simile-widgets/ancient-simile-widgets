@@ -1,5 +1,10 @@
 CHANGES.txt
 
+Ongoing
+ * When you run run.bat, we now serve
+    http://localhost:8181/ajax - from src/webapp/site/
+    http://localhost:8181/ajax/api - from src/webapp/api/
+
 Version 2.2
  * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
    to take optional second paramenter of classname for computing size on
