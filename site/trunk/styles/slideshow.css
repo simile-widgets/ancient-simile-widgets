@@ -1,32 +1,35 @@
 #slideshow {
-    border: 1px solid #ccc;
     background-image: url(../images/body_back.gif);
     background-position: top left;
     background-repeat: repeat-x;
-    margin-left: 30px;
-    margin-right: 250px;
     height: 14em;
 }
 
 #slideshow .item {
     display: none;
-    margin: 10px;
+    border: 1px solid #eee;
+    padding: 2em;
 }
 
 #slideshow .item .icon {
-    margin: 10px;
     float: right;
 }
 
 #slideshow .item .title {
-    margin: 10px;
     font-size: 300%;
     font-weight: bold;
     font-family: "verdana", "helvetica", "arial", sans-serif;
 }
 
+#slideshow .item .title a {
+    text-decoration: none;
+}
+
+#slideshow .item .title a:hover {
+    text-decoration: underline;
+}
+
 #slideshow .item .description {
-    margin: 10px;
     font-size: 130%;
     height: 8em;
 }
