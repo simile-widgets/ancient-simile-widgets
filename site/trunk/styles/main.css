@@ -396,6 +396,7 @@ span.new {
     margin: 5.0em 20.0em 5.0em 0em;
     text-align: center;
     border-bottom: 1px solid #C0Af8a;
+    clear: both;
 }
 
 #ft .credits {
