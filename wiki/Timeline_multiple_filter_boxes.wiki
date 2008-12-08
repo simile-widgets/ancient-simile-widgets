@@ -1,0 +1,88 @@
+#summary Using multiple filter boxes on a page
+
+= Introduction =
+
+A filter for a Timeline band is binary: either an event passes the filter or it doesn't. But the user interface for the filter can be elaborate.
+
+In this example by Discussion Forum contributor pepsipaul, he updates the setupfiltercontrols.js file (in the examples directory of the Timeline source). 
+
+The new user interface provides three input text boxes to the user. If an event matches the text in any of the boxes, then the event passes the filter. This is "ORing" together the input boxes.
+
+= Details =
+
+{{{
+
+I have made a semi - finished version of multiple filters. 
+numOfFilters is a variable used to simply state the amount of filter 
+input boxes there are. I changed the perform filtering method within 
+the setupfiltercontrols.js 
+any comments welcome 
+
+var numOfFilters = 3; 
+function performFiltering(timeline, bandIndices, table) { 
+    timerID = null; 
+    var tr = table.rows[1]; 
+    // Add all filter inputs to a new array 
+    var filterInputs = new Array(); 
+    for(var i=0; i<numOfFilters; i++) { 
+      filterInputs.push(cleanString(tr.cells[i].firstChild.value)); 
+    } 
+    var filterMatcher = null; 
+    var filterRegExes = new Array(); 
+    for(var i=0; i<filterInputs.length; i++) { 
+        // if the filterInputs are not empty create a new regex for each 
+one and add them 
+        // to an array 
+        if (filterInputs[i].length > 0){ 
+                        filterRegExes.push(new RegExp(filterInputs[i], "i")); 
+        } 
+                filterMatcher = function(evt) { 
+                        // iterate through the regex's and check them against the evtText 
+                        // if match return true, if not found return false 
+                        for(var j=0; j<filterRegExes.length; j++) { 
+                                if(filterRegExes[j].test(evt.getText()) == true){ 
+                                                return true; 
+                                } 
+                        } 
+        return false; 
+       }; 
+    } 
+    var regexes = []; 
+    var hasHighlights = false; 
+    for (var x = numOfFilters; x < tr.cells.length - 1; x++) { 
+        var input = tr.cells[x].firstChild; 
+        var text2 = cleanString(input.value); 
+        if (text2.length > 0) { 
+            hasHighlights = true; 
+            regexes.push(new RegExp(text2, "i")); 
+        } else { 
+            regexes.push(null); 
+        } 
+    } 
+    var highlightMatcher = hasHighlights ? function(evt) { 
+        var text = evt.getText(); 
+        var description = evt.getDescription(); 
+        for (var x = 0; x < regexes.length; x++) { 
+            var regex = regexes[x]; 
+            //if (regex != null && (regex.test(text) || regex.test 
+(description))) { 
+            if (regex != null && regex.test(text)) { 
+                return x; 
+            } 
+        } 
+        return -1; 
+    } : null; 
+    filterMatcherGlobal = filterMatcher; 
+    highlightMatcherGlobal = highlightMatcher; 
+    for (var i = 0; i < bandIndices.length; i++) { 
+        var bandIndex = bandIndices[i]; 
+        timeline.getBand(bandIndex).getEventPainter().setFilterMatcher 
+(filterMatcher); 
+        timeline.getBand(bandIndex).getEventPainter 
+().setHighlightMatcher(highlightMatcher); 
+    } 
+    timeline.paint(); 
+} 
+
+
+}}}
