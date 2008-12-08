@@ -43,6 +43,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
 The Timeline library is called by client software on your html page. Your client software can add additional User Interface (UI) features.
  * [Timeline_highlighting_and_filtering Highlighting and Filtering Controls]
  * [Timeline_multiple_filter_boxes Multiple filter boxes]
+ * [Timeline_highlighting_weekends Highlighting Weekends]
 
 === Loading data ===
  * [Timeline_LoadEventsDynamically Load Events Dynamically]
