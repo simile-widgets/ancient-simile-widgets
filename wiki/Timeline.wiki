@@ -39,6 +39,11 @@ This wiki still references images and examples from the MIT site.  Almost all th
  * [Timeline_Moving_the_Timeline_via_Javascript Moving the Timeline via Javascript]
  * [http://www.linuxjournal.com/article/9301 http://www.linuxjournal.com/article/9301] -- good info on changing themes AND some good info on loading data
 
+=== Timeline Client UI Ideas ===
+The Timeline library is called by client software on your html page. Your client software can add additional User Interface (UI) features.
+ * [Timeline_highlighting_and_filtering Highlighting and Filtering Controls]
+ * [Timeline_filtering_options Filtering Options]
+
 === Loading data ===
  * [Timeline_LoadEventsDynamically Load Events Dynamically]
  * [Timeline_EventSourceJSON_jsDate use js Date()] with JSON
