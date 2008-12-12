@@ -97,9 +97,9 @@ Exhibit.SliderFacet.slider.prototype._setSlider = function(slider, value) {
     slider.value = value;
     
     if (this._horizontal) {
-	slider.div.style.left = (value/this._scaleFactor-slider.offset) + 'px';
+	slider.div.style.left = ((value-this._maxRange.min)/this._scaleFactor-slider.offset) + 'px';
     } else {
-	slider.div.style.top = (value/this._scaleFactor-slider.offset) + 'px';
+	slider.div.style.top = ((value-this._maxRange.min)/this._scaleFactor-slider.offset) + 'px';
     }
 
     this._setDisplays(slider);
