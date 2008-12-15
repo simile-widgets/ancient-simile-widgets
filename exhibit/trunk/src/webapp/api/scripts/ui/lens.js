@@ -563,11 +563,19 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
         job.opts
     );
     
-    var node = job.div.lastChild;
-    var tagName = node.tagName;
-    if (tagName == "span") {
+    var node = job.div.tagName.toLowerCase() == "table" ? job.div.rows[job.div.rows.length - 1] : job.div.lastChild;
+    var tagName = node.tagName.toLowerCase();
+    switch (tagName) {
+    case "span":
         node.style.display = "inline";
-    } else {
+        break;
+    case "tr":
+        node.style.display = "table-row";
+        break;
+    case "td":
+        node.style.display = "table-cell";
+        break;
+    default:
         node.style.display = "block";
     }
     
