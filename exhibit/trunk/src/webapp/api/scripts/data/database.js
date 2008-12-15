@@ -379,14 +379,13 @@ Exhibit.Database._Impl.prototype.isSubmission = function(id) {
 
 Exhibit.Database._Impl.prototype.getAllItems = function() {
     var ret = new Exhibit.Set();
-    var itemList = this._items.toArray();
-
-    for (var i in itemList) {
-        var item = itemList[i];
-        if (!this.isSubmission(item)) {
+    var self = this;
+    
+    this._items.visit(function(item) {
+        if (!self.isSubmission(item)) {
             ret.add(item);
         }
-    }
+    });
 
     return ret;
 };
