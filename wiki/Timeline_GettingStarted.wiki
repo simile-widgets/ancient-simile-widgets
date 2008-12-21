@@ -26,11 +26,17 @@ In your HTML code, link to Timeline's Javascript API code as follows:
 
 === Step 2. Create a DIV Element ===
 
-Create a *`div`* element in your HTML code, e.g.
-
- {{{<div id="my-timeline" style="height: 150px; border: 1px solid #aaa"></div> }}}
+Create a *`div`* element in your HTML code, and include a noscript element immediately after it.
+ {{{
+<div id="my-timeline" style="height: 150px; border: 1px solid #aaa"></div>
+<noscript>
+This page uses Javascript to show you a Timeline. Please enable Javascript in your browser to see the full page. Thank you.
+</noscript>
+}}}
 
 You should give it an ID as well as fix its height. You can optionally set its borders, this usually makes the timeline look better.
+
+The noscript tag will help out people who have turned off Javascript in their browser. Timeline uses Javascript, which is included in all browsers and enabled by default. It does not use Java.
 
 === Step 3. Call *`Timeline.create()`* ===
 
