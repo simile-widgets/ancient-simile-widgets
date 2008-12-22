@@ -1,0 +1,17 @@
+#summary Exhibit overview
+
+= Exhibit =
+Exhibit enables you to create html pages with dynamic exhibits of data collections without resorting to complex database and server-side technologies. The collections can be searched and browsed using faceted browsing. Assorted views are provided including Timelines, tiles, maps, and more.
+
+== More Information ==
+Please see the MIT wiki for more information about Exhibit. The Mailing list is also a good place to ask for assistance.
+
+== Runtime Architecture ==
+Exhibit is a set of Javascript files that run in a user's browser. In addition, a "painter service" is used. A public painter service is hosted on a MIT server. Or you can locally host your own painter service. The available painter source uses Java, or you can write your own server.
+
+=== Hosting ===
+Our thanks to MIT for hosting a publicly available Exhibit service. The MIT server can be used for run-time access to the Exhibit Javascript libraries, asset files (images and CSS) and the public painter service. When starting with Exhibit, most people use the MIT server.
+
+If you have any sort of mission-critical use of Exhibit, you may well wish to host it yourself. While the MIT server is reliable, it is not actively managed by an operations group. [http://www.stevetrefethen.com/blog/HostingMITsSimileExhibitOSProject.aspx Some information on hosting Exhibit on your own server.]
+
+*Please do not add comments to this page, they are not read. Instead, use the mailing list. Thanks.*
