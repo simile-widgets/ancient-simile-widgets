@@ -160,7 +160,7 @@ JSON arrays and hashes should _not_ have trailing commas before closing brackets
     {
        'start':"Sat May 20 1961 00:00:00 GMT-0600",
        'title':"'Bay of Pigs' Invasion"
-       'durationEvent':false,
+       'durationEvent':false
      }, {
        'start':"Wed May 01 1963 00:00:00 GMT-0600" ,
        'end':"Sat Jun 01 1963 00:00:00 GMT-0600" ,
