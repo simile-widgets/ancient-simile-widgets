@@ -17,7 +17,7 @@ In your HTML code, link to Timeline's Javascript API code as follows:
    <head>
      <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
      ...
-     <script src="http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js" type="text/javascript"></script>
+     <script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>
      ...
    </head>
    <body>
