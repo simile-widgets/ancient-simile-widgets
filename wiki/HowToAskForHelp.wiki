@@ -16,3 +16,5 @@ When someone needs help with their particular use of one of the widgets, a lot o
     Consistency: problem occurs every time (as opposed to randomly)
 }}}
  # If you are asking for a new feature, and it's something visual, it'd good to draw it (in something like Paintbrush on Windows) and include that image. If not, sketch it on paper and take a picture. If it's something non visual but hard to imagine, see if there is any existing web site that does something similar and point us to it.
+
+Please use the [http://groups.google.com/group/simile-widgets/ simile-widgets Google group] to ask for help (by emailing simile-widgets@googlegroups.com). Please do *not* leave comments on this page.
