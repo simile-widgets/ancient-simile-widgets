@@ -12,7 +12,8 @@ Please send additional examples to the mailing list
  * [http://aotw.org/timeline.php The Maryland Campaign of 1862]
 
 == Industry ==
- * [http://www.semi-directory.com/events.asp Calendar of Semiconductor Industry events] 
+ * [http://www.semi-directory.com/events.asp Calendar of Semiconductor Industry events]
+ * [http://www.androidacademy.com/3-features/40-current/49-article-what-m Timeline of the Google Android OS by AndroidAcademy.com]
 
 == Media == 
  * [http://news.alexeysmirnov.name/ Latest news on a Timeline]
