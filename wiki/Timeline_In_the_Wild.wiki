@@ -27,6 +27,7 @@ Please send additional examples to the mailing list
  * [http://www.astronomer.me.uk/logs/by-timeline/ Astronomy Observation logs]
  * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
  * [http://www.oe-files.de/gmaps/eqmashup.html Mashup] of an Earthquake Timeline with Google map of the locations by Jörn Clausen
+ * [http://hominin.net/timeline/ Timeline] of Hominins
 
 = Services using Timeline =
  * [http://timefo.com] Timefo.com
