@@ -34,7 +34,7 @@ Most browsers ignore trailing commas in array and hash or object constructors, b
 }}}
 
 === XML Mime type and Characters ===
-If you're using the XML data format, then your incoming XML file will be read and parsed by the browser, not by the Timeline library. Because this (large) task is handled by the browser,there can be browser-specific issues.
+If you're using the XML data format, then your incoming XML file will be read and parsed by the browser, not by the Timeline library. Because this (large) task is handled by the browser, there can be browser-specific issues.
 
 If an XML Timeline is working on some browsers but not others, check the following:
 
@@ -48,6 +48,8 @@ The XML tag bodies must not include any stray &, < or > characters. Often the am
  * & has to be written as &amp;
  * > has to be written as &gt;
  * < has to be written as &lt;
+
+Note that the semi-colon is a part of the escape sequence.
 
 There are no exceptions to this rule. Google for "XML reserved characters" to learn more. 
 
