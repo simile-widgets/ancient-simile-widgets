@@ -33,6 +33,8 @@ Most browsers ignore trailing commas in array and hash or object constructors, b
 
 }}}
 
+== Works properly in some browsers, but not all ==
+
 === XML Mime type and Characters ===
 If you're using the XML data format, then your incoming XML file will be read and parsed by the browser, not by the Timeline library. Because this (large) task is handled by the browser, there can be browser-specific issues.
 
