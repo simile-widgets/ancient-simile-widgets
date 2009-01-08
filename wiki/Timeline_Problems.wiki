@@ -8,7 +8,9 @@ Remember that Apple's Safari browser can be used and tested on Windows.
 
 = Some common Timeline problems and their solutions =
 
-=== Works properly in most browsers, but not Internet Explorer ===
+== Works properly in most browsers, but not Internet Explorer ==
+
+=== Trailing Commas ===
 Most browsers ignore trailing commas in array and hash or object constructors, but IE does not. This can lead to many problems in Timeline. In the following example, the two trailing commas would work fine in every browser except IE.
 {{{
 { 
@@ -30,5 +32,25 @@ Most browsers ignore trailing commas in array and hash or object constructors, b
 }
 
 }}}
+
+=== XML Mime type and Characters ===
+If you're using the XML data format, then your incoming XML file will be read and parsed by the browser, not by the Timeline library. Because this (large) task is handled by the browser,there can be browser-specific issues.
+
+If an XML Timeline is working on some browsers but not others, check the following:
+
+==== XML mime type ====
+Your XML response should include 
+  Content-Type application/xml
+It can be checked by examining the response headers using firebug.
+
+==== No < & or > characters in XML ====
+The XML tag bodies must not include any stray &, < or > characters. Often the ampersand characters are overlooked. All of the characters need to be escaped.
+ * & has to be written as &amp;
+ * > has to be written as &gt;
+ * < has to be written as &lt;
+
+There are no exceptions to this rule. Google for "XML reserved characters" to learn more. 
+
+
 
 * If you have questions, please use the [http://groups.google.com/group/simile-widgets/ mailing list]. Comments posted here are NOT read *
