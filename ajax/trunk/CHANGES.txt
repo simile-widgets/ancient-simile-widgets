@@ -4,6 +4,8 @@ Ongoing
  * When you run run.bat, we now serve
     http://localhost:8181/ajax - from src/webapp/site/
     http://localhost:8181/ajax/api - from src/webapp/api/
+ * Refactored popup bubble rendering code so that it uses as much CSS
+   (rather than Javascript) as possible. 
 
 Version 2.2
  * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize

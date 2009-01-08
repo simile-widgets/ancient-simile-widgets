@@ -184,6 +184,7 @@ if (typeof SimileAjax == "undefined") {
             "window-manager.js"
         ];
         var cssFiles = [
+            "graphics.css"
         ];
         
         if (typeof SimileAjax_urlPrefix == "string") {
