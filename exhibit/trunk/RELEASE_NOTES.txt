@@ -10,6 +10,8 @@ Ongoing
   function in any tabular view that includes a row template to get a TBODY
   instead of a TR. 
   
+- Added localization files for locale "nl", contributed by Marko.
+  
 
 Version 2.1.0 -- November 16, 2008
 
