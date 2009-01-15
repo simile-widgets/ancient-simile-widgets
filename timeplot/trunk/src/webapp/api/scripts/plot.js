@@ -77,10 +77,12 @@ Timeplot.Plot.prototype = {
                         return;
                     }
                     
-                    var v = plot._dataSource.getValue(t);
+                    var validTime = plot._dataSource.getClosestValidTime(t);
+                    x = plot._timeGeometry.toScreen(validTime);
+                    var v = plot._dataSource.getValue(validTime);
                     if (plot._plotInfo.roundValues) v = Math.round(v);
                     plot._valueFlag.innerHTML = new String(v);
-                    var d = new Date(t);
+                    var d = new Date(validTime);
                     var p = plot._timeGeometry.getPeriod(); 
                     if (p < day) {
                         plot._timeFlag.innerHTML = d.toLocaleTimeString();

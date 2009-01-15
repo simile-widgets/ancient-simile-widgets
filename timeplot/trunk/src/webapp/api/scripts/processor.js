@@ -110,6 +110,8 @@ Timeplot.Processor.prototype = {
     
     getValue: Timeplot.DataSource.prototype.getValue,
 
+    getClosestValidTime: Timeplot.DataSource.prototype.getClosestValidTime,
+
     addListener: function(listener) {
         this._dataSource.addListener(listener);
     },

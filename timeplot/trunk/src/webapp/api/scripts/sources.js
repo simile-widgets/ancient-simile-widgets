@@ -235,6 +235,32 @@ Timeplot.DataSource.prototype = {
     },
 
     /**
+     * Return the time of the data point closest to the given time.
+     */
+    getClosestValidTime: function(t) {
+        if (this._data) {
+            for (var i = 0; i < this._data.times.length; i++) {
+                var currentTime = this._data.times[i];
+                if (currentTime >= t) {
+                    if (i <= 0) {
+                        return currentTime;
+                    } else {
+                        var lastTime = this._data.times[i - 1];
+                        // t must be between currentTime and lastTime.
+                        // Find the closest one.
+                        if (t - lastTime < currentTime - t) {
+                            return lastTime;
+                        } else {
+                            return currentTime;
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    },
+
+    /**
      * Add a listener to the underlying event source
      */
     addListener: function(listener) {
