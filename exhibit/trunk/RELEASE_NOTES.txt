@@ -1,5 +1,16 @@
 RELEASE_NOTES.txt
 
+Ongoing
+
+- Fixed bug in database.getAllItems() that causes 4 function members of Array 
+  to be counted in the returned set.
+  
+- Fixed bug in lens template generator that caused a TBODY to be returned if
+  the template starts with a TR root node. This previously caused the rowStyler
+  function in any tabular view that includes a row template to get a TBODY
+  instead of a TR. 
+  
+
 Version 2.1.0 -- November 16, 2008
 
 - Fixed bug on IE 8 caused by element.getAttribute() as used in Exhibit.getAttribute() 
