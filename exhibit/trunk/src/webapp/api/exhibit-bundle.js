@@ -765,7 +765,7 @@ B.visit(function(C){A(C,function(D){pairs.push({item:C,value:D});
 });
 });
 pairs.sort(function(D,C){var E=D.value-C.value;
-return(isNaN(E)===false&&E!=0)?E:D.value.localeCompare(C.value);
+return(isNaN(E)===false)?E:D.value.localeCompare(C.value);
 });
 this._pairs=pairs;
 };

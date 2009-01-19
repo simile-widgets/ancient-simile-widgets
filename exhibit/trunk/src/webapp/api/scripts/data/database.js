@@ -975,7 +975,7 @@ Exhibit.Database._RangeIndex = function(items, getter) {
     
     pairs.sort(function(p1, p2) {
         var c = p1.value - p2.value;
-        return (isNaN(c) === false && c != 0) ? c : p1.value.localeCompare(p2.value);
+        return (isNaN(c) === false) ? c : p1.value.localeCompare(p2.value);
     });
     
     this._pairs = pairs;
