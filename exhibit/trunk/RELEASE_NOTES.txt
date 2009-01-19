@@ -11,6 +11,8 @@ Ongoing
   instead of a TR. 
   
 - Added localization files for locale "nl", contributed by Marko.
+
+- Moved extensions directory inside api directory.
   
 
 Version 2.1.0 -- November 16, 2008
