@@ -13,6 +13,8 @@ Ongoing
 - Added localization files for locale "nl", contributed by Marko.
 
 - Moved extensions directory inside api directory.
+
+- Fixed bug where hierarchical facet breaks when the result set is empty.
   
 
 Version 2.1.0 -- November 16, 2008
