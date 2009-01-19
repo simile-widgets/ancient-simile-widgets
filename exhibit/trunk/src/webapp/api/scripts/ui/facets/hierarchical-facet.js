@@ -301,7 +301,11 @@ Exhibit.HierarchicalFacet.prototype._internalRemoveSelection = function(selectio
 Exhibit.HierarchicalFacet.prototype.update = function(items) {
     this._dom.valuesContainer.style.display = "none";
     this._dom.valuesContainer.innerHTML = "";
-    this._constructBody(this._computeFacet(items));
+    
+    var tree = this._computeFacet(items);
+    if (tree) {
+        this._constructBody(tree);
+    }
     this._dom.valuesContainer.style.display = "block";
 };
 
