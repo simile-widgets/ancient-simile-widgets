@@ -19,6 +19,7 @@ Please send additional examples to the mailing list
  * [http://news.alexeysmirnov.name/ Latest news on a Timeline]
  * [http://www.tvschedules.org/ TVSchedules.org]
  * [http://www3.telus.net/warfsworld/html/travel/travel_timeline.htm Warf's World travels]
+ * [http://jimmymacofphoenix.com/timeline/timeline.aspx Visualization of blog posts]
 
 == Politics ==
  * [http://debatehub.c-span.org/ C-SPAN] C-SPAN 2008 Presidential debate Timeline
