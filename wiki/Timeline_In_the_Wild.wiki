@@ -10,6 +10,7 @@ Please send additional examples to the mailing list
 == History ==
  * [http://home.myuw.net/jjcrump/Timelines/itinerary/JohnItinerary.html The Itinerary of King John] Demonstrates integration with Google Maps to show King John's itinerary. 
  * [http://aotw.org/timeline.php The Maryland Campaign of 1862]
+ * [http://www.freebase.com/view/user/danm/default_domain/views/battles_of_the_american_civil_war?view_id=timeline Battles of the American Civil War] via Freebase integration 
 
 == Industry ==
  * [http://www.semi-directory.com/events.asp Calendar of Semiconductor Industry events]
@@ -20,7 +21,7 @@ Please send additional examples to the mailing list
  * [http://www.tvschedules.org/ TVSchedules.org]
  * [http://www3.telus.net/warfsworld/html/travel/travel_timeline.htm Warf's World travels]
  * [http://jimmymacofphoenix.com/timeline/timeline.aspx Visualization of blog posts]
-
+ * [http://www.freebase.com/view/user/dfhuynh/default_domain/views/steven_spielberg_s_movies_by_release_dates Steven Spielberg's Movies by Release Dates] via Freebase integration
 == Politics ==
  * [http://debatehub.c-span.org/ C-SPAN] C-SPAN 2008 Presidential debate Timeline
 
@@ -34,4 +35,5 @@ Please send additional examples to the mailing list
  * [http://www.mensching.info/family/hermine/hermine-timeline.html Hermine, meine persönliche Dokumentation]
 
 = Services using Timeline =
- * [http://timefo.com] Timefo.com
+ * [http://freebase.com Freebase.com] supports Timeline "views" of data
+ * [http://timefo.com Timefo.com]
