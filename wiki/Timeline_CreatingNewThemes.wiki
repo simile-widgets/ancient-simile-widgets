@@ -40,4 +40,5 @@ It is easy to change the theme. First create a standard theme. Then modify its v
             ];
 }}}
 
-Please do not leave comments here, use the mailing list instead. Thank you.
+
+*Please do not leave comments here, use the mailing list instead. Thank you. *
