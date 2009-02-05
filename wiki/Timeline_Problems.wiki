@@ -33,6 +33,12 @@ Most browsers ignore trailing commas in array and hash or object constructors, b
 
 }}}
 
+=== Negative time periods ===
+If the _start_ date for an event, hotzone or highlight is _after_ the _end_ date, the Timeline may try to draw a div with a negative width property to match your negative time period. Many browsers, including FF, silently ignore such bogus div elements. But IE is pickier and will throw an error instead of ignoring the issue.
+
+The IE debugger works well for spotting these problems. If you don't have the debugger handy, try simplifying your Timeline. Then use stepwise refinement to add features back in. When you find a problematic feature, check its dates to see that they are valid.
+
+
 == Works properly in some browsers, but not all ==
 
 === XML Mime type and Characters ===
