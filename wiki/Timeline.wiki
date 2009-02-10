@@ -61,7 +61,7 @@ The Timeline library is called by client software on your html page. Your client
  * http://www.mytimelines.net/create-an-icalendar-timeline/ - Displays iCalendar files
  * http://timeline.to/ - Universal Timeline Aggregator - Displays Atom and RSS feeds
 
-=== Site and Software incorporating Timelines ===
+=== Sites and Software incorporating Timelines ===
  * http://mqlx.com/~david/parallax/ - search engine for freebase.org
  * http://semantic-mediawiki.org/wiki/Help:Timeline_format - Semantic MediaWiki 
  * http://jrochelle.googlepages.com/97g-timeline-about.html Google Spreadsheet - has a timeline gadget based on Timeline
@@ -71,7 +71,8 @@ The Timeline library is called by client software on your html page. Your client
  * http://code.google.com/p/gwtsimiletimeline/ - GWT API library to support SIMILE Timeline within the GWT framework. 
  * http://code.google.com/p/similetimelinerailshelper/ - Rails helper
  * http://project.dahukanna.net/tiddlywiki/timeline/sampletimeline220b5.html - TiddlyWiki Integration
- * http://www.zkoss.org/smalltalks/timeline1/timeline1.dsp - integrated into ZK OOS 
+ * http://www.zkoss.org/smalltalks/timeline1/timeline1.dsp - integrated into ZK OOS
+ * http://bakery.cakephp.org/articles/view/timeline-helper - integration with the CakePHP framework
 
 === API ===
  * [Timeline_TimelineClass Timelines]
