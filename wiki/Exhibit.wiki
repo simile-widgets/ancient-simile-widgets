@@ -10,6 +10,7 @@ Please see the [http://simile.mit.edu/wiki/Exhibit MIT wiki] for more informatio
  * [http://libdev.law.columbia.edu/neweres/sorted.html Exhibit] of Legal databases at the Columbia University Law Library
  * [https://fc.gannacademy.org/gannopedia/jhistory/jhexhibit.html Jewish History and People]
  * [http://simile.mit.edu/wiki/Exhibit/Examples Examples on the MIT Exhibit wiki]
+ * [http://substrate.burnham.org/ A Substrate focused visual interactive interface for Protease cleavage events in CutDB] Includes modification of Timeline component to use domain-specific units on the x axis instead of date/time units.
 
 == Runtime Architecture ==
 Exhibit is a set of Javascript files that run in a user's browser. In addition, a "painter service" is used. A public painter service is hosted on a MIT server. Or you can locally host your own painter service. The available painter source uses Java, or you can write your own server.
