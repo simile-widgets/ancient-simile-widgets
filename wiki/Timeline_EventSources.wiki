@@ -165,7 +165,7 @@ JSON arrays and objects should _not_ have trailing commas before closing bracket
   'events': [
     {
        'start':"Sat May 20 1961 00:00:00 GMT-0600",
-       'title':"'Bay of Pigs' Invasion"
+       'title':"'Bay of Pigs' Invasion",
        'durationEvent':false // Notes: not "false". And no trailing comma.
      }, {
        'start':"Wed May 01 1963 00:00:00 GMT-0600" ,
@@ -180,3 +180,5 @@ William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>"
 }
 
 }}}
+
+*Please do not leave comments here, they are not read. Use the [http://groups.google.com/group/simile-widgets/ mailing list.] Thanks.*
