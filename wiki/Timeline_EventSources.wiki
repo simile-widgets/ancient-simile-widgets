@@ -94,15 +94,19 @@ The data element contains one or more child elements of type *`<event>`*, the or
 
 Each *`<event>`* element can include any of the event attributes listed above. For example:
  * start, latestStart, end, etc
- * The _text content_ of the event element is the event's _description._ The information must be escaped/formatted HTML. Note in the example below how <i> is properly encoded as &lt;i&gt;
+ * The _text content_ of the event element is the event's _description._ The information must be escaped/formatted HTML.
+ * {{{Note in the example below how <i> is properly encoded as &lt;i&gt;}}}
 
 The xml document must be served with a content-type that the browser thinks is xml: "text/xml, application/xml or ends in +xml" (per [http://www.w3.org/TR/XMLHttpRequest/#xml-response-entity-body the XMLHttpRequest spec]). If it's not, you could get this cryptic error, which I include here as search bait:
 
+{{{
 TypeError: xml has no properties "XmlHttp: Error handling onReadyStateChange"
-\[Exception... "'XmlHttp: Error handling onReadyStateChange' when calling method: \[nsIOnReadyStateChangeHandler::handleEvent]" nsresult: "0x8057001e (NS_ERROR_XPC_JS_THREW_STRING)" location: "<unknown>" data: no]
+\[Exception... "'XmlHttp: Error handling onReadyStateChange' when calling method: \[nsIOnReadyStateChangeHandler::handleEvent]" 
+nsresult: "0x8057001e (NS_ERROR_XPC_JS_THREW_STRING)" location: "<unknown>" data: no]
 fDone(XMLHttpRequest readyState=4 status=200)timeplot-bundle.j... (line 177)
 _onReadyStateChange(XMLHttpRequest readyState=4 status=200, function(), function())simile-ajax-bundl... (line 2429)
 onreadystatechange()
+}}}
 
 === XML Examples ===
 
@@ -129,25 +133,27 @@ onreadystatechange()
 }}}
 
 == JSON Data Format ==
+See [http://json.org] for general information about JSON.
 
 The JSON format used for Timeline includes the above attributes in the following format:
 
-Everything is contained in a single anonymous base hash *`{}`* The base hash can include the Timeline attributes listed above as key : value pairs:
+_Everything_ is contained in a single base object *`{}`* The base object can include the Timeline attributes:
  * wiki-url 
  * wiki-section
  * date-time-format
  
-The base hash also contains the key _events_. Its value is an array of _event_ hash elements. The event elements can be in any order. Each event hash can include the event attributes listed above as key : value pairs
+The base object also contains the _events_ attribute. Its value is an array of _event_ objects. The events can be in any order, they do not have to be ordered by date.
 
-Each event element can include any of the event attributes listed above. For example:
+Each event object can include the event attributes listed above as key : value pairs. For example:
  * start, latestStart, earliestEnd, etc
- * description is also stored as member of the event hash. 
+ * description is also stored as member of the event object. 
 
-As noted in the Event attributes section above, the JSON data format will accept references to the Javascript Date object as an alternative to date strings.
+As noted in the Event attributes section above, the Timeline JSON data format will accept references to the Javascript Date object as an alternative to date strings. Note that your data set will no longer strictly qualify as JSON if you include Date objects in it. (But it will load faster!)
 
+=== Caveats ===
 JSON true, false values must not include quotes. See durationEvent, below.
 
-JSON arrays and hashes should _not_ have trailing commas before closing brackets or braces. If present, they will cause problems with some JS engines. Eg, the one in Internet Explorer. 
+JSON arrays and objects should _not_ have trailing commas before closing brackets or braces. If present, they will cause problems with some JS engines. Eg, the one in Internet Explorer. 
 
 === JSON Examples ===
 
@@ -160,13 +166,14 @@ JSON arrays and hashes should _not_ have trailing commas before closing brackets
     {
        'start':"Sat May 20 1961 00:00:00 GMT-0600",
        'title':"'Bay of Pigs' Invasion"
-       'durationEvent':false
+       'durationEvent':false // Notes: not "false". And no trailing comma.
      }, {
        'start':"Wed May 01 1963 00:00:00 GMT-0600" ,
        'end':"Sat Jun 01 1963 00:00:00 GMT-0600" ,
        'durationEvent':true,
        'title':"Oswald moves to New Orleans",
-       'description':"Oswald moves to New Orleans, and finds employment at the William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>"
+       'description':"Oswald moves to New Orleans, and finds employment at the
+William B. Riley Coffee Company. <i>ref. Treachery in Dallas, p 320</i>"
      }, {
       ...
      } ]    // Note: Do NOT include a trailing comma! (Breaks on IE)
