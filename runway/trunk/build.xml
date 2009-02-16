@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="runway" default="build" basedir=".">
+  <property file="${basedir}/build-settings.properties" />
+  <property file="${basedir}/local-build-settings.properties" />
+  
+  <taskdef resource="flexTasks.tasks"
+           classpath="${FLEX_HOME}ant/lib/flexTasks.jar" />
+
+  <property name="dir.src"     value="${basedir}/src/" />
+  <property name="dir.src.as"  value="${dir.src}as/" />
+  <property name="dir.src.api" value="${dir.src}web/api/" />
+  
+  <property name="dir.lib"     value="${basedir}/lib/" />
+  <property name="dir.lib.as"  value="${dir.lib}as/" />
+  
+  <property name="dir.build"   value="${basedir}/build/" />
+
+  <!-- =================================================================== -->
+  <target name="prepare">
+    <mkdir dir="${dir.build}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <target name="build" depends="prepare">
+    <path id="files.as">
+      <fileset dir="${dir.src.as}">
+        <include name="**/**"/>
+      </fileset>
+    </path>
+    
+    <pathconvert 
+      property="files.classes" 
+      pathsep=" " 
+      dirsep="." 
+      refid="files.as">
+      <map from="${dir.src.as}/" to="" />
+      <mapper>
+         <chainedmapper><globmapper from="*.as" to="*" /></chainedmapper>
+      </mapper>
+    </pathconvert>
+    
+    <mxmlc file="${dir.src.as}org/simileWidgets/runway/${Name}Widget.as" output="${dir.build}/${name}.swf">
+      <target-player>10.0.12.36</target-player>
+      
+      <source-path path-element="${dir.src.as}"/>
+      
+      <compiler.library-path dir="${dir.lib.as}">
+        <include name="flare.swc" />
+      </compiler.library-path>
+    </mxmlc>
+    
+    <copy todir="${dir.src.api}swf">
+      <fileset dir="${dir.build}">
+        <include name="*.swf"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- =================================================================== -->
+  <target name="clean">
+    <delete dir="${dir.build}"/>
+  </target>
+
+</project>

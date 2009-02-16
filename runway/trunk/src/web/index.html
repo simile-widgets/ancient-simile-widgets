@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Simile Widgets - Runway</title>
+    <script src="api/runway-api.js" language="javascript"></script>
+    <style>
+        body { margin: 0px; overflow:hidden }
+        #the-widget { height: 400px; }
+    </style>
+    
+    <script language="JavaScript" type="text/javascript">
+        var widget;
+        function onLoad() {
+            var div = document.getElementById("the-widget");
+            widget = Runway.createOrShowInstaller(div);
+
+        }
+        
+        function doIt() {
+            if (widget != null) {
+                widget.setRecords([
+                    {   image: "http://www.freebase.com/api/trans/image_thumb/guid/9202a8c04000641f800000000a18182e?mode=fillcrop&maxheight=200&maxwidth=200",
+                        title: "Anatomy for the Artist"
+                    },
+                    {   image: "http://www.freebase.com/api/trans/image_thumb/guid/9202a8c04000641f800000000a1818ab?mode=fillcrop&maxheight=200&maxwidth=200",
+                        title: "intern"
+                    },
+                    {   image: "http://www.freebase.com/api/trans/image_thumb/wikipedia/images/en_id/8855635?mode=fillcrop&maxheight=200&maxwidth=200",
+                        title:  "Interpreter of Maladies"
+                    }
+                ]);
+            }
+        }
+    </script>
+</head>
+<body onload="onLoad();">
+    <div id="the-widget"></div>
+    <div>
+        <button onclick="doIt();">do it</button>
+    </div>
+</body>
+</html>
