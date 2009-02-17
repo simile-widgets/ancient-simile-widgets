@@ -1,12 +1,12 @@
 package org.simileWidgets.runway {
     import flash.display.*;
+    import flash.geom.*;
     import flash.events.Event;
     import flash.events.IOErrorEvent;
     import flash.text.TextField;
     import flash.text.TextFormat;
     import flash.text.TextFormatAlign;
     import flash.system.LoaderContext;
-    import flash.geom.Matrix;
     import flash.net.URLRequest;
     
     public class SlideRendition extends Sprite {
@@ -75,14 +75,16 @@ package org.simileWidgets.runway {
         }
         
         public function rerender():void {
-            graphics.clear();
             if (_bitmap != null) {
                 var scale:Number = imageScale;
                 _bitmap.scaleX = scale;
                 _bitmap.scaleY = scale;
                 
                 _text.visible = false;
+                _drawReflection();
             } else {
+                graphics.clear();
+                
                 var slideSize:Number = _runway.slideSizePixels;
                 
                 graphics.beginFill(_runway.slideBackgroundColor);
@@ -187,6 +189,23 @@ package org.simileWidgets.runway {
             
             _prototypeBitmapData = new BitmapData(newWidth, newHeight, originalBitmapData.transparent);
             _prototypeBitmapData.draw(originalBitmapData, matrix);
+        }
+        
+        private function _drawReflection():void {
+            var reflectionBitmapData:BitmapData = new BitmapData(_prototypeBitmapData.width, _prototypeBitmapData.height, true, 0x00000000);
+            var rect:Rectangle = new Rectangle(0, 0, _prototypeBitmapData.width, _prototypeBitmapData.height);
+            
+            reflectionBitmapData.fillRect(rect, 0x00000000);
+            reflectionBitmapData.copyPixels(_prototypeBitmapData, rect, new Point(), _runway.reflectionMask);
+            
+            var transform:Matrix = new Matrix();
+            transform.scale(imageScale, -imageScale);
+            transform.translate(0, _prototypeBitmapData.height);
+            
+            graphics.clear();
+            graphics.beginBitmapFill(reflectionBitmapData, transform, false);
+            graphics.drawRect(0, scaledHeight, scaledWidth, scaledHeight);
+            graphics.endFill();
         }
         
         private function _disposeLoader():void {

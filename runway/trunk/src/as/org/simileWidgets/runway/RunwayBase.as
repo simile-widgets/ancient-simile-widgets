@@ -19,8 +19,8 @@ package org.simileWidgets.runway {
         protected var _tilt:Number = 60;           // degrees
         protected var _horizon:Number = 0.5;       // of container's height, from top
         
-        protected var _reflectivity:Number = 0.7;      // alpha of reflection
-        protected var _reflectionExtent:Number = 0.5;  // of slideSize, how far the reflection extents until it fades to nothing
+        protected var _reflectivity:Number = 0.5;      // alpha of reflection
+        protected var _reflectionExtent:Number = 0.6;  // of slideSize, how far the reflection extents until it fades to nothing
         protected var _reflectionTint:String = null;
         
         protected var _backgroundGradient:String = "double";
@@ -52,6 +52,8 @@ package org.simileWidgets.runway {
         protected var _mask:Sprite;
         protected var _platformView:Sprite;
         protected var _platform:Sprite;
+        
+        protected var _reflectionMask:BitmapData;
         
         public function RunwayBase(boundingWidth:Number, boundingHeight:Number) {
             this.boundingWidth = boundingWidth;
@@ -214,8 +216,48 @@ package org.simileWidgets.runway {
             return _centerSpreadPixels;
         }
         
+        public function get reflectionMask():BitmapData {
+            if (_reflectionMask == null) {
+                var size:Number = Runway.MAX_SLIDE_SIZE; //slideSizePixels;
+                
+                var gradientMatrix:Matrix = new Matrix();
+                var gradientSprite:Sprite = new Sprite();
+                
+                gradientMatrix.createGradientBox(
+                    size, 
+                    size * reflectionExtent, 
+                    Math.PI/2, 
+                    0, 
+                    size * (1.0 - reflectionExtent)
+                );
+                gradientSprite.graphics.beginGradientFill(
+                    GradientType.LINEAR, 
+                    [0xFFFFFF, 0xFFFFFF], 
+                    [0, reflectivity], 
+                    [0, 255], 
+                    gradientMatrix
+                );
+                gradientSprite.graphics.drawRect(
+                    0, 
+                    size * (1.0 - reflectionExtent), 
+                    size, 
+                    size * reflectionExtent
+                );
+                gradientSprite.graphics.endFill();
+                
+                _reflectionMask = new BitmapData(size, size, true, 0x00000000);
+                _reflectionMask.draw(gradientSprite, new Matrix());
+            }
+            return _reflectionMask;
+        }
+        
         protected function _ensureCleanSettings():Boolean {
             if (_settingsDirty) {
+                if (_reflectionMask != null) {
+                    _reflectionMask.dispose();
+                    _reflectionMask = null;
+                }
+                
                 _recalculate();
                 return true;
             }
