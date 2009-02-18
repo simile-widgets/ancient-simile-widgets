@@ -29,6 +29,7 @@
     
         var javascriptFiles = [
             "runway.js",
+            "dispatcher.js",
             "flash.js"
         ];
         var cssFiles = [

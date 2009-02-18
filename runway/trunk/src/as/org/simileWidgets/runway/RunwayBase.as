@@ -25,9 +25,9 @@ package org.simileWidgets.runway {
         
         protected var _backgroundGradient:String = "double";
         protected var _backgroundColor:uint = 0x0;
-        protected var _backgroundColorTop:uint = 0x0;
-        protected var _backgroundColorMiddle:uint = 0x444444;
-        protected var _backgroundColorBottom:uint = 0x222222;
+        protected var _backgroundColorTop:uint = 0xdddddd; //0x0;
+        protected var _backgroundColorMiddle:uint = 0xffffff;
+        protected var _backgroundColorBottom:uint = 0xddddff; //0x222222;
         
         protected var _backgroundImageURL:String = null;
         protected var _backgroundImageAlign:String = "middle center";
