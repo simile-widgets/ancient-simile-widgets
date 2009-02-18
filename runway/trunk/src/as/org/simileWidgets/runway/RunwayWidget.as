@@ -13,7 +13,7 @@ package org.simileWidgets.runway {
             stage.align = flash.display.StageAlign.TOP_LEFT;
             stage.addEventListener(Event.RESIZE, resizeListener);
             
-            _runway = new Runway(stage.stageWidth, stage.stageHeight);
+            _runway = new Runway(stage.stageWidth, stage.stageHeight, new Theme(null), new Geometry(true, 0));
             addChild(_runway);
             
             if (ExternalInterface.available) {
