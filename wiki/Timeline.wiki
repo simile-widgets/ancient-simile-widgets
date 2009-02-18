@@ -62,6 +62,7 @@ The Timeline library is called by client software on your html page. Your client
  * http://timeline.to/ - Universal Timeline Aggregator - Displays Atom and RSS feeds
 
 === Sites and Software incorporating Timelines ===
+ * [http://code.google.com/p/timemap/ TimeMap] - Integrates Timeline with Google Maps
  * http://mqlx.com/~david/parallax/ - search engine for freebase.org
  * http://semantic-mediawiki.org/wiki/Help:Timeline_format - Semantic MediaWiki 
  * http://jrochelle.googlepages.com/97g-timeline-about.html Google Spreadsheet - has a timeline gadget based on Timeline
