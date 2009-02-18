@@ -7,6 +7,8 @@ Please send additional examples to the mailing list
 
 = Timeline in the Wild =
 
+== Government ==
+ * The US Presidential website [http://www.recovery.gov/ Recovery.gov] features the Timeline software at the bottom of the site's home page.
 == History ==
  * [http://home.myuw.net/jjcrump/Timelines/itinerary/JohnItinerary.html The Itinerary of King John] Demonstrates integration with Google Maps to show King John's itinerary. 
  * [http://aotw.org/timeline.php The Maryland Campaign of 1862]
@@ -22,6 +24,10 @@ Please send additional examples to the mailing list
  * [http://www3.telus.net/warfsworld/html/travel/travel_timeline.htm Warf's World travels]
  * [http://jimmymacofphoenix.com/timeline/timeline.aspx Visualization of blog posts]
  * [http://www.freebase.com/view/user/dfhuynh/default_domain/views/steven_spielberg_s_movies_by_release_dates Steven Spielberg's Movies by Release Dates] via Freebase integration
+
+== Personal ==
+ * [http://www.mensching.info/family/hermine/hermine-timeline.html Hermine, meine persönliche Dokumentation]
+
 == Politics ==
  * [http://debatehub.c-span.org/ C-SPAN] C-SPAN 2008 Presidential debate Timeline
 
@@ -30,9 +36,6 @@ Please send additional examples to the mailing list
  * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
  * [http://www.oe-files.de/gmaps/eqmashup.html Mashup] of an Earthquake Timeline with Google map of the locations by Jörn Clausen
  * [http://hominin.net/timeline/ Timeline] of Hominins
-
-== Personal ==
- * [http://www.mensching.info/family/hermine/hermine-timeline.html Hermine, meine persönliche Dokumentation]
 
 = Services using Timeline =
  * [http://freebase.com Freebase.com] supports Timeline "views" of data
