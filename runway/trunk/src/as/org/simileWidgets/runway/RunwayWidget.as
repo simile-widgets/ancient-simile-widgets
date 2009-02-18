@@ -19,6 +19,10 @@ package org.simileWidgets.runway {
             if (ExternalInterface.available) {
                 Security.allowDomain('*'); // This allows Javascript from any web page to call us.
                 setupCallbacks();
+                
+                if (root.loaderInfo.parameters.hasOwnProperty("onReady")) {
+                    ExternalInterface.call(root.loaderInfo.parameters["onReady"]);
+                }
             } else {
                 trace("External interface is not available for this container.");
             }
