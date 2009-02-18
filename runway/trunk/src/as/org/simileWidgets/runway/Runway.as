@@ -8,11 +8,16 @@ package org.simileWidgets.runway {
     import flare.animate.*;
     
     public class Runway extends RunwayBase {
-        static internal const MAX_SLIDE_SIZE:Number = 400; // pixels
-        
         static internal const SIDE_LEFT:int = 0;
         static internal const SIDE_RIGHT:int = 1;
         static internal const SIDE_CENTER:int = 2;
+        
+        static internal const THEMES:Object = {
+            "arctic" : {
+            },
+            "pitchblack" : {
+            }
+        };
         
         private var _leftConveyer:Sprite;
         private var _rightConveyer:Sprite;
@@ -22,8 +27,8 @@ package org.simileWidgets.runway {
         private var _slides:Array = [];
         private var _slideFrames:Array = [];
         
-        public function Runway(boundingWidth:Number, boundingHeight:Number) {
-            super(boundingWidth, boundingHeight);
+        public function Runway(boundingWidth:Number, boundingHeight:Number, theme:Theme, geometry:Geometry) {
+            super(boundingWidth, boundingHeight, theme, geometry);
             
             _leftConveyer = new Sprite();
             _platform.addChild(_leftConveyer);

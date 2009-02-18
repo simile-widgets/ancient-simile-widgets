@@ -54,7 +54,7 @@ package org.simileWidgets.runway {
         }
         
         public function prepare():void {
-            if (_mode === MODE_START) {
+            if (false) { //if (_mode === MODE_START) {
                 var imageURL:String = _slide.imageURL;
                 if (imageURL == null) {
                     _mode = MODE_NO_IMAGE;
@@ -75,25 +75,23 @@ package org.simileWidgets.runway {
         }
         
         public function rerender():void {
+            graphics.clear();
             if (_bitmap != null) {
                 var scale:Number = imageScale;
                 _bitmap.scaleX = scale;
                 _bitmap.scaleY = scale;
                 
                 _text.visible = false;
-                _drawReflection();
             } else {
-                graphics.clear();
+                var slideSize:Number = _runway.geometry.slideSizePixels;
                 
-                var slideSize:Number = _runway.slideSizePixels;
-                
-                graphics.beginFill(_runway.slideBackgroundColor);
-                graphics.lineStyle(_runway.slideBorderThickness, _runway.slideBorderColor);
+                graphics.beginFill(_runway.theme.slideBackgroundColor);
+                graphics.lineStyle();
                 graphics.drawRect(0, 0, slideSize, slideSize);
                 graphics.endFill();
                 
                 _text.x = 0;
-                _text.y = 0;
+                _text.y = 2 * slideSize / 3;
                 _text.width = slideSize;
                 _text.height = slideSize;
                 _text.visible = true;
@@ -119,19 +117,20 @@ package org.simileWidgets.runway {
                 
                 var format:TextFormat = new TextFormat();
                 format.font = "Arial";
-                format.size = 20;
+                format.size = 12;
                 format.bold = true;
                 format.align = TextFormatAlign.CENTER;
                 
                 _text.setTextFormat(format);
             }
+            _drawReflection();
         }
         
         public function get scaledWidth():Number {
             if (_bitmap != null) {
                 return Math.round(_prototypeBitmapData.width * imageScale);
             } else {
-                return _runway.slideSizePixels;
+                return _runway.geometry.slideSizePixels;
             }
         }
         
@@ -139,13 +138,13 @@ package org.simileWidgets.runway {
             if (_bitmap != null) {
                 return Math.round(_prototypeBitmapData.height * imageScale);
             } else {
-                return _runway.slideSizePixels;
+                return _runway.geometry.slideSizePixels;
             }
         }
         
         public function get imageScale():Number {
             if (_bitmap != null) {
-                var slideSize:Number = _runway.slideSizePixels;
+                var slideSize:Number = _runway.geometry.slideSizePixels;
                 return Math.min(1.0, slideSize / Math.max(_prototypeBitmapData.width, _prototypeBitmapData.height));
             } else {
                 return 0;
@@ -177,8 +176,8 @@ package org.simileWidgets.runway {
         private function _preparePrototypeBitmapData():void {
             var originalBitmapData:BitmapData = Bitmap(_loader.content).bitmapData;
             
-            var scaleWidth:Number = Math.max(1.0, Runway.MAX_SLIDE_SIZE / Math.max(1, originalBitmapData.width));
-            var scaleHeight:Number = Math.max(1.0, Runway.MAX_SLIDE_SIZE / Math.max(1, originalBitmapData.height));
+            var scaleWidth:Number = Math.max(1.0, _runway.geometry.maxSlideSizePixels / Math.max(1, originalBitmapData.width));
+            var scaleHeight:Number = Math.max(1.0, _runway.geometry.maxSlideSizePixels / Math.max(1, originalBitmapData.height));
             var scale:Number = Math.min(scaleWidth, scaleHeight);
             
             var newWidth:Number = Math.round(originalBitmapData.width * scale);
@@ -191,11 +190,10 @@ package org.simileWidgets.runway {
             _prototypeBitmapData.draw(originalBitmapData, matrix);
         }
         
-        private function _drawReflection():void {
+        private function _drawReflection2():void {
             var reflectionBitmapData:BitmapData = new BitmapData(_prototypeBitmapData.width, _prototypeBitmapData.height, true, 0x00000000);
             var rect:Rectangle = new Rectangle(0, 0, _prototypeBitmapData.width, _prototypeBitmapData.height);
             
-            reflectionBitmapData.fillRect(rect, 0x00000000);
             reflectionBitmapData.copyPixels(_prototypeBitmapData, rect, new Point(), _runway.reflectionMask);
             
             var transform:Matrix = new Matrix();
@@ -203,8 +201,48 @@ package org.simileWidgets.runway {
             transform.translate(0, _prototypeBitmapData.height);
             
             graphics.clear();
-            graphics.beginBitmapFill(reflectionBitmapData, transform, false);
+            graphics.beginBitmapFill(reflectionBitmapData, transform);
             graphics.drawRect(0, scaledHeight, scaledWidth, scaledHeight);
+            graphics.endFill();
+        }
+        
+        private function _drawReflection():void {
+            if (_bitmap != null) {
+                _reflectPrototypeBitmap();
+            } else {
+                _reflectSelf();
+            }
+        }
+        
+        private function _reflectPrototypeBitmap():void {
+            _reflectBitmapData(_prototypeBitmapData, imageScale, scaledHeight);
+        }
+        
+        private function _reflectSelf():void {
+            _reflectBitmapDrawable(this, scaledWidth, scaledHeight, 1, scaledHeight);
+        }
+        
+        private function _reflectBitmapDrawable(bitmapDrawable:IBitmapDrawable, width:int, height:int, scale:Number, top:Number):void {
+            var targetBitmapData:BitmapData = new BitmapData(width, height, true, 0x00000000);
+            targetBitmapData.draw(bitmapDrawable, new Matrix());
+            
+            _reflectBitmapData(targetBitmapData, scale, top);
+            
+            targetBitmapData.dispose();
+        }
+        
+        private function _reflectBitmapData(originalBitmapData:BitmapData, scale:Number, top:Number):void {
+            var reflectionBitmapData:BitmapData = new BitmapData(originalBitmapData.width, originalBitmapData.height, true, 0x00000000);
+            var rect:Rectangle = new Rectangle(0, 0, originalBitmapData.width, originalBitmapData.height);
+            
+            reflectionBitmapData.copyPixels(originalBitmapData, rect, new Point(), _runway.reflectionMask);
+            
+            var transform:Matrix = new Matrix();
+            transform.scale(scale, -scale);
+            transform.translate(0, originalBitmapData.height);
+            
+            graphics.beginBitmapFill(reflectionBitmapData, transform);
+            graphics.drawRect(0, top, originalBitmapData.width * scale, originalBitmapData.height * scale);
             graphics.endFill();
         }
         

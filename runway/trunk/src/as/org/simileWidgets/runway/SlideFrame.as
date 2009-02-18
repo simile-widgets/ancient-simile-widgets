@@ -31,30 +31,30 @@ package org.simileWidgets.runway {
         }
         
         protected function _calculateStandingPosition(side:int, index:int):Object {
-            var slideSize:int = _runway.slideSizePixels;
+            var slideSize:int = _runway.geometry.slideSizePixels;
             
             switch (side) {
             case Runway.SIDE_LEFT:
                 return {
-                    x: _runway.spreadPixels * index - _runway.centerSpreadPixels,
+                    x: _runway.geometry.spreadPixels * index - _runway.geometry.centerSpreadPixels,
                     y: 0,
-                    z: _runway.recedePixels,
-                    rotationY: -_runway.tilt
+                    z: _runway.geometry.recedePixels,
+                    rotationY: -_runway.geometry.tilt
                 };
             case Runway.SIDE_RIGHT:
                 return {
-                    x: _runway.spreadPixels * index + _runway.centerSpreadPixels - 
-                        Math.round(slideSize * Math.cos(_runway.tilt * Math.PI / 180)),
+                    x: _runway.geometry.spreadPixels * index + _runway.geometry.centerSpreadPixels - 
+                        Math.round(slideSize * Math.cos(_runway.geometry.tilt * Math.PI / 180)),
                     y: 0,
-                    z: _runway.recedePixels + 
-                        Math.round(slideSize * Math.sin(_runway.tilt * Math.PI / 180)),
-                    rotationY: _runway.tilt
+                    z: _runway.geometry.recedePixels + 
+                        Math.round(slideSize * Math.sin(_runway.geometry.tilt * Math.PI / 180)),
+                    rotationY: _runway.geometry.tilt
                 };
             
             case Runway.SIDE_CENTER:
             default:
                 return {
-                    x: _runway.spreadPixels * index - Math.round(slideSize / 2),
+                    x: _runway.geometry.spreadPixels * index - Math.round(slideSize / 2),
                     y: 0,
                     z: 0,
                     rotationY: 0
