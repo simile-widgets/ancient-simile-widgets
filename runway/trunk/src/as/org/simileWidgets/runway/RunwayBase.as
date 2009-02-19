@@ -93,7 +93,9 @@ package org.simileWidgets.runway {
                     [0xFFFFFF, 0xFFFFFF], 
                     [0, _theme.reflectivity], 
                     [32, 224], 
-                    gradientMatrix
+                    gradientMatrix,
+                    SpreadMethod.PAD,
+                    InterpolationMethod.RGB
                 );
                 gradientSprite.graphics.drawRect(
                     0, 
@@ -148,7 +150,7 @@ package org.simileWidgets.runway {
                     GradientType.LINEAR,
                     [ _theme.backgroundColorTop, _theme.backgroundColorBottom ], 
                     [ 1.0, 1.0 ],
-                    [ 0x00, 0xFF ], 
+                    [ 0, 160 ], 
                     mtx, 
                     SpreadMethod.PAD
                 );
@@ -157,7 +159,7 @@ package org.simileWidgets.runway {
                     GradientType.LINEAR,
                     [ _theme.backgroundColorTop, _theme.backgroundColorMiddle, _theme.backgroundColorBottom ], 
                     [ 1.0, 1.0, 1.0 ],
-                    [ 0x00, Math.round(_geometry.horizon * 0xFF), 0xFF ], 
+                    [ 0x00, 80, 160 ], 
                     mtx, 
                     SpreadMethod.PAD
                 );
@@ -175,13 +177,7 @@ package org.simileWidgets.runway {
             _platformView.y = 0;
             _platformView.transform.perspectiveProjection.projectionCenter = new Point(0, boundingHeight / 2);
             _platformView.transform.perspectiveProjection.fieldOfView = 45;
-            
-            _platformView.graphics.clear();
-            _platformView.graphics.lineStyle(1, 0xFFFFFF);
-            _platformView.graphics.moveTo(0, 0);
-            _platformView.graphics.lineTo(0, boundingHeight);
-            _platformView.graphics.moveTo(0, boundingHeight / 2);
-            _platformView.graphics.lineTo(boundingWidth / 2, boundingHeight / 2);
+            _platformView.transform.perspectiveProjection.focalLength = boundingHeight * 1.5;
             
             _platform.y = Math.round((boundingHeight - _geometry.slideSizePixels) / 3);
         }

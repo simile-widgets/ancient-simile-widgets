@@ -47,6 +47,9 @@ package org.simileWidgets.runway {
         public function setRecords(records:Object):void {
                 trace("Adding " + records.length);
             if (_slides.length == 0) {
+                var center:int = 2;//Math.round(records.length / 2);
+                _platform.x = -_geometry.spreadPixels * center;
+                
                 for (var i:int = 0; i < records.length; i++) {
                     var record:Object = records[i];
                     if (!("id" in record)) {
@@ -59,9 +62,15 @@ package org.simileWidgets.runway {
                     _slides.push(slide);
                     _slideFrames.push(slideFrame);
                     
-                    _rightConveyer.addChildAt(slideFrame, 0);
+                    if (i == center) {
+                        _centerStand.addChild(slideFrame);
+                    } else if (i < center) {
+                        _leftConveyer.addChild(slideFrame);
+                    } else {
+                        _rightConveyer.addChildAt(slideFrame, 0);
+                    }
                     
-                    slideFrame.setStandingPosition(i == 0 ? SIDE_CENTER : SIDE_RIGHT, i);
+                    slideFrame.setStandingPosition(i == center ? SIDE_CENTER : (i < center ? SIDE_LEFT : SIDE_RIGHT), i);
                     slideFrame.prepare();
                 }
                 trace("Added " + records.length);

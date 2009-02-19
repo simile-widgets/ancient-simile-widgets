@@ -14,10 +14,10 @@ package org.simileWidgets.runway {
         protected var _slideSize:Number;           // in pixels if fixedSlideSize is true, 
                                                    // or otherwise, ratio of container's height
                                     
-        protected var _spread:Number = 0.5;        // of slideSize
-        protected var _centerSpread:Number = 0.5;  // of slideSize
-        protected var _recede:Number = 0.5;        // of slideSize
-        protected var _tilt:Number = 60;           // degrees
+        protected var _spread:Number = 0.6;        // of slideSize
+        protected var _centerSpread:Number = 0.7;  // of slideSize
+        protected var _recede:Number = 1.25;       // of slideSize
+        protected var _tilt:Number = 70;           // degrees
         protected var _horizon:Number = 0.5;       // of container's height, from top
         
         /*
