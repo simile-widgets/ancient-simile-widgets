@@ -4,6 +4,7 @@ package org.simileWidgets.runway {
     public class SlideFrame extends Sprite {
         private var _runway:Runway;
         private var _rendition:SlideRendition;
+        private var _side:int;
         
         public function SlideFrame(runway:Runway, slide:Slide) {
             _runway = runway;
@@ -23,11 +24,19 @@ package org.simileWidgets.runway {
         }
         
         public function setStandingPosition(side:int, index:int):void {
+            _side = side;
+            
             var p:Object = _calculateStandingPosition(side, index);
             this.x = p.x;
             this.y = p.y;
             this.z = p.z;
             this.rotationY = p.rotationY;
+            
+            _positionRendition();
+        }
+        
+        public function onRenditionChanged():void {
+            _positionRendition();
         }
         
         protected function _calculateStandingPosition(side:int, index:int):Object {
@@ -59,6 +68,15 @@ package org.simileWidgets.runway {
                     z: 0,
                     rotationY: 0
                 };
+            }
+        }
+        
+        protected function _positionRendition():void {
+            _rendition.y = _runway.geometry.slideSizePixels - _rendition.scaledHeight;
+            if (_side == Runway.SIDE_RIGHT) {
+                _rendition.x = _runway.geometry.slideSizePixels - _rendition.scaledWidth;
+            } else if (_side == Runway.SIDE_CENTER) {
+                _rendition.x = (_runway.geometry.slideSizePixels - _rendition.scaledWidth) / 2;
             }
         }
     }

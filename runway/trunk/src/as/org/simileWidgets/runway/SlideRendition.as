@@ -153,7 +153,7 @@ package org.simileWidgets.runway {
         }
         
         private function onImageLoaded(e:Event):void {
-            trace("Loaded image " + _slide.imageURL);
+            //trace("Loaded image " + _slide.imageURL);
             
             _preparePrototypeBitmapData();
             _bitmap = new Bitmap(_prototypeBitmapData);
@@ -163,10 +163,12 @@ package org.simileWidgets.runway {
             _mode = MODE_GOOD_IMAGE;
             
             rerender();
+            
+            _slideFrame.onRenditionChanged();
         }
         
         private function onImageError(e:Event):void {
-            trace("Error loading image " + _slide.imageURL);
+            //trace("Error loading image " + _slide.imageURL);
             
             _disposeLoader();
             _mode = MODE_BAD_IMAGE;
@@ -233,22 +235,10 @@ package org.simileWidgets.runway {
         }
         
         private function _reflectBitmapData(originalBitmapData:BitmapData, scale:Number, top:Number):void {
-            var reflectionBitmapData:BitmapData = new BitmapData(originalBitmapData.width, originalBitmapData.height, true, 0x00000000);
+            var reflectionBitmapData:BitmapData = new BitmapData(originalBitmapData.width, originalBitmapData.height, false, _runway.theme.effectiveBackgroundColorBottom);
             var rect:Rectangle = new Rectangle(0, 0, originalBitmapData.width, originalBitmapData.height);
             
-            reflectionBitmapData.copyPixels(originalBitmapData, rect, new Point(), _runway.reflectionMask);
-            
-            var multiplier:Number = 0.9;
-            var tint:uint = _runway.theme.reflectionTint;
-            var r:uint = ((tint >> 16) & 0xFF);
-            var g:uint = ((tint >> 8) & 0xFF);
-            var b:uint = (tint & 0xFF);
-            var m:uint = Math.min(r, Math.min(g, b));
-            var colorTransform:ColorTransform = new ColorTransform(
-                multiplier, multiplier, multiplier, 1,
-                (r - m) / 2, (g - m) / 2, (b - m) / 2
-            );
-            reflectionBitmapData.colorTransform(rect, colorTransform);
+            reflectionBitmapData.copyPixels(originalBitmapData, rect, new Point(), _runway.reflectionMask, null, true);
             
             var transform:Matrix = new Matrix();
             transform.scale(scale, -scale);

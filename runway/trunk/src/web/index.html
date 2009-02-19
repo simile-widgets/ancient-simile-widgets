@@ -7,24 +7,14 @@
         body { margin: 0px; overflow:hidden; background: #ddf; }
         #the-widget { height: 400px; }
     </style>
-    
+    <script language="JavaScript" type="text/javascript" src="index.js"></script>
     <script language="JavaScript" type="text/javascript">
         var widget;
         function onLoad() {
             var div = document.getElementById("the-widget");
             widget = Runway.createOrShowInstaller(div, {
                 onReady: function() {
-                    widget.setRecords([
-                        {   image: "http://www.freebase.com/api/trans/image_thumb/guid/9202a8c04000641f800000000a18182e?mode=fillcrop&maxheight=200&maxwidth=200",
-                            title: "Anatomy for the Artist"
-                        },
-                        {   image: "http://www.freebase.com/api/trans/image_thumb/guid/9202a8c04000641f800000000a1818ab?mode=fillcrop&maxheight=200&maxwidth=200",
-                            title: "intern"
-                        },
-                        {   image: "http://www.freebase.com/api/trans/image_thumb/wikipedia/images/en_id/8855635?mode=fillcrop&maxheight=200&maxwidth=200",
-                            title:  "Interpreter of Maladies"
-                        }
-                    ]);
+                    widget.setRecords(records);
                 }
             });
         }
