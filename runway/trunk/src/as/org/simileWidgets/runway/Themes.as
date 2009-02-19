@@ -4,9 +4,9 @@ package org.simileWidgets.runway {
         
         public static var names:Object = {
             "arctic" : {
-                "reflectivity" : 0.5,
-                "reflectionExtent" : 0.6,
-                "reflectionTint" : null,
+                "reflectivity" : 0.8,
+                "reflectionExtent" : 0.4,
+                "reflectionTint" : 0xddddff,
                 
                 "backgroundGradient" :  Theme.GRADIENT_DOUBLE,
                 "backgroundColor" : 0x0,

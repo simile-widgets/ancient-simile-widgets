@@ -77,7 +77,7 @@ package org.simileWidgets.runway {
         public function get reflectionMask():BitmapData {
             if (_reflectionMask == null) {
                 var size:Number = _geometry.maxSlideSizePixels;
-                trace(size + " " + _theme.reflectionExtent);
+                
                 var gradientMatrix:Matrix = new Matrix();
                 var gradientSprite:Sprite = new Sprite();
                 
@@ -92,7 +92,7 @@ package org.simileWidgets.runway {
                     GradientType.LINEAR, 
                     [0xFFFFFF, 0xFFFFFF], 
                     [0, _theme.reflectivity], 
-                    [0, 255], 
+                    [32, 224], 
                     gradientMatrix
                 );
                 gradientSprite.graphics.drawRect(

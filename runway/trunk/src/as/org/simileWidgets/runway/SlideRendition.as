@@ -25,6 +25,7 @@ package org.simileWidgets.runway {
         
         private var _text:TextField;
         private var _loader:Loader;
+        
         private var _prototypeBitmapData:BitmapData;
         private var _bitmap:Bitmap;
         
@@ -54,7 +55,7 @@ package org.simileWidgets.runway {
         }
         
         public function prepare():void {
-            if (false) { //if (_mode === MODE_START) {
+            if (_mode === MODE_START) {
                 var imageURL:String = _slide.imageURL;
                 if (imageURL == null) {
                     _mode = MODE_NO_IMAGE;
@@ -236,6 +237,18 @@ package org.simileWidgets.runway {
             var rect:Rectangle = new Rectangle(0, 0, originalBitmapData.width, originalBitmapData.height);
             
             reflectionBitmapData.copyPixels(originalBitmapData, rect, new Point(), _runway.reflectionMask);
+            
+            var multiplier:Number = 0.9;
+            var tint:uint = _runway.theme.reflectionTint;
+            var r:uint = ((tint >> 16) & 0xFF);
+            var g:uint = ((tint >> 8) & 0xFF);
+            var b:uint = (tint & 0xFF);
+            var m:uint = Math.min(r, Math.min(g, b));
+            var colorTransform:ColorTransform = new ColorTransform(
+                multiplier, multiplier, multiplier, 1,
+                (r - m) / 2, (g - m) / 2, (b - m) / 2
+            );
+            reflectionBitmapData.colorTransform(rect, colorTransform);
             
             var transform:Matrix = new Matrix();
             transform.scale(scale, -scale);
