@@ -173,6 +173,8 @@ package org.simileWidgets.runway {
         }
         
         protected function _setPerspective():void {
+            _platformView.visible = false;
+            
             _platformView.x = boundingWidth / 2;
             _platformView.y = 0;
             _platformView.transform.perspectiveProjection.projectionCenter = new Point(0, boundingHeight / 2);
@@ -180,6 +182,8 @@ package org.simileWidgets.runway {
             _platformView.transform.perspectiveProjection.focalLength = boundingHeight * 1.5;
             
             _platform.y = Math.round((boundingHeight - _geometry.slideSizePixels) / 3);
+            
+            _platformView.visible = true;
         }
     }
 }
