@@ -58,7 +58,7 @@ Runway._Impl.prototype._installUI = function() {
         "FlashVars",            "onReady=" + Runway.Dispatcher.wrap(onReady)
     );
     
-    this._flashObject = document[this._flashObjectID];
+    this._flashObject = document[this._flashObjectID] || window[this._flashObjectID];
 };
 
 Runway._Impl.prototype.getID = function() {
