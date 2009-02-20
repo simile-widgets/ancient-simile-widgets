@@ -8,8 +8,6 @@ package org.simileWidgets.runway {
         
         protected var _reflectivity:Number;      // alpha of reflection
         protected var _reflectionExtent:Number;  // of slideSize, how far the reflection extents until it fades to nothing
-        protected var _reflectionTint:uint;      // an optional hue on the reflection
-        protected var _reflectionBrightness:int; // positive for brighten, negative for darken
         
         protected var _backgroundGradient:String;
         protected var _backgroundColor:uint;
@@ -60,27 +58,6 @@ package org.simileWidgets.runway {
             v = _limit(v, 0.1, 1.0);
             if (_reflectionExtent != v) {
                 _reflectionExtent = v;
-                dirty = true;
-            }
-        }
-        
-        public function get reflectionTint():uint {
-            return _reflectionTint;
-        }
-        public function set reflectionTint(v:uint):void {
-            if (_reflectionTint != v) {
-                _reflectionTint = v;
-                dirty = true;
-            }
-        }
-        
-        public function get reflectionBrightness():int {
-            return _reflectionBrightness;
-        }
-        public function set reflectionBrightness(v:int):void {
-            v = _limit(v, -200, 200);
-            if (_reflectionBrightness != v) {
-                _reflectionBrightness = v;
                 dirty = true;
             }
         }
@@ -138,8 +115,8 @@ package org.simileWidgets.runway {
         
         public function get effectiveBackgroundColorBottom():uint {
             switch (_backgroundGradient) {
-            case "single":
-            case "double":
+            case GRADIENT_SINGLE:
+            case GRADIENT_DOUBLE:
                 return _backgroundColorBottom;
             default:
                 return _backgroundColor;

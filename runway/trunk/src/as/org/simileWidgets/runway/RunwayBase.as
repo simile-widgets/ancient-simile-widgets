@@ -61,6 +61,11 @@ package org.simileWidgets.runway {
             }
         }
         
+        public function setThemeName(themeName:String):void {
+            _theme.resetThemeName(themeName);
+            _backgroundDirty = true;
+        }
+        
         public function get theme():Theme {
             return _theme;
         }
@@ -145,7 +150,7 @@ package org.simileWidgets.runway {
             var mtx:Matrix = new Matrix();
             mtx.createGradientBox(boundingWidth, boundingHeight, Math.PI / 2);
                 
-            if (_theme.backgroundGradient == "single") {
+            if (_theme.backgroundGradient == Theme.GRADIENT_SINGLE) {
                 graphics.beginGradientFill(
                     GradientType.LINEAR,
                     [ _theme.backgroundColorTop, _theme.backgroundColorBottom ], 
@@ -154,7 +159,7 @@ package org.simileWidgets.runway {
                     mtx, 
                     SpreadMethod.PAD
                 );
-            } else if (_theme.backgroundGradient == "double") {
+            } else if (_theme.backgroundGradient == Theme.GRADIENT_DOUBLE) {
                 graphics.beginGradientFill(
                     GradientType.LINEAR,
                     [ _theme.backgroundColorTop, _theme.backgroundColorMiddle, _theme.backgroundColorBottom ], 

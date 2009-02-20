@@ -48,3 +48,13 @@ var records = [
         title: "Waiting"
     }
 ];
+
+function onThemeChange(select) {
+    var themeName = select.options[select.selectedIndex].value;
+    var theme = Runway.themes[themeName];
+    
+    widget.setThemeName(themeName);
+    document.body.style.backgroundColor = theme.bottomColor;
+    document.body.className = "theme-" + themeName;
+    document.getElementById("control-panel").style.backgroundColor = theme.topColor;
+}

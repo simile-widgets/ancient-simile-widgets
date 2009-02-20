@@ -41,6 +41,7 @@ package org.simileWidgets.runway {
         private function setupCallbacks():void {
             try {
                 ExternalInterface.addCallback("setRecords", _runway.setRecords); 
+                ExternalInterface.addCallback("setThemeName", _runway.setThemeName); 
             } catch (e:Error) {
                 trace("Error adding callbacks");
             }
