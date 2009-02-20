@@ -1,26 +1,60 @@
 package org.simileWidgets.runway {
     public class Themes {
-        public static var defaultName:String = "arctic";
+        public static var defaultName:String = "pristine";
         
         public static var names:Object = {
             "arctic" : {
                 "reflectivity" : 0.5,
                 "reflectionExtent" : 0.7,
-                "reflectionTint" : 0xddddff,
-                "reflectionBrightness" : 50,
                 
                 "backgroundGradient" :  Theme.GRADIENT_DOUBLE,
-                "backgroundColor" : 0x0,
-                "backgroundColorTop" : 0xdddddd,
+                "backgroundColorTop" : 0xe8e8e8,
                 "backgroundColorMiddle" : 0xffffff,
-                "backgroundColorBottom" : 0xddddff,
+                "backgroundColorBottom" : 0xe8e8ff,
                 
-                "backgroundImageURL" : null,
-                "backgroundImageAlign" : "middle center",
-                "backgroundImageRepeat" : "repeat",
-                "backgroundImageOpacity" : 1.0,
+                "slideBackgroundColor" : 0xdddddd
+            },
+            "pristine" : {
+                "reflectivity" : 0.5,
+                "reflectionExtent" : 0.7,
                 
-                "slideBackgroundColor" : 0xcccccc
+                "backgroundGradient" :  Theme.GRADIENT_DOUBLE,
+                "backgroundColorTop" : 0xffffff,
+                "backgroundColorMiddle" : 0xe8e8ff,
+                "backgroundColorBottom" : 0xffffff,
+                
+                "slideBackgroundColor" : 0xdddddd
+            },
+            "midnight" : {
+                "reflectivity" : 0.5,
+                "reflectionExtent" : 0.7,
+                
+                "backgroundGradient" :  Theme.GRADIENT_DOUBLE,
+                "backgroundColorTop" : 0x000000,
+                "backgroundColorMiddle" : 0x222222,
+                "backgroundColorBottom" : 0x000000,
+                
+                "slideBackgroundColor" : 0x444444
+            },
+            "sunset" : {
+                "reflectivity" : 0.5,
+                "reflectionExtent" : 0.7,
+                
+                "backgroundGradient" :  Theme.GRADIENT_DOUBLE,
+                "backgroundColorTop" : 0x110022,
+                "backgroundColorMiddle" : 0x330000,
+                "backgroundColorBottom" : 0x220000,
+                
+                "slideBackgroundColor" : 0x444444
+            },
+            "pitchblack" : {
+                "reflectivity" : 0.5,
+                "reflectionExtent" : 0.7,
+                
+                "backgroundGradient" :  Theme.GRADIENT_NONE,
+                "backgroundColor" : 0x0,
+                
+                "slideBackgroundColor" : 0x222222
             }
         };
     }

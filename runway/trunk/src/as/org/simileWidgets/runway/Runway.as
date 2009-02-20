@@ -73,6 +73,13 @@ package org.simileWidgets.runway {
             }
         }
         
+        override public function setThemeName(themeName:String):void {
+            super.setThemeName(themeName);
+            for each (var slideFrame:SlideFrame in _slideFrames) {
+                slideFrame.rerender();
+            }
+        }
+        
         public function focus(index:int):void {
             if (index == _centerIndex || index < 0) {
                 return;

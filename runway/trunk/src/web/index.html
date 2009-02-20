@@ -4,8 +4,26 @@
     <title>Simile Widgets - Runway</title>
     <script src="api/runway-api.js" language="javascript"></script>
     <style>
-        body { margin: 0px; overflow:hidden; background: #ddf; }
+        body { margin: 0px; overflow:hidden; background: white; }
+        #control-panel { padding: 1em; }
         #the-widget { height: 400px; }
+        #content { padding: 1em; }
+        
+        body.theme-pristine {
+            color: black;
+        }
+        body.theme-arctic {
+            color: black;
+        }
+        body.theme-midnight {
+            color: #aaa;
+        }
+        body.theme-sunset {
+            color: #aaa;
+        }
+        body.theme-pitchblack {
+            color: #aaa;
+        }
     </style>
     <script language="JavaScript" type="text/javascript" src="index.js"></script>
     <script language="JavaScript" type="text/javascript">
@@ -21,6 +39,17 @@
     </script>
 </head>
 <body onload="onLoad();">
+    <div id="control-panel">
+        Theme:
+        <select id="the-themes" onchange="onThemeChange(this);">
+            <option value="pristine" selected="true">Pristine</option>
+            <option value="arctic">Arctic</option>
+            <option value="midnight">Midnight</option>
+            <option value="sunset">Sunset</option>
+            <option value="pitchblack">Pitchblack</option>
+        </select>
+    </div>
     <div id="the-widget"></div>
+    <div id="content"></div>
 </body>
 </html>

@@ -35,6 +35,10 @@ package org.simileWidgets.runway {
             _rendition.prepare();
         }
         
+        public function rerender():void {
+            _rendition.rerender();
+        }
+        
         public function setStandingPosition(side:int):void {
             _side = side;
             

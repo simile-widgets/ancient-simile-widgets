@@ -9,6 +9,29 @@ Runway.flashVersion = {
     revision: 12
 };
 
+Runway.themes = {
+    "pristine" : {
+        topColor: "white",
+        bottomColor: "white"
+    },
+    "arctic" : {
+        topColor: "#e8e8e8",
+        bottomColor: "#e8e8ff"
+    },
+    "midnight" : {
+        topColor: "black",
+        bottomColor: "black"
+    },
+    "sunset" : {
+        topColor: "#110022",
+        bottomColor: "#220000"
+    },
+    "pitchblack" : {
+        topColor: "black",
+        bottomColor: "black"
+    }
+};
+
 Runway.hasRightFlashVersion = function() {
     return Runway.Flash.hasVersionOrLater(Runway.flashVersion.major, Runway.flashVersion.minor, Runway.flashVersion.revision);
 };
@@ -67,6 +90,10 @@ Runway._Impl.prototype.getID = function() {
 
 Runway._Impl.prototype.setRecords = function(records) {
     this._flashObject.setRecords(records);
+};
+
+Runway._Impl.prototype.setThemeName = function(themeName) {
+    this._flashObject.setThemeName(themeName);
 };
 
 Runway._Impl.prototype._onReady = function() {
