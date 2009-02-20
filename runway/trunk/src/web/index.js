@@ -54,7 +54,8 @@ function onThemeChange(select) {
     var theme = Runway.themes[themeName];
     
     widget.setThemeName(themeName);
+    
     document.body.style.backgroundColor = theme.bottomColor;
     document.body.className = "theme-" + themeName;
-    document.getElementById("control-panel").style.backgroundColor = theme.topColor;
+    document.getElementById("top-panel").style.backgroundColor = theme.topColor;
 }
