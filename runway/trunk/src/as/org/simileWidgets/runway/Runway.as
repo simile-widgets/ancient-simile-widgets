@@ -24,6 +24,8 @@ package org.simileWidgets.runway {
         private var _slides:Array = [];
         private var _slideFrames:Array = [];
         
+        private var _transition:Transition = null;
+        
         public function Runway(boundingWidth:Number, boundingHeight:Number, theme:Theme, geometry:Geometry) {
             super(boundingWidth, boundingHeight, theme, geometry);
             
@@ -79,6 +81,11 @@ package org.simileWidgets.runway {
         public function focus(index:int):void {
             if (index == _centerIndex || index < 0) {
                 return;
+            }
+            
+            if (_transition != null && _transition.running) {
+                _transition.stop();
+                _transition = null;
             }
             
             var i:int;
@@ -145,7 +152,8 @@ package org.simileWidgets.runway {
             
             _centerIndex = index;
             
-            allAnimations.play();
+            _transition = allAnimations;
+            _transition.play();
         }
         
         internal function onSlideFrameClick(slideFrame:SlideFrame, side:int):void {
