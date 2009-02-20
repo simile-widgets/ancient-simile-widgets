@@ -9,13 +9,6 @@ package org.simileWidgets.runway {
         static internal const SIDE_RIGHT:int = 1;
         static internal const SIDE_CENTER:int = 2;
         
-        static internal const THEMES:Object = {
-            "arctic" : {
-            },
-            "pitchblack" : {
-            }
-        };
-        
         private var _leftConveyer:Sprite;
         private var _rightConveyer:Sprite;
         private var _centerStand:Sprite;
@@ -24,7 +17,7 @@ package org.simileWidgets.runway {
         private var _slides:Array = [];
         private var _slideFrames:Array = [];
         
-        private var _transition:Transition = null;
+        private var _transition:Parallel = null;
         
         public function Runway(boundingWidth:Number, boundingHeight:Number, theme:Theme, geometry:Geometry) {
             super(boundingWidth, boundingHeight, theme, geometry);
@@ -94,7 +87,7 @@ package org.simileWidgets.runway {
             const maxBatch:int = 10;
             
             var allAnimations:Parallel = new Parallel();
-            allAnimations.easing = Easing.easeOutSine; //Easing.easeOutExpo;
+            allAnimations.easing = Easing.easeOutSine;
             
             var slideFrame:SlideFrame = _slideFrames[index];
             _centerStand.addChild(slideFrame);
@@ -110,14 +103,27 @@ package org.simileWidgets.runway {
                     for (; i > index + maxBatch; i--) {
                         slideFrame = _slideFrames[i];
                         _rightConveyer.addChild(slideFrame);
-                        slideFrame.setStandingPosition(Runway.SIDE_RIGHT);
+                        slideFrame.setStandingPosition(SIDE_RIGHT);
                     }
                 }
                 
                 for (; i > index; i--) {
                     slideFrame = _slideFrames[i];
                     _rightConveyer.addChild(slideFrame);
-                    slideFrame.readyToMoveSideway(allAnimations, Runway.SIDE_RIGHT, batch, i - index, duration);
+                    slideFrame.readyToMoveSideway(allAnimations, SIDE_RIGHT, batch, i - index, duration);
+                }
+                
+                /*
+                 *  Make sure all other slides not involved in animation are
+                 *  back in their proper place. They might have been involved
+                 *  in the previous animation and were still in midway.
+                 */
+                i--; // skip the new center index
+                for (;i > 0; i--) {
+                    _slideFrames[i].setStandingPosition(SIDE_LEFT);
+                }
+                for (i = _centerIndex + 1; i < _slideFrames.length; i++) {
+                    _slideFrames[i].setStandingPosition(SIDE_RIGHT);
                 }
             } else {
                 // The new focus is on the right of the old focus, so things get moved to the left.
@@ -129,14 +135,27 @@ package org.simileWidgets.runway {
                     for (; i < index - maxBatch; i++) {
                         slideFrame = _slideFrames[i];
                         _leftConveyer.addChild(slideFrame);
-                        slideFrame.setStandingPosition(Runway.SIDE_LEFT);
+                        slideFrame.setStandingPosition(SIDE_LEFT);
                     }
                 }
                 
                 for (; i < index; i++) {
                     slideFrame = _slideFrames[i];
                     _leftConveyer.addChild(slideFrame);
-                    slideFrame.readyToMoveSideway(allAnimations, Runway.SIDE_LEFT, batch, index - i, duration);
+                    slideFrame.readyToMoveSideway(allAnimations, SIDE_LEFT, batch, index - i, duration);
+                }
+                
+                /*
+                 *  Make sure all other slides not involved in animation are
+                 *  back in their proper place. They might have been involved
+                 *  in the previous animation and were still in midway.
+                 */
+                i++; // skip the new center index
+                for (;i < _slideFrames.length; i++) {
+                    _slideFrames[i].setStandingPosition(SIDE_RIGHT);
+                }
+                for (i = _centerIndex - 1; i >= 0; i--) {
+                    _slideFrames[i].setStandingPosition(SIDE_LEFT);
                 }
             }
             
