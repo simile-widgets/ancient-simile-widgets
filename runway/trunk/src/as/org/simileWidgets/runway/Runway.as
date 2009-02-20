@@ -1,6 +1,7 @@
 package org.simileWidgets.runway {
     import flash.display.*;
     import flash.events.*;
+    import flash.ui.Keyboard;
     import flare.animate.*;
     
     public class Runway extends RunwayBase {
@@ -37,7 +38,9 @@ package org.simileWidgets.runway {
             
             _centerIndex = -1;
             
-            addEventListener(Event.ENTER_FRAME, enterFrameListener);
+            var stageDetector:StageDetector = new StageDetector(this);
+            stageDetector.addEventListener(StageDetector.ADDED_TO_STAGE, _addedToStageListener);
+            stageDetector.addEventListener(StageDetector.REMOVED_FROM_STAGE, _removedFromStageListener);
         }
         
         public function setRecords(records:Object):void {
@@ -73,13 +76,6 @@ package org.simileWidgets.runway {
             }
         }
         
-        override public function setThemeName(themeName:String):void {
-            super.setThemeName(themeName);
-            for each (var slideFrame:SlideFrame in _slideFrames) {
-                slideFrame.rerender();
-            }
-        }
-        
         public function focus(index:int):void {
             if (index == _centerIndex || index < 0) {
                 return;
@@ -88,6 +84,7 @@ package org.simileWidgets.runway {
             var i:int;
             var batch:int = Math.abs(_centerIndex - index);
             var duration:Number = 0.3 + Math.min(batch, 5) * 0.15;
+            const maxBatch:int = 10;
             
             var allAnimations:Parallel = new Parallel();
             allAnimations.easing = Easing.easeOutSine; //Easing.easeOutExpo;
@@ -97,13 +94,39 @@ package org.simileWidgets.runway {
             slideFrame.readyToMoveCenter(allAnimations, duration);
             
             if (_centerIndex >= 0 && index < _centerIndex) {
-                for (i = Math.max(0, _centerIndex); i > index; i--) {
+                // The new focus is on the left of the old focus, so things get moved to the right.
+                
+                i = Math.max(0, _centerIndex);
+                
+                if (batch > maxBatch) {
+                    // Minimize the amount of animations when there is a large batch.
+                    for (; i > index + maxBatch; i--) {
+                        slideFrame = _slideFrames[i];
+                        _rightConveyer.addChild(slideFrame);
+                        slideFrame.setStandingPosition(Runway.SIDE_RIGHT);
+                    }
+                }
+                
+                for (; i > index; i--) {
                     slideFrame = _slideFrames[i];
                     _rightConveyer.addChild(slideFrame);
                     slideFrame.readyToMoveSideway(allAnimations, Runway.SIDE_RIGHT, batch, i - index, duration);
                 }
             } else {
-                for (i = Math.max(0, _centerIndex); i < index; i++) {
+                // The new focus is on the right of the old focus, so things get moved to the left.
+                
+                i = Math.max(0, _centerIndex);
+                
+                if (batch > maxBatch) {
+                    // Minimize the amount of animations when there is a large batch.
+                    for (; i < index - maxBatch; i++) {
+                        slideFrame = _slideFrames[i];
+                        _leftConveyer.addChild(slideFrame);
+                        slideFrame.setStandingPosition(Runway.SIDE_LEFT);
+                    }
+                }
+                
+                for (; i < index; i++) {
                     slideFrame = _slideFrames[i];
                     _leftConveyer.addChild(slideFrame);
                     slideFrame.readyToMoveSideway(allAnimations, Runway.SIDE_LEFT, batch, index - i, duration);
@@ -144,9 +167,58 @@ package org.simileWidgets.runway {
             }
         }
         
-        private function enterFrameListener(e:Event):void {
-            _ensureCleanBackground();
+        private function _addedToStageListener(e:Event):void {
+            addEventListener(Event.ENTER_FRAME, _enterFrameListener);
+            stage.addEventListener(KeyboardEvent.KEY_UP, _keyUpListener);
+        }
+        
+        private function _removedFromStageListener(e:Event):void {
+            removeEventListener(Event.ENTER_FRAME, _enterFrameListener);
+            stage.removeEventListener(KeyboardEvent.KEY_UP, _keyUpListener);
+        }
+        
+        private function _enterFrameListener(e:Event):void {
+            var rerender:Boolean = false;
+            if (_ensureCleanBackground()) {
+                rerender = true;
+            }
             if (_ensureCleanSettings()) {
+                rerender = true;
+            }
+            
+            if (rerender) {
+                for each (var slideFrame:SlideFrame in _slideFrames) {
+                    slideFrame.rerender();
+                }
+            }
+        }
+        
+        private function _keyUpListener(e:KeyboardEvent):void {
+            switch (e.keyCode) {
+            case Keyboard.LEFT:
+            case Keyboard.UP:
+                if (_centerIndex > 0) {
+                    focus(_centerIndex - 1);
+                }
+                break;
+            case Keyboard.PAGE_UP:
+                focus(Math.max(0, _centerIndex - 5));
+                break;
+            case Keyboard.RIGHT:
+            case Keyboard.DOWN:
+                if (_centerIndex < _slideFrames.length - 1) {
+                    focus(_centerIndex + 1);
+                }
+                break;
+            case Keyboard.PAGE_DOWN:
+                focus(Math.min(_slideFrames.length - 1, _centerIndex + 5));
+                break;
+            case Keyboard.HOME:
+                focus(0);
+                break;
+            case Keyboard.END:
+                focus(_slideFrames.length - 1);
+                break;
             }
         }
     }
