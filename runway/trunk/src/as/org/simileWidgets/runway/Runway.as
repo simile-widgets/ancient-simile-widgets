@@ -79,12 +79,12 @@ package org.simileWidgets.runway {
             }
             
             var i:int;
-            var duration:Number = 1.5;
+            var batch:int = Math.abs(_centerIndex - index);
+            var duration:Number = 0.3 + Math.min(batch, 5) * 0.15;
             
             var allAnimations:Parallel = new Parallel();
-            allAnimations.easing = Easing.easeOutExpo;
+            allAnimations.easing = Easing.easeOutSine; //Easing.easeOutExpo;
             
-            var batch:int = Math.abs(_centerIndex - index);
             var slideFrame:SlideFrame = _slideFrames[index];
             _centerStand.addChild(slideFrame);
             slideFrame.readyToMoveCenter(allAnimations, duration);
