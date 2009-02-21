@@ -13,7 +13,6 @@ package org.simileWidgets.runway {
         protected var _settingsDirty:Boolean = false;
         protected var _backgroundDirty:Boolean = false;
         
-        protected var _mask:Sprite;
         protected var _platformView:Sprite;
         protected var _platform:Sprite;
         
@@ -133,6 +132,11 @@ package org.simileWidgets.runway {
         }
         protected function _ensureCleanBackground():Boolean {
             if (_backgroundDirty || _theme.dirty) {
+                if (_reflectionMask != null) {
+                    _reflectionMask.dispose();
+                    _reflectionMask = null;
+                }
+                
                 _redrawBackground();
                 
                 _theme.dirty = false;
