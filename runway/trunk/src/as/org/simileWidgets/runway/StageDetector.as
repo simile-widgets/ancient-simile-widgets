@@ -1,5 +1,10 @@
 /*
  *  Copied from http://www.moock.org/eas3/examples/moock_eas3_examples/eas3_stage_detector/src/StageDetector.as
+ *
+ *  This is the example 20-8, on page 496 of
+ *
+ *  Essential ActionScript 3.0, first edition, August 2007, by Colin Moock. 
+ *  Copyright 2007 O'Reilly Media, Inc., 0-596-52694-6.
  */
  
 package org.simileWidgets.runway {

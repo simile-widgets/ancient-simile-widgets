@@ -2,6 +2,7 @@ package org.simileWidgets.runway {
     import flash.external.ExternalInterface;
     import flash.system.Security;
     import flash.display.Sprite;
+    import flash.display.StageQuality;
     import flash.events.*;
 
     [SWF(frameRate="30")]
@@ -9,6 +10,9 @@ package org.simileWidgets.runway {
         private var _runway:Runway;
         
         public function RunwayWidget() {
+            stage.frameRate = 24;
+            stage.quality = StageQuality.BEST;
+            
             stage.scaleMode = flash.display.StageScaleMode.NO_SCALE;
             stage.align = flash.display.StageAlign.TOP_LEFT;
             stage.addEventListener(Event.RESIZE, resizeListener);
@@ -50,6 +54,8 @@ package org.simileWidgets.runway {
             try {
                 ExternalInterface.addCallback("setRecords", _runway.setRecords); 
                 ExternalInterface.addCallback("setThemeName", _runway.setThemeName); 
+                
+                ExternalInterface.addCallback("select", _runway.select); 
             } catch (e:Error) {
                 trace("Error adding callbacks");
             }
