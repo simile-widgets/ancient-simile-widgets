@@ -52,10 +52,12 @@ package org.simileWidgets.runway {
         
         private function setupCallbacks():void {
             try {
-                ExternalInterface.addCallback("setRecords", _runway.setRecords); 
                 ExternalInterface.addCallback("setThemeName", _runway.setThemeName); 
                 
-                ExternalInterface.addCallback("select", _runway.select); 
+                ExternalInterface.addCallback("clearRecords", _runway.clearRecords);
+                ExternalInterface.addCallback("addRecords", _runway.addRecords);
+                ExternalInterface.addCallback("setRecords", _runway.setRecords);
+                ExternalInterface.addCallback("select", _runway.select);
             } catch (e:Error) {
                 trace("Error adding callbacks");
             }
