@@ -66,6 +66,13 @@ Runway._Impl.prototype._installUI = function() {
         self._onReady();
     };
     
+    var flashVars = [
+        "onReady=" + Runway.Dispatcher.wrap(onReady)
+    ];
+    if ("onSelect" in this._options) {
+        flashVars.push("onSelect=" + Runway.Dispatcher.wrap(this._options.onSelect));
+    }
+    
     this._elmt.innerHTML = Runway.Flash.generateObjectEmbedHTML(
         "src",                  Runway.urlPrefix + "swf/runway",
         "width",                "100%",
@@ -78,7 +85,7 @@ Runway._Impl.prototype._installUI = function() {
         "allowScriptAccess",    "always",
         "type",                 "application/x-shockwave-flash",
         "pluginspage",          "http://www.adobe.com/go/getflashplayer",
-        "FlashVars",            "onReady=" + Runway.Dispatcher.wrap(onReady)
+        "FlashVars",            flashVars.join("&")
     );
     
     this._flashObject = document[this._flashObjectID] || window[this._flashObjectID];

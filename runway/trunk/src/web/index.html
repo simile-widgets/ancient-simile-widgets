@@ -40,6 +40,12 @@
             color: #aaa;
         }
         
+        #selected-slide {
+            text-align: center;
+            margin-bottom: 2em;
+            font-weight: bold;
+            font-size: 120%;
+        }
         #description {
             text-align: left;
             width: 20em;
@@ -55,6 +61,10 @@
             widget = Runway.createOrShowInstaller(div, {
                 onReady: function() {
                     widget.setRecords(records);
+                },
+                onSelect: function(index, id) {
+                    var record = records[index];
+                    document.getElementById("selected-slide").innerHTML = record.title;
                 }
             });
         }
@@ -81,6 +91,7 @@
         </div>
         <div id="the-widget"></div>
         <div id="content">
+            <div id="selected-slide"></div>
             <center>
                 <div id="description">
                     SIMILE Widget Runway lets you display images in a rich interactive

@@ -12,7 +12,7 @@ package org.simileWidgets.runway {
         private var _leftConveyer:Sprite;
         private var _rightConveyer:Sprite;
         private var _centerStand:Sprite;
-        private var _centerIndex:Number;
+        private var _centerIndex:Number = -1;
         
         private var _slides:Array = [];
         private var _slideFrames:Array = [];
@@ -38,8 +38,15 @@ package org.simileWidgets.runway {
             stageDetector.addEventListener(StageDetector.REMOVED_FROM_STAGE, _removedFromStageListener);
         }
         
+        public function get selectedIndex():int {
+            return _centerIndex;
+        }
+        
+        public function get selectedID():String {
+            return _centerIndex < 0 ? null : _slides[_centerIndex].id;
+        }
+        
         public function setRecords(records:Object):void {
-                trace("Adding " + records.length);
             if (_slides.length == 0) {
                 for (var i:int = 0; i < records.length; i++) {
                     var record:Object = records[i];
@@ -64,7 +71,7 @@ package org.simileWidgets.runway {
                     slideFrame.setStandingPosition(i == _centerIndex ? SIDE_CENTER : (i < _centerIndex ? SIDE_LEFT : SIDE_RIGHT));
                     slideFrame.prepare();
                 }
-                trace("Added " + records.length);
+                
                 focus(0);
             } else {
                 // Don't know what to do yet
@@ -173,6 +180,8 @@ package org.simileWidgets.runway {
             
             _transition = allAnimations;
             _transition.play();
+            
+            dispatchEvent(new Event("select"));
         }
         
         internal function onSlideFrameClick(slideFrame:SlideFrame, side:int):void {
