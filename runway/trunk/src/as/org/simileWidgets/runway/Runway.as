@@ -48,33 +48,52 @@ package org.simileWidgets.runway {
             return _selectedIndex < 0 ? null : _slides[_selectedIndex].id;
         }
         
-        public function setRecords(records:Object):void {
-            if (_slides.length == 0) {
-                for (var i:int = 0; i < records.length; i++) {
-                    var record:Object = records[i];
-                    if (!("id" in record)) {
-                        record["id"] = "r" + Math.round(1000000 * Math.random());
-                    }
-                    
-                    var slide:Slide = new Slide(record);
-                    var slideFrame:SlideFrame = new SlideFrame(this, slide, i);
-                    
-                    _slides.push(slide);
-                    _slideFrames.push(slideFrame);
-                    
-                    if (i == _selectedIndex) {
-                        _centerStand.addChild(slideFrame);
-                    } else if (i < _selectedIndex) {
-                        _leftConveyer.addChild(slideFrame);
-                    } else {
-                        _rightConveyer.addChildAt(slideFrame, 0);
-                    }
-                    
-                    slideFrame.setStandingPosition(i == _selectedIndex ? SIDE_CENTER : (i < _selectedIndex ? SIDE_LEFT : SIDE_RIGHT));
-                    slideFrame.prepare();
+        public function clearRecords():void {
+            if (_slides.length > 0) {
+                if (_transition != null && _transition.running) {
+                    _transition.stop();
+                    _transition = null;
                 }
                 
+                for (var i:int = 0; i < _slides.length; i++) {
+                    _disposeSlide(i);
+                }
+                
+                _slides = [];
+                _slideFrames = [];
+                _selectedIndex = -1;
+                
+                _platform.x = 0;
+            }
+        }
+        
+        public function addRecords(records:Object):void {
+            var startIndex:int = _slides.length;
+            for (var i:int = 0; i < records.length; i++) {
+                var record:Object = records[i];
+                if (!("id" in record)) {
+                    record["id"] = "r" + Math.round(1000000 * Math.random());
+                }
+                
+                var slide:Slide = new Slide(record);
+                var slideFrame:SlideFrame = new SlideFrame(this, slide, startIndex + i);
+                
+                _slides.push(slide);
+                _slideFrames.push(slideFrame);
+                _rightConveyer.addChildAt(slideFrame, 0);
+                
+                slideFrame.setStandingPosition(SIDE_RIGHT);
+                slideFrame.prepare();
+            }
+            
+            if (startIndex == 0) {
                 select(0);
+            }
+        }
+        
+        public function setRecords(records:Object):void {
+            if (_slides.length == 0) {
+                addRecords(records);
             } else {
                 // Don't know what to do yet
             }
@@ -93,7 +112,6 @@ package org.simileWidgets.runway {
             var i:int;
             var batch:int = Math.abs(_selectedIndex - index);
             var duration:Number = 0.3 + Math.min(batch, 5) * 0.15;
-            const maxBatch:int = 10;
             
             var allAnimations:Parallel = new Parallel();
             allAnimations.easing = Easing.easeOutSine;
@@ -107,9 +125,9 @@ package org.simileWidgets.runway {
                 
                 i = Math.max(0, _selectedIndex);
                 
-                if (batch > maxBatch) {
+                if (batch > MAX_BATCH_MOVEMENT) {
                     // Minimize the amount of animations when there is a large batch.
-                    for (; i > index + maxBatch; i--) {
+                    for (; i > index + MAX_BATCH_MOVEMENT; i--) {
                         slideFrame = _slideFrames[i];
                         _rightConveyer.addChild(slideFrame);
                         slideFrame.setStandingPosition(SIDE_RIGHT);
@@ -139,9 +157,9 @@ package org.simileWidgets.runway {
                 
                 i = Math.max(0, _selectedIndex);
                 
-                if (batch > maxBatch) {
+                if (batch > MAX_BATCH_MOVEMENT) {
                     // Minimize the amount of animations when there is a large batch.
-                    for (; i < index - maxBatch; i++) {
+                    for (; i < index - MAX_BATCH_MOVEMENT; i++) {
                         slideFrame = _slideFrames[i];
                         _leftConveyer.addChild(slideFrame);
                         slideFrame.setStandingPosition(SIDE_LEFT);
@@ -266,6 +284,19 @@ package org.simileWidgets.runway {
                 select(_slideFrames.length - 1);
                 break;
             }
+        }
+        
+        protected function _disposeSlide(i:int):void {
+            var slide:Slide = _slides[i];
+            var slideFrame:SlideFrame = _slideFrames[i];
+            
+            slideFrame.parent.removeChild(slideFrame);
+            
+            slideFrame.dispose();
+            slide.dispose();
+            
+            _slideFrames[i] = null;
+            _slides[i] = null;
         }
     }
 }

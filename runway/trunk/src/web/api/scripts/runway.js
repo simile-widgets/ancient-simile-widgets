@@ -95,6 +95,14 @@ Runway._Impl.prototype.getID = function() {
     return this._flashObjectID;
 };
 
+Runway._Impl.prototype.clearRecords = function() {
+    this._flashObject.clearRecords();
+};
+
+Runway._Impl.prototype.addRecords = function(records) {
+    this._flashObject.addRecords(records);
+};
+
 Runway._Impl.prototype.setRecords = function(records) {
     this._flashObject.setRecords(records);
 };
