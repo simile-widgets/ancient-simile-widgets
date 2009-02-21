@@ -231,23 +231,24 @@ package org.simileWidgets.runway {
             }
         }
         
-        private function _addedToStageListener(e:Event):void {
+        protected function _addedToStageListener(e:Event):void {
             addEventListener(Event.ENTER_FRAME, _enterFrameListener);
             stage.addEventListener(KeyboardEvent.KEY_UP, _keyUpListener);
         }
         
-        private function _removedFromStageListener(e:Event):void {
+        protected function _removedFromStageListener(e:Event):void {
             removeEventListener(Event.ENTER_FRAME, _enterFrameListener);
             stage.removeEventListener(KeyboardEvent.KEY_UP, _keyUpListener);
         }
         
-        private function _enterFrameListener(e:Event):void {
+        protected function _enterFrameListener(e:Event):void {
             var rerender:Boolean = false;
             if (_ensureCleanBackground()) {
                 rerender = true;
             }
             if (_ensureCleanSettings()) {
                 rerender = true;
+                _forceLayout();
             }
             
             if (rerender) {
@@ -257,7 +258,7 @@ package org.simileWidgets.runway {
             }
         }
         
-        private function _keyUpListener(e:KeyboardEvent):void {
+        protected function _keyUpListener(e:KeyboardEvent):void {
             switch (e.keyCode) {
             case Keyboard.LEFT:
             case Keyboard.UP:
@@ -284,6 +285,19 @@ package org.simileWidgets.runway {
                 select(_slideFrames.length - 1);
                 break;
             }
+        }
+        
+        protected function _forceLayout():void {
+            if (_transition != null && _transition.running) {
+                _transition.stop();
+                _transition = null;
+            }
+
+            for (var i:int = 0; i < _slideFrames.length; i++) {
+                _slideFrames[i].setStandingPosition(i == _selectedIndex ? SIDE_CENTER : (i < _selectedIndex ? SIDE_LEFT : SIDE_RIGHT));
+            }
+            
+            _platform.x = -_geometry.spreadPixels * _selectedIndex;
         }
         
         protected function _disposeSlide(i:int):void {
