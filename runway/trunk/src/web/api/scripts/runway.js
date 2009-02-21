@@ -111,6 +111,14 @@ Runway._Impl.prototype.setThemeName = function(themeName) {
     this._flashObject.setThemeName(themeName);
 };
 
+Runway._Impl.prototype.getProperty = function(name) {
+    return this._flashObject.getProperty(name);
+};
+
+Runway._Impl.prototype.setProperty = function(name, value) {
+    this._flashObject.setProperty(name, value);
+};
+
 Runway._Impl.prototype._onReady = function() {
     if ("onReady" in this._options) {
         this._options["onReady"]();

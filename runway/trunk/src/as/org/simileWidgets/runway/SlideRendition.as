@@ -193,22 +193,6 @@ package org.simileWidgets.runway {
             _prototypeBitmapData.draw(originalBitmapData, matrix);
         }
         
-        private function _drawReflection2():void {
-            var reflectionBitmapData:BitmapData = new BitmapData(_prototypeBitmapData.width, _prototypeBitmapData.height, true, 0x00000000);
-            var rect:Rectangle = new Rectangle(0, 0, _prototypeBitmapData.width, _prototypeBitmapData.height);
-            
-            reflectionBitmapData.copyPixels(_prototypeBitmapData, rect, new Point(), _runway.reflectionMask);
-            
-            var transform:Matrix = new Matrix();
-            transform.scale(imageScale, -imageScale);
-            transform.translate(0, _prototypeBitmapData.height);
-            
-            graphics.clear();
-            graphics.beginBitmapFill(reflectionBitmapData, transform);
-            graphics.drawRect(0, scaledHeight, scaledWidth, scaledHeight);
-            graphics.endFill();
-        }
-        
         private function _drawReflection():void {
             if (_bitmap != null) {
                 _reflectPrototypeBitmap();
