@@ -9,10 +9,12 @@ package org.simileWidgets.runway {
         static internal const SIDE_RIGHT:int = 1;
         static internal const SIDE_CENTER:int = 2;
         
+        static internal const MAX_BATCH_MOVEMENT:int = 10;
+        
         private var _leftConveyer:Sprite;
         private var _rightConveyer:Sprite;
         private var _centerStand:Sprite;
-        private var _centerIndex:Number = -1;
+        private var _selectedIndex:Number = -1;
         
         private var _slides:Array = [];
         private var _slideFrames:Array = [];
@@ -31,7 +33,7 @@ package org.simileWidgets.runway {
             _centerStand = new Sprite();
             _platform.addChild(_centerStand);
             
-            _centerIndex = -1;
+            _selectedIndex = -1;
             
             var stageDetector:StageDetector = new StageDetector(this);
             stageDetector.addEventListener(StageDetector.ADDED_TO_STAGE, _addedToStageListener);
@@ -39,11 +41,11 @@ package org.simileWidgets.runway {
         }
         
         public function get selectedIndex():int {
-            return _centerIndex;
+            return _selectedIndex;
         }
         
         public function get selectedID():String {
-            return _centerIndex < 0 ? null : _slides[_centerIndex].id;
+            return _selectedIndex < 0 ? null : _slides[_selectedIndex].id;
         }
         
         public function setRecords(records:Object):void {
@@ -60,26 +62,26 @@ package org.simileWidgets.runway {
                     _slides.push(slide);
                     _slideFrames.push(slideFrame);
                     
-                    if (i == _centerIndex) {
+                    if (i == _selectedIndex) {
                         _centerStand.addChild(slideFrame);
-                    } else if (i < _centerIndex) {
+                    } else if (i < _selectedIndex) {
                         _leftConveyer.addChild(slideFrame);
                     } else {
                         _rightConveyer.addChildAt(slideFrame, 0);
                     }
                     
-                    slideFrame.setStandingPosition(i == _centerIndex ? SIDE_CENTER : (i < _centerIndex ? SIDE_LEFT : SIDE_RIGHT));
+                    slideFrame.setStandingPosition(i == _selectedIndex ? SIDE_CENTER : (i < _selectedIndex ? SIDE_LEFT : SIDE_RIGHT));
                     slideFrame.prepare();
                 }
                 
-                focus(0);
+                select(0);
             } else {
                 // Don't know what to do yet
             }
         }
         
-        public function focus(index:int):void {
-            if (index == _centerIndex || index < 0) {
+        public function select(index:int):void {
+            if (index == _selectedIndex || index < 0 || _slides.length == 0 || index >= _slides.length) {
                 return;
             }
             
@@ -89,7 +91,7 @@ package org.simileWidgets.runway {
             }
             
             var i:int;
-            var batch:int = Math.abs(_centerIndex - index);
+            var batch:int = Math.abs(_selectedIndex - index);
             var duration:Number = 0.3 + Math.min(batch, 5) * 0.15;
             const maxBatch:int = 10;
             
@@ -100,10 +102,10 @@ package org.simileWidgets.runway {
             _centerStand.addChild(slideFrame);
             slideFrame.readyToMoveCenter(allAnimations, duration);
             
-            if (_centerIndex >= 0 && index < _centerIndex) {
+            if (_selectedIndex >= 0 && index < _selectedIndex) {
                 // The new focus is on the left of the old focus, so things get moved to the right.
                 
-                i = Math.max(0, _centerIndex);
+                i = Math.max(0, _selectedIndex);
                 
                 if (batch > maxBatch) {
                     // Minimize the amount of animations when there is a large batch.
@@ -129,13 +131,13 @@ package org.simileWidgets.runway {
                 for (;i > 0; i--) {
                     _slideFrames[i].setStandingPosition(SIDE_LEFT);
                 }
-                for (i = _centerIndex + 1; i < _slideFrames.length; i++) {
+                for (i = _selectedIndex + 1; i < _slideFrames.length; i++) {
                     _slideFrames[i].setStandingPosition(SIDE_RIGHT);
                 }
             } else {
                 // The new focus is on the right of the old focus, so things get moved to the left.
                 
-                i = Math.max(0, _centerIndex);
+                i = Math.max(0, _selectedIndex);
                 
                 if (batch > maxBatch) {
                     // Minimize the amount of animations when there is a large batch.
@@ -161,11 +163,19 @@ package org.simileWidgets.runway {
                 for (;i < _slideFrames.length; i++) {
                     _slideFrames[i].setStandingPosition(SIDE_RIGHT);
                 }
-                for (i = _centerIndex - 1; i >= 0; i--) {
+                for (i = _selectedIndex - 1; i >= 0; i--) {
                     _slideFrames[i].setStandingPosition(SIDE_LEFT);
                 }
             }
             
+            if (batch > MAX_BATCH_MOVEMENT) {
+                /*
+                 *  For large batch, don't start animating from the current selected index
+                 *  as that will yield a lot of movement.
+                 */
+                _platform.x = -_geometry.spreadPixels * 
+                    (index > _selectedIndex ? index - MAX_BATCH_MOVEMENT : index + MAX_BATCH_MOVEMENT);
+            }
             allAnimations.add(
                 new Tween(
                     _platform, 
@@ -176,7 +186,7 @@ package org.simileWidgets.runway {
                 )
             );
             
-            _centerIndex = index;
+            _selectedIndex = index;
             
             _transition = allAnimations;
             _transition.play();
@@ -187,16 +197,16 @@ package org.simileWidgets.runway {
         internal function onSlideFrameClick(slideFrame:SlideFrame, side:int):void {
             var i:int;
             if (side == SIDE_LEFT) {
-                for (i = _centerIndex - 1; i >= 0; i--) {
+                for (i = _selectedIndex - 1; i >= 0; i--) {
                     if (_slideFrames[i] == slideFrame) {
-                        focus(i);
+                        select(i);
                         return;
                     }
                 }
             } else if (side == SIDE_RIGHT) {
-                for (i = _centerIndex + 1; i < _slideFrames.length; i++) {
+                for (i = _selectedIndex + 1; i < _slideFrames.length; i++) {
                     if (_slideFrames[i] == slideFrame) {
-                        focus(i);
+                        select(i);
                         return;
                     }
                 }
@@ -233,27 +243,27 @@ package org.simileWidgets.runway {
             switch (e.keyCode) {
             case Keyboard.LEFT:
             case Keyboard.UP:
-                if (_centerIndex > 0) {
-                    focus(_centerIndex - 1);
+                if (_selectedIndex > 0) {
+                    select(_selectedIndex - 1);
                 }
                 break;
             case Keyboard.PAGE_UP:
-                focus(Math.max(0, _centerIndex - 5));
+                select(Math.max(0, _selectedIndex - 5));
                 break;
             case Keyboard.RIGHT:
             case Keyboard.DOWN:
-                if (_centerIndex < _slideFrames.length - 1) {
-                    focus(_centerIndex + 1);
+                if (_selectedIndex < _slideFrames.length - 1) {
+                    select(_selectedIndex + 1);
                 }
                 break;
             case Keyboard.PAGE_DOWN:
-                focus(Math.min(_slideFrames.length - 1, _centerIndex + 5));
+                select(Math.min(_slideFrames.length - 1, _selectedIndex + 5));
                 break;
             case Keyboard.HOME:
-                focus(0);
+                select(0);
                 break;
             case Keyboard.END:
-                focus(_slideFrames.length - 1);
+                select(_slideFrames.length - 1);
                 break;
             }
         }
