@@ -20,6 +20,14 @@ package org.simileWidgets.runway {
                 Security.allowDomain('*'); // This allows Javascript from any web page to call us.
                 setupCallbacks();
                 
+                if (root.loaderInfo.parameters.hasOwnProperty("onSelect")) {
+                    _runway.addEventListener(
+                        "select", 
+                        function(e:Event):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onSelect"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
                 if (root.loaderInfo.parameters.hasOwnProperty("onReady")) {
                     ExternalInterface.call(root.loaderInfo.parameters["onReady"]);
                 }
