@@ -43,10 +43,15 @@ Runway.create = function(elmt, options) {
 Runway.createOrShowInstaller = function(elmt, options) {
     if (Runway.hasRightFlashVersion()) {
         return Runway.create(elmt, options);
-    } else if (Runway.Flash.canStartProductInstall()) {
-        elmt.innerHTML = Runway.Flash.generateProductInstallHTML();
     } else {
-        elmt.innerHTML = "Sorry, your Flash player is just too old!";
+        elmt.innerHTML = 
+            '<div class="runway-noflash-message">' +
+                'Flash Player version ' + 
+                    [Runway.flashVersion.major, Runway.flashVersion.minor, Runway.flashVersion.revision].join(".") +
+                    '<br/>' +
+                'or later is needed to view this content.<br/>' +
+                '<a href="http://get.adobe.com/flashplayer/">Download the latest Flash Player</a>.' +
+            '</div>';
     }
     return null;
 };

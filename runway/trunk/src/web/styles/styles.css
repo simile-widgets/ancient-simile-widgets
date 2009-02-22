@@ -86,6 +86,15 @@ input {
     padding: 0px;
 }
 
+#left-column {
+    
+}
+
+#right-column {
+    display: none;
+    padding-left: 2em;
+}
+
 #selected-slide {
     font-weight: bold;
     font-size: 120%;
@@ -95,4 +104,17 @@ input {
     width: 20em;
     font-size: 200%;
     font-family: "Lucida Grande", Helvetica, Tahoma, Arial, sans-serif;
+}
+
+#preview {
+    display: none;
+    text-align: center;
+    color: red;
+}
+#preview img {
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+#the-widget #preview {
+    display: block;
 }

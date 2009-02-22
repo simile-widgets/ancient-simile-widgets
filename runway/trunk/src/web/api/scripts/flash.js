@@ -296,29 +296,4 @@ Runway.Flash = {};
         );
         return generateObjectEmbedHTML(ret.objectAttrs, ret.params, ret.embedAttrs);
     };
-    
-    Runway.Flash.canStartProductInstall = function() {
-        return Runway.Flash.hasVersionOrLater(6, 0, 65);
-    };
-    
-    Runway.Flash.generateProductInstallHTML = function() {
-        var MMPlayerType = (isIE == true) ? "ActiveX" : "PlugIn";
-        var MMredirectURL = window.location;
-        document.title = document.title + " - Flash Player Installation";
-        
-        var MMdoctitle = document.title;
-        
-        return Runway.Flash.generateObjectEmbedHTML(
-            "src",         "playerProductInstall",
-            "FlashVars",   [ "MMredirectURL=" + MMredirectURL, "MMplayerType=" + MMPlayerType, "MMdoctitle=" + MMdoctitle ].join("&"),
-            "width",       "100%",
-            "height",      "300",
-            "align",       "middle",
-            "quality",     "high",
-            "bgcolor",     "#ffffff",
-            "type",        "application/x-shockwave-flash",
-            "pluginspage", "http://www.adobe.com/go/getflashplayer"
-        );
-    };
-
 })();

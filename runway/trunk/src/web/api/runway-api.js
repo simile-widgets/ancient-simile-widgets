@@ -33,6 +33,7 @@
             "flash.js"
         ];
         var cssFiles = [
+            "runway.css"
         ];
         
         var defaultClientLocales = ("language" in navigator ? navigator.language : navigator.browserLanguage).split(";");
