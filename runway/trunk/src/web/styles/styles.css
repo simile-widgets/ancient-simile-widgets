@@ -1,0 +1,98 @@
+body {
+    background-image: none;
+}
+
+body.theme-pristine {
+    color: black;
+}
+body.theme-pristine #body h1 {
+    color: black;
+    background: #eee;
+}
+
+body.theme-arctic {
+    color: black;
+}
+body.theme-arctic #body h1 {
+    color: black;
+    background: #eef;
+}
+
+body.theme-midnight {
+    color: #aaa;
+}
+body.theme-midnight #body h1 {
+    color: #ddd;
+    background: #333;
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+}
+
+body.theme-sunset {
+    color: #aaa;
+}
+body.theme-sunset #body h1 {
+    color: #ddd;
+    background: #333;
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+}
+
+body.theme-pitchblack {
+    color: #aaa;
+}
+body.theme-pitchblack #body h1 {
+    color: #ddd;
+    background: #333;
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+}
+
+table {
+    font-size: 100%;
+}
+
+input {
+    width: 6em;
+}
+
+#body h1 {
+    margin: 15px 0px; 35px;
+}
+
+#top-panel {
+}
+
+#theme-panel { 
+    padding: 1em; 
+}
+
+#settings-panel {
+    border: 1px solid #eee;
+    height: 20em;
+    padding: 1em;
+    overflow: auto;
+}
+
+#the-widget {
+}
+
+#bottom-panel {
+    margin-bottom: 100px;
+}
+
+#body {
+    margin: 0px; 
+    padding: 0px;
+}
+
+#selected-slide {
+    font-weight: bold;
+    font-size: 120%;
+}
+#description {
+    text-align: left;
+    width: 20em;
+    font-size: 200%;
+    font-family: "Lucida Grande", Helvetica, Tahoma, Arial, sans-serif;
+}

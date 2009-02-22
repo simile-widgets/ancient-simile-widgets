@@ -2,73 +2,41 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Simile Widgets - Runway</title>
+
+    <!-- Replace the URL here with http://static.simile.mit.edu/runway/api/1.0/runway-api.js -->
     <script src="api/runway-api.js" language="javascript"></script>
     
-    <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" />
-    <style>
-        body {
-            background-image: none;
-        }
-        
-        #top-panel {}
-        #control-panel { padding: 1em; }
-        #the-widget { height: 400px; }
-        #content { padding: 0em 1em; }
-        
-        #body h1 {
-            margin: 15px 0px; 35px;
-        }
-        
-        #body {
-            margin: 0px; 
-            padding: 0px;
-        }
-        
-        body.theme-pristine {
-            color: black;
-        }
-        body.theme-arctic {
-            color: black;
-        }
-        body.theme-midnight {
-            color: #aaa;
-        }
-        body.theme-sunset {
-            color: #aaa;
-        }
-        body.theme-pitchblack {
-            color: #aaa;
-        }
-        
-        #selected-slide {
-            text-align: center;
-            margin-bottom: 2em;
-            font-weight: bold;
-            font-size: 120%;
-        }
-        #description {
-            text-align: left;
-            width: 20em;
-            font-size: 200%;
-            font-family: "Lucida Grande", Helvetica, Tahoma, Arial, sans-serif;
-        }
-    </style>
+    <!-- These 2 files are specific to this demo. -->
     <script language="JavaScript" type="text/javascript" src="index.js"></script>
-    <script language="JavaScript" type="text/javascript">
+    <script language="JavaScript" type="text/javascript" src="data.js"></script>
+    
+    <script>
         var widget;
+
         function onLoad() {
-            var div = document.getElementById("the-widget");
-            widget = Runway.createOrShowInstaller(div, {
-                onReady: function() {
-                    widget.setRecords(records);
-                },
-                onSelect: function(index, id) {
-                    var record = records[index];
-                    document.getElementById("selected-slide").innerHTML = record.title;
+            widget = Runway.createOrShowInstaller(
+                document.getElementById("the-widget"),
+                {
+                    onReady: function() {
+                        widget.setRecords(records);
+                        widget.select(7);
+                        
+                        // This next line is specific for this demo. 
+                        // You don't really need it for your own page.
+                        generateSettingPanel(); 
+                    },
+                    onSelect: function(index, id) {
+                        // This is how you get notified when a different image has been selected in the widget.
+                        var record = records[index];
+                        document.getElementById("selected-slide").innerHTML = record.title;
+                    }
                 }
-            });
+            );
         }
     </script>
+    
+    <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
 </head>
 <body onload="onLoad();">
     <ul id="path">
@@ -79,25 +47,50 @@
     <div id="body">
         <div id="top-panel">
             <h1>Runway 1.0</h1>
-            <div id="control-panel">Theme:
-                <select id="the-themes" onchange="onThemeChange(this);">
-                    <option value="pristine" selected="true">Pristine</option>
-                    <option value="arctic">Arctic</option>
-                    <option value="midnight">Midnight</option>
-                    <option value="sunset">Sunset</option>
-                    <option value="pitchblack">Pitchblack</option>
-                </select>
-            </div>
         </div>
-        <div id="the-widget"></div>
-        <div id="content">
-            <div id="selected-slide"></div>
-            <center>
-                <div id="description">
-                    SIMILE Widget Runway lets you display images in a rich interactive
-                    visualization similar to that of Apple iTunes.
-                </div>
-            </center>
+        
+        <div id="the-widget" style="height: 400px;"></div> <!-- This element is all you really need. -->
+        
+        <div id="bottom-panel">
+            <center><table style="width: 800px;"><tr valign="top">
+                <td>
+                    <div id="description">
+                        SIMILE Widget Runway lets you display images in a rich interactive
+                        visualization similar to that of Apple iTunes. It is a Flash-based
+                        implementation.
+                    </div>
+                    
+                    <h2>Links</h2>
+                    <ul>
+                        <li><a href="http://code.google.com/p/simile-widgets/wiki/Runway">Documentation</a></li>
+                        <li><a href="groups.google.com/group/simile-widgets">Mailing List</a> (for technical support, etc.)</li>
+                    </ul>
+                    
+                    <h2>Credits</h2>
+                    <p>Original author: <a href="http://davidhuynh.net/">David Huynh</a>.</p>
+                    <p>The images used for this demo are from <a href="http://www.freebase.com/">Freebase</a>.</p>
+                </td>
+                <td>
+                    <p>The Flash widget can fire events to update the web page's Javascript.
+                        For example, when you select a new image in the widget above, this
+                        text in HTML should be updated: <span id="selected-slide"></span>.
+                    </p>
+                    
+                    <p>The web page's Javascript can change the Flash widget on the fly.
+                        Try changing the various settings below:
+                    </p>
+                    <div id="theme-panel">Theme:
+                        <select id="the-themes" onchange="onThemeChange(this);">
+                            <option value="pristine" selected="true">Pristine</option>
+                            <option value="arctic">Arctic</option>
+                            <option value="midnight">Midnight</option>
+                            <option value="sunset">Sunset</option>
+                            <option value="pitchblack">Pitchblack</option>
+                        </select>
+                    </div>
+                    <div id="settings-panel"></div>
+                </td>
+            </tr></table></center>
         </div>
     </div>
 </body>
