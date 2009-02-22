@@ -42,7 +42,7 @@ package org.simileWidgets.runway {
         public function get slideSize():Number {
             return _slideSize;
         }
-        public function set slideSize(newSlideSize:Number):void {
+        public function set slideSize(newSlideSize:Number):void {trace("here");
             if (!_fixedSlideSize) {
                 newSlideSize = _limit(newSlideSize, MIN_SLIDE_SIZE_PIXELS, MAX_SLIDE_SIZE_PIXELS);
                 if (_slideSize != newSlideSize) {

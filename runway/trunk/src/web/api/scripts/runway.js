@@ -77,6 +77,16 @@ Runway._Impl.prototype._installUI = function() {
     if ("onSelect" in this._options) {
         flashVars.push("onSelect=" + Runway.Dispatcher.wrap(this._options.onSelect));
     }
+    for (var n in this._options) {
+        if (this._options.hasOwnProperty(n)) {
+            switch (n) {
+            case "onSelect":
+            case "onReady":
+                continue;
+            }
+            flashVars.push(n + "=" + this._options[n]);
+        }
+    }
     
     this._elmt.innerHTML = Runway.Flash.generateObjectEmbedHTML(
         "src",                  Runway.urlPrefix + "swf/runway",

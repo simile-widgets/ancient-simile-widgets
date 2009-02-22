@@ -17,8 +17,28 @@ package org.simileWidgets.runway {
             stage.align = flash.display.StageAlign.TOP_LEFT;
             stage.addEventListener(Event.RESIZE, resizeListener);
             
-            _runway = new Runway(stage.stageWidth, stage.stageHeight, new Theme(null), new Geometry(true, 0));
+            var slideSize:Number = ("slideSize" in root.loaderInfo.parameters) ?
+                Number(root.loaderInfo.parameters["slideSize"]) : 0;
+            var theme:Theme = ("theme" in root.loaderInfo.parameters) ?
+                new Theme(root.loaderInfo.parameters["theme"]) : new Theme(null);
+            var geometry:Geometry =
+                new Geometry(root.loaderInfo.parameters["fixedSlideSize"] == "true", slideSize);
+                
+            _runway = new Runway(stage.stageWidth, stage.stageHeight, theme, geometry);
             addChild(_runway);
+            
+            for (var n:String in root.loaderInfo.parameters) {
+                switch (n) {
+                case "onSelect":
+                case "onReady":
+                case "theme":
+                case "fixedSlideSize":
+                case "slideSize":
+                    continue;
+                }
+                
+                setProperty(n, root.loaderInfo.parameters[n]);
+            }
             
             if (ExternalInterface.available) {
                 Security.allowDomain('*'); // This allows Javascript from any web page to call us.
@@ -89,13 +109,12 @@ package org.simileWidgets.runway {
             } else if (_isColorThemeProperty(name)) {
                 _runway.theme[name] = _stringToColor(value);
             } else if (_isBooleanThemeProperty(name)) {
-                _runway.theme[name] = value;
+                _runway.theme[name] = (value is Boolean) ? value : (value == "true");
             } else if (_isNumberThemeProperty(name)) {
-                _runway.theme[name] = value;
+                _runway.theme[name] = (value is Number) ? value : Number(value);
             } else if (_isNumberGeometryProperty(name)) {
-                _runway.geometry[name] = value;
+                _runway.geometry[name] = (value is Number) ? value : Number(value);
             }
-
         }
         
         private function _isStringThemeProperty(name:String):Boolean {
