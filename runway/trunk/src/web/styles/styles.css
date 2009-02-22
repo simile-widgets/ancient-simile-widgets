@@ -57,7 +57,7 @@ input {
 }
 
 #body h1 {
-    margin: 15px 0px; 35px;
+    margin: 15px 0px 35px;
 }
 
 #top-panel {
@@ -78,7 +78,7 @@ input {
 }
 
 #bottom-panel {
-    margin-bottom: 100px;
+    padding-bottom: 100px;
 }
 
 #body {
