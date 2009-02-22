@@ -6,6 +6,9 @@ package org.simileWidgets.runway {
         static internal const MAX_SLIDE_SIZE_PIXELS:Number = 400; // for performance, we never ever go beyond 400 pixels
         static internal const MIN_SLIDE_SIZE_PIXELS:Number = 50;  // for visual sanity, we never ever go under 50 pixels
     
+        static internal const MAX_SLIDE_SIZE_RATIO:Number = 0.9;
+        static internal const MIN_SLIDE_SIZE_RATIO:Number = 0.1;
+        
         public var dirty:Boolean = true;
         
         protected var _fixedSlideSize:Boolean;     // false means slides are resized based on container;
@@ -32,7 +35,7 @@ package org.simileWidgets.runway {
             _fixedSlideSize = fixedSlideSize;
             _slideSize = fixedSlideSize ? 
                 (slideSize > 0 ? _limit(slideSize, MIN_SLIDE_SIZE_PIXELS, MAX_SLIDE_SIZE_PIXELS) : DEFAULT_SLIDE_SIZE_PIXELS) : 
-                (slideSize > 0 ? slideSize : DEFAULT_SLIDE_SIZE_RATIO);
+                (slideSize > 0 ? _limit(slideSize, 0.1, 0.9) : DEFAULT_SLIDE_SIZE_RATIO);
         }
         
         public function get fixedSlideSize():Boolean {
@@ -42,9 +45,9 @@ package org.simileWidgets.runway {
         public function get slideSize():Number {
             return _slideSize;
         }
-        public function set slideSize(newSlideSize:Number):void {trace("here");
+        public function set slideSize(newSlideSize:Number):void {
             if (!_fixedSlideSize) {
-                newSlideSize = _limit(newSlideSize, MIN_SLIDE_SIZE_PIXELS, MAX_SLIDE_SIZE_PIXELS);
+                newSlideSize = _limit(newSlideSize, MIN_SLIDE_SIZE_RATIO, MAX_SLIDE_SIZE_RATIO);
                 if (_slideSize != newSlideSize) {
                     _slideSize = newSlideSize;
                     dirty = true;
@@ -108,7 +111,7 @@ package org.simileWidgets.runway {
         }
         
         public function get maxSlideSizePixels():Number {
-            return _fixedSlideSize ? slideSize : MAX_SLIDE_SIZE_PIXELS;
+            return _fixedSlideSize ? slideSizePixels : MAX_SLIDE_SIZE_PIXELS;
         }
         
         public function get slideSizePixels():Number {
