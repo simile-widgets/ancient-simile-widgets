@@ -81,6 +81,7 @@ package org.simileWidgets.runway {
                 var scale:Number = imageScale;
                 _bitmap.scaleX = scale;
                 _bitmap.scaleY = scale;
+                _bitmap.smoothing = true;
                 
                 _text.visible = false;
             } else {
@@ -190,7 +191,7 @@ package org.simileWidgets.runway {
             matrix.scale(scale, scale);
             
             _prototypeBitmapData = new BitmapData(newWidth, newHeight, originalBitmapData.transparent);
-            _prototypeBitmapData.draw(originalBitmapData, matrix);
+            _prototypeBitmapData.draw(originalBitmapData, matrix, null, null, null, true);
         }
         
         private function _drawReflection():void {
