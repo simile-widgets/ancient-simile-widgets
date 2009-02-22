@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="runway" default="build" basedir=".">
-  <property file="${basedir}/build-settings.properties" />
   <property file="${basedir}/local-build-settings.properties" />
+  <property file="${basedir}/build-settings.properties" />
   
   <taskdef resource="flexTasks.tasks"
            classpath="${FLEX_HOME}ant/lib/flexTasks.jar" />
