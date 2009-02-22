@@ -38,9 +38,9 @@ function onThemeChange(select) {
     
     widget.setThemeName(themeName);
     
-    document.body.style.backgroundColor = theme.bottomColor;
+    document.body.style.backgroundColor = theme.topColor;
     document.body.className = "theme-" + themeName;
-    document.getElementById("top-panel").style.backgroundColor = theme.topColor;
+    document.getElementById("bottom-panel").style.backgroundColor = theme.bottomColor;
     
     generateSettingPanel();
 }
