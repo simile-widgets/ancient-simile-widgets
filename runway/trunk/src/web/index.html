@@ -17,6 +17,12 @@
             widget = Runway.createOrShowInstaller(
                 document.getElementById("the-widget"),
                 {
+                    // initial settings
+                    fixedSlideSize: false,
+                    slideSize: 300,
+                    backgroundColorTop: "#fff",
+                    
+                    // event handlers
                     onReady: function() {
                         widget.setRecords(records);
                         widget.select(7);
