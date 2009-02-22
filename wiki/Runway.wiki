@@ -53,6 +53,14 @@ widget = Runway.createOrShowInstaller(
 );
 }}}
 
+= Properties (Settings) =
+
+There is 1 property that you can only change when you construct the Runway widget: <code>slideSize</code> (in number of pixels). At the moment, you cannot change the slide size on-the-fly.
+
+You can also set the theme at construction time with the <code>theme</code> property. But you can switch theme on-the-fly using the <code>setThemeName(name)</code> method.
+
+For all the other properties, please see [http://www.simile-widgets.org/runway/ this live demo] and play with the settings panel on the right.
+
 = Development = 
 
 * [http://opensource.adobe.com/wiki/display/flexsdk/Downloads Flex SDK]
