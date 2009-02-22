@@ -60,6 +60,9 @@ package org.simileWidgets.runway {
                 ExternalInterface.addCallback("addRecords", _runway.addRecords);
                 ExternalInterface.addCallback("setRecords", _runway.setRecords);
                 ExternalInterface.addCallback("select", _runway.select);
+                
+                ExternalInterface.addCallback("getSelectedIndex", function():int { return _runway.selectedIndex; });
+                ExternalInterface.addCallback("getSlideCount", function():int { return _runway.slideCount; });
             } catch (e:Error) {
                 trace("Error adding callbacks");
             }
@@ -101,12 +104,21 @@ package org.simileWidgets.runway {
             case "backgroundImageURL" :
             case "backgroundImageAlign" :
             case "backgroundImageRepeat" :
+            case "titleFontFamily" :
+            case "subtitleFontFamily" :
                 return true;
             }
             return false;
         }
         
         private function _isBooleanThemeProperty(name:String):Boolean {
+            switch (name) {
+            case "showTitle" :
+            case "showSubtitle" :
+            case "titleFontBold" :
+            case "subtitleFontBold" :
+                return true;
+            }
             return false;
         }
         
@@ -115,6 +127,8 @@ package org.simileWidgets.runway {
             case "reflectivity" :
             case "reflectionExtent" :
             case "backgroundImageOpacity" :
+            case "titleFontSize" :
+            case "subtitleFontSize" :
                 return true;
             }
             return false;
@@ -126,6 +140,8 @@ package org.simileWidgets.runway {
             case "backgroundColorTop" :
             case "backgroundColorMiddle" :
             case "backgroundColorBottom" :
+            case "titleColor" :
+            case "subtitleColor" :
                 return true;
             }
             return false;
