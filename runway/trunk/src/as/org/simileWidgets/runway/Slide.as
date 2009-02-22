@@ -23,7 +23,7 @@ package org.simileWidgets.runway {
         }
         
         public function get subtitle():String {
-            return ("subtitle" in _record) ? String(_record["subtitle"]) : null;
+            return ("subtitle" in _record) ? String(_record["subtitle"]) : "";
         }
         
         public function get record():Object {

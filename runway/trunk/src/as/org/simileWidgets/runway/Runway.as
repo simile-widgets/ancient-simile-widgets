@@ -3,6 +3,9 @@ package org.simileWidgets.runway {
     import flash.events.*;
     import flash.geom.Point;
     import flash.ui.Keyboard;
+    import flash.text.TextField;
+    import flash.text.TextFormat;
+    import flash.text.TextFormatAlign;
     import flare.animate.*;
     
     public class Runway extends RunwayBase {
@@ -15,6 +18,8 @@ package org.simileWidgets.runway {
         private var _leftConveyer:Sprite;
         private var _rightConveyer:Sprite;
         private var _centerStand:Sprite;
+        private var _titleText:TextField;
+        private var _subtitleText:TextField;
         
         private var _selectedIndex:Number = -1;
         private var _slides:Array = [];
@@ -37,19 +42,17 @@ package org.simileWidgets.runway {
             _centerStand = new Sprite();
             _platform.addChild(_centerStand);
             
+            _titleText = new TextField();
+            addChild(_titleText);
+            
+            _subtitleText = new TextField();
+            addChild(_subtitleText);
+            
             _selectedIndex = -1;
             
             var stageDetector:StageDetector = new StageDetector(this);
             stageDetector.addEventListener(StageDetector.ADDED_TO_STAGE, _addedToStageListener);
             stageDetector.addEventListener(StageDetector.REMOVED_FROM_STAGE, _removedFromStageListener);
-        }
-        
-        public function get selectedIndex():int {
-            return _selectedIndex;
-        }
-        
-        public function get selectedID():String {
-            return _selectedIndex < 0 ? null : _slides[_selectedIndex].id;
         }
         
         public function clearRecords():void {
@@ -68,6 +71,7 @@ package org.simileWidgets.runway {
                 _selectedIndex = -1;
                 
                 _platform.x = 0;
+                _setTitleText("", "");
             }
         }
         
@@ -101,6 +105,22 @@ package org.simileWidgets.runway {
             } else {
                 // Don't know what to do yet
             }
+        }
+        
+        public function get selectedID():String {
+            return _selectedIndex < 0 ? null : _slides[_selectedIndex].id;
+        }
+        
+        public function get selectedIndex():int {
+            return _selectedIndex;
+        }
+        
+        public function set selectedIndex(index:int):void {
+            select(index);
+        }
+        
+        public function get slideCount():int {
+            return _slides.length;
         }
         
         public function select(index:int):void {
@@ -209,6 +229,7 @@ package org.simileWidgets.runway {
             );
             
             _selectedIndex = index;
+            _setTitleText(_slides[_selectedIndex].title, _slides[_selectedIndex].subtitle);
             
             _transition = allAnimations;
             _transition.play();
@@ -271,6 +292,11 @@ package org.simileWidgets.runway {
             }
             
             if (rerender) {
+                _setTitleText(
+                    _selectedIndex < 0 ? "" : _slides[_selectedIndex].title, 
+                    _selectedIndex < 0 ? "" : _slides[_selectedIndex].subtitle
+                );
+                
                 for each (var slideFrame:SlideFrame in _slideFrames) {
                     slideFrame.rerender();
                 }
@@ -347,6 +373,50 @@ package org.simileWidgets.runway {
             }
             
             _platform.x = -_geometry.spreadPixels * _selectedIndex;
+        }
+        
+        protected function _setTitleText(title:String, subtitle:String):void {
+            if (_theme.showTitle) {
+                _titleText.visible = true;
+                
+                _titleText.x = 0;
+                _titleText.y = _platform.y + Math.round(Math.min(boundingHeight * 0.9, _geometry.slideSizePixels * 1.2));
+                _titleText.width = boundingWidth;
+                _titleText.selectable = false;
+                
+                var format:TextFormat = new TextFormat();
+                format.font = _theme.titleFontFamily;
+                format.size = _theme.titleFontSize;
+                format.bold = _theme.titleFontBold;
+                format.align = TextFormatAlign.CENTER;
+                
+                _titleText.text = title;
+                _titleText.setTextFormat(format);
+                _titleText.textColor = _theme.titleColor;
+                
+                if (_theme.showSubtitle) {
+                    _subtitleText.visible = true;
+                    
+                    _subtitleText.x = 0;
+                    _subtitleText.y = _titleText.y + Math.round(_titleText.textHeight * 1.2);
+                    _subtitleText.width = boundingWidth;
+                    _subtitleText.selectable = false;
+                    
+                    format.font = _theme.subtitleFontFamily;
+                    format.size = _theme.subtitleFontSize;
+                    format.bold = _theme.subtitleFontBold;
+                    format.align = TextFormatAlign.CENTER;
+                    
+                    _subtitleText.text = subtitle;
+                    _subtitleText.setTextFormat(format);
+                    _subtitleText.textColor = _theme.subtitleColor;
+                } else {
+                    _subtitleText.visible = false;
+                }
+            } else {
+                _titleText.visible = false;
+                _subtitleText.visible = false;
+            }
         }
         
         protected function _interpretMouseGesture(start:Point, end:Point, duration:Number):void {

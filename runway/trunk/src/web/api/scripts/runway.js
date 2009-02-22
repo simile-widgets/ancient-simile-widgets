@@ -119,6 +119,18 @@ Runway._Impl.prototype.setProperty = function(name, value) {
     this._flashObject.setProperty(name, value);
 };
 
+Runway._Impl.prototype.select = function(index) {
+    this._flashObject.select(index);
+};
+
+Runway._Impl.prototype.getSelectedIndex = function() {
+    return this._flashObject.getSelectedIndex();
+};
+
+Runway._Impl.prototype.getSlideCount = function() {
+    return this._flashObject.getSlideCount();
+};
+
 Runway._Impl.prototype._onReady = function() {
     if ("onReady" in this._options) {
         this._options["onReady"]();
