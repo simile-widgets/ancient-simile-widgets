@@ -179,8 +179,8 @@ package org.simileWidgets.runway {
         private function _preparePrototypeBitmapData():void {
             var originalBitmapData:BitmapData = Bitmap(_loader.content).bitmapData;
             
-            var scaleWidth:Number = Math.max(1.0, _runway.geometry.maxSlideSizePixels / Math.max(1, originalBitmapData.width));
-            var scaleHeight:Number = Math.max(1.0, _runway.geometry.maxSlideSizePixels / Math.max(1, originalBitmapData.height));
+            var scaleWidth:Number = Math.min(1.0, _runway.geometry.maxSlideSizePixels / Math.max(1, originalBitmapData.width));
+            var scaleHeight:Number = Math.min(1.0, _runway.geometry.maxSlideSizePixels / Math.max(1, originalBitmapData.height));
             var scale:Number = Math.min(scaleWidth, scaleHeight);
             
             var newWidth:Number = Math.round(originalBitmapData.width * scale);
@@ -219,10 +219,12 @@ package org.simileWidgets.runway {
         }
         
         private function _reflectBitmapData(originalBitmapData:BitmapData, scale:Number, top:Number):void {
+            var reflectionMask:BitmapData = _runway.reflectionMask;
             var reflectionBitmapData:BitmapData = new BitmapData(originalBitmapData.width, originalBitmapData.height, false, _runway.theme.effectiveBackgroundColorBottom);
             var rect:Rectangle = new Rectangle(0, 0, originalBitmapData.width, originalBitmapData.height);
             
-            reflectionBitmapData.copyPixels(originalBitmapData, rect, new Point(), _runway.reflectionMask, null, true);
+            reflectionBitmapData.copyPixels(originalBitmapData, rect, new Point(), 
+                reflectionMask, new Point(0, reflectionMask.height - originalBitmapData.height), true);
             
             var transform:Matrix = new Matrix();
             transform.scale(scale, -scale);

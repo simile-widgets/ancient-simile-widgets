@@ -17,12 +17,17 @@ package org.simileWidgets.runway {
             stage.align = flash.display.StageAlign.TOP_LEFT;
             stage.addEventListener(Event.RESIZE, resizeListener);
             
+            var fixedSlideSize:Boolean = true;
+                /*  TODO: I haven't figured out how to do the reflections properly
+                    if the size keeps changing.
+                    ("fixedSlideSize" in root.loaderInfo.parameters) ?
+                        (root.loaderInfo.parameters["fixedSlideSize"] == "true") : true; */
             var slideSize:Number = ("slideSize" in root.loaderInfo.parameters) ?
                 Number(root.loaderInfo.parameters["slideSize"]) : 0;
             var theme:Theme = ("theme" in root.loaderInfo.parameters) ?
                 new Theme(root.loaderInfo.parameters["theme"]) : new Theme(null);
             var geometry:Geometry =
-                new Geometry(root.loaderInfo.parameters["fixedSlideSize"] == "true", slideSize);
+                new Geometry(fixedSlideSize, slideSize);
                 
             _runway = new Runway(stage.stageWidth, stage.stageHeight, theme, geometry);
             addChild(_runway);
@@ -58,11 +63,6 @@ package org.simileWidgets.runway {
             } else {
                 trace("External interface is not available for this container.");
             }
-        }
-        
-        public function getFoo(a:Array):String {
-            //new Foo();
-            return a.join(";");
         }
         
         private function resizeListener(e:Event):void {
@@ -132,6 +132,7 @@ package org.simileWidgets.runway {
         
         private function _isBooleanThemeProperty(name:String):Boolean {
             switch (name) {
+            case "fixedSlideSize" :
             case "showTitle" :
             case "showSubtitle" :
             case "titleFontBold" :

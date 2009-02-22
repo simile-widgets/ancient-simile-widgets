@@ -2,7 +2,7 @@ var possibleSettings = {
     "reflectivity" : "number",
     "reflectionExtent" : "number",
     
-    "slideSize" : "number",
+    //"slideSize" : "number",
     "spread" : "number",
     "centerSpread" : "number",
     "recede" : "number",

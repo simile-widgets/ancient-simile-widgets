@@ -123,6 +123,7 @@ package org.simileWidgets.runway {
                 }
                 
                 _geometry.recalculate(boundingWidth, boundingHeight);
+                _setPerspective();
                 
                 _geometry.dirty = false;
                 _settingsDirty = false;
@@ -190,7 +191,7 @@ package org.simileWidgets.runway {
             _platformView.transform.perspectiveProjection.fieldOfView = 45;
             _platformView.transform.perspectiveProjection.focalLength = boundingHeight * 1.5;
             
-            _platform.y = Math.round((boundingHeight - _geometry.slideSizePixels) / 3);
+            _platform.y = Math.round(boundingHeight / 2 - 2 * _geometry.slideSizePixels / 3);
             
             _platformView.visible = true;
         }
