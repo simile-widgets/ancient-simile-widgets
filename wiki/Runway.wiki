@@ -6,6 +6,18 @@ Add your content here.
 
 = Details =
 
+The first step to using Runway is to make sure that the site(s) where the image files are located make available a cross-domain.xml policy file giving permission to Runway to load those image files. Suppose that the image files are coming from http://example.com/, then there must be a http://example.com/crossdomain.xml file
+
+{{{
+<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
+<cross-domain-policy>
+  <allow-access-from domain="*" />
+</cross-domain-policy>
+}}}
+
+Here is [http://www.freebase.com/crossdomain.xml such a file on freebase.com], which grants access to all Flash widgets (including Runway) from all domains. If you want a more restrictive policy, consult Adobe's [http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_14213 technote on cross domain policy].
+
 = Development = 
 
 * [http://opensource.adobe.com/wiki/display/flexsdk/Downloads Flex SDK]
