@@ -1,8 +1,8 @@
 = Runway 1.0 =
 
-SIMILE Widget Runway lets you display images in a rich interactive visualization similar to that of Apple iTunes. It is a Flash-based implementation. Here is [http://www.simile-widgets.org/runway/ a live demo].
+SIMILE Widget Runway lets you display images in a rich interactive visualization similar to that of Apple iTunes, known as Cover Flow. Runway is a Flash-based implementation. Here is [http://www.simile-widgets.org/runway/ the project page and live demo].
 
-Just like all the other SIMILE widgets, Runway is open source under the BSD license, and free for you to use. Of course, we would appreciate that you give us due credits by at least linking back to [http://www.simile-widgets.org/runway/].
+Just like all the other SIMILE widgets, Runway is open source under the BSD license, and completely free for you to use. Of course, we would appreciate that you give us due credits by at least linking back to [http://www.simile-widgets.org/runway/] from where you use it. Enjoy!
 
 = How to Use =
 
@@ -18,7 +18,9 @@ Make sure that the site(s) where the image files are located make available a cr
 </cross-domain-policy>
 }}}
 
-Here is [http://www.freebase.com/crossdomain.xml such a file on freebase.com], which grants access to all Flash widgets (including Runway) from all domains. If you want a more restrictive policy, consult Adobe's [http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_14213 technote on cross domain policy].
+Here is [http://www.freebase.com/crossdomain.xml such a file] on [freebase.com Freebase], which grants access to all Flash widgets (including Runway) from all domains.
+
+If you want a more restrictive policy, consult Adobe's [http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_14213 technote on cross domain policy].
 
 ==Step 2. Prepare the Data==
 
