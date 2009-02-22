@@ -1,6 +1,7 @@
 package org.simileWidgets.runway {
     import flash.display.*;
     import flash.events.*;
+    import flash.geom.Point;
     import flash.ui.Keyboard;
     import flare.animate.*;
     
@@ -14,12 +15,15 @@ package org.simileWidgets.runway {
         private var _leftConveyer:Sprite;
         private var _rightConveyer:Sprite;
         private var _centerStand:Sprite;
-        private var _selectedIndex:Number = -1;
         
+        private var _selectedIndex:Number = -1;
         private var _slides:Array = [];
         private var _slideFrames:Array = [];
         
         private var _transition:Parallel = null;
+        private var _mouseDownTime:Number;
+        private var _mouseDownLocation:Point;
+        private var _lastMouseLocation:Point;
         
         public function Runway(boundingWidth:Number, boundingHeight:Number, theme:Theme, geometry:Geometry) {
             super(boundingWidth, boundingHeight, theme, geometry);
@@ -233,11 +237,26 @@ package org.simileWidgets.runway {
         
         protected function _addedToStageListener(e:Event):void {
             addEventListener(Event.ENTER_FRAME, _enterFrameListener);
+            
+            addEventListener(MouseEvent.MOUSE_DOWN, _mouseDownListener);
+            addEventListener(MouseEvent.MOUSE_UP, _mouseUpListener);
+            addEventListener(MouseEvent.MOUSE_OUT, _mouseOutListener);
+            addEventListener(MouseEvent.MOUSE_MOVE, _mouseMoveListener);
+            addEventListener(MouseEvent.MOUSE_WHEEL, _mouseWheelListener);
+
             stage.addEventListener(KeyboardEvent.KEY_UP, _keyUpListener);
+
         }
         
         protected function _removedFromStageListener(e:Event):void {
             removeEventListener(Event.ENTER_FRAME, _enterFrameListener);
+            
+            removeEventListener(MouseEvent.MOUSE_DOWN, _mouseDownListener);
+            removeEventListener(MouseEvent.MOUSE_UP, _mouseUpListener);
+            removeEventListener(MouseEvent.MOUSE_OUT, _mouseOutListener);
+            removeEventListener(MouseEvent.MOUSE_MOVE, _mouseMoveListener);
+            removeEventListener(MouseEvent.MOUSE_WHEEL, _mouseWheelListener);
+            
             stage.removeEventListener(KeyboardEvent.KEY_UP, _keyUpListener);
         }
         
@@ -287,6 +306,36 @@ package org.simileWidgets.runway {
             }
         }
         
+        protected function _mouseDownListener(e:MouseEvent):void {
+            _mouseDownTime = new Date().time;
+            _mouseDownLocation = new Point(e.stageX, e.stageY);
+        }
+        
+        protected function _mouseUpListener(e:MouseEvent):void {
+            if (_mouseDownLocation != null) {
+                _interpretMouseGesture(_mouseDownLocation, new Point(e.stageX, e.stageY), new Date().time - _mouseDownTime);
+            }
+            _mouseDownLocation = null;
+            _lastMouseLocation = null;
+        }
+        
+        protected function _mouseOutListener(e:MouseEvent):void {
+            if (_mouseDownLocation != null && _lastMouseLocation != null) {
+                _interpretMouseGesture(_mouseDownLocation, _lastMouseLocation, new Date().time - _mouseDownTime);
+            }
+            _mouseDownLocation = null;
+            _lastMouseLocation = null;
+        }
+        
+        protected function _mouseMoveListener(e:MouseEvent):void {
+            if (_mouseDownLocation != null) {
+                _lastMouseLocation = new Point(e.stageX, e.stageY);
+            }
+        }
+        
+        protected function _mouseWheelListener(e:MouseEvent):void {
+        }
+        
         protected function _forceLayout():void {
             if (_transition != null && _transition.running) {
                 _transition.stop();
@@ -298,6 +347,17 @@ package org.simileWidgets.runway {
             }
             
             _platform.x = -_geometry.spreadPixels * _selectedIndex;
+        }
+        
+        protected function _interpretMouseGesture(start:Point, end:Point, duration:Number):void {
+            duration = Math.max(1, duration);
+            
+            var distance:Number = Point.distance(start, end);
+            var velocity:Number = distance / duration;
+            if (duration > 10 && velocity > 0.2) {
+                var diff:int = (end.x > start.x ? -1 : 1) * Math.round(velocity * 5);
+                select(Math.max(0, Math.min(_slides.length - 1, _selectedIndex + diff)));
+            }
         }
         
         protected function _disposeSlide(i:int):void {
