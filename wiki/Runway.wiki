@@ -1,12 +1,14 @@
-= Runway =
+= Runway 1.0 =
 
 SIMILE Widget Runway lets you display images in a rich interactive visualization similar to that of Apple iTunes. It is a Flash-based implementation. Here is [http://www.simile-widgets.org/runway/ a live demo].
 
 Just like all the other SIMILE widgets, Runway is open source under the BSD license, and free for you to use. Of course, we would appreciate that you give us due credits by at least linking back to [http://www.simile-widgets.org/runway/].
 
-= Details =
+= How to Use =
 
-The first step to using Runway is to make sure that the site(s) where the image files are located make available a cross-domain.xml policy file giving permission to Runway to load those image files. Suppose that the image files are coming from http://example.com/, then there must be a http://example.com/crossdomain.xml file
+==Step 1. Cross Domain Policy==
+
+Make sure that the site(s) where the image files are located make available a cross-domain.xml policy file giving permission to Runway to load those image files. Suppose that the image files are coming from http://example.com/, then there must be a http://example.com/crossdomain.xml file
 
 {{{
 <?xml version="1.0"?>
@@ -17,6 +19,39 @@ The first step to using Runway is to make sure that the site(s) where the image 
 }}}
 
 Here is [http://www.freebase.com/crossdomain.xml such a file on freebase.com], which grants access to all Flash widgets (including Runway) from all domains. If you want a more restrictive policy, consult Adobe's [http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_14213 technote on cross domain policy].
+
+==Step 2. Prepare the Data==
+
+Runway right now only takes data in Javascript. Here is an example Javascript file containing data for Runway: [http://www.simile-widgets.org/runway/data.js]. If you know Javascript, then you can get data in any other form from any other source as long as you can transform it into such an array before feeding it into Runway.
+
+==Step 3. Writing the HTML and Javascript==
+
+It's best that you look at the source code of [http://www.simile-widgets.org/runway/index.html], copy it (together with the data file above) locally, and tweak it for your purpose.
+
+There are a few important details to note. First, the inclusion of the Runway API
+{{{
+    <script src="http://api.simile-widgets.org/runway/1.0/runway-api.js" language="javascript"></script>
+}}}
+Then the placeholder for where the Runway widget will be rendered
+{{{
+   <div id="the-widget" style="height: 400px;"></div>
+}}}
+Then the Javascript code to construct the Runway widget
+{{{
+widget = Runway.createOrShowInstaller(
+    document.getElementById("the-widget"),
+    {
+        // examples of initial settings
+        // slideSize: 200,
+        // backgroundColorTop: "#fff",
+        
+        // event handlers
+        onReady: function() {
+            widget.setRecords(records);
+        }
+    }
+);
+}}}
 
 = Development = 
 
