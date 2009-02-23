@@ -21,7 +21,8 @@ package org.simileWidgets.runway {
         protected var _centerSpread:Number = 0.7;  // of slideSize
         protected var _recede:Number = 1.25;       // of slideSize
         protected var _tilt:Number = 70;           // degrees
-        protected var _horizon:Number = 0.5;       // of container's height, from top
+        protected var _centerOffset:Number = 0;    // in pixels
+        protected var _fieldOfView:Number = 45;         // degrees
         
         /*
          *  These are calculated.
@@ -81,7 +82,7 @@ package org.simileWidgets.runway {
             return _recede;
         }
         public function set recede(v:Number):void {
-            v = _limit(v, 0.1, 1.0);
+            v = _limit(v, 0.1, 3.0);
             if (_recede != v) {
                 _recede = v;
                 dirty = true;
@@ -99,17 +100,27 @@ package org.simileWidgets.runway {
             }
         }
 
-        public function get horizon():Number {
-            return _horizon;
+        public function get centerOffset():Number {
+            return _centerOffset;
         }
-        public function set horizon(v:Number):void {
-            v = _limit(v, 0.1, 0.9);
-            if (_horizon != v) {
-                _horizon = v;
+        public function set centerOffset(v:Number):void {
+            if (_centerOffset != v) {
+                _centerOffset = v;
                 dirty = true;
             }
         }
         
+        public function get fieldOfView():Number {
+            return _fieldOfView;
+        }
+        public function set fieldOfView(v:Number):void {
+            v = _limit(v, 10, 180);
+            if (_fieldOfView != v) {
+                _fieldOfView = v;
+                dirty = true;
+            }
+        }
+
         public function get maxSlideSizePixels():Number {
             return _fixedSlideSize ? slideSizePixels : MAX_SLIDE_SIZE_PIXELS;
         }

@@ -18,7 +18,7 @@
                 document.getElementById("the-widget"),
                 {
                     // examples of initial settings
-                    // slideSize: 200,
+                    // theme: "pitchblack",
                     // backgroundColorTop: "#fff",
                     
                     // event handlers
@@ -35,6 +35,10 @@
                         // This is how you get notified when a different image has been selected in the widget.
                         var record = records[index];
                         document.getElementById("selected-slide").innerHTML = record.title;
+                    },
+                    onZoom: function(index, id) {
+                        // You can hook up a lightbox widget to magnify the selected image
+                        // alert(records[index].title);
                     }
                 }
             );

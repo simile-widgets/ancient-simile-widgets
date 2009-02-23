@@ -185,11 +185,10 @@ package org.simileWidgets.runway {
         protected function _setPerspective():void {
             _platformView.visible = false;
             
-            _platformView.x = boundingWidth / 2;
+            _platformView.x = boundingWidth / 2 + _geometry.centerOffset;
             _platformView.y = 0;
             _platformView.transform.perspectiveProjection.projectionCenter = new Point(0, boundingHeight / 2);
-            _platformView.transform.perspectiveProjection.fieldOfView = 45;
-            _platformView.transform.perspectiveProjection.focalLength = boundingHeight * 1.5;
+            _platformView.transform.perspectiveProjection.fieldOfView = _geometry.fieldOfView;
             
             _platform.y = Math.round(boundingHeight / 2 - 2 * _geometry.slideSizePixels / 3);
             
