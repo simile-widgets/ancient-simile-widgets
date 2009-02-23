@@ -2,7 +2,9 @@
  *  Runway
  *======================================================================
  */
- 
+
+Runway.swf = Runway.urlPrefix + "swf/runway";
+
 Runway.flashVersion = {
     major: 10,
     minor: 0,
@@ -89,7 +91,7 @@ Runway._Impl.prototype._installUI = function() {
     }
     
     this._elmt.innerHTML = Runway.Flash.generateObjectEmbedHTML(
-        "src",                  Runway.urlPrefix + "swf/runway",
+        "src",                  Runway.swf,
         "width",                "100%",
         "height",               "100%",
         "align",                "middle",

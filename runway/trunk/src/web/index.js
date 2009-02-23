@@ -1,13 +1,15 @@
 var possibleSettings = {
-    "reflectivity" : "number",
-    "reflectionExtent" : "number",
-    
     //"slideSize" : "number",
+    
     "spread" : "number",
     "centerSpread" : "number",
     "recede" : "number",
     "tilt" : "number",
-    "horizon" : "number",
+    "centerOffset" : "number",
+    "fieldOfView" : "number",
+    
+    "reflectivity" : "number",
+    "reflectionExtent" : "number",
     
     "backgroundGradient" : [ "none", "single", "double" ],
     "backgroundColor" : "color",

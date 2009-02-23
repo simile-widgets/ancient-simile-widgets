@@ -36,6 +36,7 @@ package org.simileWidgets.runway {
                 switch (n) {
                 case "onSelect":
                 case "onReady":
+                case "onZoom":
                 case "theme":
                 case "fixedSlideSize":
                 case "slideSize":
@@ -54,6 +55,14 @@ package org.simileWidgets.runway {
                         "select", 
                         function(e:Event):void {
                             ExternalInterface.call(root.loaderInfo.parameters["onSelect"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onZoom")) {
+                    _runway.addEventListener(
+                        "zoom", 
+                        function(e:Event):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onZoom"], _runway.selectedIndex, _runway.selectedID);
                         }
                     );
                 }
@@ -82,6 +91,7 @@ package org.simileWidgets.runway {
                 ExternalInterface.addCallback("select", _runway.select);
                 
                 ExternalInterface.addCallback("getSelectedIndex", function():int { return _runway.selectedIndex; });
+                ExternalInterface.addCallback("getSelectedID", function():String { return _runway.selectedID; });
                 ExternalInterface.addCallback("getSlideCount", function():int { return _runway.slideCount; });
             } catch (e:Error) {
                 trace("Error adding callbacks");
@@ -174,7 +184,8 @@ package org.simileWidgets.runway {
             case "centerSpread" :
             case "recede" :
             case "tilt" :
-            case "horizon" :
+            case "centerOffset" :
+            case "fieldOfView" :
                 return true;
             }
             return false;

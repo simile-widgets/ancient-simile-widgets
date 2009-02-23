@@ -253,6 +253,8 @@ package org.simileWidgets.runway {
                         return;
                     }
                 }
+            } else {
+                dispatchEvent(new Event("zoom"));
             }
         }
         
@@ -328,6 +330,10 @@ package org.simileWidgets.runway {
                 break;
             case Keyboard.END:
                 select(_slideFrames.length - 1);
+                break;
+            case Keyboard.SPACE:
+            case Keyboard.ENTER:
+                dispatchEvent(new Event("zoom"));
                 break;
             }
         }
