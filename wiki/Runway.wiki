@@ -8,7 +8,7 @@ Just like all the other SIMILE widgets, Runway is open source under the BSD lice
 
 ==Step 1. Cross Domain Policy==
 
-Make sure that the site(s) where the image files are located make available a cross-domain.xml policy file giving permission to Runway to load those image files. Suppose that the image files are coming from http://example.com/, then there must be a http://example.com/crossdomain.xml file
+Make sure that the site(s) where the image files are located make available a crossdomain.xml policy file giving permission to Runway to load those image files. Suppose that the image files are coming from http://example.com/, then there must be a http://example.com/crossdomain.xml file
 
 {{{
 <?xml version="1.0"?>
