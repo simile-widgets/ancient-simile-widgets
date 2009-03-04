@@ -5926,7 +5926,7 @@ this._configurePossibleOrders(B);
 }var C=Exhibit.getAttribute(A,"possibleDirections",",");
 if(C!=null&&C.length>0&&this._possibleOrders!=null){for(var D=0;
 D<C.length&&D<this._possibleOrders.length;
-D++){this._possibleOrders.ascending=(C[D].toLowerCase()!="descending");
+D++){this._possibleOrders[D].ascending=(C[D].toLowerCase()!="descending");
 }}Exhibit.SettingsUtilities.collectSettingsFromDOM(A,Exhibit.OrderedViewFrame._settingSpecs,this._settings);
 this._internalValidate();
 };
