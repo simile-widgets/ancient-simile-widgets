@@ -61,7 +61,7 @@ Exhibit.OrderedViewFrame.prototype.configureFromDOM = function(domConfiguration)
     var possibleDirections = Exhibit.getAttribute(domConfiguration, "possibleDirections", ",");
     if (possibleDirections != null && possibleDirections.length > 0 && this._possibleOrders != null) {
         for (var i = 0; i < possibleDirections.length && i < this._possibleOrders.length; i++) {
-            this._possibleOrders.ascending = (possibleDirections[i].toLowerCase() != "descending");
+            this._possibleOrders[i].ascending = (possibleDirections[i].toLowerCase() != "descending");
         }
     }
     
