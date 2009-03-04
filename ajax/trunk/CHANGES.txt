@@ -1,11 +1,7 @@
 CHANGES.txt
 
-Ongoing
- * When you run run.bat, we now serve
-    http://localhost:8181/ajax - from src/webapp/site/
-    http://localhost:8181/ajax/api - from src/webapp/api/
- * Refactored popup bubble rendering code so that it uses as much CSS
-   (rather than Javascript) as possible. 
+Version 2.3
+ 
 
 Version 2.2
  * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
@@ -24,7 +20,17 @@ Version 2.2
    Added as last param for backwards compatibility. If used, maxHeight inserts
    a div with a scrollbar in bubble so it won't be taller than maxHeight.
    Bubbles shorter than maxHeight do not get a scrollbar. -- LarryK rev 1666
-
+ * When you run run.bat, we now serve
+    http://localhost:8181/ajax - from src/webapp/site/
+    http://localhost:8181/ajax/api - from src/webapp/api/
+    -- David H rev 1703
+ * Refactored popup bubble rendering code so that it uses as much CSS
+   (rather than Javascript) as possible. -- David H rev 1733
+ * Added SimileAjax.version in platform.js. Issue 60. -- LarryK rev 1811
+ * Changed from JQuery1.2.6 to jquery-1.2.6.min.js
+   If you want the source version of JQuery then load it yourself and the 
+   simile-ajax-api won't load it. -- LarryK rev 1811
+   
 Version 2.1
  * JQuery updated to v1.2.6
  * Snapshot of software
