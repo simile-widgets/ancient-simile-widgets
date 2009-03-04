@@ -26,7 +26,7 @@ Version 2.2
     -- David H rev 1703
  * Refactored popup bubble rendering code so that it uses as much CSS
    (rather than Javascript) as possible. -- David H rev 1733
- * Added SimileAjax.version in platform.js. Issue 60. -- LarryK rev 1811
+ * Added SimileAjax.version string in platform.js. Issue 60. -- LarryK rev 1811
  * Changed from JQuery1.2.6 to jquery-1.2.6.min.js
    If you want the source version of JQuery then load it yourself and the 
    simile-ajax-api won't load it. -- LarryK rev 1811
