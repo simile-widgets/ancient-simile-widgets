@@ -166,7 +166,7 @@ if (typeof SimileAjax == "undefined") {
 
     (function() {
         var javascriptFiles = [
-            "jquery-1.2.6.js",
+            "jquery-1.2.6.min.js",
             "platform.js",
             "debug.js",
             "xmlhttp.js",

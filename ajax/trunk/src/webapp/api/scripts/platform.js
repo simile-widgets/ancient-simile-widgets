@@ -6,6 +6,14 @@
 /*  This must be called after our jQuery has been loaded 
     but before control returns to user-code.
 */
+
+
+/*==================================================
+ *  REMEMBER to update the Version!
+ *==================================================
+ */
+SimileAjax.version = 'pre 2.2.0';
+
 SimileAjax.jQuery = jQuery.noConflict(true);
 if (typeof window["$"] == "undefined") {
     window.$ = SimileAjax.jQuery;
