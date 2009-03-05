@@ -12,7 +12,7 @@
  *  REMEMBER to update the Version!
  *==================================================
  */
-SimileAjax.version = 'pre 2.2.0';
+SimileAjax.version = '2.2.0';
 
 SimileAjax.jQuery = jQuery.noConflict(true);
 if (typeof window["$"] == "undefined") {

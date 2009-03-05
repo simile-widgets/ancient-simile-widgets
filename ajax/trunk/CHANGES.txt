@@ -30,6 +30,8 @@ Version 2.2
  * Changed from JQuery1.2.6 to jquery-1.2.6.min.js
    If you want the source version of JQuery then load it yourself and the 
    simile-ajax-api won't load it. -- LarryK rev 1811
+ * Changed ver to 2.2.0 in preparation for the release.
+   Updated release notes. -- LarryK rev 1816
    
 Version 2.1
  * JQuery updated to v1.2.6

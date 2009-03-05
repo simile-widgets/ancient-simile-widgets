@@ -1066,7 +1066,7 @@ jQuery.fn["outer"+name]=function(margin){return this["inner"+name]()+num(this,"b
 
 
 /* platform.js */
-SimileAjax.version="pre 2.2.0";
+SimileAjax.version="2.2.0";
 SimileAjax.jQuery=jQuery.noConflict(true);
 if(typeof window["$"]=="undefined"){window.$=SimileAjax.jQuery;
 }SimileAjax.Platform.os={isMac:false,isWin:false,isWin32:false,isUnix:false};
