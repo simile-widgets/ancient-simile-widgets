@@ -21,7 +21,7 @@ This wiki still references images and examples from the MIT site.  Almost all th
 
 === Getting Started ===
  * [Timeline_Basics The Basics], briefly how timelines work
- * [Timeline_Releases_and_Hosting Timeline releases and hosting] options
+ * [Timeline_Releases_and_Access Timeline releases and access] options
  * [Timeline_Event_Display How events are shown on a Timeline]
  * [Timeline_GettingStarted Getting started], a step by step tutorial 
  * [Timeline_UnderstandingInitialization Understanding Initialization] - walk through of Timeline initialization and defaults
