@@ -5,7 +5,12 @@
 Here are a few easy steps to create a simple timeline. Open up your favorite text or HTML editor and start creating an HTML file.
 
 === Note ===
-This tutorial has been partially updated for use with Timeline version 2.x. The screen shots are from Timeline version 1, so your Timeline will look somewhat different. In addition to this tutorial, please check out the Timeline examples, [http://simile-widgets.googlecode.com/svn/timeline/trunk/src/webapp/site/examples/ available here.]
+This tutorial has been partially updated for use with Timeline version 2.x. The screen shots are from Timeline version 1, so your Timeline will look somewhat different.
+
+=== Examples ===
+In addition to this tutorial, please check out:
+ * The [http://simile-widgets.googlecode.com/files/timeline_local_example_1.0.zip local Timeline example:] a Timeline web page and data file that doesn't require a web server to use.
+ * [http://simile-widgets.googlecode.com/svn/timeline/trunk/src/webapp/site/examples/ Timeline examples]
 
 === Step 1. Link to the API ===
 
@@ -17,7 +22,7 @@ In your HTML code, link to Timeline's Javascript API code as follows:
    <head>
      <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
      ...
-     <script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>
+     <script src="http://static.simile.mit.edu/timeline/api-2.3.0/timeline-api.js?bundle=true" type="text/javascript"></script>
      ...
    </head>
    <body>
