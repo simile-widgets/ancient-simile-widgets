@@ -1,0 +1,45 @@
+CHANGES.txt
+
+Version 2.2.1
+ * Switched from jQuery 1.2.6 to 1.3.2. Also detect if jQuery or $ are in window
+   and include our own jQuery if not.
+
+Version 2.2
+ * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
+   to take optional second paramenter of classname for computing size on
+   screen. See issue 30. -- LarryK rev 1635 and 1637
+ * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
+   to use getBoundingClientRect if available. See issue 13
+   -- LarryK rev 1635 and 1637
+ * Added SimileAjax.Graphics.getWidthHeight(el) RETURNS hash {width:  w, height: h}
+   in pixels. File: graphics.js
+   -- LarryK rev 1641
+ * Updated License to refer to JQuery -- LarryK rev 1641
+ * Updated SimileAjax.Graphics.getWidthHeight to better test availability of 
+   getBoundingClientRect -- LarryK rev 1657
+ * Added new param, maxHeight to SimileAjax.Graphics.createBubbleForContentAndPoint
+   Added as last param for backwards compatibility. If used, maxHeight inserts
+   a div with a scrollbar in bubble so it won't be taller than maxHeight.
+   Bubbles shorter than maxHeight do not get a scrollbar. -- LarryK rev 1666
+ * When you run run.bat, we now serve
+    http://localhost:8181/ajax - from src/webapp/site/
+    http://localhost:8181/ajax/api - from src/webapp/api/
+    -- David H rev 1703
+ * Refactored popup bubble rendering code so that it uses as much CSS
+   (rather than Javascript) as possible. -- David H rev 1733
+ * Added SimileAjax.version string in platform.js. Issue 60. -- LarryK rev 1811
+ * Changed from JQuery1.2.6 to jquery-1.2.6.min.js
+   If you want the source version of JQuery then load it yourself and the 
+   simile-ajax-api won't load it. -- LarryK rev 1811
+ * Changed ver to 2.2.0 in preparation for the release.
+   Updated release notes. -- LarryK rev 1816
+   
+Version 2.1
+ * JQuery updated to v1.2.6
+ * Snapshot of software
+ * Added Changes, Release_notes, Readme and License files
+
+Version 2.0
+ * Software changes
+ * Moved svn repository to Google code
+

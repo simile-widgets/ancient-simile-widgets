@@ -1,0 +1,45 @@
+RELEASE_NOTES.txt
+
+Version 2.2.1 -- March 9, 2009
+ * Switched from jQuery 1.2.6 to 1.3.2. Also detect if jQuery or $ are in window
+   and include our own jQuery if not.
+ 
+Version 2.2.0 -- March 4, 2009
+
+ Notable changes
+ * Now including jquery-1.2.6.min.js. Updated License to refer to JQuery
+ * Added new param, maxHeight to SimileAjax.Graphics.createBubbleForContentAndPoint
+   Added as last param for backwards compatibility. If used, maxHeight inserts
+   a div with a scrollbar in bubble so it won't be taller than maxHeight.
+   Bubbles shorter than maxHeight do not get a scrollbar.
+ * When you run run.bat, we now serve
+    http://localhost:8181/ajax - from src/webapp/site/
+    http://localhost:8181/ajax/api - from src/webapp/api/
+ * Added SimileAjax.version string in platform.js. Issue 60.
+ * Fix for issue 13, 30
+ * Added SimileAjax.Graphics.getWidthHeight(el) RETURNS hash {width:  w, height: h}
+   in pixels.
+ * Refactored popup bubble rendering code so that it uses as much CSS
+   (rather than Javascript) as possible.
+ * See Changes file for more information.
+ 
+ No known issues.
+ 
+
+Version 2.1.0 -- October 27, 2008
+
+  Known Issues
+  Firefox 3.x on Macintosh -- width of event labels on the Timeline
+  are not calculated correctly, causes some labels to wrap.
+  Problem is in
+  SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
+  file: /ajax/trunk/src/webapp/api/scripts/graphics.js
+  
+  Issue # 13 on the issues tracker
+  http://code.google.com/p/simile-widgets/issues
+    
+PREVIOUS RELEASES
+
+Version numbering was not consistent prior to Version 2.1.0
+In general, the trunk tends to be stable
+
