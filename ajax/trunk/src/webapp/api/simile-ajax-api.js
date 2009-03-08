@@ -166,7 +166,6 @@ if (typeof SimileAjax == "undefined") {
 
     (function() {
         var javascriptFiles = [
-            "jquery-1.2.6.min.js",
             "platform.js",
             "debug.js",
             "xmlhttp.js",
@@ -186,6 +185,9 @@ if (typeof SimileAjax == "undefined") {
         var cssFiles = [
             "graphics.css"
         ];
+        if (!("jQuery" in window) && !("$" in window)) {
+        	javascriptFiles.unshift("jquery-1.3.2.min.js");
+        }
         
         if (typeof SimileAjax_urlPrefix == "string") {
             SimileAjax.urlPrefix = SimileAjax_urlPrefix;
