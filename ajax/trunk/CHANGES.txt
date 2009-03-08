@@ -1,7 +1,8 @@
 CHANGES.txt
 
-Version 2.3
- 
+Version 2.2.1
+ * Switched from jQuery 1.2.6 to 1.3.2. Also detect if jQuery or $ are in window
+   and include our own jQuery if not.
 
 Version 2.2
  * Updated SimileAjax.Graphics._FontRenderingContext.prototype.computeSize
