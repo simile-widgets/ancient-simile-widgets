@@ -2,7 +2,7 @@
  *  Simile Timeplot API
  *
  *  Include Timeplot in your HTML file as follows:
- *    <script src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js" type="text/javascript"></script>
+ *    <script src="http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js" type="text/javascript"></script>
  *
  *==================================================*/
 
@@ -106,7 +106,7 @@
             }
         }
 
-        var timeplotURLPrefix = (local) ? "/timeplot/api/1.0/" : Timeplot.urlPrefix;
+        var timeplotURLPrefix = Timeplot.urlPrefix;
 
         if (local && !("console" in window)) {
             var firebug = [ timeplotURLPrefix + "lib/firebug/firebug.js" ];
@@ -154,7 +154,7 @@
         if (typeof Timeline != "undefined") {
             loadTimeplot();
         } else {
-            var timelineURL = (local) ? "/timeline/api-2.0/timeline-api.js?bundle=false" : "http://static.simile.mit.edu/timeline/api-2.0/timeline-api.js";
+            var timelineURL = "http://api.simile-widgets.org/timeline/2.3.1/timeline-api.js?bundle=true";
             window.SimileAjax_onLoad = loadTimeplot;
             SimileAjax.includeJavascriptFile(document, timelineURL);
         }
@@ -164,9 +164,7 @@
     if (typeof SimileAjax == "undefined") {
         window.SimileAjax_onLoad = loadTimeline;
         
-        var url = local ?
-            "/ajax/api-2.0/simile-ajax-api.js?bundle=false" :
-            "http://static.simile.mit.edu/ajax/api-2.0/simile-ajax-api.js?bundle=true";
+        var url = "http://api.simile-widgets.org/ajax/2.2.1/simile-ajax-api.js?bundle=true";
                 
         var createScriptElement = function() {
             var script = document.createElement("script");

@@ -1,8 +1,7 @@
 <html>
-<head>
-    <title>SIMILE | Timeplot | Immigration</title>
+  <head>
+    <title>SIMILE Widgets | Timeplot | Examples | Immigration</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
-    
     <style>
         body {
             background-color: #fff;
@@ -27,7 +26,8 @@
         }
     </style>
     
-    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+    <!-- For your own use, replace ../../api/timeplot-api.js with http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js -->
+    <script type="text/javascript" src="../../api/timeplot-api.js"></script>
 
     <script>
                         
@@ -109,23 +109,23 @@
             }
         }
     </script>
-</head>
-<body onload="onLoad();" onresize="onResize();">
-<!--#include virtual="../../sidebar.html" -->
-<ul id="path">
-  <li><a href="/" title="Home">SIMILE</a></li>
-  <li><a href="../../">Timeplot</a></li>
-  <li><span>Immigration</span></li>
-</ul>
+  </head>
+  <body onload="onLoad();" onresize="onResize();">
+    <ul id="path">
+      <li><a href="/" title="Home">SIMILE Widgets</a></li>
+      <li><a href="../../">Timeplot</a></li>
+      <li><span>Examples: Immigration</span></li>
+    </ul>
 
-<div id="body">
-	<h1>Immigration</h1>
-    <div class="label"><span style="color: #193441;">New Legal Permanent Residents in the U.S. (per year)</span> vs. <span style="color: #468966;">U.S. Population</span> vs. <span style="color: #B9121B">U.S. History</span></div>
-    <div id="timeplot1" style="height: 300px" class="timeplot"></div>
-    <div class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a>, <a href="http://www.census.gov/population/censusdata/table-4.pdf">U.S. Census Bereau</a> and <a href="http://en.wikipedia.org/wiki/Timeline_of_United_States_history">Wikipedia</a></div>
-    <p class="note">The plots have different dimensions and scales but here they have been normalized to better expose relationships in trends.
-    Move your mouse over the plots to obtain the individual values.</p> 
-</div>
-    
-</body>
+    <div id="header">
+    	<h1>Immigration</h1>
+    </div>
+    <div id="content">
+        <div class="label"><span style="color: #193441;">New Legal Permanent Residents in the U.S. (per year)</span> vs. <span style="color: #468966;">U.S. Population</span> vs. <span style="color: #B9121B">U.S. History</span></div>
+        <div id="timeplot1" style="height: 300px" class="timeplot"></div>
+        <div class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a>, <a href="http://www.census.gov/population/censusdata/table-4.pdf">U.S. Census Bereau</a> and <a href="http://en.wikipedia.org/wiki/Timeline_of_United_States_history">Wikipedia</a></div>
+        <p class="note">The plots have different dimensions and scales but here they have been normalized to better expose relationships in trends.
+        Move your mouse over the plots to obtain the individual values.</p> 
+    </div>
+  </body>
 </html>
