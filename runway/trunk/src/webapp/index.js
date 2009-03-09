@@ -8,7 +8,7 @@ var possibleSettings = {
     "centerOffset" : "number",
     "fieldOfView" : "number",
     
-    "reflectivity" : "number",
+   // "reflectivity" : "number",
     "reflectionExtent" : "number",
     
     "backgroundGradient" : [ "none", "single", "double" ],
@@ -121,6 +121,4 @@ function generateSelectSetting(container, name, value, choices) {
     
     select.onchange = function() {
         widget.setProperty(name, select.options[select.selectedIndex].value);
-        selectChoice(widget.getProperty(name));
-    };
-}
+        selectChoi
