@@ -1,0 +1,140 @@
+<html>
+<head>
+    <title>SIMILE | Timeplot | Tests | Value Geometries</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+        
+        h2 {
+            border-bottom: none !important;
+        }
+        
+        .timeplot {
+            margin: 1em;
+        }
+    </style>
+    
+    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+
+    <script>
+        var timeplot1 = null;
+        var timeplot2 = null;
+        var timeplot3 = null;
+        var timeplot4 = null;
+        var timeplot5 = null;
+        var timeplot6 = null;
+        var timeplot7 = null;
+        var timeplot8 = null;
+        var timeplot9 = null;
+        var timeplot10 = null;
+        var timeplot11 = null;
+        var timeplot12 = null;
+
+        function loadTimeplot(div, type, min, max, color, gridtype) {
+            if (type == "lin") {
+	            var valueGeometry = new Timeplot.DefaultValueGeometry({
+	                gridColor: color,
+	                gridType: gridtype,
+	                min: min,
+	                max: max
+	            });
+	        } else if (type == "log") {
+                var valueGeometry = new Timeplot.LogarithmicValueGeometry({
+                    gridColor: color,
+                    gridType: gridtype,
+                    min: min,
+                    max: max
+                });
+	        } else {
+	           return;
+	        }
+            
+            var plotInfo = [
+                Timeplot.createPlotInfo({
+                    valueGeometry: valueGeometry
+                })                
+            ];
+            
+            var timeplot = Timeplot.create(div, plotInfo);
+            timeplot.paint();
+            return timeplot;
+        }
+        
+        function onLoad() {
+            timeplot1 = loadTimeplot(document.getElementById("timeplot1"), "lin", 0, 634899, "#cc0000", "short");
+            timeplot2 = loadTimeplot(document.getElementById("timeplot2"), "lin", 45, 134, "#00cc00", "long");
+            timeplot3 = loadTimeplot(document.getElementById("timeplot3"), "lin", 0.3, 3.7, "#0000cc", "long");
+            timeplot4 = loadTimeplot(document.getElementById("timeplot4"), "lin", 0.1, 0.6, "#284907", "long");
+            timeplot5 = loadTimeplot(document.getElementById("timeplot5"), "lin", -134, -4, "#cc0000", "long");
+            timeplot6 = loadTimeplot(document.getElementById("timeplot6"), "lin", -1.3, -0.7, "#00cc00", "long");
+            timeplot7 = loadTimeplot(document.getElementById("timeplot7"), "lin", -3.2, +2.3, "#000000", "long");
+            timeplot8 = loadTimeplot(document.getElementById("timeplot8"), "lin", -234234, 394820, "#000000", "short");
+            timeplot9 = loadTimeplot(document.getElementById("timeplot9"), "lin", -234, 2343, "#ff0000", "short");
+            timeplot10 = loadTimeplot(document.getElementById("timeplot10"), "log", 0, 23423, "#ff0000", "short");
+            timeplot11 = loadTimeplot(document.getElementById("timeplot11"), "log", 334, 2344234, "#ff0000", "short");
+            timeplot12 = loadTimeplot(document.getElementById("timeplot12"), "log", 0, 342, "#00ff00", "long");
+        }            
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                    if (timeplot2) timeplot2.repaint();
+                    if (timeplot3) timeplot3.repaint();
+                    if (timeplot4) timeplot4.repaint();
+                    if (timeplot5) timeplot5.repaint();
+                    if (timeplot6) timeplot6.repaint();
+                    if (timeplot7) timeplot7.repaint();
+                    if (timeplot8) timeplot8.repaint();
+                    if (timeplot9) timeplot9.repaint();
+                    if (timeplot10) timeplot10.repaint();
+                    if (timeplot11) timeplot11.repaint();
+                    if (timeplot12) timeplot12.repaint();
+                }, 0);
+            }
+        }
+    </script>
+</head>
+<body onload="onLoad();" onresize="onResize();">
+<!--#include virtual="../../sidebar.html" -->
+<ul id="path">
+  <li><a href="/" title="Home">SIMILE</a></li>
+  <li><a href="../../">Timeplot</a></li>
+  <li><a href="../">Tests</a></li>
+  <li><span>Value Geometries</span></li>
+</ul>
+
+<div id="body">
+	<h1>Value Geometries Tests</h1>
+    <table width="100%">
+     <tr>
+      <td width="33%"><div id="timeplot1" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot2" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot3" class="timeplot"></div></td>
+     </tr>
+     <tr>
+      <td width="33%"><div id="timeplot4" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot5" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot6" class="timeplot"></div></td>
+     </tr>
+     <tr>
+      <td width="33%"><div id="timeplot7" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot8" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot9" class="timeplot"></div></td>
+     </tr>
+     <tr>
+      <td width="33%"><div id="timeplot10" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot11" class="timeplot"></div></td>
+      <td width="33%"><div id="timeplot12" class="timeplot"></div></td>
+     </tr>
+    </table>
+</div>
+    
+</body>
+</html>

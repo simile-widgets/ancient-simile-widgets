@@ -1,0 +1,1164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="generator" content="JsDoc Toolkit 1.0">
+	<title>JsDoc: Geometries</title>
+	<link rel=stylesheet href="default.css" type="text/css" media=screen>
+</head>
+
+<body>
+	<div class="content">
+		<div class="docs">
+		
+			<div class="sectionHead">Library: Geometries</div>
+			<div class="section overview">
+				<div class="itemTitle">
+					Overview
+				</div>
+				<div>	
+					<div class="desc">Geometries</div>
+					<div class="itemTags">
+					
+						<ul>
+							<li>desc: Geometries</li>
+						</ul>
+					
+					</div>
+				</div>
+			</div>
+			
+			<div class="sectionHead">Constructors</div>
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry"></a>
+					
+					
+					Timeplot.DefaultValueGeometry(<span class="signature">params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">This is the constructor for the default value geometry.
+A value geometry is what regulates mapping of the plot values to the screen y coordinate.
+If two plots share the same value geometry, they will be drawn using the same scale.
+If "min" and "max" parameters are not set, the geometry will stretch itself automatically
+so that the entire plot will be drawn without overflowing. The stretching happens also
+when a geometry is shared between multiple plots, the one with the biggest range will
+win over the others.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry.setTimeplot">setTimeplot</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry.setRange">setRange</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry.reset">reset</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry.toScreen">toScreen</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry.fromScreen">fromScreen</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry.paint">paint</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultValueGeometry._clearLabels">_clearLabels</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.LogarithmicValueGeometry"></a>
+					
+					
+					Timeplot.LogarithmicValueGeometry(<span class="signature">params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">This is the constructor for a Logarithmic value geometry, which
+is useful when plots have values in different magnitudes but 
+exhibit similar trends and such trends want to be shown on the same
+plot (here a cartesian geometry would make the small magnitudes 
+disappear).
+
+NOTE: this class extends Timeplot.DefaultValueGeometry and inherits
+all of the methods of that class. So refer to that class.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.LogarithmicValueGeometry.actLinear">actLinear</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.LogarithmicValueGeometry.actLogarithmic">actLogarithmic</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.LogarithmicValueGeometry.toggle">toggle</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry"></a>
+					
+					
+					Timeplot.DefaultTimeGeometry(<span class="signature">params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">This is the constructor for the default time geometry.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.setTimeplot">setTimeplot</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.setRange">setRange</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.reset">reset</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.toScreen">toScreen</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.fromScreen">fromScreen</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.getPeriod">getPeriod</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.getLabeler">getLabeler</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.getUnit">getUnit</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultTimeGeometry.paint">paint</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.MagnifyingTimeGeometry"></a>
+					
+					
+					Timeplot.MagnifyingTimeGeometry(<span class="signature">params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">This is the constructor for the magnifying time geometry.
+Users can interact with this geometry and 'magnify' certain areas of the
+plot to see the plot enlarged and resolve details that would otherwise
+get lost or cluttered with a linear time geometry.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.MagnifyingTimeGeometry.initialize">initialize</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.MagnifyingTimeGeometry.setMagnifyingParams">setMagnifyingParams</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			<div class="sectionHead">Functions</div>
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry.setTimeplot"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>setTimeplot(<span class="signature">timeplot</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Since geometries can be reused across timeplots, we need to call this function
+before we can paint using this geometry.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							timeplot
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry.setRange"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>setRange(<span class="signature">range</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Called by all the plot layers this geometry is associated with
+to update the value range. Unless min/max values are specified
+in the parameters, the biggest value range will be used.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							range
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry.reset"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>reset(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Called after changing ranges or canvas size to reset the grid values</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry.toScreen"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>toScreen(<span class="signature">value</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Map the given value to a y screen coordinate.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							value
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry.fromScreen"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>fromScreen(<span class="signature">y</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Map the given y screen coordinate to a value</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							y
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry.paint"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>paint(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Each geometry is also a painter and paints the value grid and grid labels.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultValueGeometry._clearLabels"></a>
+					
+						<i><a href="#Timeplot.DefaultValueGeometry" class="type">Timeplot.DefaultValueGeometry.</a></i>_clearLabels(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Removes all the labels that were added by this geometry</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.LogarithmicValueGeometry.actLinear"></a>
+					
+						<i><a href="#Timeplot.LogarithmicValueGeometry" class="type">Timeplot.LogarithmicValueGeometry.</a></i>actLinear(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Turn the logarithmic scaling off.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.LogarithmicValueGeometry.actLogarithmic"></a>
+					
+						<i><a href="#Timeplot.LogarithmicValueGeometry" class="type">Timeplot.LogarithmicValueGeometry.</a></i>actLogarithmic(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Turn the logarithmic scaling on.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.LogarithmicValueGeometry.toggle"></a>
+					
+						<i><a href="#Timeplot.LogarithmicValueGeometry" class="type">Timeplot.LogarithmicValueGeometry.</a></i>toggle(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Toggle logarithmic scaling seeting it to on if off and viceversa.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.setTimeplot"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>setTimeplot(<span class="signature">timeplot</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Since geometries can be reused across timeplots, we need to call this function
+before we can paint using this geometry.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							timeplot
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.setRange"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>setRange(<span class="signature">range</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Called by all the plot layers this geometry is associated with
+to update the time range. Unless min/max values are specified
+in the parameters, the biggest range will be used.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							range
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.reset"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>reset(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Called after changing ranges or canvas size to reset the grid values</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.toScreen"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>toScreen(<span class="signature">time</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Map the given date to a x screen coordinate.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							time
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.fromScreen"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>fromScreen(<span class="signature">x</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Map the given x screen coordinate to a date.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							x
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.getPeriod"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>getPeriod(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Get a period (in milliseconds) this time geometry spans.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.getLabeler"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>getLabeler(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the labeler that has been associated with this time geometry</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.getUnit"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>getUnit(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the time unit associated with this time geometry</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultTimeGeometry.paint"></a>
+					
+						<i><a href="#Timeplot.DefaultTimeGeometry" class="type">Timeplot.DefaultTimeGeometry.</a></i>paint(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Each geometry is also a painter and paints the value grid and grid labels.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.MagnifyingTimeGeometry.initialize"></a>
+					
+						<i><a href="#Timeplot.MagnifyingTimeGeometry" class="type">Timeplot.MagnifyingTimeGeometry.</a></i>initialize(<span class="signature">timeplot</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Initialize this geometry associating it with the given timeplot and 
+register the geometry event handlers to the timeplot so that it can
+interact with the user.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							timeplot
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.MagnifyingTimeGeometry.setMagnifyingParams"></a>
+					
+						<i><a href="#Timeplot.MagnifyingTimeGeometry" class="type">Timeplot.MagnifyingTimeGeometry.</a></i>setMagnifyingParams(<span class="signature">c, a, b</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Set the Magnifying parameters. c is the location in pixels where the Magnifying
+center should be located in the timeplot, a is the aperture in pixel of
+the Magnifying and b is the time period in milliseconds that the Magnifying 
+should span.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							c
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							a
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							b
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="sectionHead">Objects</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</div>
+	</div>
+	<div class="finePrint">
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Fri, 27 Jul 2007 04:11:47 GMT
+	</div>
+</body>
+</html>

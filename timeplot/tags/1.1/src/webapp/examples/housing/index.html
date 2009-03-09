@@ -1,0 +1,134 @@
+<html>
+  <head>
+    <title>SIMILE Widgets | Timeplot | Examples | Houses vs. Stock Market</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+         
+        .label {
+            color: #666;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #333;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+        
+        .sources {
+            font-size: 90%;
+        }
+    </style>
+    
+    <!-- For your own use, replace ../../api/timeplot-api.js with http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js -->
+    <script type="text/javascript" src="../../api/timeplot-api.js"></script>
+
+    <script>
+        var timeplot1;
+
+        var color1 = new Timeplot.Color('#FCFFF5');
+        var color2 = new Timeplot.Color('#D1DBBD');
+        var color3 = new Timeplot.Color('#91AA9D');
+        var color4 = new Timeplot.Color('#468966');
+        var color5 = new Timeplot.Color('#193441');
+        var gridColor  = new Timeplot.Color('#FFE57F');
+        
+        function onLoad() {
+
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: "#000000",
+                min: "1975-01-01"
+            });
+
+            var geometry1 = new Timeplot.DefaultValueGeometry({
+                min: 0
+            });
+
+            var geometry2 = new Timeplot.DefaultValueGeometry({
+                min: 0
+            });
+
+            var geometry3 = new Timeplot.DefaultValueGeometry({
+                min: 0
+            });
+
+            var eventSource1 = new Timeplot.DefaultEventSource();
+            var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
+
+            var eventSource2 = new Timeplot.DefaultEventSource();
+            var dataSource2 = new Timeplot.ColumnSource(eventSource2,1);
+
+            var eventSource3 = new Timeplot.DefaultEventSource();
+            var dataSource3 = new Timeplot.ColumnSource(eventSource3,1);
+            
+            var plotInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "Inflation",
+                    dataSource: dataSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry2,
+                    lineColor: color3,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "Down Jones Index",
+                    dataSource: dataSource3,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry3,
+                    lineColor: color5,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "House Pricing Index",
+                    dataSource: dataSource1,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry1,
+                    lineColor: color4,
+                    showValues: true
+                })
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
+            timeplot1.loadText("house_pricing_index.txt", " ", eventSource1);
+            timeplot1.loadText("us-inflation.txt", " ", eventSource2);
+            timeplot1.loadText("dow-jones-index.txt", " ", eventSource3);
+        }            
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                }, 0);
+            }
+        }
+    </script>
+  </head>
+  <body onload="onLoad();" onresize="onResize();">
+    <ul id="path">
+      <li><a href="/" title="Home">SIMILE Widgets</a></li>
+      <li><a href="../../">Timeplot</a></li>
+      <li><span>Examples: Houses vs. Stock Market</span></li>
+    </ul>
+
+    <div id="header">
+    	<h1>Houses vs. Stock Market</h1>
+    </div>
+    <div id="content">
+        <div class="label"><span style="color: #91AA9D;">Inflation</span> vs. <span style="color: #468966;">Housing Price Index</span> vs. <span style="color: #193441;">Dow Jones Industrial Average</span></div>
+        <div id="timeplot1" style="height: 300px" class="timeplot"></div>
+        <p class="sources">Sources: <a href="http://www.bls.gov/data/">U.S. Department of Labor</a>, <a href="">Office of Federal Housing Enterprise Oversight (OFHEO)</a> and <a href="http://www.djindexes.com/mdsidx/index.cfm?event=showavgIndexData">Dow Jones & Company</a></p>
+        <p class="note">The indices have different dimensions and scales but here they have been normalized to better expose relationships in trends.
+        Move your mouse over the plots to obtain the individual values.</p> 
+    </div>
+    
+  </body>
+</html>

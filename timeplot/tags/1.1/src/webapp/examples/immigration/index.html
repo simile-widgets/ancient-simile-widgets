@@ -1,0 +1,131 @@
+<html>
+  <head>
+    <title>SIMILE Widgets | Timeplot | Examples | Immigration</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+         
+        .label {
+            color: #333;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #333;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+        
+        .sources {
+            font-size: 90%;
+        }
+    </style>
+    
+    <!-- For your own use, replace ../../api/timeplot-api.js with http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js -->
+    <script type="text/javascript" src="../../api/timeplot-api.js"></script>
+
+    <script>
+                        
+        var timeplot1;
+
+        function onLoad() {
+
+	        var red = new Timeplot.Color('#B9121B');
+	        var blue = new Timeplot.Color('#193441');
+	        var green = new Timeplot.Color('#468966');
+	        var lightGreen = new Timeplot.Color('#5C832F');
+	        
+	        var gridColor  = new Timeplot.Color('#000000');
+
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "bottom"
+            });
+
+            var geometry1 = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                gridType: "short",
+                axisLabelsPlacement: "left",
+                min: 0
+            });
+
+            var geometry2 = new Timeplot.DefaultValueGeometry({
+                min: 0
+            });
+
+            var eventSource1 = new Timeplot.DefaultEventSource();
+            var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
+
+            var eventSource2 = new Timeplot.DefaultEventSource();
+            var dataSource2 = new Timeplot.ColumnSource(eventSource2,1);
+
+            var eventSource3 = new Timeplot.DefaultEventSource();
+            
+            var plotInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "Population",
+                    dataSource: dataSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry2,
+                    lineColor: green,
+                    dotColor: lightGreen,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "Immigration",
+                    dataSource: dataSource1,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry1,
+                    lineColor: blue,
+                    dotColor: blue,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "Events",
+                    eventSource: eventSource3,
+                    timeGeometry: timeGeometry,
+                    lineColor: red
+                })
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
+            timeplot1.loadText("immigration.txt", " ", eventSource1);
+            timeplot1.loadText("us_population.txt", " ", eventSource2);
+            timeplot1.loadXML("us_history.xml", eventSource3);
+        }            
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                }, 0);
+            }
+        }
+    </script>
+  </head>
+  <body onload="onLoad();" onresize="onResize();">
+    <ul id="path">
+      <li><a href="/" title="Home">SIMILE Widgets</a></li>
+      <li><a href="../../">Timeplot</a></li>
+      <li><span>Examples: Immigration</span></li>
+    </ul>
+
+    <div id="header">
+    	<h1>Immigration</h1>
+    </div>
+    <div id="content">
+        <div class="label"><span style="color: #193441;">New Legal Permanent Residents in the U.S. (per year)</span> vs. <span style="color: #468966;">U.S. Population</span> vs. <span style="color: #B9121B">U.S. History</span></div>
+        <div id="timeplot1" style="height: 300px" class="timeplot"></div>
+        <div class="sources">Sources: <a href="http://www.dhs.gov/ximgtn/statistics/publications/LPR06.shtm">U.S. Department of Homeland Security</a>, <a href="http://www.census.gov/population/censusdata/table-4.pdf">U.S. Census Bereau</a> and <a href="http://en.wikipedia.org/wiki/Timeline_of_United_States_history">Wikipedia</a></div>
+        <p class="note">The plots have different dimensions and scales but here they have been normalized to better expose relationships in trends.
+        Move your mouse over the plots to obtain the individual values.</p> 
+    </div>
+  </body>
+</html>

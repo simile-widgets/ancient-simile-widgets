@@ -1,0 +1,50 @@
+<!--+
+    |
+    |           +===========================+
+    |           |   Timeplot Build System   |
+    |           +===========================+
+    |
+    | This is just for bundling and minifying javascript and CSS files.
+    |
+    +-->
+
+<project default="bundle" basedir="." name="Timeplot">
+
+  <target name="tasks">
+    <taskdef name="jsmin"
+        classname="edu.mit.simile.jsminTask.JSMinTask"
+        classpath="tools/jsminTask.jar"/>
+  </target>
+  	
+  <target name="bundle" depends="tasks">
+    <jsmin output="src/webapp/api/timeplot-bundle.js">
+        <fileset dir="src/webapp/api/scripts">
+        	<include name="timeplot.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="plot.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="sources.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="geometry.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="color.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="math.js" />
+        </fileset>
+        <fileset dir="src/webapp/api/scripts">
+            <include name="processor.js" />
+        </fileset>
+  	</jsmin>
+  	
+    <concat destfile="src/webapp/api/timeplot-bundle.css">
+        <fileset dir="src/webapp/api/styles">
+        	<include name="**/*.css" />
+        </fileset>
+    </concat>
+  </target>
+</project>

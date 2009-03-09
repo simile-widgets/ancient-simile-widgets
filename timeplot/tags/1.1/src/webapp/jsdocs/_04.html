@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="generator" content="JsDoc Toolkit 1.0">
+	<title>JsDoc: Plot</title>
+	<link rel=stylesheet href="default.css" type="text/css" media=screen>
+</head>
+
+<body>
+	<div class="content">
+		<div class="docs">
+		
+			<div class="sectionHead">Library: Plot</div>
+			<div class="section overview">
+				<div class="itemTitle">
+					Overview
+				</div>
+				<div>	
+					<div class="desc">Plot Layer</div>
+					<div class="itemTags">
+					
+						<ul>
+							<li>desc: Plot Layer</li>
+						</ul>
+					
+					</div>
+				</div>
+			</div>
+			
+			<div class="sectionHead">Constructors</div>
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.Plot"></a>
+					
+					
+					Timeplot.Plot(<span class="signature">timeplot, plotInfo</span>)
+					
+				</div>
+				
+				
+					<div class="desc">A plot layer is the main building block for timeplots and it's the object
+that is responsible for painting the plot itself. Each plot needs to have
+a time geometry, either a DataSource (for time series
+plots) or an EventSource (for event plots) and a value geometry in case 
+of time series plots. Such parameters are passed along
+in the 'plotInfo' map.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							timeplot
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							plotInfo
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.Plot.initialize">initialize</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.Plot.dispose">dispose</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.Plot.getDataSource">getDataSource</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.Plot.getTimeGeometry">getTimeGeometry</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.Plot.getValueGeometry">getValueGeometry</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.Plot.paint">paint</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="sectionHead">Functions</div>
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.Plot.initialize"></a>
+					
+						<i><a href="#Timeplot.Plot" class="type">Timeplot.Plot.</a></i>initialize(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Initialize the plot layer</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.Plot.dispose"></a>
+					
+						<i><a href="#Timeplot.Plot" class="type">Timeplot.Plot.</a></i>dispose(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Dispose the plot layer and all the data sources and listeners associated to it</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.Plot.getDataSource"></a>
+					
+						<i><a href="#Timeplot.Plot" class="type">Timeplot.Plot.</a></i>getDataSource(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the data source of this plot layer (it could be either a DataSource or an EventSource)</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.Plot.getTimeGeometry"></a>
+					
+						<i><a href="#Timeplot.Plot" class="type">Timeplot.Plot.</a></i>getTimeGeometry(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the time geometry associated with this plot layer</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.Plot.getValueGeometry"></a>
+					
+						<i><a href="#Timeplot.Plot" class="type">Timeplot.Plot.</a></i>getValueGeometry(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the value geometry associated with this plot layer</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.Plot.paint"></a>
+					
+						<i><a href="#Timeplot.Plot" class="type">Timeplot.Plot.</a></i>paint(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Paint this plot layer</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="sectionHead">Objects</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</div>
+	</div>
+	<div class="finePrint">
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Fri, 27 Jul 2007 04:11:47 GMT
+	</div>
+</body>
+</html>

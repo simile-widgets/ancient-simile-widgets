@@ -1,0 +1,142 @@
+<html>
+<head>
+    <title>SIMILE | Timeplot | Magnifying Stats</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+         
+        .label {
+            color: #666;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #BBB;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+                
+        .toggle {
+            padding: 0px 3px;
+            cursor: pointer;
+            text-decoration: underline;
+            color: #666;
+        }
+        
+        .active-toggle {
+            padding: 0px 3px;
+        }
+                    
+        #timeplot2 {
+            height: 100px;
+        }
+    </style>
+    
+    <!--script type="text/javascript" src="/timeplot/api/1.0/timeplot-api.js?bundle=false"></script-->
+    <script type="text/javascript" src="http://static.simile.mit.edu/timeplot/api/1.0/timeplot-api.js"></script>
+
+    <script>
+        var timeplot1;
+
+        var quietLine  = new Timeplot.Color('#82A6A2');
+        var loudLine   = new Timeplot.Color('#284452');
+        var lightFill  = new Timeplot.Color('#DEE5D1');
+        var gridColor  = new Timeplot.Color('#B0B0B0');
+        
+        function onLoad() {
+            if (document.location.toString().match(/^http\:\/\/simile.mit.edu.*$/)) {
+                var dataURL = "http://simile.mit.edu/history/data/webstats.data";
+                var eventsURL = "http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=6";
+            } else {
+                var dataURL = "data.txt";
+                var eventsURL = "events.xml";
+            } 
+        
+            var dataFilter = function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    row[0] = row[0].replace(/\//g,"-");
+                }
+                return data;
+            };
+            
+            var eventSource = new Timeplot.DefaultEventSource();
+            var eventSource2 = new Timeplot.DefaultEventSource();
+    
+            var webTraffic = new Timeplot.ColumnSource(eventSource,2);
+            var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
+            var webGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
+                min: 0
+            });
+            
+            var timeGeometry = new Timeplot.MagnifyingTimeGeometry({
+                gridColor: gridColor
+            });
+            
+            var plotsInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "web clean",
+                    dataSource: webTraffic,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: webGeometry,
+                    lineColor: quietLine,
+                    fillColor: lightFill,
+                }),
+                Timeplot.createPlotInfo({
+                    id: "web clean avg",
+                    dataSource: avgWebTraffic,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: webGeometry,
+                    lineColor: loudLine,
+                    showValues: true,
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: webGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotsInfo1);
+            timeplot1.loadText(dataURL, " ", eventSource, dataFilter);
+            timeplot1.loadXML(eventsURL, eventSource2);
+        }
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                }, 0);
+            }
+        }
+    </script>
+</head>
+<body onload="onLoad();" onresize="onResize();">
+<!--#include virtual="../../sidebar.html" -->
+<ul id="path">
+  <li><a href="/" title="Home">SIMILE</a></li>
+  <li><a href="../../" title="Home">Timeplot</a></li>
+  <li><span>Magnifying Stats</span></li>
+</ul>
+
+<div id="body">
+    <h1>Magnifying Stats</h1>
+    <p>This chart features a magnifying timeline: <strong>drag</strong> a rectangle over the area you want to enlarge.</p>
+    <div id="timeplot1" class="timeplot"></div>
+    <p>You can <strong>drag the lens around</strong> the timeline or <strong>click outside</strong> of it <strong>to reset</strong>.</p>
+</div>
+    
+</body>
+</html>

@@ -1,0 +1,1151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="generator" content="JsDoc Toolkit 1.0">
+	<title>JsDoc: Timeplot</title>
+	<link rel=stylesheet href="default.css" type="text/css" media=screen>
+</head>
+
+<body>
+	<div class="content">
+		<div class="docs">
+		
+			<div class="sectionHead">Library: Timeplot</div>
+			<div class="section overview">
+				<div class="itemTitle">
+					Overview
+				</div>
+				<div>	
+					<div class="desc">Timeplot</div>
+					<div class="itemTags">
+					
+						<ul>
+							<li>desc: Timeplot</li>
+						</ul>
+					
+					</div>
+				</div>
+			</div>
+			
+			<div class="sectionHead">Constructors</div>
+			
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl"></a>
+					
+					
+					Timeplot._Impl(<span class="signature">elmt, plotInfos</span>)
+					
+				</div>
+				
+				
+					<div class="desc">This is the implementation of the Timeplot object.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							elmt
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							plotInfos
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.getElement">getElement</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.getDocument">getDocument</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.add">add</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.remove">remove</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.addPainter">addPainter</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.removePainter">removePainter</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.getWidth">getWidth</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.getHeight">getHeight</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.getCanvas">getCanvas</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.loadText">loadText</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.loadXML">loadXML</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.putText">putText</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.putDiv">putDiv</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.placeDiv">placeDiv</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.locate">locate</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.update">update</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.repaint">repaint</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot._Impl.paint">paint</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="sectionHead">Functions</div>
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.create"></a>
+					
+					
+					Timeplot.create(<span class="signature">elmt, plotInfos</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Create a timeplot attached to the given element and using the configuration from the given array of PlotInfos</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							elmt
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							plotInfos
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.createPlotInfo"></a>
+					
+					
+					Timeplot.createPlotInfo(<span class="signature">params</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Create a PlotInfo configuration from the given map of params</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							params
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.getElement"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getElement(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Returns the main container div this timeplot is operating on.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.getDocument"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getDocument(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Returns document this timeplot belongs to.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.add"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>add(<span class="signature">div</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Append the given element to the timeplot DOM</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							div
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.remove"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>remove(<span class="signature">div</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Remove the given element to the timeplot DOM</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							div
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.addPainter"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>addPainter(<span class="signature">layerName, painter</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Add a painter to the timeplot</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							layerName
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							painter
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.removePainter"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>removePainter(<span class="signature">layerName, painter</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Remove a painter from the timeplot</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							layerName
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							painter
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.getWidth"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getWidth(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Get the width in pixels of the area occupied by the entire timeplot in the page</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.getHeight"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getHeight(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Get the height in pixels of the area occupied by the entire timeplot in the page</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.getCanvas"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>getCanvas(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Get the drawing canvas associated with this timeplot</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.loadText"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>loadText(<span class="signature">url, separator, eventSource, filter</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc"><p>Load the data from the given url into the given eventSource, using
+the given separator to parse the columns and preprocess it before parsing
+thru the optional filter function. The filter is useful for when 
+the data is row-oriented but the format is not compatible with the
+one that Timeplot expects.</p> 
+
+<p>Here is an example of a filter that changes dates in the form 'yyyy/mm/dd'
+in the required 'yyyy-mm-dd' format:
+<pre>var dataFilter = function(data) {
+    for (var i = 0; i < data.length; i++) {
+        var row = data[i];
+        row[0] = row[0].replace(/\//g,"-");
+    }
+    return data;
+};</pre></p></div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							url
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							separator
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							filter
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.loadXML"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>loadXML(<span class="signature">url, eventSource</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Load event data from the given url into the given eventSource, using
+the Timeline XML event format.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							url
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.putText"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>putText(<span class="signature">id, text, clazz, styles</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Overlay a 'div' element filled with the given text and styles to this timeplot
+This is used to implement labels since canvas does not support drawing text.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							id
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							text
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							clazz
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							styles
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.putDiv"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>putDiv(<span class="signature">id, clazz, styles</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Overlay a 'div' element, with the given class and the given styles to this timeplot.
+This is used for labels and horizontal and vertical grids.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							id
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							clazz
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							styles
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.placeDiv"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>placeDiv(<span class="signature">div, styles</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Associate the given map of styles to the given element. 
+In case such styles indicate position (left,right,top,bottom) correct them
+with the padding information so that they align to the 'internal' area
+of the timeplot.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							div
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							styles
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.locate"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>locate(<span class="signature">div</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">return a {x,y} map with the location of the given element relative to the 'internal' area of the timeplot
+(that is, without the container padding)</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							div
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.update"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>update(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Forces timeplot to re-evaluate the various value and time geometries
+associated with its plot layers and repaint accordingly. This should
+be invoked after the data in any of the data sources has been
+modified.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.repaint"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>repaint(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Forces timeplot to re-evaluate its own geometry, clear itself and paint.
+This should be used instead of paint() when you're not sure if the 
+geometry of the page has changed or not.</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot._Impl.paint"></a>
+					
+						<i><a href="#Timeplot._Impl" class="type">Timeplot._Impl.</a></i>paint(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Calls all the painters that were registered to this timeplot and makes them
+paint the timeplot. This should be used only when you're sure that the geometry
+of the page hasn't changed.
+NOTE: painting is performed by a different thread and it's safe to call this
+function in bursts (as in mousemove or during window resizing</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="sectionHead">Objects</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</div>
+	</div>
+	<div class="finePrint">
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Fri, 27 Jul 2007 04:11:47 GMT
+	</div>
+</body>
+</html>

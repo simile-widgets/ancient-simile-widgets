@@ -1,0 +1,122 @@
+<html>
+  <head>
+    <title>SIMILE Widgets | Timeplot | Examples | George W. Bush Ratings</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+         
+        .label {
+            color: #91AA9D;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #333;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+        
+        .sources {
+            font-size: 90%;
+        }
+    </style>
+    
+    <!-- For your own use, replace ../../api/timeplot-api.js with http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js -->
+    <script type="text/javascript" src="../../api/timeplot-api.js"></script>
+
+    <script>
+        var timeplot1;
+        var plotInfo1;
+        
+        var fill = new Timeplot.Color('#D1DBBD');
+        fill.transparency(0.75);
+        var line = new Timeplot.Color('#193441');
+        var event = new Timeplot.Color('#cc0000');
+
+        var gridColor  = new Timeplot.Color('#000000');
+
+        function onLoad() {
+
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "top"
+            });
+
+            var geometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
+                gridType: "short",
+                max: 110,
+                min: 0
+            });
+
+            var eventSource1 = new Timeplot.DefaultEventSource();
+            var eventSource2 = new Timeplot.DefaultEventSource();
+            var dataSource1 = new Timeplot.ColumnSource(eventSource1,1);
+            
+            plotInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "Ratings",
+                    dataSource: dataSource1,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry,
+                    lineColor: line,
+                    dotColor: line,
+                    fillColor: fill,
+                    fillGradient: false,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: geometry,
+                    lineColor: event
+                })                
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotInfo1);
+            timeplot1.loadText("bush_ratings.txt", ",", eventSource1);
+            timeplot1.loadXML("bush_events.xml", eventSource2);
+        }            
+        
+        function toggle() {
+            var checkbox = document.getElementById("toggler");
+            plotInfo1[0].showValues = checkbox.checked;
+            timeplot1.update();
+        }
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                }, 0);
+            }
+        }
+    </script>
+  </head>
+  <body onload="onLoad();" onresize="onResize();">
+    <ul id="path">
+      <li><a href="/" title="Home">SIMILE Widgets</a></li>
+      <li><a href="../../">Timeplot</a></li>
+      <li><span>Examples: George W. Bush Ratings</span></li>
+    </ul>
+
+    <div id="header">
+    	<h1>George W. Bush Ratings</h1>
+    </div>
+    <div id="content">
+        <div id="timeplot1" style="height: 300px" class="timeplot"></div>
+        <p style="float: right">Show values on the mouse location<input id="toggler" type="checkbox" checked="true" onchange="toggle()"/></p>
+        <p class="sources">Source: <a href="http://www.pollingreport.com/BushJob1.htm">NBC News/Wall Street Journal</a></p>
+    </div>
+  </body>
+</html>
