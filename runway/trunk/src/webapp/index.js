@@ -1,15 +1,13 @@
 var possibleSettings = {
-    //"slideSize" : "number",
+    "reflectivity" : "number",
+    "reflectionExtent" : "number",
     
+    //"slideSize" : "number",
     "spread" : "number",
     "centerSpread" : "number",
     "recede" : "number",
     "tilt" : "number",
-    "centerOffset" : "number",
-    "fieldOfView" : "number",
-    
-   // "reflectivity" : "number",
-    "reflectionExtent" : "number",
+    //"horizon" : "number",
     
     "backgroundGradient" : [ "none", "single", "double" ],
     "backgroundColor" : "color",
@@ -121,4 +119,6 @@ function generateSelectSetting(container, name, value, choices) {
     
     select.onchange = function() {
         widget.setProperty(name, select.options[select.selectedIndex].value);
-        selectChoi
+        selectChoice(widget.getProperty(name));
+    };
+}
