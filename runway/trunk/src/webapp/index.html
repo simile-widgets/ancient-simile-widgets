@@ -1,9 +1,10 @@
 <html lang="en">
-<head>
+  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Simile Widgets - Runway</title>
+    <title>SIMILE Widgets | Runway</title>
+    <link rel="stylesheet" href="http://www.simile-widgets.org/styles/common.css" />
 
-    <!-- You need this, but replace the URL here with http://static.simile.mit.edu/runway/api/1.0/runway-api.js -->
+    <!-- You need this, but replace the URL here with http://api.simile-widgets.org/runway/1.0/runway-api.js -->
     <script src="api/runway-api.js" language="javascript"></script>
     
     <!-- These 2 files are specific to this demo. -->
@@ -44,77 +45,80 @@
             );
             
             // This is specific to this demo.
-            if (widget == null) {
-                document.getElementById("the-widget").appendChild(
-                    document.getElementById("preview").cloneNode(true));
-            }
-        }
-    </script>
-    
-    <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" />
-    <link rel="stylesheet" href="styles/styles.css" />
-</head>
-<body onload="onLoad();">
+            if (widget == nustyles/styles.css" />
+    <link rel="stylesheet" href="styles/themes.css" />
+  </head>
+  <body onload="onLoad();">
     <ul id="path">
-        <li><a href="http://www.simile-widgets.org/" title="Home">SIMILE Widgets</a></li>
-        <li><span>Runway</span></li>
-    </ul>
-    <div id="body">
+        <li><a href="l="stylesheet" href="http://simile.mit.edu/styles/default.css" />
+    <link rel="stylesheet" href="styheader">
+      <h1>Runway</h1>
+    </div>
+    
+    <!-- This element is all you really need. -->
+    <div id="the-widget" style="height: 400px;"></div>
+    
+d="body">
         <div id="top-panel">
             <h1>Runway 1.0</h1>
         </div>
         
-        <!-- This element is all you really need. -->
-        <div id="the-widget" style="height: 400px;"></div>
-        
-        <!-- The remaining code is specific to this demo, not necessary for your own web page. -->
-        <div id="bottom-panel">
-            <center><table style="width: 750px;"><tr valign="top">
+<div id="bottom-panel">
+        <center><table style="width: 750px;"><tr valign="top">
+            <td id="left-column">
+                <div id="description">
+                    This widget lets you display images in a rich interactive
+r><table style="width: 750px;"><tr valign="top">
                 <td id="left-column">
-                    <div id="description">
-                        SIMILE Widget Runway lets you display images in a rich interactive
-                        visualization similar to that of Apple iTunes known as Cover Flow.
+                   It is a Flash-based implementation.
+                </div>
+                
+                <h2>Links</h2>
+                <ul>
+milar to that of Apple iTunes known as Cover Flow.
                         It is a Flash-based implementation.
-                    </div>
+                 /div>
                     
                     <h2>Links</h2>
                     <ul>
-                        <li><a href="http://code.google.com/p/simile-widgets/wiki/Runway">Documentation</a></li>
-                        <li><a href="http://groups.google.com/group/simile-widgets">Mailing List</a> (for technical support, etc.)</li>
-                        <li><a href="http://code.google.com/p/simile-widgets/source/browse/#svn/runway/trunk">Code</a> (open source, BSD license)</li>
-                    </ul>
-                    
-                    <h2>Credits</h2>
-                    <p>Original author: <a href="http://davidhuynh.net/">David Huynh</a>.</p>
-                    <p>The images used for this demo are from <a href="http://www.freebase.com/">Freebase</a>.</p>
-                </td>
-                <td id="right-column">
-                    <p>The Flash widget can fire events to update the web page's Javascript.
-                        For example, when you select a new image in the widget above, this
-                        text in HTML should be updated: <span id="selected-slide"></span>.
-                    </p>
-                    
-                    <p>The web page's Javascript can change the Flash widget on the fly.
+                        <li><a href="http:de.google.com/p/simile-widgets/wiki/Runway">Documentation</a></li>
+                        <li><a href="http://groups.google.com/group/simile-w</ul>
+                
+                <h2>Credits</h2>
+          <li><a href="http://code.google.com/p/simile-widgets/source/browse/#svn/runway/trunk">Code</a> (o<p>The images used for this demo are from <a href="http://www.freebase.com/">Freebase</a>.</p>
+            </td>
+            <td id="right-column">
+http://davidhuynh.net/">David Huynh</a>.</p>
+                    <p>The images used for this demo are from <aFor example, when you select a new image in the widget above, this
+               <td id="right-column">
+                    <p>The Flash widget can fire events to update</p>
+                
+                 For example, when you select a new image in the widget above, this
+                     Try changing the various settings below:
+                </p>
+                <div id="theme-panel">Theme:
+                    <select id="the-themes" onchange="onThemeChange(this);">
+
                         Try changing the various settings below:
                     </p>
-                    <div id="theme-panel">Theme:
-                        <select id="the-themes" onchange="onThemeChange(this);">
-                            <option value="pristine" selected="true">Pristine</option>
-                            <option value="arctic">Arctic</option>
-                            <option value="midnight">Midnight</option>
-                            <option value="sunset">Sunset</option>
-                            <option value="pitchblack">Pitchblack</option>
+               <option value="arctic">Arctic</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="sunset">Sunset</option>
+                        <option value="pitchblack">Pitchblack</option>
+                    </select>
+                </div>
+                <div id="settings-panel"></div>
+            </td>
+        </tr></table></center>
+    </div>
+    
+    <div id="footer">
+      Copyright &copy; <a href="http://web.mit.edu/">Massachusetts Institute of Technology</a> and Contributors 2006-2009 ~ Some rights reserved
+    </div>
+    black">Pitchblack</option>
                         </select>
                     </div>
                     <div id="settings-panel"></div>
                 </td>
-            </tr></table></center>
-        </div>
-    </div>
-    <div id="preview">
-        With the latest version of the Flash Player, you'd be seeing
-        something like this, but interactive:<br/>
-        <img src="images/preview.png"/>
-    </div>
-</body>
+            </tr></table></center>  </body>
 </html>

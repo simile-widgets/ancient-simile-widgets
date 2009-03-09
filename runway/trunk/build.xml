@@ -8,7 +8,7 @@
 
   <property name="dir.src"     value="${basedir}/src/" />
   <property name="dir.src.as"  value="${dir.src}as/" />
-  <property name="dir.src.api" value="${dir.src}web/api/" />
+  <property name="dir.src.api" value="${dir.src}webapp/api/" />
   
   <property name="dir.lib"     value="${basedir}/lib/" />
   <property name="dir.lib.as"  value="${dir.lib}as/" />

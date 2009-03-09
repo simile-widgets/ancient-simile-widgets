@@ -1,0 +1,35 @@
+body.theme-pristine {
+    color: black;
+}
+body.theme-pristine #header h1 {
+    color: black;
+}
+
+body.theme-arctic {
+    color: black;
+}
+body.theme-arctic #header h1 {
+    color: black;
+}
+
+body.theme-midnight {
+    color: #aaa;
+}
+body.theme-midnight #header h1 {
+    color: #ddd;
+}
+
+body.theme-sunset {
+    color: #aaa;
+}
+body.theme-sunset #header h1 {
+    color: #ddd;
+}
+
+body.theme-pitchblack {
+    color: #aaa;
+}
+body.theme-pitchblack #header h1 {
+    color: #ddd;
+}
+
