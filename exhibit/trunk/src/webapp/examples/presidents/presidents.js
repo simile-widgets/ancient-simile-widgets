@@ -622,7 +622,19 @@
             birthPlace: 'New Haven, Connecticut, USA',
             religion: [ "Methodist" ]
         },
-        
+        {   label: 'Barack Obama',
+            type: 'President',
+            presidency: 44,
+            index: 43,
+            term: [ 56 ],
+            dieInOffice: 'no',
+            imageURL: 'http://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Official_portrait_of_Barack_Obama.jpg/100px-Official_portrait_of_Barack_Obama.jpg',
+            url: 'http://en.wikipedia.org/wiki/Barack_Obama',
+            party: "Democratic",
+            birth: '1961-08-04',
+            birthPlace: 'Honolulu, Hawaii, USA',
+            religion: [ "Christian" ]
+        },        
         {   label: '1',
             type: 'Presidency',
             index: 1,
@@ -881,6 +893,11 @@
             inDate: '2001-01-20',
             outDate: '2009-01-20'
         },
+        {   label: '44',
+            type: 'Presidency',
+            index: 44,
+            inDate: '2009-01-20'
+        },
         
         {   id: 'George Washington',
             birthLatLng: '37.585241,-77.497343'
@@ -1007,6 +1024,9 @@
         },
         {   id: 'George W. Bush',
             birthLatLng: '41.308056,-72.928611'
+        },
+        {   id: 'Barack Obama',
+            birthLatLng: '21.3069,-157.8583'
         },
             
         {   id: 'George Washington',

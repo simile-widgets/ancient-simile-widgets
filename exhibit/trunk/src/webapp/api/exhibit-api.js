@@ -30,6 +30,7 @@
         }
     
         window.Exhibit = {
+            version:    "2.2.0",
             loaded:     false,
             params:     { bundle: !useLocalResources, authenticated: !noAuthentication, autoCreate: true, safe: false },
             namespace:  "http://simile.mit.edu/2006/11/exhibit#",
@@ -224,14 +225,10 @@
          *  Extensions (for backward compatibility)
          */
         if (includeTimeline) {
-            scriptURLs.push(useLocalResources ?
-                "http://127.0.0.1:8888/exhibit/extensions/time/time-extension.js" :
-                "http://static.simile.mit.edu/exhibit/extensions-2.0/time/time-extension.js");
+            scriptURLs.push(Exhibit.urlPrefix + "extensions/time/time-extension.js");
         }
         if (includeMap) {
-            scriptURLs.push(useLocalResources ?
-                "http://127.0.0.1:8888/exhibit/extensions/map/map-extension.js" :
-                "http://static.simile.mit.edu/exhibit/extensions-2.0/map/map-extension.js");
+            scriptURLs.push(Exhibit.urlPrefix + "extensions/map/map-extension.js");
         }
         
         SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
@@ -247,7 +244,7 @@
         
         var url = useLocalResources ?
             "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false" :
-            "http://static.simile.mit.edu/ajax/api-2.1.0/simile-ajax-api.js";
+            "http://api.simile-widgets.org/ajax/2.2.1/simile-ajax-api.js";
             
         var createScriptElement = function() {
             var script = document.createElement("script");

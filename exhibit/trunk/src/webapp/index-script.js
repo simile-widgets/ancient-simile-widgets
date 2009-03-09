@@ -1,6 +1,6 @@
 function onLoad() {
     var examples = [
-        {   url:        "examples/presidents/presidents-2.html",
+        {   url:        "examples/presidents/presidents.html",
             screenshot: "images/example-screenshot-presidents.png"
         },
         {   url:        "examples/flags/flags.html",

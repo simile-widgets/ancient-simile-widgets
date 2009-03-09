@@ -1,27 +1,34 @@
 <html>
-<head>
-    <title>SIMILE | Exhibit | Billionaires</title>
+  <head>
+    <title>SIMILE Widgets | Exhibit | Examples | Billionaires</title>
+    <link rel='stylesheet' href='http://www.simile-widgets.org/styles/common.css' type='text/css' />
     
     <link href="billionaires.js" type="application/json" rel="exhibit/data" />
     
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/exhibit-api.js -->
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/exhibit-api.js -->
     <script src="../../api/exhibit-api.js"></script>
     
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/extensions/map/map-extension.js -->
-    <script src="../../api/extensions/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQtmVvwtG6TMOLiwecD59_rvdOkHxTAPhubLidYKS8G8qHrZGTBqAeJEg"></script>
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/extensions/map/map-extension.js -->
+    <script src="../../api/extensions/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRRyiP6mHEsQpwvxB19-hS9Kgd8RYhSXEtJVAXDUCZPqwtZZi7-HUYUYrw"></script>
     
     <link rel='stylesheet' href='styles.css' type='text/css' />
-</head>
-<body>
+  </head>
+  <body>
+    <ul id="path">
+      <li><a href="/">SIMILE Widgets</a></li>
+      <li><a href="/exhibit/">Exhibit</a></li>
+      <li><span>Examples: Billionaires in History</span></li>
+    </ul>
+
     <table id="frame"><tr>
-        <td id="content">
+        <td id="main-content">
             <h1>Billionaires in History</h1>
             
             <div ex:role="coder" id="wealth-coder"
                 ex:coderClass="SizeGradient" 
                 ex:gradientPoints="0, 15; 200, 70">
             </div>
-            
+        
             <div ex:role="viewPanel">
                 <div ex:role="view"
                     ex:viewClass="Map"
@@ -57,13 +64,13 @@
             <hr/>
             <div ex:role="facet" ex:expression=".company" ex:facetLabel="Companies" ex:height="15em"></div>
             <div ex:role="facet" ex:expression=".origin-country" ex:facetLabel="Countries of Origin" ex:height="20em"></div>
-            
-            
+        
+        
             <div style="text-align: center; margin: 2em;">
                 <div ex:role="logo" ex:color="Azure"></div>
                 <a href="billionaires.js" target="_blank">get data file</a>
             </div>
         </td>
     </tr></table>
-</body>
+  </body>
 </html>

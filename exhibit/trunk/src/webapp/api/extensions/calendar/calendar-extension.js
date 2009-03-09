@@ -5,7 +5,7 @@
 
 Exhibit.CalendarExtension = {
     params: {
-        bundle: true
+        bundle: false
     } 
 };
 

@@ -1,12 +1,7 @@
-#sidebar {
-    margin: 0px 0px 2em 1em;
-    width:  170px;
-}
-
 p.blurb {
-    font-size:  120%;
-    font-style: italic;
-    width:      35em;
+    font-size: 150%; 
+    color: #888; 
+    width: 30em
 }
 .blurb em {
     font-weight: bold;
@@ -18,6 +13,7 @@ p.blurb {
     background: url(images/gradient-background.png) repeat-x bottom left;
     overflow: hidden;
     position: relative;
+    margin-bottom: 48px;
 }
 #carousel-message {
     position:   absolute; 

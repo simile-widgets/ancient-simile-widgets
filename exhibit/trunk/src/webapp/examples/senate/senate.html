@@ -1,15 +1,16 @@
 <html>
-<head>
-    <title>SIMILE | Exhibit | Senate</title>
+  <head>
+    <title>SIMILE Widgets | Exhibit | Examples | Senate</title>
+    <link rel='stylesheet' href='http://www.simile-widgets.org/styles/common.css' type='text/css' />
     
     <link href="senate-committees.js" type="application/json" rel="exhibit/data" />
     <link href="senate-bills.js" type="application/json" rel="exhibit/data" />
     
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/exhibit-api.js -->
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/exhibit-api.js -->
     <script src="../../api/exhibit-api.js"></script>
     
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/extensions/map/map-extension.js -->
-    <script src="../../api/extensions/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRQtmVvwtG6TMOLiwecD59_rvdOkHxTAPhubLidYKS8G8qHrZGTBqAeJEg"></script>
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/extensions/map/map-extension.js -->
+    <script src="../../api/extensions/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRRyiP6mHEsQpwvxB19-hS9Kgd8RYhSXEtJVAXDUCZPqwtZZi7-HUYUYrw"></script>
     
     <script type="text/javascript">
         var rowStyler = function(item, database, tr) {
@@ -23,10 +24,16 @@
         };
     </script>
     <link rel='stylesheet' href='styles.css' type='text/css' />
-</head>
+  </head>
 
-<body>
-  <div ex:role="exhibit-collection" ex:itemTypes="Senator"></div>
+  <body>
+    <ul id="path">
+      <li><a href="/">SIMILE Widgets</a></li>
+      <li><a href="/exhibit/">Exhibit</a></li>
+      <li><span>Examples: Senate</span></li>
+    </ul>
+    
+    <div ex:role="exhibit-collection" ex:itemTypes="Senator"></div>
     <table id="frame">
         <tr>
             <td id="content">
@@ -91,6 +98,5 @@
             </td>
         </tr>
     </table>
-  </div>
-</body>
+  </body>
 </html>
