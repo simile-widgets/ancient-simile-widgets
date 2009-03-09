@@ -1,0 +1,3 @@
+#!/bin/sh
+cd tools/jsdoc
+java -jar app/js.jar app/run.js -d=../../src/webapp/jsdocs -t=templates/html ../../src/webapp/api/scripts/ 

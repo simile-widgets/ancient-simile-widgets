@@ -1,0 +1,743 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="generator" content="JsDoc Toolkit 1.0">
+	<title>JsDoc: Sources</title>
+	<link rel=stylesheet href="default.css" type="text/css" media=screen>
+</head>
+
+<body>
+	<div class="content">
+		<div class="docs">
+		
+			<div class="sectionHead">Library: Sources</div>
+			<div class="section overview">
+				<div class="itemTitle">
+					Overview
+				</div>
+				<div>	
+					<div class="desc">Sources</div>
+					<div class="itemTags">
+					
+						<ul>
+							<li>desc: Sources</li>
+						</ul>
+					
+					</div>
+				</div>
+			</div>
+			
+			<div class="sectionHead">Constructors</div>
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultEventSource"></a>
+					
+					
+					Timeplot.DefaultEventSource(<span class="signature">eventIndex</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Timeplot.DefaultEventSource is an extension of Timeline.DefaultEventSource
+and therefore reuses the exact same event loading subsystem that
+Timeline uses.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							eventIndex
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultEventSource.loadText">loadText</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DefaultEventSource.getRange">getRange</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultEventSource.NumericEvent"></a>
+					
+					
+					Timeplot.DefaultEventSource.NumericEvent(<span class="signature">time, values</span>)
+					
+				</div>
+				
+				
+					<div class="desc">A NumericEvent is an Event that also contains an array of values, 
+one for each columns in the loaded data file.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							time
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							values
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.DataSource"></a>
+					
+					
+					Timeplot.DataSource(<span class="signature">eventSource</span>)
+					
+				</div>
+				
+				
+					<div class="desc">A DataSource represent an abstract class that represents a monodimensional time series.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				<div class="detailHead">methods</div>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DataSource.getRange">getRange</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DataSource.getData">getData</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DataSource.getValue">getValue</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DataSource.addListener">addListener</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DataSource.removeListener">removeListener</a></li>
+					</ul>
+				
+					<ul class="details">
+						<li><a href="#Timeplot.DataSource.replaceListener">replaceListener</a></li>
+					</ul>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.ColumnSource"></a>
+					
+					
+					Timeplot.ColumnSource(<span class="signature">eventSource, column</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Implementation of a DataSource that extracts the time series out of a 
+single column from the events</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							column
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section constructor">
+				<div class="itemTitle">
+					<a name="Timeplot.ColumnDiffSource"></a>
+					
+					
+					Timeplot.ColumnDiffSource(<span class="signature">eventSource, column1, column2</span>)
+					
+				</div>
+				
+				
+					<div class="desc">Data Source that generates the time series out of the difference
+between the first and the second column</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							eventSource
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							column1
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							column2
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="sectionHead">Functions</div>
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultEventSource.loadText"></a>
+					
+						<i><a href="#Timeplot.DefaultEventSource" class="type">Timeplot.DefaultEventSource.</a></i>loadText(<span class="signature">text, separator, url, filter</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Function used by Timeplot to load time series data from a text file.</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							text
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							separator
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							url
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							filter
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DefaultEventSource.getRange"></a>
+					
+						<i><a href="#Timeplot.DefaultEventSource" class="type">Timeplot.DefaultEventSource.</a></i>getRange(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the range of the loaded data</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DataSource.getRange"></a>
+					
+						<i><a href="#Timeplot.DataSource" class="type">Timeplot.DataSource.</a></i>getRange(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the range of this data source</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DataSource.getData"></a>
+					
+						<i><a href="#Timeplot.DataSource" class="type">Timeplot.DataSource.</a></i>getData(<span class="signature"></span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the actual data that this data source represents.
+NOTE: _data = { times: [], values: [] }</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DataSource.getValue"></a>
+					
+						<i><a href="#Timeplot.DataSource" class="type">Timeplot.DataSource.</a></i>getValue(<span class="signature">t</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Return the value associate with the given time in this time series</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							t
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DataSource.addListener"></a>
+					
+						<i><a href="#Timeplot.DataSource" class="type">Timeplot.DataSource.</a></i>addListener(<span class="signature">listener</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Add a listener to the underlying event source</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							listener
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DataSource.removeListener"></a>
+					
+						<i><a href="#Timeplot.DataSource" class="type">Timeplot.DataSource.</a></i>removeListener(<span class="signature">listener</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Remove a listener from the underlying event source</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							listener
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			<div class="section function">
+				<div class="itemTitle">
+					<a name="Timeplot.DataSource.replaceListener"></a>
+					
+						<i><a href="#Timeplot.DataSource" class="type">Timeplot.DataSource.</a></i>replaceListener(<span class="signature">oldListener, newListener</span>)
+					
+					
+				</div>
+				
+				
+					<div class="desc">Replace a listener from the underlying event source</div>
+				
+				
+				
+				
+				
+				<div class="detailHead">parameters</div>
+				<table class="params">
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							oldListener
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+					<tr>
+						<td class="type">
+							
+						</td>
+						<td>
+							newListener
+						</td>
+						<td>
+							
+						</td> 
+					</tr>
+				
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			<div class="sectionHead">Objects</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</div>
+	</div>
+	<div class="finePrint">
+	Generated by <a href="http://jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> on Fri, 27 Jul 2007 04:11:47 GMT
+	</div>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<html>
+  <head>
+    <title>SIMILE Widgets | Timeplot | Examples | SIMILE Stats</title>
+    <link rel='stylesheet' href='../../styles.css' type='text/css' />
+    <style>
+        body {
+            background-color: #fff;
+            background-image: none;
+        }
+         
+        .label {
+            color: #666;
+            margin-top: 0.5em;
+            padding: 0.1em;
+            font-family: 'verdana', 'helvetica', sans serif;
+        }        
+        
+        .timeplot-grid-label {
+            color: #666;
+            font-family: 'verdana', 'helvetica', sans serif;
+            font-size: 9px !important;
+        }
+                
+        .toggle {
+            padding: 0px 3px;
+            cursor: pointer;
+            text-decoration: underline;
+            color: #666;
+        }
+        
+        .active-toggle {
+            padding: 0px 3px;
+        }
+                    
+        #timeplot2 {
+            height: 100px;
+        }
+    </style>
+    
+    <!-- For your own use, replace ../../api/timeplot-api.js with http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js -->
+    <script type="text/javascript" src="../../api/timeplot-api.js"></script>
+
+    <script>
+        var timeplot1;
+        var timeplot2;
+        var timeplot3;
+        var timeplot4;
+        var downloadGeometry;
+        
+        function onLoad() {
+            if (document.location.toString().match(/^http\:\/\/simile.mit.edu.*$/)) {
+                var dataURL = "http://simile.mit.edu/history/data/webstats.data";
+                var eventsURL = "http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=7";
+            } else {
+                var dataURL = "data.txt";
+                var eventsURL = "events.xml";
+            } 
+
+            var dataFilter = function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    row[0] = row[0].replace(/\//g,"-");
+                }
+                return data;
+            };
+            
+            var eventSource = new Timeplot.DefaultEventSource();
+            var eventSource2 = new Timeplot.DefaultEventSource();
+
+            var quietLine  = new Timeplot.Color('#82A6A2');
+            var loudLine   = new Timeplot.Color('#284452');
+            var lightFill  = new Timeplot.Color('#DEE5D1');
+            var gridColor  = new Timeplot.Color('#888888');
+
+            var timeGeometry = new Timeplot.DefaultTimeGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "top",
+                min: 0
+            });
+    
+            var webTraffic = new Timeplot.ColumnSource(eventSource,2);
+            var avgWebTraffic = new Timeplot.Processor(webTraffic,Timeplot.Operator.average, { size: 15 });
+            var webGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
+                min: 0
+            });
+            
+            var plotsInfo1 = [
+                Timeplot.createPlotInfo({
+                    id: "web clean",
+                    dataSource: webTraffic,
+                    valueGeometry: webGeometry,
+                    timeGeometry: timeGeometry,
+                    lineColor: quietLine
+                }),
+                Timeplot.createPlotInfo({
+                    id: "web clean avg",
+                    dataSource: avgWebTraffic,
+                    valueGeometry: webGeometry,
+                    timeGeometry: timeGeometry,
+                    lineColor: loudLine,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    valueGeometry: webGeometry,
+                    timeGeometry: timeGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot1 = Timeplot.create(document.getElementById("timeplot1"), plotsInfo1);
+            timeplot1.loadText(dataURL, " ", eventSource, dataFilter);
+            timeplot1.loadXML(eventsURL, eventSource2);
+
+            var crawlersGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
+                min: 0
+            });
+            var plotsInfo2 = [
+                Timeplot.createPlotInfo({
+                    id: "crawlers",
+                    dataSource: new Timeplot.ColumnDiffSource(eventSource,1,2),
+                    valueGeometry: crawlersGeometry,
+                    timeGeometry: timeGeometry,
+                    lineColor: quietLine,
+                    fillColor: quietLine.lighten(30),
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot2 = Timeplot.create(document.getElementById("timeplot2"), plotsInfo2);
+
+            var news = new Timeplot.ColumnSource(eventSource,3);
+            var smoothedNews = new Timeplot.Processor(news,Timeplot.Operator.average, { size: 8 });
+            var summedNews = new Timeplot.Processor(news,Timeplot.Operator.sum);
+            var newsGeometry = new Timeplot.DefaultValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
+                min: 0
+            });
+            
+            var plotsInfo3 = [
+                Timeplot.createPlotInfo({ 
+                    id: "cumulative news",
+                    dataSource: summedNews,
+                    timeGeometry: timeGeometry,
+                    lineColor: loudLine,
+                    fillColor: lightFill,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({ 
+                    id: "news",
+                    dataSource: news,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: newsGeometry,
+                    lineColor: quietLine
+                }),
+                Timeplot.createPlotInfo({ 
+                    id: "smoothed news",
+                    dataSource: smoothedNews,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: newsGeometry,
+                    lineColor: loudLine,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: newsGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot3 = Timeplot.create(document.getElementById("timeplot3"), plotsInfo3);
+            
+            var gadgetDownloads = new Timeplot.ColumnSource(eventSource,9);
+            var smoothedGadgetDownloads = new Timeplot.Processor(gadgetDownloads,Timeplot.Operator.average, { size: 4 });
+            var longwellDownloads = new Timeplot.ColumnSource(eventSource,12);
+            var smoothedLongwellDownloads = new Timeplot.Processor(longwellDownloads,Timeplot.Operator.average, { size: 4 });
+            var welkinDownloads = new Timeplot.ColumnSource(eventSource,15);
+            var smoothedWelkinDownloads = new Timeplot.Processor(welkinDownloads,Timeplot.Operator.average, { size: 4 });
+            var piggybankDownloads = new Timeplot.ColumnSource(eventSource,19);
+            var smoothedPiggybankDownloads = new Timeplot.Processor(piggybankDownloads,Timeplot.Operator.average, { size: 4 });
+            var solventDownloads = new Timeplot.ColumnSource(eventSource,22);
+            var smoothedSolventDownloads = new Timeplot.Processor(solventDownloads,Timeplot.Operator.average, { size: 4 });
+            downloadGeometry = new Timeplot.LogarithmicValueGeometry({
+                gridColor: gridColor,
+                axisLabelsPlacement: "left",
+                min: 0
+            });
+            
+            var blue   = new Timeplot.Color("#455681");
+            var azur   = new Timeplot.Color("#0090FF");
+            var yellow = new Timeplot.Color("#FFBD2C");
+            var orange = new Timeplot.Color("#BB4A1B");
+            var red    = new Timeplot.Color("#701F2B");
+            
+            var plotsInfo4 = [
+                Timeplot.createPlotInfo({
+                    id: "gadget-smoothed",
+                    dataSource: smoothedGadgetDownloads,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: downloadGeometry,
+                    lineColor: blue,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "longwell-smoothed",
+                    dataSource: smoothedLongwellDownloads,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: downloadGeometry,
+                    lineColor: yellow,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "welkin-smoothed",
+                    dataSource: smoothedWelkinDownloads,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: downloadGeometry,
+                    lineColor: azur,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "solvent-smoothed",
+                    dataSource: smoothedSolventDownloads,
+                    valueGeometry: downloadGeometry,
+                    lineColor: orange,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "piggybank-smoothed",
+                    dataSource: smoothedPiggybankDownloads,
+                    timeGeometry: timeGeometry,
+                    valueGeometry: downloadGeometry,
+                    lineColor: red,
+                    showValues: true
+                }),
+                Timeplot.createPlotInfo({
+                    id: "events",
+                    eventSource: eventSource2,
+                    timeGeometry: timeGeometry,
+                    lineColor: loudLine
+                })
+            ];
+            
+            timeplot4 = Timeplot.create(document.getElementById("timeplot4"), plotsInfo4);
+            
+        }
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    if (timeplot1) timeplot1.repaint();
+                    if (timeplot2) timeplot2.repaint();
+                    if (timeplot3) timeplot3.repaint();
+                    if (timeplot4) timeplot4.repaint();
+                }, 0);
+            }
+        }
+        
+        function linearDownloads() {
+            downloadGeometry.actLinear();
+            timeplot4.repaint();
+            var logToggle = document.getElementById("log-toggle");
+            logToggle.className = "toggle";
+            var linToggle = document.getElementById("lin-toggle");
+            linToggle.className = "active-toggle";
+        }
+        
+        function logarithmicDownloads() {
+            downloadGeometry.actLogarithmic();
+            timeplot4.repaint();
+            var logToggle = document.getElementById("log-toggle");
+            logToggle.className = "active-toggle";
+            var linToggle = document.getElementById("lin-toggle");
+            linToggle.className = "toggle";
+        }
+    </script>
+  </head>
+  <body onload="onLoad();" onresize="onResize();">
+    <ul id="path">
+      <li><a href="/" title="Home">SIMILE Widgets</a></li>
+      <li><a href="../../">Timeplot</a></li>
+      <li><span>Examples: SIMILE Stats</span></li>
+    </ul>
+
+    <div id="header">
+    	<h1>SIMILE Stats</h1>
+    </div>
+    <div id="content">
+        <div class="label">Web Traffic</div>
+        <div id="timeplot1" class="timeplot"></div>
+        <div class="label">Web Crawlers Traffic</div>
+        <div id="timeplot2" class="timeplot"></div>
+        <div class="label">Newsfeed Traffic</div>
+        <div id="timeplot3" class="timeplot"></div>
+        <div class="label">Downloads (<span id="log-toggle" class="active-toggle" onclick="logarithmicDownloads();">log</span>|<span id="lin-toggle" class="toggle" onclick="linearDownloads();">lin</span>)</div>
+        <div id="timeplot4" class="timeplot"></div>
+        <p class="note" style="margin-top: 3em">This <a href="http://simile.mit.edu/history/data/webstats.data">data</a> is produced live by scripts that analyze our servers logs. The <a href="http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=7">events</a> are generated directly out of our <a href="http://wordpress.org/">Wordpress</a> <a href="http://simile.mit.edu/blog/">blog</a> from all the posts tagged with the <em>timeplot</em> category, using the <a href="http://www.freshlabs.de/journal/archives/2006/10/wordpress-plugin-simile-timeline/">Timeline plugin for Wordpress</a>.</p>
+    </div>
+    
+  </body>
+</html>

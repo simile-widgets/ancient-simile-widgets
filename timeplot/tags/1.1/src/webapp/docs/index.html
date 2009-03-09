@@ -1,0 +1,354 @@
+<html>
+  <head>
+    <title>SIMILE Widgets | Timeplot | How to Create Timeplots</title>
+    <link rel='stylesheet' href='styles.css' type='text/css' />
+    <style>
+        .timeplot {
+            margin: 2em;
+        }
+    </style>
+    <script src="../api/timeplot-api.js" type="text/javascript"></script>
+    <script src="create-timeplots.js" type="text/javascript"></script>
+  </head>
+  <body onload="onLoad();" onresize="onResize();">    
+    <ul id="path">
+      <li><a href="/" title="Home">SIMILE Widgets</a></li>
+      <li><a href="../" title="Timeplot">Timeplot</a></li>
+      <li><span>How to Create Timeplots</span></li>
+    </ul>
+
+    <div id="header">
+      <h1>How to Create Timeplots</h1>
+    </div>
+    
+    <div id="content">
+      
+    <!-- ================= Getting Started ================== -->
+        
+    <h2><a name="getting-started">Getting Started</a></h2>
+    
+    <p>Here are a few easy steps to create a simple timeplot. Open up your favorite text
+       or HTML editor and start creating an HTML file.</p>
+    
+    <h3>Step 1. Link to the API</h3>
+    <p>In your HTML code, link to Timeplot's Javascript API code as follows:
+<pre>&lt;html&gt;
+  &lt;head&gt;
+    ...
+    <span class="highlight">&lt;script src="<a href="http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js">http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js</a>" 
+       type="text/javascript"&gt;&lt;/script&gt;</span>
+    ...
+  &lt;/head&gt;
+  &lt;body&gt;
+    ...
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+    </p>
+    
+    <h3>Step 2. Create a DIV Element</h3>
+    <p>Create a <span class="html">div</span> element in your HTML code, e.g.
+<pre>&lt;div id="my-timeplot" style="height: 150px;"&gt;&lt;/div&gt;</pre>
+        You should give it an ID as well as fix its height.
+    </p>
+
+    <h3>Step 3. Call <span class="code">Timeplot.create()</span></h3>
+    <p>Add two event handlers, <span class="code">onload</span> and
+        <span class="code">onresize</span>, to the 
+        <span class="html">body</span> element:
+<pre>  &lt;body onload="onLoad();" onresize="onResize();"&gt;
+    ...
+  &lt;/body&gt;</pre>
+        Then write the following code in a 
+        <span class="html">script</span> block or a separate Javascript file:
+<pre>var timeplot;
+
+function onLoad() {
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1"
+    })
+  ];
+            
+  timeplot = Timeplot.create(document.getElementById("my-timeplot"), plotInfo);
+}
+
+var resizeTimerID = null;
+function onResize() {
+    if (resizeTimerID == null) {
+        resizeTimerID = window.setTimeout(function() {
+            resizeTimerID = null;
+            timeplot.repaint();
+        }, 100);
+    }
+}
+</pre>
+        Note that if we put the code to construct the timeplot in
+        the <span class="code">onload</span> handler to make sure that when
+        we start to use Timeplot's API, all its code has been loaded.
+        That code creates an empty timeplot, as the one here below. 
+    </p>
+    
+    <p><div id="timeplot0" class="timeplot" style="height: 150px;"></div></p>
+    
+    <h3>Step 4. Add Data</h3>
+    
+    <p>In order for the timeplot to plot, we need to indicate where is the data. 
+    Timeplot supports loading time series data from
+    plain text files with one event per row (but that could have multiple
+    values as columns).</p>
+    
+    <p>To add data to the timeplot, we need to create an <code>EventSource</code>
+        and load it with data from the data file:
+<pre>function onLoad() {
+<span class="highlight">  var eventSource = new Timeplot.DefaultEventSource();</span>
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      <span class="highlight">dataSource: new Timeplot.ColumnSource(eventSource,1)</span>
+    })
+  ];
+  
+  timeplot = Timeplot.create(document.getElementById("my-timeplot"), plotInfo);
+  <span class="highlight">timeplot.loadText("data.txt", ",", eventSource);</span>
+}</pre>
+        Note how <span class="code">timeplot</span> loads the entire dataset 
+        in the <span class="code">eventSource</span> and we instruct the
+        timeplot to use a <span class="code">Timeplot.ColumnSource</span> 
+        to extract the time series used to draw the plot (here, we want to draw
+        the first column). The result is below.
+    </p>
+    
+    <p><div id="timeplot1" class="timeplot" style="height: 150px"></div></p>
+    
+    <p>Take a look at <a href="../examples/bush/bush_ratings.txt">the data file</a>. 
+       You can see that the column values are comma-separated and that the first
+       column must be a time (using <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> format). 
+       Timeplot considers lines that start with '#' as comments
+       and ignores them. <em>Note that you have to tell the <span class="code">Timeplot.loadText()</span>
+       function which string separator it should use to parse the data file (in this case a ",")</em>.
+    </p>
+    
+    <h3>Step 5. Tune the plot range</h3>
+    
+    <p>By default, Timeplot automatically scales the plot to maximally fit the available
+    real estate on the page, but this behavior can be modified. In our plot, we know
+    that our data is a percentage so we would like to have the y axis be from 0 to 100.
+    In order to do this, we need to explicitly create a <span class="code">ValueGeometry</span>:
+<pre>
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+<span class="highlight">      valueGeometry: new Timeplot.DefaultValueGeometry({
+        min: 0,
+        max: 100
+      })</span>
+    })
+  ];
+</pre>
+    which yields the result:</p>
+    
+    <p><div id="timeplot2" class="timeplot" style="height: 150px"></div></p>
+    
+    <h3>Step 6. Enable the value grid</h3>
+    
+    <p>Sometimes, it's useful to have a visual grid to help readers establish
+    the scale of the plot. In order to achieve this, it's enough to indicate
+    the <span class="code">gridColor</span> to the 
+    <span class="code">ValueGeometry</span>:
+<pre>
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+      valueGeometry: new Timeplot.DefaultValueGeometry({
+<span class="highlight">        gridColor: "#000000",
+        axisLabelsPlacement: "left",</span>
+        min: 0,
+        max: 100
+      })
+    })
+  ];
+</pre>
+    so now timeplot takes care of finding out the most appropriate grid division
+    to keep avoid visual clutter:
+    
+    <p><div id="timeplot3" class="timeplot" style="height: 150px"></div></p>
+
+    <h3>Step 7. Add labels to the time axis</h3>
+    
+    <p>You can tell Timeplot to add labels to the time axis by configuring the <span class="code">TimeGeometry</span>
+    just like we just did for the <span class="code">ValueGeometry</span>:
+<pre>
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+      valueGeometry: new Timeplot.DefaultValueGeometry({
+        gridColor: "#000000",
+        axisLabelsPlacement: "left",
+        min: 0,
+        max: 100
+      }),
+<span class="highlight">      timeGeometry: new Timeplot.DefaultTimeGeometry({
+        gridColor: "#000000",
+        axisLabelsPlacement: "top"
+      })</span>
+    })
+  ];
+</pre>
+    
+     which results in:</p>
+     
+     <p><div id="timeplot4" class="timeplot" style="height: 150px"></div></p>
+
+    <h3>Step 8. Change the plot colors</h3>
+    
+    <p>You can configure the stroke and fill color of your plot by setting
+    parameters of the <span class="code">PlotInfo</span>:
+<pre>
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+      valueGeometry: new Timeplot.DefaultValueGeometry({
+        gridColor: "#000000",
+        axisLabelsPlacement: "left",
+        min: 0,
+        max: 100
+      }),
+      timeGeometry: new Timeplot.DefaultTimeGeometry({
+        gridColor: new Timeplot.Color("#000000"),
+        axisLabelsPlacement: "top"
+      }),      
+<span class="highlight">      lineColor: "#ff0000",
+      fillColor: "#cc8080"</span>
+    })
+  ];
+</pre>
+    
+     which results in:</p>
+     
+     <p><div id="timeplot5" class="timeplot" style="height: 150px"></div></p>
+             
+    <h3>Step 9. Show Plot values on Mouse over</h3>
+    
+    <p>You can configure the plot so that going over it with your mouse will visualize
+    the actual time represented by that location in the plot and the value of the plot 
+    at that time:
+<pre>
+
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+      valueGeometry: new Timeplot.DefaultValueGeometry({
+        gridColor: "#000000",
+        min: 0,
+        max: 100
+      }),
+      timeGeometry: new Timeplot.DefaultTimeGeometry({
+        gridColor: new Timeplot.Color("#000000"),
+        axisLabelsPlacement: "top"
+      }),
+      lineColor: "#ff0000",
+      fillColor: "#cc8080",
+      <span class="highlight">showValues: true</span>
+    })
+  ];
+</pre>
+    
+     which results in:</p>
+     
+     <p><div id="timeplot6" class="timeplot" style="height: 150px"></div></p>
+    
+    <h3>Step 10. Adding another plot over the current one</h3>
+    
+    <p>You can draw multiple plots in the same timeplot, either using the same <em>geometry</em> 
+    of another one or not, depending on what you want to achieve. If two plots share the same geometry
+    object, they will be drawn on the same 'range' of time or values. If not, each one will use their
+    own scale. Here we want to plot another column from the same data source, using the same geometries
+    for both time and values so that they all overlap:
+<pre>
+  <span class="highlight">var timeGeometry = new Timeplot.DefaultTimeGeometry({
+    gridColor: new Timeplot.Color("#000000"),
+    axisLabelsPlacement: "top"
+  });
+
+  var valueGeometry = new Timeplot.DefaultValueGeometry({
+    gridColor: "#000000",
+    min: 0,
+    max: 100
+  });</span>
+
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+      <span class="highlight">timeGeometry: timeGeometry,
+      valueGeometry: valueGeometry,</span>
+      lineColor: "#ff0000",
+      fillColor: "#cc8080",
+      showValues: true
+    })<span class="highlight">,
+    Timeplot.createPlotInfo({
+      id: "plot2",
+      dataSource: new Timeplot.ColumnSource(eventSource,3),
+      timeGeometry: timeGeometry,
+      valueGeometry: valueGeometry,
+      lineColor: "#D0A825",
+      showValues: true
+    })</span>
+  ];
+</pre>
+    
+     which results in:</p>
+     
+     <p><div id="timeplot7" class="timeplot" style="height: 150px"></div></p>
+
+    <h3>Step 11. Overlaying events over the plots</h3>
+    
+    <p>Timeplot can load <a href="http://simile.mit.edu/timeline/">Timeline</a> events and overlay
+    the over plots. Here is how to do it and note how we keep using the same geometries for both
+    the plots and the events:
+<pre>
+  <span class="highlight">var eventSource2 = new Timeplot.DefaultEventSource();</span>
+
+  var plotInfo = [
+    Timeplot.createPlotInfo({
+      id: "plot1",
+      dataSource: new Timeplot.ColumnSource(eventSource,1),
+      timeGeometry: timeGeometry,
+      valueGeometry: valueGeometry,
+      lineColor: "#ff0000",
+      fillColor: "#cc8080",
+      showValues: true
+    }),
+    Timeplot.createPlotInfo({
+      id: "plot2",
+      dataSource: new Timeplot.ColumnSource(eventSource,3),
+      timeGeometry: timeGeometry,
+      valueGeometry: valueGeometry,
+      lineColor: "#D0A825",
+      showValues: true
+    })<span class="highlight">,
+    Timeplot.createPlotInfo({
+      id: "plot3",
+      timeGeometry: timeGeometry,
+      eventSource: eventSource2,
+      lineColor: "#03212E"
+    </span>
+  ];
+  
+  timeplot = Timeplot.create(document.getElementById("my-timeplot"), plotInfo);
+  timeplot.loadText("data.txt", ",", eventSource);
+  <span class="highlight">timeplots.loadXML("events.xml", eventSource2);</span>
+</pre>
+    
+     which results in:</p>
+     
+     <p><div id="timeplot8" class="timeplot" style="height: 150px"></div></p>
+        
+    </div>
+  </body>
+</html>
