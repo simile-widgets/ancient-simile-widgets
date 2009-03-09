@@ -45,49 +45,61 @@
     </concat>
       
     <!-- Time extension -->
-    <jsmin output="src/webapp/extensions/time/time-extension-bundle.js">
-        <fileset dir="src/webapp/extensions/time/scripts">
+    <jsmin output="src/webapp/api/extensions/time/time-extension-bundle.js">
+        <fileset dir="src/webapp/api/extensions/time/scripts">
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/extensions/time/time-extension-bundle.css">
-        <fileset dir="src/webapp/extensions/time/styles">
+    <concat destfile="src/webapp/api/extensions/time/time-extension-bundle.css">
+        <fileset dir="src/webapp/api/extensions/time/styles">
             <include name="**/*.css" />
         </fileset>
     </concat>
     
     <!-- Map extension -->
-    <jsmin output="src/webapp/extensions/map/map-extension-bundle.js">
-        <fileset dir="src/webapp/extensions/map/scripts">
+    <jsmin output="src/webapp/api/extensions/map/map-extension-bundle.js">
+        <fileset dir="src/webapp/api/extensions/map/scripts">
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/extensions/map/map-extension-bundle.css">
-        <fileset dir="src/webapp/extensions/map/styles">
+    <concat destfile="src/webapp/api/extensions/map/map-extension-bundle.css">
+        <fileset dir="src/webapp/api/extensions/map/styles">
             <include name="**/*.css" />
         </fileset>
     </concat>
     
     <!-- Chart extension -->
-    <jsmin output="src/webapp/extensions/chart/chart-extension-bundle.js">
-        <fileset dir="src/webapp/extensions/chart/scripts">
+    <jsmin output="src/webapp/api/extensions/chart/chart-extension-bundle.js">
+        <fileset dir="src/webapp/api/extensions/chart/scripts">
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/extensions/chart/chart-extension-bundle.css">
-        <fileset dir="src/webapp/extensions/chart/styles">
+    <concat destfile="src/webapp/api/extensions/chart/chart-extension-bundle.css">
+        <fileset dir="src/webapp/api/extensions/chart/styles">
+            <include name="**/*.css" />
+        </fileset>
+    </concat>
+    
+    <!-- Timeplot extension -->
+    <jsmin output="src/webapp/api/extensions/timeplot/timeplot-extension-bundle.js">
+        <fileset dir="src/webapp/api/extensions/timeplot/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
+    <concat destfile="src/webapp/api/extensions/timeplot/timeplot-extension-bundle.css">
+        <fileset dir="src/webapp/api/extensions/timeplot/styles">
             <include name="**/*.css" />
         </fileset>
     </concat>
     
     <!-- Calendar extension -->
-    <jsmin output="src/webapp/extensions/calendar/calendar-extension-bundle.js">
-        <fileset dir="src/webapp/extensions/calendar/scripts">
+    <jsmin output="src/webapp/api/extensions/calendar/calendar-extension-bundle.js">
+        <fileset dir="src/webapp/api/extensions/calendar/scripts">
             <include name="**/*.js" />
         </fileset>
     </jsmin>
-    <concat destfile="src/webapp/extensions/calendar/calendar-extension-bundle.css">
-        <fileset dir="src/webapp/extensions/calendar/styles">
+    <concat destfile="src/webapp/api/extensions/calendar/calendar-extension-bundle.css">
+        <fileset dir="src/webapp/api/extensions/calendar/styles">
             <include name="**/*.css" />
         </fileset>
     </concat>
