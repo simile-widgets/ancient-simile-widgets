@@ -25,6 +25,8 @@ Version 2.2.0 -- March 9, 2009
   
 - Updated styles and links in index.html and examples to release on simile-widgets.org.
 
+- Linked timeplot extension to timeplot 1.1 on api.simile-widgets.org. Also bundled the extension.
+
 Version 2.1.0 -- November 16, 2008
 
 - Fixed bug on IE 8 caused by element.getAttribute() as used in Exhibit.getAttribute() 
