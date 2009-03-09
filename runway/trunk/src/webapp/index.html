@@ -23,7 +23,7 @@
                 document.getElementById("the-widget"),
                 {
                     // examples of initial settings
-                    // theme: "pitchblack",
+                    // slideSize: 200,
                     // backgroundColorTop: "#fff",
                     
                     // event handlers
@@ -40,69 +40,64 @@
                         // This is how you get notified when a different image has been selected in the widget.
                         var record = records[index];
                         document.getElementById("selected-slide").innerHTML = record.title;
-                    },
-                    onZoom: function(index, id) {
-                        // You can hook up a lightbox widget to magnify the selected image
-                        // alert(records[index].title);
                     }
                 }
             );
             
-            // This is sp]]>ecific to thi</head>
+            // This is specific to this demo.
+            if (widget == null) {
+                document.getElementById("the-widget").appendChild(
+                    document.getElementById("preview").cloneNode(true));
+            }
+        }
+    ]]></script>
+  </head>
   <body onload="onLoad();">
     <ul id="path">
-        <li><a href="l="stylesheet" href="http://simile.mit.edu/styles/default.css" />
-    <link rel="stylesheet" href="styheader">
+        <li><a href="/" title="Home">SIMILE Widgets</a></li>
+        <li><span>Runway</span></li>
+    </ul>
+    <div id="header">
       <h1>Runway</h1>
     </div>
     
     <!-- This element is all you really need. -->
     <div id="the-widget" style="height: 400px;"></div>
     
-d="body">
-        <div id="top-panel">
-            <h1>Runway 1.0</h1>
-        </div>
-        
-<div id="bottom-panel">
+    <!-- The remaining code is specific to this demo, not necessary for your own web page. -->
+    <div id="bottom-panel">
         <center><table style="width: 750px;"><tr valign="top">
             <td id="left-column">
                 <div id="description">
                     This widget lets you display images in a rich interactive
-r><table style="width: 750px;"><tr valign="top">
-                <td id="left-column">
-                   It is a Flash-based implementation.
+                    visualization similar to that of Apple iTunes known as Cover Flow.
+                    It is a Flash-based implementation.
                 </div>
                 
                 <h2>Links</h2>
                 <ul>
-milar to that of Apple iTunes known as Cover Flow.
-                        It is a Flash-based implementation.
-                 /div>
-                    
-                    <h2>Links</h2>
-                    <ul>
-                        <li><a href="http:de.google.com/p/simile-widgets/wiki/Runway">Documentation</a></li>
-                        <li><a href="http://groups.google.com/group/simile-w</ul>
+                    <li><a href="http://code.google.com/p/simile-widgets/wiki/Runway">Documentation</a></li>
+                    <li><a href="http://groups.google.com/group/simile-widgets">Mailing List</a> (for technical support, etc.)</li>
+                    <li><a href="http://code.google.com/p/simile-widgets/source/browse/#svn/runway/trunk">Code</a> (open source, BSD license)</li>
+                </ul>
                 
                 <h2>Credits</h2>
-          <li><a href="http://code.google.com/p/simile-widgets/source/browse/#svn/runway/trunk">Code</a> (o<p>The images used for this demo are from <a href="http://www.freebase.com/">Freebase</a>.</p>
+                <p>Original author: <a href="http://davidhuynh.net/">David Huynh</a>.</p>
+                <p>The images used for this demo are from <a href="http://www.freebase.com/">Freebase</a>.</p>
             </td>
             <td id="right-column">
-http://davidhuynh.net/">David Huynh</a>.</p>
-                    <p>The images used for this demo are from <aFor example, when you select a new image in the widget above, this
-               <td id="right-column">
-                    <p>The Flash widget can fire events to update</p>
+                <p>The Flash widget can fire events to update the web page's Javascript.
+                    For example, when you select a new image in the widget above, this
+                    text in HTML should be updated: <span id="selected-slide"></span>.
+                </p>
                 
-                 For example, when you select a new image in the widget above, this
-                     Try changing the various settings below:
+                <p>The web page's Javascript can change the Flash widget on the fly.
+                    Try changing the various settings below:
                 </p>
                 <div id="theme-panel">Theme:
                     <select id="the-themes" onchange="onThemeChange(this);">
-
-                        Try changing the various settings below:
-                    </p>
-               <option value="arctic">Arctic</option>
+                        <option value="pristine" selected="true">Pristine</option>
+                        <option value="arctic">Arctic</option>
                         <option value="midnight">Midnight</option>
                         <option value="sunset">Sunset</option>
                         <option value="pitchblack">Pitchblack</option>
@@ -116,10 +111,11 @@ http://davidhuynh.net/">David Huynh</a>.</p>
     <div id="footer">
       Copyright &copy; <a href="http://web.mit.edu/">Massachusetts Institute of Technology</a> and Contributors 2006-2009 ~ Some rights reserved
     </div>
-    black">Pitchblack</option>
-                        </select>
-                    </div>
-                    <div id="settings-panel"></div>
-                </td>
-            </tr></table></center>  </body>
+    
+    <div id="preview">
+        With the latest version of the Flash Player, you'd be seeing
+        something like this, but interactive:<br/>
+        <img src="images/preview.png"/>
+    </div>
+  </body>
 </html>
