@@ -1,7 +1,7 @@
 ﻿<html>
-<head>
-    <meta name="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Temperaturer i Sverige (temperatur.nu)</title>
+  <head>
+    <title>SIMILE Widgets | Exhibit | Examples | Temperaturer i Sverige (temperatur.nu)</title>
+    <link rel='stylesheet' href='http://www.simile-widgets.org/styles/common.css' type='text/css' />
 
     <!-- data links -->
     <link rel="exhibit/data" type="application/jsonp"
@@ -16,19 +16,25 @@
     <link rel='stylesheet' href='styles.css' type='text/css' />
 
     <!-- scripts -->
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/exhibit-api.js -->
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/exhibit-api.js -->
     <script src="../../api/exhibit-api.js"></script>
     
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/extensions/map/map-extension.js -->
-    <script type="text/javascript" src="../../api/extensions/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRTrYRWU3nwu1f8cAim67W-TT5e_ZBRlQi8LFs-7C7lM5cuabJ4zHrTx1w"></script>
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/extensions/map/map-extension.js -->
+    <script type="text/javascript" src="../../api/extensions/map/map-extension.js?gmapkey=ABQIAAAA5JLLfCE9c7HAtg25QM2KCRRyiP6mHEsQpwvxB19-hS9Kgd8RYhSXEtJVAXDUCZPqwtZZi7-HUYUYrw"></script>
     
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/extensions/map/map-extension.js -->
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/extensions/chart/chart-extension.js -->
     <script type="text/javascript" src="../../api/extensions/chart/chart-extension.js"></script>
     
     <script type="text/javascript" src="converters.js" charset="utf-8"></script>
-</head>
+  </head>
 
-<body>
+  <body>
+    <ul id="path">
+      <li><a href="/">SIMILE Widgets</a></li>
+      <li><a href="/exhibit/">Exhibit</a></li>
+      <li><span>Examples: Temperaturer i Sverige (temperatur.nu)</span></li>
+    </ul>
+    
     <div ex:role="collection" ex:itemTypes="Plats"></div>
     <table id="frame">
         <tr>
@@ -49,8 +55,8 @@
                         ex:label="Karta"
                         ex:lat=".lat"
                         ex:lng=".lon"
-                        ex:colorKey=".temp"
-                        ex:colorCoder="temperature-colors"
+                        ex:_colorKey=".temp"
+                        ex:_colorCoder="temperature-colors"
                         ex:shapeAlpha="1"
                         ex:size="large"
                         ex:center="61, 13"
@@ -97,5 +103,5 @@
             </td>
         </tr>
     </table>
-</body>
+  </body>
 </html>

@@ -1,10 +1,3 @@
-body {
-    position: relative;
-    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    padding: 1em;
-    margin: 0px;
-}
-
 .columnTable .column {
     vertical-align: top;
 }

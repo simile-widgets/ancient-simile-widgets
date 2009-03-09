@@ -1,51 +1,47 @@
 <html>
-<head>
-    <title>2008 Democratic Primary Results</title>
+  <head>
+    <title>SIMILE Widgets | Exhibit | Examples | 2008 Democratic Primary Results</title>
+    <link rel='stylesheet' href='http://www.simile-widgets.org/styles/common.css' type='text/css' />
 
     <link href="results.js" type="application/json" rel="exhibit/data" />
 
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/exhibit-api.js -->
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/exhibit-api.js -->
     <script src="../../api/exhibit-api.js"></script>
     
-    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/latest/extensions/calendar/calendar-extension.js -->
+    <!-- Replace the URL here with http://api.simile-widgets.org/exhibit/2.2.0/extensions/calendar/calendar-extension.js -->
     <script src="../../api/extensions/calendar/calendar-extension.js"></script>
+  </head> 
+  <body>
+    <ul id="path">
+      <li><a href="/">SIMILE Widgets</a></li>
+      <li><a href="/exhibit/">Exhibit</a></li>
+      <li><span>Examples: 2008 Democratic Primary Results</span></li>
+    </ul>
     
-    <style>
-        body {
-            font-family:    Tahoma, Arial, sans serif;
-            font-size:      12px;
-            margin:         0;
-            padding:        5px;
-        }
-        table { font-size: 100%; border-collapse: collapse; }
-        tr { vertical-align: top; }
-
-    </style>
-</head> 
-<body>
-<div ex:role="collection" ex:itemTypes="Contest"></div>
-<div id="content">
-    <div id="title-panel">
-        <h1>2008 Democratic Primary Results</h1>
+    <div id="header">
+      <h1>2008 Democratic Primary Results</h1>
     </div>
-    <table width="100%" cellpadding="10">
-      <tr>
-        <td ex:role="viewPanel">
-          <div ex:role="view"
-              ex:viewClass="Tabular"
-              ex:label="Details"
-              ex:columns=".label, .Date, concat(.Clinton+Popular, ' / ', .Clinton+Delegates), concat(.Obama+Popular, ' / ', .Obama+Delegates), concat(.Votes, ' / ', .Pledged+Delegates)"
-              ex:columnLabels="State, Date, Clinton (Popular / Delegates), Obama (Popular / Delegates), Total (Popular / Delegates)"
-              ex:formats="date { mode: medium; show: date }, number { decimal-digits: 0 }, item {title: .Name }"
-              ex:sortColumn="1">
-          </div>
-        </td>
-        <td width="200">
-            <div ex:role="facet" ex:expression=".Date" ex:facetLabel="Primary/Caucus Date" ex:facetClass="DatePicker"></div>
-            <div ex:role="facet" ex:expression=".Winner" ex:facetLabel="Winner"></div>
-        </td>
-      </tr>
-    </table>
-</div>
-</body>
+    
+    <div id="content">
+        <div ex:role="collection" ex:itemTypes="Contest"></div>
+        <table width="100%" cellpadding="10">
+          <tr>
+            <td ex:role="viewPanel">
+              <div ex:role="view"
+                  ex:viewClass="Tabular"
+                  ex:label="Details"
+                  ex:columns=".label, .Date, concat(.Clinton+Popular, ' / ', .Clinton+Delegates), concat(.Obama+Popular, ' / ', .Obama+Delegates), concat(.Votes, ' / ', .Pledged+Delegates)"
+                  ex:columnLabels="State, Date, Clinton (Popular / Delegates), Obama (Popular / Delegates), Total (Popular / Delegates)"
+                  ex:formats="date { mode: medium; show: date }, number { decimal-digits: 0 }, item {title: .Name }"
+                  ex:sortColumn="1">
+              </div>
+            </td>
+            <td width="200">
+                <div ex:role="facet" ex:beginDate=".Date" ex:facetLabel="Primary/Caucus Date" ex:facetClass="DatePicker"></div>
+                <div ex:role="facet" ex:expression=".Winner" ex:facetLabel="Winner"></div>
+            </td>
+          </tr>
+        </table>
+    </div>
+  </body>
 </html>
