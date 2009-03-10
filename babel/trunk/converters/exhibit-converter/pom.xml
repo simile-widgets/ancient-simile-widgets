@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simileWidgets</groupId>
+  <artifactId>babel-exhibit-converter</artifactId>
+  <name>Babel Exhibit Converter</name>
+  <version>1.0.0</version>
+  <description>Exhibit Converter is part of the Babel project. It reads and writes data in exhibit formats.</description>
+
+  <parent>
+      <groupId>org.simileWidgets</groupId>
+      <artifactId>babel-converters</artifactId>
+      <version>1.0.0</version>
+  </parent>
+	
+  <dependencies>
+    <dependency>
+      <groupId>org.simileWidgets</groupId>
+      <artifactId>babel-interfaces</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.simileWidgets</groupId>
+      <artifactId>babel-bibtex-converter</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
+      <version>1.6R5</version>
+    </dependency>
+    <dependency>
+      <groupId>nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+      <version>0.9.5</version>
+    </dependency>
+  </dependencies>
+
+</project>

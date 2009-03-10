@@ -1,0 +1,6 @@
+@article{viégas_visualizing_2006,
+  AUTHOR        = {Noga Alon and Mihai B\uadoiu and Erik D. Demaine and
+    title = {Time?Space Trade-offs in Scaling up RDF Schema Reasoning},
+ abstract = {Perù and Per{\`u}},
+ author = {Albert-L\'{a}szl\'{o} Barab\'{a}si and M\^{o}nica Ferreira da Silva and F. Patern\`{o} and W{\l}adys{\l}aw M. Turski and Sten-\AA{ke} T\"{a}rnlund and Ketil B{\o} and J. Encarna\c{c}{\~a}o and P\"{e}\ss{}t\^{e}r \v{C}\u{e}\.{z}\={o}\.{g}},
+  

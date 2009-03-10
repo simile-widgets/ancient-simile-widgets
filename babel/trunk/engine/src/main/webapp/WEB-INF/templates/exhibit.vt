@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
+        <title>Simile | Babel | Preview in Exhibit</title>
+        <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js?autoCreate=false" type="text/javascript"></script>
+        <script type="text/javascript">
+            var exhibit;
+        
+            function getForm() {
+                return document.getElementById("data-form");
+            }
+            function getTextarea() {
+                return document.getElementById("data-textarea");
+            }
+            function onLoad() {
+                var data = eval("(" + getTextarea().value + ")");
+                
+                window.database = Exhibit.Database.create();
+                window.database.loadData(data);
+                
+                var facets = [ "<div ex:role='facet' ex:expression='.type'></div>" ];
+                for (var p in data.properties) {
+                    facets.push("<div ex:role='facet' ex:expression='." + p + "'></div>");
+                }
+                document.getElementById("facets").innerHTML = facets.join("");
+                
+                window.exhibit = Exhibit.create();
+                window.exhibit.configureFromDOM();
+                
+                document.getElementById("close-button").onclick = function(evt) {
+                    evt = (evt) ? evt : event;
+                    
+                    getForm().style.display = "none";
+                    
+                    evt.stopPropagation();
+                    return false;
+                };
+            }
+            function copyRawData() {
+                getForm().style.display = "block";
+                
+                var textarea = getTextarea();
+                textarea.focus();
+                textarea.select();
+            }
+            function downloadRawData() {
+                getForm().submit();
+            }
+
+        </script>
+        <style>
+            #view-panel h1 {
+                font-size:      120%;
+                background:     none;
+                border:         none;
+            }
+            #preview-controls {
+                padding:        1em;
+                border:         1px dashed #aaa;
+                margin-bottom:  1em;
+                text-align:     center;
+            }
+            #data-form {
+                display:    none;
+                position:   absolute;
+                top:        10em;
+                left:       15%;
+                width:      70%;
+                z-index:    1000;
+                padding:    2em;
+                border:     2px solid #888;
+                background: #FFFFE0;
+            }
+            #data-form textarea {
+                width:      100%;
+            }
+        </style>
+    </head>
+    <body onload="onLoad();">
+        <ul id="path">
+            <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+            <li><a href="http://simile.mit.edu/babel/" title="Babel">Babel</a></li>
+            <li><span>Preview of Data in Exhibit</span></li>
+        </ul>
+        <div id="body">
+            <h1>Preview in Exhibit</h1>
+            <div id="preview-controls">
+                <button onclick="copyRawData();">Copy Raw Data</button>
+                <button onclick="downloadRawData();">Download Raw Data</button>
+            </div>
+            <table width="100%">
+                <tr valign="top">
+                    <td>
+                        <div ex:role="view" ex:grouped="false"></div>
+                    </td>
+                    <td width="30%">
+                        <div id="facets"></div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <form id="data-form" action="reflector?mimetype=application/json" method="post" enctype="multipart/form-data">
+            <p>Copy the raw data:</p>
+            <textarea rows="15" wrap="off" id="data-textarea" name="content">$utilities.escapeHtml($data)</textarea>
+            <p style="text-align: center;"><button id="close-button">Close</button></p>
+        </form>
+    </body>
+</html>

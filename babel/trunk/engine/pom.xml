@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simileWidgets</groupId>
+  <artifactId>babel-engine</artifactId>
+  <name>Babel Engine</name>
+  <version>1.0.0</version>
+
+  <parent>
+      <groupId>org.simileWidgets</groupId>
+      <artifactId>babel</artifactId>
+      <version>1.0.0</version>
+  </parent>
+
+  <build>
+   <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <configuration>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.bio.SocketConnector">
+              <port>7777</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>        
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <contextPath>/</contextPath>
+          <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+        <groupId>org.simileWidgets</groupId>
+        <artifactId>babel-interfaces</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.simileWidgets</groupId>
+        <artifactId>babel-bibtex-converter</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.simileWidgets</groupId>
+        <artifactId>babel-exhibit-converter</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.simileWidgets</groupId>
+        <artifactId>babel-tsv-converter</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.simileWidgets</groupId>
+        <artifactId>babel-xls-converter</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.simileWidgets</groupId>
+        <artifactId>babel-jpeg-converter</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+
+    
+    <dependency>
+        <groupId>servlets.com</groupId>
+        <artifactId>cos</artifactId>
+        <version>05Nov2002</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+    </dependency>
+    <dependency>
+        <groupId>rhino</groupId>
+        <artifactId>js</artifactId>
+        <version>1.6R7</version>
+    </dependency>
+    <dependency>
+      <groupId>velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.5</version>
+    </dependency>
+        
+    <!-- =============== Logging =============== -->
+
+
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.4.3</version>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.4.3</version>
+    </dependency>
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.15</version>
+    </dependency>
+		
+    <!-- =============== Miscellaneous utilities =============== -->
+    
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.1</version>
+    </dependency>
+    <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.3</version>
+    </dependency>
+    <dependency>
+      <groupId>nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+      <version>0.9.5</version>
+    </dependency>    
+
+  </dependencies>
+</project>

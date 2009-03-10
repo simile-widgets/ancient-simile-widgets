@@ -1,0 +1,403 @@
+/*
+ *  (c) Copyright The SIMILE Project 2003-2008. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+options {
+   LOOKAHEAD=3;
+   FORCE_LA_CHECK=true;
+   JAVA_UNICODE_ESCAPE=true;
+   IGNORE_CASE=true;
+   STATIC=false;
+}
+
+PARSER_BEGIN(BibtexGrammar)
+
+package edu.mit.simile.babel.bibtex;
+
+import java.io.*;
+import java.util.*;
+import edu.mit.simile.babel.bibtex.*;
+
+public final class BibtexGrammar {
+ 
+    static final String [][] months = new String[][]{
+        {"jan", "{January}"}, 
+        {"feb", "{February}"},
+        {"mar", "{March}"}, 
+        {"apr", "{April}"},
+        {"may", "{May}"}, 
+        {"jun", "{June}"},
+        {"jul", "{July}"}, 
+        {"aug", "{August}"},
+        {"sep", "{September}"}, 
+        {"oct", "{October}"},
+        {"nov", "{November}"}, 
+        {"dec", "{December}"}
+    };
+ 
+    private String preamble = "";
+    private String comment = "";
+    private Map strings = new HashMap();
+    private List records = new ArrayList();
+   
+    /** 
+      * Returns the records.  Should be called after parse(). 
+      */
+    public List getRecords(){
+        return records;
+    }
+
+    /** 
+      * Prints debugging output. Should be called after parse(). 
+      */
+    public void printout() {
+        if (!"".equals(preamble)) System.out.println("\nDEBUG: Found Preamble: \n" + preamble);
+
+        System.out.println("\nDEBUG: Found " + strings.size() + " Strings:");
+        Iterator iter = strings.keySet().iterator();
+        while(iter.hasNext()){
+            Object key = iter.next(); 
+            System.out.println("\t" + key + "\t" + strings.get(key));
+        }
+
+        System.out.println("\nDEBUG: Found " + records.size() + " Records:");
+        iter = records.iterator();
+        while (iter.hasNext()) {
+            System.out.println("-----------------------------------");
+            BibMap record = (BibMap) iter.next();
+            System.out.println("TYPE:\t" + record.getType());
+            System.out.println("KEY:\t" + record.getKey());
+            Iterator jiter = record.keySet().iterator();
+            while (jiter.hasNext()) {
+                String key = (String) jiter.next();
+                System.out.println("\tFIELD:\t" + key + "\t" + record.get(key));
+            }
+            System.out.println("");
+        }
+    }
+}
+    
+PARSER_END(BibtexGrammar)
+
+TOKEN:{
+        < AT: "@" >
+      | < WS: ([" ","\r","\t", "\n"])+ >
+      | < STR: "string" >
+      | < PRE: "preamble" >
+      | < COMMENT: "comment" >
+      | < EQ: "=" >
+      | < HASH: "#" >
+      | < COMMA: (<WS>)? "," >
+      | < LPAREN: "(" >
+      | < RPAREN: ")" >
+      | < QUOTE:  "\"">
+      | < LBRACE: "{" >
+      | < RBRACE: "}" >
+      | < DELIM: "{" | "}" | "(" | ")" | "\"" >
+      | < QCHAR: "\\" <DELIM> | "\\%" >   // also a word
+      | < WORD: (<LETTER>|<DIGIT>|<SIGN>)+ >
+      | < LETTER:
+          [
+           "\u0000",
+           "\u0041"-"\u005a",
+           "\u005f",
+           "\u0061"-"\u007a",
+           "\u00c0"-"\u00d6",
+           "\u00d8"-"\u00ff",
+           "\u0100"-"\u1fff",
+           "\u3040"-"\u318f",
+           "\u3300"-"\u337f",
+           "\u3400"-"\u3d2d",
+           "\u4e00"-"\u9fff",
+           "\uf900"-"\ufaff"
+          ]
+        >
+      | < DIGIT: 
+          [
+           "\u0030"-"\u0039",
+           "\u0660"-"\u0669",
+           "\u06f0"-"\u06f9",
+           "\u0966"-"\u096f",
+           "\u09e6"-"\u09ef",
+           "\u0a66"-"\u0a6f",
+           "\u0ae6"-"\u0aef",
+           "\u0b66"-"\u0b6f",
+           "\u0be7"-"\u0bef",
+           "\u0c66"-"\u0c6f",
+           "\u0ce6"-"\u0cef",
+           "\u0d66"-"\u0d6f",
+           "\u0e50"-"\u0e59",
+           "\u0ed0"-"\u0ed9",
+           "\u1040"-"\u1049"
+          ]
+        >
+      | < SIGN:
+          [
+           "!",
+           "%",
+           "*",
+           "+",
+           "-",
+           "<",
+           ">",
+           "|",
+           "?",
+           "&",
+           "$",
+           "~",
+           "'",
+           "\\",
+           ".",
+           "^",
+           "`",
+           ":",
+           "/",
+           "[",
+           "]",
+           "_",
+           ";",
+           "\u0080"-"\u00BF",
+           "\u00d7",
+           "\u00f7",
+           "\u2019",
+           "\ufffd"
+         ]
+       >
+}
+
+/** 
+  * A bibtex file is basically a concatenation of records, which are
+  * either string definitions or proper bibliographic records.  This
+  * method just consumes records until the file ends, at which point it
+  * resolves cross-references within individual records. 
+  */
+void parse():
+{
+    // Load the default string expansions for months.  My impression
+    // is that these are supposed to expand to locale-specific strings
+    // for the month.  This hack effectively makes this an "English 
+    // bibtex parser"
+    for (int i = 0; i < months.length; i++) {
+        strings.put(months[i][0], months[i][1]);
+    }
+}
+{
+    ( strdef() | comdef() | recdef() | predef() | <WORD> | <COMMA> | <WS> | <EOF> { return; })*
+}
+
+/** 
+  * Consumes a preamble definition. 
+  */
+void predef():
+{
+    String val;
+}
+{
+    <AT> <PRE> [<WS>] (
+       (<LBRACE> [<WS>] (val = vals()) [<WS>] <RBRACE>)
+     | (<LPAREN> [<WS>] (val = vals()) [<WS>] <RPAREN>)
+    )
+    { preamble = preamble + val; }
+}
+
+
+/** 
+  * Consumes a single string definition. A string definition is
+  * basically a single pair. 
+  */
+void strdef():
+{
+}
+{
+    <AT> <STR> [<WS>] (
+       (<LBRACE> pair(strings) [<WS>] <RBRACE>)
+     | (<LPAREN> pair(strings) [<WS>] <RPAREN>)
+    )
+}
+
+/** 
+  * Consumes a comment definition.
+  */
+void comdef():
+{
+}
+{
+    <AT> <COMMENT> [<WS>] (
+       (<LBRACE> (<WORD>|<WS>)+ <RBRACE>)
+     | (<LPAREN> (<WORD>|<WS>)+ <RPAREN>)
+    )
+}
+
+/** 
+  * Consumes a single record definition. 
+  */
+void recdef():
+{
+    Token t1 = null;
+    Token t2 = null;
+    BibMap record = new BibMap();
+}
+{
+    <AT> (t1 = <WORD>) [<WS>] (
+        (<LBRACE> [<WS>] [(t2=<WORD> | t2=<COMMENT> | t2=<STR> | t2=<PRE>) <COMMA>] (pair(record))* [<WS>] <RBRACE>)
+      | (<LPAREN> [<WS>] [(t2=<WORD> | t2=<COMMENT> | t2=<STR> | t2=<PRE>) <COMMA>] (pair(record))* [<WS>] <RPAREN>)
+    )
+    {
+        record.setType(t1.toString().toLowerCase());
+        if (t2 != null) {
+            record.setKey(t2.toString());
+        }
+        records.add(record);
+    }
+}
+
+/** 
+  * Consumes a pair and places them in map. 
+  */
+void pair(Map map):
+{
+    Token id;
+    String val;
+}
+{
+    [<WS>] (id=<WORD> | id=<COMMENT> | id=<STR> | id=<PRE>) [<WS>] <EQ> [<WS>] (val = vals()) [<WS>] [<COMMA>]
+    { 
+        String name = id.toString().toLowerCase();
+        
+        // NOTE(SM): Zotero splits comments in several fields, so here we put them back together as one.
+        if ("comment".equals(name) && map.containsKey(name)) {
+            val = (String) map.get(name) + "\n" + val;
+        }
+        
+        map.put(name, val); 
+    }
+}
+
+/** 
+  * Consumes a concatenation of "values" 
+  */
+String vals():
+{
+    String val;
+    StringBuffer sb = new StringBuffer();
+}
+{
+    val = val() { sb.append(val); }
+    ([<WS>] <HASH> [<WS>] val = val() 
+        {
+            if (sb.charAt(0) == '{') {
+                sb.deleteCharAt(sb.length()-1); // must be a curly brace
+            }
+            if (val.startsWith("{")) {
+                val = val.substring(1, val.length()-1);
+            }
+            sb.append(val + "}");
+        }
+    )*  
+    { return sb.toString(); }
+}
+
+/** 
+  * Consumes a value, plus any trailing whitespace 
+  */
+String val():
+{
+    Token token;
+    String val;
+}
+{
+    <LBRACE> (val = wordsq()) <RBRACE> { return "{" + val + "}"; }
+    | <QUOTE> (val = words()) <QUOTE> { return "{" + val + "}"; }
+    | (token = <WORD>) 
+    {
+        String key = token.toString().toLowerCase();
+        if (strings.containsKey(key)) {
+            return (String) strings.get(key);
+        } else {
+            return key;
+        }
+    } 
+}
+
+/** 
+  * Consumes a set of words, where a quote token is a word. 
+  */
+String wordsq():
+{
+    String s;
+    Token t;
+    StringBuffer sb = new StringBuffer();
+}
+{
+    (s=wordq() { sb.append(s); }
+     | <LBRACE> (s=wordsq()) <RBRACE> { sb.append("{" + s + "}"); }
+    )*
+    { return sb.toString(); }
+}
+
+/** 
+  * Consumes a set of words, where a quote token is not a word. 
+  */
+String words():
+{
+    String s;
+    Token t;
+    StringBuffer sb = new StringBuffer();
+}
+{
+    (s=word() { sb.append(s); }
+     | <LBRACE> (s=wordsq()) <RBRACE> { sb.append("{" + s + "}"); }
+    )*
+    { return sb.toString(); }
+}
+
+/** 
+  * Consumes and returns a "word", where a quote token is a word. 
+  */
+String wordq():
+{
+    Token t;
+}
+{
+    (t=<WS> | t=<WORD> | t=<EQ> | t=<LPAREN> | t=<RPAREN> | t=<AT> | t=<QCHAR> | t=<STR>| t=<COMMA> | t=<HASH>  | t=<PRE> | t=<QUOTE> | t=<COMMENT>)
+    { return(t.toString()); }
+}
+
+/** 
+  * Consumes and returns a "word", where a quote token is not a word. 
+  */
+String word():
+{
+    Token t;
+}
+{
+    (t=<WS> | t=<WORD> | t=<EQ> | t=<LPAREN> | t=<RPAREN> | t=<AT> | t=<QCHAR> | t=<STR>| t=<COMMA> | t=<HASH> | t=<PRE> | t=<COMMENT>)
+    { return(t.toString()); }
+}
+
