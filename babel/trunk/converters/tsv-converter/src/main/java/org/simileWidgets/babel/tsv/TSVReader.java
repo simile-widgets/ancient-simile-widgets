@@ -70,23 +70,14 @@ public class TSVReader implements BabelReader {
 		return TSVFormat.s_singleton;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#takesReader()
-	 */
 	public boolean takesReader() {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#read(java.io.InputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void read(InputStream inputStream, Sail sail, Properties properties, Locale locale) throws Exception {
 		throw new NotImplementedException();
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void read(Reader reader, Sail sail, Properties properties, Locale locale) throws Exception {
 		String 				namespace = properties.getProperty("namespace");
 		List<Column> 		columns = new ArrayList<Column>();

@@ -51,51 +51,30 @@ import org.simileWidgets.babel.SerializationFormat;
 public final class ExhibitJsonReader implements BabelReader {
     //final static private Logger s_logger = Logger.getLogger(ExhibitJsonReader.class);
     
-    /* (non-Javadoc)
-     * @see edu.mit.simile.babel.BabelReader#getLabel(java.util.Locale)
-     */
     public String getLabel(Locale locale) {
         return "Exhibit JSON Reader";
     }
-    
-    /* (non-Javadoc)
-     * @see edu.mit.simile.babel.ExhibitJsonReader#getDescription(java.util.Locale)
-     */
+
     public String getDescription(Locale locale) {
         return "Reads Exhibit JSON format";
     }
     
-    /* (non-Javadoc)
-     * @see edu.mit.simile.babel.ExhibitJsonReader#getOutputSemanticType()
-     */
     public SemanticType getSemanticType() {
         return GenericType.s_singleton;
     }
     
-    /* (non-Javadoc)
-     * @see edu.mit.simile.babel.BabelConverter#getSerializationFormat()
-     */
     public SerializationFormat getSerializationFormat() {
         return ExhibitJsonFormat.s_singleton;
     }
 
-    /* (non-Javadoc)
-     * @see edu.mit.simile.babel.ExhibitJsonReader#takesReader()
-     */
     public boolean takesReader() {
         return true;
     }
     
-    /* (non-Javadoc)
-     * @see edu.mit.simile.babel.ExhibitJsonReader#read(java.io.InputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-     */
     public void read(InputStream inputStream, Sail sail, Properties properties, Locale locale) throws Exception {
         throw new NotImplementedException();
     }
 
-    /* (non-Javadoc)
-     * @see edu.mit.simile.babel.ExhibitJsonReader#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-     */
     public void read(Reader reader, Sail sail, Properties properties, Locale locale) throws Exception {
         MemoryStore metaStore = new MemoryStore();
         metaStore.initialize();

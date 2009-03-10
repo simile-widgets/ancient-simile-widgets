@@ -38,51 +38,30 @@ import org.w3c.dom.Element;
 
 public class RSS1p0Writer implements BabelWriter {
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getLabel(java.util.Locale)
-	 */
 	public String getLabel(Locale locale) {
 		return "Serializes generic data to RSS 1.0";
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getDescription(java.util.Locale)
-	 */
 	public String getDescription(Locale locale) {
 		return "Serializes generic data to RSS 1.0";
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getSemanticType()
-	 */
 	public SemanticType getSemanticType() {
 		return GenericType.s_singleton;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getSerializationFormat()
-	 */
 	public SerializationFormat getSerializationFormat() {
 		return RSS1p0Format.s_singleton;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#takesWriter()
-	 */
 	public boolean takesWriter() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.OutputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
+
 	public void write(OutputStream outputStream, Sail sail, Properties properties, Locale locale) throws Exception {
 		throw new NotImplementedException();
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.Writer, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void write(Writer writer, Sail sail, Properties properties, Locale locale)
 			throws Exception {
         String url = properties.getProperty("url");

@@ -38,39 +38,39 @@ public class Babel {
     final static public Map<String, String> s_previewTemplates = new HashMap<String, String>();
 
     static {
-        s_readers.put("rdf-xml", "edu.mit.simile.babel.generic.RdfXmlConverter");
-        s_readers.put("n3", "edu.mit.simile.babel.generic.N3Converter");
-        s_readers.put("tsv", "edu.mit.simile.babel.tsv.TSVReader");
-        s_readers.put("xls", "edu.mit.simile.babel.xls.XLSReader");
-        s_readers.put("bibtex", "edu.mit.simile.babel.bibtex.BibtexReader");
-        s_readers.put("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonReader");
-        s_readers.put("exhibit-html", "edu.mit.simile.babel.exhibit.ExhibitWebPageReader");
-        s_readers.put("jpeg", "edu.mit.simile.babel.jpeg.JPEGReader");
+        s_readers.put("rdf-xml", "org.simileWidgets.babel.generic.RdfXmlConverter");
+        s_readers.put("n3", "org.simileWidgets.babel.generic.N3Converter");
+        s_readers.put("tsv", "org.simileWidgets.babel.tsv.TSVReader");
+        s_readers.put("xls", "org.simileWidgets.babel.xls.XLSReader");
+        s_readers.put("bibtex", "org.simileWidgets.babel.bibtex.BibtexReader");
+        s_readers.put("exhibit-json", "org.simileWidgets.babel.exhibit.ExhibitJsonReader");
+        s_readers.put("exhibit-html", "org.simileWidgets.babel.exhibit.ExhibitWebPageReader");
+        s_readers.put("jpeg", "org.simileWidgets.babel.jpeg.JPEGReader");
 
-        s_readersFromMimeType.put("application/rdf+xml", "edu.mit.simile.babel.generic.RdfXmlConverter");
-        s_readersFromMimeType.put("application/rdf+n3", "edu.mit.simile.babel.generic.N3Converter");
-        s_readersFromMimeType.put("application/rdf+turtle", "edu.mit.simile.babel.generic.N3Converter");
-        s_readersFromMimeType.put("text/tab-separated-values", "edu.mit.simile.babel.tsv.TSVReader");
-        s_readersFromMimeType.put("application/vnd.ms-excel", "edu.mit.simile.babel.xls.XLSReader");
-        s_readersFromMimeType.put("text/x-bibtex", "edu.mit.simile.babel.bibtex.BibtexReader");
-        s_readersFromMimeType.put("application/json+exhibit", "edu.mit.simile.babel.exhibit.ExhibitJsonReader");
-        s_readersFromMimeType.put("text/html+exhibit", "edu.mit.simile.babel.exhibit.ExhibitWebPageReader");
-        s_readersFromMimeType.put("image/jpeg", "edu.mit.simile.babel.jpeg.JPEGReader");
+        s_readersFromMimeType.put("application/rdf+xml", "org.simileWidgets.babel.generic.RdfXmlConverter");
+        s_readersFromMimeType.put("application/rdf+n3", "org.simileWidgets.babel.generic.N3Converter");
+        s_readersFromMimeType.put("application/rdf+turtle", "org.simileWidgets.babel.generic.N3Converter");
+        s_readersFromMimeType.put("text/tab-separated-values", "org.simileWidgets.babel.tsv.TSVReader");
+        s_readersFromMimeType.put("application/vnd.ms-excel", "org.simileWidgets.babel.xls.XLSReader");
+        s_readersFromMimeType.put("text/x-bibtex", "org.simileWidgets.babel.bibtex.BibtexReader");
+        s_readersFromMimeType.put("application/json+exhibit", "org.simileWidgets.babel.exhibit.ExhibitJsonReader");
+        s_readersFromMimeType.put("text/html+exhibit", "org.simileWidgets.babel.exhibit.ExhibitWebPageReader");
+        s_readersFromMimeType.put("image/jpeg", "org.simileWidgets.babel.jpeg.JPEGReader");
         
-        s_writers.put("rdf-xml", "edu.mit.simile.babel.generic.RdfXmlConverter");
-        s_writers.put("n3", "edu.mit.simile.babel.generic.N3Converter");
-        s_writers.put("rss1.0", "edu.mit.simile.babel.generic.RSS1p0Writer");
-        s_writers.put("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonWriter");
-        s_writers.put("exhibit-jsonp", "edu.mit.simile.babel.exhibit.ExhibitJsonpWriter");
-        s_writers.put("bibtex-exhibit-json", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonWriter");
-        s_writers.put("bibtex-exhibit-jsonp", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonpWriter");
-        s_writers.put("text", "edu.mit.simile.babel.generic.TextWriter");
+        s_writers.put("rdf-xml", "org.simileWidgets.babel.generic.RdfXmlConverter");
+        s_writers.put("n3", "org.simileWidgets.babel.generic.N3Converter");
+        s_writers.put("rss1.0", "org.simileWidgets.babel.generic.RSS1p0Writer");
+        s_writers.put("exhibit-json", "org.simileWidgets.babel.exhibit.ExhibitJsonWriter");
+        s_writers.put("exhibit-jsonp", "org.simileWidgets.babel.exhibit.ExhibitJsonpWriter");
+        s_writers.put("bibtex-exhibit-json", "org.simileWidgets.babel.exhibit.BibtexExhibitJsonWriter");
+        s_writers.put("bibtex-exhibit-jsonp", "org.simileWidgets.babel.exhibit.BibtexExhibitJsonpWriter");
+        s_writers.put("text", "org.simileWidgets.babel.generic.TextWriter");
 
-        s_writersFromMimeType.put("application/rdf+xml", "edu.mit.simile.babel.generic.RdfXmlConverter");
-        s_writersFromMimeType.put("application/rdf+n3", "edu.mit.simile.babel.generic.N3Converter");
-        s_writersFromMimeType.put("application/rdf+turtle", "edu.mit.simile.babel.generic.N3Converter");
-        s_writersFromMimeType.put("application/json+exhibit", "edu.mit.simile.babel.exhibit.ExhibitJsonWriter");
-        s_writersFromMimeType.put("application/jsonp+exhibit", "edu.mit.simile.babel.exhibit.ExhibitJsonpWriter");
+        s_writersFromMimeType.put("application/rdf+xml", "org.simileWidgets.babel.generic.RdfXmlConverter");
+        s_writersFromMimeType.put("application/rdf+n3", "org.simileWidgets.babel.generic.N3Converter");
+        s_writersFromMimeType.put("application/rdf+turtle", "org.simileWidgets.babel.generic.N3Converter");
+        s_writersFromMimeType.put("application/json+exhibit", "org.simileWidgets.babel.exhibit.ExhibitJsonWriter");
+        s_writersFromMimeType.put("application/jsonp+exhibit", "org.simileWidgets.babel.exhibit.ExhibitJsonpWriter");
         
         s_previewTemplates.put("exhibit-json", "exhibit.vt");
         s_previewTemplates.put("bibtex-exhibit-json", "bibtex-exhibit.vt");
