@@ -62,16 +62,10 @@ public class ExhibitJsonWriter implements BabelWriter {
 		return ExhibitJsonFormat.s_singleton;
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#takesWriter()
-	 */
 	public boolean takesWriter() {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.OutputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void write(OutputStream outputStream, Sail sail, Properties properties, Locale locale) throws Exception {
 		throw new NotImplementedException();
 	}

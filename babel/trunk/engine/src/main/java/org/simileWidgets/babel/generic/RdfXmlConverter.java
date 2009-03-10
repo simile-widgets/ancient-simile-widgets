@@ -29,51 +29,30 @@ import org.simileWidgets.babel.format.RdfXmlFormat;
 
 public class RdfXmlConverter implements BabelReader, BabelWriter {
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getLabel(java.util.Locale)
-	 */
 	public String getLabel(Locale locale) {
 		return "Serializes generic data to RDF/XML";
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getDescription(java.util.Locale)
-	 */
 	public String getDescription(Locale locale) {
 		return "Serializes generic data to RDF/XML";
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getSemanticType()
-	 */
 	public SemanticType getSemanticType() {
 		return GenericType.s_singleton;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#getSerializationFormat()
-	 */
 	public SerializationFormat getSerializationFormat() {
 		return RdfXmlFormat.s_singleton;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#takesReader()
-	 */
 	public boolean takesReader() {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#read(java.io.InputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void read(InputStream inputStream, Sail sail, Properties properties, Locale locale) throws Exception {
 		throw new NotImplementedException();
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void read(Reader reader, Sail sail, Properties properties, Locale locale)
 			throws Exception {
 
@@ -130,23 +109,14 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#takesWriter()
-	 */
 	public boolean takesWriter() {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.OutputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void write(OutputStream outputStream, Sail sail, Properties properties, Locale locale) throws Exception {
 		throw new NotImplementedException();
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.Writer, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void write(Writer writer, Sail sail, Properties properties, Locale locale)
 			throws Exception {
 		

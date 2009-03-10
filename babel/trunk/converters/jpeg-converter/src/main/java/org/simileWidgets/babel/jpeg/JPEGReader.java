@@ -71,16 +71,10 @@ public class JPEGReader implements BabelReader {
 		return JPEGFormat.s_singleton;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#takesReader()
-	 */
 	public boolean takesReader() {
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#read(java.io.InputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void read(InputStream inputStream, Sail sail, Properties properties, Locale locale) throws Exception {
 		String        namespace = properties.getProperty("namespace");
 		String				url = properties.getProperty("url");
@@ -133,9 +127,6 @@ public class JPEGReader implements BabelReader {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
-	 */
 	public void read(Reader reader, Sail sail, Properties properties, Locale locale) throws Exception {
 		throw new NotImplementedException();
 	}

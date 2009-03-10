@@ -41,7 +41,7 @@ public class BibtexExhibitJsonWriter extends ExhibitJsonWriter {
 	@Override
 	public void write(Writer writer, Sail sail, Properties properties, Locale locale) throws Exception {
 		ResourceBundle resources = ResourceBundle.getBundle(
-			"edu.mit.simile.babel.exhibit.BibtexExhibitJsonWriter", locale);
+			"org.simileWidgets.babel.exhibit.BibtexExhibitJsonWriter", locale);
 		
 		m_types.put("Publication", new Type(
 			resources.getString("PublicationLabel"),
