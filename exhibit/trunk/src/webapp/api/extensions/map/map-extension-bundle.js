@@ -292,7 +292,7 @@ if(A){A.openInfoWindow(this._createInfoWindow([C]));
 Exhibit.MapView.prototype._createInfoWindow=function(A){return Exhibit.ViewUtilities.fillBubbleWithItems(null,A,this._uiContext);
 };
 Exhibit.MapView._iconData=null;
-Exhibit.MapView._markerUrlPrefix="http://simile.mit.edu/painter/painter?";
+Exhibit.MapView._markerUrlPrefix="http://service.simile-widgets.org/painter/painter?";
 Exhibit.MapView._defaultMarkerShape="circle";
 Exhibit.MapView._makeIcon=function(L,G,M,O,K,E){var D=O.length*3;
 var I=Math.ceil(E.shapeWidth/2)+D;

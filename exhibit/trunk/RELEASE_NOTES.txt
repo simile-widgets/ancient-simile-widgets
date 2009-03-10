@@ -1,6 +1,6 @@
 RELEASE_NOTES.txt
 
-Version 2.2.0 -- March 9, 2009
+Version 2.2.0 -- March 10, 2009
 
 - Fixed bug in database.getAllItems() that causes 4 function members of Array 
   to be counted in the returned set.
@@ -23,9 +23,10 @@ Version 2.2.0 -- March 9, 2009
 - Updated presidents example to include Obama. Added a few computed columns to the table view.
   Removed extraneous files.
   
-- Updated styles and links in index.html and examples to release on simile-widgets.org.
-
 - Linked timeplot extension to timeplot 1.1 on api.simile-widgets.org. Also bundled the extension.
+
+- Linked to http://service.simile-widgets.org/ for painter and babel services.
+
 
 Version 2.1.0 -- November 16, 2008
 

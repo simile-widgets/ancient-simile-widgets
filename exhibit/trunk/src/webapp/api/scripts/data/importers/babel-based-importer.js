@@ -18,7 +18,7 @@ Exhibit.BabelBasedImporter = {
         
         "application/x-bibtex" : "bibtex"
     },
-    babelTranslatorURL: "http://simile.mit.edu/babel/translator",
+    babelTranslatorURL: "http://service.simile-widgets.org/babel/translator",
     
     _initialize: function() {
         var links = [];
