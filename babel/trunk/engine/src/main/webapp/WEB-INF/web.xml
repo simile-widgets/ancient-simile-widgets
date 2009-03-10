@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
+<web-app>
+
+    <servlet>
+        <servlet-name>Translator</servlet-name>
+        <servlet-class>edu.mit.simile.babel.TranslatorServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>Config</servlet-name>
+        <servlet-class>edu.mit.simile.babel.ConfigServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>Preview</servlet-name>
+        <servlet-class>edu.mit.simile.babel.PreviewServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>Reflector</servlet-name>
+        <servlet-class>edu.mit.simile.babel.ReflectorServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>Validator</servlet-name>
+        <servlet-class>edu.mit.simile.babel.ValidatorServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>ExhibitFeeder</servlet-name>
+        <servlet-class>edu.mit.simile.babel.ExhibitFeederServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>HtmlExtractor</servlet-name>
+        <servlet-class>edu.mit.simile.babel.HtmlExtractorServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Translator</servlet-name>
+        <url-pattern>/translator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Config</servlet-name>
+        <url-pattern>/config</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Preview</servlet-name>
+        <url-pattern>/preview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Reflector</servlet-name>
+        <url-pattern>/reflector</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Validator</servlet-name>
+        <url-pattern>/validator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExhibitFeeder</servlet-name>
+        <url-pattern>/exhibit-feeder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HtmlExtractor</servlet-name>
+        <url-pattern>/html-extractor</url-pattern>
+    </servlet-mapping>
+
+</web-app>

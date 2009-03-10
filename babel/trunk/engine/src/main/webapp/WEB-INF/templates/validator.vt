@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
+        <title>Simile | Babel | Validator</title>
+        <style>
+            body {
+                height: 800px;
+            }
+            div.error-message {
+                font-size: 150%;
+                color: #800;
+                font-family: monospace;
+                font-weight: bold;
+            }
+            #no-error-message {
+                font-size: 200%;
+                color: #008;
+            }
+            #no-error-explanation {
+                width: 3in;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="path">
+            <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+            <li><a href="http://simile.mit.edu/babel/" title="Babel">Babel</a></li>
+            <li><span>Validator</span></li>
+        </ul>
+        <div id="body">
+            <h1>Validator</h1>
+
+#if($hasCode)
+    #if($hasError)
+        #foreach($e in $errors)
+            <div class="error-message">$e.details(), line $e.lineNumber(), column $e.columnNumber()</div>
+            <pre>$e.lineSource()</pre>
+        #end
+    #else
+        <div id="no-error-message">Your code has no syntax error.</div>
+        <p id="no-error-explanation">If you're led to this page because 
+            Exhibit said your code has errors, then 
+            <a href="mailto:general@simile.mit.edu?subject=Validator problem">let us know</a>.
+        </p>
+    #end
+    <hr/>
+#end
+            <form id="validate-form"
+                method="post" enctype="multipart/form-data" action="validator">
+                <p>Upload and validate files:</p>
+                <div id="convert-form-body">
+                    <div><input type="file" name="upload-file" size="80" id="upload-file"></input></div>
+                    <div>Note: We do not store your data on our server.</div>
+                </div>
+                <p><input type="submit" value="Upload and Validate" /></p>
+            </form>
+        </div>
+    </body>
+</html>

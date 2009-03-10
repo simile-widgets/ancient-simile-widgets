@@ -1,0 +1,167 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
+        <title>Simile | Babel | Bibtex Preview in Exhibit</title>
+        <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js?autoCreate=false" type="text/javascript"></script>
+        <script type="text/javascript">
+            function getForm() {
+                return document.getElementById("data-form");
+            }
+            function getTextarea() {
+                return document.getElementById("data-textarea");
+            }
+            function onLoad() {
+                var data = eval("(" + getTextarea().value + ")");
+                
+                window.database = Exhibit.Database.create();
+                window.database.loadData(data);
+                
+                window.exhibit = Exhibit.create();
+                window.exhibit.configureFromDOM();
+                
+                document.getElementById("close-button").onclick = function(evt) {
+                    evt = (evt) ? evt : event;
+                    
+                    getForm().style.display = "none";
+                    
+                    evt.stopPropagation();
+                    return false;
+                };
+            }
+            function copyRawData() {
+                getForm().style.display = "block";
+                
+                var textarea = getTextarea();
+                textarea.focus();
+                textarea.select();
+            }
+            function downloadRawData() {
+                getForm().submit();
+            }
+        </script>
+        <style>
+            div.title {
+                font-weight: bold;  
+            }
+            
+            div.publication-lens {
+                padding:        0.5em;
+                border:         1px solid #ccc; 
+                margin-bottom:  1em;
+            }
+            .publication-lens div.authors {
+                font-style:     italic;
+            }
+            .publication-lens div.other-properties {
+                font-size:      80%;
+                color:          #888;
+                font-style:     italic;
+                margin-top:     0.5em;
+            }
+            
+            div.author-lens {
+                padding:        0.5em;
+                border:         1px solid #ccc; 
+                margin-bottom:  1em;
+            }
+            .author-lens ol.publications li {
+                margin-bottom:  0.5em;
+            }
+            .author-lens .publication-title {
+                font-weight:    bold;
+                color:          #008;
+            }
+            .author-lens span.authors {
+                font-style:     italic;
+            }
+            .author-lens .year {
+                font-style:     italic;
+            }
+            
+            #view-panel h1 {
+                font-size:      120%;
+                background:     none;
+                border:         none;
+            }
+            #preview-controls {
+                padding:        1em;
+                border:         1px dashed #aaa;
+                margin-bottom:  1em;
+                text-align:     center;
+            }
+            #data-form {
+                display:    none;
+                position:   absolute;
+                top:        10em;
+                left:       15%;
+                width:      70%;
+                z-index:    1000;
+                padding:    2em;
+                border:     2px solid #888;
+                background: #FFFFE0;
+            }
+            #data-form textarea {
+                width:      100%;
+            }
+        </style>
+    </head>
+    <body onload="onLoad();" ex:exporters="Bibtex">
+        <ul id="path">
+            <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+            <li><a href="http://simile.mit.edu/babel/" title="Babel">Babel</a></li>
+            <li><span>Preview of Bibtex Data in Exhibit</span></li>
+        </ul>
+        <div id="body">
+            <div ex:role="collection" ex:itemTypes="Publication"></div>
+            
+            <h1>Bibtex Preview in Exhibit</h1>
+            <div id="preview-controls">
+                <button onclick="copyRawData();">Copy Raw Data</button>
+                <button onclick="downloadRawData();">Download Raw Data</button>
+            </div>
+            <table width="100%" cellpadding="20">
+                <tr valign="top">
+                    <td>
+                        <div ex:role="lens" ex:itemTypes="Publication" class="publication-lens" style="display: none;">
+                            <div class="title"><span ex:content=".label"></span><span ex:if-exists=".date">, 
+                                <span ex:if-exists=".month" ex:content=".month" class="month"></span> <span ex:content=".year" class="year"></span>
+                            </span></div>
+                            
+                            <div class="authors"><span ex:content=".author"></span></div>
+                            <p ex:content=".abstract"></p>
+                            <div class="other-properties">Other properties have been converted but not shown in this generic view.</div>
+                        </div>
+                        <div ex:role="exhibit-lens" ex:itemTypes="Author" class="author-lens" style="display: none;">
+                            <div class="title"><span ex:content=".original-name"></span></div>
+                            
+                            <ol class="publications" ex:content="!author">
+                                <li><span ex:content=".label" class="publication-title"></span> by
+                                    <span ex:content=".author" class="authors"></span><span ex:if-exists=".date">, 
+                                        <span ex:if-exists=".month" ex:content=".month" class="month"></span> <span ex:content=".year" class="year"></span>
+                                    </span>
+                                </li>
+                            </ol>
+                        </div>
+                        <div ex:role="view"
+                            ex:orders=".date"
+                            ex:directions="descending"
+                            ex:grouped="false"
+                            ex:possibleOrders=".pub-type, .author, .date, .label"></div>
+                    </td>
+                    <td width="25%">
+                        <div ex:role="facet" ex:expression=".pub-type"></div>
+                        <div ex:role="facet" ex:expression=".author"></div>
+                        <div ex:role="facet" ex:expression=".year"></div>
+                        <div ex:role="facet" ex:expression=".cat"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <form id="data-form" action="reflector?mimetype=application/json" method="post" enctype="multipart/form-data">
+            <p>Copy the raw data:</p>
+            <textarea rows="15" wrap="off" id="data-textarea" name="content">$utilities.escapeHtml($data)</textarea>
+            <p style="text-align: center;"><button id="close-button">Close</button></p>
+        </form>
+    </body>
+</html>

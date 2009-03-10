@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <title>SIMILE | Babel</title>
+    <script src="config" type="text/javascript"></script>
+    <script src="scripts/babel.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://www.simile-widgets.org/styles/common.css" type="text/css" />
+    <link rel="stylesheet" href="styles/babel.css" type="text/css" />
+    <style>
+        .highlight-format {
+            color: blue;
+            background: #FFFFC0;
+        }
+        #conversion-ui h2 {
+            margin:  0 0 0.5em 0;
+        }
+        
+        .convert-form {
+            border: 1px solid #ccc;
+            margin: 2em 0;
+        }
+        .convert-form-header {
+            padding:    0.25em 1em;
+            background: #ccc;
+        }
+        .convert-form-header span {
+            font-size:  150%;
+        }
+        .convert-form-body {
+            background: #FFFFE8;
+            padding: 1em;
+        }
+        .convert-form-body div {
+            margin: 0 0 0.5em 0;
+        }
+        .convert-form-footer {
+            padding:    0.25em 1em;
+            background: #eee;
+            text-align: right;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body onload="onLoad();">
+
+    <ul id="path">
+      <li><a href="http://www.simile-widgets.org/" title="Home">SIMILE Widgets</a></li>
+      <li><span>Babel</span></li>
+    </ul>
+
+    <div id="body" style="height: 800px; margin: 2em;">
+
+        <img src="images/babel.png" style="float: right; margin: 0 2em 2em 2em;" />
+    
+        <h1>Babel</h1>
+        
+        <p>You can use Babel to convert between various formats.</p>
+        
+        <table cellspacing="20" width="100%" id="conversion-ui" style="clear: both">
+            <tr valign="top">
+                <td>
+                    <h2>from format</h2>
+                    <form name="from-formats">
+                        <div id="from-formats-div" />
+                    </form>
+                </td>
+                <td>
+                    <h2>to format</h2>
+                    <form name="to-formats">
+                        <div id="to-formats-div" />
+                    </form>
+                </td>
+                <td width="40%">
+                    <h2>data to convert</h2>
+                    
+                    <p id="no-conversion-message">
+                        There is no conversion available between the selected from and to formats.
+                        Once you pick a from- or a to- format, its compatible formats are 
+                        <span class="highlight-format">highlighted in yellow</span>.
+                    </p>
+                    
+                    <p id="several-semantics-message" style="display: none;">
+                        There are several semantics through which we can convert between
+                        the from format and the to format you have selected. Some semantics
+                        can cause more lossy conversions than others. Pick the semantics
+                        you want:
+                        <form id="semantic-types-form">
+                        </form>
+                    </p>
+                    
+                    <div id="convert-forms" style="display: none;">
+                        <form id="convert-choices-form">
+                            <p>Where is the data that you want to convert?</p>
+                            <div><input type="radio" name="convert-choice" onclick="onConvertChoiceClick('files');" checked="true">the data is in some <b>files</b> on my computer</input></div>
+                            <div><input type="radio" name="convert-choice" onclick="onConvertChoiceClick('urls');" >the data is on some <b>web sites</b></input></div>
+                            <div><input type="radio" name="convert-choice" onclick="onConvertChoiceClick('text');" >the data is <b>text</b> I can paste into this web page</input></div>
+                        </form>
+                        
+                        <form id="mimetype-choices-form">
+                            <p>Result's mime-type:
+                                <input type="radio" name="mimetype-choice" value="default" checked="true">default</input>
+                                <input type="radio" name="mimetype-choice" value="text/plain" >text/plain</input>
+                                <input type="radio" name="mimetype-choice" value="application/xml" >application/xml</input>
+                            </p>
+                        </form>
+                        
+                        <form id="files-convert-form" class="convert-form" style=""
+                            target="_blank" method="post" enctype="multipart/form-data">
+                            <div class="convert-form-header"><span>convert files</span></div>
+                            <div class="convert-form-body">
+                                <div><input type="file" name="file" size="50" /></div>
+                                <div><button id="add-another-file-button">Add Another File</button></div>
+                                <div>Note: We do not store your data on our server.</div>
+                            </div>
+                            <div class="convert-form-footer">
+                                <input type="submit" value="Upload and Convert" id="submit-files-button" name="convert-button" />
+                                <input type="submit" value="Upload and Preview" id="preview-files-button" name="preview-button" />
+                            </div>
+                        </form>
+                        
+                        <form id="urls-convert-form" class="convert-form" style="display: none"
+                            target="_blank" method="post" enctype="multipart/form-data">
+                            <div class="convert-form-header"><span>convert data on some web sites</span></div>
+                            <div class="convert-form-body">
+                                <div>Enter one or more URLs where the data can be found:</div>
+                                <div><input type="text" name="url" size="63" /></div>
+                                <div><button id="add-another-url-button">Add Another URL</button></div>
+                                <div>Note: We cannot access any site that requires you to log in.</div>
+                            </div>
+                            <div class="convert-form-footer">
+                                <input type="submit" value="Retrieve and Convert" id="submit-urls-button" name="convert-button" />
+                                <input type="submit" value="Retrieve and Preview" id="preview-urls-button" name="preview-button" />
+                            </div>
+                        </form>
+                        
+                        <form id="text-convert-form" class="convert-form" style="display: none"
+                            target="_blank" method="post" enctype="multipart/form-data">
+                            <div class="convert-form-header"><span>convert text</span></div>
+                            <div class="convert-form-body">
+                                <div><textarea name="raw-text" rows="20" cols="48"></textarea></div>
+                            </div>
+                            <div class="convert-form-footer">
+                                <input type="submit" value="Upload and Convert" id="submit-text-button" name="convert-button" />
+                                <input type="submit" value="Upload and Preview" id="preview-text-button" name="preview-button" />
+                            </div>
+                        </form>
+                        
+                        <p id="preview-message" style="display: none">
+                            Note that the results for the selected output format 
+                            can be previewed in a web application.
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

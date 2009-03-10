@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simileWidgets</groupId>
+  <artifactId>babel-jpeg-converter</artifactId>
+  <name>Babel JPEG Converter</name>
+  <version>1.0.0</version>
+  <description>JPEG Converter is part of the Babel project. It reads data from binary JPEG images.</description> 
+
+  <parent>
+      <groupId>org.simileWidgets</groupId>
+      <artifactId>babel-converters</artifactId>
+      <version>1.0.0</version>
+  </parent>
+
+  <dependencies>
+	<dependency>
+        <groupId>org.simileWidgets</groupId>
+		<artifactId>babel-interfaces</artifactId>
+        <version>1.0.0</version>
+	</dependency>
+	<dependency>
+        <groupId>org.simileWidgets</groupId>
+		<artifactId>babel-exhibit-converter</artifactId>
+        <version>1.0.0</version>
+	</dependency>
+	<dependency>
+		<groupId>edu.mit.simile</groupId>
+		<artifactId>jpeg2rdf</artifactId>
+		<version>1.1-SNAPSHOT</version>
+	</dependency>
+  </dependencies>
+</project>
