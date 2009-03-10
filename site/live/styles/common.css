@@ -1,0 +1,131 @@
+/* ----------------------------- Base ---------------------------- */
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    margin:             0px;
+    padding:            0px;
+    background-color:   #fff;
+    color:              #222;
+    font-family:        "Lucida Grande", "Tahoma", "Helvetica", "Arial", sans-serif;
+    font-size:          120%;
+    quotes:             "\201C" "\201E" "\2018" "\2019";
+}
+
+table, tr, td {
+    font-size: inherit;
+}
+
+tr, td {
+    vertical-align: top;
+}
+
+a:link {
+	color: #222;
+}
+
+a:visited {
+	color: #666;
+}
+
+a:hover {
+	color: #000;
+}
+
+a:active {
+}
+
+a:focus {
+}
+
+img, a img {
+    border: none;
+}
+
+/* ----------------------------- Path ---------------------------- */
+
+#path {
+    color: #333;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ccc;
+    padding: 3px 8px;
+    margin: 0px;
+}
+
+#path li {
+    display: inline;
+    padding-left: 13px;
+    padding-right: 3px;
+    background-image: url(icons/arrow.gif);
+    background-repeat: no-repeat;
+    background-position: 1px 5px;
+}
+
+#path span {
+    font-weight: bold;
+}
+
+/* ----------------------------- Header ---------------------------- */
+
+#header {
+    margin: 24px 48px;
+}
+
+#header h1 {
+    font-size: 250%;
+    color: #222;
+    margin: 0;
+    margin-bottom: 6px;
+}
+
+#header h2 {
+    font-size: 120%;
+    color: #aaa;
+    margin: 0;
+}
+
+/* ----------------------------- Content ---------------------------- */
+
+#content {
+    margin: 24px 48px;
+}
+
+/* ----------------------------- Footer ---------------------------- */
+
+#footer {
+    margin-top: 48px;
+    border-top: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+    color: #888;
+    font-size: 80%;
+}
+
+#footer a {
+    color: #888;
+}
+
+/* ----------------------------- Path ---------------------------- */
+
+table.spaced-table {
+    border-collapse: collapse;
+}
+
+table.spaced-table td {
+    padding: 0;
+    padding-left: 1em;
+}
+
+table.spaced-table td:first-child {
+    padding-left: 0;
+}
+
+table.spaced-table tr td {
+    padding-top: 1em;
+}
+
+table.spaced-table tr:first-child td {
+    padding-top: 0;
+}
