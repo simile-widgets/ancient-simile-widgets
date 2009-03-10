@@ -662,7 +662,7 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
 };
 
 Exhibit.MapView._iconData = null;
-Exhibit.MapView._markerUrlPrefix = "http://simile.mit.edu/painter/painter?";
+Exhibit.MapView._markerUrlPrefix = "http://service.simile-widgets.org/painter/painter?";
 Exhibit.MapView._defaultMarkerShape = "circle";
 
 Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, settings) {

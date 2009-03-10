@@ -1664,7 +1664,7 @@ SimileAjax.XmlHttp.get(url,fError,fDone);
 
 
 /* babel-based-importer.js */
-Exhibit.BabelBasedImporter={mimetypeToReader:{"application/rdf+xml":"rdf-xml","application/n3":"n3","application/msexcel":"xls","application/x-msexcel":"xls","application/x-ms-excel":"xls","application/vnd.ms-excel":"xls","application/x-excel":"xls","application/xls":"xls","application/x-xls":"xls","application/x-bibtex":"bibtex"},babelTranslatorURL:"http://simile.mit.edu/babel/translator",_initialize:function(){var B=[];
+Exhibit.BabelBasedImporter={mimetypeToReader:{"application/rdf+xml":"rdf-xml","application/n3":"n3","application/msexcel":"xls","application/x-msexcel":"xls","application/x-ms-excel":"xls","application/vnd.ms-excel":"xls","application/x-excel":"xls","application/xls":"xls","application/x-xls":"xls","application/x-bibtex":"bibtex"},babelTranslatorURL:"http://service.simile-widgets.org/babel/translator",_initialize:function(){var B=[];
 var F=document.documentElement.getElementsByTagName("head");
 for(var C=0;
 C<F.length;
