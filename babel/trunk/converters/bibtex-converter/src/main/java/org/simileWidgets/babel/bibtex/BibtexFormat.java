@@ -1,5 +1,5 @@
 /*
- *  (c) Copyright The SIMILE Project 2003-2008. All rights reserved.
+ * (c) Copyright MIT and contributors 2003-2008. Some rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

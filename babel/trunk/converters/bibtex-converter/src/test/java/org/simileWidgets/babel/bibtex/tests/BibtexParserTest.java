@@ -11,8 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.simileWidgets.babel.bibtex.BibtexCleanerReader;
-
-import edu.mit.simile.babel.bibtex.BibtexGrammar;
+import org.simileWidgets.babel.bibtex.BibtexGrammar;
 
 public class BibtexParserTest {
 
