@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simileWidgets</groupId>
+  <artifactId>Painter</artifactId>
+  <name>SIMILE Painter</name>
+  <version>1.0.0</version>
+  <description>Painter is a web service for rendering images, such as those to be used as markers on maps.</description> 
+  <url>http://www.simile-widgets.org/painter/</url>
+  <inceptionYear>2007</inceptionYear>
+
+  <build>
+    <plugins>
+	  <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>    
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.0.1</version>
+        <configuration>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.bio.SocketConnector">
+              <port>5555</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>        
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <contextPath>/</contextPath>
+          <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+        </dependency>
+	    <dependency>
+	        <groupId>commons-lang</groupId>
+	        <artifactId>commons-lang</artifactId>
+	        <version>2.4</version>
+	    </dependency>
+  </dependencies>
+
+</project>
