@@ -33,7 +33,7 @@ package org.simileWidgets.runway {
             _runway = new Runway(stage.stageWidth, stage.stageHeight, theme, geometry);
             addChild(_runway);
             
-            Mouse.cursor = "hand";
+            Mouse.cursor = "button";
             
             for (var n:String in root.loaderInfo.parameters) {
                 switch (n) {
