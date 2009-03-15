@@ -1,0 +1,47 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-rio-n3/2.0.1/openrdf-rio-n3-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-rio-n3/2.0.1/openrdf-rio-n3-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.15/log4j-1.2.15.jar" sourcepath="M2_REPO/log4j/log4j/1.2.15/log4j-1.2.15-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-iteration/1.5/aduna-iteration-1.5.jar" sourcepath="M2_REPO/info/aduna/aduna-iteration/1.5/aduna-iteration-1.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-rio-trix/2.0.1/openrdf-rio-trix-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-rio-trix/2.0.1/openrdf-rio-trix-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-query/2.0.1/openrdf-query-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-query/2.0.1/openrdf-query-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-collections/1.4/aduna-collections-1.4.jar" sourcepath="M2_REPO/info/aduna/aduna-collections/1.4/aduna-collections-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.3/commons-codec-1.3-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/jms/jms/1.1/jms-1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-sail-api/2.0.1/openrdf-sail-api-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-sail-api/2.0.1/openrdf-sail-api-2.0.1-sources.jar"/>
+  <classpathentry kind="src" path="/babel-interfaces"/>
+  <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-queryalgebra-evaluation/2.0.1/openrdf-queryalgebra-evaluation-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-queryalgebra-evaluation/2.0.1/openrdf-queryalgebra-evaluation-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/nekohtml/nekohtml/0.9.5/nekohtml-0.9.5.jar" sourcepath="M2_REPO/nekohtml/nekohtml/0.9.5/nekohtml-0.9.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar" sourcepath="M2_REPO/javax/activation/activation/1.1/activation-1.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-rio-turtle/2.0.1/openrdf-rio-turtle-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-rio-turtle/2.0.1/openrdf-rio-turtle-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-concurrent/1.4/aduna-concurrent-1.4.jar" sourcepath="M2_REPO/info/aduna/aduna-concurrent/1.4/aduna-concurrent-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar" sourcepath="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-lang/1.4/aduna-lang-1.4.jar" sourcepath="M2_REPO/info/aduna/aduna-lang/1.4/aduna-lang-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-model/2.0.1/openrdf-model-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-model/2.0.1/openrdf-model-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-sail-inferencer/2.0.1/openrdf-sail-inferencer-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-sail-inferencer/2.0.1/openrdf-sail-inferencer-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-queryparser-serql/2.0.1/openrdf-queryparser-serql-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-queryparser-serql/2.0.1/openrdf-queryparser-serql-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-rio-api/2.0.1/openrdf-rio-api-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-rio-api/2.0.1/openrdf-rio-api-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-repository-api/2.0.1/openrdf-repository-api-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-repository-api/2.0.1/openrdf-repository-api-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-queryparser-api/2.0.1/openrdf-queryparser-api-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-queryparser-api/2.0.1/openrdf-queryparser-api-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-repository-sail/2.0.1/openrdf-repository-sail-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-repository-sail/2.0.1/openrdf-repository-sail-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-sail-nativerdf/2.0.1/openrdf-sail-nativerdf-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-sail-nativerdf/2.0.1/openrdf-sail-nativerdf-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-sail-memory/2.0.1/openrdf-sail-memory-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-sail-memory/2.0.1/openrdf-sail-memory-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-xml/1.5/aduna-xml-1.5.jar" sourcepath="M2_REPO/info/aduna/aduna-xml/1.5/aduna-xml-1.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-rio-ntriples/2.0.1/openrdf-rio-ntriples-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-rio-ntriples/2.0.1/openrdf-rio-ntriples-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-queryalgebra-model/2.0.1/openrdf-queryalgebra-model-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-queryalgebra-model/2.0.1/openrdf-queryalgebra-model-2.0.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/rhino/js/1.6R5/js-1.6R5.jar" sourcepath="M2_REPO/rhino/js/1.6R5/js-1.6R5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sun/jmx/jmxri/1.2.1/jmxri-1.2.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-io/1.3/aduna-io-1.3.jar" sourcepath="M2_REPO/info/aduna/aduna-io/1.3/aduna-io-1.3-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/openrdf/openrdf-rio-rdfxml/2.0.1/openrdf-rio-rdfxml-2.0.1.jar" sourcepath="M2_REPO/org/openrdf/openrdf-rio-rdfxml/2.0.1/openrdf-rio-rdfxml-2.0.1-sources.jar"/>
+  <classpathentry kind="src" path="/babel-exhibit-converter"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.4.3/slf4j-api-1.4.3.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.4.3/slf4j-api-1.4.3-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-text/1.3/aduna-text-1.3.jar" sourcepath="M2_REPO/info/aduna/aduna-text/1.3/aduna-text-1.3-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.4.0/xercesImpl-2.4.0.jar" sourcepath="M2_REPO/xerces/xercesImpl/2.4.0/xercesImpl-2.4.0-sources.jar"/>
+  <classpathentry kind="src" path="/babel-bibtex-converter"/>
+  <classpathentry kind="var" path="M2_REPO/info/aduna/aduna-net/1.5/aduna-net-1.5.jar" sourcepath="M2_REPO/info/aduna/aduna-net/1.5/aduna-net-1.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4/mail-1.4.jar" sourcepath="M2_REPO/javax/mail/mail/1.4/mail-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1.jar"/>
+</classpath>
