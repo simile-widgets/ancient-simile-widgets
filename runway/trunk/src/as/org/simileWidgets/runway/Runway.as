@@ -55,6 +55,14 @@ package org.simileWidgets.runway {
             stageDetector.addEventListener(StageDetector.REMOVED_FROM_STAGE, _removedFromStageListener);
         }
         
+        public function get titleTextField():TextField {
+            return _titleText;
+        }
+        
+        public function get subtitleTextField():TextField {
+            return _subtitleText;
+        }
+        
         public function clearRecords():void {
             if (_slides.length > 0) {
                 if (_transition != null && _transition.running) {
@@ -366,6 +374,7 @@ package org.simileWidgets.runway {
         }
         
         protected function _mouseWheelListener(e:MouseEvent):void {
+            select(Math.max(0, Math.min(_selectedIndex - e.delta, _slideFrames.length - 1)));
         }
         
         protected function _forceLayout():void {

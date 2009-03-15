@@ -76,17 +76,23 @@ Runway._Impl.prototype._installUI = function() {
     var flashVars = [
         "onReady=" + Runway.Dispatcher.wrap(onReady)
     ];
-    if ("onSelect" in this._options) {
-        flashVars.push("onSelect=" + Runway.Dispatcher.wrap(this._options.onSelect));
+    var eventHandlerNames = {
+        "onSelect" : true,
+        "onZoom" : true,
+        "onTitleClick" : true,
+        "onSubtitleClick" : true
+    };
+    for (var n in eventHandlerNames) {
+        if (n in this._options) {
+            flashVars.push(n + "=" + Runway.Dispatcher.wrap(this._options[n]));
+        }
     }
+    
     for (var n in this._options) {
         if (this._options.hasOwnProperty(n)) {
-            switch (n) {
-            case "onSelect":
-            case "onReady":
-                continue;
+            if (n != "onReady" && !(n in eventHandlerNames)) {
+                flashVars.push(n + "=" + this._options[n]);
             }
-            flashVars.push(n + "=" + this._options[n]);
         }
     }
     
