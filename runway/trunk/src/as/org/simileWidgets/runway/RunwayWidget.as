@@ -4,6 +4,7 @@ package org.simileWidgets.runway {
     import flash.display.Sprite;
     import flash.display.StageQuality;
     import flash.events.*;
+    import flash.ui.Mouse;
 
     [SWF(frameRate="30")]
     public class RunwayWidget extends Sprite {
@@ -31,6 +32,8 @@ package org.simileWidgets.runway {
                 
             _runway = new Runway(stage.stageWidth, stage.stageHeight, theme, geometry);
             addChild(_runway);
+            
+            Mouse.cursor = "hand";
             
             for (var n:String in root.loaderInfo.parameters) {
                 switch (n) {
@@ -63,6 +66,22 @@ package org.simileWidgets.runway {
                         "zoom", 
                         function(e:Event):void {
                             ExternalInterface.call(root.loaderInfo.parameters["onZoom"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onTitleClick")) {
+                    _runway.titleTextField.addEventListener(
+                        MouseEvent.CLICK, 
+                        function(e:MouseEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onTitleClick"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onSubtitleClick")) {
+                    _runway.subtitleTextField.addEventListener(
+                        MouseEvent.CLICK, 
+                        function(e:MouseEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onSubtitleClick"], _runway.selectedIndex, _runway.selectedID);
                         }
                     );
                 }

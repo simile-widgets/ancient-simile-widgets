@@ -39,6 +39,16 @@
                         // This is how you get notified when a different image has been selected in the widget.
                         var record = records[index];
                         document.getElementById("selected-slide").innerHTML = record.title;
+                    },
+                    onTitleClick: function(index, id) {
+                        alert("Clicked on title: " + records[index].title);
+                    },
+                    onSubtitleClick: function(index, id) {
+                        alert("Clicked on subtitle: " + records[index].subtitle);
+                    },
+                    onZoom: function(index, id) {
+                        // Triggered by Space, Enter, or clicking on the currently focused image.
+                        alert("Zoomed in on: " + records[index].title);
                     }
                 }
             );
