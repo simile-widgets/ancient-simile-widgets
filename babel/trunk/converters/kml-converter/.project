@@ -1,0 +1,17 @@
+<projectDescription>
+  <name>babel-tsv-converter</name>
+  <comment>TSV Converter is part of the Babel project. It reads and writes data in tab-separated value formats.</comment>
+  <projects>
+    <project>babel-interfaces</project>
+    <project>babel-exhibit-converter</project>
+    <project>babel-bibtex-converter</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

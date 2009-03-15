@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="converters/tsv-converter/src/main/java"/>
+	<classpathentry kind="src" path="engine/src/main/java"/>
+	<classpathentry kind="src" path="interfaces/src/main/java"/>
+	<classpathentry kind="src" path="converters/bibtex-converter/src/main/java"/>
+	<classpathentry kind="src" path="converters/xls-converter/src/main/java"/>
+	<classpathentry kind="src" path="converters/exhibit-converter/src/main/java"/>
+	<classpathentry kind="src" path="converters/jpeg-converter/src/main/java"/>
+	<classpathentry kind="src" path="converters/kml-converter/src/main/java"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
