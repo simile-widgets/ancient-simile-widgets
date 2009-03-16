@@ -24,5 +24,6 @@
     <module>bibtex-converter</module>
     <module>xls-converter</module>
     <module>jpeg-converter</module>
+    <module>kml-converter</module>
   </modules>
 </project>

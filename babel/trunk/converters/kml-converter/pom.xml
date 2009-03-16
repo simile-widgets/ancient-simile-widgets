@@ -5,10 +5,10 @@
 >
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.simileWidgets</groupId>
-  <artifactId>babel-tsv-converter</artifactId>
-  <name>Babel TSV Converter</name>
+  <artifactId>babel-kml-converter</artifactId>
+  <name>Babel KML Converter</name>
   <version>1.0.0</version>
-  <description>TSV Converter is part of the Babel project. It reads and writes data in tab-separated value formats.</description> 
+  <description>KML Converter is part of the Babel project. It reads and writes data in the KML format.</description> 
 
   <parent>
       <groupId>org.simileWidgets</groupId>

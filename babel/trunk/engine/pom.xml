@@ -83,6 +83,11 @@
         <artifactId>babel-jpeg-converter</artifactId>
         <version>1.0.0</version>
     </dependency>
+    <dependency>
+        <groupId>org.simileWidgets</groupId>
+        <artifactId>babel-kml-converter</artifactId>
+        <version>1.0.0</version>
+    </dependency>
 
     
     <dependency>

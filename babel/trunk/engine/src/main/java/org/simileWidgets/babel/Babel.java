@@ -46,6 +46,7 @@ public class Babel {
         s_readers.put("exhibit-json", "org.simileWidgets.babel.exhibit.ExhibitJsonReader");
         s_readers.put("exhibit-html", "org.simileWidgets.babel.exhibit.ExhibitWebPageReader");
         s_readers.put("jpeg", "org.simileWidgets.babel.jpeg.JPEGReader");
+        s_readers.put("kml", "org.simileWidgets.babel.kml.KMLReader");
 
         s_readersFromMimeType.put("application/rdf+xml", "org.simileWidgets.babel.generic.RdfXmlConverter");
         s_readersFromMimeType.put("application/rdf+n3", "org.simileWidgets.babel.generic.N3Converter");
@@ -56,6 +57,7 @@ public class Babel {
         s_readersFromMimeType.put("application/json+exhibit", "org.simileWidgets.babel.exhibit.ExhibitJsonReader");
         s_readersFromMimeType.put("text/html+exhibit", "org.simileWidgets.babel.exhibit.ExhibitWebPageReader");
         s_readersFromMimeType.put("image/jpeg", "org.simileWidgets.babel.jpeg.JPEGReader");
+        s_readersFromMimeType.put("application/vnd.google-earth.kml+xml", "org.simileWidgets.babel.kml.KMLReader");
         
         s_writers.put("rdf-xml", "org.simileWidgets.babel.generic.RdfXmlConverter");
         s_writers.put("n3", "org.simileWidgets.babel.generic.N3Converter");
