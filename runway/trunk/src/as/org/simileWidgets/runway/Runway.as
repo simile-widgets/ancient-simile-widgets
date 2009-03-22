@@ -3,8 +3,12 @@ package org.simileWidgets.runway {
     import flash.events.*;
     import flash.geom.Point;
     import flash.ui.Keyboard;
+    import flash.ui.Mouse;
+    import flash.ui.MouseCursor;
     import flash.text.TextField;
+    import flash.text.TextFieldType;
     import flash.text.TextFormat;
+    import flash.text.TextLineMetrics;
     import flash.text.TextFormatAlign;
     import flare.animate.*;
     
@@ -20,6 +24,7 @@ package org.simileWidgets.runway {
         private var _centerStand:Sprite;
         private var _titleText:TextField;
         private var _subtitleText:TextField;
+        private var _tooltipText:TextField;
         
         private var _selectedIndex:Number = -1;
         private var _slides:Array = [];
@@ -43,10 +48,20 @@ package org.simileWidgets.runway {
             _platform.addChild(_centerStand);
             
             _titleText = new TextField();
+            _titleText.type = TextFieldType.DYNAMIC;
+            _titleText.addEventListener(MouseEvent.MOUSE_OVER, _controlMouseOverListener);
+            _titleText.addEventListener(MouseEvent.MOUSE_OUT, _controlMouseOutListener);
             addChild(_titleText);
             
             _subtitleText = new TextField();
+            _subtitleText.type = TextFieldType.DYNAMIC;
+            _subtitleText.addEventListener(MouseEvent.MOUSE_OVER, _controlMouseOverListener);
+            _subtitleText.addEventListener(MouseEvent.MOUSE_OUT, _controlMouseOutListener);
             addChild(_subtitleText);
+            
+            _tooltipText = new TextField();
+            _tooltipText.type = TextFieldType.DYNAMIC;
+            addChild(_tooltipText);
             
             _selectedIndex = -1;
             
@@ -266,6 +281,34 @@ package org.simileWidgets.runway {
             }
         }
         
+        internal function showTooltip(sprite:Sprite, tooltip:String):void {
+            var point:Point = new Point(_geometry.slideSizePixels / 2, -_geometry.slideSizePixels / 3);
+            var point2:Point = sprite.localToGlobal(point);
+            
+            _tooltipText.visible = true;
+            
+            var format:TextFormat = new TextFormat();
+            format.font = _theme.titleFontFamily;
+            format.size = Math.round(_theme.titleFontSize * 0.60);
+            format.bold = _theme.titleFontBold;
+            format.align = TextFormatAlign.CENTER;
+            
+            _tooltipText.text = tooltip;
+            _tooltipText.setTextFormat(format);
+            _tooltipText.textColor = _theme.titleColor;
+            
+            var metrics:TextLineMetrics = _tooltipText.getLineMetrics(0);
+            
+            _tooltipText.y = point2.y;
+            _tooltipText.width = metrics.width + 20;
+            _tooltipText.height = metrics.height + 10;
+            _tooltipText.x = point2.x - Math.floor(_tooltipText.width / 2);
+        }
+        
+        internal function hideTooltip():void {
+            _tooltipText.visible = false;
+        }
+        
         protected function _addedToStageListener(e:Event):void {
             addEventListener(Event.ENTER_FRAME, _enterFrameListener);
             
@@ -388,16 +431,12 @@ package org.simileWidgets.runway {
             }
             
             _platform.x = -_geometry.spreadPixels * _selectedIndex;
+            _positionTitleSubtitle();
         }
         
         protected function _setTitleText(title:String, subtitle:String):void {
             if (_theme.showTitle) {
                 _titleText.visible = true;
-                
-                _titleText.x = 0;
-                _titleText.y = _platform.y + Math.round(Math.min(boundingHeight * 0.9, _geometry.slideSizePixels * 1.2));
-                _titleText.width = boundingWidth;
-                _titleText.selectable = false;
                 
                 var format:TextFormat = new TextFormat();
                 format.font = _theme.titleFontFamily;
@@ -411,11 +450,6 @@ package org.simileWidgets.runway {
                 
                 if (_theme.showSubtitle) {
                     _subtitleText.visible = true;
-                    
-                    _subtitleText.x = 0;
-                    _subtitleText.y = _titleText.y + Math.round(_titleText.textHeight * 1.2);
-                    _subtitleText.width = boundingWidth;
-                    _subtitleText.selectable = false;
                     
                     format.font = _theme.subtitleFontFamily;
                     format.size = _theme.subtitleFontSize;
@@ -432,8 +466,23 @@ package org.simileWidgets.runway {
                 _titleText.visible = false;
                 _subtitleText.visible = false;
             }
+            _positionTitleSubtitle();
         }
         
+        protected function _positionTitleSubtitle():void {
+            var metrics:TextLineMetrics = _titleText.getLineMetrics(0);
+            
+            _titleText.y = _platform.y + Math.round(Math.min(boundingHeight * 0.9, _geometry.slideSizePixels * 1.2));
+            _titleText.width = metrics.width + 10;
+            _titleText.x = Math.floor((boundingWidth - _titleText.width) / 2);
+                
+            metrics = _subtitleText.getLineMetrics(0);
+            
+            _subtitleText.y = _titleText.y + Math.round(_titleText.textHeight * 1.2);
+            _subtitleText.width = metrics.width + 10;
+            _subtitleText.x = Math.floor((boundingWidth - _subtitleText.width) / 2);
+        }
+
         protected function _interpretMouseGesture(start:Point, end:Point, duration:Number):void {
             duration = Math.max(1, duration);
             
@@ -456,6 +505,14 @@ package org.simileWidgets.runway {
             
             _slideFrames[i] = null;
             _slides[i] = null;
+        }
+        
+        private function _controlMouseOverListener(e:Event):void {
+            Mouse.cursor = MouseCursor.BUTTON;
+        }
+        
+        private function _controlMouseOutListener(e:Event):void {
+            Mouse.cursor = MouseCursor.AUTO;
         }
     }
 }

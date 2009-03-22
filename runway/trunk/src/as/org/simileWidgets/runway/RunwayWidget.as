@@ -4,7 +4,6 @@ package org.simileWidgets.runway {
     import flash.display.Sprite;
     import flash.display.StageQuality;
     import flash.events.*;
-    import flash.ui.Mouse;
 
     [SWF(frameRate="30")]
     public class RunwayWidget extends Sprite {
@@ -33,13 +32,13 @@ package org.simileWidgets.runway {
             _runway = new Runway(stage.stageWidth, stage.stageHeight, theme, geometry);
             addChild(_runway);
             
-            Mouse.cursor = "button";
-            
             for (var n:String in root.loaderInfo.parameters) {
                 switch (n) {
                 case "onSelect":
                 case "onReady":
                 case "onZoom":
+                case "onTitleClick":
+                case "onSubtitleClick":
                 case "theme":
                 case "fixedSlideSize":
                 case "slideSize":
