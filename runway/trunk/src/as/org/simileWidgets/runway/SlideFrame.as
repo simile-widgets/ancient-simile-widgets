@@ -5,6 +5,8 @@ package org.simileWidgets.runway {
     import flare.animate.Parallel;
     import flare.animate.Tween;
     import flare.animate.Easing;
+    import flash.ui.Mouse;
+    import flash.ui.MouseCursor;
 
     public class SlideFrame extends Sprite {
         private var _runway:Runway;
@@ -20,10 +22,14 @@ package org.simileWidgets.runway {
             addChild(_rendition);
             
             addEventListener(MouseEvent.CLICK, _clickListener);
+            addEventListener(MouseEvent.MOUSE_OVER, _mouseOverListener);
+            addEventListener(MouseEvent.MOUSE_OUT, _mouseOutListener);
         }
         
         public function dispose():void {
             removeEventListener(MouseEvent.CLICK, _clickListener);
+            removeEventListener(MouseEvent.MOUSE_OVER, _mouseOverListener);
+            removeEventListener(MouseEvent.MOUSE_OUT, _mouseOutListener);
             
             _rendition.dispose();
             _rendition = null;
@@ -170,6 +176,18 @@ package org.simileWidgets.runway {
         
         private function _clickListener(e:Event):void {
             _runway.onSlideFrameClick(this, _side);
+        }
+        
+        private function _mouseOverListener(e:Event):void {
+            Mouse.cursor = MouseCursor.BUTTON;
+            if (_side != Runway.SIDE_CENTER) {
+                _runway.showTooltip(this, _rendition.slide.title);
+            }
+        }
+        
+        private function _mouseOutListener(e:Event):void {
+            Mouse.cursor = MouseCursor.AUTO;
+            _runway.hideTooltip();
         }
     }
 }

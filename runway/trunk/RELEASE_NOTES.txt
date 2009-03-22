@@ -2,4 +2,9 @@ RELEASE_NOTES.txt
 
 Ongoing
 
-- Started on February 14, 2009.
+For 1.1
+
+- Added events onTitleClick, onSubtitleClick, onZoom.
+- Set mouse cursor to hand when over clickable elements.
+- Added tooltip on mouse over slides on either side.
+

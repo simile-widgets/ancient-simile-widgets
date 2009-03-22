@@ -128,6 +128,10 @@ package org.simileWidgets.runway {
             _drawReflection();
         }
         
+        public function get slide():Slide {
+            return _slide;
+        }
+        
         public function get scaledWidth():Number {
             if (_bitmap != null) {
                 return Math.round(_prototypeBitmapData.width * imageScale);
