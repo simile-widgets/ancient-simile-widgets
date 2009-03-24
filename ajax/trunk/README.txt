@@ -45,6 +45,6 @@
 
 
 
-                                                        The SIMILE Project
-                                                      http://simile.mit.edu/
+                                                        The SIMILE Widgets Project
+                                                      http://www.simile-widgets.org/
 
