@@ -1,10 +1,5 @@
 /*==================================================
  *  Simile Ajax API
- *
- *  Include this file in your HTML file as follows:
- *
- *    <script src="http://simile.mit.edu/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
- *
  *==================================================
  */
 
