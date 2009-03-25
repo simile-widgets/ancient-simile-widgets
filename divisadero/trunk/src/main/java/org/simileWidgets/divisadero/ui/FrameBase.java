@@ -87,6 +87,16 @@ abstract class FrameBase extends JFrame {
         });
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Save Project");
+        menuItem.setMnemonic(KeyEvent.VK_S);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, metaMask));
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doSaveProject();
+            }
+        });
+        menu.add(menuItem);
+        
         menu.addSeparator();
         
         menuItem = new JMenuItem("Export...");
@@ -318,6 +328,7 @@ abstract class FrameBase extends JFrame {
     
     abstract void doNewProject();
     abstract void doOpenProject();
+    abstract void doSaveProject();
     abstract void doExport();
     abstract void doQuit();
     

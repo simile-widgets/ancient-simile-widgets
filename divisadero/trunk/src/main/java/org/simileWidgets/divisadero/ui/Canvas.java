@@ -8,6 +8,8 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -47,6 +49,7 @@ public class Canvas extends JComponent {
                     _handleMouseDragged(e);
                 }
             }
+            
         });
         
         this.addMouseListener(new MouseAdapter() {
@@ -70,6 +73,15 @@ public class Canvas extends JComponent {
                 }
             }
         });
+        
+        this.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+                if (_interactor == null || !_interactor.hitTest(e.getPoint())) {
+                    _handleMouseWheelMoved(e);
+                }
+			}
+		});
     }
     
     public void setProject(Project project) {
@@ -194,5 +206,9 @@ public class Canvas extends JComponent {
         if (_interactor != null) {
             _interactor.resume();
         }
+    }
+    
+    protected void _handleMouseWheelMoved(MouseWheelEvent e) {
+    	zoomBy(-e.getWheelRotation(), e.getPoint());
     }
 }
