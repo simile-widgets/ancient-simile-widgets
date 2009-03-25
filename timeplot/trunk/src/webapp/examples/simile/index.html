@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>SIMILE Widgets | Timeplot | Examples | SIMILE Stats</title>
+    <title>SIMILE Widgets | Timeplot | Examples | Stats</title>
     <link rel='stylesheet' href='../../styles.css' type='text/css' />
     <style>
         body {
@@ -48,13 +48,8 @@
         var downloadGeometry;
         
         function onLoad() {
-            if (document.location.toString().match(/^http\:\/\/simile.mit.edu.*$/)) {
-                var dataURL = "http://simile.mit.edu/history/data/webstats.data";
-                var eventsURL = "http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=7";
-            } else {
-                var dataURL = "data.txt";
-                var eventsURL = "events.xml";
-            } 
+            var dataURL = "data.txt";
+            var eventsURL = "events.xml";
 
             var dataFilter = function(data) {
                 for (var i = 0; i < data.length; i++) {
@@ -294,11 +289,11 @@
     <ul id="path">
       <li><a href="/" title="Home">SIMILE Widgets</a></li>
       <li><a href="../../">Timeplot</a></li>
-      <li><span>Examples: SIMILE Stats</span></li>
+      <li><span>Examples: Stats</span></li>
     </ul>
 
     <div id="header">
-    	<h1>SIMILE Stats</h1>
+    	<h1>Stats</h1>
     </div>
     <div id="content">
         <div class="label">Web Traffic</div>
@@ -309,7 +304,6 @@
         <div id="timeplot3" class="timeplot"></div>
         <div class="label">Downloads (<span id="log-toggle" class="active-toggle" onclick="logarithmicDownloads();">log</span>|<span id="lin-toggle" class="toggle" onclick="linearDownloads();">lin</span>)</div>
         <div id="timeplot4" class="timeplot"></div>
-        <p class="note" style="margin-top: 3em">This <a href="http://simile.mit.edu/history/data/webstats.data">data</a> is produced live by scripts that analyze our servers logs. The <a href="http://simile.mit.edu/blog/wp-content/plugins/simile-timeline/timeline.xml.php?cat=7">events</a> are generated directly out of our <a href="http://wordpress.org/">Wordpress</a> <a href="http://simile.mit.edu/blog/">blog</a> from all the posts tagged with the <em>timeplot</em> category, using the <a href="http://www.freshlabs.de/journal/archives/2006/10/wordpress-plugin-simile-timeline/">Timeline plugin for Wordpress</a>.</p>
     </div>
     
   </body>

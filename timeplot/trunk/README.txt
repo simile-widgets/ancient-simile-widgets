@@ -38,7 +38,7 @@
   Refer to the Timeplot web site at 
   
   
-   http://simile.mit.edu/timeplot/
+   http://www.simile-widgets.org/timeplot/
 
 
 
@@ -76,6 +76,6 @@
 
 
 
-                                                        The SIMILE Project
-                                                      http://simile.mit.edu/
+                                                        The SIMILE Widgets Project
+                                                      http://www.simile-widgets.org/
 
