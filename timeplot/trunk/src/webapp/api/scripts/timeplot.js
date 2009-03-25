@@ -475,8 +475,8 @@ Timeplot._Impl.prototype = {
             // inserting copyright and link to simile
             var elmtCopyright = SimileAjax.Graphics.createTranslucentImage(Timeplot.urlPrefix + "images/copyright.png");
             elmtCopyright.className = "timeplot-copyright";
-            elmtCopyright.title = "Timeplot (c) SIMILE - http://simile.mit.edu/timeplot/";
-            SimileAjax.DOM.registerEvent(elmtCopyright, "click", function() { window.location = "http://simile.mit.edu/timeplot/"; });
+            elmtCopyright.title = "SIMILE Timeplot - http://www.simile-widgets.organ/timeplot/";
+            SimileAjax.DOM.registerEvent(elmtCopyright, "click", function() { window.location = "http://www.simile-widgets.organ/timeplot/"; });
             containerDiv.appendChild(elmtCopyright);
             
             var timeplot = this;
@@ -533,7 +533,7 @@ Timeplot._Impl.prototype = {
             this._message.containerDiv.style.right = "20%";
             this._message.containerDiv.style.minWidth = "20em";
             this._message.contentDiv.className = "timeplot-message";
-            this._message.contentDiv.innerHTML = "We're terribly sorry, but your browser is not currently supported by <a href='http://simile.mit.edu/timeplot/'>Timeplot</a>.<br><br> We are working on supporting it in the near future but, for now, see the <a href='http://simile.mit.edu/wiki/Timeplot_Limitations'>list of currently supported browsers</a>.";
+            this._message.contentDiv.innerHTML = "We're terribly sorry, but your browser is not currently supported by <a href='http://www.simile-widgets.org/timeplot/'>Timeplot</a>.";
             this._message.containerDiv.style.display = "block";
 
             containerDiv.appendChild(this._message.containerDiv);

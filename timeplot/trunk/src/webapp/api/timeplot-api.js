@@ -47,7 +47,6 @@
         window.Timeplot = {
             loaded:     false,
             params:     { bundle: true, autoCreate: true },
-            namespace:  "http://simile.mit.edu/2007/06/timeplot#",
             importers:  {}
         };
     
