@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Properties;
 
 import org.simileWidgets.divisadero.Project;
 
@@ -20,19 +21,28 @@ import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 import com.sun.pdfview.PDFRenderer;
 
-public class PdfFileLayer extends BitmapLayer {
+public class PdfFileLayer extends FileBasedBitmapLayer {
     final static float PICAS_PER_INCH = 72;
     final static float PIXELS_PER_INCH = 300;
     
-    protected File _file;
-    protected BufferedImage _image;
+    protected PdfFileLayer(Project project, String name, String key) {
+        super(project, name, key);
+    }
     
     public PdfFileLayer(Project project, String name, File file) {
-        super(project, name);
+        super(project, name, null);
         _file = file;
         
+        loadFile();
+    }
+    
+    protected void loadFile() {
+    	if (_file == null || !_file.exists()) {
+    		return;
+    	}
+    	
         try {
-            ByteBuffer byteBuffer = readFile(file);
+            ByteBuffer byteBuffer = readFile(_file);
             PDFFile pdfFile = new PDFFile(byteBuffer);
             PDFPage pdfPage = pdfFile.getPage(Math.max(1, Math.min(1, pdfFile.getNumPages())), true);
             
@@ -66,10 +76,14 @@ public class PdfFileLayer extends BitmapLayer {
         } catch (Exception e) {
         }
     }
+    
+    @Override
+    public String getType() {
+    	return "pdf";
+    }
 
     @Override
-    public void paint(Graphics2D g2d) {
-        super.paint(g2d);
+    protected void internalPaint(Graphics2D g2d) {
         if (_image != null) {
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g2d.drawImage(_image, null, 0, 0);
@@ -87,5 +101,13 @@ public class PdfFileLayer extends BitmapLayer {
         } finally {
             fc.close();
         }
+    }
+    
+    static public PdfFileLayer load(Project project, Properties properties, String prefix, String key, String name) {
+    	PdfFileLayer layer = new PdfFileLayer(project, name, key);
+    	layer.load(project, properties, prefix);
+    	layer.loadFile();
+    	
+    	return layer;
     }
 }

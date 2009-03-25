@@ -3,10 +3,7 @@ package org.simileWidgets.divisadero.ui;
 import java.awt.Point;
 import java.io.File;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumn;
@@ -19,11 +16,13 @@ import org.simileWidgets.divisadero.bitmap.PdfFileLayer;
 public class Frame extends FrameBase {
     private static final long serialVersionUID = -4307794028515768946L;
     
-    protected Project           _project = new Project(null);
+    protected Project           _project;
     protected LayerTableModel   _layerTableModel;
     
     public Frame() {
         super();
+        
+        _project = new Project(new File("./examples/united-states/"));
         
         _canvas.setProject(_project);
         _rewireLayerTable();
@@ -46,6 +45,11 @@ public class Frame extends FrameBase {
     void doNewProject() {
         // TODO Auto-generated method stub
         
+    }
+    
+    @Override
+    void doSaveProject() {
+    	_project.save();
     }
 
     @Override

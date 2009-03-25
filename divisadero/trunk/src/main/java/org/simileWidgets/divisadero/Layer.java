@@ -1,21 +1,29 @@
 package org.simileWidgets.divisadero;
 
 import java.awt.Graphics2D;
+import java.io.File;
+import java.util.Properties;
 
 abstract public class Layer {
     protected final Project _project;
+    protected final String  _key;
     
     protected String    _name;
     protected boolean   _dirty;
     protected boolean   _visible = true;
     
-    protected Layer(Project project, String name) {
+    protected Layer(Project project, String name, String key) {
         _project = project;
         _name = name;
+        _key = key != null ? key : ("l" + Math.round(Math.random() * 1000000));
     }
 
     public Project getProject() {
         return _project;
+    }
+    
+    public String getKey() {
+    	return _key;
     }
     
     public String getName() {
@@ -36,8 +44,6 @@ abstract public class Layer {
     public boolean isDirty() {
         return _dirty;
     }
-    
-    abstract public void paint(Graphics2D g2d);
 
     public boolean isVisible() {
         return _visible;
@@ -46,4 +52,8 @@ abstract public class Layer {
     public void setVisible(boolean visible) {
         _visible = visible;
     }
+    
+    abstract public String getType();
+    abstract public void paint(Graphics2D g2d);
+    abstract public void save(File projectDir, Properties properties, String prefix);
 }
