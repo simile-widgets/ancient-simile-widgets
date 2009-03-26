@@ -18,7 +18,7 @@
 
 
   <target name="build" >
-	<jar destfile="jsminTask.jar">
+	<jar destfile="lib/jsminTask.jar">
 		<fileset dir="${output.dir}" />
 	    <fileset dir="${lib.dir}" />
 	</jar>
