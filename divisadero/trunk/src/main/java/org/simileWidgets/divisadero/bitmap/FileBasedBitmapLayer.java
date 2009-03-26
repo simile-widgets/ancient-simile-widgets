@@ -22,6 +22,9 @@ abstract public class FileBasedBitmapLayer extends BitmapLayer {
 		if (_file != null) {
 			String filePath = getPath(_file);
 			String dirPath = getPath(_project.getDir());
+			if (!dirPath.endsWith(File.separator)) {
+				dirPath = dirPath + File.separator;
+			}
 			
 			properties.put(prefix + "absoluteFile", filePath);
 			if (filePath.indexOf(dirPath) == 0) {
