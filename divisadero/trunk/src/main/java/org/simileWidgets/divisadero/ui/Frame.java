@@ -5,6 +5,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumn;
 
@@ -30,6 +31,14 @@ public class Frame extends FrameBase {
     
     protected void _rewireLayerTable() {
         _layerTableModel = new LayerTableModel(_project);
+        _layerTableModel.addTableModelListener(new TableModelListener() {
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getType() != TableModelEvent.UPDATE || e.getColumn() != LayerTableModel.Column_Name) {
+					_canvas.repaint();
+				}
+			}
+		});
         
         _layerTable.setModel(_layerTableModel);
         _layerTable.setColumnSelectionAllowed(false);

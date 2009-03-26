@@ -8,6 +8,9 @@ import org.simileWidgets.divisadero.Project;
 public class LayerTableModel extends AbstractTableModel {
     final protected Project _project;
     
+    final public static int Column_Visible = 0;
+    final public static int Column_Name = 1;
+    
     public LayerTableModel(Project project) {
         _project = project;
     }
@@ -24,9 +27,9 @@ public class LayerTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int column) {
         switch (column) {
-        case 0:
+        case Column_Visible:
             return "V?";
-        case 1:
+        case Column_Name:
             return "Name";
         }
         return null;
@@ -35,9 +38,9 @@ public class LayerTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Layer layer = _project.getLayers().get(rowIndex);
         switch (columnIndex) {
-        case 0:
+        case Column_Visible:
             return new Boolean(layer.isVisible());
-        case 1:
+        case Column_Name:
             return layer.getName();
         }
         return null;
@@ -46,7 +49,7 @@ public class LayerTableModel extends AbstractTableModel {
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
-        case 0:
+        case Column_Visible:
             return Boolean.class;
         }
         return String.class;
@@ -54,6 +57,23 @@ public class LayerTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 0;
+        return true;//columnIndex == Column_Visible;
+    }
+    
+    @Override
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+    	Layer layer = _project.getLayers().get(rowIndex);
+    	switch (columnIndex) {
+    	case Column_Visible:
+    		layer.setVisible((Boolean) value);
+    		break;
+    	case Column_Name:
+    		layer.setName((String) value);
+    		break;
+  		default:
+   			return;
+    	}
+    	
+    	this.fireTableCellUpdated(rowIndex, columnIndex);
     }
 }

@@ -142,6 +142,7 @@ public class Canvas extends JComponent {
         }
     }
 
+    final static int GRID_SIZE = 100;
 
     @Override
     public void paint(Graphics g) {
@@ -150,18 +151,50 @@ public class Canvas extends JComponent {
         g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
         
-        if (_project != null) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            try {
-                paintLayers(g2d);
-            } finally {
-                g2d.dispose();
+    	Graphics2D g2d = (Graphics2D) g.create();
+    	try {
+	    	AffineTransform t = getTransform();
+	    	
+            if (_project != null) {
+                g2d.transform(t);
+            	paintLayers(g2d);
             }
+            
+	    	try {
+				AffineTransform t2 = t.createInverse();
+				
+		    	int width = getWidth();
+		    	int height = getHeight();
+		    	
+				Point2D topLeft = t2.transform(new Point2D.Double(0,0), null);
+				Point2D bottomRight = t2.transform(new Point2D.Double(width, height), null);
+				
+				double xMin = Math.round(topLeft.getX() / GRID_SIZE) * GRID_SIZE;
+				double yMin = Math.round(topLeft.getY() / GRID_SIZE) * GRID_SIZE;
+				double xMax = Math.round(bottomRight.getX() / GRID_SIZE) * GRID_SIZE;
+				double yMax = Math.round(bottomRight.getY() / GRID_SIZE) * GRID_SIZE;
+				
+				Color c = new Color(192, 192, 224, 64);
+				
+				for (double x = xMin; x <= xMax; x += GRID_SIZE) {
+					int pixelX = (int) t.transform(new Point2D.Double(x, 0), null).getX();
+					g.setColor(c);
+					g.drawLine(pixelX, 0, pixelX, height);
+				}
+				
+				for (double y = yMin; y <= yMax; y += GRID_SIZE) {
+					int pixelY = (int) t.transform(new Point2D.Double(0, y), null).getY();
+					g.setColor(c);
+					g.drawLine(0, pixelY, width, pixelY);
+				}
+			} catch (NoninvertibleTransformException e) {
+			}
+        } finally {
+            g2d.dispose();
         }
     }
     
     protected void paintLayers(Graphics2D g2d) {
-        g2d.transform(getTransform());
 
         List<Layer> layers = _project.getLayers();
         for (int i = layers.size() - 1; i >= 0; i--) {

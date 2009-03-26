@@ -23,7 +23,7 @@ import com.sun.pdfview.PDFRenderer;
 
 public class PdfFileLayer extends FileBasedBitmapLayer {
     final static float PICAS_PER_INCH = 72;
-    final static float PIXELS_PER_INCH = 300;
+    final static float PIXELS_PER_INCH = 150;
     
     protected PdfFileLayer(Project project, String name, String key) {
         super(project, name, key);
