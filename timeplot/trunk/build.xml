@@ -13,7 +13,7 @@
   <target name="tasks">
     <taskdef name="jsmin"
         classname="edu.mit.simile.jsminTask.JSMinTask"
-        classpath="tools/jsminTask.jar"/>
+        classpath="tools/jsmin-task/jsminTask.jar"/>
   </target>
   	
   <target name="bundle" depends="tasks">
