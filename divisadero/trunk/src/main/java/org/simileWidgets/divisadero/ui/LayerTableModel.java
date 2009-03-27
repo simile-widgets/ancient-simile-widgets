@@ -6,7 +6,9 @@ import org.simileWidgets.divisadero.Layer;
 import org.simileWidgets.divisadero.Project;
 
 public class LayerTableModel extends AbstractTableModel {
-    final protected Project _project;
+	private static final long serialVersionUID = -7680185841852028673L;
+
+	final protected Project _project;
     
     final public static int Column_Visible = 0;
     final public static int Column_Name = 1;

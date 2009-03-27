@@ -1,5 +1,6 @@
 package org.simileWidgets.divisadero.bitmap;
 
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +18,19 @@ abstract public class FileBasedBitmapLayer extends BitmapLayer {
 		// TODO Auto-generated constructor stub
 	}
 
+    @Override
+    protected Rectangle2D getBoundary() {
+    	if (_image != null) {
+    		return new Rectangle2D.Double(0, 0, _image.getWidth(), _image.getHeight());
+    	} else {
+    		return new Rectangle2D.Double();
+    	}
+    }
+
 	@Override
 	public void save(File projectDir, Properties properties, String prefix) {
+		super.save(projectDir, properties, prefix);
+		
 		if (_file != null) {
 			String filePath = getPath(_file);
 			String dirPath = getPath(_project.getDir());

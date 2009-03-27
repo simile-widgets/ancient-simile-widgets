@@ -63,7 +63,9 @@ public class Utilities {
 	}
 
 	public static void setRectangle2D(Properties properties, String name, Rectangle2D r) {
-		String value = r.getX() + "," + r.getY() + "," + r.getWidth() + "," + r.getHeight();
-		properties.put(name, value);
+		if (r != null) {
+			String value = r.getX() + "," + r.getY() + "," + r.getWidth() + "," + r.getHeight();
+			properties.put(name, value);
+		}
 	}
 }

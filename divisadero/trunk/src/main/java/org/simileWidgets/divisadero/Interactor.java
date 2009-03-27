@@ -1,6 +1,8 @@
 package org.simileWidgets.divisadero;
 
-import java.awt.Point;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 
 import org.simileWidgets.divisadero.ui.Canvas;
 
@@ -19,5 +21,7 @@ abstract public class Interactor {
     
     abstract public void uninstall();
     
-    abstract public boolean hitTest(Point p);
+    abstract public boolean hitTest(MouseEvent event, AffineTransform canvasToScreen);
+    
+    abstract public void paint(Graphics2D g2d, AffineTransform canvasToScreen);
 }

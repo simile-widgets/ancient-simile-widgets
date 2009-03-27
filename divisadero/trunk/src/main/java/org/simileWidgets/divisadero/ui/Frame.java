@@ -25,8 +25,8 @@ public class Frame extends FrameBase {
         
         _project = new Project(new File("./examples/united-states/"));
         
-        _canvas.setProject(_project);
         _rewireLayerTable();
+        _canvas.setProject(_project, _layerTable.getSelectionModel(), _layerTableModel);
     }
     
     protected void _rewireLayerTable() {
