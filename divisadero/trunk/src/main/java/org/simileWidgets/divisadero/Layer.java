@@ -1,6 +1,7 @@
 package org.simileWidgets.divisadero;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.Properties;
 
@@ -54,6 +55,14 @@ abstract public class Layer {
     }
     
     abstract public String getType();
+    
     abstract public void paint(Graphics2D g2d);
+    
     abstract public void save(File projectDir, Properties properties, String prefix);
+    
+    /**
+     * @param mousePoint In the coordinate system of the canvas, not of the layer.
+     * @return
+     */
+    abstract public Interactor getInteractor(Point2D mousePoint);
 }
