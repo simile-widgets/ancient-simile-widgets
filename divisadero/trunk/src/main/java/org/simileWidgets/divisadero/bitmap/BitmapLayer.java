@@ -28,6 +28,7 @@ abstract public class BitmapLayer extends Layer {
 	    double        rotation = 0;
 	    double        scaleX = 1.0;
 	    double        scaleY = 1.0;
+	    double		  shear = 0;
 	    
 	    Point2D[]	    anchors = new Point2D[2];		// relative to _pivot
 	    
@@ -42,6 +43,7 @@ abstract public class BitmapLayer extends Layer {
 	    	forward.translate(offset.getX(), offset.getY());
 	    	forward.rotate(rotation);
 	    	forward.scale(scaleX, scaleY);
+	    	forward.shear(shear, 0);
 	    	
 	    	try {
 				backward = forward.createInverse();
@@ -58,6 +60,7 @@ abstract public class BitmapLayer extends Layer {
 	    	t.rotation = this.rotation;
 	    	t.scaleX = this.scaleX;
 	    	t.scaleY = this.scaleY;
+	    	t.shear = this.shear;
 	    	
 	    	t.anchors[0] = new Point2D.Double(this.anchors[0].getX(), this.anchors[0].getY());
 	    	t.anchors[1] = new Point2D.Double(this.anchors[1].getX(), this.anchors[1].getY());
@@ -87,6 +90,7 @@ abstract public class BitmapLayer extends Layer {
 		_transform.rotation = Utilities.getDouble(properties, prefix + "rotation", _transform.rotation);
 		_transform.scaleX = Utilities.getDouble(properties, prefix + "scaleX", _transform.scaleX);
 		_transform.scaleY = Utilities.getDouble(properties, prefix + "scaleY", _transform.scaleY);
+		_transform.shear = Utilities.getDouble(properties, prefix + "shear", _transform.shear);
 		
 		_transform.opacity = Utilities.getDouble(properties, prefix + "opacity", _transform.opacity);
 		_transform.crop = Utilities.getRectangle2D(properties, prefix + "crop", null);
@@ -104,6 +108,7 @@ abstract public class BitmapLayer extends Layer {
 		Utilities.setDouble(properties, prefix + "rotation", _transform.rotation);
 		Utilities.setDouble(properties, prefix + "scaleX", _transform.scaleX);
 		Utilities.setDouble(properties, prefix + "scaleY", _transform.scaleY);
+		Utilities.setDouble(properties, prefix + "shear", _transform.shear);
 		
 		Utilities.setDouble(properties, prefix + "opacity", _transform.opacity);
 		Utilities.setRectangle2D(properties, prefix + "crop", _transform.crop);
@@ -156,6 +161,7 @@ abstract public class BitmapLayer extends Layer {
     	Canvas 		_canvas;
     	int 		_mode = MODE_READY;
     	Transform	_oldTransform;
+    	Point2D		_mouseDown;
     	
 		@Override
 		public boolean hitTest(MouseEvent event, AffineTransform canvasToScreen) {
@@ -170,15 +176,27 @@ abstract public class BitmapLayer extends Layer {
 			
 			Point2D p = event.getPoint();
 			 
-			return _mode != MODE_READY || (
+			return _mode != MODE_READY ||
 				within(p, PIVOT_RADIUS, pivotOnScreen) ||
 				within(p, ANCHOR_RADIUS, anchor0OnScreen) ||
-				within(p, ANCHOR_RADIUS, anchor1OnScreen));
+				within(p, ANCHOR_RADIUS, anchor1OnScreen) ||
+				withinBoundary(p, canvasToScreen);
 		}
 		
 		protected boolean within(Point2D center, double radius, Point2D test) {
 			return Math.abs(test.getX() - center.getX()) <= radius &&
 				Math.abs(test.getY() - center.getY()) <= radius;
+		}
+		
+		protected boolean withinBoundary(Point2D p, AffineTransform canvasToScreen) {
+			Rectangle2D boundary = getBoundary();
+			Point2D topLeft = canvasToScreen.transform(_transform.forward.transform(
+					new Point2D.Double(boundary.getMinX(), boundary.getMinY()), null), null);
+			Point2D bottomRight = canvasToScreen.transform(_transform.forward.transform(
+					new Point2D.Double(boundary.getMaxX(), boundary.getMaxY()), null), null);
+			
+			return p.getX() >= topLeft.getX() && p.getX() <= bottomRight.getX() &&
+				p.getY() >= topLeft.getY() && p.getY() <= bottomRight.getY();
 		}
 
 		@Override
@@ -280,6 +298,7 @@ abstract public class BitmapLayer extends Layer {
 				if (ctrlMeta) {
 					_oldTransform = _transform.dup();
 					_mode = MODE_MOVING_PIVOT;
+					return;
 				}
 			} else if (within(p, ANCHOR_RADIUS, anchor0OnScreen)) {
 				_oldTransform = _transform.dup();
@@ -288,6 +307,7 @@ abstract public class BitmapLayer extends Layer {
 				} else {
 					_mode = MODE_STRETCHING_ANCHOR_0;
 				}
+				return;
 			} else if (within(p, ANCHOR_RADIUS, anchor1OnScreen)) {
 				_oldTransform = _transform.dup();
 				if (ctrlMeta) {
@@ -295,6 +315,13 @@ abstract public class BitmapLayer extends Layer {
 				} else {
 					_mode = MODE_STRETCHING_ANCHOR_1;
 				}
+				return;
+			}
+			
+			if (withinBoundary(p, canvasToScreen)) {
+				_mouseDown = _canvas.getInverseTransform().transform(p, null);
+				_mode = MODE_MOVING_LAYER;
+				_oldTransform = _transform.dup();
 			}
 		}
 
@@ -326,13 +353,24 @@ abstract public class BitmapLayer extends Layer {
 				break;
 				
 			case MODE_MOVING_ANCHOR_0:
-				_transform.anchors[0] = ourPoint;
+				_transform.anchors[0] = keepDistance(ourPoint, null, 10);
 				break;
 				
 			case MODE_MOVING_ANCHOR_1:
-				_transform.anchors[1] = ourPoint;
+				_transform.anchors[1] = keepDistance(ourPoint, null, 10);
+				break;
+			
+			case MODE_STRETCHING_ANCHOR_0:
+				reanchor(canvasPoint, _oldTransform.forward.transform(_transform.anchors[1], null));
 				break;
 				
+			case MODE_STRETCHING_ANCHOR_1:
+				reanchor(_oldTransform.forward.transform(_transform.anchors[0], null), canvasPoint);
+				break;
+			
+			case MODE_MOVING_LAYER:
+				moveLayer(canvasPoint);
+				break;
 			}
 			_canvas.repaint();
 		}
@@ -340,6 +378,95 @@ abstract public class BitmapLayer extends Layer {
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			if (_paused) { return; }
+		}
+		
+		void reanchor(Point2D anchor0OnCanvas, Point2D anchor1OnCanvas) {
+			Point2D pivotOnCanvas = _transform.forward.transform(new Point2D.Double(), null);
+			//System.err.println(pivotOnCanvas);
+			//anchor0OnCanvas = keepDistance(anchor0OnCanvas, pivotOnCanvas, 10);
+			//anchor1OnCanvas = keepDistance(anchor1OnCanvas, pivotOnCanvas, 10);
+			
+			/*
+			 *  Use anchor 0 to compute angle and scale X, then transform
+			 *  anchor 1 into canvas coordinates using that angle and that scale X.
+			 *  Then figure out scale Y and shear that will align anchor 1.
+			 */
+			
+			double angle = computeAngle(anchor0OnCanvas, pivotOnCanvas, _transform.anchors[0], null);
+			double scaleX = computeDistance(anchor0OnCanvas, pivotOnCanvas) /
+				computeDistance(_transform.anchors[0], null);
+			
+			AffineTransform t = new AffineTransform();
+			t.rotate(angle);
+			t.scale(scaleX, 1);
+			
+			Point2D anchor1PrimeOnCanvas = t.transform(_transform.anchors[1], null);
+			
+			double anchor1PrimeToAnchor0OnCanvas =
+				ensureNonZero(
+					computeAngle(anchor1PrimeOnCanvas, null, anchor0OnCanvas, pivotOnCanvas), 0.000001);
+			
+			double anchor1ToAnchor0OnCanvas = 
+				ensureNonZero(
+					computeAngle(anchor1OnCanvas, pivotOnCanvas, anchor0OnCanvas, pivotOnCanvas), 0.000001);
+			
+			double anchor1PrimeDistanceToPivot = computeDistance(anchor1PrimeOnCanvas, null);
+			double anchor1DistanceToPivot = computeDistance(anchor1OnCanvas, pivotOnCanvas);
+			
+			double scaleY = 
+				ensureNonZero(
+					(anchor1DistanceToPivot * Math.sin(anchor1ToAnchor0OnCanvas)) /
+						(anchor1PrimeDistanceToPivot * Math.sin(anchor1PrimeToAnchor0OnCanvas)), 0.000001);
+			
+			double diffX =
+				anchor1DistanceToPivot * Math.cos(anchor1ToAnchor0OnCanvas) -
+				anchor1PrimeDistanceToPivot * Math.cos(anchor1PrimeToAnchor0OnCanvas);
+			double diffY =
+				ensureNonZero(
+					anchor1DistanceToPivot * Math.sin(anchor1ToAnchor0OnCanvas), 0.000001);
+					
+			double shear = (diffX / diffY) * scaleY / scaleX;
+			
+			_transform.scaleX = scaleX;
+			_transform.scaleY = scaleY;
+			_transform.rotation = angle;
+			_transform.shear = shear;
+			_transform.cacheTransforms();
+		}
+		
+		void moveLayer(Point2D canvasPoint) {
+			_transform.offset.setLocation(new Point2D.Double(
+				_oldTransform.offset.getX() + (canvasPoint.getX() - _mouseDown.getX()),
+				_oldTransform.offset.getY() + (canvasPoint.getY() - _mouseDown.getY())
+			));
+			_transform.cacheTransforms();
+		}
+
+		
+		double computeAngle(Point2D p, Point2D origin) {
+			double diffX = (p.getX() - (origin == null ? 0 : origin.getX()));
+			double diffY = (p.getY() - (origin == null ? 0 : origin.getY()));
+			return Math.atan2(diffY, diffX);
+		}
+		
+		double computeAngle(Point2D p1, Point2D origin1, Point2D p2, Point2D origin2) {
+			return computeAngle(p1, origin1) - computeAngle(p2, origin2);
+		}
+		
+		double computeDistance(Point2D p, Point2D origin) {
+			double diffX = (p.getX() - (origin == null ? 0 : origin.getX()));
+			double diffY = (p.getY() - (origin == null ? 0 : origin.getY()));
+			return Math.sqrt(diffX * diffX + diffY * diffY);
+		}
+		
+		double ensureNonZero(double a, double min) {
+			return Math.signum(a) * Math.max(min, Math.abs(a));
+		}
+		
+		Point2D keepDistance(Point2D p, Point2D origin, double min) {
+			double distance = Math.max(min, computeDistance(p, origin));
+			double angle = computeAngle(p, null);
+			return new Point2D.Double(distance * Math.cos(angle), distance * Math.sin(angle));
 		}
     }
 }
