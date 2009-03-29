@@ -55,7 +55,7 @@ widget = Runway.createOrShowInstaller(
 );
 }}}
 
-= Step 4. Security Issues =
+== Step 4. Security Issues ==
 
 When you're testing your .html file locally (through a file:/// URL), you would need to tell Flash to "trust" that file. This is done by pointing your browser at
 
