@@ -39,6 +39,21 @@ public class Utilities {
 		return def;
 	}
 
+	public static void setBoolean(Properties properties, String name, boolean b) {
+		properties.put(name, Boolean.toString(b));
+	}
+
+	public static boolean getBoolean(Properties properties, String name, boolean def) {
+		String value = properties.getProperty(name);
+		if (value != null && value.length() > 0) {
+			try {
+				return Boolean.parseBoolean(value);
+			} catch (Exception e) {
+			}
+		}
+		return def;
+	}
+
 	public static void setDouble(Properties properties, String name, double d) {
 		properties.put(name, Double.toString(d));
 	}

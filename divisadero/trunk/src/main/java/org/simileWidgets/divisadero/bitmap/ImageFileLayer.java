@@ -7,11 +7,8 @@ import java.util.Properties;
 import org.simileWidgets.divisadero.Project;
 
 public class ImageFileLayer extends FileBasedBitmapLayer {
-    protected File _file;
-    
     public ImageFileLayer(Project project, String name, File file) {
-        super(project, name, null);
-        _file = file;
+        super(project, name, null, file);
     }
 
     @Override
