@@ -18,4 +18,4 @@ If you would like to have a page load when the user clicks on an event, instead 
   }
 }}}
 
-Beware that both of these calls can limit functionality. When a user clicks inside of the containing div (which is displaying as a block, so it may extend outside of the title), the action will execute. Since the same area can be used for navigating through the Timeline, there may be a inadvertent calls to the _showBubble function.
+Beware that both of these calls can limit functionality. When a user clicks inside of the containing div (which is displaying as a block, so it may extend outside of the title), the action will execute. Since the same area can be used for navigating through the Timeline, there may be a inadvertent calls to the showBubble function.
