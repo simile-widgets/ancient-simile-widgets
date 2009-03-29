@@ -6,7 +6,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -27,19 +26,11 @@ public class PdfFileLayer extends FileBasedBitmapLayer {
     final static float PIXELS_PER_INCH = 150;
     
     protected PdfFileLayer(Project project, String name, String key) {
-        super(project, name, key);
+        super(project, name, key, null);
     }
     
     public PdfFileLayer(Project project, String name, File file) {
-        super(project, name, null);
-        _file = file;
-        
-        loadFile();
-        
-        if (_image != null) {
-        	_transform.anchors[0] = new Point2D.Double(_image.getWidth(), 0);
-        	_transform.anchors[1] = new Point2D.Double(0, _image.getHeight());
-        }
+        super(project, name, null, file);
     }
     
     protected void loadFile() {
@@ -86,14 +77,6 @@ public class PdfFileLayer extends FileBasedBitmapLayer {
     @Override
     public String getType() {
     	return "pdf";
-    }
-
-    @Override
-    protected void internalPaint(Graphics2D g2d) {
-        if (_image != null) {
-            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            g2d.drawImage(_image, null, 0, 0);
-        }
     }
     
     private static ByteBuffer readFile(File file) throws IOException {

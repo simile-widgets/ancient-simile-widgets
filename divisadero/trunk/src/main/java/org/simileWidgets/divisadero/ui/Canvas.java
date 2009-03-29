@@ -24,9 +24,10 @@ import javax.swing.event.TableModelListener;
 
 import org.simileWidgets.divisadero.Interactor;
 import org.simileWidgets.divisadero.Layer;
+import org.simileWidgets.divisadero.LayerListener;
 import org.simileWidgets.divisadero.Project;
 
-public class Canvas extends JComponent implements ListSelectionListener, TableModelListener {
+public class Canvas extends JComponent implements ListSelectionListener, TableModelListener, LayerListener {
     private static final long serialVersionUID = -5971324417823955056L;
     
     protected Project 				_project;
@@ -237,15 +238,19 @@ public class Canvas extends JComponent implements ListSelectionListener, TableMo
     }
     
     protected void paintLayers(Graphics2D g2d) {
-
         List<Layer> layers = _project.getLayers();
         for (int i = layers.size() - 1; i >= 0; i--) {
             Layer layer = layers.get(i);
-            Graphics2D g2d2 = (Graphics2D) g2d.create();
-            try {
-                layer.paint(g2d2);
-            } finally {
-                g2d2.dispose();
+            if (layer.isReady()) {
+	            Graphics2D g2d2 = (Graphics2D) g2d.create();
+	            try {
+	                layer.paint(g2d2);
+	            } finally {
+	                g2d2.dispose();
+	            }
+            } else {
+            	layer.addListener(this);
+            	layer.getReady();
             }
         }
     }
@@ -321,11 +326,26 @@ public class Canvas extends JComponent implements ListSelectionListener, TableMo
 			}
 			
 			if (_currentLayer.isVisible()) {
-				_interactor = _currentLayer.getInteractor(null);
-				if (_interactor != null) {
-					_interactor.install(this);
-				}
+				acquireInteractor();
 			}
+		}
+	}
+
+	@Override
+	public void layerReady(Layer layer) {
+		layer.removeListener(this);
+		if (layer.isVisible()) {
+			if (layer == _currentLayer && _interactor == null) {
+				acquireInteractor();
+			}
+			repaint();
+		}
+	}
+	
+	protected void acquireInteractor() {
+		_interactor = _currentLayer.getInteractor(null);
+		if (_interactor != null) {
+			_interactor.install(this);
 		}
 	}
 }

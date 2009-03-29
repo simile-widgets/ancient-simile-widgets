@@ -77,14 +77,14 @@ abstract public class BitmapLayer extends Layer {
     
     protected BitmapLayer(Project project, String name, String key) {
         super(project, name, key);
-        _transform.anchors[0] = new Point2D.Double(100, 0);
-        _transform.anchors[1] = new Point2D.Double(0, 100);
     }
     
 	protected void load(Project project, Properties properties, String prefix) {
+		super.load(project, properties, prefix);
+		
 		_transform.pivot = Utilities.getPoint2D(properties, prefix + "pivot", _transform.pivot);
-		_transform.anchors[0] = Utilities.getPoint2D(properties, prefix + "anchor.0", _transform.anchors[0]);
-		_transform.anchors[1] = Utilities.getPoint2D(properties, prefix + "anchor.1", _transform.anchors[1]);
+		_transform.anchors[0] = Utilities.getPoint2D(properties, prefix + "anchor.0", null);
+		_transform.anchors[1] = Utilities.getPoint2D(properties, prefix + "anchor.1", null);
 		
 		_transform.offset = Utilities.getPoint2D(properties, prefix + "offset", _transform.offset);
 		_transform.rotation = Utilities.getDouble(properties, prefix + "rotation", _transform.rotation);
@@ -100,6 +100,8 @@ abstract public class BitmapLayer extends Layer {
 	
 	@Override
 	public void save(File projectDir, Properties properties, String prefix) {
+		super.save(projectDir, properties, prefix);
+		
 		Utilities.setPoint2D(properties, prefix + "pivot", _transform.pivot);
 		Utilities.setPoint2D(properties, prefix + "anchor.0", _transform.anchors[0]);
 		Utilities.setPoint2D(properties, prefix + "anchor.1", _transform.anchors[1]);
@@ -115,6 +117,10 @@ abstract public class BitmapLayer extends Layer {
 	}
 	
     abstract protected Rectangle2D getBoundary();
+    
+    protected Rectangle2D getCropBoundary() {
+    	return _transform.crop != null ? _transform.crop : getBoundary();
+    }
 
     @Override
     public void paint(Graphics2D g2d) {
