@@ -16,12 +16,15 @@ import org.simileWidgets.divisadero.bitmap.PdfFileLayer;
 
 public class Frame extends FrameBase {
     private static final long serialVersionUID = -4307794028515768946L;
+    public static Frame theFrame;
     
     protected Project           _project;
     protected LayerTableModel   _layerTableModel;
     
     public Frame() {
         super();
+        
+        theFrame = this;
         
         _project = new Project(new File("./examples/united-states/"));
         

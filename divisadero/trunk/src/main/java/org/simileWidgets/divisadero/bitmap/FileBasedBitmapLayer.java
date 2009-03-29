@@ -1,10 +1,10 @@
 package org.simileWidgets.divisadero.bitmap;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -15,7 +15,7 @@ import org.simileWidgets.divisadero.Project;
 abstract public class FileBasedBitmapLayer extends BitmapLayer {
     protected File 			_file;
     protected boolean		_ready;
-    protected BufferedImage _image;
+    protected Image 		_image;
     protected Thread		_readyThread;
 
 	protected FileBasedBitmapLayer(Project project, String name, String key, File file) {
@@ -41,10 +41,10 @@ abstract public class FileBasedBitmapLayer extends BitmapLayer {
 						
 				        if (_image != null) {
 				        	if (_transform.anchors[0] == null) {
-				        		_transform.anchors[0] = new Point2D.Double(_image.getWidth(), 0);
+				        		_transform.anchors[0] = new Point2D.Double(_image.getWidth(null), 0);
 				        	}
 				        	if (_transform.anchors[1] == null) {
-				        		_transform.anchors[1] = new Point2D.Double(0, _image.getHeight());
+				        		_transform.anchors[1] = new Point2D.Double(0, _image.getHeight(null));
 				        	}
 				        	_transform.cacheTransforms();
 				        }
@@ -68,8 +68,8 @@ abstract public class FileBasedBitmapLayer extends BitmapLayer {
     		return new Rectangle2D.Double(
     			-_transform.pivot.getX(), 
     			-_transform.pivot.getY(),
-    			_image.getWidth(),
-    			_image.getHeight()
+    			_image.getWidth(null),
+    			_image.getHeight(null)
     		);
     	} else {
     		return new Rectangle2D.Double();
@@ -121,7 +121,7 @@ abstract public class FileBasedBitmapLayer extends BitmapLayer {
     protected void internalPaint(Graphics2D g2d) {
         if (_image != null) {
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            g2d.drawImage(_image, null, 0, 0);
+            g2d.drawImage(_image, null, null);
         }
     }
 	

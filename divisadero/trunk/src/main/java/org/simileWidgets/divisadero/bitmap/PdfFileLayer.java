@@ -3,11 +3,11 @@ package org.simileWidgets.divisadero.bitmap;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.nio.channels.FileChannel;
 import java.util.Properties;
 
 import org.simileWidgets.divisadero.Project;
+import org.simileWidgets.divisadero.ui.Frame;
 
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
@@ -58,7 +59,9 @@ public class PdfFileLayer extends FileBasedBitmapLayer {
             Rectangle rect = new Rectangle(0, 0, 
                     (int) contentInPixels.getWidth(), (int) contentInPixels.getHeight());
             
-            _image = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_4BYTE_ABGR);
+            _image = Frame.theFrame.getGraphicsConfiguration().createCompatibleVolatileImage(
+            		rect.width, rect.height, VolatileImage.TRANSLUCENT);
+            _image.setAccelerationPriority(1.0f);
             
             Graphics2D g2d = (Graphics2D) _image.getGraphics();
             try {
@@ -71,6 +74,7 @@ public class PdfFileLayer extends FileBasedBitmapLayer {
             }
         } catch (NoninvertibleTransformException e) {
         } catch (Exception e) {
+        	e.printStackTrace();
         }
     }
     
