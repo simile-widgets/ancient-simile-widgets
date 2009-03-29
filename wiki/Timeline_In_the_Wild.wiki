@@ -14,6 +14,9 @@ Please send additional examples to the mailing list
  * [http://aotw.org/timeline.php The Maryland Campaign of 1862]
  * [http://www.freebase.com/view/user/danm/default_domain/views/battles_of_the_american_civil_war?view_id=timeline Battles of the American Civil War] via Freebase integration 
 
+== Museums ==
+ * [http://collections.musees-haute-normandie.fr/ Museums of Normandy] uses timeline to place artworks in their historical context
+
 == Industry ==
  * [http://www.semi-directory.com/events.asp Calendar of Semiconductor Industry events]
  * [http://www.androidacademy.com/3-features/40-current/49-article-what-m Timeline of the Google Android OS by AndroidAcademy.com]
@@ -40,3 +43,6 @@ Please send additional examples to the mailing list
 = Services using Timeline =
  * [http://freebase.com Freebase.com] supports Timeline "views" of data
  * [http://timefo.com Timefo.com]
+
+= Frameworks that include Timeline =
+ * [http://www.cubicweb.org CubicWeb] supports Timeline views of data
