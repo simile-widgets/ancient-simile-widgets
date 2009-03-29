@@ -15,7 +15,7 @@ Please send additional examples to the mailing list
  * [http://www.freebase.com/view/user/danm/default_domain/views/battles_of_the_american_civil_war?view_id=timeline Battles of the American Civil War] via Freebase integration 
 
 == Museums ==
- * [http://collections.musees-haute-normandie.fr/ Museums of Normandy] uses timeline to place artworks in their historical context
+ * [http://www.musees-haute-normandie.fr/collections/ Museums of Normandy] uses timeline to place artworks in their historical context
 
 == Industry ==
  * [http://www.semi-directory.com/events.asp Calendar of Semiconductor Industry events]
