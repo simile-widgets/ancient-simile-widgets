@@ -61,7 +61,7 @@ When you're testing your .html file locally (through a file:/// URL), you would 
 
 [http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html]
 
-That page embeds a Flash interface for you to configure the Flash player. Open the dropdown labeled "Edit locations..." and choose "Add location...". Then click "Browse for files...". When you see the file dialog box, change its extension filter (bottom right corner) from "Flash Movies (*.swf)" to "All files (*.*)". Then find your .html file.
+That page embeds a Flash interface for you to configure the Flash player. Open the dropdown labeled "Edit locations..." and choose "Add location...". Then click "Browse for files...". When you see the file dialog box, change its extension filter (bottom right corner) from "Flash Movies (`*`.swf)" to "All files (`*`.`*`)". Then find your .html file.
 
 You should now be able to open your .html file in the browser.
 
