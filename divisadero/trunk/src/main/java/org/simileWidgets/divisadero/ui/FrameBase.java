@@ -32,6 +32,7 @@ import org.simileWidgets.divisadero.ui.ShelfLayout.Direction;
 
 abstract class FrameBase extends JFrame {
     protected Canvas        _canvas;
+    protected JLabel		_statusBar;
     protected JSplitPane    _sideBar;
     protected Container     _controlPanel;
     protected List<JPanel>  _controlSubPanels = new LinkedList<JPanel>();
@@ -48,6 +49,10 @@ abstract class FrameBase extends JFrame {
         createMenuBar();
         createStatusPanel();
         createContentPanes();
+    }
+    
+    public void setStatusText(String s) {
+    	_statusBar.setText(s);
     }
     
     private void createMenuBar() {
@@ -253,9 +258,9 @@ abstract class FrameBase extends JFrame {
     }
     
     private void createStatusPanel() {
-        JComponent statusBar = new JLabel("status");
-        statusBar.setBorder(new EmptyBorder(2, 5, 2, 5));
-        add(statusBar, BorderLayout.SOUTH);
+        _statusBar = new JLabel("status");
+        _statusBar.setBorder(new EmptyBorder(2, 5, 2, 5));
+        add(_statusBar, BorderLayout.SOUTH);
     }
     
     private void createContentPanes() {

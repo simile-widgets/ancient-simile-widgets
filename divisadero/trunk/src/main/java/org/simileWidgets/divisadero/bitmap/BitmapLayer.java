@@ -20,6 +20,7 @@ import org.simileWidgets.divisadero.Layer;
 import org.simileWidgets.divisadero.Project;
 import org.simileWidgets.divisadero.Utilities;
 import org.simileWidgets.divisadero.ui.Canvas;
+import org.simileWidgets.divisadero.ui.Frame;
 
 abstract public class BitmapLayer extends Layer {
 	static protected class Transform {
@@ -41,8 +42,10 @@ abstract public class BitmapLayer extends Layer {
 	    void cacheTransforms() {
 	    	forward = new AffineTransform();
 	    	forward.translate(offset.getX(), offset.getY());
-	    	forward.rotate(rotation);
+	    	
+	    	// Do not change the order of these 3 statements
 	    	forward.scale(scaleX, scaleY);
+	    	forward.rotate(rotation);
 	    	forward.shear(shear, 0);
 	    	
 	    	try {
@@ -387,57 +390,82 @@ abstract public class BitmapLayer extends Layer {
 		}
 		
 		void reanchor(Point2D anchor0OnCanvas, Point2D anchor1OnCanvas) {
-			Point2D pivotOnCanvas = _transform.forward.transform(new Point2D.Double(), null);
-			//System.err.println(pivotOnCanvas);
-			//anchor0OnCanvas = keepDistance(anchor0OnCanvas, pivotOnCanvas, 10);
-			//anchor1OnCanvas = keepDistance(anchor1OnCanvas, pivotOnCanvas, 10);
+			Point2D pivotOnCanvas = _oldTransform.forward.transform(new Point2D.Double(), null);
 			
 			/*
-			 *  Use anchor 0 to compute angle and scale X, then transform
-			 *  anchor 1 into canvas coordinates using that angle and that scale X.
-			 *  Then figure out scale Y and shear that will align anchor 1.
+			 *  For convenience, make anchors on canvas relative to pivot on canvas.
 			 */
+			//anchor0OnCanvas = keepDistance(anchor0OnCanvas, pivotOnCanvas, 10);
+			anchor0OnCanvas.setLocation(
+				anchor0OnCanvas.getX() - pivotOnCanvas.getX(),
+				anchor0OnCanvas.getY() - pivotOnCanvas.getY());
 			
-			double angle = computeAngle(anchor0OnCanvas, pivotOnCanvas, _transform.anchors[0], null);
-			double scaleX = computeDistance(anchor0OnCanvas, pivotOnCanvas) /
-				computeDistance(_transform.anchors[0], null);
+			//anchor1OnCanvas = keepDistance(anchor1OnCanvas, pivotOnCanvas, 10);
+			anchor1OnCanvas.setLocation(
+				anchor1OnCanvas.getX() - pivotOnCanvas.getX(),
+				anchor1OnCanvas.getY() - pivotOnCanvas.getY());
 			
-			AffineTransform t = new AffineTransform();
-			t.rotate(angle);
-			t.scale(scaleX, 1);
+			double x1 = _transform.anchors[0].getX(); // should NOT be zero
+			double y1 = _transform.anchors[0].getY(); // should be zero
+			double x2 = _transform.anchors[1].getX();
+			double y2 = _transform.anchors[1].getY();
 			
-			Point2D anchor1PrimeOnCanvas = t.transform(_transform.anchors[1], null);
+			double x1prime = anchor0OnCanvas.getX();
+			double y1prime = anchor0OnCanvas.getY();
+			double x2prime = anchor1OnCanvas.getX();
+			double y2prime = anchor1OnCanvas.getY();
 			
-			double anchor1PrimeToAnchor0OnCanvas =
-				ensureNonZero(
-					computeAngle(anchor1PrimeOnCanvas, null, anchor0OnCanvas, pivotOnCanvas), 0.000001);
+			double a = (x2prime * y1 - x1prime * y2) * (y1prime * y2 - y1 * y2prime);
+			double b = (x2prime * y1 - x1prime * y2) * (x2 * y1prime - x1 * y2prime) + (x1 * x2prime - x1prime * x2) * (y1prime * y2 - y1 * y2prime);
+			double c = (x1 * x2prime - x1prime * x2) * (x2 * y1prime - x1 * y2prime) - (x2prime * y1 - x1prime * y2) * (y1 * y2prime - y1prime * y2);
+			//System.err.println(a + " " + b + " " + c);
+			double gamma;
+			if (a == 0) {
+				gamma = -c / b;
+			} else {
+				double d = b * b - 4 * a * c;
+				if (d < 0) {
+					return;
+				}
+				
+				double s1 = (-b + Math.sqrt(d)) / (2 * a);
+				double s2 = (-b - Math.sqrt(d)) / (2 * a);
+				//System.err.println(s1 + " " + s2);
+				gamma = s1 != 0 ? s1 : s2;
+			}
 			
-			double anchor1ToAnchor0OnCanvas = 
-				ensureNonZero(
-					computeAngle(anchor1OnCanvas, pivotOnCanvas, anchor0OnCanvas, pivotOnCanvas), 0.000001);
 			
-			double anchor1PrimeDistanceToPivot = computeDistance(anchor1PrimeOnCanvas, null);
-			double anchor1DistanceToPivot = computeDistance(anchor1OnCanvas, pivotOnCanvas);
+			double theta = Math.atan2(
+					x2prime * (x1 + gamma * y1) - x1prime * (x2 + gamma * y2), 
+					x2prime * y1 - x1prime * y2);
+			if (theta >= Math.PI / 2) {
+				theta -= Math.PI;
+			} else if (theta <= -Math.PI / 2) {
+				theta += Math.PI;
+			}
+			double cos = Math.cos(theta);
+			double sin = Math.sin(theta);
+			double alphaX = x1prime / ((x1 + gamma * y1) * cos - y1 * sin);
+			double alphaY = y1prime != 0 ? (y1prime / ((x1 + gamma * y1) * sin + y1 * cos)) :
+				(y2prime / ((x2 + gamma * y2) * sin + y2 * cos));
 			
-			double scaleY = 
-				ensureNonZero(
-					(anchor1DistanceToPivot * Math.sin(anchor1ToAnchor0OnCanvas)) /
-						(anchor1PrimeDistanceToPivot * Math.sin(anchor1PrimeToAnchor0OnCanvas)), 0.000001);
-			
-			double diffX =
-				anchor1DistanceToPivot * Math.cos(anchor1ToAnchor0OnCanvas) -
-				anchor1PrimeDistanceToPivot * Math.cos(anchor1PrimeToAnchor0OnCanvas);
-			double diffY =
-				ensureNonZero(
-					anchor1DistanceToPivot * Math.sin(anchor1ToAnchor0OnCanvas), 0.000001);
-					
-			double shear = (diffX / diffY) * scaleY / scaleX;
-			
-			_transform.scaleX = scaleX;
-			_transform.scaleY = scaleY;
-			_transform.rotation = angle;
-			_transform.shear = shear;
+			_transform.rotation = theta;
+			_transform.shear = gamma;
+			_transform.scaleX = alphaX;
+			_transform.scaleY = alphaY;
 			_transform.cacheTransforms();
+			
+			String s =
+				"scaleX: " + round(_transform.scaleX) +
+				", scaleY: " + round(_transform.scaleY) +
+				", rotation: " + round(_transform.rotation) +
+				", shear: " + round(_transform.shear);
+			System.err.println(s);
+			Frame.theFrame.setStatusText(s);
+		}
+		
+		String round(double d) {
+			return Double.toString(Math.round(d * 1000.0) / 1000.0);
 		}
 		
 		void moveLayer(Point2D canvasPoint) {
@@ -471,8 +499,11 @@ abstract public class BitmapLayer extends Layer {
 		
 		Point2D keepDistance(Point2D p, Point2D origin, double min) {
 			double distance = Math.max(min, computeDistance(p, origin));
-			double angle = computeAngle(p, null);
-			return new Point2D.Double(distance * Math.cos(angle), distance * Math.sin(angle));
+			double angle = computeAngle(p, origin);
+			double x = origin == null ? 0 : origin.getX();
+			double y = origin == null ? 0 : origin.getY();
+			
+			return new Point2D.Double(x + distance * Math.cos(angle), y + distance * Math.sin(angle));
 		}
     }
 }
