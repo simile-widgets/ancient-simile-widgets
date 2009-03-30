@@ -47,6 +47,8 @@ The Timeline library is called by client software on your html page. Your client
  * [Timeline_highlighting_weekends Highlighting Weekends]
 
 === Loading data ===
+ * [Timeline_DataInTheTimelineFile Data stored in the Timeline file vs an external data file]
+ * [Timeline_DataExternalNoWebServer Loading external data file without a web server]
  * [Timeline_LoadEventsDynamically Load Events Dynamically]
  * [Timeline_EventSourceJSON_jsDate use js Date()] with JSON
  * [Timeline_EditGridXSLT EditGrid] - Convert an EditGrid spreadsheet to Timeline XML format
