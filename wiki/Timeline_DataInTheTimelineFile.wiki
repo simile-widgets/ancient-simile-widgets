@@ -6,7 +6,7 @@ The usual practice is to store your Timeline's data in an external xml or json f
 
 = Details =
 
-1. Create a Javascript variable "json" with your JSON Timeline data.
+1. Create a Javascript variable "json" with your JSON Timeline data. Any variable name can be used.
 
 2. After creating your Timeline, load the data:
 {{{ eventSource.loadJSON(json, document.location.href); }}}
