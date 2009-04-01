@@ -26,6 +26,8 @@ package org.simileWidgets.runway {
         private var _subtitleText:TextField;
         private var _tooltipText:TextField;
         
+        private var _mouseWheelIncrement:int = -1;
+        
         private var _selectedIndex:Number = -1;
         private var _slides:Array = [];
         private var _slideFrames:Array = [];
@@ -68,6 +70,14 @@ package org.simileWidgets.runway {
             var stageDetector:StageDetector = new StageDetector(this);
             stageDetector.addEventListener(StageDetector.ADDED_TO_STAGE, _addedToStageListener);
             stageDetector.addEventListener(StageDetector.REMOVED_FROM_STAGE, _removedFromStageListener);
+        }
+        
+        public function get mouseWheelIncrement():int {
+            return _mouseWheelIncrement;
+        }
+        
+        public function set mouseWheelIncrement(mouseWheelIncrement:int):void {
+            _mouseWheelIncrement = mouseWheelIncrement;
         }
         
         public function get titleTextField():TextField {
@@ -417,7 +427,12 @@ package org.simileWidgets.runway {
         }
         
         protected function _mouseWheelListener(e:MouseEvent):void {
-            select(Math.max(0, Math.min(_selectedIndex - e.delta, _slideFrames.length - 1)));
+            if (_transition != null && _transition.running) {
+                return;
+            }
+            
+            var change:int = (_mouseWheelIncrement > 0) ? (e.delta < 0 ? -1 : 1) * _mouseWheelIncrement : e.delta;
+            select(Math.max(0, Math.min(_selectedIndex - change, _slideFrames.length - 1)));
         }
         
         protected function _forceLayout():void {

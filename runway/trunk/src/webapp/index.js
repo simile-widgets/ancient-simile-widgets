@@ -29,7 +29,9 @@ var possibleSettings = {
     "subtitleFontFamily" : "string",
     "subtitleFontSize" : "number",
     "subtitleFontBold" : "boolean",
-    "subtitleColor" : "color"
+    "subtitleColor" : "color",
+    
+    "mouseWheelIncrement" : "number"
 };
 
 function onThemeChange(select) {

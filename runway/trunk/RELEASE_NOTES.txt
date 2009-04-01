@@ -4,7 +4,15 @@ Ongoing
 
 For 1.1
 
-- Added events onTitleClick, onSubtitleClick, onZoom.
+- Added events 
+    onTitleClick
+    onTitleMouseOver
+    onTitleMouseOut 
+    onSubtitleClick
+    onSubtitleMouseOver
+    onSubtitleMouseOut 
+    onZoom
 - Set mouse cursor to hand when over clickable elements.
 - Added tooltip on mouse over slides on either side.
-
+- Added setting mouseWheelIncrement.
+- Fixed 6-digit color parsing bug.

@@ -38,7 +38,11 @@ package org.simileWidgets.runway {
                 case "onReady":
                 case "onZoom":
                 case "onTitleClick":
+                case "onTitleMouseOver":
+                case "onTitleMouseOut":
                 case "onSubtitleClick":
+                case "onSubtitleMouseOver":
+                case "onSubtitleMouseOut":
                 case "theme":
                 case "fixedSlideSize":
                 case "slideSize":
@@ -76,11 +80,43 @@ package org.simileWidgets.runway {
                         }
                     );
                 }
+                if (root.loaderInfo.parameters.hasOwnProperty("onTitleMouseOver")) {
+                    _runway.titleTextField.addEventListener(
+                        MouseEvent.MOUSE_OVER, 
+                        function(e:MouseEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onTitleMouseOver"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onTitleMouseOut")) {
+                    _runway.titleTextField.addEventListener(
+                        MouseEvent.MOUSE_OUT, 
+                        function(e:MouseEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onTitleMouseOut"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
                 if (root.loaderInfo.parameters.hasOwnProperty("onSubtitleClick")) {
                     _runway.subtitleTextField.addEventListener(
                         MouseEvent.CLICK, 
                         function(e:MouseEvent):void {
                             ExternalInterface.call(root.loaderInfo.parameters["onSubtitleClick"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onSubtitleMouseOver")) {
+                    _runway.subtitleTextField.addEventListener(
+                        MouseEvent.MOUSE_OVER, 
+                        function(e:MouseEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onSubtitleMouseOver"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onSubtitleMouseOut")) {
+                    _runway.subtitleTextField.addEventListener(
+                        MouseEvent.MOUSE_OUT, 
+                        function(e:MouseEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onSubtitleMouseOut"], _runway.selectedIndex, _runway.selectedID);
                         }
                     );
                 }
@@ -127,6 +163,8 @@ package org.simileWidgets.runway {
                 return _runway.theme[name];
             } else if (_isNumberGeometryProperty(name)) {
                 return _runway.geometry[name];
+            } else if (_isNumberRunwayProperty(name)) {
+                return _runway[name];
             }
             return undefined;
         }
@@ -142,7 +180,17 @@ package org.simileWidgets.runway {
                 _runway.theme[name] = (value is Number) ? value : Number(value);
             } else if (_isNumberGeometryProperty(name)) {
                 _runway.geometry[name] = (value is Number) ? value : Number(value);
+            } else if (_isNumberRunwayProperty(name)) {
+                _runway[name] = (value is Number) ? value : Number(value);
             }
+        }
+        
+        private function _isNumberRunwayProperty(name:String):Boolean {
+            switch (name) {
+            case "mouseWheelIncrement":
+                return true;
+            }
+            return false;
         }
         
         private function _isStringThemeProperty(name:String):Boolean {
@@ -226,9 +274,9 @@ package org.simileWidgets.runway {
                     
                     return ((r + r * 16) << 16) | ((g + g * 16) << 8) | (b + b * 16);
                 } else if (value.length == 6) {
-                    r = parseInt(value.substr(0, 1), 16);
-                    g = parseInt(value.substr(1, 1), 16);
-                    b = parseInt(value.substr(2, 1), 16);
+                    r = parseInt(value.substr(0, 2), 16);
+                    g = parseInt(value.substr(2, 2), 16);
+                    b = parseInt(value.substr(4, 2), 16);
                     
                     return (r << 16) | (g << 8) | b;
                 }
