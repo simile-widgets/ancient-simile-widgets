@@ -112,6 +112,25 @@ Runway._Impl.prototype._installUI = function() {
     );
     
     this._flashObject = document[this._flashObjectID] || window[this._flashObjectID];
+    
+    var onMouseScroll = function(evt) {
+        if (evt.stopPropagation) {
+            evt.stopPropagation();
+        }
+        evt.cancelBubble = true;
+        
+          // prevent the default action
+        if (evt.preventDefault) {
+            evt.preventDefault();
+        }
+        evt.returnValue = false;
+        return false;
+    };
+    if (SimileAjax.Platform.browser.isFirefox) {
+        SimileAjax.DOM.registerEvent(this._elmt, "DOMMouseScroll", onMouseScroll);
+    } else {
+        SimileAjax.DOM.registerEvent(this._elmt, "mousewheel", onMouseScroll);
+    }
 };
 
 Runway._Impl.prototype.getID = function() {

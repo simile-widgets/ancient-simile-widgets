@@ -187,7 +187,9 @@ package org.simileWidgets.runway {
         
         private function _mouseOutListener(e:Event):void {
             Mouse.cursor = MouseCursor.AUTO;
-            _runway.hideTooltip();
+            if (_side != Runway.SIDE_CENTER) {
+                _runway.hideTooltip();
+            }
         }
     }
 }
