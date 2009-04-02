@@ -43,10 +43,17 @@ package org.simileWidgets.datadust.expression {
         }
 
         static public function parse(s:String):Expression {
+            if (s == null) {
+                return null;
+            }
+            
             var scanner:Scanner = new Scanner(s);
             var token:Object = scanner.token;
             var next:Function = function():void { scanner.next(); token = scanner.token; };
             var makePosition:Function = function():int { return token != null ? token.start : scanner.index; };
+            var makeErrorString:Function = function(msg:String):String {
+                return msg + ", at offset " + makePosition() + " while parsing \"" + s + "\"";
+            };
             
             var parsePath:Function = function(node:INode):INode {
                 while (token != null) {
@@ -57,7 +64,7 @@ package org.simileWidgets.datadust.expression {
                             node = new PropertyNode(node, token.value);
                             next();
                         } else {
-                            //throw new Error("Missing property ID at position " + makePosition());
+                            throw new Error(makeErrorString("Missing property name"));
                         }
                     } else if (token.type == Scanner.DELIMITER && token.value == "[") {
                         next();
@@ -69,10 +76,10 @@ package org.simileWidgets.datadust.expression {
                             if (token != null && token.type == Scanner.DELIMITER && token.value == "]") {
                                 next();
                             } else {
-                                //throw new Error("Missing ] at position " + makePosition());
+                                throw new Error(makeErrorString("Missing ]"));
                             }
                         } else {
-                            //throw new Error("Missing index number or string at position " + makePosition());
+                            throw new Error(makeErrorString("Missing index number or string"));
                         }
                     } else {
                         break;
@@ -82,7 +89,7 @@ package org.simileWidgets.datadust.expression {
             };
             var parseFactor:Function = function():INode {
                 if (token == null) {
-                    throw new Error("Missing factor at end of expression");
+                    throw new Error(makeErrorString("Missing factor"));
                 }
                 
                 var result:INode = null;
@@ -108,10 +115,10 @@ package org.simileWidgets.datadust.expression {
                             if (token != null && token.type == Scanner.DELIMITER && token.value == ")") {
                                 next();
                             } else {
-                                //throw new Error("Missing ) to end " + identifier + " at position " + makePosition());
+                                throw new Error(makeErrorString("Missing )"));
                             }
                         } else {
-                            //throw new Error("Missing ( to start " + identifier + " at position " + makePosition());
+                            throw new Error(makeErrorString("Missing ( after " + identifier));
                         }
                     } else {
                         if (token != null && token.type == Scanner.DELIMITER && token.value == "(") {
@@ -121,13 +128,23 @@ package org.simileWidgets.datadust.expression {
                             if (token != null && token.type == Scanner.DELIMITER && token.value == ")") {
                                 next();
                             } else {
-                                //throw new Error("Missing ) after function call " + identifier + " at position " + makePosition());
+                                throw new Error(makeErrorString("Missing )"));
                             }
                         } else {
                             result = parsePath(new IdentifierNode(identifier));
                         }
                     }
                     break;
+                case Scanner.OPERATOR:
+                    if (token.value == "-" || token.value == "+") {
+                        var op:String = token.value;
+                        next();
+                        
+                        var factor:INode = new parseFactor();
+                        result = op == "+" ? factor : (new OperatorNode("*", [ new LiteralNode(-1), factor ]));
+                    }
+                    break;
+                    
                 case Scanner.DELIMITER:
                     if (token.value == "(") {
                         next();
@@ -137,13 +154,15 @@ package org.simileWidgets.datadust.expression {
                             next();
                             break;
                         } else {
-                            throw new Error("Missing ) at position " + makePosition());
+                            throw new Error(makeErrorString("Missing )"));
                         }
-                    } // else, fall through
-                default:
-                    throw new Error("Unexpected text " + token.value + " at position " + makePosition());
+                    }
+                    break;
                 }
                 
+                if (result == null) {
+                    throw new Error(makeErrorString("Unexpected text \"" + token.value + "\""));
+                }
                 return result;
             };
             var parseTerm:Function = function():INode {
