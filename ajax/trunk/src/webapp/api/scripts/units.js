@@ -17,9 +17,18 @@ SimileAjax.NativeDateUnit.getParser = function(format) {
     if (typeof format == "string") {
         format = format.toLowerCase();
     }
-    return (format == "iso8601" || format == "iso 8601") ?
-        SimileAjax.DateTime.parseIso8601DateTime : 
-        SimileAjax.DateTime.parseGregorianDateTime;
+    
+    var parser = (format == "iso8601" || format == "iso 8601") ?
+                    SimileAjax.DateTime.parseIso8601DateTime : 
+                    SimileAjax.DateTime.parseGregorianDateTime;
+                    
+    return function(date) {
+        if ("toUTCString" in date && typeof date.toUTCString == "function") {
+            return date;
+        } else {
+            return parser(date);
+        }
+    };
 };
 
 SimileAjax.NativeDateUnit.parseFromObject = function(o) {
