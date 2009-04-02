@@ -6,9 +6,9 @@
 Datadust.swf = Datadust.urlPrefix + "swf/datadust";
 
 Datadust.flashVersion = {
-    major: 10,
+    major: 9,
     minor: 0,
-    revision: 12
+    revision: 159
 };
 
 Datadust.hasRightFlashVersion = function() {
