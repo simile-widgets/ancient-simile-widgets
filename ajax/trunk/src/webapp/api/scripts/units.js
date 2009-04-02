@@ -22,11 +22,11 @@ SimileAjax.NativeDateUnit.getParser = function(format) {
                     SimileAjax.DateTime.parseIso8601DateTime : 
                     SimileAjax.DateTime.parseGregorianDateTime;
                     
-    return function(date) {
-        if ("toUTCString" in date && typeof date.toUTCString == "function") {
-            return date;
+    return function(d) {
+        if (typeof d != 'undefined' && typeof d.toUTCString == "function") {
+            return d;
         } else {
-            return parser(date);
+            return parser(d);
         }
     };
 };

@@ -2669,7 +2669,7 @@ SimileAjax.NativeDateUnit.cloneValue=function(A){return new Date(A.getTime());
 };
 SimileAjax.NativeDateUnit.getParser=function(A){if(typeof A=="string"){A=A.toLowerCase();
 }var B=(A=="iso8601"||A=="iso 8601")?SimileAjax.DateTime.parseIso8601DateTime:SimileAjax.DateTime.parseGregorianDateTime;
-return function(C){if("toUTCString" in C&&typeof C.toUTCString=="function"){return C;
+return function(C){if(typeof C!="undefined"&&typeof C.toUTCString=="function"){return C;
 }else{return B(C);
 }};
 };
