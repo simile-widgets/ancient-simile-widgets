@@ -1,0 +1,36 @@
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>SIMILE Widgets | Datadust</title>
+    <link rel="stylesheet" href="http://www.simile-widgets.org/styles/common.css" />
+
+    <!-- You need this, but replace the URL here with http://api.simile-widgets.org/datadust/1.0/datadust-api.js -->
+    <script type="text/javascript" src="../../api/datadust-api.js?bundle=false"></script>
+    
+    <!-- These 2 files are specific to this demo. -->
+    <script type="text/javascript" src="index.js"></script>
+    <link rel="stylesheet" href="../../styles/styles.css" />
+  </head>
+  <body onload="onLoad();">
+    <ul id="path">
+        <li><a href="/" title="Home">SIMILE Widgets</a></li>
+        <li><span>Datadust</span></li>
+    </ul>
+    <div id="header">
+      <h1>World</h1>
+    </div>
+    
+    <!-- This element is all you really need. -->
+    <div id="the-widget" style="height: 600px;"></div>
+    
+    <center>y-axis: density, x-axis: population, size: literacy
+        <button onclick="select(0)">1950</button>
+        <button onclick="select(1)">2000</button>
+        <button onclick="select(2)">2000B</button>
+    </center>
+    
+    <div id="footer">
+      Copyright &copy; <a href="http://web.mit.edu/">Massachusetts Institute of Technology</a> and Contributors 2006-2009 ~ Some rights reserved
+    </div>
+  </body>
+</html>
