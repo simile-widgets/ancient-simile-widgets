@@ -1,5 +1,8 @@
 package org.simileWidgets.datadust.config {
     import org.simileWidgets.datadust.expression.Expression;
+    import flare.animate.FunctionSequence;
+    import flare.vis.Visualization;
+    import flare.vis.axis.Axis;
 
     public class AxisConfiguration {
         protected var _scaleType:String;
@@ -22,6 +25,9 @@ package org.simileWidgets.datadust.config {
         
         public function get scaleType():String {
             return _scaleType;
+        }
+        
+        public function configure(vis:Visualization, axisLayout:ExpressionAxisLayout, axis:Axis, seq:FunctionSequence):void {
         }
     }
 }

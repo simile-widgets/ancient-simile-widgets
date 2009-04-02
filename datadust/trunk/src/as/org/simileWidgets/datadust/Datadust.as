@@ -18,6 +18,7 @@ package org.simileWidgets.datadust {
     import flash.text.TextFieldType;
     import org.simileWidgets.datadust.config.Utilities;
     import org.simileWidgets.datadust.config.Configuration;
+    import org.simileWidgets.datadust.config.ScatterPlotConfiguration;
     import org.simileWidgets.datadust.config.IPropertyConfiguration;
     import org.simileWidgets.datadust.expression.Expression;
     
@@ -264,7 +265,12 @@ package org.simileWidgets.datadust {
                     var jsBaseConfig:Object = (jsBaseConfigIndex >= 0 && jsBaseConfigIndex < configs.length && jsBaseConfigIndex != i) ?
                         configs[jsBaseConfigIndex] : null;
                         
-                    _configurations.push(new Configuration(jsConfig, jsBaseConfig));
+                    var chartType:String = Utilities.getDelegate(jsConfig, jsBaseConfig, "chartType", "scatter");
+                    
+                    switch (chartType) {
+                    case "scatter":
+                        _configurations.push(new ScatterPlotConfiguration(jsConfig, jsBaseConfig));
+                    }
                 }
             }
             
