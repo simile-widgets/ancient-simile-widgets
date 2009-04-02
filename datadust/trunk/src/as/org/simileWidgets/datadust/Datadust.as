@@ -324,6 +324,9 @@ package org.simileWidgets.datadust {
             }
             
             var text:String = tooltipExpression.eval(node);
+            if (text == null) {
+                return;
+            }
             
             var x:Number = e.stageX - e.localX;
             var y:Number = e.stageY - e.localY;
