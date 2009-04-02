@@ -40,7 +40,7 @@
     </pathconvert>
     
     <mxmlc file="${dir.src.as}org/simileWidgets/datadust/${Name}Widget.as" output="${dir.build}/${name}.swf">
-      <target-player>9.0.159.0</target-player>
+      <target-player>9.0.0.0</target-player>
       
       <source-path path-element="${dir.src.as}"/>
       
