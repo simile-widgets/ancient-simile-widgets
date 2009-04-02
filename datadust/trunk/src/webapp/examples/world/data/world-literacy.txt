@@ -1,0 +1,232 @@
+country	literacy
+Afghanistan	28.1
+Albania	98.7
+Algeria	69.9
+American Samoa	97
+Andorra	100
+Angola	67.4
+Anguilla	95
+Antigua and Barbuda	85.8
+Argentina	97.2
+Armenia	99.4
+Aruba	97.3
+Australia	99
+Austria	98
+Azerbaijan	98.8
+Bahamas, The	95.6
+Bahrain	86.5
+Bangladesh	43.1
+Barbados	99.7
+Belarus	99.6
+Belgium	99
+Belize	76.9
+Benin	34.7
+Bermuda	98
+Bhutan	47
+Bolivia	86.7
+Bosnia and Herzegovina	96.7
+Botswana	81.2
+Brazil	88.6
+British Virgin Islands	97.8
+Brunei	92.7
+Bulgaria	98.2
+Burkina Faso	21.8
+Burma	89.9
+Burundi	59.3
+Cambodia	73.6
+Cameroon	67.9
+Canada	99
+Cape Verde	76.6
+Cayman Islands	98
+Central African Republic	48.6
+Chad	25.7
+Chile	95.7
+China	90.9
+Christmas Island	-1
+Cocos (Keeling) Islands	-1
+Colombia	92.8
+Comoros	56.5
+Congo, Democratic Republic of the	67.2
+Congo, Republic of the	83.8
+Cook Islands	95
+Costa Rica	94.9
+Cote d'Ivoire	48.7
+Croatia	98.1
+Cuba	99.8
+Cyprus	97.6
+Czech Republic	99
+Denmark	99
+Djibouti	67.9
+Dominica	94
+Dominican Republic	87
+Ecuador	91
+Egypt	71.4
+El Salvador	80.2
+Equatorial Guinea	87
+Eritrea	58.6
+Estonia	99.8
+Ethiopia	42.7
+Falkland Islands (Islas Malvinas)	-1
+Faroe Islands	99
+Fiji	93.7
+Finland	100
+France	99
+French Polynesia	98
+Gabon	63.2
+Gambia, The	40.1
+Gaza Strip	92.4
+Georgia	100
+Germany	99
+Ghana	57.9
+Gibraltar	80
+Greece	96
+Greenland	100
+Grenada	96
+Guam	99
+Guatemala	69.1
+Guernsey	-1
+Guinea	29.5
+Guinea-Bissau	42.4
+Guyana	98.8
+Haiti	52.9
+Holy See (Vatican City)	100
+Honduras	80
+Hong Kong	93.5
+Hungary	99.4
+Iceland	99
+India	61
+Indonesia	90.4
+Iran	77
+Iraq	74.1
+Ireland	99
+Isle of Man	-1
+Israel	97.1
+Italy	98.4
+Jamaica	87.9
+Japan	99
+Jersey	-1
+Jordan	89.9
+Kazakhstan	99.5
+Kenya	85.1
+Kiribati	-1
+Korea, North	99
+Korea, South	97.9
+Kuwait	93.3
+Kyrgyzstan	98.7
+Laos	68.7
+Latvia	99.7
+Lebanon	87.4
+Lesotho	84.8
+Liberia	57.5
+Libya	82.6
+Liechtenstein	100
+Lithuania	99.6
+Luxembourg	100
+Macau	91.3
+Macedonia	96.1
+Madagascar	68.9
+Malawi	62.7
+Malaysia	88.7
+Maldives	96.3
+Mali	46.4
+Malta	92.8
+Marshall Islands	93.7
+Mauritania	51.2
+Mauritius	84.4
+Mayotte	-1
+Mexico	91
+Micronesia, Federated States of	89
+Moldova	99.1
+Monaco	99
+Mongolia	97.8
+Montserrat	97
+Morocco	52.3
+Mozambique	47.8
+Namibia	85
+Nauru	-1
+Nepal	48.6
+Netherlands	99
+Netherlands Antilles	96.7
+New Caledonia	96.2
+New Zealand	99
+Nicaragua	67.5
+Niger	28.7
+Nigeria	68
+Niue	95
+Norfolk Island	-1
+Northern Mariana Islands	97
+Norway	100
+Oman	81.4
+Pakistan	49.9
+Palau	92
+Panama	91.9
+Papua New Guinea	57.3
+Paraguay	94
+Peru	87.7
+Philippines	92.6
+Pitcairn Islands	-1
+Poland	99.8
+Portugal	93.3
+Puerto Rico	94.1
+Qatar	89
+Romania	97.3
+Russia	99.4
+Rwanda	70.4
+Saint Helena	97
+Saint Kitts and Nevis	97.8
+Saint Lucia	90.1
+Saint Pierre and Miquelon	99
+Saint Vincent and the Grenadines	96
+Samoa	99.7
+San Marino	96
+Sao Tome and Principe	84.9
+Saudi Arabia	78.8
+Senegal	39.3
+Serbia	96.4
+Seychelles	91.8
+Sierra Leone	35.1
+Singapore	92.5
+Slovakia	99.6
+Slovenia	99.7
+Solomon Islands	-1
+Somalia	37.8
+South Africa	86.4
+Spain	97.9
+Sri Lanka	90.7
+Sudan	61.1
+Suriname	89.6
+Svalbard	-1
+Swaziland	81.6
+Sweden	99
+Switzerland	99
+Syria	79.6
+Taiwan	96.1
+Tajikistan	99.5
+Tanzania	69.4
+Thailand	92.6
+Timor-Leste	58.6
+Togo	60.9
+Tokelau	-1
+Tonga	98.9
+Trinidad and Tobago	98.6
+Tunisia	74.3
+Turkey	87.4
+Turkmenistan	98.8
+Turks and Caicos Islands	98
+Tuvalu	-1
+Uganda	66.8
+Ukraine	99.4
+United Arab Emirates	77.9
+United Kingdom	99
+United States	99
+Uruguay	98
+Uzbekistan	99.3
+Vanuatu	74
+Venezuela	93
+Vietnam	90.3
+Virgin Islands	95
+Wallis and Futuna	50
+West Bank	92.4
+Yemen	50.2
+Zambia	80.6
+Zimbabwe	90.7
