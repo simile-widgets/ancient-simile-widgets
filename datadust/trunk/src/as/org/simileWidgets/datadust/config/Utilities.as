@@ -1,5 +1,4 @@
 package org.simileWidgets.datadust.config {
-    import flare.data.DataSet;
     import flare.vis.data.Data;
     import flare.vis.data.DataSprite;
     import org.simileWidgets.datadust.expression.Expression;
@@ -83,102 +82,5 @@ package org.simileWidgets.datadust.config {
             return "#" + toHex2Digits((c >> 16) & 0xFF) + toHex2Digits((c >> 8) & 0xFF) + toHex2Digits(c & 0xFF);
         }
         
-        static public function prepareData(data:Data, config:*):void {
-            if (!(config is Array)) {
-                config = [ config ];
-            }
-            
-            var expression:Expression;
-            
-            for (var i:int = 0; i < config.length; i++) {
-                var entry:Object = config[i];
-                if (entry.hasOwnProperty("operation")) {
-                    var operation:String = entry["operation"];
-                    switch (operation) {
-                    case "sort":
-                        expression = Expression.parse(entry["expression"]);
-                        
-                        var ascending:Boolean = entry.hasOwnProperty("ascending") ? entry["ascending"] : true;
-                        var property:String = entry.hasOwnProperty("property") ? entry["property"] : "rank";
-                        
-                        data.nodes.sortBy(expression.text);
-                        
-                        var rank:Number = ascending ? 0 : data.nodes.length - 1;
-                        data.nodes.visit(ascending ?
-                            function(node:DataSprite):void { node.data[property] = rank++; } :
-                            function(node:DataSprite):void { node.data[property] = rank--; }
-                        );
-                        break;
-                        
-                    case "filter":
-                        expression = Expression.parse(entry["expression"]);
-                        
-                        data.nodes.visit(function(node:DataSprite):void { 
-                            if (true !== expression.eval(node)) {
-                                data.nodes.remove(node);
-                            }
-                        });
-                        break;
-                    }
-                }
-            }
-        }
-        
-        static public function prepareDataSet(ds:DataSet, config:*):DataSet {
-            if (!(config is Array)) {
-                config = [ config ];
-            }
-            
-            var expression:Expression;
-            
-            for (var i:int = 0; i < config.length; i++) {
-                var entry:Object = config[i];
-                if (entry.hasOwnProperty("operation")) {
-                    var operation:String = entry["operation"];
-                    switch (operation) {
-                    case "sort":
-                        expression = Expression.parse(entry["expression"]);
-                        
-                        var ascending:Boolean = entry.hasOwnProperty("ascending") ? entry["ascending"] : true;
-                        var property:String = entry.hasOwnProperty("property") ? entry["property"] : "rank";
-                        
-                        var comp:Function = ascending ? function(a:Object, b:Object):Number {
-                            var va:Number = expression.eval({ data: a });
-                            var vb:Number = expression.eval({ data: b });
-                            return va - vb;
-                        } : function(a:Object, b:Object):Number {
-                            var va:Number = expression.eval({ data: a });
-                            var vb:Number = expression.eval({ data: b });
-                            return vb - va;
-                        };
-                        ds.nodes.data.sort(comp);
-                        
-                        if (entry.hasOwnProperty("head")) {
-                            var head:int = entry["head"];
-                            if (head < 0) {
-                                ds.nodes.data = ds.nodes.data.slice(0, Math.max(0, ds.nodes.data.length + head));
-                            } else {
-                                ds.nodes.data = ds.nodes.data.slice(0, Math.min(ds.nodes.data.length, head));
-                            }
-                        }
-                        if (entry.hasOwnProperty("tail")) {
-                            var tail:int = entry["tail"];
-                            if (tail < 0) {
-                                ds.nodes.data = ds.nodes.data.slice(Math.min(ds.nodes.data.length, -tail));
-                            } else {
-                                ds.nodes.data = ds.nodes.data.slice(ds.nodes.data.length - Math.min(ds.nodes.data.length, tail));
-                            }
-                        }
-                        
-                        for (var j:int = 0; j < ds.nodes.data.length; j++) {
-                            ds.nodes.data[j][property] = j;
-                        }
-
-                        break;
-                    }
-                }
-            }
-            return ds;
-        }
     }
 }
