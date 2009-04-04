@@ -53,7 +53,7 @@ package org.simileWidgets.datadust {
         public function init(config:*):void {
             var f:Function = function():void {
                 if (config.hasOwnProperty("prepare")) {
-                    Utilities.prepareData(_data, config["prepare"]);
+                    DataUtilities.prepareData(_data, config["prepare"]);
                 }
                 _internalInit(config);
             };
@@ -79,20 +79,11 @@ package org.simileWidgets.datadust {
         
         protected function _loadDataSource(source:*, f:Function):void {
             var dataSchema:DataSchema = null;
-            var hasColumnHeadings:Boolean = source.hasOwnProperty("hasColumnHeadings") ? source["hasColumnHeadings"] : false;
+            var hasColumnHeadings:Boolean = 
+                source.hasOwnProperty("hasColumnHeadings") ? source["hasColumnHeadings"] : false;
             
             if (!hasColumnHeadings && source.hasOwnProperty("columns")) {
-                dataSchema = new DataSchema();
-                
-                var columns:Array = source["columns"];
-                for (var i:int = 0; i < columns.length; i++) {
-                    var column:* = columns[i];
-                    if (column is String) {
-                        dataSchema.addField(new DataField(column, DataUtil.STRING));
-                    } else {
-                        dataSchema.addField(new DataField(column.name, column.type == "number" ? DataUtil.NUMBER : DataUtil.STRING));
-                    }
-                }
+                dataSchema = DataUtilities.createDataSchemaFromColumns(source["columns"]);
             }
             
             var ds:DataSource = new DataSource(
@@ -108,7 +99,7 @@ package org.simileWidgets.datadust {
                     var ds:DataSet = loader.data as DataSet;
                     
                     if (hasColumnHeadings && source.hasOwnProperty("columns")) {
-                        ds = _readjustColumns(ds, source["columns"]);
+                        ds = DataUtilities.readjustColumns(ds, source["columns"]);
                     }
                     _addDataSet(ds, source);
                     
@@ -117,143 +108,27 @@ package org.simileWidgets.datadust {
             );
         }
         
-        protected function _readjustColumns(ds:DataSet, columns:Array):DataSet {
-            var columnMap:Object = {};
-            for (var i:int = 0; i < columns.length; i++) {
-                var column:Object = columns[i];
-                columnMap[column.name] = column.type;
-            }
-            
-            var dataSchema:DataSchema = new DataSchema();
-            var fields:Array = ds.nodes.schema.fields;
-            for (i = 0; i < fields.length; i++) {
-                var field:DataField = fields[i];
-                if (columnMap.hasOwnProperty(field.name)) {
-                    dataSchema.addField(new DataField(
-                        field.name, 
-                        columnMap[field.name] == "number" ? DataUtil.NUMBER : DataUtil.STRING));
-                } else {
-                    dataSchema.addField(field);
-                }
-            }
-            
-            for each (var tuple:Object in ds.nodes.data) {
-                for (i = 0; i < columns.length; i++) {
-                    column = columns[i];
-                    if (column.type == "number") {
-                        var name:String = column.name;
-                        if (tuple.hasOwnProperty(name)) {
-                            tuple[name] = DataUtil.parseValue(tuple[name], DataUtil.NUMBER);
-                        }
-                    }
-                }
-            }
-            return new DataSet(new DataTable(ds.nodes.data, dataSchema));
-        }
-        
         protected function _addDataSet(ds:DataSet, source:*):void {
             /*
              *  Pre-processing
              */
             if (source.hasOwnProperty("group")) {
-                ds = _group(ds, source["group"]);
+                ds = DataUtilities.group(ds, source["group"]);
             }
             if (source.hasOwnProperty("prepare")) {
-                ds = Utilities.prepareDataSet(ds, source["prepare"]);
+                ds = DataUtilities.prepareDataSet(ds, source["prepare"]);
             }
         
             if (_data == null) {
                 _data = Data.fromDataSet(ds);
             } else if (source.hasOwnProperty("join")) {
                 var joins:* = source["join"];
-                if (joins is Array) {
-                    _join(ds, joins);
-                } else {
-                    _join(ds, [ joins ]);
-                }
+                DataUtilities.joinNodes(_data, ds, (joins is Array) ? joins : [joins]);
             } else {
                 for each (var tuple:Object in ds.nodes.data) {
                     _data.addNode(tuple);
                 }
             }
-        }
-        
-        protected function _group(ds:DataSet, criteria:*):DataSet {
-            if (!criteria.hasOwnProperty("key") || !criteria.hasOwnProperty("group")) {
-                return ds;
-            }
-            
-            var rows:Array = [];
-            var map:Object = {};
-            var keyField:String = criteria["key"];
-            var groupField:String = criteria["group"];
-            
-            for each (var tuple:Object in ds.nodes.data) {
-                var key:* = tuple[keyField];
-                var groupKey:* = String(tuple[groupField]);
-                
-                var newTuple:*;
-                if (map.hasOwnProperty(key)) {
-                    newTuple = map[key];
-                } else {
-                    newTuple = {};
-                    newTuple[keyField] = key;
-                    newTuple[groupField] = {};
-                    
-                    map[key] = newTuple;
-                    rows.push(newTuple);
-                }
-                
-                var group:Object = newTuple[groupField];
-                var groupEntry:Object = group[groupKey] = { "key" : groupKey };
-                
-                for (var field:String in tuple) {
-                    if (field != keyField && field != groupField) {
-                        groupEntry[field] = tuple[field];
-                    }
-                }
-            }
-            
-            return new DataSet(new DataTable(rows));
-        }
-        
-        protected function _join(ds:DataSet, joins:Array):void {
-            var joins2:Array = [];
-            for (var i:int = 0; i < joins.length; i++) {
-                var join:* = joins[i];
-                if (join is String) {
-                    joins2.push({ ours: join, theirs: join });
-                } else {
-                    joins2.push(join);
-                }
-            }
-            
-            var map:Object = {};
-            for each (var tuple:Object in ds.nodes.data) {
-                var a:Array = [];
-                for (var j:int = 0; j < joins2.length; j++) {
-                    a.push(tuple[joins2[j].ours]);
-                }
-                var key:String = a.join("|");
-                map[key] = tuple;
-            }
-            
-            _data.nodes.visit(function(node:NodeSprite):void {
-                var theirTuple:Object = node.data;
-                
-                var a:Array = [];
-                for (var j:int = 0; j < joins2.length; j++) {
-                    a.push(theirTuple[joins2[j].theirs]);
-                }
-                var key:String = a.join("|");
-                
-                if (map.hasOwnProperty(key)) {
-                    var ourTuple:Object = map[key];
-                    for (var name:String in ourTuple) {
-                        theirTuple[name] = ourTuple[name];
-                    }
-                }
-            });
         }
         
         protected function _internalInit(config:*):void {
