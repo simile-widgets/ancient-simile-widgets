@@ -4,6 +4,7 @@ package org.simileWidgets.datadust.config {
     import flare.vis.axis.CartesianAxes;
     import flare.scale.ScaleType;
     import org.simileWidgets.datadust.expression.Expression;
+    import org.simileWidgets.datadust.vis.ExpressionAxisLayout;
 
     public class ScatterPlotConfiguration extends Configuration {
         protected var _xAxisConfig:AxisConfiguration;
@@ -38,6 +39,7 @@ package org.simileWidgets.datadust.config {
             );
             axisLayout.xScale.scaleType = _xAxisConfig.scaleType == "log" ? ScaleType.LOG : ScaleType.LINEAR;
             axisLayout.yScale.scaleType = _yAxisConfig.scaleType == "log" ? ScaleType.LOG : ScaleType.LINEAR;
+            axisLayout.visualization = vis;
             
             vis.operators.add(axisLayout);
             

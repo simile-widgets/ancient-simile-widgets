@@ -21,6 +21,7 @@ package org.simileWidgets.datadust {
     import org.simileWidgets.datadust.config.ScatterPlotConfiguration;
     import org.simileWidgets.datadust.config.IPropertyConfiguration;
     import org.simileWidgets.datadust.expression.Expression;
+    import org.simileWidgets.datadust.vis.FormattedCartesianAxes;
     
     public class Datadust extends DatadustBase {
         protected var _data:Data;
@@ -160,7 +161,7 @@ package org.simileWidgets.datadust {
             
             var config:Configuration = _configurations[index];
             if (_vis == null) {
-                _vis = new Visualization(_data);
+                _vis = new Visualization(_data, new FormattedCartesianAxes());
                 _vis.bounds = new Rectangle(100, 50, boundingWidth - 150, boundingHeight - 100);
                 addChild(_vis);
                 
