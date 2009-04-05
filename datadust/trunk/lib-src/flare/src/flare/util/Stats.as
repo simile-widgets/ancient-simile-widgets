@@ -122,15 +122,19 @@ package flare.util
 			
 			// determine data type
 			for (i=0; i<_num; ++i) {
-				var v:Object = _elm[i], type:int;
-				type = v is Date ? DATE : (v is Number ? NUMBER : OBJECT);
+				var v:* = _elm[i], type:int;
+				
+				// DATADUST: Ignore null and undefined values
+                if (v !== null && v !== undefined) {
+				    type = v is Date ? DATE : (v is Number ? NUMBER : OBJECT);
 
-				if (_type == -1) {
-					_type = type; // seed type
-				} else if (type != _type) {
-					_type = OBJECT; // punt if no match
-					break;
-				}
+    				if (_type == -1) {
+    					_type = type; // seed type
+    				} else if (type != _type) {
+    					_type = OBJECT; // punt if no match
+    					break;
+    				}
+    			}
 			}
 			
 			// sort data values

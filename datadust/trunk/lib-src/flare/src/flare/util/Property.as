@@ -11,7 +11,8 @@ package flare.util
 	{
 		private static const DELIMITER:* = /[\.|\[(.*)\]]/;
 		
-		private static var __cache:Object = {};
+		// DATADUST: Changed __cache from private to protected so the subclass Expression can access it.
+		protected static var __cache:Object = {};
 		private static var __stack:Array = [];
 		private static var __proxy:IValueProxy;
 
