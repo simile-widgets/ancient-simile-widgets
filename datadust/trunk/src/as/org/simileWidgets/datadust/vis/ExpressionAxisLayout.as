@@ -1,5 +1,7 @@
-package org.simileWidgets.datadust.config {
+package org.simileWidgets.datadust.vis {
     import flare.vis.operator.layout.AxisLayout;
+    import flare.vis.axis.CartesianAxes;
+    import flare.vis.Visualization;
     import org.simileWidgets.datadust.expression.Expression;
     
     public class ExpressionAxisLayout extends AxisLayout {

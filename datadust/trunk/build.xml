@@ -14,6 +14,9 @@
   <property name="dir.lib.as"  value="${dir.lib}as/" />
   
   <property name="dir.build"   value="${basedir}/build/" />
+  
+  <property name="flare.src" value="${basedir}/lib-src/flare/src"/>
+  <property name="flare.lib" value="${basedir}/lib-src/flare/lib"/>
 
   <!-- =================================================================== -->
   <target name="prepare">
@@ -43,6 +46,7 @@
       <target-player>9.0.0.0</target-player>
       
       <source-path path-element="${dir.src.as}"/>
+      <source-path path-element="${FLEX_HOME}frameworks/projects/framework/src/"/>
       
       <compiler.library-path dir="${dir.lib.as}">
         <include name="flare.swc" />
@@ -54,6 +58,32 @@
         <include name="*.swf"/>
       </fileset>
     </copy>
+  </target>
+  
+  <!-- =================================================================== -->
+  <target name="flare" depends="prepare">
+    <!-- First we have to collect all the AS files -->
+    <path id="flare.files">
+      <fileset dir="${flare.src}">
+        <include name="**/**"/>
+      </fileset>
+    </path>
+    <pathconvert 
+      property="flare.classes" 
+      pathsep=" " 
+      dirsep="." 
+      refid="flare.files">
+      <map from="${flare.src}/" to=""/>
+      <mapper>
+         <chainedmapper><globmapper from="*.as" to="*"/></chainedmapper>
+      </mapper>
+    </pathconvert>
+
+    <!-- Now we build the .swc -->
+    <compc output="${dir.lib.as}/flare.swc" include-classes="${flare.classes}">
+      <source-path path-element="${flare.src}/"/>
+      <source-path path-element="${flare.lib}/"/>
+    </compc>
   </target>
 
   <!-- =================================================================== -->
