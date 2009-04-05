@@ -67,8 +67,10 @@ package flare.vis.axis
 		public function CartesianAxes(vis:Visualization=null) {
 			_vis = vis;
 			
-			addChild(_xaxis = new Axis());
-			addChild(_yaxis = new Axis());
+			// DATADUST: Allow axes to be created differently by subclasses.
+			addChild(_xaxis = createAxis());
+			addChild(_yaxis = createAxis());
+			
 			addChild(_xline = new AxisGridLine());
 			addChild(_yline = new AxisGridLine());
 			addChild(_border = new RectSprite());
@@ -115,6 +117,10 @@ package flare.vis.axis
             _xGridClip.fillColor = 0xffffffff;
             _yGridClip.lineColor = 0;
             _yGridClip.fillColor = 0xffffffff;
+		}
+		
+		protected function createAxis():Axis {
+		    return new Axis();
 		}
 		
 		/** @inheritDoc */
