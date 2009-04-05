@@ -36,7 +36,7 @@ package org.simileWidgets.datadust {
             var date:String = d[7];
             var dayofyear:String = d[9];
             var week:String = d[11];
-            var dayofweek:String = (d[13]) ? d[13] : 1;
+            var dayofweek:String = (d[13]) ? d[13] : "1";
 
             dateObject.setUTCFullYear(year);
             if (dayofyear != null) { 
@@ -45,9 +45,9 @@ package org.simileWidgets.datadust {
             } else if (week != null) {
                 dateObject.setUTCMonth(0);
                 dateObject.setUTCDate(1);
-                var gd = dateObject.getUTCDay();
-                var day =  (gd) ? gd : 7;
-                var offset = Number(dayofweek) + (7 * Number(week));
+                var gd:Number = dateObject.getUTCDay();
+                var day:Number =  (gd) ? gd : 7;
+                var offset:Number = Number(dayofweek) + (7 * Number(week));
 
                 if (day <= 4) { 
                     dateObject.setUTCDate(offset + 1 - day); 
@@ -98,13 +98,13 @@ package org.simileWidgets.datadust {
              *  http://dojotoolkit.org/.
              */
 
-            var offset:Number = null;
+            var offset:* = undefined;
             var comps:Array = (string.indexOf("T") == -1) ? string.split(" ") : string.split("T");
             
             setIso8601Date(dateObject, comps[0]);
             if (comps.length == 2) { 
                 // first strip timezone info from the end
-                var d = comps[1].match(_timezoneRegexp);
+                var d:Array = comps[1].match(_timezoneRegexp);
                 if (d != null) {
                     if (d[0] == 'Z') {
                         offset = 0;
@@ -117,7 +117,7 @@ package org.simileWidgets.datadust {
 
                 setIso8601Time(dateObject, comps[1]); 
             }
-            if (offset == null) {
+            if (offset == undefined) {
                 offset = dateObject.getTimezoneOffset(); // local time zone if no tz info
             }
             dateObject.setTime(dateObject.getTime() + offset * 60000);
@@ -128,9 +128,9 @@ package org.simileWidgets.datadust {
         static public function parseIso8601DateTime(string:String):Date {
             try {
                 return setIso8601(new Date(0), string);
-            } catch (e) {
-                return null;
+            } catch (e:Error) {
             }
+            return null;
         }
     }
 }

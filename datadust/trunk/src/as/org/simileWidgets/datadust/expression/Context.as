@@ -1,4 +1,6 @@
 package org.simileWidgets.datadust.expression {
+    import org.simileWidgets.datadust.DateUtilities;
+    
     public class Context {
         protected var _parent:Context;
         protected var _map:Object = {};
@@ -56,6 +58,8 @@ package org.simileWidgets.datadust.expression {
                 }
                 return 0;
             });
+            
+            ctx.setIdentifier("date", DateUtilities.parseIso8601DateTime);
             
             return ctx;
         }
