@@ -8,8 +8,6 @@ package org.simileWidgets.datadust {
             switch (type) {
             case "number":
                 return DataUtil.NUMBER;
-            case "date":
-                return DataUtil.DATE;
             case "boolean":
                 return DataUtil.BOOLEAN;
             }
@@ -30,11 +28,19 @@ package org.simileWidgets.datadust {
             return dataSchema;
         }
         
-        static public function readjustColumns(ds:DataSet, columns:Array):DataSet {
+        static public function readjustColumns(ds:DataSet, columns:Array, readjustAll:Boolean):DataSet {
             var columnMap:Object = {};
+            var hasDates:Boolean = false;
             for (var i:int = 0; i < columns.length; i++) {
                 var column:Object = columns[i];
                 columnMap[column.name] = column.type;
+                if (column.type == "date") {
+                    hasDates = true;
+                }
+            }
+            
+            if (!readjustAll && !hasDates) {
+                return ds;
             }
             
             var dataSchema:DataSchema = new DataSchema();
@@ -53,10 +59,14 @@ package org.simileWidgets.datadust {
             for each (var tuple:Object in ds.nodes.data) {
                 for (i = 0; i < columns.length; i++) {
                     column = columns[i];
-                    if (column.type == "number") {
+                    if (readjustAll || (column.type == "date")) {
                         var name:String = column.name;
                         if (tuple.hasOwnProperty(name)) {
-                            tuple[name] = DataUtil.parseValue(tuple[name], DataUtil.NUMBER);
+                            if (column.type == "number") {
+                                tuple[name] = DataUtil.parseValue(tuple[name], DataUtil.NUMBER);
+                            } else if (column.type == "date") {
+                                tuple[name] = DateUtilities.parseIso8601DateTime(tuple[name]);
+                            }
                         }
                     }
                 }
@@ -69,7 +79,10 @@ package org.simileWidgets.datadust {
                 config = [ config ];
             }
             
-            var expression:Expression;
+            var groupExpression:Expression;
+            var sortExpression:Expression;
+            var ascending:Boolean;
+            var property:String;
             
             for (var i:int = 0; i < config.length; i++) {
                 var entry:Object = config[i];
@@ -77,12 +90,11 @@ package org.simileWidgets.datadust {
                     var operation:String = entry["operation"];
                     switch (operation) {
                     case "sort":
-                        expression = Expression.parse(entry["expression"]);
+                        sortExpression = Expression.parse(entry["expression"]);
+                        ascending = entry.hasOwnProperty("ascending") ? entry["ascending"] : true;
+                        property = entry.hasOwnProperty("property") ? entry["property"] : "rank";
                         
-                        var ascending:Boolean = entry.hasOwnProperty("ascending") ? entry["ascending"] : true;
-                        var property:String = entry.hasOwnProperty("property") ? entry["property"] : "rank";
-                        
-                        data.nodes.sortBy(expression.text);
+                        data.nodes.sortBy(sortExpression.text);
                         
                         var rank:Number = ascending ? 0 : data.nodes.length - 1;
                         data.nodes.visit(ascending ?
@@ -91,8 +103,55 @@ package org.simileWidgets.datadust {
                         );
                         break;
                         
+                    case "connect":
+                        groupExpression = entry.hasOwnProperty("group") ? Expression.parse(entry["group"]) : null;
+                        sortExpression = Expression.parse(entry["sort"]);
+                        ascending = entry.hasOwnProperty("ascending") ? entry["ascending"] : true;
+                        
+                        var processGroup:Function = function(nodes:*):void {
+                            var pairs:Array = [];
+                            if (nodes is DataList) {
+                                nodes.visit(function(node:NodeSprite):void {
+                                    pairs.push({ node: node, value: sortExpression.eval(node) });
+                                });
+                            } else {
+                                for each (var node:NodeSprite in nodes) {
+                                    pairs.push({ node: node, value: sortExpression.eval(node) });
+                                }
+                            }
+                            pairs = pairs.sort(
+                                function(p1:Object, p2:Object):int { return DataUtilities.compare(p1.value, p2.value); },
+                                ascending ? 0 : Array.DESCENDING
+                            );
+                            
+                            for (var j:int = 1; j < pairs.length; j++) {
+                                var node1:NodeSprite = pairs[j - 1].node;
+                                var node2:NodeSprite = pairs[j].node;
+                                
+                                data.addEdgeFor(node1, node2, true);
+                            }
+                        };
+                        
+                        if (groupExpression == null) {
+                            processGroup(data.nodes);
+                        } else {
+                            var groups:Object = {};
+                            data.nodes.visit(function(node:NodeSprite):void {
+                                var value:* = groupExpression.eval(node);
+                                if (groups.hasOwnProperty(value)) {
+                                    groups[value].push(node);
+                                } else {
+                                    groups[value] = [ node ];
+                                }
+                            });
+                            for (var v:String in groups) {
+                                processGroup(groups[v]);
+                            }
+                        }
+                        break;
+                        
                     case "filter":
-                        expression = Expression.parse(entry["expression"]);
+                        var expression:Expression = Expression.parse(entry["expression"]);
                         
                         data.nodes.visit(function(node:DataSprite):void { 
                             if (true !== expression.eval(node)) {
@@ -240,6 +299,19 @@ package org.simileWidgets.datadust {
             });
         }
         
+        static public function toComparable(d:*):* {
+            if (d != null) {
+                if (d is Date) {
+                    return d.time;
+                }
+            }
+            return d;
+        }
         
+        static public function compare(d1:*, d2:*):Number {
+            var v1:* = toComparable(d1);
+            var v2:* = toComparable(d2);
+            return v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);
+        }
     }
 }

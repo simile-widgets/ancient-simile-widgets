@@ -98,8 +98,8 @@ package org.simileWidgets.datadust {
                 function(evt:Event):void {
                     var ds:DataSet = loader.data as DataSet;
                     
-                    if (hasColumnHeadings && source.hasOwnProperty("columns")) {
-                        ds = DataUtilities.readjustColumns(ds, source["columns"]);
+                    if (source.hasOwnProperty("columns")) {
+                        ds = DataUtilities.readjustColumns(ds, source["columns"], hasColumnHeadings);
                     }
                     _addDataSet(ds, source);
                     
