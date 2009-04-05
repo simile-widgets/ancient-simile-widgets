@@ -4,6 +4,7 @@ package flare.display
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
+    import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
@@ -76,11 +77,46 @@ package flare.display
 		private var _tf:TextField;
 		private var _fmt:TextFormat;
 		
+		// DATADUST: This is for superscript.
+		private var _tfExtra:TextField
+		private var _fmtExtra:TextFormat;
+		
 		private var _hAnchor:int = LEFT;
 		private var _vAnchor:int = TOP;
 		
+		protected function copyTextFormat(fmt:TextFormat):TextFormat {
+            return new TextFormat(
+                fmt.font,
+                fmt.size,
+                fmt.color,
+                fmt.bold,
+                fmt.italic,
+                fmt.underline,
+                fmt.url,
+                fmt.target,
+                fmt.align,
+                fmt.leftMargin, 
+                fmt.rightMargin, 
+                fmt.indent,
+                fmt.leading
+            );
+		}
+		
+		protected function deriveExtraTextFormat():void {
+		    _fmtExtra = copyTextFormat(_fmt);
+		    _fmtExtra.size = Number(_fmtExtra.size) * 0.8;
+		}
+		
+		protected function setTextFormats():void {
+		    _tf.setTextFormat(_fmt);
+			_tfExtra.setTextFormat(_fmtExtra);
+		}
+		
 		/** The TextField instance backing this TextSprite. */
 		public function get textField():TextField { return _tf; }
+
+		/** The extra TextField instance backing this TextSprite. */
+		public function get extraTextField():TextField { return _tfExtra; }
 		
 		/** The bitmap of the text, if in BITMAP mode. */
 		public function get bitmap():Bitmap { return _bmap; }
@@ -98,7 +134,9 @@ package flare.display
 		public function get textFormat():TextFormat { return _fmt; }
 		public function set textFormat(fmt:TextFormat):void {
 			_tf.defaultTextFormat = (_fmt = fmt);
-			_tf.setTextFormat(_fmt);
+			deriveExtraTextFormat();
+			setTextFormats();
+			
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -115,6 +153,18 @@ package flare.display
 		}
 		
 		/**
+		 * The extra text shown by this TextSprite.
+		 */
+		public function get extraText():String { return _tfExtra.text; }
+		public function set extraText(txt:String):void {
+			if (_tfExtra.text != txt) {
+				_tfExtra.text = (txt == null ? "" : txt);
+				if (_fmtExtra != null) _tfExtra.setTextFormat(_fmtExtra);
+				dirty();
+			}
+		}
+		
+		/**
 		 * The html text shown by this TextSprite.
 		 */
 		public function get htmlText():String { return _tf.htmlText; }
@@ -126,12 +176,24 @@ package flare.display
 		}
 		
 		/**
+		 * The extra html text shown by this TextSprite.
+		 */
+		public function get extraHtmlText():String { return _tfExtra.htmlText; }
+		public function set extraHtmlText(txt:String):void {
+			if (_tfExtra.htmlText != txt) {
+				_tfExtra.htmlText = (txt == null ? "" : txt);
+				dirty();
+			}
+		}
+		
+		/**
 		 * The font to the text.
 		 */
 		public function get font():String { return String(_fmt.font); }
 		public function set font(f:String):void {
-			_fmt.font = f;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.font = _fmt.font = f;
+			setTextFormats();
+			
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -140,8 +202,8 @@ package flare.display
 		 */
 		public function get color():uint { return uint(_fmt.color); }
 		public function set color(c:uint):void {
-			_fmt.color = c;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.color = _fmt.color = c;
+			setTextFormats();
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -151,7 +213,8 @@ package flare.display
 		public function get size():Number { return Number(_fmt.size); }
 		public function set size(s:Number):void {
 			_fmt.size = s;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.size = Math.round(s * 0.8);
+			setTextFormats();
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -160,8 +223,8 @@ package flare.display
 		 */
 		public function get bold():Boolean { return Boolean(_fmt.bold); }
 		public function set bold(b:Boolean):void {
-			_fmt.bold = b;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.bold = _fmt.bold = b;
+			setTextFormats();
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -170,8 +233,8 @@ package flare.display
 		 */
 		public function get italic():Boolean { return Boolean(_fmt.italic); }
 		public function set italic(b:Boolean):void {
-			_fmt.italic = b;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.italic = _fmt.italic = b;
+			setTextFormats();
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -180,8 +243,8 @@ package flare.display
 		 */
 		public function get underline():Boolean { return Boolean(_fmt.underline); }
 		public function set underline(b:Boolean):void {
-			_fmt.underline = b;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.underline = _fmt.underline = b;
+			setTextFormats();
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -190,8 +253,8 @@ package flare.display
 		 */
 		public function get kerning():Boolean { return Boolean(_fmt.kerning); }
 		public function set kerning(b:Boolean):void {
-			_fmt.kerning = b;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.kerning = _fmt.kerning = b;
+			setTextFormats();
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -200,8 +263,8 @@ package flare.display
 		 */
 		public function get letterSpacing():int { return int(_fmt.letterSpacing); }
 		public function set letterSpacing(s:int):void {
-			_fmt.letterSpacing = s;
-			_tf.setTextFormat(_fmt);
+			_fmtExtra.letterSpacing = _fmt.letterSpacing = s;
+			setTextFormats();
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -239,6 +302,14 @@ package flare.display
 			_tf.autoSize = TextFieldAutoSize.LEFT;
 			_tf.defaultTextFormat = (_fmt = format ? format : new TextFormat());
 			if (text != null) _tf.text = text;
+			
+			// DATADUST: This is for superscript.
+			deriveExtraTextFormat();
+			_tfExtra = new TextField();
+			_tfExtra.selectable = false; // not selectable by default
+			_tfExtra.autoSize = TextFieldAutoSize.LEFT;
+			_tfExtra.defaultTextFormat = _fmt;
+    		
 			_bmap = new Bitmap();
 			setMode(mode);
 			dirty();
@@ -299,7 +370,11 @@ package flare.display
 			_fmt.target = fmt.target;
 			_fmt.underline = fmt.underline;
 			_fmt.url = fmt.url;
-			_tf.setTextFormat(_fmt);
+			
+			deriveExtraTextFormat();
+			
+			setTextFormats();
+			
 			if (_mode==BITMAP) dirty();
 		}
 		
@@ -315,26 +390,45 @@ package flare.display
 		/** @private */
 		protected function layout():void
 		{
-			var d:DisplayObject = (_mode==BITMAP ? _bmap : _tf);
+			if (_mode == BITMAP) {
+				var d:DisplayObject = _bmap;
 			
-			// horizontal anchor
-			switch (_hAnchor) {
-				case LEFT:   d.x = 0; break;
-				case CENTER: d.x = -d.width / 2; break;
-				case RIGHT:  d.x = -d.width; break;
-			}
-			// vertical anchor
-			switch (_vAnchor) {
-				case TOP:    d.y = 0; break;
-				case MIDDLE: d.y = -d.height / 2; break;
-				case BOTTOM: d.y = -d.height; break;
+				// horizontal anchor
+				switch (_hAnchor) {
+					case LEFT:   d.x = 0; break;
+					case CENTER: d.x = -d.width / 2; break;
+					case RIGHT:  d.x = -d.width; break;
+				}
+				// vertical anchor
+				switch (_vAnchor) {
+					case TOP:    d.y = 0; break;
+					case MIDDLE: d.y = -d.height / 2; break;
+					case BOTTOM: d.y = -d.height; break;
+				}
+			} else {
+				var width:int = _tf.width + _tfExtra.width;
+			
+				// horizontal anchor
+				switch (_hAnchor) {
+					case LEFT:   _tf.x = 0; break;
+					case CENTER: _tf.x = -width / 2; break;
+					case RIGHT:  _tf.x = -width; break;
+				}
+				// vertical anchor
+				switch (_vAnchor) {
+					case TOP:    _tf.y = 0; break;
+					case MIDDLE: _tf.y = -_tf.height / 2; break;
+					case BOTTOM: _tf.y = -_tf.height; break;
+				}
+				_tfExtra.x = _tf.x + _tf.width;
+				_tfExtra.y = _tf.y;
 			}
 		}
 		
 		/** @private */
 		protected function rasterize():void
 		{
-			var tw:Number = _tf.width + 1;
+			var tw:Number = _tf.width + _tfExtra.width + 1;
 			var th:Number = _tf.height + 1;
 			var bd:BitmapData = _bmap.bitmapData;
 			if (bd == null || bd.width != tw || bd.height != th) {
@@ -344,6 +438,10 @@ package flare.display
 				bd.fillRect(new Rectangle(0,0,tw,th), 0x00ffffff);
 			}
 			bd.draw(_tf);
+			
+			var transform:Matrix = new Matrix();
+			transform.translate(_tf.width, 0);
+			bd.draw(_tfExtra, transform);
 		}
 		
 	} // end of class TextSprite
