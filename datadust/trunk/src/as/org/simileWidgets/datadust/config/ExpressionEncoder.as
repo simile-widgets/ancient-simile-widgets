@@ -20,12 +20,7 @@ package org.simileWidgets.datadust.config {
         }
         
         protected function addOperator(vis:Visualization, seq:FunctionSequence, op:IOperator):void {
-            if (seq == null) {
-                vis.operators.add(op);
-            } else {
-                vis.setOperator(_propertyName, op);
-                seq.push(vis.updateLater(_propertyName), 1);
-            }
+            vis.operators.add(op);
         }
     }
 }

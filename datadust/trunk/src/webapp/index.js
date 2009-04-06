@@ -60,6 +60,9 @@ function onLoad() {
                     yAxis: {
                         expression: "default(data.year[2000].density, 0)",
                         scale: "log"
+                    },
+                    nodes: {
+                        alpha: { expression: "if(data.continent = 'Africa', 1, 0)" }
                     }
                 },
                 {
