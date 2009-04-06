@@ -14,12 +14,11 @@ package org.simileWidgets.datadust.vis {
             
             label.font = "Helvetica";
             label.size = 14;
-            label.extraTextField.antiAliasType = label.textField.antiAliasType = flash.text.AntiAliasType.ADVANCED;
-            label.extraTextField.sharpness = label.textField.sharpness = -200;
+            label.bold = false;
+            label.color = 0xFF000000;
             
             super.updateLabel(label);
             if (axisScale.scaleType == ScaleType.LOG && label.value is Number) {
-                
                 formatLogValue(label, label.value as Number, 1);
             }
         }
@@ -29,22 +28,21 @@ package org.simileWidgets.datadust.vis {
                 var exp:Number = Math.round(log10(n));
                 var factor:Number = n / Math.pow(10, exp);
                 
-                label.bold = ((exp % 3) == 0);
-                
-                if (Math.abs(factor - 1) < 0.01) { // almost 1
-                    label.text = "10";
-                } else {
-                    if (factor > 5) {
-                        factor /= 10;
-                        exp += 1;
+                if (!isNaN(factor) && !isNaN(exp)) {
+                    if (Math.abs(factor - 1) < 0.01) { // almost 1
+                        label.text = "10";
+                    } else {
+                        if (factor > 5) {
+                            factor /= 10;
+                            exp += 1;
+                        }
+                        label.text = roundToSignificantDigits(factor, significantDigits) + "x10";
                     }
-                    label.text = roundToSignificantDigits(factor, significantDigits) + "x10";
+                    label.extraText = String(exp);
+                    
+                    label.bold = ((exp % 3) == 0);
+                    label.color = ((exp % 3) == 0) ? 0xFF000000 : 0xFF888888;
                 }
-                label.extraText = String(exp);
-            } else {
-                label.bold = false;
-                label.text = String(n);
-                label.extraText = "";
             }
         }
         

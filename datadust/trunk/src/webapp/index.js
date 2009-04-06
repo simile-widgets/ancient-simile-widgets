@@ -18,6 +18,11 @@ function onLoad() {
                         group:  "year"
                     }
                 },
+                {   url:        "examples/world/data/continents.txt",
+                    format:     "tab",
+                    hasColumnHeadings: true,
+                    join:       "country"
+                },
                 {   url:        "examples/world/data/world-literacy.txt",
                     format:     "tab",
                     hasColumnHeadings: true,
@@ -32,7 +37,7 @@ function onLoad() {
             ],
             configs: [
                 {
-                    tooltip: { expression: "data.country" },
+                    tooltip: { expression: "data.country + ' in ' + data.continent" },
                     xAxis: {
                         expression: "default(data.year[1950].population, 0)",
                         scale: "log"
@@ -42,11 +47,12 @@ function onLoad() {
                         scale: "log"
                     },
                     nodes: {
-                        size: { expression: "power(data.literacy, 2)" }
+                        size: { expression: "power(data.literacy, 2)" },
+                        fillColor: { expression: "data.continent" }
                     }
                 },
                 {
-                    tooltip: { expression: "data.country" },
+                    baseConfig: 0,
                     xAxis: {
                         expression: "default(data.year[2000].population, 0)",
                         scale: "log"
@@ -54,13 +60,10 @@ function onLoad() {
                     yAxis: {
                         expression: "default(data.year[2000].density, 0)",
                         scale: "log"
-                    },
-                    nodes: {
-                        size: { expression: "power(data.literacy, 2)" }
                     }
                 },
                 {
-                    tooltip: { expression: "data.country" },
+                    baseConfig: 0,
                     xAxis: {
                         expression: "default(data.literacy, 0)",
                         scale: "linear"
@@ -68,9 +71,6 @@ function onLoad() {
                     yAxis: {
                         expression: "default(data.year[2000].population, 0)",
                         scale: "log"
-                    },
-                    nodes: {
-                        size: { expression: "power(data.year[2000].density, 2)" }
                     }
                 }
             ]

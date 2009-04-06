@@ -7,8 +7,6 @@ package org.simileWidgets.datadust {
     import flare.vis.*;
     import flare.vis.data.Data;
     import flare.vis.data.NodeSprite;
-    import flare.vis.controls.HoverControl;
-    import flare.vis.events.SelectionEvent;
     import flare.scale.*;
     import flash.net.URLLoader;
     import flash.text.TextField;
@@ -161,87 +159,34 @@ package org.simileWidgets.datadust {
             
             var config:Configuration = _configurations[index];
             if (_vis == null) {
-                _vis = new Visualization(_data, new FormattedCartesianAxes());
-                _vis.bounds = new Rectangle(100, 50, boundingWidth - 150, boundingHeight - 100);
-                addChild(_vis);
-                
-                _vis.controls.add(new HoverControl(
-                    NodeSprite,
-                    HoverControl.MOVE_AND_RETURN, // by default, move highlighted items to front
-                    function(e:SelectionEvent):void { // mouse over
-                        e.node.lineWidth = 2;
-                        e.node.lineColor = 0x88ff0000;
-                        showPopup(config, e.cause, e.node);
-                    },
-                    function(e:SelectionEvent):void { // mouse out
-                        var lwpc:IPropertyConfiguration = config.nodesConfig.lineWidthConfig;
-                        e.node.lineWidth = lwpc != null ? lwpc.encode(e.node) : 0;
-                        
-                        var lcpc:IPropertyConfiguration = config.nodesConfig.lineColorConfig;
-                        e.node.lineColor = lcpc != null ? lcpc.encode(e.node) : 0;
-                        
-                        removeChild(_popup);
-                    }
-                ));
+                createVisualization();
                 
                 config.configure(_vis, null);
                 
                 _vis.update();
             } else {
                 _vis.continuousUpdates = false;
+                _vis.controls.clear();
                 _vis.operators.clear();
                 
                 var seq:FunctionSequence = new FunctionSequence();
                 
                 config.configure(_vis, seq);
+                /*
+                seq.push(function(t:Transition):void {
+                    trace("Done transitioning");
+                }, null);
+                */
                 seq.play();
             }
             _activeConfiguration = index;
         }
         
-        protected function showPopup(config:Configuration, e:MouseEvent, node:NodeSprite):void {
-            var tooltipExpression:Expression = config.tooltipExpression;
-            if (tooltipExpression == null) {
-                return;
-            }
-            
-            var text:String = tooltipExpression.eval(node);
-            if (text == null) {
-                return;
-            }
-            
-            var x:Number = e.stageX - e.localX;
-            var y:Number = e.stageY - e.localY;
-            var w:Number = node.width;
-            var h:Number = node.height;
-                    
-            addChild(_popup);
-            _popup.width = 500;
-            _popup.text = text;
-            _popup.background = true;
-            _popup.backgroundColor = 0x88eeeeee;
-            _popup.type = TextFieldType.DYNAMIC;
-                    
-            var format:TextFormat = new TextFormat();
-            format.font = "Helvetica";
-            format.size = 15;
-            _popup.setTextFormat(format);
-            
-            var metrics:TextLineMetrics = _popup.getLineMetrics(0);
-            
-            _popup.width = metrics.width + 5;
-            _popup.height = metrics.height + 5;
-            if (x + w + _popup.width > boundingWidth) {
-                _popup.x = x - _popup.width - 3;
-            } else {
-                _popup.x = x + w + 3;
-            }
-            
-            if (y > 20) {
-                _popup.y = y - 10;
-            } else {
-                _popup.y = y + 10;
-            }
+        protected function createVisualization():void {
+            _vis = new Visualization(_data, new FormattedCartesianAxes());
+            _vis.bounds = new Rectangle(100, 50, boundingWidth - 150, boundingHeight - 100);
+            _vis.data.addGroup("selected");
+            addChild(_vis);
         }
     }
 }
