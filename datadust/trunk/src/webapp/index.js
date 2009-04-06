@@ -62,7 +62,7 @@ function onLoad() {
                         scale: "log"
                     },
                     nodes: {
-                        alpha: { expression: "if(data.continent = 'Africa', 1, 0)" }
+                        alpha: { expression: "if(data.continent = 'Africa', 1, 0.1)" }
                     }
                 },
                 {
@@ -74,6 +74,9 @@ function onLoad() {
                     yAxis: {
                         expression: "default(data.year[2000].population, 0)",
                         scale: "log"
+                    },
+                    nodes: {
+                        alpha: { expression: "if(data.continent = 'Africa', 1, 0.1)" }
                     }
                 }
             ]
