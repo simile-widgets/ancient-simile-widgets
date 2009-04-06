@@ -1,7 +1,6 @@
 package org.simileWidgets.datadust.config {
     import flare.vis.Visualization;
     import flare.animate.FunctionSequence;
-    import org.simileWidgets.datadust.expression.Expression;
 
     public class NodesConfiguration {
         protected var _shapeConfig:IPropertyConfiguration;

@@ -1,0 +1,232 @@
+continent	country
+North America	United States
+Europe	Germany
+Australia	Australia
+Asia	Iran
+Europe	United Kingdom
+Asia	Hong Kong
+Europe	Iceland
+Europe	France
+Asia	India
+North America	Canada
+Asia	Russia
+Asia	Japan
+Europe	Italy
+Asia	Philippines
+Africa	South Africa
+Asia	Thailand
+Europe	Poland
+South America	Brazil
+South America	Argentina
+Europe	Belgium
+Europe	Netherlands
+Europe	Denmark
+Europe	Sweden
+Asia	Turkey
+South America	Venezuela
+Asia	North Korea
+Asia	South Korea
+North America	Mexico
+Europe	Lithuania
+Europe	Spain
+Asia	Singapore
+Europe	Norway
+Europe	Czech Republic
+Europe	Croatia
+Europe	Slovakia
+Africa	Morocco
+Europe	Luxembourg
+Asia	Pakistan
+Europe	Finland
+Europe	Switzerland
+Africa	Botswana
+Asia	Malaysia
+Africa	Egypt
+Europe	Ireland
+Europe	Hungary
+Europe	Andorra
+Asia	United Arab Emirates
+Asia	Afghanistan
+North America	Antigua and Barbuda
+North America	Anguilla
+Europe	Albania
+Asia	Armenia
+North America	Netherlands Antilles
+Africa	Angola
+Europe	Austria
+North America	Aruba
+Asia	Azerbaijan
+Europe	Bosnia and Herzegovina
+North America	Barbados
+Asia	Bangladesh
+Africa	Burkina Faso
+Europe	Bulgaria
+Asia	Bahrain
+Africa	Burundi
+Africa	Benin
+North America	Bermuda
+Asia	Brunei Darussalam
+South America	Bolivia
+North America	The Bahamas
+Asia	Bhutan
+Antarctica	Bouvet Island
+Europe	Belarus
+North America	Belize
+Asia	Cocos Islands
+Africa	Central African Republic
+Africa	Republic of the Congo
+Africa	Côte d'Ivoire
+South America	Chile
+Africa	Cameroon
+Asia	China
+South America	Colombia
+Europe	Serbia
+North America	Cuba
+Africa	Cape Verde
+Asia	Christmas Island
+Asia	Cyprus
+Africa	Djibouti
+North America	Dominica
+North America	Dominican Republic
+Africa	Algeria
+South America	Ecuador
+Europe	Estonia
+Africa	Western Sahara
+Africa	Eritrea
+Africa	Ethiopia
+South America	Falkland Islands
+Asia	Federated States of Micronesia
+North America	Clipperton Island
+North America	Grenada
+Asia	Georgia
+South America	French Guiana
+Europe	Guernsey
+Africa	Ghana
+Europe	Gibraltar
+North America	Greenland
+Africa	The Gambia
+Africa	Guinea
+North America	Guadeloupe
+Africa	Equatorial Guinea
+Europe	Greece
+Antarctica	South Georgia and the South Sandwich Islands
+North America	Guatemala
+Africa	Guinea-Bissau
+South America	Guyana
+Antarctica	Heard Island and McDonald Islands
+North America	Honduras
+North America	Haiti
+Asia	Indonesia
+Asia	Israel
+Europe	Isle of Man
+Asia	British Indian Ocean Territory
+Asia	Iraq
+Europe	Jersey
+North America	Jamaica
+Asia	Jordan
+Africa	Kenya
+Asia	Kyrgyzstan
+Asia	Cambodia
+Africa	Comoros
+North America	Saint Kitts and Nevis
+Asia	Kuwait
+North America	Cayman Islands
+Asia	Kazakhstan
+Asia	Laos
+Asia	Lebanon
+North America	Saint Lucia
+Europe	Liechtenstein
+Asia	Sri Lanka
+Africa	Liberia
+Africa	Lesotho
+Europe	Latvia
+Africa	Libya
+Europe	Moldova
+Africa	Madagascar
+Europe	Republic of Macedonia
+Africa	Mali
+Asia	Mongolia
+Asia	Macau
+North America	Martinique
+Africa	Mauritania
+North America	Montserrat
+Europe	Malta
+Africa	Mauritius
+Asia	Maldives
+Africa	Malawi
+Africa	Mozambique
+Africa	Namibia
+Africa	Niger
+Africa	Nigeria
+North America	Nicaragua
+Asia	Nepal
+Asia	Oman
+North America	Panama
+South America	Peru
+North America	Saint-Pierre and Miquelon
+Europe	Portugal
+South America	Paraguay
+Asia	Qatar
+Africa	Réunion Island
+Europe	Romania
+Africa	Rwanda
+Asia	Saudi Arabia
+Africa	Seychelles
+Africa	Sudan
+Africa	Saint Helena
+Europe	Slovenia
+Europe	Svalbard
+Africa	Sierra Leone
+Europe	San Marino
+Africa	Senegal
+Africa	Somalia
+South America	Suriname
+Africa	São Tomé and Príncipe
+North America	El Salvador
+Asia	Syria
+Africa	Swaziland
+North America	Turks and Caicos Islands
+Africa	Chad
+Antarctica	French Southern Territories
+Africa	Togo
+Asia	Tajikistan
+Asia	Turkmenistan
+Africa	Tunisia
+North America	Trinidad and Tobago
+Asia	Taiwan
+Africa	Tanzania
+Europe	Ukraine
+Africa	Uganda
+South America	Uruguay
+Asia	Uzbekistan
+Europe	Vatican City
+North America	Saint Vincent and the Grenadines
+North America	British Virgin Islands
+North America	United States Virgin Islands
+Asia	Vietnam
+Asia	Yemen
+Africa	Mayotte
+Africa	Zambia
+Africa	Zimbabwe
+Australia	Ashmore and Cartier Islands
+Africa	Bassas da India
+Asia	Myanmar
+Africa	Europa Island
+Asia	Gaza Strip
+Africa	Glorioso Islands
+North America	Jan Mayen
+Africa	Juan de Nova Island
+Europe	Montenegro
+North America	Navassa Island
+Asia	Paracel Islands
+Asia	Spratly Islands
+Africa	Tromelin Island
+Asia	Palau
+Europe	Northern Ireland
+Europe	Scotland
+Europe	Wales
+Asia	West Bank
+Africa	Democratic Republic of the Congo
+Europe	Yugoslavia
+Europe	Valencian Country
+Europe	Second Polish Republic
