@@ -6,12 +6,15 @@ package org.simileWidgets.datadust.config {
     import flare.animate.FunctionSequence;
     
     public class ColorExpressionEncoder extends ExpressionEncoder {
-        public function ColorExpressionEncoder(propertyName:String, o:Object) {
+        protected var _group:String;
+        
+        public function ColorExpressionEncoder(group:String, propertyName:String, o:Object) {
             super(propertyName, o["expression"]);
+            _group = group;
         }
         
         public override function configure(vis:Visualization, seq:FunctionSequence):void {
-            addOperator(vis, seq, new ColorEncoder(_expression.text, Data.NODES, _propertyName, ScaleType.CATEGORIES));
+            addOperator(vis, seq, new ColorEncoder(_expression.text, _group, _propertyName, ScaleType.CATEGORIES));
         }
     }
 }

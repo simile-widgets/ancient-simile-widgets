@@ -1,5 +1,6 @@
 package org.simileWidgets.datadust.config {
     import flare.vis.Visualization;
+    import flare.vis.data.Data;
     import flare.animate.FunctionSequence;
     import org.simileWidgets.datadust.expression.Expression;
 
@@ -9,9 +10,9 @@ package org.simileWidgets.datadust.config {
         protected var _alphaConfig:IPropertyConfiguration;
         
         public function EdgesConfiguration(jsConfig:Object, jsBaseConfig:Object) {
-            _lineColorConfig =  Utilities.getPropertyConfiguration(jsConfig, jsBaseConfig, "lineColor", "lineColor",    0,          "color");
-            _lineWidthConfig =  Utilities.getPropertyConfiguration(jsConfig, jsBaseConfig, "lineWidth", "lineWidth",    0,          "number");
-            _alphaConfig =      Utilities.getPropertyConfiguration(jsConfig, jsBaseConfig, "alpha",     "alpha",        null,       "number");
+            _lineColorConfig =  Utilities.getPropertyConfiguration(Data.EDGES, jsConfig, jsBaseConfig, "lineColor", "lineColor",    0,          "color");
+            _lineWidthConfig =  Utilities.getPropertyConfiguration(Data.EDGES, jsConfig, jsBaseConfig, "lineWidth", "lineWidth",    0,          "number");
+            _alphaConfig =      Utilities.getPropertyConfiguration(Data.EDGES, jsConfig, jsBaseConfig, "alpha",     "alpha",        null,       "number");
         }
         
         public function get lineColorConfig():IPropertyConfiguration {

@@ -1,13 +1,15 @@
 package org.simileWidgets.datadust.config {
-    import org.simileWidgets.datadust.expression.Expression;
     import flare.vis.Visualization;
     import flare.animate.FunctionSequence;
+    import flare.vis.operator.encoder.PropertyEncoder;
 
     public class ConstantPropertyEncoder implements IPropertyConfiguration {
+        protected var _group:String;
         protected var _propertyName:String;
         protected var _value:*;
         
-        public function ConstantPropertyEncoder(propertyName:String, value:*) {
+        public function ConstantPropertyEncoder(group:String, propertyName:String, value:*) {
+            _group = group;
             _propertyName = propertyName;
             _value = value;
         }
@@ -16,11 +18,7 @@ package org.simileWidgets.datadust.config {
             var p:Object = {};
             p[_propertyName] = _value;
             
-            if (seq == null) {
-                vis.data.nodes.setProperties(p);
-            } else {
-                seq.push(vis.data.nodes.setLater(p), 1);
-            }
+            vis.operators.add(new PropertyEncoder(p, _group));
         }
         
         public function encode(x:Object):* {

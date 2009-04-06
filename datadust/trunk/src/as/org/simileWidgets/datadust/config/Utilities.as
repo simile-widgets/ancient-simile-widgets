@@ -13,12 +13,12 @@ package org.simileWidgets.datadust.config {
             return o1 != null && o1.hasOwnProperty(field) ? o1[field] : {};
         }
         
-        static public function getPropertyConfiguration(o1:Object, o2:Object, configField:String, propertyName:String, def:*, format:String):IPropertyConfiguration {
+        static public function getPropertyConfiguration(group:String, o1:Object, o2:Object, configField:String, propertyName:String, def:*, format:String):IPropertyConfiguration {
             var o:* = getDelegate(o1, o2, configField, def);
             var config:IPropertyConfiguration = null;
             if (o != null) {
                 if (o is Number || o is String) {
-                    config = new ConstantPropertyEncoder(propertyName, parseStaticPropertyValue(o, format));
+                    config = new ConstantPropertyEncoder(group, propertyName, parseStaticPropertyValue(o, format));
                 } else {
                     switch (format) {
                     case "size":
@@ -30,7 +30,11 @@ package org.simileWidgets.datadust.config {
                         break;
                         
                     case "color":
-                        config = new ColorExpressionEncoder(propertyName, o);
+                        config = new ColorExpressionEncoder(group, propertyName, o);
+                        break;
+                        
+                    case "number":
+                        config = new AsIsExpressionEncoder(group, propertyName, o);
                         break;
                     }
                 }
