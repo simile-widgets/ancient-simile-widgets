@@ -300,14 +300,14 @@ package org.simileWidgets.runway {
             }
         }
         
-        internal function onSideSlideFrameMouseOver(slideFrame:SlideFrame, side:int):void {
-            if (_showSideSlideTooltip) {
+        internal function onSlideFrameMouseOver(slideFrame:SlideFrame, side:int):void {
+            if (_showSideSlideTooltip && side != Runway.SIDE_CENTER) {
                 showTooltip(slideFrame, slideFrame.rendition.slide.title);
             }
             dispatchEvent(new SlideEvent("sideSlideMouseOver", slideFrame.rendition.slide, slideFrame.index));
         }
         
-        internal function onSideSlideFrameMouseOut(slideFrame:SlideFrame, side:int):void {
+        internal function onSlideFrameMouseOut(slideFrame:SlideFrame, side:int):void {
             hideTooltip();
             dispatchEvent(new SlideEvent("sideSlideMouseOut", slideFrame.rendition.slide, slideFrame.index));
         }
