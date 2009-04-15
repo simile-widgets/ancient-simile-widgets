@@ -31,7 +31,8 @@ var possibleSettings = {
     "subtitleFontBold" : "boolean",
     "subtitleColor" : "color",
     
-    "mouseWheelIncrement" : "number"
+    "mouseWheelIncrement" : "number",
+    "showSideSlideTooltip" : "boolean"
 };
 
 function onThemeChange(select) {

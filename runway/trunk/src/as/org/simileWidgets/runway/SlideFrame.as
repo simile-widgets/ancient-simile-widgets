@@ -37,6 +37,18 @@ package org.simileWidgets.runway {
             _runway = null;
         }
         
+        public function get rendition():SlideRendition {
+            return _rendition;
+        }
+        
+        public function get index():int {
+            return _index;
+        }
+        
+        public function get side():int {
+            return _side;
+        }
+        
         public function prepare():void {
             _rendition.prepare();
         }
@@ -181,14 +193,14 @@ package org.simileWidgets.runway {
         private function _mouseOverListener(e:Event):void {
             Mouse.cursor = MouseCursor.BUTTON;
             if (_side != Runway.SIDE_CENTER) {
-                _runway.showTooltip(this, _rendition.slide.title);
+                _runway.onSideSlideFrameMouseOver(this, _side);
             }
         }
         
         private function _mouseOutListener(e:Event):void {
             Mouse.cursor = MouseCursor.AUTO;
             if (_side != Runway.SIDE_CENTER) {
-                _runway.hideTooltip();
+                _runway.onSideSlideFrameMouseOut(this, _side);
             }
         }
     }

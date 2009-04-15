@@ -80,7 +80,13 @@ Runway._Impl.prototype._installUI = function() {
         "onSelect" : true,
         "onZoom" : true,
         "onTitleClick" : true,
-        "onSubtitleClick" : true
+        "onTitleMouseOver": true,
+        "onTitleMouseOut": true,
+        "onSubtitleClick" : true,
+        "onSubtitleMouseOver": true,
+        "onSubtitleMouseOut": true,
+        "onSideSlideMouseOver": true,
+        "onSideSlideMouseOut": true
     };
     for (var n in eventHandlerNames) {
         if (n in this._options) {

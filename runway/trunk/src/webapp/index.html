@@ -41,14 +41,20 @@
                         document.getElementById("selected-slide").innerHTML = record.title;
                     },
                     onTitleClick: function(index, id) {
-                        alert("Clicked on title: " + records[index].title);
+                        // alert("Clicked on title: " + records[index].title);
                     },
                     onSubtitleClick: function(index, id) {
-                        alert("Clicked on subtitle: " + records[index].subtitle);
+                        // alert("Clicked on subtitle: " + records[index].subtitle);
                     },
                     onZoom: function(index, id) {
                         // Triggered by Space, Enter, or clicking on the currently focused image.
-                        alert("Zoomed in on: " + records[index].title);
+                        // alert("Zoomed in on: " + records[index].title);
+                    },
+                    onSideSlideMouseOver: function(index, id) {
+                        // console.log("over " + index);
+                    },
+                    onSideSlideMouseOut: function(index, id) {
+                        // console.log("out " + index);
                     }
                 }
             );
