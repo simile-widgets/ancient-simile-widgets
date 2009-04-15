@@ -43,6 +43,8 @@ package org.simileWidgets.runway {
                 case "onSubtitleClick":
                 case "onSubtitleMouseOver":
                 case "onSubtitleMouseOut":
+                case "onSideSlideMouseOver":
+                case "onSideSlideMouseOut":
                 case "theme":
                 case "fixedSlideSize":
                 case "slideSize":
@@ -69,6 +71,22 @@ package org.simileWidgets.runway {
                         "zoom", 
                         function(e:Event):void {
                             ExternalInterface.call(root.loaderInfo.parameters["onZoom"], _runway.selectedIndex, _runway.selectedID);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onSideSlideMouseOver")) {
+                    _runway.addEventListener(
+                        "sideSlideMouseOver", 
+                        function(e:SlideEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onSideSlideMouseOver"], e.index, e.slide.id);
+                        }
+                    );
+                }
+                if (root.loaderInfo.parameters.hasOwnProperty("onSideSlideMouseOut")) {
+                    _runway.addEventListener(
+                        "sideSlideMouseOut", 
+                        function(e:SlideEvent):void {
+                            ExternalInterface.call(root.loaderInfo.parameters["onSideSlideMouseOut"], e.index, e.slide.id);
                         }
                     );
                 }
@@ -165,6 +183,8 @@ package org.simileWidgets.runway {
                 return _runway.geometry[name];
             } else if (_isNumberRunwayProperty(name)) {
                 return _runway[name];
+            } else if (_isBooleanRunwayProperty(name)) {
+                return _runway[name];
             }
             return undefined;
         }
@@ -182,12 +202,22 @@ package org.simileWidgets.runway {
                 _runway.geometry[name] = (value is Number) ? value : Number(value);
             } else if (_isNumberRunwayProperty(name)) {
                 _runway[name] = (value is Number) ? value : Number(value);
+            } else if (_isBooleanRunwayProperty(name)) {
+                _runway[name] = (value is Boolean) ? value : (value == "true");
             }
         }
         
         private function _isNumberRunwayProperty(name:String):Boolean {
             switch (name) {
             case "mouseWheelIncrement":
+                return true;
+            }
+            return false;
+        }
+        
+        private function _isBooleanRunwayProperty(name:String):Boolean {
+            switch (name) {
+            case "showSideSlideTooltip":
                 return true;
             }
             return false;

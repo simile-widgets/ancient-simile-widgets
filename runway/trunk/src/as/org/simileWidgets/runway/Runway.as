@@ -26,7 +26,8 @@ package org.simileWidgets.runway {
         private var _subtitleText:TextField;
         private var _tooltipText:TextField;
         
-        private var _mouseWheelIncrement:int = -1;
+        private var _mouseWheelIncrement:int = 1;
+        private var _showSideSlideTooltip:Boolean = true;
         
         private var _selectedIndex:Number = -1;
         private var _slides:Array = [];
@@ -78,6 +79,14 @@ package org.simileWidgets.runway {
         
         public function set mouseWheelIncrement(mouseWheelIncrement:int):void {
             _mouseWheelIncrement = mouseWheelIncrement;
+        }
+        
+        public function get showSideSlideTooltip():Boolean {
+            return _showSideSlideTooltip;
+        }
+        
+        public function set showSideSlideTooltip(showSideSlideTooltip:Boolean):void {
+            _showSideSlideTooltip = showSideSlideTooltip;
         }
         
         public function get titleTextField():TextField {
@@ -291,7 +300,23 @@ package org.simileWidgets.runway {
             }
         }
         
+        internal function onSideSlideFrameMouseOver(slideFrame:SlideFrame, side:int):void {
+            if (_showSideSlideTooltip) {
+                showTooltip(slideFrame, slideFrame.rendition.slide.title);
+            }
+            dispatchEvent(new SlideEvent("sideSlideMouseOver", slideFrame.rendition.slide, slideFrame.index));
+        }
+        
+        internal function onSideSlideFrameMouseOut(slideFrame:SlideFrame, side:int):void {
+            hideTooltip();
+            dispatchEvent(new SlideEvent("sideSlideMouseOut", slideFrame.rendition.slide, slideFrame.index));
+        }
+        
         internal function showTooltip(sprite:Sprite, tooltip:String):void {
+            if (!_showSideSlideTooltip) {
+                return;
+            }
+            
             var point:Point = new Point(_geometry.slideSizePixels / 2, -_geometry.slideSizePixels / 3);
             var point2:Point = sprite.localToGlobal(point);
             
@@ -431,8 +456,10 @@ package org.simileWidgets.runway {
                 return;
             }
             
-            var change:int = (_mouseWheelIncrement > 0) ? (e.delta < 0 ? -1 : 1) * _mouseWheelIncrement : e.delta;
-            select(Math.max(0, Math.min(_selectedIndex - change, _slideFrames.length - 1)));
+            if (_mouseWheelIncrement > 0) {
+                var change:int = (e.delta < 0 ? -1 : 1) * _mouseWheelIncrement;
+                select(Math.max(0, Math.min(_selectedIndex - change, _slideFrames.length - 1)));
+            }
         }
         
         protected function _forceLayout():void {

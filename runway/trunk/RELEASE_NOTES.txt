@@ -12,7 +12,11 @@ For 1.1
     onSubtitleMouseOver
     onSubtitleMouseOut 
     onZoom
+    onSideSlideMouseOver
+    onSideSlideMouseOut
 - Set mouse cursor to hand when over clickable elements.
-- Added tooltip on mouse over slides on either side.
-- Added setting mouseWheelIncrement.
+- Added tooltip on mouse over slides on either side. Also added boolean setting 
+  showSideSlideTooltip for turning on/off this behavior.
+- Added setting mouseWheelIncrement. Default to 1. 
+  Set to anything less than 1 to disable mousewheel.
 - Fixed 6-digit color parsing bug.
