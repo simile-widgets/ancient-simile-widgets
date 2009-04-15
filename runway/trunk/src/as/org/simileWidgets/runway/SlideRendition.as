@@ -194,7 +194,7 @@ package org.simileWidgets.runway {
             var matrix:Matrix = new Matrix();
             matrix.scale(scale, scale);
             
-            _prototypeBitmapData = new BitmapData(newWidth, newHeight, originalBitmapData.transparent);
+            _prototypeBitmapData = new BitmapData(newWidth, newHeight, true);
             _prototypeBitmapData.draw(originalBitmapData, matrix, null, null, null, true);
         }
         

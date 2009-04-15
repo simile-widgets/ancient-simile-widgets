@@ -192,16 +192,12 @@ package org.simileWidgets.runway {
         
         private function _mouseOverListener(e:Event):void {
             Mouse.cursor = MouseCursor.BUTTON;
-            if (_side != Runway.SIDE_CENTER) {
-                _runway.onSideSlideFrameMouseOver(this, _side);
-            }
+            _runway.onSlideFrameMouseOver(this, _side);
         }
         
         private function _mouseOutListener(e:Event):void {
             Mouse.cursor = MouseCursor.AUTO;
-            if (_side != Runway.SIDE_CENTER) {
-                _runway.onSideSlideFrameMouseOut(this, _side);
-            }
+            _runway.onSlideFrameMouseOut(this, _side);
         }
     }
 }
