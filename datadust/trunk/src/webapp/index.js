@@ -48,7 +48,8 @@ function onLoad() {
                     },
                     nodes: {
                         size: { expression: "power(data.literacy, 2)" },
-                        fillColor: { expression: "data.continent" }
+                        fillColor: { expression: "data.continent" },
+                        visible: { expression: "and(data.year[1950].population != null, data.year[1950].density != null)" }
                     }
                 },
                 {

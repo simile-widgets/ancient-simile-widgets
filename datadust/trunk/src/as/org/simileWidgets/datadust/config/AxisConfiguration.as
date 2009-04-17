@@ -9,11 +9,13 @@ package org.simileWidgets.datadust.config {
         protected var _scaleType:String;
         protected var _expression:Expression;
         protected var _stacked:Boolean;
+        protected var _dimensionLabel:String;
         
         public function AxisConfiguration(jsConfig:Object, jsBaseConfig:Object) {
             _scaleType = Utilities.getDelegate(jsConfig, jsBaseConfig, "scale", "linear");
             _stacked = Utilities.getDelegate(jsConfig, jsBaseConfig, "stacked", false);
             _expression = Expression.parse(Utilities.getDelegate(jsConfig, jsBaseConfig, "expression", "rank"));
+            _dimensionLabel = Utilities.getDelegate(jsConfig, jsBaseConfig, "dimensionLabel", null);
         }
         
         public function get expression():Expression {
@@ -29,6 +31,7 @@ package org.simileWidgets.datadust.config {
         }
         
         public function configure(vis:Visualization, axisLayout:ExpressionAxisLayout, axis:Axis, seq:FunctionSequence):void {
+			axis.dimensionLabelText = _dimensionLabel != null ? _dimensionLabel : _expression.text;
         }
     }
 }

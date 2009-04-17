@@ -67,6 +67,44 @@ package org.simileWidgets.datadust.expression {
             ctx.setIdentifier("upper", function(s:String):String {
                 return s == null ? null : s.toUpperCase();
             });
+
+            ctx.setIdentifier("and", function(... args):Boolean {
+                var r:Boolean = true;
+                for (var i:int = 0; r && i < args.length; i++) {
+                    var arg:* = args[i];
+                    r = r && Boolean(arg);
+                }
+                return r;
+            });
+            ctx.setIdentifier("or", function(... args):Boolean {
+                var r:Boolean = false;
+                for (var i:int = 0; !r && i < args.length; i++) {
+                    var arg:* = args[i];
+                    r = r || Boolean(arg);
+                }
+                return r;
+            });
+            ctx.setIdentifier("nor", function(... args):Boolean {
+                var r:Boolean = false;
+                for (var i:int = 0; !r && i < args.length; i++) {
+                    var arg:* = args[i];
+                    r = r || Boolean(arg);
+                }
+                return !r;
+            });
+            ctx.setIdentifier("xor", function(... args):Boolean {
+                var c:int = 0;
+                for (var i:int = 0; i < args.length; i++) {
+                    var arg:* = args[i];
+                    if (Boolean(arg)) {
+                        c++;
+                    }
+                }
+                return c == 1;
+            });
+            ctx.setIdentifier("not", function(b:Boolean):Boolean {
+                return !b;
+            });
             
             return ctx;
         }
