@@ -3,23 +3,16 @@ package org.simileWidgets.datadust.config {
     import flare.vis.Visualization;
     import flare.animate.FunctionSequence;
 
-    public class NodesConfiguration {
+    public class NodesConfiguration extends SpriteConfiguration {
         protected var _shapeConfig:IPropertyConfiguration;
         protected var _fillColorConfig:IPropertyConfiguration;
-        protected var _lineColorConfig:IPropertyConfiguration;
         protected var _sizeConfig:IPropertyConfiguration;
-        protected var _lineWidthConfig:IPropertyConfiguration;
-        protected var _alphaConfig:IPropertyConfiguration;
-        protected var _iconConfig:IPropertyConfiguration;
         
         public function NodesConfiguration(jsConfig:Object, jsBaseConfig:Object) {
+            super(Data.NODES, jsConfig, jsBaseConfig);
             _shapeConfig =      Utilities.getPropertyConfiguration(Data.NODES, jsConfig, jsBaseConfig, "shape",     "shape",        null,       "text");
             _fillColorConfig =  Utilities.getPropertyConfiguration(Data.NODES, jsConfig, jsBaseConfig, "fillColor", "fillColor",    0x88000000, "color");
-            _lineColorConfig =  Utilities.getPropertyConfiguration(Data.NODES, jsConfig, jsBaseConfig, "lineColor", "lineColor",    0,          "color");
             _sizeConfig =       Utilities.getPropertyConfiguration(Data.NODES, jsConfig, jsBaseConfig, "size",      "size",         null,       "size");
-            _lineWidthConfig =  Utilities.getPropertyConfiguration(Data.NODES, jsConfig, jsBaseConfig, "lineWidth", "lineWidth",    0,          "number");
-            _alphaConfig =      Utilities.getPropertyConfiguration(Data.NODES, jsConfig, jsBaseConfig, "alpha",     "alpha",        1,          "number");
-            _iconConfig =       Utilities.getPropertyConfiguration(Data.NODES, jsConfig, jsBaseConfig, "icon",      "icon",         null,       "text");
         }
         
         public function get shapeConfig():IPropertyConfiguration {
@@ -30,34 +23,15 @@ package org.simileWidgets.datadust.config {
             return _fillColorConfig;
         }
         
-        public function get lineColorConfig():IPropertyConfiguration {
-            return _lineColorConfig;
-        }
-        
         public function get sizeConfig():IPropertyConfiguration {
             return _sizeConfig;
         }
         
-        public function get lineWidthConfig():IPropertyConfiguration {
-            return _lineWidthConfig;
-        }
-        
-        public function get alphaConfig():IPropertyConfiguration {
-            return _alphaConfig;
-        }
-        
-        public function get iconConfig():IPropertyConfiguration {
-            return _iconConfig;
-        }
-        
-        public function configure(vis:Visualization, seq:FunctionSequence):void {
+        public override function configure(vis:Visualization, seq:FunctionSequence):void {
+            super.configure(vis, seq);
             if (_shapeConfig != null) { _shapeConfig.configure(vis, seq); }
             if (_fillColorConfig != null) { _fillColorConfig.configure(vis, seq); }
-            if (_lineColorConfig != null) { _lineColorConfig.configure(vis, seq); }
             if (_sizeConfig != null) { _sizeConfig.configure(vis, seq); }
-            if (_lineWidthConfig != null) { _lineWidthConfig.configure(vis, seq); }
-            if (_alphaConfig != null) { _alphaConfig.configure(vis, seq); }
-            if (_iconConfig != null) { _iconConfig.configure(vis, seq); }
         }
     }
 }

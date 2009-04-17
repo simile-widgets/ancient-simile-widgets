@@ -1,4 +1,4 @@
-package org.simileWidgets.datadust.config {
+package org.simileWidgets.datadust.config.encoder {
     import flare.vis.Visualization;
     import flare.vis.operator.encoder.ShapeEncoder;
     import flare.animate.FunctionSequence;

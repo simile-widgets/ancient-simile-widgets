@@ -1,7 +1,8 @@
-package org.simileWidgets.datadust.config {
+package org.simileWidgets.datadust.config.encoder {
     import flare.vis.Visualization;
     import flare.animate.FunctionSequence;
     import flare.vis.operator.encoder.PropertyEncoder;
+    import org.simileWidgets.datadust.config.IPropertyConfiguration;
 
     public class ConstantPropertyEncoder implements IPropertyConfiguration {
         protected var _group:String;

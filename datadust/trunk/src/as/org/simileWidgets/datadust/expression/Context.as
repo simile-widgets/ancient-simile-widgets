@@ -61,6 +61,13 @@ package org.simileWidgets.datadust.expression {
             
             ctx.setIdentifier("date", DateUtilities.parseIso8601DateTime);
             
+            ctx.setIdentifier("lower", function(s:String):String {
+                return s == null ? null : s.toLowerCase();
+            });
+            ctx.setIdentifier("upper", function(s:String):String {
+                return s == null ? null : s.toUpperCase();
+            });
+            
             return ctx;
         }
         
