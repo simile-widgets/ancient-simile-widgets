@@ -1,8 +1,9 @@
-package org.simileWidgets.datadust.config {
+package org.simileWidgets.datadust.config.encoder {
     import flare.vis.Visualization;
     import flare.vis.operator.IOperator;
     import flare.animate.FunctionSequence;
     import org.simileWidgets.datadust.expression.Expression;
+    import org.simileWidgets.datadust.config.IPropertyConfiguration;
     
     public class ExpressionEncoder implements IPropertyConfiguration {
         protected var _propertyName:String;

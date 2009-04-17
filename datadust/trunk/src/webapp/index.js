@@ -62,7 +62,7 @@ function onLoad() {
                         scale: "log"
                     },
                     nodes: {
-                        alpha: { expression: "if(data.continent = 'Africa', 1, 0.1)" }
+                        alpha: { expression: "if(data.continent = 'Africa', 1, 0.3)" }
                     }
                 },
                 {
@@ -76,7 +76,7 @@ function onLoad() {
                         scale: "log"
                     },
                     nodes: {
-                        alpha: { expression: "if(data.continent = 'Africa', 1, 0.1)" }
+                        visible: { expression: "data.continent = 'Africa'" }
                     }
                 }
             ]

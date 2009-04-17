@@ -2,6 +2,7 @@ package org.simileWidgets.datadust.config {
     import flare.vis.data.Data;
     import flare.vis.data.DataSprite;
     import org.simileWidgets.datadust.expression.Expression;
+    import org.simileWidgets.datadust.config.encoder.*;
     
     public class Utilities {
         static public function getDelegate(o1:Object, o2:Object, field:String, def:*):* {
@@ -17,7 +18,7 @@ package org.simileWidgets.datadust.config {
             var o:* = getDelegate(o1, o2, configField, def);
             var config:IPropertyConfiguration = null;
             if (o != null) {
-                if (o is Number || o is String) {
+                if (o is Number || o is String || o is Boolean) {
                     config = new ConstantPropertyEncoder(group, propertyName, parseStaticPropertyValue(o, format));
                 } else {
                     switch (format) {
@@ -36,6 +37,10 @@ package org.simileWidgets.datadust.config {
                     case "number":
                         config = new AsIsExpressionEncoder(group, propertyName, o);
                         break;
+                        
+                    case "boolean":
+                        config = new AsIsExpressionEncoder(group, propertyName, o);
+                        break;
                     }
                 }
             }
@@ -50,6 +55,9 @@ package org.simileWidgets.datadust.config {
             case "number" :
                 return o is Number ? o : parseFloat(o);
                 
+            case "boolean" :
+                return o is Boolean ? o : Boolean(o);
+
             default:
                 return o;
             }
@@ -70,13 +78,13 @@ package org.simileWidgets.datadust.config {
                     g = parseInt(value.substr(1, 1), 16);
                     b = parseInt(value.substr(2, 1), 16);
                     
-                    return ((r + r * 16) << 16) | ((g + g * 16) << 8) | (b + b * 16);
+                    return 0xff000000 | ((r + r * 16) << 16) | ((g + g * 16) << 8) | (b + b * 16);
                 } else if (value.length == 6) {
                     r = parseInt(value.substr(0, 2), 16);
                     g = parseInt(value.substr(2, 2), 16);
                     b = parseInt(value.substr(4, 2), 16);
                     
-                    return (r << 16) | (g << 8) | b;
+                    return 0xff000000 | (r << 16) | (g << 8) | b;
                 }
             }
             return 0;
