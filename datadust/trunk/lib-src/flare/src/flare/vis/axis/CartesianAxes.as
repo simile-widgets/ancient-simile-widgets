@@ -117,6 +117,20 @@ package flare.vis.axis
             _xGridClip.fillColor = 0xffffffff;
             _yGridClip.lineColor = 0;
             _yGridClip.fillColor = 0xffffffff;
+
+			// set dimension label anchors
+			_xaxis.dimensionHorizontalAnchor = TextSprite.CENTER;
+			_xaxis.dimensionVerticalAnchor   = TextSprite.TOP;
+			_yaxis.dimensionHorizontalAnchor = TextSprite.CENTER;
+			_yaxis.dimensionVerticalAnchor   = TextSprite.MIDDLE;
+			
+			// set dimension label offsets
+			_xaxis.dimensionLabelOffsetX =  0; _xaxis.dimensionLabelOffsetY = 28;
+			_yaxis.dimensionLabelOffsetX = -45; _yaxis.dimensionLabelOffsetY = 0;
+
+            // set dimension label angles
+			_xaxis.dimensionLabelAngle = 0;
+			_yaxis.dimensionLabelAngle = -90;
 		}
 		
 		protected function createAxis():Axis {

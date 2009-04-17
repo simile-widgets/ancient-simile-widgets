@@ -42,6 +42,7 @@ package flare.vis.axis
 		// children indices
 		private static const LABELS:uint = 1;
         private static const GRIDLINES:uint = 0;
+        private static const DIMENSION_LABEL:uint = 2;
 		
 		// axis scale
 		private var _prevScale:Scale;
@@ -64,6 +65,14 @@ package flare.vis.axis
 		private var _labelFormat:String = null;
 		private var _labelTextMode:int = TextSprite.BITMAP;
 		private var _labelTextFormat:TextFormat = new TextFormat("Arial",12,0);
+		// dimension label settings
+		private var _dimensionAnchorH:int = TextSprite.LEFT;
+		private var _dimensionAnchorV:int = TextSprite.TOP;
+		private var _dimensionLabelAngle:Number = 0;
+		private var _dimensionLabelText:String = null;
+		private var _dimensionLabelColor:uint = 0;
+		private var _dimensionLabelTextFormat:TextFormat = new TextFormat("Arial",12,0);
+		
 		// temporary variables
 		private var _point:Point = new Point();
 		
@@ -201,6 +210,39 @@ package flare.vis.axis
 			return (ScaleType.isQuantitative(axisScale.scaleType) ? Y(0) : y1);
 		}
 		
+		/** Sprite containing the axis dimension label. */
+		public function get dimensionLabel():Sprite { return getChildAt(DIMENSION_LABEL) as Sprite; }
+		
+		public var dimensionLabelOffsetX:Number = 0;
+		public var dimensionLabelOffsetY:Number = 0;
+		
+		/** The horizontal anchor point for axis dimension label.
+		 *  @see flare.display.TextSprite. */
+		public function get dimensionHorizontalAnchor():int { return _dimensionAnchorH; }
+		public function set dimensionHorizontalAnchor(a:int):void { _dimensionAnchorH = a; updateDimensionLabel(); }
+		
+		/** The vertical anchor point for axis dimension label.
+		 *  @see flare.display.TextSprite. */
+		public function get dimensionVerticalAnchor():int { return _dimensionAnchorV; }
+		public function set dimensionVerticalAnchor(a:int):void { _dimensionAnchorV = a; updateDimensionLabel(); }
+		
+		/** The angle (orientation) of axis label text. */
+		public function get dimensionLabelAngle():Number { return _dimensionLabelAngle; }
+		public function set dimensionLabelAngle(a:Number):void { _dimensionLabelAngle = a; updateDimensionLabel(); }
+		
+		/** The axis dimension label text. */
+		public function get dimensionLabelText():String { return _dimensionLabelText; }
+		public function set dimensionLabelText(s:String):void { _dimensionLabelText = s; updateDimensionLabel(); }
+
+		/** The color of axis dimension label text. */
+		public function get dimensionLabelColor():uint { return _dimensionLabelColor; }
+		public function set dimensionLabelColor(c:uint):void { _dimensionLabelColor = c; updateDimensionLabel(); }
+		
+		/** TextFormat (font, size, style) for axis label text. */
+		public function get dimensionLabelTextFormat():TextFormat { return _dimensionLabelTextFormat; }
+		public function set dimensionLabelTextFormat(f:TextFormat):void { _dimensionLabelTextFormat = f; updateDimensionLabel(); }
+		
+		
 		// -- Initialization --------------------------------------------------
 		
 		/**
@@ -222,6 +264,7 @@ package flare.vis.axis
         {
             addChild(new Sprite()); // add gridlines
             addChild(new Sprite()); // add labels
+            addChild(new Sprite()); // add dimension label container
         }
 		
 		// -- Updates ---------------------------------------------------------
@@ -232,21 +275,22 @@ package flare.vis.axis
 		 * @return the input transitioner.
 		 */
 		public function update(trans:Transitioner):Transitioner
-        {
-        	var t:Transitioner = (trans!=null ? trans : Transitioner.DEFAULT);
-        	
-        	// compute directions and offsets
-        	_xd  = lineLengthX < 0 ? -1 : 1;
-        	_yd  = lineLengthY < 0 ? -1 : 1;
-        	_xlo =  _xd*labelOffsetX + (labelOffsetX>0 ? lineLengthX : 0);
-        	_ylo = -_yd*labelOffsetY + (labelOffsetY<0 ? lineLengthY : 0);
-        	
-        	// run updates
-            filter(t);
-            layout(t);
-            updateLabels(); // TODO run through transitioner?
-            updateGridLines(); // TODO run through transitioner?
-            return trans;
+		{
+			var t:Transitioner = (trans!=null ? trans : Transitioner.DEFAULT);
+
+			// compute directions and offsets
+			_xd  = lineLengthX < 0 ? -1 : 1;
+			_yd  = lineLengthY < 0 ? -1 : 1;
+			_xlo =  _xd*labelOffsetX + (labelOffsetX>0 ? lineLengthX : 0);
+			_ylo = -_yd*labelOffsetY + (labelOffsetY<0 ? lineLengthY : 0);
+
+			// run updates
+			filter(t);
+			layout(t);
+			updateLabels(); // TODO run through transitioner?
+			updateGridLines(); // TODO run through transitioner?
+			updateDimensionLabel();
+			return trans;
         }
 		
 		// -- Lookups ---------------------------------------------------------
@@ -631,6 +675,26 @@ package flare.vis.axis
 				}
 			}
 			return -1;
+		}
+		
+		/**
+		 * Updates all axis labels.
+		 */		
+		protected function updateDimensionLabel() : void
+		{
+			var container:Sprite = this.dimensionLabel;
+			var label:AxisLabel = container.numChildren > 0 ? (container.getChildAt(0) as AxisLabel) : null;
+			if (label == null) {
+				label = new AxisLabel();
+				container.addChild(label);
+			}
+			
+			label.x = this.dimensionLabelOffsetX + (this.x1 + this.x2) / 2;
+			label.y = this.dimensionLabelOffsetY + (this.y1 + this.y2) / 2;
+			label.horizontalAnchor = _dimensionAnchorH;
+			label.verticalAnchor = _dimensionAnchorV;
+			label.rotation = _dimensionLabelAngle;
+			label.text = _dimensionLabelText;
 		}
 		
 		// -- Axis GridLine Helpers -------------------------------------------
