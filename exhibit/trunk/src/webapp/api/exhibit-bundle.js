@@ -1529,7 +1529,7 @@ B++){C=C&&A[B].contains(true);
 }};
 Exhibit.Functions["or"]={f:function(A){var C=false;
 for(var B=0;
-C&&B<A.length;
+!C&&B<A.length;
 B++){C=C||A[B].contains(true);
 }return new Exhibit.Expression._Collection([C],"boolean");
 }};

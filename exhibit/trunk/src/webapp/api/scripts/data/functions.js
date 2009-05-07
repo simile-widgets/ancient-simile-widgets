@@ -91,7 +91,7 @@ Exhibit.Functions["and"] = {
 Exhibit.Functions["or"] = {
     f: function(args) {
         var r = false;
-        for (var i = 0; r && i < args.length; i++) {
+        for (var i = 0; !r && i < args.length; i++) {
             r = r || args[i].contains(true);
         }
         return new Exhibit.Expression._Collection([ r ], "boolean");

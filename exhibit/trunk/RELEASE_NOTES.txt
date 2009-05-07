@@ -1,5 +1,9 @@
 RELEASE_NOTES.txt
 
+Ongoing
+
+- Fixed bug in "or" function.
+
 Version 2.2.0 -- March 10, 2009
 
 - Fixed bug in database.getAllItems() that causes 4 function members of Array 
