@@ -3,7 +3,7 @@
 = Introduction =
 
 Timeline is in use everywhere.
-Please send additional examples to the mailing list
+Please send additional examples to the mailing list or add comments below.
 
 = Timeline in the Wild =
 
@@ -39,6 +39,9 @@ Please send additional examples to the mailing list
  * [http://auvac.org/resources/infographic/timeline/ The Autonomous Underwater Vehicle Applications Center]
  * [http://www.oe-files.de/gmaps/eqmashup.html Mashup] of an Earthquake Timeline with Google map of the locations by Jörn Clausen
  * [http://hominin.net/timeline/ Timeline] of Hominins
+
+== Web properties ==
+ * [http://www.madeinlocal.com/ MadeInLocal] social networking site. Use menu Action / Search / Events to see the Timeline of local events
 
 = Services using Timeline =
  * [http://freebase.com Freebase.com] supports Timeline "views" of data
