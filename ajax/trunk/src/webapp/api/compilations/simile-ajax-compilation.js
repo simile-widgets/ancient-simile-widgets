@@ -1,7 +1,12 @@
 ﻿
 
+/* compile-prolog.js */
+window.SimileAjax_isCompiled=true;
+
+
 /* simile-ajax-api.js */
-if(typeof SimileAjax=="undefined"){var SimileAjax={loaded:false,loadingScriptsCount:0,error:null,params:{bundle:"true"}};
+if(typeof SimileAjax=="undefined"){var isCompiled=("SimileAjax_isCompiled" in window)&&window.SimileAjax_isCompiled;
+var SimileAjax={loaded:false,loadingScriptsCount:0,error:null,params:{bundle:"true"}};
 SimileAjax.Platform=new Object();
 var getHead=function(A){return A.getElementsByTagName("head")[0];
 };
@@ -74,7 +79,7 @@ if(!(H instanceof Array)){H=[H];
 }else{M[I]=K.apply(this,H);
 }}return M;
 };
-(function(){var C=["platform.js","debug.js","xmlhttp.js","json.js","dom.js","graphics.js","date-time.js","string.js","html.js","data-structure.js","units.js","ajax.js","history.js","window-manager.js"];
+if(!isCompiled){(function(){var C=["platform.js","debug.js","xmlhttp.js","json.js","dom.js","graphics.js","date-time.js","string.js","html.js","data-structure.js","units.js","ajax.js","history.js","window-manager.js"];
 var A=["graphics.css"];
 if(!("jQuery" in window)&&!("$" in window)){C.unshift("jquery-1.3.2.min.js");
 }if(typeof SimileAjax_urlPrefix=="string"){SimileAjax.urlPrefix=SimileAjax_urlPrefix;
@@ -88,7 +93,7 @@ if(SimileAjax.params.bundle){SimileAjax.includeJavascriptFiles(document,SimileAj
 }SimileAjax.includeCssFiles(document,SimileAjax.urlPrefix+"styles/",A);
 SimileAjax.loaded=true;
 })();
-}
+}}
 
 /* simile-ajax-bundle.js */
 if(!("jQuery" in window)&&!("$" in window)){(function(){var D=this,z,r=D.jQuery,d=D.$,c=D.jQuery=D.$=function(F,E){return new c.fn.init(F,E);
@@ -2957,3 +2962,13 @@ I.send(F);
 SimileAjax.XmlHttp._forceXML=function(C){try{C.overrideMimeType("text/xml");
 }catch(D){C.setrequestheader("Content-Type","text/xml");
 }};
+
+
+/* compile-epilog.js */
+(function(){var f=null;
+if(typeof SimileAjax_onLoad=="string"){f=eval(SimileAjax_onLoad);
+SimileAjax_onLoad=null;
+}else{if(typeof SimileAjax_onLoad=="function"){f=SimileAjax_onLoad;
+SimileAjax_onLoad=null;
+}}if(f!=null){f();
+}})();
