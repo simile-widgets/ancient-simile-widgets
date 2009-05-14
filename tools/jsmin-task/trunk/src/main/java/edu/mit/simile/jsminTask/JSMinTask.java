@@ -33,6 +33,7 @@ public class JSMinTask extends Task {
     private File          m_suffixFile;
     
 	private boolean       m_verbose;
+	private boolean       m_bom = true;
     private boolean       m_obfuscate = true;
     private boolean       m_printWarnings = false;
     private boolean       m_preserveSemicolons = true;
@@ -40,6 +41,10 @@ public class JSMinTask extends Task {
     
     public void setVerbose(boolean verbose) {
         m_verbose = verbose;
+    }
+    
+    public void setBom(boolean bom) {
+        m_bom = bom;
     }
     
     public void setObfuscate(boolean obfuscate) {
@@ -82,7 +87,10 @@ public class JSMinTask extends Task {
 		
         try {
             OutputStream os = new FileOutputStream(m_outputFile);
-            os.write(new byte[] { (byte)0xEF, (byte)0xBB, (byte)0xBF });
+            
+            if (this.m_bom) {
+            	os.write(new byte[] { (byte)0xEF, (byte)0xBB, (byte)0xBF });
+            }
             
     		Writer writer = new OutputStreamWriter(os, Charset.forName("UTF-8"));
     		try {
