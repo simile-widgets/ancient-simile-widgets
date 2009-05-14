@@ -4,6 +4,8 @@
  */
 
 if (typeof SimileAjax == "undefined") {
+    var isCompiled = ("SimileAjax_isCompiled" in window) && window.SimileAjax_isCompiled;
+
     var SimileAjax = {
         loaded:                 false,
         loadingScriptsCount:    0,
@@ -158,52 +160,54 @@ if (typeof SimileAjax == "undefined") {
         }
         return to;
     };
-
-    (function() {
-        var javascriptFiles = [
-            "platform.js",
-            "debug.js",
-            "xmlhttp.js",
-            "json.js",
-            "dom.js",
-            "graphics.js",
-            "date-time.js",
-            "string.js",
-            "html.js",
-            "data-structure.js",
-            "units.js",
+    
+    if (!isCompiled) {
+        (function() {
+            var javascriptFiles = [
+                "platform.js",
+                "debug.js",
+                "xmlhttp.js",
+                "json.js",
+                "dom.js",
+                "graphics.js",
+                "date-time.js",
+                "string.js",
+                "html.js",
+                "data-structure.js",
+                "units.js",
+                
+                "ajax.js",
+                "history.js",
+                "window-manager.js"
+            ];
+            var cssFiles = [
+                "graphics.css"
+            ];
+            if (!("jQuery" in window) && !("$" in window)) {
+                javascriptFiles.unshift("jquery-1.3.2.min.js");
+            }
             
-            "ajax.js",
-            "history.js",
-            "window-manager.js"
-        ];
-        var cssFiles = [
-            "graphics.css"
-        ];
-        if (!("jQuery" in window) && !("$" in window)) {
-        	javascriptFiles.unshift("jquery-1.3.2.min.js");
-        }
-        
-        if (typeof SimileAjax_urlPrefix == "string") {
-            SimileAjax.urlPrefix = SimileAjax_urlPrefix;
-        } else {
-            var url = SimileAjax.findScript(document, "simile-ajax-api.js");
-            if (url == null) {
-                SimileAjax.error = new Error("Failed to derive URL prefix for Simile Ajax API code files");
-                return;
+            if (typeof SimileAjax_urlPrefix == "string") {
+                SimileAjax.urlPrefix = SimileAjax_urlPrefix;
+            } else {
+                var url = SimileAjax.findScript(document, "simile-ajax-api.js");
+                if (url == null) {
+                    SimileAjax.error = new Error("Failed to derive URL prefix for Simile Ajax API code files");
+                    return;
+                }
+
+                SimileAjax.urlPrefix = url.substr(0, url.indexOf("simile-ajax-api.js"));
             }
 
-            SimileAjax.urlPrefix = url.substr(0, url.indexOf("simile-ajax-api.js"));
-        }
-
-        SimileAjax.parseURLParameters(url, SimileAjax.params, {bundle:Boolean});
-        if (SimileAjax.params.bundle) {
-            SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix, [ "simile-ajax-bundle.js" ]);
-        } else {
-            SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
-        }
-        SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
-        
-        SimileAjax.loaded = true;
-    })();
+            SimileAjax.parseURLParameters(url, SimileAjax.params, {bundle:Boolean});
+            if (SimileAjax.params.bundle) {
+                SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix, [ "simile-ajax-bundle.js" ]);
+            } else {
+                SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
+            }
+            SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
+            
+            SimileAjax.loaded = true;
+        })();
+    }
 }
