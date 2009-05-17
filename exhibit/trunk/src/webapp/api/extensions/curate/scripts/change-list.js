@@ -21,10 +21,8 @@ Exhibit.ChangeList = function(elmt, uiContext, settings) {
 }
 
 Exhibit.ChangeList._settingSpecs = {
-    submissionText:  { type: "text", defaultValue: "Thanks for your submission! \
-        It has been sent to the exhibit author for approval." },
-    placeholderText: { type: "text", defaultValue: "To begin editing this exhibit, \
-        click the 'edit' links on the exhibit items." },
+    submissionText:  { type: "text", defaultValue: "Thanks for your submission! It has been sent to the exhibit author for approval." },
+    placeholderText: { type: "text", defaultValue: "To begin editing this exhibit, click the 'edit' links on the exhibit items." },
     maxValueLength:     { type: "int", defaultValue: 50 },
     trunctationString:  { type: "text", defaultValue: "..." }
 };

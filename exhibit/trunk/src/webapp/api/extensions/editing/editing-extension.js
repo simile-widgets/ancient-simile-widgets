@@ -3,13 +3,16 @@
  *==================================================
  */
 
-Exhibit.EditingExtension = {
-    params: {
-        bundle:     false
-    } 
-};
-
 (function() {
+    var isCompiled = ("Exhibit_EditingExtension_isCompiled" in window) && 
+                    window.Exhibit_EditingExtension_isCompiled;
+                    
+    Exhibit.EditingExtension = {
+        params: {
+            bundle:     false
+        } 
+    };
+
     var javascriptFiles = [
         "extra.js",
         "ui/lens.js",
@@ -21,16 +24,25 @@ Exhibit.EditingExtension = {
         "editing.css"
     ];
     
-    var url = SimileAjax.findScript(document, "/editing-extension.js");
-    if (url == null) {
-        SimileAjax.Debug.exception(new Error("Failed to derive URL prefix for Simile Exhibit Editing Extension code files"));
-        return;
-    }
-    Exhibit.EditingExtension.urlPrefix = url.substr(0, url.indexOf("editing-extension.js"));
-        
     var paramTypes = { bundle: Boolean };
-    SimileAjax.parseURLParameters(url, Exhibit.EditingExtension.params, paramTypes);
+    if (typeof Exhibit_EditingExtension_urlPrefix == "string") {
+        Exhibit.EditingExtension.urlPrefix = Exhibit_EditingExtension_urlPrefix;
+        if ("Exhibit_EditingExtension_parameters" in window) {
+            SimileAjax.parseURLParameters(Exhibit_EditingExtension_parameters,
+                                          Exhibit.EditingExtension.params,
+                                          paramTypes);
+        }
+    } else {
+        var url = SimileAjax.findScript(document, "/editing-extension.js");
+        if (url == null) {
+            SimileAjax.Debug.exception(new Error("Failed to derive URL prefix for Simile Exhibit Editing Extension code files"));
+            return;
+        }
+        Exhibit.EditingExtension.urlPrefix = url.substr(0, url.indexOf("editing-extension.js"));
         
+        SimileAjax.parseURLParameters(url, Exhibit.EditingExtension.params, paramTypes);
+    }
+    
     var scriptURLs = [];
     var cssURLs = [];
         
@@ -46,6 +58,8 @@ Exhibit.EditingExtension = {
         scriptURLs.push(Exhibit.EditingExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/editing-locale.js");
     };
     
-    SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
-    SimileAjax.includeCssFiles(document, "", cssURLs);
+    if (!isCompiled) {
+        SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
+        SimileAjax.includeCssFiles(document, "", cssURLs);
+    }
 })();

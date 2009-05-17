@@ -133,7 +133,11 @@ Exhibit.Database._Impl.prototype.removeListener = function(listener) {
 };
 
 Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
-    var links = SimileAjax.jQuery('head > link[rel=exhibit/data]').get()
+    var links = SimileAjax.jQuery('head > link[rel=exhibit/data]').get();
+    this._loadLinks(links, this, fDone);
+};
+
+Exhibit.Database._Impl.prototype.loadLinks = function(links, fDone) {
     this._loadLinks(links, this, fDone);
 };
 

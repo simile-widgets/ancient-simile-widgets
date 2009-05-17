@@ -3,13 +3,16 @@
  *==================================================
  */
 
-Exhibit.ChartExtension = {
-    params: {
-        bundle: true
-    } 
-};
-
 (function() {
+    var isCompiled = ("Exhibit_ChartExtension_isCompiled" in window) && 
+                    window.Exhibit_ChartExtension_isCompiled;
+                    
+    Exhibit.ChartExtension = {
+        params: {
+            bundle: true
+        } 
+    };
+
     var javascriptFiles = [
         "scatter-plot-view.js",
         "pivot-table-view.js",
@@ -20,17 +23,26 @@ Exhibit.ChartExtension = {
         "pivot-table-view.css",
         "bar-chart-view.css"
     ];
-        
-    var url = SimileAjax.findScript(document, "/chart-extension.js");
-    if (url == null) {
-        SimileAjax.Debug.exception(new Error("Failed to derive URL prefix for Simile Exhibit Chart Extension code files"));
-        return;
-    }
-    Exhibit.ChartExtension.urlPrefix = url.substr(0, url.indexOf("chart-extension.js"));
-        
+    
     var paramTypes = { bundle: Boolean };
-    SimileAjax.parseURLParameters(url, Exhibit.ChartExtension.params, paramTypes);
+    if (typeof Exhibit_ChartExtension_urlPrefix == "string") {
+        Exhibit.ChartExtension.urlPrefix = Exhibit_ChartExtension_urlPrefix;
+        if ("Exhibit_ChartExtension_parameters" in window) {
+            SimileAjax.parseURLParameters(Exhibit_ChartExtension_parameters,
+                                          Exhibit.ChartExtension.params,
+                                          paramTypes);
+        }
+    } else {
+        var url = SimileAjax.findScript(document, "/chart-extension.js");
+        if (url == null) {
+            SimileAjax.Debug.exception(new Error("Failed to derive URL prefix for Simile Exhibit Chart Extension code files"));
+            return;
+        }
+        Exhibit.ChartExtension.urlPrefix = url.substr(0, url.indexOf("chart-extension.js"));
         
+        SimileAjax.parseURLParameters(url, Exhibit.ChartExtension.params, paramTypes);
+    }
+    
     var scriptURLs = [];
     var cssURLs = [];
     
@@ -46,6 +58,8 @@ Exhibit.ChartExtension = {
         scriptURLs.push(Exhibit.ChartExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/chart-locale.js");
     };
     
-    SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
-    SimileAjax.includeCssFiles(document, "", cssURLs);
+    if (!isCompiled) {
+        SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
+        SimileAjax.includeCssFiles(document, "", cssURLs);
+    }
 })();

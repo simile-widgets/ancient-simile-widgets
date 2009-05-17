@@ -8,6 +8,8 @@
  */
 
 (function() {
+    var isCompiled = ("Exhibit_isCompiled" in window) && window.Exhibit_isCompiled;
+    
     var useLocalResources = false;
     var noAuthentication = false;
     
@@ -231,15 +233,18 @@
             scriptURLs.push(Exhibit.urlPrefix + "extensions/map/map-extension.js");
         }
         
-        SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
-        SimileAjax.includeCssFiles(document, "", cssURLs);
+        if (!isCompiled) {
+            SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
+            SimileAjax.includeCssFiles(document, "", cssURLs);
+        }
+        
         Exhibit.loaded = true;
     };
 
     /*
      *  Load SimileAjax if it's not already loaded
      */
-    if (typeof SimileAjax == "undefined") {
+    if (typeof SimileAjax == "undefined" && !isCompiled) {
         window.SimileAjax_onLoad = loadMe;
         
         var url = useLocalResources ?
