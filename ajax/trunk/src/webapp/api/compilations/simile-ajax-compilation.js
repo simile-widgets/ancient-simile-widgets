@@ -87,11 +87,11 @@ if(!("jQuery" in window)&&!("$" in window)){C.unshift("jquery-1.3.2.min.js");
 if(B==null){SimileAjax.error=new Error("Failed to derive URL prefix for Simile Ajax API code files");
 return ;
 }SimileAjax.urlPrefix=B.substr(0,B.indexOf("simile-ajax-api.js"));
-}SimileAjax.parseURLParameters(B,SimileAjax.params,{bundle:Boolean});
-if(SimileAjax.params.bundle){SimileAjax.includeJavascriptFiles(document,SimileAjax.urlPrefix,["simile-ajax-bundle.js"]);
+SimileAjax.parseURLParameters(B,SimileAjax.params,{bundle:Boolean});
+}if(!isCompiled){if(SimileAjax.params.bundle){SimileAjax.includeJavascriptFiles(document,SimileAjax.urlPrefix,["simile-ajax-bundle.js"]);
 }else{SimileAjax.includeJavascriptFiles(document,SimileAjax.urlPrefix+"scripts/",C);
 }SimileAjax.includeCssFiles(document,SimileAjax.urlPrefix+"styles/",A);
-SimileAjax.loaded=true;
+}SimileAjax.loaded=true;
 })();
 }}
 

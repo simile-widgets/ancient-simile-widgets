@@ -197,15 +197,17 @@ if (typeof SimileAjax == "undefined") {
                 }
 
                 SimileAjax.urlPrefix = url.substr(0, url.indexOf("simile-ajax-api.js"));
+                SimileAjax.parseURLParameters(url, SimileAjax.params, { bundle: Boolean });
             }
 
-            SimileAjax.parseURLParameters(url, SimileAjax.params, {bundle:Boolean});
-            if (SimileAjax.params.bundle) {
-                SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix, [ "simile-ajax-bundle.js" ]);
-            } else {
-                SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
+            if (!isCompiled) {
+                if (SimileAjax.params.bundle) {
+                    SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix, [ "simile-ajax-bundle.js" ]);
+                } else {
+                    SimileAjax.includeJavascriptFiles(document, SimileAjax.urlPrefix + "scripts/", javascriptFiles);
+                }
+                SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
             }
-            SimileAjax.includeCssFiles(document, SimileAjax.urlPrefix + "styles/", cssFiles);
             
             SimileAjax.loaded = true;
         })();
