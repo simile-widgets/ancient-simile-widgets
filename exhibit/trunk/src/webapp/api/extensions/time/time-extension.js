@@ -3,13 +3,16 @@
  *==================================================
  */
 
-Exhibit.TimeExtension = {
-    params: {
-        bundle: true
-    } 
-};
-
 (function() {
+    var isCompiled = ("Exhibit_TimeExtension_isCompiled" in window) && 
+                    window.Exhibit_TimeExtension_isCompiled;
+                    
+    Exhibit.TimeExtension = {
+        params: {
+            bundle: true
+        } 
+    };
+
     var javascriptFiles = [
         "timeline-view.js"
     ];
@@ -17,18 +20,32 @@ Exhibit.TimeExtension = {
         "timeline-view.css"
     ];
         
-    var url = SimileAjax.findScript(document, "/time-extension.js");
-    if (url == null) {
-        SimileAjax.Debug.exception(new Error("Failed to derive URL prefix for Simile Exhibit Time Extension code files"));
-        return;
-    }
-    Exhibit.TimeExtension.urlPrefix = url.substr(0, url.indexOf("time-extension.js"));
-        
     var paramTypes = { bundle: Boolean };
-    SimileAjax.parseURLParameters(url, Exhibit.TimeExtension.params, paramTypes);
+    if (typeof Exhibit_TimeExtension_urlPrefix == "string") {
+        Exhibit.TimeExtension.urlPrefix = Exhibit_TimeExtension_urlPrefix;
+        if ("Exhibit_TimeExtension_parameters" in window) {
+            SimileAjax.parseURLParameters(Exhibit_TimeExtension_parameters,
+                                          Exhibit.TimeExtension.params,
+                                          paramTypes);
+        }
+    } else {
+        var url = SimileAjax.findScript(document, "/time-extension.js");
+        if (url == null) {
+            SimileAjax.Debug.exception(new Error("Failed to derive URL prefix for Simile Exhibit Time Extension code files"));
+            return;
+        }
+        Exhibit.TimeExtension.urlPrefix = url.substr(0, url.indexOf("time-extension.js"));
         
-    var scriptURLs = [ "http://api.simile-widgets.org/timeline/2.3.1/timeline-api.js?bundle=true" ];
+        var paramTypes = { bundle: Boolean };
+        SimileAjax.parseURLParameters(url, Exhibit.TimeExtension.params, paramTypes);
+    }
+    
+    var scriptURLs = [];
     var cssURLs = [];
+    
+    if (!("Timeline" in window)) {
+        scriptURLs.push("http://api.simile-widgets.org/timeline/2.3.1/timeline-api.js?bundle=true");
+    }
         
     if (Exhibit.TimeExtension.params.bundle) {
         scriptURLs.push(Exhibit.TimeExtension.urlPrefix + "time-extension-bundle.js");
@@ -42,6 +59,8 @@ Exhibit.TimeExtension = {
         scriptURLs.push(Exhibit.TimeExtension.urlPrefix + "locales/" + Exhibit.locales[i] + "/time-locale.js");
     };
     
-    SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
-    SimileAjax.includeCssFiles(document, "", cssURLs);
+    if (!isCompiled) {
+        SimileAjax.includeJavascriptFiles(document, "", scriptURLs);
+        SimileAjax.includeCssFiles(document, "", cssURLs);
+    }
 })();

@@ -370,6 +370,8 @@ Exhibit.Database._Impl.prototype.removeListener=function(A){this._listeners.remo
 Exhibit.Database._Impl.prototype.loadDataLinks=function(B){var A=SimileAjax.jQuery("head > link[rel=exhibit/data]").get();
 this._loadLinks(A,this,B);
 };
+Exhibit.Database._Impl.prototype.loadLinks=function(A,B){this._loadLinks(A,this,B);
+};
 Exhibit.Database._Impl.prototype.loadSubmissionLinks=function(C){var B=this;
 var D={loadData:function(E,F){if("types" in E){B.loadTypes(E.types,F);
 }if("properties" in E){B.loadProperties(E.properties,F);

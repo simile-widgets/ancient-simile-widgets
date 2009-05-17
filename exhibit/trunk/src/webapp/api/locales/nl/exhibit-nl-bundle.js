@@ -1,11 +1,12 @@
+﻿
 
 /* database-l10n.js */
 if(!("l10n" in Exhibit.Database)){Exhibit.Database.l10n={};
-}Exhibit.Database.l10n.itemType={label:"Item",pluralLabel:"Items",uri:"http://simile.mit.edu/2006/11/exhibit#Item"};
-Exhibit.Database.l10n.labelProperty={label:"label",pluralLabel:"labels",reverseLabel:"label van",reversePluralLabel:"labels van"};
-Exhibit.Database.l10n.typeProperty={label:"type",pluralLabel:"types",reverseLabel:"type van",reversePluralLabel:"types van"};
-Exhibit.Database.l10n.uriProperty={label:"webadres",pluralLabel:"webadressen",reverseLabel:"webadres van",reversePluralLabel:"webadressen van"};
-Exhibit.Database.l10n.sortLabels={"text":{ascending:"a - z",descending:"z - a"},"nummer":{ascending:"kleinste eerst",descending:"grootste eerst"},"date":{ascending:"eerste eerst",descending:"laatste eerst"},"boolean":{ascending:"foutief eerst",descending:"correct first"},"item":{ascending:"a - z",descending:"z - a"}};
+}Exhibit.Database.l10n.itemType={label:"Element",pluralLabel:"Elemente",uri:"http://simile.mit.edu/2006/11/exhibit#Item"};
+Exhibit.Database.l10n.labelProperty={label:"Bezeichnung",pluralLabel:"Bezeichnungen",reverseLabel:"Bezeichnung von",reversePluralLabel:"Bezeichnungen von"};
+Exhibit.Database.l10n.typeProperty={label:"Type",pluralLabel:"Typen",reverseLabel:"Type van",reversePluralLabel:"Typen van"};
+Exhibit.Database.l10n.uriProperty={label:"URI",pluralLabel:"URIs",reverseLabel:"URI van",reversePluralLabel:"URIs van"};
+Exhibit.Database.l10n.sortLabels={"text":{ascending:"a - z",descending:"z - a"},"number":{ascending:"kleinste eerst",descending:"grootste eerst"},"date":{ascending:"eerste eerst",descending:"laatste eerst"},"boolean":{ascending:"foutief eerst",descending:"correct eerst"},"item":{ascending:"a - z",descending:"z - a"}};
 Exhibit.Database.l10n.labelItemsOfType=function(F,C,G,B){var A=F==1?Exhibit.Database.l10n.itemType.label:Exhibit.Database.l10n.itemType.pluralLabel;
 var E=G.getType(C);
 if(E){A=E.getLabel();
@@ -21,22 +22,22 @@ return D;
 if(!("l10n" in Exhibit)){Exhibit.l10n={};
 }Exhibit.l10n.missingLabel="missend";
 Exhibit.l10n.missingSortKey="(missend)";
-Exhibit.l10n.notApplicableSortKey="(n/a)";
+Exhibit.l10n.notApplicableSortKey="(niet beschikbaar)";
 Exhibit.l10n.itemLinkLabel="link";
-Exhibit.l10n.busyIndicatorMessage="Bezig...";
+Exhibit.l10n.busyIndicatorMessage="Even wachten aub...";
 Exhibit.l10n.showDocumentationMessage="We zullen de relevante informatie tonen na dit bericht.";
 Exhibit.l10n.showJavascriptValidationMessage="We zullen de fout gedetailleerd uitleggen na dit bericht.";
 Exhibit.l10n.showJsonValidationMessage="We zullen de fout gedetailleerd uitleggen na dit bericht.";
-Exhibit.l10n.showJsonValidationFormMessage="We zullen naar een website surfen waar u uw code kunt uploaden en checken.";
-Exhibit.l10n.badJsonMessage=function(A,B){return"The JSON data file\n  "+A+"\ncontains errors =\n\n"+B;
+Exhibit.l10n.showJsonValidationFormMessage="We zullen naar een website surfen waar u uw code kunt uploaden en checken..";
+Exhibit.l10n.badJsonMessage=function(A,B){return"De JSON-data\n  "+A+"\nbevat fouten =\n\n"+B;
 };
-Exhibit.l10n.failedToLoadDataFileMessage=function(A){return"We kunnen het databestand\n  "+A+"\nniet vinden. Is de bestandsnaam correct?";
+Exhibit.l10n.failedToLoadDataFileMessage=function(A){return"De data\n  "+A+"\nkan niet gevonden worden. Is de bestandsnaam wel correct?";
 };
-Exhibit.l10n.exportButtonLabel="Exporteer";
-Exhibit.l10n.exportAllButtonLabel="Exporteer alles";
-Exhibit.l10n.exportDialogBoxCloseButtonLabel="Sluiten";
+Exhibit.l10n.exportButtonLabel="Exporteren";
+Exhibit.l10n.exportAllButtonLabel="Alles exporteren";
+Exhibit.l10n.exportDialogBoxCloseButtonLabel="sluiten";
 Exhibit.l10n.exportDialogBoxPrompt="Kopieer deze code naar het clipboard, zoals u ook zou doen met tekst. Druk op ESC om dit dialoogvenster te sluiten.";
-Exhibit.l10n.focusDialogBoxCloseButtonLabel="Sluit";
+Exhibit.l10n.focusDialogBoxCloseButtonLabel="Sluiten";
 Exhibit.l10n.rdfXmlExporterLabel="RDF/XML";
 Exhibit.l10n.smwExporterLabel="Semantische wikitekst";
 Exhibit.l10n.exhibitJsonExporterLabel="Exhibit JSON";
@@ -114,9 +115,9 @@ Exhibit.OrderedViewFrame.l10n.formatShowAll=function(A){return"Toon alle "+A+" r
 if(!("l10n" in Exhibit.TabularView)){Exhibit.TabularView.l10n={};
 }Exhibit.TabularView.l10n.viewLabel="Tabel";
 Exhibit.TabularView.l10n.viewTooltip="Toon items in een tabel";
-Exhibit.TabularView.l10n.columnHeaderSortTooltip="Klik om te sorteren via deze kolom";
-Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Klik om te sorteren in omgekeerde volgorde";
-Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"sorteer oplopend ":"sorteer aflopend ")+A;
+Exhibit.TabularView.l10n.columnHeaderSortTooltip="Klik om deze kolom te sorteren";
+Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Klik om deze kolom te sorteren in omgekeerde volgorder";
+Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"Sorteer oplopend ":"sorteer aflopend ")+A;
 };
 
 
@@ -134,23 +135,23 @@ Exhibit.TileView.l10n.viewTooltip="Toon items als tegels in een lijst";
 
 /* view-panel-l10n.js */
 if(!("l10n" in Exhibit.ViewPanel)){Exhibit.ViewPanel.l10n={};
-}Exhibit.ViewPanel.l10n.createSelectViewActionTitle=function(A){return"selecteer zicht "+A+"";
+}Exhibit.ViewPanel.l10n.createSelectViewActionTitle=function(A){return"selecteer "+A+" toon";
 };
 Exhibit.ViewPanel.l10n.missingViewClassMessage="De beschrijving voor een van de zichten mist het viewClass-veld.";
-Exhibit.ViewPanel.l10n.viewClassNotFunctionMessage=function(A){return"De waarde van het viewClass attribuut '"+A+"' die je hebt aangegeven\nvoor een van de zichten lijkt geen javascript functie te zijn.";
+Exhibit.ViewPanel.l10n.viewClassNotFunctionMessage=function(A){return"De waarde van het viewClass attribuut '"+A+"' die u heeft aangegeven\nvoor een van de zichten lijkt geen javascriptfunctie te zijn.";
 };
-Exhibit.ViewPanel.l10n.badViewClassMessage=function(A){return"The viewClass attribute value '"+A+"' you have specified\nfor one of the views is not a valid Javascript expression.";
+Exhibit.ViewPanel.l10n.badViewClassMessage=function(A){return"De waarde van het viewClass attribuut '"+A+"' die u heeft aangegeven\nvoor een van de zichten lijkt geen javascriptexpressie te zijn.";
 };
 
 
 /* collection-summary-widget-l10n.js */
 if(!("l10n" in Exhibit.CollectionSummaryWidget)){Exhibit.CollectionSummaryWidget.l10n={};
 }Exhibit.CollectionSummaryWidget.l10n.resetFiltersLabel="Reset alle filters";
-Exhibit.CollectionSummaryWidget.l10n.resetFiltersTooltip="Maka alle filters leeg en toon de oorsponkelijke items";
+Exhibit.CollectionSummaryWidget.l10n.resetFiltersTooltip="Maak alle filters leeg en toon de oorspronkelijke items";
 Exhibit.CollectionSummaryWidget.l10n.resetActionTitle="Reset alle filters";
 Exhibit.CollectionSummaryWidget.l10n.allResultsTemplate="<span class='%0' id='resultDescription'></span>";
-Exhibit.CollectionSummaryWidget.l10n.noResultsTemplate="<span class='%0'><span class='%1'>0</span> results</span> (<span id='resetActionLink'></span>)";
-Exhibit.CollectionSummaryWidget.l10n.filteredResultsTemplate="<span class='%0' id='resultDescription'></span> gefilterd van oorspronkelijk <span id='originalCountSpan'>0</span> (<span id='resetActionLink'></span>)";
+Exhibit.CollectionSummaryWidget.l10n.noResultsTemplate="<span class='%0'><span class='%1'>0</span> resultaten</span> (<span id='resetActionLink'></span>)";
+Exhibit.CollectionSummaryWidget.l10n.filteredResultsTemplate="<span class='%0' id='resultDescription'></span> <span id='originalCountSpan'>0</span> gefilterd van oorspronkelijk (<span id='resetActionLink'></span>)";
 
 
 /* coders-l10n.js */
@@ -164,16 +165,16 @@ Exhibit.Coders.l10n.othersCaseLabel="anders";
 if(!("l10n" in Exhibit.FacetUtilities)){Exhibit.FacetUtilities.l10n={};
 }Exhibit.FacetUtilities.l10n.clearSelectionsTooltip="Maak deze selecties leeg";
 Exhibit.FacetUtilities.l10n.facetSelectActionTitle="Selecteer %0 in facet %1";
-Exhibit.FacetUtilities.l10n.facetUnselectActionTitle="Selectie %0 in facet %1 opheffen";
+Exhibit.FacetUtilities.l10n.facetUnselectActionTitle="Hef selectie %0 in facet %1 op";
 Exhibit.FacetUtilities.l10n.facetSelectOnlyActionTitle="Selecteer alleen %0 in facet %1";
 Exhibit.FacetUtilities.l10n.facetClearSelectionsActionTitle="Maak selecties in facet %0 leeg";
 Exhibit.FacetUtilities.l10n.facetTextSearchActionTitle="Tekst doorzoeken %0";
 Exhibit.FacetUtilities.l10n.facetClearTextSearchActionTitle="Maak veld tekst doorzoeken leeg";
-Exhibit.FacetUtilities.l10n.missingThisField="(Veld mist)";
+Exhibit.FacetUtilities.l10n.missingThisField="(mist dit veld)";
 
 
 /* views-l10n.js */
 if(!("l10n" in Exhibit.ViewUtilities)){Exhibit.ViewUtilities.l10n={};
 }Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(B,A,C){var D=A.length;
-return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> van <class class='exhibit-views-totalCount'>%1</span> kan niet worden afgebeeld.",[D==1?(D+" result"):(D+" results"),B]);
+return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> van <class class='exhibit-views-totalCount'>%1</span>  kan niet worden afgebeeld.",[D==1?(D+" result"):(D+" results"),B]);
 };

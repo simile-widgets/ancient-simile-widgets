@@ -3,6 +3,8 @@ RELEASE_NOTES.txt
 Ongoing
 
 - Fixed bug in "or" function.
+- Added the "compilations" to the build process in order to support dynamic loading.
+- Added an example to illustrate dynamic loading.
 
 Version 2.2.0 -- March 10, 2009
 
