@@ -43,7 +43,7 @@
                 </div>
             </td>
             <td id="content">
-                <div ex:role="coder" ex:coderClass="Color" id="party-colors">
+                <div ex:role="coder" ex:coderClass="Color" id="party-colors" style="display: none;">
                     <span ex:color="red">Republican</span>
                     <span ex:color="blue">Democratic</span>
                     
@@ -119,7 +119,7 @@
                     <div ex:role="view"
                         ex:viewClass="Tabular"
                         ex:label="Details"
-                        ex:columns=".term, .label, .party, .presidency.inDate, .presidency.outDate, add(foreach(.presidency, date-range(.inDate, default(.outDate, today()), 'day'))), .birth, .death"
+                        ex:columns=".term, .label, .party, .presidency.inDate, .presidency.outDate, add(foreach(.presidency, date-range(.inDate, default(.outDate, now()), 'day'))), .birth, .death"
                         ex:columnLabels="term, name, party, took office, left office, days in office, age of ascension, age"
                         ex:formats="date { mode: medium; show: date }"
                         ex:sortColumn="3"
