@@ -10,11 +10,18 @@ Exhibit.TileView = function(containerElmt, uiContext) {
     
     var view = this;
 
-    this._listener = { onItemsChanged: function() { view._reconstruct(); } };
+    this._listener = { 
+        onItemsChanged: function() { 
+            view._orderedViewFrame._settings.page = 0;
+            view._reconstruct(); 
+        }
+    };
     uiContext.getCollection().addListener(this._listener);
 
     this._orderedViewFrame = new Exhibit.OrderedViewFrame(uiContext);
-    this._orderedViewFrame.parentReconstruct = function() { view._reconstruct(); };
+    this._orderedViewFrame.parentReconstruct = function() { 
+        view._reconstruct();
+    };
 };
 
 Exhibit.TileView._settingSpecs = {

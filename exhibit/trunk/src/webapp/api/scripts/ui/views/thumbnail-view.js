@@ -11,6 +11,7 @@ Exhibit.ThumbnailView = function(containerElmt, uiContext) {
     var view = this;
     this._listener = { 
         onItemsChanged: function() {
+            view._orderedViewFrame._settings.page = 0;
             view._reconstruct(); 
         } 
     };
@@ -19,7 +20,7 @@ Exhibit.ThumbnailView = function(containerElmt, uiContext) {
     this._orderedViewFrame = new Exhibit.OrderedViewFrame(uiContext);
     this._orderedViewFrame.parentReconstruct = function() {
         view._reconstruct();
-    }
+    };
 };
 
 Exhibit.ThumbnailView._settingSpecs = {
