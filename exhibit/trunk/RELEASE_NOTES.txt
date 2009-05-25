@@ -5,6 +5,13 @@ Ongoing
 - Fixed bug in "or" function.
 - Added the "compilations" to the build process in order to support dynamic loading.
 - Added an example to illustrate dynamic loading.
+- Implemented paging in Tile, Thumbnail, and Tabular views. New settings include: 
+  paginate = true or false; default is false
+  pageSize = items per page; default is 20
+  page = starting page index, from 0
+  pageWindow = number of pages before and after current page to show 
+    if the current page is far from the first page and/or the last page;
+    default is 2
 
 Version 2.2.0 -- March 10, 2009
 

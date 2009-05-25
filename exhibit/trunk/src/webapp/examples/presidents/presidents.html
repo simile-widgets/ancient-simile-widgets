@@ -85,7 +85,7 @@
                     >
                 </div>
                     
-                <div ex:role="viewPanel">
+                <div ex:role="viewPanel" ex:initialView="2">
                     <div class="map-lens" ex:role="lens" style="display: none;">
                         <div><img ex:src-content=".imageURL" /></div>
                         <span ex:content=".label"></span><br/>
@@ -124,6 +124,8 @@
                         ex:formats="date { mode: medium; show: date }"
                         ex:sortColumn="3"
                         ex:sortAscending="false"
+                        ex:paginate="true"
+                        ex:pageSize="5"
                         >
                         <table style="display: none;">
                             <tr ex:background-style-content="if(exists(.death), '#ccc', 'white')">

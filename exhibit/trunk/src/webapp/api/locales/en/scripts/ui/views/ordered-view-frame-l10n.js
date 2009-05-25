@@ -31,3 +31,11 @@ Exhibit.OrderedViewFrame.l10n.formatDontShowAll = function(limitCount) {
 Exhibit.OrderedViewFrame.l10n.formatShowAll = function(count) {
     return "Show all " + count + " results";
 };
+
+Exhibit.OrderedViewFrame.l10n.pageWindowEllipses = " ... ";
+Exhibit.OrderedViewFrame.l10n.pageSeparator = " &bull; ";
+Exhibit.OrderedViewFrame.l10n.previousPage = "&laquo;&nbsp;Previous";
+Exhibit.OrderedViewFrame.l10n.nextPage = "Next&nbsp;&raquo;";
+Exhibit.OrderedViewFrame.l10n.makePagingActionTitle = function(pageIndex) {
+    return ("Page " + (pageIndex + 1));
+};

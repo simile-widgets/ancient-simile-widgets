@@ -11,3 +11,18 @@ table.exhibit-tabularView-body {
     cursor:         pointer;
     white-space:    pre;
 }
+
+div.exhibit-tabularView-pagingControls {
+    margin: 1em 0;
+    text-align: center;
+}
+
+.exhibit-tabularView-pagingControls-currentPage {
+    padding: 0px 0.5em;
+    font-weight: bold;
+}
+
+.exhibit-tabularView-pagingControls-page {
+    padding: 0px 0.5em;
+}
+

@@ -14,7 +14,8 @@ Exhibit.TabularView = function(containerElmt, uiContext) {
     var view = this;
     this._listener = { 
         onItemsChanged: function() {
-            view._reconstruct(); 
+            view._settings.page = 0;
+            view._reconstruct();
         }
     };
     uiContext.getCollection().addListener(this._listener);
@@ -27,7 +28,11 @@ Exhibit.TabularView._settingSpecs = {
     "showToolbox":          { type: "boolean", defaultValue: true },
     "border":               { type: "int",     defaultValue: 1 },
     "cellPadding":          { type: "int",     defaultValue: 5 },
-    "cellSpacing":          { type: "int",     defaultValue: 3 }
+    "cellSpacing":          { type: "int",     defaultValue: 3 },
+    "paginate":             { type: "boolean", defaultValue: false },
+    "pageSize":             { type: "int",     defaultValue: 20 },
+    "pageWindow":           { type: "int",     defaultValue: 2 },
+    "page":                 { type: "int",     defaultValue: 0 }
 };
 
 Exhibit.TabularView.create = function(configuration, containerElmt, uiContext) {
@@ -265,7 +270,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         items.sort(this._createSortFunction(items, sortColumn.expression, this._settings.sortAscending));
     
         /*
-         *  Sort the items
+         *  Style the table
          */
         var table = document.createElement("table");
         table.className = "exhibit-tabularView-body";
@@ -350,11 +355,109 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                 }
             }
         }
-        for (var i = 0; i < items.length; i++) {
+        
+        var start, end;
+        var generatePagingControls = false;
+        if (this._settings.paginate) {
+            start = this._settings.page * this._settings.pageSize;
+            end = Math.min(start + this._settings.pageSize, items.length);
+            
+            generatePagingControls = items.length > this._settings.pageSize;
+        } else {
+            start = 0;
+            end = items.length;
+        }
+        for (var i = start; i < end; i++) {
             renderItem(i);
         }
 
         bodyDiv.appendChild(table);
+        
+        if (generatePagingControls) {
+            this._renderPagingDiv(this._dom.topPagingDiv, items.length, this._settings.page);
+            this._renderPagingDiv(this._dom.bottomPagingDiv, items.length, this._settings.page);
+            
+            this._dom.topPagingDiv.style.display = "block";
+            this._dom.bottomPagingDiv.style.display = "block";
+        } else {
+            this._dom.topPagingDiv.style.display = "none";
+            this._dom.bottomPagingDiv.style.display = "none";
+        }
+    }
+};
+
+Exhibit.TabularView.prototype._renderPagingDiv = function(div, itemCount, page) {
+    var l10n = Exhibit.TabularView.l10n;
+    var pageCount = Math.ceil(itemCount / this._settings.pageSize);
+    
+    div.className = "exhibit-tabularView-pagingControls";
+    div.innerHTML = "";
+    
+    var self = this;
+    var renderPageLink = function(label, index) {
+        var a = document.createElement("a");
+        a.innerHTML = label;
+        a.className = "exhibit-tabularView-pagingControls-page";
+        a.href = "javascript:{}";
+        div.appendChild(a);
+        
+        var handler = function(elmt, evt, target) {
+            self._gotoPage(index);
+            SimileAjax.DOM.cancelEvent(evt);
+            return false;
+        }
+        SimileAjax.WindowManager.registerEvent(a, "click", handler);
+    };
+    var renderPageNumber = function(index) {
+        if (index == page) {
+            var elmt = document.createElement("span");
+            elmt.className = "exhibit-tabularView-pagingControls-currentPage";
+            elmt.innerHTML = (index + 1);
+            div.appendChild(elmt);
+        } else {
+            renderPageLink(index + 1, index);
+        }
+    };
+    var renderHTML = function(html) {
+        var span = document.createElement("span");
+        span.innerHTML = html;
+        
+        div.appendChild(span);
+    };
+    
+    if (page > 0) {
+        renderPageLink(l10n.previousPage, page - 1);
+        renderHTML(" ");
+    }
+    
+    var pageWindowStart = 0;
+    var pageWindowEnd = pageCount - 1;
+    
+    if (page - this._settings.pageWindow > 1) {
+        renderPageNumber(0);
+        renderHTML(l10n.pageWindowEllipses);
+        
+        pageWindowStart = page - this._settings.pageWindow;
+    }
+    if (page + this._settings.pageWindow < pageCount - 2) {
+        pageWindowEnd = page + this._settings.pageWindow;
+    }
+    
+    for (var i = pageWindowStart; i <= pageWindowEnd; i++) {
+        if (i > pageWindowStart) {
+            renderHTML(l10n.pageSeparator);
+        }
+        renderPageNumber(i);
+    }
+    
+    if (pageWindowEnd < pageCount - 1) {
+        renderHTML(l10n.pageWindowEllipses);
+        renderPageNumber(pageCount - 1);
+    }
+    
+    if (page < pageCount - 1) {
+        renderHTML(" ");
+        renderPageLink(l10n.nextPage, page + 1);
     }
 };
 
@@ -487,6 +590,8 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
     var oldSortAscending = this._settings.sortAscending;
     var newSortColumn = columnIndex;
     var newSortAscending = oldSortColumn == newSortColumn ? !oldSortAscending : true;
+    var oldPage = this._settings.page;
+    var newPage = 0;
     var settings = this._settings;
     
     var self = this;
@@ -494,14 +599,35 @@ Exhibit.TabularView.prototype._doSort = function(columnIndex) {
         function() {
             settings.sortColumn = newSortColumn;
             settings.sortAscending = newSortAscending;
+            settings.page = newPage;
             self._reconstruct();
         },
         function() {
             settings.sortColumn = oldSortColumn;
             settings.sortAscending = oldSortAscending;
+            settings.page = oldPage;
             self._reconstruct();
         },
         Exhibit.TabularView.l10n.makeSortActionTitle(this._columns[columnIndex].label, newSortAscending)
+    );
+};
+
+Exhibit.TabularView.prototype._gotoPage = function(page) {
+    var oldPage = this._settings.page;
+    var newPage = page;
+    var settings = this._settings;
+    
+    var self = this;
+    SimileAjax.History.addLengthyAction(
+        function() {
+            settings.page = newPage;
+            self._reconstruct();
+        },
+        function() {
+            settings.page = oldPage;
+            self._reconstruct();
+        },
+        Exhibit.TabularView.l10n.makePagingActionTitle(page)
     );
 };
 
@@ -520,8 +646,16 @@ Exhibit.TabularView.createDom = function(div) {
             {   tag:    "div",
                 field:  "collectionSummaryDiv"
             },
+            {   tag:        "div",
+                className:  "exhibit-tabularView-pagingControls",
+                field:      "topPagingDiv"
+            },
             {   tag:    "div",
                 field:  "bodyDiv"
+            },
+            {   tag:        "div",
+                className:  "exhibit-tabularView-pagingControls",
+                field:      "bottomPagingDiv"
             }
         ]
     };
