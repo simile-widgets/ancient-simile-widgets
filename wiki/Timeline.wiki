@@ -78,6 +78,7 @@ The Timeline library is called by client software on your html page. Your client
  * http://www.zkoss.org/smalltalks/timeline1/timeline1.dsp - integrated into ZK OOS
  * http://bakery.cakephp.org/articles/view/timeline-helper - integration with the CakePHP framework
  * Wordpress [http://www.freshlabs.de/journal/archives/2006/10/wordpress-plugin-simile-timeline/ plugin] by freshlabs
+ * Drupal [http://drupal.org/project/timeline module]
 
 === API ===
  * [Timeline_TimelineClass Timelines]
