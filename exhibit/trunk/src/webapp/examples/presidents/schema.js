@@ -14,15 +14,6 @@
         'url': {
             valueType: "url"
         },
-        'author': {
-            label:                  "authored by",
-            reverseLabel:           "author of",
-            reversePluralLabel:     "authors of",
-            groupingLabel:          "their authors",
-            reverseGroupingLabel:   "their work",
-            valueType:              "item"
-        },
-        
         'presidency': {
             valueType:              "item"
         },
