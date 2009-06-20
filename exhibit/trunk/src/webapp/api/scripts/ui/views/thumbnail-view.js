@@ -27,6 +27,10 @@ Exhibit.ThumbnailView._settingSpecs = {
     "showToolbox":          { type: "boolean", defaultValue: true }
 };
 
+Exhibit.ThumbnailView._itemContainerClass = SimileAjax.Platform.browser.isIE ?
+    "exhibit-thumbnailView-itemContainer-IE" :
+    "exhibit-thumbnailView-itemContainer";
+
 Exhibit.ThumbnailView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.ThumbnailView(
         containerElmt,
@@ -174,9 +178,7 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
         }
         
         var itemLensDiv = document.createElement("div");
-        itemLensDiv.className = SimileAjax.Platform.browser.isIE ?
-            "exhibit-thumbnailView-itemContainer-IE" :
-            "exhibit-thumbnailView-itemContainer";
+        itemLensDiv.className = Exhibit.ThumbnailView._itemContainerClass;
         
         var itemLens = view._lensRegistry.createLens(itemID, itemLensDiv, view._uiContext);
         state.itemContainer.appendChild(itemLensDiv);
