@@ -32,7 +32,9 @@ Exhibit.TabularView._settingSpecs = {
     "paginate":             { type: "boolean", defaultValue: false },
     "pageSize":             { type: "int",     defaultValue: 20 },
     "pageWindow":           { type: "int",     defaultValue: 2 },
-    "page":                 { type: "int",     defaultValue: 0 }
+    "page":                 { type: "int",     defaultValue: 0 },
+    "alwaysShowPagingControls": { type: "boolean", defaultValue: false },
+    "pagingControlLocations":   { type: "enum",    defaultValue: "topbottom", choices: [ "top", "bottom", "topbottom" ] }
 };
 
 Exhibit.TabularView.create = function(configuration, containerElmt, uiContext) {
@@ -362,7 +364,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             start = this._settings.page * this._settings.pageSize;
             end = Math.min(start + this._settings.pageSize, items.length);
             
-            generatePagingControls = items.length > this._settings.pageSize;
+            generatePagingControls = (items.length > this._settings.pageSize) || (items.length > 0 && this._settings.alwaysShowPagingControls);
         } else {
             start = 0;
             end = items.length;
@@ -374,11 +376,15 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         bodyDiv.appendChild(table);
         
         if (generatePagingControls) {
-            this._renderPagingDiv(this._dom.topPagingDiv, items.length, this._settings.page);
-            this._renderPagingDiv(this._dom.bottomPagingDiv, items.length, this._settings.page);
+            if (this._settings.pagingControlLocations == "top" || this._settings.pagingControlLocations == "topbottom") {
+                this._renderPagingDiv(this._dom.topPagingDiv, items.length, this._settings.page);
+                this._dom.topPagingDiv.style.display = "block";
+            }
             
-            this._dom.topPagingDiv.style.display = "block";
-            this._dom.bottomPagingDiv.style.display = "block";
+            if (this._settings.pagingControlLocations == "bottom" || this._settings.pagingControlLocations == "topbottom") {
+                this._renderPagingDiv(this._dom.bottomPagingDiv, items.length, this._settings.page);
+                this._dom.bottomPagingDiv.style.display = "block";
+            }
         } else {
             this._dom.topPagingDiv.style.display = "none";
             this._dom.bottomPagingDiv.style.display = "none";
@@ -399,6 +405,7 @@ Exhibit.TabularView.prototype._renderPagingDiv = function(div, itemCount, page) 
         a.innerHTML = label;
         a.className = "exhibit-tabularView-pagingControls-page";
         a.href = "javascript:{}";
+        a.title = l10n.makePagingLinkTooltip(index);
         div.appendChild(a);
         
         var handler = function(elmt, evt, target) {
