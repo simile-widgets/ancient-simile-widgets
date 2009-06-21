@@ -34,8 +34,11 @@ Exhibit.MapView = function(containerElmt, uiContext) {
 };
 
 Exhibit.MapView._settingSpecs = {
+    "latlngOrder":      { type: "enum",     defaultValue: "latlng", choices: [ "latlng", "lnglat" ] },
+    "latlngPairSeparator": { type: "text",  defaultValue: ";"   },
     "center":           { type: "float",    defaultValue: [20,0],   dimensions: 2 },
     "zoom":             { type: "float",    defaultValue: 2         },
+    "scrollWheelZoom":  { type: "boolean",  defaultValue: true      },
     "size":             { type: "text",     defaultValue: "small"   },
     "scaleControl":     { type: "boolean",  defaultValue: true      },
     "overviewControl":  { type: "boolean",  defaultValue: false     },
@@ -48,6 +51,7 @@ Exhibit.MapView._settingSpecs = {
     "sizeCoder":        { type: "text",     defaultValue: null      },
     "iconCoder":        { type: "text",     defaultValue: null      },
     "selectCoordinator":  { type: "text",   defaultValue: null      },
+    
     "iconSize":         { type: "int",      defaultValue: 0         },
     "iconFit":          { type: "text",     defaultValue: "smaller" },
     "iconScale":        { type: "float",    defaultValue: 1         },
@@ -60,6 +64,11 @@ Exhibit.MapView._settingSpecs = {
     "pin":              { type: "boolean",  defaultValue: true      },
     "pinHeight":        { type: "int",      defaultValue: 6         },
     "pinWidth":         { type: "int",      defaultValue: 6         },
+    
+    "borderOpacity":    { type: "float",    defaultValue: 0.5       },
+    "borderWidth":      { type: "int",      defaultValue: 1         },
+    "borderColor":      { type: "text",     defaultValue: null      },
+    
     "sizeLegendLabel":  { type: "text",     defaultValue: null      },
     "colorLegendLabel": { type: "text",     defaultValue: null      },
     "iconLegendLabel":  { type: "text",     defaultValue: null      },
@@ -105,6 +114,14 @@ Exhibit.MapView._accessorSpecs = [
                 ]
             }
         ]
+    },
+    {   accessorName:   "getPolygon",
+        attributeName:  "polygon",
+        type:           "text"
+    },
+    {   accessorName:   "getPolyline",
+        attributeName:  "polyline",
+        type:           "text"
     },
     {   accessorName:   "getColorKey",
         attributeName:  "marker", // backward compatibility
@@ -176,11 +193,13 @@ Exhibit.MapView._configure = function(view, configuration) {
     Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.MapView._settingSpecs, view._settings);
     
     var accessors = view._accessors;
-    view._getLatlng = function(itemID, database, visitor) {
-        accessors.getProxy(itemID, database, function(proxy) {
-            accessors.getLatlng(proxy, database, visitor);
-        });
-    };
+    view._getLatlng = accessors.getLatlng != null ?
+        function(itemID, database, visitor) {
+            accessors.getProxy(itemID, database, function(proxy) {
+                accessors.getLatlng(proxy, database, visitor);
+            });
+        } : 
+        null;
 };
 
 Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProperty, outputTextArea, database, accuracy) {
@@ -345,8 +364,6 @@ Exhibit.MapView.prototype._constructGMap = function(mapDiv) {
         return settings.mapConstructor(mapDiv);
     } else {
         var map = new GMap2(mapDiv);
-        map.enableDoubleClickZoom();
-        map.enableContinuousZoom();
 
         map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
         
@@ -356,6 +373,12 @@ Exhibit.MapView.prototype._constructGMap = function(mapDiv) {
         }
         if (settings.scaleControl) {
             map.addControl(new GScaleControl());
+        }
+        
+        map.enableDoubleClickZoom();
+        map.enableContinuousZoom();
+        if (settings.scrollWheelZoom) {
+            map.enableScrollWheelZoom();
         }
         
         map.addControl(new GMapTypeControl());
@@ -370,6 +393,10 @@ Exhibit.MapView.prototype._constructGMap = function(mapDiv) {
             map.setMapType(G_HYBRID_MAP);
             break;
         }
+        
+        GEvent.addListener(map, "click", function() {
+            SimileAjax.WindowManager.cancelPopups();
+        });
         
         return map;
     }
@@ -436,50 +463,83 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
 
     var currentSet = collection.getRestrictedItems();
     var locationToData = {};
-    var hasColorKey = (this._accessors.getColorKey != null);
-    var hasSizeKey = (this._accessors.getSizeKey != null);
-    var hasIconKey = (this._accessors.getIconKey != null);
-    var hasIcon = (this._accessors.getIcon != null);
+    var hasColorKey = (accessors.getColorKey != null);
+    var hasSizeKey = (accessors.getSizeKey != null);
+    var hasIconKey = (accessors.getIconKey != null);
+    var hasIcon = (accessors.getIcon != null);
     
+    var hasPoints = (this._getLatlng != null);
+    var hasPolygons = (accessors.getPolygon != null);
+    var hasPolylines = (accessors.getPolyline != null);
+    
+    var makeLatLng = settings.latlngOrder == "latlng" ? 
+        function(first, second) { return new GLatLng(first, second); } :
+        function(first, second) { return new GLatLng(second, first); };
+        
     currentSet.visit(function(itemID) {
         var latlngs = [];
-        self._getLatlng(itemID, database, function(v) { if (v != null && "lat" in v && "lng" in v) latlngs.push(v); });
+        var polygons = [];
+        var polylines = [];
         
-        if (latlngs.length > 0) {
+        if (hasPoints) {
+            self._getLatlng(itemID, database, function(v) { if (v != null && "lat" in v && "lng" in v) latlngs.push(v); });
+        }
+        if (hasPolygons) {
+            accessors.getPolygon(itemID, database, function(v) { if (v != null) polygons.push(v); });
+        }
+        if (hasPolylines) {
+            accessors.getPolyline(itemID, database, function(v) { if (v != null) polylines.push(v); });
+        }
+        
+        if (latlngs.length > 0 || polygons.length > 0 || polylines.length > 0) {
+            var color = self._settings.color;
+            
             var colorKeys = null;
             if (hasColorKey) {
                 colorKeys = new Exhibit.Set();
                 accessors.getColorKey(itemID, database, function(v) { colorKeys.add(v); });
+                
+                color = self._colorCoder.translateSet(colorKeys, colorCodingFlags);
             }
-            var sizeKeys = null;
-            if (hasSizeKey) {
-                sizeKeys = new Exhibit.Set();
-                accessors.getSizeKey(itemID, database, function(v) { sizeKeys.add(v); });
-            }
-            var iconKeys = null;
-            if (hasIconKey) {
-                iconKeys = new Exhibit.Set();
-                accessors.getIconKey(itemID, database, function(v) { iconKeys.add(v); });
-            }
-            for (var n = 0; n < latlngs.length; n++) {
-                var latlng = latlngs[n];
-                var latlngKey = latlng.lat + "," + latlng.lng;
-                if (latlngKey in locationToData) {
-                    var locationData = locationToData[latlngKey];
-                    locationData.items.push(itemID);
-                    if (hasColorKey) { locationData.colorKeys.addSet(colorKeys); }
-                    if (hasSizeKey) { locationData.sizeKeys.addSet(sizeKeys); }
-                    if (hasIconKey) { locationData.iconKeys.addSet(iconKeys); }
-                } else {
-                    var locationData = {
-                        latlng:     latlng,
-                        items:      [ itemID ]
-                    };
-                    if (hasColorKey) { locationData.colorKeys = colorKeys;}
-                    if (hasSizeKey) { locationData.sizeKeys = sizeKeys; }
-                    if (hasIconKey) { locationData.iconKeys = iconKeys; }
-                    locationToData[latlngKey] = locationData;
+            
+            if (latlngs.length > 0) {
+                var sizeKeys = null;
+                if (hasSizeKey) {
+                    sizeKeys = new Exhibit.Set();
+                    accessors.getSizeKey(itemID, database, function(v) { sizeKeys.add(v); });
                 }
+                var iconKeys = null;
+                if (hasIconKey) {
+                    iconKeys = new Exhibit.Set();
+                    accessors.getIconKey(itemID, database, function(v) { iconKeys.add(v); });
+                }
+                for (var n = 0; n < latlngs.length; n++) {
+                    var latlng = latlngs[n];
+                    var latlngKey = latlng.lat + "," + latlng.lng;
+                    if (latlngKey in locationToData) {
+                        var locationData = locationToData[latlngKey];
+                        locationData.items.push(itemID);
+                        if (hasColorKey) { locationData.colorKeys.addSet(colorKeys); }
+                        if (hasSizeKey) { locationData.sizeKeys.addSet(sizeKeys); }
+                        if (hasIconKey) { locationData.iconKeys.addSet(iconKeys); }
+                    } else {
+                        var locationData = {
+                            latlng:     latlng,
+                            items:      [ itemID ]
+                        };
+                        if (hasColorKey) { locationData.colorKeys = colorKeys;}
+                        if (hasSizeKey) { locationData.sizeKeys = sizeKeys; }
+                        if (hasIconKey) { locationData.iconKeys = iconKeys; }
+                        locationToData[latlngKey] = locationData;
+                    }
+                }
+            }
+            
+            for (var p = 0; p < polygons.length; p++) {
+                self._plotPolygon(itemID, polygons[p], color, makeLatLng); 
+            }
+            for (var p = 0; p < polylines.length; p++) {
+                self._plotPolyline(itemID, polylines[p], color, makeLatLng); 
             }
         } else {
             unplottableItems.push(itemID);
@@ -643,6 +703,61 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
     if (bounds && typeof settings.center == "undefined") {
         self._map.setCenter(bounds.getCenter());
     }
+};
+
+Exhibit.MapView.prototype._plotPolygon = function(itemID, polygonString, color, makeLatLng) {
+    var coords = this._parsePolygonOrPolyline(polygonString, makeLatLng);
+    if (coords.length > 1) {
+        var settings = this._settings;
+        var borderColor = settings.borderColor != null ? settings.borderColor : color;
+        var polygon = new GPolygon(coords, borderColor, settings.borderWidth, settings.borderOpacity, color, settings.opacity);
+        
+        return this._addPolygonOrPolyline(itemID, polygon);
+    }
+    return null;
+};
+
+Exhibit.MapView.prototype._plotPolyline = function(itemID, polylineString, color, makeLatLng) {
+    var coords = this._parsePolygonOrPolyline(polylineString, makeLatLng);
+    if (coords.length > 1) {
+        var settings = this._settings;
+        var borderColor = settings.borderColor != null ? settings.borderColor : color;
+        var polyline = new GPolyline(coords, borderColor, settings.borderWidth, settings.borderOpacity);
+        return this._addPolygonOrPolyline(itemID, polyline);
+    }
+    return null;
+};
+
+Exhibit.MapView.prototype._addPolygonOrPolyline = function(itemID, poly) {
+    this._map.addOverlay(poly);
+    
+    var self = this;
+    var onclick = function(latlng) {
+        self._map.openInfoWindow(
+            latlng,
+            self._createInfoWindow([itemID])
+        );
+        if (self._selectListener != null) {
+            self._selectListener.fire({ itemIDs: [itemID] });
+        }
+    }
+    GEvent.addListener(poly, "click", onclick);
+    
+    this._itemIDToMarker[itemID] = poly;
+    
+    return poly;
+};
+
+Exhibit.MapView.prototype._parsePolygonOrPolyline = function(s, makeLatLng) {
+    var coords = [];
+    
+    var a = s.split(this._settings.latlngPairSeparator);
+    for (var i = 0; i < a.length; i++) {
+        var pair = a[i].split(",");
+        coords.push(makeLatLng(parseFloat(pair[0]), parseFloat(pair[1])));
+    }
+    
+    return coords;
 };
 
 Exhibit.MapView.prototype._select = function(selection) {
