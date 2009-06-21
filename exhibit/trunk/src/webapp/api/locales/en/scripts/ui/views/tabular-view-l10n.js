@@ -22,3 +22,6 @@ Exhibit.TabularView.l10n.nextPage = "Next&nbsp;&raquo;";
 Exhibit.TabularView.l10n.makePagingActionTitle = function(pageIndex) {
     return ("Page " + (pageIndex + 1));
 };
+Exhibit.TabularView.l10n.makePagingLinkTooltip = function(pageIndex) {
+    return ("Go to page " + (pageIndex + 1));
+};

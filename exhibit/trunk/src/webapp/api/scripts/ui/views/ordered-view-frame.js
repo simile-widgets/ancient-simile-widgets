@@ -12,18 +12,20 @@ Exhibit.OrderedViewFrame = function(uiContext) {
 };
 
 Exhibit.OrderedViewFrame._settingSpecs = {
-    "showAll":              { type: "boolean", defaultValue: false },
-    "grouped":              { type: "boolean", defaultValue: true },
-    "showDuplicates":       { type: "boolean", defaultValue: false },
-    "abbreviatedCount":     { type: "int",     defaultValue: 10 },
-    "showHeader":           { type: "boolean", defaultValue: true },
-    "showSummary":          { type: "boolean", defaultValue: true },
-    "showControls":         { type: "boolean", defaultValue: true },
-    "showFooter":           { type: "boolean", defaultValue: true },
-    "paginate":             { type: "boolean", defaultValue: false },
-    "pageSize":             { type: "int",     defaultValue: 20 },
-    "pageWindow":           { type: "int",     defaultValue: 2 },
-    "page":                 { type: "int",     defaultValue: 0 }
+    "showAll":                  { type: "boolean", defaultValue: false },
+    "grouped":                  { type: "boolean", defaultValue: true },
+    "showDuplicates":           { type: "boolean", defaultValue: false },
+    "abbreviatedCount":         { type: "int",     defaultValue: 10 },
+    "showHeader":               { type: "boolean", defaultValue: true },
+    "showSummary":              { type: "boolean", defaultValue: true },
+    "showControls":             { type: "boolean", defaultValue: true },
+    "showFooter":               { type: "boolean", defaultValue: true },
+    "paginate":                 { type: "boolean", defaultValue: false },
+    "pageSize":                 { type: "int",     defaultValue: 20 },
+    "pageWindow":               { type: "int",     defaultValue: 2 },
+    "page":                     { type: "int",     defaultValue: 0 },
+    "alwaysShowPagingControls": { type: "boolean", defaultValue: false },
+    "pagingControlLocations":   { type: "enum",    defaultValue: "topbottom", choices: [ "top", "bottom", "topbottom" ] }
 };
     
 Exhibit.OrderedViewFrame.prototype.configure = function(configuration) {
@@ -96,6 +98,9 @@ Exhibit.OrderedViewFrame.prototype._internalValidate = function() {
     }
     if (this._possibleOrders != null && this._possibleOrders.length == 0) {
         this._possibleOrders = null;
+    }
+    if (this._settings.paginate) {
+        this._settings.grouped = false;
     }
 };
 
@@ -452,18 +457,18 @@ Exhibit.OrderedViewFrame.prototype._internalReconstruct = function(allItems) {
     var fromIndex = 0;
     var toIndex = settings.showAll ? totalCount : Math.min(totalCount, settings.abbreviatedCount);
     
-    if (!settings.grouped && settings.paginate && pageCount > 1) {
+    if (!settings.grouped && settings.paginate && (pageCount > 1 || (pageCount > 0 && settings.alwaysShowPagingControls))) {
         fromIndex = settings.page * settings.pageSize;
         toIndex = Math.min(fromIndex + settings.pageSize, totalCount);
         
-        if (settings.showHeader) {
+        if (settings.showHeader && (settings.pagingControlLocations == "top" || settings.pagingControlLocations == "topbottom")) {
             this._headerDom.renderPageLinks(
                 settings.page,
                 pageCount,
                 settings.pageWindow
             );
         }
-        if (settings.showFooter) {
+        if (settings.showFooter && (settings.pagingControlLocations == "bottom" || settings.pagingControlLocations == "topbottom")) {
             this._footerDom.renderPageLinks(
                 settings.page,
                 pageCount,
@@ -899,6 +904,7 @@ Exhibit.OrderedViewFrame.renderPageLinks = function(div, page, pageCount, pageWi
         a.innerHTML = label;
         a.className = "exhibit-collectionView-pagingControls-page";
         a.href = "javascript:{}";
+        a.title = l10n.makePagingLinkTooltip(index);
         div.appendChild(a);
         
         var handler = function(elmt, evt, target) {

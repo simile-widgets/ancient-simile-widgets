@@ -115,6 +115,8 @@ Exhibit.OrderedViewFrame.l10n.previousPage="&laquo;&nbsp;Previous";
 Exhibit.OrderedViewFrame.l10n.nextPage="Next&nbsp;&raquo;";
 Exhibit.OrderedViewFrame.l10n.makePagingActionTitle=function(A){return("Page "+(A+1));
 };
+Exhibit.OrderedViewFrame.l10n.makePagingLinkTooltip=function(A){return("Go to page "+(A+1));
+};
 
 
 /* tabular-view-l10n.js */
@@ -130,6 +132,8 @@ Exhibit.TabularView.l10n.pageSeparator=" &bull; ";
 Exhibit.TabularView.l10n.previousPage="&laquo;&nbsp;Previous";
 Exhibit.TabularView.l10n.nextPage="Next&nbsp;&raquo;";
 Exhibit.TabularView.l10n.makePagingActionTitle=function(A){return("Page "+(A+1));
+};
+Exhibit.TabularView.l10n.makePagingLinkTooltip=function(A){return("Go to page "+(A+1));
 };
 
 
