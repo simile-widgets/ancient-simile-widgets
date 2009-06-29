@@ -109,6 +109,8 @@ Exhibit.OrderedViewFrame.l10n.formatDontShowAll=function(A){return"Show only the
 };
 Exhibit.OrderedViewFrame.l10n.formatShowAll=function(A){return"Show all "+A+" results";
 };
+Exhibit.OrderedViewFrame.l10n.pagingControlContainerElement="div";
+Exhibit.OrderedViewFrame.l10n.pagingControlElement="span";
 Exhibit.OrderedViewFrame.l10n.pageWindowEllipses=" ... ";
 Exhibit.OrderedViewFrame.l10n.pageSeparator=" &bull; ";
 Exhibit.OrderedViewFrame.l10n.previousPage="&laquo;&nbsp;Previous";
@@ -126,14 +128,6 @@ Exhibit.TabularView.l10n.viewTooltip="View items in a table";
 Exhibit.TabularView.l10n.columnHeaderSortTooltip="Click to sort by this column";
 Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Click to sort in the reverse order";
 Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"sorted ascending by ":"sorted descending by ")+A;
-};
-Exhibit.TabularView.l10n.pageWindowEllipses=" ... ";
-Exhibit.TabularView.l10n.pageSeparator=" &bull; ";
-Exhibit.TabularView.l10n.previousPage="&laquo;&nbsp;Previous";
-Exhibit.TabularView.l10n.nextPage="Next&nbsp;&raquo;";
-Exhibit.TabularView.l10n.makePagingActionTitle=function(A){return("Page "+(A+1));
-};
-Exhibit.TabularView.l10n.makePagingLinkTooltip=function(A){return("Go to page "+(A+1));
 };
 
 

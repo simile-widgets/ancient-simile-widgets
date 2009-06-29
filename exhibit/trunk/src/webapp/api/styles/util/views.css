@@ -87,3 +87,18 @@ div.exhibit-collectionView-pagingControls {
     padding: 0px 0.5em;
 }
 
+ul.exhibit-collectionView-pagingControls {
+    clear: both;
+    margin: 2em 0;
+    text-align: center;
+}
+ul.exhibit-collectionView-pagingControls li {
+    list-style-type: none;
+    display: inline;
+}
+ul.exhibit-collectionView-pagingControls li a {
+    border: 1px solid #90C2E1;
+    background: #DFEDF7;
+    padding: 2px 5px;
+    text-decoration: none;
+}
