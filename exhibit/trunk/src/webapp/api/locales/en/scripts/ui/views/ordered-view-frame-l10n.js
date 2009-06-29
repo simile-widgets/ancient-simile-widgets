@@ -32,6 +32,8 @@ Exhibit.OrderedViewFrame.l10n.formatShowAll = function(count) {
     return "Show all " + count + " results";
 };
 
+Exhibit.OrderedViewFrame.l10n.pagingControlContainerElement = "div";
+Exhibit.OrderedViewFrame.l10n.pagingControlElement = "span";
 Exhibit.OrderedViewFrame.l10n.pageWindowEllipses = " ... ";
 Exhibit.OrderedViewFrame.l10n.pageSeparator = " &bull; ";
 Exhibit.OrderedViewFrame.l10n.previousPage = "&laquo;&nbsp;Previous";

@@ -773,8 +773,7 @@ Exhibit.OrderedViewFrame.headerTemplate =
         "<span class='exhibit-collectionView-header-groupControl'> \u2022 " +
             "<a id='groupOption' class='exhibit-action'></a>" + 
         "</span>" +
-    "</div>" +
-    "<div class='exhibit-collectionView-pagingControls' style='display: none;' id='topPagingDiv'></div>";
+    "</div>";
 
 Exhibit.OrderedViewFrame.createHeaderDom = function(
     uiContext,
@@ -786,7 +785,11 @@ Exhibit.OrderedViewFrame.createHeaderDom = function(
     gotoPage
 ) {
     var l10n = Exhibit.OrderedViewFrame.l10n;
-    var template = String.substitute(Exhibit.OrderedViewFrame.headerTemplate, [ l10n.sortingControlsTemplate ]);
+    var template = String.substitute(
+        Exhibit.OrderedViewFrame.headerTemplate +
+        "<" + l10n.pagingControlContainerElement + " class='exhibit-collectionView-pagingControls' style='display: none;' id='topPagingDiv'></" + l10n.pagingControlContainerElement + ">", 
+        [ l10n.sortingControlsTemplate ]);
+        
     var dom = SimileAjax.DOM.createDOMFromString(headerDiv, template, {});
     headerDiv.className = "exhibit-collectionView-header";
     
@@ -845,8 +848,7 @@ Exhibit.OrderedViewFrame.createHeaderDom = function(
 };
 
 Exhibit.OrderedViewFrame.footerTemplate = 
-    "<div id='showAllSpan'></div>" +
-    "<div class='exhibit-collectionView-pagingControls' style='display: none;' id='bottomPagingDiv'></div>";
+    "<div id='showAllSpan'></div>";
     
 Exhibit.OrderedViewFrame.createFooterDom = function(
     uiContext,
@@ -859,7 +861,8 @@ Exhibit.OrderedViewFrame.createFooterDom = function(
     
     var dom = SimileAjax.DOM.createDOMFromString(
         footerDiv,
-        Exhibit.OrderedViewFrame.footerTemplate,
+        Exhibit.OrderedViewFrame.footerTemplate +
+        "<" + l10n.pagingControlContainerElement + " class='exhibit-collectionView-pagingControls' style='display: none;' id='bottomPagingDiv'></" + l10n.pagingControlContainerElement + ">",
         {}
     );
     footerDiv.className = "exhibit-collectionView-footer";
@@ -892,20 +895,23 @@ Exhibit.OrderedViewFrame.createFooterDom = function(
     return dom;
 };
 
-Exhibit.OrderedViewFrame.renderPageLinks = function(div, page, pageCount, pageWindow, gotoPage) {
+Exhibit.OrderedViewFrame.renderPageLinks = function(parentElmt, page, pageCount, pageWindow, gotoPage) {
     var l10n = Exhibit.OrderedViewFrame.l10n;
     
-    div.className = "exhibit-collectionView-pagingControls";
-    div.innerHTML = "";
+    parentElmt.className = "exhibit-collectionView-pagingControls";
+    parentElmt.innerHTML = "";
     
     var self = this;
     var renderPageLink = function(label, index) {
+        var elmt = document.createElement(l10n.pagingControlElement);
+        elmt.className = "exhibit-collectionView-pagingControls-page";
+        parentElmt.appendChild(elmt);
+        
         var a = document.createElement("a");
         a.innerHTML = label;
-        a.className = "exhibit-collectionView-pagingControls-page";
         a.href = "javascript:{}";
         a.title = l10n.makePagingLinkTooltip(index);
-        div.appendChild(a);
+        elmt.appendChild(a);
         
         var handler = function(elmt, evt, target) {
             gotoPage(index);
@@ -916,24 +922,27 @@ Exhibit.OrderedViewFrame.renderPageLinks = function(div, page, pageCount, pageWi
     };
     var renderPageNumber = function(index) {
         if (index == page) {
-            var elmt = document.createElement("span");
+            var elmt = document.createElement(l10n.pagingControlElement);
             elmt.className = "exhibit-collectionView-pagingControls-currentPage";
             elmt.innerHTML = (index + 1);
-            div.appendChild(elmt);
+            
+            parentElmt.appendChild(elmt);
         } else {
             renderPageLink(index + 1, index);
         }
     };
     var renderHTML = function(html) {
-        var span = document.createElement("span");
-        span.innerHTML = html;
+        var elmt = document.createElement(l10n.pagingControlElement);
+        elmt.innerHTML = html;
         
-        div.appendChild(span);
+        parentElmt.appendChild(elmt);
     };
     
     if (page > 0) {
         renderPageLink(l10n.previousPage, page - 1);
-        renderHTML(" ");
+        if (l10n.pageSeparator.length > 0) {
+            renderHTML(" ");
+        }
     }
     
     var pageWindowStart = 0;
@@ -950,7 +959,7 @@ Exhibit.OrderedViewFrame.renderPageLinks = function(div, page, pageCount, pageWi
     }
     
     for (var i = pageWindowStart; i <= pageWindowEnd; i++) {
-        if (i > pageWindowStart) {
+        if (i > pageWindowStart && l10n.pageSeparator.length > 0) {
             renderHTML(l10n.pageSeparator);
         }
         renderPageNumber(i);
@@ -962,7 +971,9 @@ Exhibit.OrderedViewFrame.renderPageLinks = function(div, page, pageCount, pageWi
     }
     
     if (page < pageCount - 1) {
-        renderHTML(" ");
+        if (l10n.pageSeparator.length > 0) {
+            renderHTML(" ");
+        }
         renderPageLink(l10n.nextPage, page + 1);
     }
 };
