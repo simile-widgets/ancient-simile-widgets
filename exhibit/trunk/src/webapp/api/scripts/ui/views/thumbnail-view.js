@@ -24,7 +24,8 @@ Exhibit.ThumbnailView = function(containerElmt, uiContext) {
 };
 
 Exhibit.ThumbnailView._settingSpecs = {
-    "showToolbox":          { type: "boolean", defaultValue: true }
+    "showToolbox":          { type: "boolean", defaultValue: true },
+    "columnCount":          { type: "int", defaultValue: -1 }
 };
 
 Exhibit.ThumbnailView._itemContainerClass = SimileAjax.Platform.browser.isIE ?
@@ -127,6 +128,14 @@ Exhibit.ThumbnailView.prototype._initializeUI = function() {
 };
 
 Exhibit.ThumbnailView.prototype._reconstruct = function() {
+    if (this._settings.columnCount < 2) {
+        this._reconstructWithFloats();
+    } else {
+        this._reconstructWithTable();
+    }
+};
+
+Exhibit.ThumbnailView.prototype._reconstructWithFloats = function() {
     var view = this;
     var state = {
         div:            this._dom.bodyDiv,
@@ -193,6 +202,84 @@ Exhibit.ThumbnailView.prototype._reconstruct = function() {
     this._div.style.display = "block";
 };
 
+Exhibit.ThumbnailView.prototype._reconstructWithTable = function() {
+    var view = this;
+    var state = {
+        div:            this._dom.bodyDiv,
+        groupDoms:      [],
+        groupCounts:    [],
+        table:          null,
+        columnIndex:    0
+    };
+    
+    var closeGroups = function(groupLevel) {
+        for (var i = groupLevel; i < state.groupDoms.length; i++) {
+            state.groupDoms[i].countSpan.innerHTML = state.groupCounts[i];
+        }
+        state.groupDoms = state.groupDoms.slice(0, groupLevel);
+        state.groupCounts = state.groupCounts.slice(0, groupLevel);
+        
+        if (groupLevel > 0) {
+            state.div = state.groupDoms[groupLevel - 1].contentDiv;
+        } else {
+            state.div = view._dom.bodyDiv;
+        }
+        state.itemContainer = null;
+        state.table = null;
+        state.columnIndex = 0;
+    }
+    
+    this._orderedViewFrame.onNewGroup = function(groupSortKey, keyType, groupLevel) {
+        closeGroups(groupLevel);
+        
+        var groupDom = Exhibit.ThumbnailView.constructGroup(
+            groupLevel,
+            groupSortKey
+        );
+        
+        state.div.appendChild(groupDom.elmt);
+        state.div = groupDom.contentDiv;
+        
+        state.groupDoms.push(groupDom);
+        state.groupCounts.push(0);
+    };
+    
+    this._orderedViewFrame.onNewItem = function(itemID, index) {
+        //if (index > 10) return;
+        
+        if (state.columnIndex >= view._settings.columnCount) {
+            state.columnIndex = 0;
+        }
+        
+        if (state.table == null) {
+            state.table = Exhibit.ThumbnailView.constructTableItemContainer();
+            state.div.appendChild(state.table);
+        }
+        if (state.columnIndex == 0) {
+            state.table.insertRow(state.table.rows.length);
+        }
+        var td = state.table.rows[state.table.rows.length - 1].insertCell(state.columnIndex++);
+        
+        for (var i = 0; i < state.groupCounts.length; i++) {
+            state.groupCounts[i]++;
+        }
+        
+        var itemLensDiv = document.createElement("div");
+        itemLensDiv.className = Exhibit.ThumbnailView._itemContainerClass;
+        
+        var itemLens = view._lensRegistry.createLens(itemID, itemLensDiv, view._uiContext);
+        td.appendChild(itemLensDiv);
+    };
+                
+    this._div.style.display = "none";
+    
+    this._dom.bodyDiv.innerHTML = "";
+    this._orderedViewFrame.reconstruct();
+    closeGroups(0);
+    
+    this._div.style.display = "block";
+};
+
 Exhibit.ThumbnailView.constructGroup = function(
     groupLevel,
     label
@@ -233,3 +320,8 @@ Exhibit.ThumbnailView.constructItemContainer = function() {
     return div;
 };
     
+Exhibit.ThumbnailView.constructTableItemContainer = function() {
+    var table = document.createElement("table");
+    table.className = "exhibit-thumbnailView-body";
+    return table;
+};
