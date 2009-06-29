@@ -12,6 +12,7 @@ Ongoing
   pageWindow = number of pages before and after current page to show 
     if the current page is far from the first page and/or the last page;
     default is 2
+- Support columnCount setting for thumbnail view.
 - Added support for polygons and polylines in map view, and added an example called 
   polymap to illustrate these features.
 - Added scrollWheelZoom setting for map view.
