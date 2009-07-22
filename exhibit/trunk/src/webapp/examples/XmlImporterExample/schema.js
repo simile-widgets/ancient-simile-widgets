@@ -1,0 +1,8 @@
+{
+	properties : {
+		'copyright' : {
+			'valueType' : 'number'
+		},
+		
+	}
+}
