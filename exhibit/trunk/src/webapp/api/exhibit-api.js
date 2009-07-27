@@ -65,6 +65,7 @@
             "data/importers/babel-based-importer.js",
             "data/importers/rdfa-importer.js",
             "data/importers/exhibit-xml-importer.js",
+            "data/importers/tsv-csv-importer.js",
             
             "data/exporters/rdf-xml-exporter.js",
             "data/exporters/semantic-wikitext-exporter.js",
