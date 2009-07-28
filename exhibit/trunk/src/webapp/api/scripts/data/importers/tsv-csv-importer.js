@@ -97,8 +97,8 @@ Exhibit.TsvCsvImporter.getProperties = function(propertyRow) { //function that p
 			var type = "";
 
 			if (prop.match(":")){
-				prop = prop.substring(0, prop.lastIndexOf(":"));
 				var t = prop.substring(prop.lastIndexOf(":") + 1);
+				prop = prop.substring(0, prop.lastIndexOf(":"));
 				if (t in valueTypes){
 					type = t;
 				}else{
