@@ -12,8 +12,8 @@ Exhibit.TsvCsvImporter.load = function(link, database, cont) {
 	var url = typeof link == "string" ? link : link.href;
     url = Exhibit.Persistence.resolveURL(url);
     var type = link.type.substring(link.type.indexOf("/")+1); //type of data (either tsv or csv)
-    var expressionString = Exhibit.getAttribute(link, "properties"); //null if no ex:properties attribute is given in the html document
-    var removeFirstLine = Exhibit.getAttribute(link, "removeFirstLine")==true? true : false; //false if ex:removeFirstLine is set to false or if the attribute is not specfied
+    var hasColumnTitles = Exhibit.getAttribute(link, "hasColumnTitles")!=null? Exhibit.getAttribute(link, "hasColumnTitles") : true; // false if ex:hasColumnTitles is set to false, otherwise the default value is true
+    var expressionString = Exhibit.getAttribute(link, "properties"); //null if no ex:properties attribute is given in the html documents
     
 	var fError = function(statusText, status, xmlhttp) {
         Exhibit.UI.hideBusyIndicator();
@@ -27,7 +27,7 @@ Exhibit.TsvCsvImporter.load = function(link, database, cont) {
             var o = null;
             try {
             	var text = xmlhttp.responseText; //the text retrieved from the link
-                o = eval(Exhibit.TsvCsvImporter.parseTsvCsv(text, type, expressionString, removeFirstLine)); //text is converted to Exhibit JSON
+                o = eval(Exhibit.TsvCsvImporter.parseTsvCsv(text, type, expressionString, hasColumnTitles)); //text is converted to Exhibit JSON
             } catch (e) {
                 Exhibit.UI.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url, e), url);
 			}
@@ -47,23 +47,38 @@ Exhibit.TsvCsvImporter.load = function(link, database, cont) {
 	
 }        
 
-Exhibit.TsvCsvImporter.parseTsvCsv = function(text, format, expressionString, removeFirstLine) {
+Exhibit.TsvCsvImporter.parseTsvCsv = function(text, format, expressionString, hasColumnTitles) {
 		var separator = Exhibit.TsvCsvImporter.formatType(format); // type of separator ("," or "/t")
 
-		var lines = text.split("\n"); 
+		var lines = text.split("\n");
+        var rest; //array containing the data excluding the column titles
 				
-		var noPropertyNames = expressionString!=null; //boolean that is false unless the ex:properties attribute is specified
-		var exString;
-		
-		if (removeFirstLine){
-			lines = line.slice(1); 
+		var hasPropertyListAttribute = expressionString!=null; //boolean that is false unless the ex:properties attribute is specified
+        var exString;
+        var propertyRow;
+        
+        if (hasPropertyListAttribute){ //if the data is in tsv format, the comma-separated list of the ex:properties attribute must become a tab-separated string 
+			exString = Exhibit.TsvCsvImporter.replaceAll(expressionString, ",", separator)
 		}
-		if (noPropertyNames&&separator=="\t"){ //if the data is in tsv format, the comma-separated list of the ex:properties attribute must become a tab-separated string 
-			exString = Exhibit.TsvCsvImporter.replaceAll(expressionString, ",", "\t")
+    
+        if (hasPropertyListAttribute){ //if the ex:properties attribute is specified, the string becomes the column header row
+            propertyRow = exString.split(separator);
+            if(hasColumnTitles=="false"){ 
+				rest = lines;
+			}else{ //if there is a header row in the data file, the first row must be removed and the list of property names given in ex:properties will override it
+                rest = lines.slice(1);
+            }
+        }else{
+            if (hasColumnTitles=="false"){ //if there is no header row in the file and no ex:properties attribute is specified, the user is notified that the column names are required
+				alert("No header row was given for the property names. Either specify them in the ex:properties attribute or add a header row to the file.");
+                return;
+			}
+			else{
+                propertyRow = lines[0].split(separator);
+                rest = lines.slice(1);
+            }
 		}
-		var propertyRow = noPropertyNames? exString.split(separator):lines[0].split(separator); //array containing all the property names
-		var rest = lines.slice(1); //array containing the remaining rows of data
-		
+       
 		while (rest[rest.length-1]==""){ //removes empty rows at the end
 			rest = rest.slice(0,rest.length-1);
 		} 
