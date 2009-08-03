@@ -399,7 +399,7 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
         } else if (name == "content") {
             templateNode.content = Exhibit.ExpressionParser.parse(value);
             templateNode.attributes.push({
-                name:   name,
+                name:   "ex:content",
                 value:  value
             });
         } else if (name == "edit") {
