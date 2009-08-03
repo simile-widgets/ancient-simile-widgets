@@ -398,6 +398,10 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
             templateNode.control = value;
         } else if (name == "content") {
             templateNode.content = Exhibit.ExpressionParser.parse(value);
+            templateNode.attributes.push({
+                name:   name,
+                value:  value
+            });
         } else if (name == "edit") {
             templateNode.edit = value;
         } else if (name == 'options') {
