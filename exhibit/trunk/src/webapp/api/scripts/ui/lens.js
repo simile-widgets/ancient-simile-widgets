@@ -383,23 +383,28 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
     if (value == null || typeof value != "string" || value.length == 0 || name == "contentEditable") {
         return;
     }
-    if (name == "ex:onshow") {
-        templateNode.attributes.push({
-            name:   name,
-            value:  value
-        });
-    } else if (name.length > 3 && name.substr(0,3) == "ex:") {
+    if (name.length > 3 && name.substr(0,3) == "ex:") {
         name = name.substr(3);
         if (name == "formats") {
             templateNode.uiContext = Exhibit.UIContext._createWithParent(uiContext);
             
             Exhibit.FormatParser.parseSeveral(templateNode.uiContext, value, 0, {});
-        } else if (name == "control") {
+        } else if (name == "onshow") {
+	    templateNode.attributes.push({
+		    name:   name,
+		    value:  value
+		});
+	} else if (name == "control") {
             templateNode.control = value;
         } else if (name == "content") {
             templateNode.content = Exhibit.ExpressionParser.parse(value);
             templateNode.attributes.push({
                 name:   "ex:content",
+                value:  value
+            });
+        } else if (name == "editor") {
+            templateNode.attributes.push({
+                name:   "ex:editor",
                 value:  value
             });
         } else if (name == "edit") {
