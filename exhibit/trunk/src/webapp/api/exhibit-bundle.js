@@ -1,4 +1,4 @@
-﻿
+
 
 /* authentication.js */
 Exhibit.Authentication={};
@@ -1923,6 +1923,92 @@ if(data==null||S===""){continue;
 }V.push(c);
 P.items=V;
 }U.loadData(P,Exhibit.Persistence.resolveURL(location.href));
+};
+
+
+/* json-importer.js */
+Exhibit.jsonImporter={};
+Exhibit.importers["application/general-json"]=Exhibit.jsonImporter;
+Exhibit.jsonImporter.getjsonDocument=function(A){var B=null;
+$.ajax({url:A,type:"GET",dataType:"json",async:false,success:function(C){B=C;
+}});
+if(B){return B;
+}else{alert("ERROR FINDING JSON DOC");
+return null;
+}};
+Exhibit.jsonImporter.findFirstItems=function(C,D){if(C instanceof Array){for each(object in C){return Exhibit.jsonImporter.findFirstItems(object,D);
+}}else{var A=[];
+var B=[];
+for(child in C){A.push(C[child]);
+if(D.itemTag.indexOf(child)>=0){for each(subChild in C[child]){subChild.index=D.itemTag.indexOf(child);
+B.push(subChild);
+}}}if(B.length){return B;
+}else{return Exhibit.jsonImporter.findFirstItems(A,D);
+}}};
+Exhibit.jsonImporter.getItems=function(json,exhibitJSON,configuration){var itemQueue;
+var root=json;
+if(root instanceof Array){itemQueue=root;
+}else{itemQueue=[root];
+}while(itemQueue.length>0){var myObject=itemQueue.shift();
+var index=myObject.index;
+var objectToAppend={};
+var propertyQueue=[];
+for(propertyKey in myObject){propertyQueue.push(propertyKey);
+}while(propertyQueue.length>0){var key=propertyQueue.shift();
+var keyID=key.split(".").pop();
+if(configuration.itemTag.indexOf(keyID)==-1){var propertyValue=eval("myObject."+key);
+if(keyID=="index"){}else{if(propertyValue instanceof Array){objectToAppend[keyID]=propertyValue;
+}else{if(propertyValue instanceof Object){for(newProperty in propertyValue){propertyQueue.push(key+"."+newProperty);
+}}else{if(keyID==configuration.propertyTags[index]){var referenceIndex=configuration.propertyTags.indexOf(keyID);
+var newKey=configuration.propertyNames[referenceIndex];
+objectToAppend[newKey]=propertyValue;
+}else{if(keyID==configuration.propertyLabel[index]){objectToAppend.label=propertyValue;
+}else{objectToAppend[keyID]=propertyValue;
+}}}}}if(configuration.itemType[index]){objectToAppend.type=configuration.itemType[index];
+}else{objectToAppend.type="Item";
+}}else{newObject=eval("myObject."+key);
+if(newObject instanceof Array){for each(object in newObject){object.index=configuration.itemTag.indexOf(keyID);
+if(configuration.parentRelation[object.index]){object[configuration.parentRelation[object.index]]=objectToAppend.label;
+}else{object["is a child of"]=objectToAppend.label;
+}itemQueue.push(object);
+}}else{newObject.index=configuration.itemTag.indexOf(keyID);
+if(configuration.parentRelation[newObject.index]){newObject[configuration.parentRelation[newObject.index]]=objectToAppend.label;
+}else{newObject["isChildOf"]=objectToAppend.label;
+}itemQueue.push(newObject);
+}}}exhibitJSON.items.push(objectToAppend);
+}return exhibitJSON;
+};
+Exhibit.jsonImporter.configure=function(){var A={"itemTag":[],"propertyLabel":[],"itemType":[],"parentRelation":[],"propertyTags":[],"propertyNames":[]};
+$("link").each(function(){if(this.hasAttribute("ex:itemTag")){A.itemTag=Exhibit.getAttribute(this,"ex:itemTag",",");
+}if(this.hasAttribute("ex:setPropertyAsLabel")){A.propertyLabel=Exhibit.getAttribute(this,"ex:setPropertyAsLabel",",");
+}if(this.hasAttribute("ex:itemType")){A.itemType=Exhibit.getAttribute(this,"ex:itemType",",");
+}if(this.hasAttribute("ex:parentRelation")){A.parentRelation=Exhibit.getAttribute(this,"ex:parentRelation",",");
+}if(this.hasAttribute("ex:propertyNames")){A.propertyNames=Exhibit.getAttribute(this,"ex:propertyNames",",");
+}if(this.hasAttribute("ex:propertyTags")){A.propertyTags=Exhibit.getAttribute(this,"ex:propertyTags",",");
+}});
+return A;
+};
+Exhibit.jsonImporter.load=function(E,F,A){var B=this;
+var C=typeof E=="string"?E:E.href;
+C=Exhibit.Persistence.resolveURL(C);
+var G=function(J,H,I){Exhibit.UI.hideBusyIndicator();
+Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(C));
+if(A){A();
+}};
+var D=function(){Exhibit.UI.hideBusyIndicator();
+try{var J=null;
+try{jsonDoc=Exhibit.jsonImporter.getjsonDocument(C);
+var K=B.configure();
+J={"items":[]};
+var H=B.findFirstItems(jsonDoc,K);
+J=Exhibit.jsonImporter.getItems(H,J,K);
+}catch(I){Exhibit.UI.showJsonFileValidation(Exhibit.l10n.badJsonMessage(C,I),C);
+}if(J!=null){F.loadData(J,Exhibit.Persistence.getBaseURL(C));
+}}catch(I){SimileAjax.Debug.exception(I,"Error loading Exhibit JSON data from "+C);
+}finally{if(A){A();
+}}};
+Exhibit.UI.showBusyIndicator();
+SimileAjax.XmlHttp.get(C,G,D);
 };
 
 
@@ -5436,6 +5522,7 @@ if(C=="formats"){D.uiContext=Exhibit.UIContext._createWithParent(B);
 Exhibit.FormatParser.parseSeveral(D.uiContext,G,0,{});
 }else{if(C=="control"){D.control=G;
 }else{if(C=="content"){D.content=Exhibit.ExpressionParser.parse(G);
+D.attributes.push({name:"ex:content",value:G});
 }else{if(C=="edit"){D.edit=G;
 }else{if(C=="options"){D.options=G;
 }else{if(C=="editvalues"){D.editValues=G;

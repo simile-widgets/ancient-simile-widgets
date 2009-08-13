@@ -5391,6 +5391,7 @@ if(M=="formats"){L.uiContext=Exhibit.UIContext._createWithParent(N);
 Exhibit.FormatParser.parseSeveral(L.uiContext,I,0,{});
 }else{if(M=="control"){L.control=I;
 }else{if(M=="content"){L.content=Exhibit.ExpressionParser.parse(I);
+L.attributes.push({name:"ex:content",value:I});
 }else{if(M=="edit"){L.edit=I;
 }else{if(M=="options"){L.options=I;
 }else{if(M=="editvalues"){L.editValues=I;
