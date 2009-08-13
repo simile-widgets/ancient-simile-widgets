@@ -5436,6 +5436,7 @@ if(name=="formats"){templateNode.uiContext=Exhibit.UIContext._createWithParent(u
 Exhibit.FormatParser.parseSeveral(templateNode.uiContext,value,0,{});
 }else{if(name=="control"){templateNode.control=value;
 }else{if(name=="content"){templateNode.content=Exhibit.ExpressionParser.parse(value);
+templateNode.attributes.push({name:"ex:content",value:value});
 }else{if(name=="edit"){templateNode.edit=value;
 }else{if(name=="options"){templateNode.options=value;
 }else{if(name=="editvalues"){templateNode.editValues=value;
