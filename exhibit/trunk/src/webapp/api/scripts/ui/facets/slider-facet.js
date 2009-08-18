@@ -3,6 +3,7 @@
  *==================================================
  */
 
+
 Exhibit.SliderFacet = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
@@ -15,6 +16,8 @@ Exhibit.SliderFacet = function(containerElmt, uiContext) {
     this._maxRange = {min: null, max: null}; //total range of slider
 };
 
+
+
 Exhibit.SliderFacet._settingsSpecs = {
     "facetLabel":       { type: "text" },
     "scroll":           { type: "boolean", defaultValue: true },
@@ -24,8 +27,11 @@ Exhibit.SliderFacet._settingsSpecs = {
     "height":           { type: "int", defaultValue: false },
     "width":            { type: "int", defaultValue: false },
     "horizontal":       { type: "boolean", defaultValue: true },
-    "inputText":        { type: "boolean", defaultValue: true } 
-};
+    "inputText":        { type: "boolean", defaultValue: true },
+    "showMissing":		{ type: "boolean", defaultValue: true}
+    };
+        
+
 
 Exhibit.SliderFacet.create = function(configuration, containerElmt, uiContext) {
     var uiContext = Exhibit.UIContext.create(configuration, uiContext);
@@ -39,6 +45,7 @@ Exhibit.SliderFacet.create = function(configuration, containerElmt, uiContext) {
     return facet;
 };
 
+//this is what Exhibit.UI.createFromDOM(elmt, uiContext) redirects to for the slider facet
 Exhibit.SliderFacet.createFromDOM = function(configElmt, containerElmt, uiContext) {
     var configuration = Exhibit.getConfigurationFromDOM(configElmt);
     var uiContext = Exhibit.UIContext.createFromDOM(configElmt, uiContext);
@@ -46,7 +53,8 @@ Exhibit.SliderFacet.createFromDOM = function(configElmt, containerElmt, uiContex
 	containerElmt != null? containerElmt : configElmt,
 	uiContext
     );
-
+	
+	//fills facet with configuration information
     Exhibit.SettingsUtilities.collectSettingsFromDOM(configElmt, Exhibit.SliderFacet._settingsSpecs, facet._settings);
 
     try {
@@ -54,10 +62,18 @@ Exhibit.SliderFacet.createFromDOM = function(configElmt, containerElmt, uiContex
         if (expressionString != null && expressionString.length > 0) {
             facet._expression = Exhibit.ExpressionParser.parse(expressionString);
         }
+        
+        var showMissing = Exhibit.getAttribute(configElmt, "showMissing");
+        console.log(showMissing);
+        if (showMissing != null && showMissing.length > 0) {
+            facet._showMissing = (showMissing == "true");
+        }
+        else{facet._showMissing=true;}
+
     } catch (e) {
         SimileAjax.Debug.exception(e, "SliderFacet: Error processing configuration of slider facet");
     }
-
+	
     Exhibit.SliderFacet._configure(facet, configuration);
     facet._initializeUI();
     uiContext.getCollection().addFacet(facet);
@@ -65,17 +81,29 @@ Exhibit.SliderFacet.createFromDOM = function(configElmt, containerElmt, uiContex
     return facet;
 };
 
+//what appears to be redundant configuration
 Exhibit.SliderFacet._configure = function(facet, configuration) {
     Exhibit.SettingsUtilities.collectSettings(configuration, Exhibit.SliderFacet._settingsSpecs, facet._settings);
 
     if ("expression" in configuration) {
 		facet._expression = Exhibit.ExpressionParser.parse(configuration.expression);
+		
     }
     if ("selection" in configuration) {
         var selection = configuration.selection;
         facet._selection = {min: selection[0], max: selection[1]};
     }
-
+    
+    if ("showMissing" in configuration){
+ 		facet._showMissing=configuration.showMissing;   
+    
+    }
+ 
+    
+    
+    
+	
+	//needs to be altered...get a label for something complex
     if (!("facetLabel" in facet._settings)) {
 		facet._settings.facetLabel = "missing ex:facetLabel";
 		if (facet._expression != null && facet._expression.isPath()) {
@@ -85,11 +113,17 @@ Exhibit.SliderFacet._configure = function(facet, configuration) {
 				facet._settings.facetLabel = segment.forward ? property.getLabel() : property.getReverseLabel();
 		    }
 		}
-    }
+		}
+	
+    facet._cache = new Exhibit.FacetUtilities.Cache(
+        facet._uiContext.getDatabase(),
+        facet._uiContext.getCollection(),
+        facet._expression
+    );
     
     facet._maxRange = facet._getMaxRange();
 };
-
+//initializes UI, obviously
 Exhibit.SliderFacet.prototype._initializeUI = function() {
     this._dom = SimileAjax.DOM.createDOMFromString(
        this._div,
@@ -102,60 +136,143 @@ Exhibit.SliderFacet.prototype._initializeUI = function() {
     this._slider = new Exhibit.SliderFacet.slider(this._dom.slider, this, this._settings.precision, this._settings.horizontal);
 };
 
+//checks for user use of slider, null if slider not yet used
 Exhibit.SliderFacet.prototype.hasRestrictions = function() {
     return (this._range.min && this._range.min != this._maxRange.min) || (this._range.max && this._range.max != this._maxRange.max);
 };
 
+//[items] used by other function
 Exhibit.SliderFacet.prototype.update = function(items) {
     if (this._settings.histogram) {
 		var data = [];
 		var n = 75; //number of bars on histogram
 		var range = (this._maxRange.max - this._maxRange.min)/n //range represented by each bar
-	    
+	    var missingCount=0;
 		var database = this._uiContext.getDatabase();
-		var path = this._expression.getPath();
-		
-		for(var i=0; i<n; i++) {
-		    data[i] = path.rangeBackward(this._maxRange.min+i*range, this._maxRange.min+(i+1)*range, false, items, database).values.size();
-		}
 	
+	if(this._selectMissing){
+	  missingCount=this._cache.getItemsMissingValue(items).size();
+	
+	
+	}	
+	if(this._expression.isPath()){
+			var path = this._expression.getPath();
+			
+			for(var i=0; i<n; i++) {
+			 data[i] = path.rangeBackward(this._maxRange.min+i*range, this._maxRange.min+(i+1)*range, false, items,database).values.size()+missingCount;
+						}
+		}
+		
+	
+	else{
+		this._buildRangeIndex();
+		var rangeIndex=this._rangeIndex;
+		
+		for(var i=0; i<n; i++){ 
+		
+		   data[i] = rangeIndex.getSubjectsInRange(this._maxRange.min+i*range, this._maxRange.min+(i+1)*range, false, null, items).size()+missingCount;
+			}
+		
+		}
+
+		
 		this._slider.updateHistogram(data);
     }
+    
 };
-
+//[items] used by other function
 Exhibit.SliderFacet.prototype.restrict = function(items) {
     if (!this.hasRestrictions()) {
 	return items;
     }
-    var path = this._expression.getPath();
-    var database = this._uiContext.getDatabase();
-    return path.rangeBackward(this._range.min, this._range.max, false, items, database).values;
+    
+    
+    set=new Exhibit.Set();
+    
+    
+   
+    
+    if(this._expression.isPath()){
+		var path = this._expression.getPath();
+    	var database = this._uiContext.getDatabase();
+    	set=path.rangeBackward(this._range.min, this._range.max, false, items, database).values;
+    	
+		}
+		
+	else{
+		this._buildRangeIndex();
+		var rangeIndex=this._rangeIndex;
+		set=rangeIndex.getSubjectsInRange(this._range.min, this._range.max, false, null, items);
+		
+			
+	}
+	
+	if(this._showMissing){
+    console.log("showMissing:true");
+    this._cache.getItemsMissingValue(items, set);
+    }
+    
+    return set;
+    
 };
-
+//gets maximum range? need to construct a range index for this...
 Exhibit.SliderFacet.prototype._getMaxRange = function() {
-    var path = this._expression.getPath();
-    var database = this._uiContext.getDatabase();
-    var propertyID = path.getLastSegment().property;
-    var property = database.getProperty(propertyID);
-    var rangeIndex = property.getRangeIndex();
+	if(this._expression.getPath()){
+	    var path = this._expression.getPath();
+	    var database = this._uiContext.getDatabase();
+	    var propertyID = path.getLastSegment().property;
+	    var property = database.getProperty(propertyID);
+	    var rangeIndex = property.getRangeIndex();
+	    }
+	else{
+	  
+	  	this._buildRangeIndex();
+		var rangeIndex=this._rangeIndex;	
+	
+	
+	}
 
     return {min: rangeIndex.getMin(), max: rangeIndex.getMax()};
 };
 
+Exhibit.SliderFacet.prototype._buildRangeIndex = function() {
+    if (!("_rangeIndex" in this)) {
+        var expression = this._expression;
+        var database = this._uiContext.getDatabase();
+        var getter = function(item, f) {
+            expression.evaluateOnItem(item, database).values.visit(function(value) {
+                if (typeof value != "number") {
+                    value = parseFloat(value);
+                }
+                if (!isNaN(value)) {
+                    f(value);
+                }
+            });
+        };
+    
+        this._rangeIndex = new Exhibit.Database._RangeIndex(
+            this._uiContext.getCollection().getAllItems(),
+            getter
+        );    
+    }
+};
+
+
+//clear
 Exhibit.SliderFacet.prototype.changeRange = function(range) {
     this._range = range;
     this._notifyCollection();
 };
-
+//clear
 Exhibit.SliderFacet.prototype._notifyCollection = function() {
     this._uiContext.getCollection().onFacetUpdated(this);
 };
-
+//clear
 Exhibit.SliderFacet.prototype.clearAllRestrictions = function() {
     this._slider.resetSliders();
     this._range = this._maxRange;
 };
-
+//clear
 Exhibit.SliderFacet.prototype.dispose = function() {
     this._uiContext.getCollection().removeFacet(this);
     this._uiContext = null;

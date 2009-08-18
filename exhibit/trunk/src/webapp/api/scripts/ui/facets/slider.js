@@ -70,6 +70,7 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     this._setSlider(this._slider2, this._maxRange.max);
 
     this._registerDragging();
+    
 
     if (this._facet._settings.inputText) {
 	this._registerInputs();
