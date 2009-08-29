@@ -16,7 +16,8 @@
 
     var javascriptFiles = [
         "map-view.js",
-        "vemap-view.js"
+        "vemap-view.js",
+        "olmap-view.js"
     ];
     var cssFiles = [
         "map-view.css"
@@ -52,6 +53,8 @@
         } else if (!("GMap2" in window)) {
             scriptURLs.push("http://maps.google.com/maps?file=api&v=2");
         }
+    } else if (Exhibit.MapExtension.params.service == "openlayers") {
+	scriptURLs.push("http://www.openlayers.org/api/OpenLayers.js");
     } else {
         scriptURLs.push("http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=5");
     }
