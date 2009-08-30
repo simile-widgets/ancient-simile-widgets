@@ -17,21 +17,25 @@
     <taskdef name="jsmin"
         classname="edu.mit.simile.jsminTask.JSMinTask"
         classpath="tools/jsmin-task/jsminTask.jar"/>
-  	
-  	<taskdef 
-  		resource="net/sf/antcontrib/antcontrib.properties"
-  		classpath="tools/ant-contrib-1.0b3.jar"/>
+    
+    <taskdef 
+      resource="net/sf/antcontrib/antcontrib.properties"
+      classpath="tools/ant-contrib-1.0b3.jar"/>
   </target>
       
   <target name="bundle-locale" depends="tasks">
-	  <jsmin output="src/webapp/api/locales/${locale}/exhibit-${locale}-bundle.js">
-	      <fileset dir="src/webapp/api/locales/${locale}/scripts">
-	          <include name="**/*.js" />
-	      </fileset>
-	  </jsmin>
+    <echo message="Bundling locale ${locale}"/>
+    
+    <jsmin output="src/webapp/api/locales/${locale}/exhibit-${locale}-bundle.js">
+        <fileset dir="src/webapp/api/locales/${locale}/scripts">
+            <include name="**/*.js" />
+        </fileset>
+    </jsmin>
   </target>
-  	
+  
   <target name="bundle-extension" depends="tasks">
+    <echo message="Bundling extension ${extension}"/>
+    
     <jsmin output="src/webapp/api/extensions/${extension}/${extension}-extension-bundle${suffix}.js" obfuscate="${obfuscate}">
         <fileset dir="src/webapp/api/extensions/${extension}/scripts">
             <include name="**/*.js" />
@@ -43,98 +47,50 @@
         </fileset>
     </concat>
   </target>
-  <target name="compile-extension" depends="tasks">
-    <jsmin output="${exhibit_compilations}/${extension}-extension-${locale}-compilation${suffix}.js" obfuscate="${obfuscate}">
-        <fileset file="${exhibit_api}/extensions/${extension}/compile-prolog.js" />
-        <fileset file="${exhibit_api}/extensions/${extension}/${extension}-extension.js" />
-        <fileset file="${exhibit_api}/extensions/${extension}/${extension}-extension-bundle${suffix}.js" />
-        <fileset dir="${exhibit_api}/extensions/${extension}/locales/${locale}/" erroronmissingdir="false">
-            <include name="${extension}-locale.js" />
-        </fileset>
-        <fileset file="${exhibit_api}/compile-epilog.js" />
-    </jsmin>
-    
-  	<if>
-   	  <available file="${exhibit_api}/extensions/${extension}/${extension}-extension-bundle.css" />
-  	  <then>
-	    <copy file="${exhibit_api}/extensions/${extension}/${extension}-extension-bundle.css" 
-    		tofile="${exhibit_compilations}/${extension}-extension-${locale}-compilation.css" />
-  	  </then>
-  	</if>
-  </target>
-  <target name="bundle-compile-extension" depends="tasks">
-  	<if>
-  	  <or>
-	  	<equals arg1="${locale}" arg2="en" />
-  	  	<available file="${exhibit_api}/extensions/${extension}/locales/${locale}/${extension}-locale.js" />
-  	  </or>
-   	  <then>
-   	    <antcall target="bundle-extension">
-   	      <param name="extension" value="${extension}" />
-   	      <param name="obfuscate" value="${obfuscate}" />
-   	      <param name="suffix" value="${suffix}" />
-   	      <param name="locale" value="${locale}" />
-   	    </antcall>
-   	    <antcall target="compile-extension">
-   	      <param name="extension" value="${extension}" />
-   	      <param name="obfuscate" value="${obfuscate}" />
-   	      <param name="suffix" value="${suffix}" />
-   	      <param name="locale" value="${locale}" />
-   	    </antcall>
-  	  </then>
-  	</if>
-  </target>
-  <target name="bundle-compile-extensions" depends="tasks">
-    <antcall target="bundle-compile-extension">
+
+  <target name="bundle-extensions" depends="tasks">
+    <antcall target="bundle-extension">
       <param name="extension" value="time" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
-    <antcall target="bundle-compile-extension">
+    <antcall target="bundle-extension">
       <param name="extension" value="map" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
-    <antcall target="bundle-compile-extension">
+    <antcall target="bundle-extension">
       <param name="extension" value="chart" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
-    <antcall target="bundle-compile-extension">
+    <antcall target="bundle-extension">
       <param name="extension" value="timeplot" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
-    <antcall target="bundle-compile-extension">
+    <antcall target="bundle-extension">
       <param name="extension" value="calendar" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
-    <antcall target="bundle-compile-extension">
+    <antcall target="bundle-extension">
       <param name="extension" value="curate" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
-    <antcall target="bundle-compile-extension">
+    <antcall target="bundle-extension">
       <param name="extension" value="editing" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
-    <antcall target="bundle-compile-extension">
+    <antcall target="bundle-extension">
       <param name="extension" value="freebase" />
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
     </antcall>
   </target>
-	
+  
   <target name="bundle-ajax" depends="tasks">
     <jsmin output="src/ajax/api/simile-ajax-bundle${suffix}.js" obfuscate="${obfuscate}">
         <fileset dir="src/ajax/api/scripts">
@@ -149,30 +105,7 @@
         </fileset>
     </jsmin>
   </target>
-  <target name="compile-ajax" depends="tasks">
-    <jsmin output="${ajax_api}/compilations/simile-ajax-compilation${suffix}.js" obfuscate="${obfuscate}">
-        <fileset file="${ajax_api}/compile-prolog.js" />
-        <fileset file="${ajax_api}/simile-ajax-api.js" />
-        <fileset file="${ajax_api}/simile-ajax-bundle${suffix}.js" />
-        <fileset file="${ajax_api}/compile-epilog.js" />
-    </jsmin>
-    <concat destfile="${ajax_api}/compilations/simile-ajax-compilation.css">
-        <fileset dir="${ajax_api}/styles">
-        	<include name="**/*.css" />
-        </fileset>
-    </concat>
-  </target>
-  <target name="bundle-compile-ajax" depends="tasks">
-    <antcall target="bundle-ajax">
-      <param name="obfuscate" value="${obfuscate}" />
-      <param name="suffix" value="${suffix}" />
-    </antcall>
-    <antcall target="compile-ajax">
-      <param name="obfuscate" value="${obfuscate}" />
-      <param name="suffix" value="${suffix}" />
-    </antcall>
-  </target>
-	
+  
   <target name="bundle-exhibit" depends="tasks">
     <jsmin output="src/webapp/api/exhibit-bundle${suffix}.js" obfuscate="${obfuscate}">
         <fileset dir="src/webapp/api/scripts">
@@ -186,60 +119,9 @@
         </fileset>
     </concat>
   </target>
-  <target name="compile-exhibit" depends="tasks">
-    <jsmin output="${exhibit_compilations}/exhibit-${locale}-compilation${suffix}.js" obfuscate="${obfuscate}">
-        <fileset file="${exhibit_api}/compile-prolog.js" />
-    	
-        <fileset file="${exhibit_api}/exhibit-api.js" />
-        <fileset file="${exhibit_api}/exhibit-bundle${suffix}.js" />
-    	
-        <fileset file="${exhibit_api}/locales/${locale}/locale.js" />
-        <fileset file="${exhibit_api}/locales/${locale}/exhibit-${locale}-bundle.js" />
-    	
-        <fileset file="${exhibit_api}/compile-epilog.js" />
-    </jsmin>
-    
-    <copy file="${exhibit_api}/exhibit-bundle.css" 
-    	tofile="${exhibit_compilations}/exhibit-${locale}-compilation.css" />
-  </target>
-  <target name="bundle-compile-exhibit" depends="tasks">
-    <antcall target="bundle-exhibit">
-      <param name="obfuscate" value="${obfuscate}" />
-      <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
-    </antcall>
-    <antcall target="compile-exhibit">
-      <param name="extension" value="${extension}" />
-      <param name="obfuscate" value="${obfuscate}" />
-      <param name="suffix" value="${suffix}" />
-      <param name="locale" value="${locale}" />
-    </antcall>
-  </target>
-	
+  
   <target name="build-locale" depends="tasks">
     <antcall target="bundle-locale"><param name="locale" value="${locale}" /></antcall>
-  	
-    <antcall target="bundle-compile-exhibit">
-      <param name="obfuscate" value="true" />
-      <param name="suffix" value="" />
-      <param name="locale" value="${locale}" />
-    </antcall>
-    <antcall target="bundle-compile-exhibit">
-      <param name="obfuscate" value="false" />
-      <param name="suffix" value="-debug" />
-      <param name="locale" value="${locale}" />
-    </antcall>
-  	
-    <antcall target="bundle-compile-extensions">
-        <param name="obfuscate" value="true" />
-        <param name="suffix" value="" />
-        <param name="locale" value="${locale}" />
-    </antcall>
-    <antcall target="bundle-compile-extensions">
-        <param name="obfuscate" value="false" />
-        <param name="suffix" value="-debug" />
-        <param name="locale" value="${locale}" />
-    </antcall>
   </target>
 
   <target name="build-locales" depends="tasks">
@@ -251,17 +133,39 @@
     <antcall target="build-locale"><param name="locale" value="de" /></antcall>
     <antcall target="build-locale"><param name="locale" value="nl" /></antcall>
   </target>
-	
+  
+  <target name="build-suffix" depends="tasks">
+    <echo message="[[[ Building profile ${profile} ]]]"/>
+    
+    <antcall target="bundle-ajax">
+      <param name="obfuscate" value="${obfuscate}" />
+      <param name="suffix" value="${suffix}" />
+    </antcall>
+    
+    <antcall target="bundle-exhibit">
+      <param name="obfuscate" value="${obfuscate}" />
+      <param name="suffix" value="${suffix}" />
+    </antcall>
+    
+    <antcall target="bundle-extensions">
+      <param name="obfuscate" value="${obfuscate}" />
+      <param name="suffix" value="${suffix}" />
+    </antcall>
+  </target>
+  
   <target name="build" depends="tasks">
-    <antcall target="bundle-compile-ajax">
+    <antcall target="build-suffix">
+      <param name="profile" value="release" />
       <param name="obfuscate" value="true" />
       <param name="suffix" value="" />
     </antcall>
-    <antcall target="bundle-compile-ajax">
+    <antcall target="build-suffix">
+      <param name="profile" value="debug" />
       <param name="obfuscate" value="false" />
       <param name="suffix" value="-debug" />
     </antcall>
-    <antcall target="build-locales"></antcall>
+    
+    <antcall target="build-locales" />
   </target>
 
 </project>
