@@ -16,6 +16,8 @@ Ongoing
 - Added support for polygons and polylines in map view, and added an example called 
   polymap to illustrate these features.
 - Added scrollWheelZoom setting for map view.
+- Compilations don't seem to be a good thing so they are removed for the time being.
+  We might experiment with a server-side solution instead.
 
 Version 2.2.0 -- March 10, 2009
 

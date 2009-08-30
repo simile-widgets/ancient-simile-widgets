@@ -28,10 +28,7 @@ Exhibit.jsonImporter.findFirstItems = function(json,configuration)
 {
 	if (json instanceof Array)
 	{
-		for each (object in json)
-		{
-			return Exhibit.jsonImporter.findFirstItems(object,configuration);
-		}
+	    return json.length > 0 ? Exhibit.jsonImporter.findFirstItems(json[0],configuration) : null;
 	}
 	else
 	{
@@ -42,8 +39,9 @@ Exhibit.jsonImporter.findFirstItems = function(json,configuration)
 			visited.push(json[child]);
 			if (configuration.itemTag.indexOf(child)>=0)
 			{
-				for each (subChild in json[child])
+				for (var i = 0; i < json[child].length; i++)
 				{
+				    var subChild = json[child][i];
 					subChild.index = configuration.itemTag.indexOf(child);
 					listOfItems.push(subChild);
 				};
@@ -138,8 +136,9 @@ Exhibit.jsonImporter.getItems = function(json,exhibitJSON,configuration)
 				newObject = eval('myObject.' + key);
 				if (newObject instanceof Array)
 				{
-					for each (object in newObject)
+					for (var i = 0; i < newObject.length; i++)
 					{
+					    var object = newObject[i];
 						object.index = configuration.itemTag.indexOf(keyID);
 						// PARENT RELATION
 						if (configuration.parentRelation[object.index])
