@@ -64,7 +64,7 @@ Exhibit.SliderFacet.createFromDOM = function(configElmt, containerElmt, uiContex
         }
         
         var showMissing = Exhibit.getAttribute(configElmt, "showMissing");
-        console.log(showMissing);
+        
         if (showMissing != null && showMissing.length > 0) {
             facet._showMissing = (showMissing == "true");
         }
@@ -208,7 +208,7 @@ Exhibit.SliderFacet.prototype.restrict = function(items) {
 	}
 	
 	if(this._showMissing){
-    console.log("showMissing:true");
+    
     this._cache.getItemsMissingValue(items, set);
     }
     
