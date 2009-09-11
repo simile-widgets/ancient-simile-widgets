@@ -20,7 +20,8 @@
         "olmap-view.js"
     ];
     var cssFiles = [
-        "map-view.css"
+        "map-view.css",
+        "olmap-view.css"
     ];
     
     var paramTypes = { bundle: Boolean };
@@ -55,6 +56,7 @@
         }
     } else if (Exhibit.MapExtension.params.service == "openlayers") {
 	scriptURLs.push("http://www.openlayers.org/api/OpenLayers.js");
+        scriptURLs.push("http://www.openstreetmap.org/openlayers/OpenStreetMap.js");
     } else {
         scriptURLs.push("http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=5");
     }
