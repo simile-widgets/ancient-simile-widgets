@@ -7,12 +7,15 @@
  */
 
 // @@@ TODO
-//  test against other examples, corner cases
-//  publish a list of settings for this - size is not an option, and will have to handle different types available, but the rest of these settings are about the same
-
-// For later
+//  fix to make sure openstreetmaps default will work - get a handle on projections
 //  extend map type concept to cover custom maps via OL in exhibit
-//  polygon / polyline
+//  publish somewhere on the web a list of settings for this - size is not an option, and will have to handle different types available, but the rest of these settings are about the same
+
+// @@@ FUTURE
+//  change popup on polygon to location of click instead of centroid
+//  hide/show instead of erase/redraw features
+//  test cases
+//  incorporate an editor based on OL editing API
 
 Exhibit.OLMapView = function(containerElmt, uiContext) {
     Exhibit.OLMapView._initialize();
@@ -315,6 +318,12 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
     if (settings.mapConstructor != null) {
         return settings.mapConstructor(mapDiv);
     } else {
+	/** openstreetmap
+        var map = new OpenLayers.Map({"div": mapDiv, "controls": [], projection: new OpenLayers.Projection("EPSG:909913"), displayProjection: new OpenLayers.Projection("EPSG:4326")});
+	var lmap = new OpenLayers.Layer.OSM.Osmarender(
+                      "Street",
+                      { layers: "basic" }, { wrapDateLine: true } );
+	*/
         var map = new OpenLayers.Map({"div": mapDiv, "controls": []});
 	var lmap = new OpenLayers.Layer.WMS(
                       "Map",
@@ -325,10 +334,12 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
                       "http://t1.hypercube.telascience.org/cgi-bin/landsat7",
                       { layers: "landsat7" }, { wrapDateLine: true } );
         lsat.setVisibility(false);
-        var markers = new OpenLayers.Layer.Markers("Markers");
-        map.addLayers([lmap, lsat, markers]);
+	var vectors = new OpenLayers.Layer.Vector("Vectors", { wrapDateLine: true });
+        map.addLayers([lmap, lsat, vectors]);
 
-        map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]), settings.zoom);
+	// openstreetmap
+	//        map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject()), settings.zoom);
+	map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]), settings.zoom);
         
         map.addControl(new OpenLayers.Control.PanPanel());
         if (settings.overviewControl) {
@@ -338,10 +349,22 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
             map.addControl(new OpenLayers.Control.ZoomPanel());
         }
 
-        // no option for continuous zoom available
+	var s = this;
+        var selectControl = new OpenLayers.Control.SelectFeature(vectors, {
+            onSelect: function(feature) {
+		s._onFeatureSelect(s, feature);
+	    },
+	    onUnselect: function(feature) {
+	        s._onFeatureUnselect(s, feature);
+	    }
+	});
+        map.addControl(selectControl);
+	selectControl.activate();
+        
 	map.addControl(new OpenLayers.Control.Navigation(settings.scrollWheelZoom, true, OpenLayers.Handler.MOD_SHIFT, true));
         
         map.addControl(new OpenLayers.Control.LayerSwitcher());
+
         // @@@ options are different here
         //map.addControl(new GMapTypeControl());
         switch (settings.type) {
@@ -355,7 +378,7 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
         //    map.setMapType(G_HYBRID_MAP);
             break;
         }
-        
+
         map.events.register("click", null, SimileAjax.WindowManager.cancelPopups);
         return map;
     }
@@ -400,9 +423,9 @@ Exhibit.OLMapView.prototype._createIconMarkerGenerator = function() {
 };
 
 Exhibit.OLMapView.prototype._clearOverlays = function() {
-    var markersLayer = this._map.getLayersByClass("OpenLayers.Layer.Markers");
-    if (markersLayer.length == 1) {
-        markersLayer[0].clearMarkers();
+    var vectorLayer = this._map.getLayersByClass("OpenLayers.Layer.Vector");
+    if (vectorLayer.length == 1) {
+        vectorLayer[0].eraseFeatures(vectorLayer[0].features);
     }
     while (this._map.popups.length > 0) {
         this._map.removePopup(this._map.popups[0]);
@@ -440,11 +463,15 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
     var hasPoints = (this._getLatlng != null);
     var hasPolygons = (accessors.getPolygon != null);
     var hasPolylines = (accessors.getPolyline != null);
-    
+
+    /** openstreetmap    
     var makeLatLng = settings.latlngOrder == "latlng" ? 
-        function(first, second) { return new OpenLayers.LonLat(second, first); } :
-        function(first, second) { return new OpenLayers.LonLat(first, second); };
-        
+    function(first, second) { return new OpenLayers.LonLat(second, first).transform(new OpenLayers.Projection("EPSG:4326"), self._map.getProjectionObject()); } :
+    function(first, second) { return new OpenLayers.LonLat(first, second).transform(new OpenLayers.Projection("EPSG:4326"), self._map.getProjectionObject()); };
+    */
+    var makeLatLng = settings.latlngOrder == "latlng" ? 
+    function(first, second) { return new OpenLayers.Geometry.Point(second, first); } :
+    function(first, second) { return new OpenLayers.Geometry.Point(first, second); };
     currentSet.visit(function(itemID) {
         var latlngs = [];
         var polygons = [];
@@ -554,37 +581,40 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
             icon,
             self._settings
         );
-        
-        var point = new OpenLayers.LonLat(locationData.latlng.lng, locationData.latlng.lat);
-        var marker = new OpenLayers.Marker(point, icon);
+        /** openstreetmap
+        var point = new OpenLayers.LonLat(locationData.latlng.lng, locationData.latlng.lat).transform(new OpenLayers.Projection("EPSG:4326"), self._map.getProjectionObject());
+	*/
+        var point = new OpenLayers.Geometry.Point(locationData.latlng.lng, locationData.latlng.lat);
+	var layer = self._map.getLayersByClass("OpenLayers.Layer.Vector")[0];
+	var marker = new OpenLayers.Feature.Vector(point, {locationData: locationData}, {
+		"externalGraphic": icon.url,
+		"graphicWidth": icon.size.w,
+		"graphicHeight": icon.size.h,
+		"graphicXOffset": icon.offset.x,
+		"graphicYOffset": icon.offset.y,
+		"fillColor": "white",
+		"fillOpacity": 1.0,
+		"strokeWidth": 0});
+        var popup = new OpenLayers.Popup.FramedCloud(
+                "markerPoup"+Math.floor(Math.random() * 10000),
+                new OpenLayers.LonLat(locationData.latlng.lng, locationData.latlng.lat),
+		null,
+                self._createInfoWindow(locationData.items).innerHTML,
+                icon,
+                true,
+                function() {
+                    SimileAjax.WindowManager.cancelPopups();
+                    self._map.removePopup(this);
+                });
+	marker.popup = popup;
+	popup.feature = marker;
+	layer.addFeatures([marker]);
+
         if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
             maxAutoZoom = locationData.latlng.maxAutoZoom;
         }
         bounds.extend(point);
         
-        marker.events.register("mousedown", marker, function(evt) {
-            var a = self._createInfoWindow(locationData.items);
-            var popup = new OpenLayers.Popup.FramedCloud("markerPoup"+Math.floor(Math.random() * 10000),
-                        point,
-                        new OpenLayers.Size(100,100), // irrelevant, auto sized
-                        a.innerHTML,
-                        icon,
-                        true,
-                        function() {
-                            SimileAjax.WindowManager.cancelPopups();
-                            this.destroy();
-                        });
-            self._map.addPopup(popup, true);
-            if (self._selectListener != null) {
-                self._selectListener.fire({ itemIDs: locationData.items });
-            }
-            OpenLayers.Event.stop(evt);
-        });
-        var markersLayer = self._map.getLayersByName("Markers");
-        if (markersLayer.length == 1) {
-            markersLayer[0].addMarker(marker);
-        }
-
         for (var x = 0; x < locationData.items.length; x++) {
             self._itemIDToMarker[locationData.items[x]] = marker;
         }
@@ -694,10 +724,17 @@ Exhibit.OLMapView.prototype._plotPolygon = function(itemID, polygonString, color
     if (coords.length > 1) {
         var settings = this._settings;
         var borderColor = settings.borderColor != null ? settings.borderColor : color;
-	// @@@ api here
-        var polygon = new GPolygon(coords, borderColor, settings.borderWidth, settings.borderOpacity, color, settings.opacity);
+        var polygon = new OpenLayers.Geometry.LinearRing(coords);
+	var polygonStyle = {
+	    "strokeColor": borderColor,
+	    "strokeWidth": settings.borderWidth,
+	    "strokeOpacity": settings.borderOpacity,
+	    "fillColor": color,
+	    "fillOpacity": settings.opacity
+	};
+	var polygonFeature = new OpenLayers.Feature.Vector(polygon, null, polygonStyle);
         
-        return this._addPolygonOrPolyline(itemID, polygon);
+        return this._addPolygonOrPolyline(itemID, polygonFeature);
     }
     return null;
 };
@@ -707,30 +744,44 @@ Exhibit.OLMapView.prototype._plotPolyline = function(itemID, polylineString, col
     if (coords.length > 1) {
         var settings = this._settings;
         var borderColor = settings.borderColor != null ? settings.borderColor : color;
-	// @@@ api here
-        var polyline = new GPolyline(coords, borderColor, settings.borderWidth, settings.borderOpacity);
-        return this._addPolygonOrPolyline(itemID, polyline);
+        var polyline = new OpenLayers.Geometry.LineString(coords);
+	var polylineStyle = {
+	    "strokeColor": borderColor,
+	    "strokeWidth": settings.borderWidth,
+	    "strokeOpacity": settings.borderOpacity
+	};
+	var polylineFeature = new OpenLayers.Feature.Vector(polyline, null, polylineStyle);
+
+        return this._addPolygonOrPolyline(itemID, polylineFeature);
     }
     return null;
 };
 
 Exhibit.OLMapView.prototype._addPolygonOrPolyline = function(itemID, poly) {
-    this._map.addOverlay(poly);
-    
-    var self = this;
-    // @@@api here
-    var onclick = function(latlng) {
-        self._map.openInfoWindow(
-            latlng,
-            self._createInfoWindow([itemID])
-        );
-        if (self._selectListener != null) {
-            self._selectListener.fire({ itemIDs: [itemID] });
-        }
+    var vectors = this._map.getLayersByClass("OpenLayers.Layer.Vector");
+    if (vectors.length > 0) {
+	var vectorLayer = vectors[0];
+	vectorLayer.addFeatures([poly]);
+    } else {
+	return null;
     }
-    // @@@ api here
-    GEvent.addListener(poly, "click", onclick);
     
+    var s = this;
+    var centroid = poly.geometry.getCentroid();
+    var popup = new OpenLayers.Popup.FramedCloud(
+        "vectorPopup"+Math.floor(Math.random() * 10000),
+        new OpenLayers.LonLat(centroid.x, centroid.y),
+        null,
+        s._createInfoWindow([ itemID ]).innerHTML,
+        null,
+        true,
+        function() {
+            SimileAjax.WindowManager.cancelPopups();
+            s._map.removePopup(this);
+        });
+    poly.popup = popup;
+    popup.feature = poly;
+
     this._itemIDToMarker[itemID] = poly;
     
     return poly;
@@ -748,32 +799,34 @@ Exhibit.OLMapView.prototype._parsePolygonOrPolyline = function(s, makeLatLng) {
     return coords;
 };
 
+Exhibit.OLMapView.prototype._onFeatureSelect = function(self, feature) {
+    self._map.addPopup(feature.popup, true);
+    if (self._selectListener != null) {
+        self._selectListener.fire({ itemIDs: feature.attributes.locationData.items });
+    }
+};
+
+Exhibit.OLMapView.prototype._onFeatureUnselect = function(self, feature) {
+    SimileAjax.WindowManager.cancelPopups();
+    self._map.removePopup(feature.popup);
+};
+
 Exhibit.OLMapView.prototype._select = function(selection) {
     var self = this;
     var itemID = selection.itemIDs[0];
     var marker = this._itemIDToMarker[itemID];
     if (marker) {
-        var popup = new OpenLayers.Popup.FramedCloud("markerPopup"+Math.floor(Math.random() * 10000),
-                    marker.lonlat,
-                    new OpenLayers.Size(100,100), // irrelevant, auto sized
-                    this._createInfoWindow([ itemID ]).innerHTML,
-                    marker.icon,
-                    true,
-                    function() {
-                        SimileAjax.WindowManager.cancelPopups();
-                        this.destroy();
-                    });
-        self._map.addPopup(popup, true);
+        self._map.addPopup(marker.popup, true);
     }
 };
 
 Exhibit.OLMapView.prototype._createInfoWindow = function(items) {
-    var self = this;
+    var selfuic = this._uiContext;
     var selfdb = this._uiContext.getDatabase();
     var selfreg = this._uiContext.getLensRegistry();
     var olContext = {};
     olContext.getSetting = function(setting) {
-	return self._uiContext.getSetting(setting);
+	return selfuic.getSetting(setting);
     };
     olContext.getDatabase = function() {
 	return selfdb;
@@ -785,7 +838,7 @@ Exhibit.OLMapView.prototype._createInfoWindow = function(items) {
 	return false;
     };
     olContext.formatList = function(iterator, count, valueType, appender) {
-	return self._uiContext.formatList(iterator, count, valueType, appender);
+	return selfuic.formatList(iterator, count, valueType, appender);
     };
     olContext.format = function(value, valueType, appender) {
         // assume this is the only thing being done with context,
@@ -894,9 +947,9 @@ Exhibit.OLMapView._makeIcon = function(shape, color, iconSize, label, iconURL, s
     }
     
     icon.image = Exhibit.OLMapView._markerUrlPrefix + imageParameters.concat(pinParameters).join("&") + "&.png";
-//    if (iconSize == 0) { icon.shadow = Exhibit.OLMapView._markerUrlPrefix + shadowParameters.concat(pinParameters).join("&") + "&.png"; }
+    // if (iconSize == 0) { icon.shadow = Exhibit.OLMapView._markerUrlPrefix + shadowParameters.concat(pinParameters).join("&") + "&.png"; }
     icon.iconSize = new OpenLayers.Size(width, height);
-//    icon.shadowSize = new OpenLayers.Size(width * 1.5, height - 2);
+    // icon.shadowSize = new OpenLayers.Size(width * 1.5, height - 2);
 
     var olicon = new OpenLayers.Icon(icon.image, icon.iconSize, icon.iconAnchor);
 
