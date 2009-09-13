@@ -6,12 +6,8 @@
  *==================================================
  */
 
-// @@@ TODO
-//  fix to make sure openstreetmaps default will work - get a handle on projections
-//  extend map type concept to cover custom maps via OL in exhibit
-//  publish somewhere on the web a list of settings for this - size is not an option, and will have to handle different types available, but the rest of these settings are about the same
-
-// @@@ FUTURE
+// FUTURE PLANS
+//  extend map type concept to cover custom map layers via OL in exhibit; this could be done with the generic mapConstructor setting, but perhaps a less programming intensive way can be made available
 //  change popup on polygon to location of click instead of centroid
 //  hide/show instead of erase/redraw features
 //  test cases
@@ -52,15 +48,15 @@ Exhibit.OLMapView._settingSpecs = {
     "latlngPairSeparator": { type: "text",  defaultValue: ";"   },
     "center":           { type: "float",    defaultValue: [20,0],   dimensions: 2 },
     "zoom":             { type: "float",    defaultValue: 2         },
+
     "scrollWheelZoom":  { type: "boolean",  defaultValue: true      },
     "scaleControl":     { type: "boolean",  defaultValue: true      },
     "overviewControl":  { type: "boolean",  defaultValue: false     },
-
-    // @@@ may be more powerful than this, many more options available
-    "type":             { type: "enum",     defaultValue: "normal", choices: [ "normal", "satellite", "hybrid" ] },
+    "type":             { type: "enum",     defaultValue: "osm", choices: [ "osm", "wms", "gmap", "gsat", "ghyb", "gter", "vmap", "vsat", "vhyb", "ymap", "ysat", "yhyb" ] },
     "bubbleTip":        { type: "enum",     defaultValue: "top",    choices: [ "top", "bottom" ] },
     "mapHeight":        { type: "int",      defaultValue: 400       },
     "mapConstructor":   { type: "function", defaultValue: null      },
+    "projection":       { type: "function", defaultValue: null      },
     "color":            { type: "text",     defaultValue: "#FF9000" },
     "colorCoder":       { type: "text",     defaultValue: null      },
     "sizeCoder":        { type: "text",     defaultValue: null      },
@@ -315,31 +311,114 @@ Exhibit.OLMapView.prototype._initializeUI = function() {
 
 Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
     var settings = this._settings;
+
+    if (settings.projection != null) {
+	this._projection = settings.projection();
+    } else {
+        this._projection = new OpenLayers.Projection("EPSG:4326");
+    }
+
     if (settings.mapConstructor != null) {
         return settings.mapConstructor(mapDiv);
     } else {
-	/** openstreetmap
-        var map = new OpenLayers.Map({"div": mapDiv, "controls": [], projection: new OpenLayers.Projection("EPSG:909913"), displayProjection: new OpenLayers.Projection("EPSG:4326")});
-	var lmap = new OpenLayers.Layer.OSM.Osmarender(
+        var map = new OpenLayers.Map({
+		"div": mapDiv,
+		"controls": [],
+		"projection": new OpenLayers.Projection("EPSG:900913"),
+		"displayProjection": this._projection,
+	        "units": "m",
+	        "numZoomLevels": 18,
+	        "maxResolution": 156543.0339,
+	        "maxExtent": new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)});
+	var osm = new OpenLayers.Layer.OSM(
                       "Street",
-                      { layers: "basic" }, { wrapDateLine: true } );
-	*/
-        var map = new OpenLayers.Map({"div": mapDiv, "controls": []});
-	var lmap = new OpenLayers.Layer.WMS(
-                      "Map",
-                      "http://labs.metacarta.com/wms/vmap0",
-                      { layers: "basic" }, { wrapDateLine: true } );
-	var lsat = new OpenLayers.Layer.WMS(
-                      "Satellite",
-                      "http://t1.hypercube.telascience.org/cgi-bin/landsat7",
-                      { layers: "landsat7" }, { wrapDateLine: true } );
-        lsat.setVisibility(false);
-	var vectors = new OpenLayers.Layer.Vector("Vectors", { wrapDateLine: true });
-        map.addLayers([lmap, lsat, vectors]);
+                      "http://tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png",
+                      { "wrapDateLine": true });
+	osm.setVisibility(false);
+        var wms = new OpenLayers.Layer.WMS(
+		       "World Map",
+		       "http://labs.metacarta.com/wms/vmap0",
+                       {"layers": "basic", }, {"wrapDateLine": true});
+	wms.setVisibility(false);
+	var availableLayers = [osm, wms];
+	var availability = { "osm" : osm, "wms" : wms };
 
-	// openstreetmap
-	//        map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject()), settings.zoom);
-	map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]), settings.zoom);
+	if (typeof G_HYBRID_MAP != "undefined") {
+	    var gmap = new OpenLayers.Layer.Google(
+		       "Street (Google)",
+                       { "sphericalMercator": true });
+            gmap.setVisibility(false);
+	    var gsat = new OpenLayers.Layer.Google(
+		       "Satellite (Google)",
+                       { "type": G_SATELLITE_MAP, "sphericalMercator": true });
+	    gsat.setVisibility(false);
+	    var ghyb = new OpenLayers.Layer.Google(
+		       "Street (Google)",
+                       { "type": G_HYBRID_MAP, "sphericalMercator": true });
+	    ghyb.setVisibility(false);
+	    var gter = new OpenLayers.Layer.Google(
+		       "Terrain (Google)",
+                       { "type": G_PHYSICAL_MAP, "sphericalMercator": true });
+	    gter.setVisibility(false);
+	    availableLayers.push(gmap, gsat, ghyb, gter);
+	    availability["gmap"] = gmap;
+	    availability["gsat"] = gsat;
+	    availability["ghyb"] = ghyb;
+	    availability["gter"] = gter;
+	}
+
+	if (typeof VEMapStyle != "undefined") {
+            var vmap = new OpenLayers.Layer.VirtualEarth(
+                       "Street (Virtual Earth)",
+                       {"type": VEMapStyle.Road, "sphericalMercator": true});
+	    vmap.setVisibility(false);
+	    var vsat = new OpenLayers.Layer.VirtualEarth(
+                       "Satellite (Virtual Earth)",
+                       {"type": VEMapStyle.Aerial, "sphericalMercator": true});
+	    vsat.setVisibility(false);
+	    var vhyb = new OpenLayers.Layer.VirtualEarth(
+                       "Street (Virtual Earth)",
+                       {"type": VEMapStyle.Hybrid, "sphericalMercator": true});
+	    vhyb.setVisibility(false);
+	    availableLayers.push(vmap, vsat, vhyb);
+	    availability["vmap"] = vmap;
+	    availability["vsat"] = vsat;
+	    availability["vhyb"] = vhyb;
+	}
+
+	if (typeof YAHOO_MAP_SAT != "undefined") {
+	    var ymap = new OpenLayers.Layer.Yahoo(
+		       "Street (Yahoo)",
+                       {"sphericalMercator": true});
+	    ymap.setVisibility(false);
+	    var ysat = new OpenLayers.Layer.Yahoo(
+		       "Satellite (Yahoo)",
+                       {"type": YAHOO_MAP_SAT, "sphericalMercator": true});
+	    ysat.setVisibility(false);
+	    var yhyb = new OpenLayers.Layer.Yahoo(
+                       "Yahoo Hybrid",
+                       {"type": YAHOO_MAP_HYB, "sphericalMercator": true});
+	    yhyb.setVisibility(false);
+	    availableLayers.push(ymap, ysat, yhyb);
+	    availability["ymap"] = ymap;
+	    availability["ysat"] = ysat;
+	    availability["yhyb"] = yhyb;
+	}
+
+	var vectors = new OpenLayers.Layer.Vector("Features", { "wrapDateLine": true });
+	availableLayers.push(vectors);
+
+	if (typeof availability[settings.type] != "undefined") {
+	    availability[settings.type].setVisibility(true);
+	} else {
+	    osm.setVisibility(true);
+	}
+
+        map.addLayers(availableLayers);
+	availability = null;
+	availableLayers = null;
+
+	map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]).transform(this._projection, map.getProjectionObject()), settings.zoom);
         
         map.addControl(new OpenLayers.Control.PanPanel());
         if (settings.overviewControl) {
@@ -349,13 +428,13 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
             map.addControl(new OpenLayers.Control.ZoomPanel());
         }
 
-	var s = this;
+	var self = this;
         var selectControl = new OpenLayers.Control.SelectFeature(vectors, {
             onSelect: function(feature) {
-		s._onFeatureSelect(s, feature);
+		self._onFeatureSelect(self, feature);
 	    },
 	    onUnselect: function(feature) {
-	        s._onFeatureUnselect(s, feature);
+	        self._onFeatureUnselect(self, feature);
 	    }
 	});
         map.addControl(selectControl);
@@ -364,20 +443,6 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
 	map.addControl(new OpenLayers.Control.Navigation(settings.scrollWheelZoom, true, OpenLayers.Handler.MOD_SHIFT, true));
         
         map.addControl(new OpenLayers.Control.LayerSwitcher());
-
-        // @@@ options are different here
-        //map.addControl(new GMapTypeControl());
-        switch (settings.type) {
-        case "normal":
-        //    map.setMapType(G_NORMAL_MAP);
-            break;
-        case "satellite":
-        //    map.setMapType(G_SATELLITE_MAP);
-            break;
-        case "hybrid":
-        //    map.setMapType(G_HYBRID_MAP);
-            break;
-        }
 
         map.events.register("click", null, SimileAjax.WindowManager.cancelPopups);
         return map;
@@ -464,14 +529,9 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
     var hasPolygons = (accessors.getPolygon != null);
     var hasPolylines = (accessors.getPolyline != null);
 
-    /** openstreetmap    
     var makeLatLng = settings.latlngOrder == "latlng" ? 
-    function(first, second) { return new OpenLayers.LonLat(second, first).transform(new OpenLayers.Projection("EPSG:4326"), self._map.getProjectionObject()); } :
-    function(first, second) { return new OpenLayers.LonLat(first, second).transform(new OpenLayers.Projection("EPSG:4326"), self._map.getProjectionObject()); };
-    */
-    var makeLatLng = settings.latlngOrder == "latlng" ? 
-    function(first, second) { return new OpenLayers.Geometry.Point(second, first); } :
-    function(first, second) { return new OpenLayers.Geometry.Point(first, second); };
+    function(first, second) { return new OpenLayers.LonLat(second, first).transform(self._projection, self._map.getProjectionObject()); } :
+    function(first, second) { return new OpenLayers.LonLat(first, second).transform(self._projection, self._map.getProjectionObject()); };
     currentSet.visit(function(itemID) {
         var latlngs = [];
         var polygons = [];
@@ -581,10 +641,7 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
             icon,
             self._settings
         );
-        /** openstreetmap
-        var point = new OpenLayers.LonLat(locationData.latlng.lng, locationData.latlng.lat).transform(new OpenLayers.Projection("EPSG:4326"), self._map.getProjectionObject());
-	*/
-        var point = new OpenLayers.Geometry.Point(locationData.latlng.lng, locationData.latlng.lat);
+        var point = new OpenLayers.Geometry.Point(locationData.latlng.lng, locationData.latlng.lat).transform(self._projection, self._map.getProjectionObject());
 	var layer = self._map.getLayersByClass("OpenLayers.Layer.Vector")[0];
 	var marker = new OpenLayers.Feature.Vector(point, {locationData: locationData}, {
 		"externalGraphic": icon.url,
@@ -597,7 +654,7 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
 		"strokeWidth": 0});
         var popup = new OpenLayers.Popup.FramedCloud(
                 "markerPoup"+Math.floor(Math.random() * 10000),
-                new OpenLayers.LonLat(locationData.latlng.lng, locationData.latlng.lat),
+                new OpenLayers.LonLat(locationData.latlng.lng, locationData.latlng.lat).transform(self._projection, self._map.getProjectionObject()),
 		null,
                 self._createInfoWindow(locationData.items).innerHTML,
                 icon,
@@ -766,18 +823,18 @@ Exhibit.OLMapView.prototype._addPolygonOrPolyline = function(itemID, poly) {
 	return null;
     }
     
-    var s = this;
+    var self = this;
     var centroid = poly.geometry.getCentroid();
     var popup = new OpenLayers.Popup.FramedCloud(
         "vectorPopup"+Math.floor(Math.random() * 10000),
-        new OpenLayers.LonLat(centroid.x, centroid.y),
+        new OpenLayers.LonLat(centroid.x, centroid.y).transform(self._projection, self._map.getProjectionObject()),
         null,
-        s._createInfoWindow([ itemID ]).innerHTML,
+        self._createInfoWindow([ itemID ]).innerHTML,
         null,
         true,
         function() {
             SimileAjax.WindowManager.cancelPopups();
-            s._map.removePopup(this);
+            self._map.removePopup(this);
         });
     poly.popup = popup;
     popup.feature = poly;
