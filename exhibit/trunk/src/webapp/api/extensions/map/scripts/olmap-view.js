@@ -530,8 +530,8 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
     var hasPolylines = (accessors.getPolyline != null);
 
     var makeLatLng = settings.latlngOrder == "latlng" ? 
-    function(first, second) { return new OpenLayers.LonLat(second, first).transform(self._projection, self._map.getProjectionObject()); } :
-    function(first, second) { return new OpenLayers.LonLat(first, second).transform(self._projection, self._map.getProjectionObject()); };
+    function(first, second) { return new OpenLayers.Geometry.Point(second, first); } :
+    function(first, second) { return new OpenLayers.Geometry.Point(first, second); };
     currentSet.visit(function(itemID) {
         var latlngs = [];
         var polygons = [];
@@ -781,7 +781,7 @@ Exhibit.OLMapView.prototype._plotPolygon = function(itemID, polygonString, color
     if (coords.length > 1) {
         var settings = this._settings;
         var borderColor = settings.borderColor != null ? settings.borderColor : color;
-        var polygon = new OpenLayers.Geometry.LinearRing(coords);
+        var polygon = new OpenLayers.Geometry.LinearRing(coords).transform(this._projection, this._map.getProjectionObject());
 	var polygonStyle = {
 	    "strokeColor": borderColor,
 	    "strokeWidth": settings.borderWidth,
@@ -801,7 +801,7 @@ Exhibit.OLMapView.prototype._plotPolyline = function(itemID, polylineString, col
     if (coords.length > 1) {
         var settings = this._settings;
         var borderColor = settings.borderColor != null ? settings.borderColor : color;
-        var polyline = new OpenLayers.Geometry.LineString(coords);
+        var polyline = new OpenLayers.Geometry.LineString(coords).transform(this._projection, this._map.getProjectionObject());
 	var polylineStyle = {
 	    "strokeColor": borderColor,
 	    "strokeWidth": settings.borderWidth,
@@ -827,7 +827,7 @@ Exhibit.OLMapView.prototype._addPolygonOrPolyline = function(itemID, poly) {
     var centroid = poly.geometry.getCentroid();
     var popup = new OpenLayers.Popup.FramedCloud(
         "vectorPopup"+Math.floor(Math.random() * 10000),
-        new OpenLayers.LonLat(centroid.x, centroid.y).transform(self._projection, self._map.getProjectionObject()),
+        new OpenLayers.LonLat(centroid.x, centroid.y),
         null,
         self._createInfoWindow([ itemID ]).innerHTML,
         null,
