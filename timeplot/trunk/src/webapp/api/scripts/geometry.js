@@ -400,7 +400,7 @@ Timeplot.DefaultTimeGeometry = function(params) {
     this._min = ("min" in params) ? params.min : null;
     this._max = ("max" in params) ? params.max : null;
     this._timeValuePosition =("timeValuePosition" in params) ? params.timeValuePosition : "bottom";
-    this._unit = ("unit" in params) ? params.unit : Timeline.NativeDateUnit;
+    this._unit = ("unit" in params) ? params.unit : SimileAjax.NativeDateUnit;
     this._linMap = {
         direct: function(t) {
             return t;
@@ -411,7 +411,7 @@ Timeplot.DefaultTimeGeometry = function(params) {
     }
     this._map = this._linMap;
     if (!this._labeler)
-        this._labeler = this._unit.createLabeller(this._locale, this._timeZone);
+        this._labeler = (this._unit && ("createLabeller" in this._unit)) ? this._unit.createLabeller(this._locale, this._timeZone) : new Timeline.GregorianDateLabeller(this._locale, this._timeZone);
     var dateParser = this._unit.getParser("iso8601");
     if (this._min && !this._min.getTime) {
         this._min = dateParser(this._min);
