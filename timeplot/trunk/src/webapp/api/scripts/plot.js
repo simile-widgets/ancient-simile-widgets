@@ -72,7 +72,7 @@ Timeplot.Plot.prototype = {
                     if (x > c.width) x = c.width;
                     if (isNaN(x) || x < 0) x = 0;
                     var t = plot._timeGeometry.fromScreen(x);
-                    if (t == 0) { // something is wrong
+                    if (t == 0 || plot._dataSource == null) { // something is wrong; IE is the only one that claims _dataSource is ever null, and only after items have changed
                         plot._valueFlag.style.display = "none";
                         return;
                     }

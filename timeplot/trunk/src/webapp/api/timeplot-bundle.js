@@ -240,7 +240,7 @@ var U=Math.round(SimileAjax.DOM.getEventRelativeCoordinates(W,F._canvas).x);
 if(U>R.width){U=R.width;
 }if(isNaN(U)||U<0){U=0;
 }var X=F._timeGeometry.fromScreen(U);
-if(X==0){F._valueFlag.style.display="none";
+if(X==0||F._dataSource==null){F._valueFlag.style.display="none";
 return ;
 }var L=F._dataSource.getClosestValidTime(X);
 U=F._timeGeometry.toScreen(L);
