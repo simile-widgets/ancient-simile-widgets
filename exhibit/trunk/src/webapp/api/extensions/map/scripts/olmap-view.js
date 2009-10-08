@@ -43,6 +43,8 @@ Exhibit.OLMapView = function(containerElmt, uiContext) {
     uiContext.getCollection().addListener(this._listener);
 };
 
+Exhibit.OLMapView.contexts = {};
+
 Exhibit.OLMapView._settingSpecs = {
     "latlngOrder":      { type: "enum",     defaultValue: "latlng", choices: [ "latlng", "lnglat" ] },
     "latlngPairSeparator": { type: "text",  defaultValue: ";"   },
@@ -878,6 +880,7 @@ Exhibit.OLMapView.prototype._select = function(selection) {
 };
 
 Exhibit.OLMapView.prototype._createInfoWindow = function(items) {
+    var contextId = "context"+Math.random()*1000;
     var selfuic = this._uiContext;
     var selfdb = this._uiContext.getDatabase();
     var selfreg = this._uiContext.getLensRegistry();
@@ -904,7 +907,13 @@ Exhibit.OLMapView.prototype._createInfoWindow = function(items) {
 	var f = new Exhibit.Formatter._ItemFormatter(olContext);
         f.format = function(v, a) {
 	    var title = this.formatText(v);
-	    var anchor = SimileAjax.DOM.createElementFromString("<a href=\"" + Exhibit.Persistence.getItemLink(v) + "\" class='exhibit-item' onclick='Exhibit.UI.showItemInPopup(\""+v+"\", this, exhibit._uiContext);'>" + title + "</a>");
+	    Exhibit.OLMapView.contexts[contextId] = selfuic;
+	    // it seems OpenLayers quashes events that are
+	    // programatically registered?  sneaking it in as an
+	    // attribute is the only thing that works, sadly.
+	    // the contexts array is a hack to coordinate global
+	    // variables with a randomly ID'd view context.
+	    var anchor = SimileAjax.DOM.createElementFromString("<a href=\"" + Exhibit.Persistence.getItemLink(v) + "\" class='exhibit-item' onclick='Exhibit.UI.showItemInPopup(\""+v+"\", this, Exhibit.OLMapView.contexts[\""+contextId+"\"]); return false;'>" + title + "</a>");
 	    a(anchor);
 	};
         f.format(value, appender);
