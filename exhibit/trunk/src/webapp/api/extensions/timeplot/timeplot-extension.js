@@ -38,8 +38,11 @@
         
         SimileAjax.parseURLParameters(url, Exhibit.TimeplotExtension.params, paramTypes);
     }
-    
-    var scriptURLs = [ "http://api.simile-widgets.org/timeplot/1.1/timeplot-api.js" ];
+
+    // Allowing these separate pieces to load on their own
+    // results in backwards order in IE.  Forcing the correct
+    // order is heavy handed but works.
+    var scriptURLs = [ "http://api.simile-widgets.org/timeline/2.3.1/timeline-api.js?bundle=true", "http://api.simile-widgets.org/timeline/2.3.1/timeline-bundle.js", "http://trunk.simile-widgets.org/timeplot/api/timeplot-api.js?bundle=true", "http://trunk.simile-widgets.org/timeplot/api/timeplot-bundle.js" ];
     var cssURLs = [];
         
     if (Exhibit.TimeplotExtension.params.bundle) {
