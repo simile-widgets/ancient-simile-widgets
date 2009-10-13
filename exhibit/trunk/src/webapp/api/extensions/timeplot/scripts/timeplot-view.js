@@ -1,5 +1,9 @@
 /*==================================================
  *  Exhibit.TimeplotView
+ *
+ *  Development partially funded by Zepheira.
+ *  http://zepheira.com/
+ *  See the main Exhibit LICENSE.txt for licensing.
  *==================================================
  */
  
