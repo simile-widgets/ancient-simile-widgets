@@ -95,7 +95,9 @@ Exhibit.OLMapView._settingSpecs = {
     "showHeader":       { type: "boolean",  defaultValue: true      },
     "showSummary":      { type: "boolean",  defaultValue: true      },
     "showFooter":       { type: "boolean",  defaultValue: true      },
-    "showToolbox":      { type: "boolean",  defaultValue: true      }
+    "showToolbox":      { type: "boolean",  defaultValue: true      },
+    "osmURL":           { type: "text",     defaultValue: "http://tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png" },
+    "wmsURL":           { type: "text",     defaultValue: "http://labs.metacarta.com/wms/vmap0" }
 };
 
 Exhibit.OLMapView._accessorSpecs = [
@@ -339,12 +341,12 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
 	        "maxExtent": new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)});
 	var osm = new OpenLayers.Layer.OSM(
                       "Street",
-                      "http://tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png",
+                      settings.osmURL,
                       { "wrapDateLine": true });
 	osm.setVisibility(false);
         var wms = new OpenLayers.Layer.WMS(
 		       "World Map",
-		       "http://labs.metacarta.com/wms/vmap0",
+		       settings.wmsURL,
                        {"layers": "basic", }, {"wrapDateLine": true});
 	wms.setVisibility(false);
 	var availableLayers = [osm, wms];
