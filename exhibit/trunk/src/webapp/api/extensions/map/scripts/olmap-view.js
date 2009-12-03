@@ -790,7 +790,6 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
     }
 
     if (bounds && settings.center == null) {
-	console.log('centering');
         self._map.setCenter(bounds.getCenterLonLat());
     }
 };
