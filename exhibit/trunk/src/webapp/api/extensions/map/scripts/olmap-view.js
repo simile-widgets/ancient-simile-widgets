@@ -53,8 +53,8 @@ Exhibit.OLMapView.contexts = {};
 Exhibit.OLMapView._settingSpecs = {
     "latlngOrder":      { type: "enum",     defaultValue: "latlng", choices: [ "latlng", "lnglat" ] },
     "latlngPairSeparator": { type: "text",  defaultValue: ";"   },
-    "center":           { type: "float",    defaultValue: [20,0],   dimensions: 2 },
-    "zoom":             { type: "float",    defaultValue: 2         },
+    "center":           { type: "float",    defaultValue: null,     dimensions: 2 },
+    "zoom":             { type: "float",    defaultValue: null      },
 
     "scrollWheelZoom":  { type: "boolean",  defaultValue: true      },
     "scaleControl":     { type: "boolean",  defaultValue: true      },
@@ -304,7 +304,7 @@ Exhibit.OLMapView.prototype._initializeUI = function() {
             } 
         },
         legendWidgetSettings
-    );    
+    );
     
     if (this._settings.showToolbox) {
         this._toolboxWidget = Exhibit.ToolboxWidget.createFromDOM(this._div, this._div, this._uiContext);
@@ -427,8 +427,14 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
 	availability = null;
 	availableLayers = null;
 
-	map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]).transform(this._projection, map.getProjectionObject()), settings.zoom);
-        
+        if (settings.center != null && typeof settings.center[0] != "undefined" && typeof settings.center[1] != "undefined") {
+            if (settings.zoom != null) {
+                map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]).transform(this._projection, map.getProjectionObject()), settings.zoom);
+            } else {
+                map.setCenter(new OpenLayers.LonLat(settings.center[1], settings.center[0]).transform(this._projection, map.getProjectionObject()));
+            }
+        }
+
         map.addControl(new OpenLayers.Control.PanPanel());
         if (settings.overviewControl) {
             map.addControl(new OpenLayers.Control.OverviewMap());
@@ -774,14 +780,18 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
             legendWidget.addEntry(iconCoder.getMissingIcon(), iconCoder.getMissingLabel(), 'icon');
         }
     }  
-    
-    if (bounds && typeof settings.zoom == "undefined") {
-        var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
-        zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);
-        self._map.setZoom(zoom);
+
+    if (bounds && settings.zoom == null) {
+        var zoom = Math.max(0, self._map.getZoomForExtent(bounds) - 1);
+        zoom = Math.min(zoom, maxAutoZoom);
+        self._map.zoomTo(zoom);
+    } else {
+	self._map.zoomTo(settings.zoom);
     }
-    if (bounds && typeof settings.center == "undefined") {
-        self._map.setCenter(bounds.getCenter());
+
+    if (bounds && settings.center == null) {
+	console.log('centering');
+        self._map.setCenter(bounds.getCenterLonLat());
     }
 };
 
