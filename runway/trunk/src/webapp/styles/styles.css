@@ -10,6 +10,10 @@ input {
     width: 6em;
 }
 
+#version {
+    color: #ccc;
+}
+
 #top-panel {
 }
 
