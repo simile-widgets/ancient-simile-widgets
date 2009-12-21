@@ -4,7 +4,7 @@
  *  Utilizing OpenLayers map API
  *  http://openlayers.org/
  *
- *  Funding for development of this extension part
+ *  Funding for development of this extension in part
  *  by Zepheira.  Copyright (c) Zepheira 2009.
  *  http://zepheira.com/
  *  See the main Exhibit LICENSE.txt for licensing.
