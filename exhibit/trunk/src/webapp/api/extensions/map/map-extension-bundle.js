@@ -490,7 +490,7 @@ if(O.projection!=null){this._projection=O.projection();
 }else{var R=new OpenLayers.Map({"div":M,"controls":[],"projection":new OpenLayers.Projection("EPSG:900913"),"displayProjection":this._projection,"units":"m","numZoomLevels":18,"maxResolution":156543.0339,"maxExtent":new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34)});
 var C=new OpenLayers.Layer.OSM("Street",O.osmURL,{"wrapDateLine":true});
 C.setVisibility(false);
-var G=new OpenLayers.Layer.WMS("World Map",O.wmsURL,{"layers":"basic",},{"wrapDateLine":true});
+var G=new OpenLayers.Layer.WMS("World Map",O.wmsURL,{"layers":"basic"},{"wrapDateLine":true});
 G.setVisibility(false);
 var P=[C,G];
 var H={"osm":C,"wms":G};

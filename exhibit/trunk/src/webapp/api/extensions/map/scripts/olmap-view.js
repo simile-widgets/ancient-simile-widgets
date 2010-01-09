@@ -347,7 +347,7 @@ Exhibit.OLMapView.prototype._constructMap = function(mapDiv) {
         var wms = new OpenLayers.Layer.WMS(
 		       "World Map",
 		       settings.wmsURL,
-                       {"layers": "basic", }, {"wrapDateLine": true});
+                       {"layers": "basic" }, {"wrapDateLine": true});
 	wms.setVisibility(false);
 	var availableLayers = [osm, wms];
 	var availability = { "osm" : osm, "wms" : wms };
