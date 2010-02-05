@@ -720,7 +720,7 @@ X.addEntry(K,N,"icon");
 }if(H.others){X.addEntry(A.getOthersIcon(),A.getOthersLabel(),"icon");
 }if(H.mixed){X.addEntry(A.getMixedIcon(),A.getMixedLabel(),"icon");
 }if(H.missing){X.addEntry(A.getMissingIcon(),A.getMissingLabel(),"icon");
-}}if(W&&l.zoom==null){var d=Math.max(0,I._map.getZoomForExtent(W)-1);
+}}if(W&&l.zoom==null){var d=Math.max(3,I._map.getZoomForExtent(W)-1);
 d=Math.min(d,R);
 I._map.zoomTo(d);
 }else{I._map.zoomTo(l.zoom);

@@ -782,7 +782,7 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
     }  
 
     if (bounds && settings.zoom == null) {
-        var zoom = Math.max(0, self._map.getZoomForExtent(bounds) - 1);
+        var zoom = Math.max(3, self._map.getZoomForExtent(bounds) - 1);
         zoom = Math.min(zoom, maxAutoZoom);
         self._map.zoomTo(zoom);
     } else {
