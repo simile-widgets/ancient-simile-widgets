@@ -544,6 +544,10 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
     var hasPolygons = (accessors.getPolygon != null);
     var hasPolylines = (accessors.getPolyline != null);
 
+    var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+    var sizeCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+    var iconCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+
     var makeLatLng = settings.latlngOrder == "latlng" ? 
     function(first, second) { return new OpenLayers.Geometry.Point(second, first); } :
     function(first, second) { return new OpenLayers.Geometry.Point(first, second); };
@@ -617,9 +621,6 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
         }
     });
     
-    var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
-    var sizeCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
-    var iconCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
     var bounds, maxAutoZoom = Infinity;
     var addMarkerAtLocation = function(locationData) {
         var itemCount = locationData.items.length;
@@ -782,7 +783,8 @@ Exhibit.OLMapView.prototype._rePlotItems = function(unplottableItems) {
     }  
 
     if (bounds && settings.zoom == null) {
-        var zoom = Math.max(3, self._map.getZoomForExtent(bounds) - 1);
+        if (maxAutoZoom > 12) maxAutoZoom = 12;
+        var zoom = Math.max(0, self._map.getZoomForExtent(bounds) - 1);
         zoom = Math.min(zoom, maxAutoZoom);
         self._map.zoomTo(zoom);
     } else {
