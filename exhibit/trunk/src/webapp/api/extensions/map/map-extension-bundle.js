@@ -566,7 +566,7 @@ return elmt;
 };
 };
 Exhibit.OLMapView.prototype._clearOverlays=function(){var A=this._map.getLayersByClass("OpenLayers.Layer.Vector");
-if(A.length==1){A[0].eraseFeatures(A[0].features);
+if(A.length==1){A[0].destroyFeatures();
 }while(this._map.popups.length>0){this._map.removePopup(this._map.popups[0]);
 }};
 Exhibit.OLMapView.prototype._reconstruct=function(){this._clearOverlays();
