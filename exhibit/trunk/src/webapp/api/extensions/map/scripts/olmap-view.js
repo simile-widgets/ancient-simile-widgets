@@ -505,7 +505,7 @@ Exhibit.OLMapView.prototype._createIconMarkerGenerator = function() {
 Exhibit.OLMapView.prototype._clearOverlays = function() {
     var vectorLayer = this._map.getLayersByClass("OpenLayers.Layer.Vector");
     if (vectorLayer.length == 1) {
-        vectorLayer[0].eraseFeatures(vectorLayer[0].features);
+        vectorLayer[0].destroyFeatures();
     }
     while (this._map.popups.length > 0) {
         this._map.removePopup(this._map.popups[0]);
