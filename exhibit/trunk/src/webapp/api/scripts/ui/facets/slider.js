@@ -53,8 +53,8 @@ Exhibit.SliderFacet.slider = function(div, facet, precision) {
     }
         
     if(histogram) {
-	this._dom.histogram.style.height = this._dom.bar.offsetHeight;
-	this._dom.histogram.style.width = this._dom.bar.offsetWidth;
+	this._dom.histogram.style.height = this._dom.bar.offsetHeight+'px';
+	this._dom.histogram.style.width = this._dom.bar.offsetWidth+'px';
     }
 
     if (horizontal) {
