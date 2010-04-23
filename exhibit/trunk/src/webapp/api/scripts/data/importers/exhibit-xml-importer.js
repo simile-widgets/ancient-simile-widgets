@@ -221,13 +221,13 @@ Exhibit.ExhibitXMLImporter.configure = function()
 	// get itemTag, propertyLabel, itemType, and parentRelation
 	$('link').each( function()
 							 {
-								 if (this.hasAttribute('ex:itemTag')) 
+								 if (this.hasAttribute('ex:itemTags')) 
 								 {
-									 configuration.itemTag = Exhibit.getAttribute(this,'ex:itemTag',',');
+									 configuration.itemTag = Exhibit.getAttribute(this,'ex:itemTags',',');
 								 }
-								 if (this.hasAttribute('ex:labelProperty'))
+								 if (this.hasAttribute('ex:propertyLabels'))
 								 {
-									configuration.propertyLabel = Exhibit.getAttribute(this,'ex:labelProperty',',');
+									configuration.propertyLabel = Exhibit.getAttribute(this,'ex:propertyLabels',',');
 								 }
 								 if (this.hasAttribute('ex:itemTypes'))
 								 {
