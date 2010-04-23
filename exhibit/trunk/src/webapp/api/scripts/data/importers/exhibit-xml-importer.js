@@ -225,17 +225,17 @@ Exhibit.ExhibitXMLImporter.configure = function()
 								 {
 									 configuration.itemTag = Exhibit.getAttribute(this,'ex:itemTag',',');
 								 }
-								 if (this.hasAttribute('ex:setPropertyAsLabel'))
+								 if (this.hasAttribute('ex:labelProperty'))
 								 {
-									configuration.propertyLabel = Exhibit.getAttribute(this,'ex:setPropertyAsLabel',',');
+									configuration.propertyLabel = Exhibit.getAttribute(this,'ex:labelProperty',',');
 								 }
-								 if (this.hasAttribute('ex:itemType'))
+								 if (this.hasAttribute('ex:itemTypes'))
 								 {
-									 configuration.itemType = Exhibit.getAttribute(this,'ex:itemType',',');
+									 configuration.itemType = Exhibit.getAttribute(this,'ex:itemTypes',',');
 								 }
-								 if (this.hasAttribute('ex:parentRelation'))
+								 if (this.hasAttribute('ex:parentRelations'))
 								 {
-									 configuration.parentRelation = Exhibit.getAttribute(this,'ex:parentRelation',',');
+									 configuration.parentRelation = Exhibit.getAttribute(this,'ex:parentRelations',',');
 								 }
 								 if (this.hasAttribute('ex:propertyNames'))
 								 {
