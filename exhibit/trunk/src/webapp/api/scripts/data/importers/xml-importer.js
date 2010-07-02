@@ -60,6 +60,7 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, object,index,configuration) {
         
         while (queue.length) {
             var node = queue.pop();
+	    if (node.textContent.length <= 0) continue; //don't include empty strings as values of properties
             var nodeType = self.determineType(node,configuration);
         
             if (nodeType == 'property') {
