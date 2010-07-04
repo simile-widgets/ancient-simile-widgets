@@ -29,9 +29,9 @@ Exhibit.XMLImporter.appendUserPropertyToArray = function(node,configuration,obje
 	// check if property list has been initialized
 	if  (typeof objectToAppend[configuration.propertyNames[referenceIndex]] == 'string') {
 		array = [array];
-		array.push(node.textContent);
+		array.push($(node).text());
 	} else {
-		array.push(node.textContent);
+	    array.push($(node).text());
 	}
 	return array;
 }
@@ -42,9 +42,9 @@ Exhibit.XMLImporter.appendPropertyToArray = function(node,configuration,objectTo
 
 	if (typeof array == 'string') {
 		array = [array];
-		array.push(node.textContent);
+		array.push($(node).text());
 	} else {
-		array.push(node.textContent);
+	    array.push($(node).text());
 	}
 	return array;
 }
@@ -58,9 +58,10 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, object,index,configuration) {
         $(this).children().each(function() { queue.push(this); });								  
         objectToAppend = {};
         
-        while (queue.length) {
+        while (queue.length > 0) {
             var node = queue.pop();
-	    if (node.textContent.length <= 0) continue; //don't include empty strings as values of properties
+
+	    if ($(node).text().length <= 0) continue; //don't include empty strings as values of properties
             var nodeType = self.determineType(node,configuration);
         
             if (nodeType == 'property') {
@@ -79,10 +80,10 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, object,index,configuration) {
                     // APPLY USER SPECIFIED PROPERTY NAMES
                     if (configuration.propertyTags.indexOf(node.nodeName)>=0) {
                         var referenceIndex = configuration.propertyTags.indexOf(node.nodeName);
-                        objectToAppend[configuration.propertyNames[referenceIndex]] = node.textContent;
+                        objectToAppend[configuration.propertyNames[referenceIndex]] = $(node).text();
                     } else {
                         //ELSE, USE TAG NODENAME
-                        objectToAppend[node.nodeName] = node.textContent;
+                        objectToAppend[node.nodeName] = $(node).text();
                     }
                 }
                 
@@ -121,10 +122,10 @@ Exhibit.XMLImporter.getParentItem = function(itemNode,configuration) {
 // SETS LABEL, TYPE, AND PARENT RELATION
 Exhibit.XMLImporter.configureItem = function(myItem, object,configuration,index) {
 	if (!(object.label) && configuration.propertyLabel[index]!=null) {
-		object['label'] = $(configuration.propertyLabel[index],myItem)[0].textContent;
+	    object['label'] = $(configuration.propertyLabel[index],myItem).eq(0).text();
 	} else {
 	    //DEFAULT TO FIRST PROPERTY
-		object['label'] = $(myItem).children()[0].textContent;
+	    object['label'] = $(myItem).children().eq(0).text();
 	}
 	
 	if (!(object.type) && configuration.itemType[index]!=null) {
