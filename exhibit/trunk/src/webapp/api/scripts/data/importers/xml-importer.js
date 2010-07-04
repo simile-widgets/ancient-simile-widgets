@@ -17,7 +17,7 @@ Exhibit.XMLImporter.getXMLDocument = function (docURL) {
 	if (xmlDoc) {
 		return xmlDoc;
 	} else {
-		alert('ERROR FINDING XML DOC');
+		alert('Error finding xml doc ' + docURL);
 		return;
 	}
 }
@@ -159,25 +159,13 @@ Exhibit.XMLImporter.configure = function() {
 
 	// get itemTag, propertyLabel, itemType, and parentRelation
 	$('link').each(function() {
-        if (this.hasAttribute('ex:itemTags')) {
-            configuration.itemTag = Exhibit.getAttribute(this,'ex:itemTags',',');
-        }
-        if (this.hasAttribute('ex:propertyLabels')) {
-            configuration.propertyLabel = Exhibit.getAttribute(this,'ex:propertyLabels',',');
-        }
-        if (this.hasAttribute('ex:itemTypes')) {
-            configuration.itemType = Exhibit.getAttribute(this,'ex:itemTypes',',');
-        }
-        if (this.hasAttribute('ex:parentRelations')) {
-            configuration.parentRelation = Exhibit.getAttribute(this,'ex:parentRelations',',');
-        }
-        if (this.hasAttribute('ex:propertyNames')) {
-            configuration.propertyNames = Exhibit.getAttribute(this,'ex:propertyNames',',');
-        }
-        if (this.hasAttribute('ex:propertyTags')) {
-            configuration.propertyTags = Exhibit.getAttribute(this,'ex:propertyTags',',');
-        }
-    });
+            configuration.itemTag = Exhibit.getAttribute(this,'ex:itemTags',',') || [];
+            configuration.propertyLabel = Exhibit.getAttribute(this,'ex:propertyLabels',',') || [];
+            configuration.itemType = Exhibit.getAttribute(this,'ex:itemTypes',',') || [];
+            configuration.parentRelation = Exhibit.getAttribute(this,'ex:parentRelations',',') || [];
+            configuration.propertyNames = Exhibit.getAttribute(this,'ex:propertyNames',',') || [];
+            configuration.propertyTags = Exhibit.getAttribute(this,'ex:propertyTags',',') || [];
+	    });
 	
 	return configuration;
 }
@@ -212,7 +200,7 @@ Exhibit.XMLImporter.load = function (link,database,cont) {
                 o = { 
 					'items': []
 					};
-				for (index in configuration.itemTag)
+		for (index=0; index < configuration.itemTag.length; index++)
 				{
 					o = Exhibit.XMLImporter.getItems(xmlDoc,o,index,configuration);
 				}
