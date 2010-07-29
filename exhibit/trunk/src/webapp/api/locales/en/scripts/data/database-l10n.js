@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.Database English localization
+ *  Exhibit.Database Norwegian (Bokmål) localization
  *==================================================
  */
 
@@ -8,48 +8,48 @@ if (!("l10n" in Exhibit.Database)) {
 }
 
 Exhibit.Database.l10n.itemType = {
-    label:          "Item",
-    pluralLabel:    "Items",
+    label:          "Objekt",
+    pluralLabel:    "Objekter",
     uri:            "http://simile.mit.edu/2006/11/exhibit#Item"
 };
 Exhibit.Database.l10n.labelProperty = {
-    label:                  "label",
-    pluralLabel:            "labels",
-    reverseLabel:           "label of",
-    reversePluralLabel:     "labels of"
+    label:                  "merkelapp",
+    pluralLabel:            "merkelapper",
+    reverseLabel:           "merkelapp for",
+    reversePluralLabel:     "merkelapper for"
 };
 Exhibit.Database.l10n.typeProperty = {
     label:                  "type",
-    pluralLabel:            "types",
-    reverseLabel:           "type of",
-    reversePluralLabel:     "types of"
+    pluralLabel:            "typer",
+    reverseLabel:           "type av",
+    reversePluralLabel:     "typer av"
 };
 Exhibit.Database.l10n.uriProperty = {
     label:                  "URI",
-    pluralLabel:            "URIs",
-    reverseLabel:           "URI of",
-    reversePluralLabel:     "URIs of"
+    pluralLabel:            "URIer",
+    reverseLabel:           "URI av",
+    reversePluralLabel:     "URIs av"
 };
 Exhibit.Database.l10n.sortLabels = {
     "text": {
-        ascending:  "a - z",
-        descending: "z - a"
+        ascending:  "a - å",
+        descending: "å - a"
     },
     "number": {
-        ascending:  "smallest first",
-        descending: "largest first"
+        ascending:  "minste først",
+        descending: "største først"
     },
     "date": {
-        ascending:  "earliest first",
-        descending: "latest first"
+        ascending:  "tidligste først",
+        descending: "nyeste først"
     },
     "boolean": {
-        ascending:  "false first",
-        descending: "true first"
+        ascending:  "usanne først",
+        descending: "sanne først"
     },
     "item": {
-        ascending:  "a - z",
-        descending: "z - a"
+        ascending:  "a - å",
+        descending: "å - a"
     }
 };
 

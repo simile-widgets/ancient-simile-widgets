@@ -132,6 +132,7 @@
     <antcall target="build-locale"><param name="locale" value="zh" /></antcall>
     <antcall target="build-locale"><param name="locale" value="de" /></antcall>
     <antcall target="build-locale"><param name="locale" value="nl" /></antcall>
+    <antcall target="build-locale"><param name="locale" value="no" /></antcall>    
   </target>
   
   <target name="build-suffix" depends="tasks">
