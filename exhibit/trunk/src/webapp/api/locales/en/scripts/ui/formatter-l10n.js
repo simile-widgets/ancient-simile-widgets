@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.Formatter English localization
+ *  Exhibit.Formatter Norwegian (Bokmål) localization
  *==================================================
  */
 
@@ -8,8 +8,8 @@ if (!("l10n" in Exhibit.Formatter)) {
 }
 
 Exhibit.Formatter.l10n.listSeparator = ", ";
-Exhibit.Formatter.l10n.listLastSeparator = ", and ";
-Exhibit.Formatter.l10n.listPairSeparator = " and ";
+Exhibit.Formatter.l10n.listLastSeparator = ", og ";
+Exhibit.Formatter.l10n.listPairSeparator = " og ";
 
 Exhibit.Formatter.l10n.textEllipsis = "...";
 
@@ -17,7 +17,7 @@ Exhibit.Formatter.l10n.booleanTrue = "true";
 Exhibit.Formatter.l10n.booleanFalse = "false";
 
 Exhibit.Formatter.l10n.currencySymbol = "$";
-Exhibit.Formatter.l10n.currencySymbolPlacement = "first"; // "last", "after-sign"
+Exhibit.Formatter.l10n.currencySymbolPlacement = "først"; // "last", "after-sign"
 Exhibit.Formatter.l10n.currencyShowSign = true;
 Exhibit.Formatter.l10n.currencyShowRed = false;
 Exhibit.Formatter.l10n.currencyShowParentheses = false;
@@ -40,14 +40,14 @@ Exhibit.Formatter.l10n.dateFullFormat = "EEEE, MMMM d, yyyy";
 Exhibit.Formatter.l10n.timeFullFormat = "HH:mm:ss.S z";
 Exhibit.Formatter.l10n.dateTimeFullFormat = "EEEE, MMMM d, yyyy G, HH:mm:ss.S z";
 
-Exhibit.Formatter.l10n.shortDaysOfWeek = [ "Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat" ];
-Exhibit.Formatter.l10n.daysOfWeek = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
+Exhibit.Formatter.l10n.shortDaysOfWeek = [ "Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør" ];
+Exhibit.Formatter.l10n.daysOfWeek = [ "Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag" ];
 
-Exhibit.Formatter.l10n.shortMonths = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-Exhibit.Formatter.l10n.months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+Exhibit.Formatter.l10n.shortMonths = [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des" ];
+Exhibit.Formatter.l10n.months = [ "Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember" ];
 
-Exhibit.Formatter.l10n.commonEra = "CE";
-Exhibit.Formatter.l10n.beforeCommonEra = "BCE";
+Exhibit.Formatter.l10n.commonEra = "e.Kr.";
+Exhibit.Formatter.l10n.beforeCommonEra = "f.Kr.";
 
 Exhibit.Formatter.l10n.beforeNoon = "am";
 Exhibit.Formatter.l10n.afterNoon = "pm";
