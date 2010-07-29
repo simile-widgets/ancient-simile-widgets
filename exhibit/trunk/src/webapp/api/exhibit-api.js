@@ -13,6 +13,7 @@
     var useLocalResources = false;
     var noAuthentication = false;
     
+
     if (document.location.search.length > 0) {
         var params = document.location.search.substr(1).split("&");
         for (var i = 0; i < params.length; i++) {
