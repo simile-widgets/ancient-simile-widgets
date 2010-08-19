@@ -38,6 +38,7 @@ Exhibit.MapView._settingSpecs = {
     "latlngPairSeparator": { type: "text",  defaultValue: ";"   },
     "center":           { type: "float",    defaultValue: [20,0],   dimensions: 2 },
     "zoom":             { type: "float",    defaultValue: 2         },
+    "autoposition":     { type: "boolean",  defaultValue: false     },
     "scrollWheelZoom":  { type: "boolean",  defaultValue: true      },
     "size":             { type: "text",     defaultValue: "small"   },
     "scaleControl":     { type: "boolean",  defaultValue: true      },
@@ -476,7 +477,7 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
     var makeLatLng = settings.latlngOrder == "latlng" ? 
         function(first, second) { return new GLatLng(first, second); } :
         function(first, second) { return new GLatLng(second, first); };
-        
+    
     currentSet.visit(function(itemID) {
         var latlngs = [];
         var polygons = [];
@@ -696,13 +697,21 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         }
     }  
     
-    if (bounds && typeof settings.zoom == "undefined") {
+    if (bounds  && (! settings.autoposition) && typeof settings.zoom == "undefined") {
         var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
         zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);
         self._map.setZoom(zoom);
     }
-    if (bounds && typeof settings.center == "undefined") {
+    if (bounds && (! settings.autoposition) && typeof settings.center == "undefined") {
         self._map.setCenter(bounds.getCenter());
+    }    
+    else if (bounds && settings.autoposition) {
+        var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
+        if (settings.maxAutoZoom && maxAutoZoom) {
+            zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);            
+        }
+        self._map.setCenter(bounds.getCenter());
+        self._map.setZoom(zoom);   
     }
 };
 
