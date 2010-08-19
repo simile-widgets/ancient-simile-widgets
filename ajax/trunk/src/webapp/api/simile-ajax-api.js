@@ -138,12 +138,14 @@ if (typeof SimileAjax == "undefined") {
             var eq = param.indexOf("=");
             var name = decode(param.slice(0,eq));
             var old = parsed[name];
+            var replacement = decode(param.slice(eq+1));
+            
             if (typeof old == "undefined") {
                 old = [];
             } else if (!(old instanceof Array)) {
                 old = [old];
             }
-            parsed[name] = old.concat(decode(param.slice(eq+1)));
+            parsed[name] = old.concat(replacement);
         }
         for (var i in parsed) {
             if (!parsed.hasOwnProperty(i)) continue;
@@ -178,13 +180,14 @@ if (typeof SimileAjax == "undefined") {
                 
                 "ajax.js",
                 "history.js",
-                "window-manager.js"
+                "window-manager.js",
+                "remoteLog.js"
             ];
             var cssFiles = [
                 "graphics.css"
             ];
             if (!("jQuery" in window) && !("$" in window)) {
-                javascriptFiles.unshift("jquery-1.3.2.min.js");
+                javascriptFiles.unshift("jquery-1.4.2.min.js");
             }
             
             if (typeof SimileAjax_urlPrefix == "string") {
