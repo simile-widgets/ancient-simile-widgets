@@ -1,12 +1,12 @@
-
+﻿
 
 /* database-l10n.js */
 if(!("l10n" in Exhibit.Database)){Exhibit.Database.l10n={};
-}Exhibit.Database.l10n.itemType={label:"Objekter",pluralLabel:"Objekter",uri:"http://simile.mit.edu/2006/11/exhibit#Item"};
-Exhibit.Database.l10n.labelProperty={label:"label",pluralLabel:"labels",reverseLabel:"label of",reversePluralLabel:"labels of"};
-Exhibit.Database.l10n.typeProperty={label:"type",pluralLabel:"types",reverseLabel:"type of",reversePluralLabel:"types of"};
-Exhibit.Database.l10n.uriProperty={label:"URI",pluralLabel:"URIs",reverseLabel:"URI of",reversePluralLabel:"URIs of"};
-Exhibit.Database.l10n.sortLabels={"text":{ascending:"a - å",descending:"å - a"},"number":{ascending:"minste først",descending:"største først"},"date":{ascending:"tidligste først",descending:"yngste først"},"boolean":{ascending:"false first",descending:"true first"},"item":{ascending:"a - z",descending:"z - a"}};
+}Exhibit.Database.l10n.itemType={label:"Objekt",pluralLabel:"Objekter",uri:"http://simile.mit.edu/2006/11/exhibit#Item"};
+Exhibit.Database.l10n.labelProperty={label:"navn",pluralLabel:"navn",reverseLabel:"navn på",reversePluralLabel:"navn på"};
+Exhibit.Database.l10n.typeProperty={label:"type",pluralLabel:"typer",reverseLabel:"type av",reversePluralLabel:"typer av"};
+Exhibit.Database.l10n.uriProperty={label:"URI",pluralLabel:"URIer",reverseLabel:"URI av",reversePluralLabel:"URIer av"};
+Exhibit.Database.l10n.sortLabels={"text":{ascending:"a - å",descending:"å - a"},"number":{ascending:"minste først",descending:"største først"},"date":{ascending:"eldste først",descending:"yngste først"},"boolean":{ascending:"usann først",descending:"sanne først"},"item":{ascending:"a - å",descending:"å - a"}};
 Exhibit.Database.l10n.labelItemsOfType=function(F,C,G,B){var A=F==1?Exhibit.Database.l10n.itemType.label:Exhibit.Database.l10n.itemType.pluralLabel;
 var E=G.getType(C);
 if(E){A=E.getLabel();
@@ -24,25 +24,25 @@ if(!("l10n" in Exhibit)){Exhibit.l10n={};
 Exhibit.l10n.missingSortKey="(mangler)";
 Exhibit.l10n.notApplicableSortKey="(n/a)";
 Exhibit.l10n.itemLinkLabel="lenke";
-Exhibit.l10n.busyIndicatorMessage="Søker...";
-Exhibit.l10n.showDocumentationMessage="Vi vil vise relevant dokumentasjon etter denne meldinga...";
-Exhibit.l10n.showJavascriptValidationMessage="Vi vil forklare denne feilen etter denne denne meldinga.";
+Exhibit.l10n.busyIndicatorMessage="S√∏ker...";
+Exhibit.l10n.showDocumentationMessage="Vi vil vise dokumentasjon etter denne meldinga.";
+Exhibit.l10n.showJavascriptValidationMessage="Vi vil forklare feilen etter denne meldinga.";
 Exhibit.l10n.showJsonValidationMessage="Vi vil forklare feilen etter denne meldinga.";
-Exhibit.l10n.showJsonValidationFormMessage="Vi vil lete etter en webservice der du kan laste opp koden etter denne meldinga.";
-Exhibit.l10n.badJsonMessage=function(A,B){return"JSON data fila\n  "+A+"\nhar feil =\n\n"+B;
+Exhibit.l10n.showJsonValidationFormMessage="Vi vil lete opp en webservice der du kan laste opp og teste koden etter denne meldinga.";
+Exhibit.l10n.badJsonMessage=function(A,B){return"JSON-datafila\n  "+A+"\ninneholder feil =\n\n"+B;
 };
-Exhibit.l10n.failedToLoadDataFileMessage=function(A){return"Vi kan ikke finne fila i\n  "+A+"\nse om filnavnet er riktig.";
+Exhibit.l10n.failedToLoadDataFileMessage=function(A){return"Vi kan ikke finne fila \n  "+A+"\n sjekk om filnavnet stemmer.";
 };
 Exhibit.l10n.exportButtonLabel="Eksporter";
 Exhibit.l10n.exportAllButtonLabel="Eksporter alle";
 Exhibit.l10n.exportDialogBoxCloseButtonLabel="Lukk";
-Exhibit.l10n.exportDialogBoxPrompt="Kopier denne koden til utklippstavla. Trykk ESC for å fjerne denne dialogboksen.";
+Exhibit.l10n.exportDialogBoxPrompt="Kopier koden til utklippstavlen. Trykk ESC for √• fjerne denne dialogboksen.";
 Exhibit.l10n.focusDialogBoxCloseButtonLabel="Lukk";
 Exhibit.l10n.rdfXmlExporterLabel="RDF/XML";
 Exhibit.l10n.smwExporterLabel="Semantisk wikitext";
 Exhibit.l10n.exhibitJsonExporterLabel="Exhibit JSON";
-Exhibit.l10n.tsvExporterLabel="Tab-separert tekst";
-Exhibit.l10n.htmlExporterLabel="HTML generet fra denne visninga";
+Exhibit.l10n.tsvExporterLabel="Tab-separerte verdier";
+Exhibit.l10n.htmlExporterLabel="HTML generert fra denne visninga";
 
 
 /* formatter-l10n.js */
@@ -54,7 +54,7 @@ Exhibit.Formatter.l10n.textEllipsis="...";
 Exhibit.Formatter.l10n.booleanTrue="sann";
 Exhibit.Formatter.l10n.booleanFalse="usann";
 Exhibit.Formatter.l10n.currencySymbol="$";
-Exhibit.Formatter.l10n.currencySymbolPlacement="første";
+Exhibit.Formatter.l10n.currencySymbolPlacement="først";
 Exhibit.Formatter.l10n.currencyShowSign=true;
 Exhibit.Formatter.l10n.currencyShowRed=false;
 Exhibit.Formatter.l10n.currencyShowParentheses=false;
@@ -76,7 +76,7 @@ Exhibit.Formatter.l10n.daysOfWeek=["Søndag","Mandag","Tirsdag","Onsdag","Torsda
 Exhibit.Formatter.l10n.shortMonths=["Jan","Feb","Mar","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Des"];
 Exhibit.Formatter.l10n.months=["Januar","Februar","Mars","April","Mai","Juni","Juli","August","September","Oktober","November","Desember"];
 Exhibit.Formatter.l10n.commonEra="CE";
-Exhibit.Formatter.l10n.beforeCommonEra="Fvt.";
+Exhibit.Formatter.l10n.beforeCommonEra="fvt.";
 Exhibit.Formatter.l10n.beforeNoon="am";
 Exhibit.Formatter.l10n.afterNoon="pm";
 Exhibit.Formatter.l10n.BeforeNoon="AM";
@@ -94,17 +94,17 @@ if(!("l10n" in Exhibit.UIContext)){Exhibit.UIContext.l10n={};
 
 /* ordered-view-frame-l10n.js */
 if(!("l10n" in Exhibit.OrderedViewFrame)){Exhibit.OrderedViewFrame.l10n={};
-}Exhibit.OrderedViewFrame.l10n.removeOrderLabel="fjern sorteringsrekkefølgen";
-Exhibit.OrderedViewFrame.l10n.sortingControlsTemplate="sortert etter: <span id='ordersSpan'></span>; <a id='thenSortByAction' href='javascript:void' class='exhibit-action' title='sorter videre etter'>så etter...</a>";
-Exhibit.OrderedViewFrame.l10n.formatSortActionTitle=function(B,A){return"Sortert etter "+B+" ("+A+")";
+}Exhibit.OrderedViewFrame.l10n.removeOrderLabel="Fjern denne sorteringsrekkefølgen";
+Exhibit.OrderedViewFrame.l10n.sortingControlsTemplate="sortert etter: <span id='ordersSpan'></span>; <a id='thenSortByAction' href='javascript:void' class='exhibit-action' title='Further sort the items'>then by...</a>";
+Exhibit.OrderedViewFrame.l10n.formatSortActionTitle=function(B,A){return"Sorter etter "+B+" ("+A+")";
 };
-Exhibit.OrderedViewFrame.l10n.formatRemoveOrderActionTitle=function(B,A){return"Fjernet rekkefølgen "+B+" ("+A+")";
+Exhibit.OrderedViewFrame.l10n.formatRemoveOrderActionTitle=function(B,A){return"Fjernet sorteringsrekkefølge "+B+" ("+A+")";
 };
-Exhibit.OrderedViewFrame.l10n.groupedAsSortedOptionLabel="gruppert etter sorteringsrekkefølge";
-Exhibit.OrderedViewFrame.l10n.groupAsSortedActionTitle="grupper som sortert";
-Exhibit.OrderedViewFrame.l10n.ungroupAsSortedActionTitle="avgrupper som sortert";
-Exhibit.OrderedViewFrame.l10n.showAllActionTitle="vis alle treff";
-Exhibit.OrderedViewFrame.l10n.dontShowAllActionTitle="vis de første resultatene";
+Exhibit.OrderedViewFrame.l10n.groupedAsSortedOptionLabel="gruppert som sortert";
+Exhibit.OrderedViewFrame.l10n.groupAsSortedActionTitle="grupper etter sortering";
+Exhibit.OrderedViewFrame.l10n.ungroupAsSortedActionTitle="avgrupper slik de er sortert";
+Exhibit.OrderedViewFrame.l10n.showAllActionTitle="vis alle";
+Exhibit.OrderedViewFrame.l10n.dontShowAllActionTitle="vis bare de første";
 Exhibit.OrderedViewFrame.l10n.formatDontShowAll=function(A){return"Vis bare de første "+A+" ";
 };
 Exhibit.OrderedViewFrame.l10n.formatShowAll=function(A){return"Vis alle "+A+" ";
@@ -114,23 +114,23 @@ Exhibit.OrderedViewFrame.l10n.formatShowAll=function(A){return"Vis alle "+A+" ";
 /* tabular-view-l10n.js */
 if(!("l10n" in Exhibit.TabularView)){Exhibit.TabularView.l10n={};
 }Exhibit.TabularView.l10n.viewLabel="Tabell";
-Exhibit.TabularView.l10n.viewTooltip="Vis objektene i en tabell";
-Exhibit.TabularView.l10n.columnHeaderSortTooltip="Klikk for å sortere denne kolonna";
-Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Klikk for å sortere i omvendt rekkefølge";
-Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"sortert i stigende rekkefølge ":"sortert i synkende rekkefølge etter ")+A;
+Exhibit.TabularView.l10n.viewTooltip="Vis i en tabell";
+Exhibit.TabularView.l10n.columnHeaderSortTooltip="Klikk her for å sortere etter denne kolonna";
+Exhibit.TabularView.l10n.columnHeaderReSortTooltip="Klikk her for å sortere i omvendt rekkefølge";
+Exhibit.TabularView.l10n.makeSortActionTitle=function(A,B){return(B?"sortert i stigende rekkefølge etter ":"sortert i synkende rekkefølge etter ")+A;
 };
 
 
 /* thumbnail-view-l10n.js */
 if(!("l10n" in Exhibit.ThumbnailView)){Exhibit.ThumbnailView.l10n={};
-}Exhibit.ThumbnailView.l10n.viewLabel="miniatyrbilder";
-Exhibit.ThumbnailView.l10n.viewTooltip="Vis alle som miniatyrbilder";
+}Exhibit.ThumbnailView.l10n.viewLabel="Miniatyrbilder";
+Exhibit.ThumbnailView.l10n.viewTooltip="Vis som miniatyrbilder";
 
 
 /* tile-view-l10n.js */
 if(!("l10n" in Exhibit.TileView)){Exhibit.TileView.l10n={};
 }Exhibit.TileView.l10n.viewLabel="Liste";
-Exhibit.TileView.l10n.viewTooltip="Vis alle objektene som liste";
+Exhibit.TileView.l10n.viewTooltip="Vis som liste ";
 
 
 /* view-panel-l10n.js */
@@ -165,7 +165,7 @@ Exhibit.Coders.l10n.othersCaseLabel="andre";
 if(!("l10n" in Exhibit.FacetUtilities)){Exhibit.FacetUtilities.l10n={};
 }Exhibit.FacetUtilities.l10n.clearSelectionsTooltip="Fjern disse utvalgene";
 Exhibit.FacetUtilities.l10n.facetSelectActionTitle="Velg %0 i fasett %1";
-Exhibit.FacetUtilities.l10n.facetUnselectActionTitle="Fjern valg %0 i fasett %1";
+Exhibit.FacetUtilities.l10n.facetUnselectActionTitle="Avvelg %0 i fasett %1";
 Exhibit.FacetUtilities.l10n.facetSelectOnlyActionTitle="Velg bare %0 i fasetten %1";
 Exhibit.FacetUtilities.l10n.facetClearSelectionsActionTitle="Fjern valg i fasetten %0";
 Exhibit.FacetUtilities.l10n.facetTextSearchActionTitle="Tekstsøk %0";
@@ -176,5 +176,5 @@ Exhibit.FacetUtilities.l10n.missingThisField="(mangler dette feltet)";
 /* views-l10n.js */
 if(!("l10n" in Exhibit.ViewUtilities)){Exhibit.ViewUtilities.l10n={};
 }Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(B,A,C){var D=A.length;
-return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> av <class class='exhibit-views-totalCount'>%1</span> kunne ikke vises på kartet.",[D==1?(D+" treff"):(D+" treff"),B]);
+return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> av <class class='exhibit-views-totalCount'>%1</span> kunne ikke vises p√• kart.",[D==1?(D+" treff"):(D+" treff"),B]);
 };
