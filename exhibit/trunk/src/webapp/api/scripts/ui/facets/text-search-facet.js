@@ -126,7 +126,20 @@ Exhibit.TextSearchFacet.prototype.clearAllRestrictions = function() {
     var restrictions = this._text;
     if (this._text != null) {
         this._text = null;
+
+        var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
         this._notifyCollection();
+        var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+        var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+        SimileAjax.RemoteLog.possiblyLog({
+            facetType:"TextSearch", 
+            facetLabel:this._settings.facetLabel, 
+            operation:"clearAllRestrictions",
+            exhibitSize:totalSize,
+            preUpdateSize:preUpdateSize,
+            postUpdateSize:postUpdateSize
+        });
     }
     this._dom.input.value = "";
     
@@ -149,7 +162,20 @@ Exhibit.TextSearchFacet.prototype.setText = function(text) {
     
     if (text != this._text) {
         this._text = text;
+        var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
         this._notifyCollection();
+        var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+        var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+        SimileAjax.RemoteLog.possiblyLog({
+            facetType:"TextSearch", 
+            facetLabel:this._settings.facetLabel, 
+            operation:"setText", 
+            text:text,
+            exhibitSize:totalSize,
+            preUpdateSize:preUpdateSize,
+            postUpdateSize:postUpdateSize            
+        });
     }
 }
 

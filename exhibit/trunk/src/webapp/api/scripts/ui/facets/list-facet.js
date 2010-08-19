@@ -167,6 +167,8 @@ Exhibit.ListFacet.prototype.hasRestrictions = function() {
 };
 
 Exhibit.ListFacet.prototype.clearAllRestrictions = function() {
+    var oldRestrictionSize = SimileAjax.RemoteLog.logActive ? this._valueSet.size() : 0;
+    
     var restrictions = { selection: [], selectMissing: false };
     if (this.hasRestrictions()) {
         this._valueSet.visit(function(v) {
@@ -176,29 +178,114 @@ Exhibit.ListFacet.prototype.clearAllRestrictions = function() {
         
         restrictions.selectMissing = this._selectMissing;
         this._selectMissing = false;
-        
+
+        var newRestrictionSize = SimileAjax.RemoteLog.logActive ? this._valueSet.size() : 0;
+        var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
         this._notifyCollection();
+        var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+        var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+        var restricted = "";
+        if (newRestrictionSize > 0) {
+            arr = Array();
+            for (k in this._valueSet._hash) {
+                arr.push(k);
+            }
+            restricted = arr.join("##");
+        }
+
+        SimileAjax.RemoteLog.possiblyLog({
+            facetType:"ListFacet", 
+            facetLabel:this._settings.facetLabel, 
+            operation:"clearAllRestrictions",
+            exhibitSize:totalSize,
+            selectedValues:restricted,            
+            preUpdateSize:preUpdateSize,
+            postUpdateSize:postUpdateSize,
+            oldRestrictionSize:oldRestrictionSize,
+            newRestrictionSize:newRestrictionSize
+        });
+
     }
     return restrictions;
 };
 
 Exhibit.ListFacet.prototype.applyRestrictions = function(restrictions) {
+    var oldRestrictionSize = SimileAjax.RemoteLog.logActive ? this._valueSet.size() : 0;
+
     this._valueSet = new Exhibit.Set();
     for (var i = 0; i < restrictions.selection.length; i++) {
         this._valueSet.add(restrictions.selection[i]);
     }
     this._selectMissing = restrictions.selectMissing;
-    
+
+    var newRestrictionSize = SimileAjax.RemoteLog.logActive ? this._valueSet.size() : 0;
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._notifyCollection();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    var restricted = "";
+    if (newRestrictionSize > 0) {
+        arr = Array();
+        for (k in this._valueSet._hash) {
+            arr.push(k);
+        }
+        restricted = arr.join("##");
+    }
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"ListFacet", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"applyRestrictions",
+        exhibitSize:totalSize,
+        selectedValues:restricted,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize,        
+        oldRestrictionSize:oldRestrictionSize,
+        newRestrictionSize:newRestrictionSize        
+    });
+    
 };
 
 Exhibit.ListFacet.prototype.setSelection = function(value, selected) {
+    var oldRestrictionSize = SimileAjax.RemoteLog.logActive ? this._valueSet.size() : 0;
+    
     if (selected) {
         this._valueSet.add(value);
     } else {
         this._valueSet.remove(value);
     }
+
+    var newRestrictionSize = SimileAjax.RemoteLog.logActive ? this._valueSet.size() : 0;
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._notifyCollection();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    var restricted = "";
+    if (newRestrictionSize > 0) {
+        arr = Array();
+        for (k in this._valueSet._hash) {
+            arr.push(k);
+        }
+        restricted = arr.join("##");
+    }
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"ListFacet", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"setSelection", 
+        value:value, 
+        selected:selected,
+        exhibitSize:totalSize,
+        selectedValues:restricted,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize,
+        oldRestrictionSize:oldRestrictionSize,
+        newRestrictionSize:newRestrictionSize        
+    });
+
 }
 
 Exhibit.ListFacet.prototype.setSelectMissing = function(selected) {

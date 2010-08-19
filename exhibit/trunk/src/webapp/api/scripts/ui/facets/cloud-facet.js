@@ -140,7 +140,19 @@ Exhibit.CloudFacet.prototype.clearAllRestrictions = function() {
         restrictions.selectMissing = this._selectMissing;
         this._selectMissing = false;
         
+        var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
         this._notifyCollection();
+        var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+        var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+        
+        SimileAjax.RemoteLog.possiblyLog({
+            facetType:"Cloud", 
+            facetLabel:this._settings.facetLabel, 
+            operation:"clearAllRestrictions",
+            exhibitSize:totalSize,
+            preUpdateSize:preUpdateSize,
+            postUpdateSize:postUpdateSize
+        });
     }
     return restrictions;
 };
@@ -151,8 +163,20 @@ Exhibit.CloudFacet.prototype.applyRestrictions = function(restrictions) {
         this._valueSet.add(restrictions.selection[i]);
     }
     this._selectMissing = restrictions.selectMissing;
-    
+
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._notifyCollection();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"Cloud", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"applyRestrictions",
+        exhibitSize:totalSize,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize
+    });    
 };
 
 Exhibit.CloudFacet.prototype.setSelection = function(value, selected) {
@@ -161,7 +185,22 @@ Exhibit.CloudFacet.prototype.setSelection = function(value, selected) {
     } else {
         this._valueSet.remove(value);
     }
+
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._notifyCollection();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"Cloud", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"setSelection", 
+        value:value, 
+        selected:selected,
+        exhibitSize:totalSize,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize
+    });    
 }
 
 Exhibit.CloudFacet.prototype.setSelectMissing = function(selected) {
