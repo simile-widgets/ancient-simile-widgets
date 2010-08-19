@@ -14,6 +14,7 @@ Exhibit.ViewPanel = function(div, uiContext) {
     this._viewTooltips = [];
     this._viewDomConfigs = [];
     this._viewIDs = [];
+    this._viewClassStrings = [];
     
     this._viewIndex = 0;
     this._view = null;
@@ -88,6 +89,7 @@ Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
                 var viewClass = Exhibit.TileView;
                 
                 var viewClassString = Exhibit.getAttribute(node, "viewClass");
+                
                 if (viewClassString != null && viewClassString.length > 0) {
                     viewClass = Exhibit.UI.viewClassNameToViewClass(viewClassString);
                     if (viewClass == null) {
@@ -124,6 +126,7 @@ Exhibit.ViewPanel.createFromDOM = function(div, uiContext) {
                 viewPanel._viewTooltips.push(tooltip);
                 viewPanel._viewDomConfigs.push(node);
                 viewPanel._viewIDs.push(id);
+                viewPanel._viewClassStrings.push(viewClassString);
             }
         }
         node = node.nextSibling;
@@ -254,7 +257,27 @@ Exhibit.ViewPanel.prototype._selectView = function(newIndex) {
             self._switchView(oldIndex);
         },
         Exhibit.ViewPanel.l10n.createSelectViewActionTitle(self._viewLabels[newIndex])
-    );
+    );    
+
+    if (SimileAjax.RemoteLog.logActive) {
+        var dat = {
+            "action":"switchView",
+            "oldIndex":oldIndex,
+            "newIndex":newIndex,
+            "oldLabel":this._viewLabels[oldIndex],
+            "newLabel":this._viewLabels[newIndex],
+            "oldID":this._viewIDs[oldIndex],
+            "newID":this._viewIDs[newIndex]
+        }
+        if (newIndex < this._viewClassStrings.length) {
+            dat["newClass"] = this._viewClassStrings[newIndex];
+        }
+        if (oldIndex < this._viewClassStrings.length) {
+            dat["oldClass"] = this._viewClassStrings[oldIndex];
+        }
+        SimileAjax.RemoteLog.possiblyLog(dat);
+    }
+
 };
 
 Exhibit.ViewPanel.getPropertyValuesPairs = function(itemID, propertyEntries, database) {
