@@ -1,5 +1,6 @@
 /*==================================================
- *  Norwegian (Bokmål) localization 
+ *  English localization 
+ *  (also base and default localization)
  *==================================================
  */
 (function() {
@@ -24,11 +25,11 @@
         var cssFiles = [
         ];
 
-        var urlPrefix = Exhibit.urlPrefix + "locales/no/";
+        var urlPrefix = Exhibit.urlPrefix + "locales/en/";
         if (Exhibit.params.bundle) {
-            SimileAjax.includeJavascriptFiles(document, urlPrefix, [ "exhibit-no-bundle.js" ]);
+            SimileAjax.includeJavascriptFiles(document, urlPrefix, [ "exhibit-en-bundle.js" ]);
             if (cssFiles.length > 0) {
-                SimileAjax.includeCssFiles(document, urlPrefix, [ "exhibit-no-bundle.css" ]);
+                SimileAjax.includeCssFiles(document, urlPrefix, [ "exhibit-en-bundle.css" ]);
             }
         } else {
             SimileAjax.includeJavascriptFiles(document, urlPrefix + "scripts/", javascriptFiles);
