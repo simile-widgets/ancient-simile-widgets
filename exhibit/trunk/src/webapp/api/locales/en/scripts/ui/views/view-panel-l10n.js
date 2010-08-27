@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.ViewPanel Norwegian (Bokmål) localization
+ *  Exhibit.ViewPanel English localization
  *==================================================
  */
 
@@ -8,12 +8,12 @@ if (!("l10n" in Exhibit.ViewPanel)) {
 }
 
 Exhibit.ViewPanel.l10n.createSelectViewActionTitle = function(viewLabel) {
-    return "velg " + viewLabel + " visning";
+    return "select " + viewLabel + " view";
 };
-Exhibit.ViewPanel.l10n.missingViewClassMessage = " The specification for one of the views is missing the viewClass field.";
+Exhibit.ViewPanel.l10n.missingViewClassMessage = "The specification for one of the views is missing the viewClass field.";
 Exhibit.ViewPanel.l10n.viewClassNotFunctionMessage = function(expr) {
-    return "Din attributtverdi for viewClass '" + expr + "' som du har valgt\n" +
-        "gir ikke et gyldig resultat fra Javascriptfunksjonen.";
+    return "The viewClass attribute value '" + expr + "' you have specified\n" +
+        "for one of the views does not evaluate to a Javascript function.";
 };
 Exhibit.ViewPanel.l10n.badViewClassMessage = function(expr) {
     return "The viewClass attribute value '" + expr + "' you have specified\n" +

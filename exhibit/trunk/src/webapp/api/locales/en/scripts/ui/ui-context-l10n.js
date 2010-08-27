@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.UIContext Norwegian (Bokmål) localization
+ *  Exhibit.UIContext English localization
  *==================================================
  */
 

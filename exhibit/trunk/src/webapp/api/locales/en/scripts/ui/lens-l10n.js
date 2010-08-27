@@ -1,5 +1,5 @@
 /*==================================================
- *  Exhibit.Lens Norwegian (Bokmål) localization
+ *  Exhibit.Lens English localization
  *==================================================
  */
 
