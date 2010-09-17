@@ -8,7 +8,7 @@ Exhibit.importers["application/xml"] = Exhibit.XMLImporter;
 
 Exhibit.XMLImporter.getXMLDocument = function (docURL) {
 	var xmlDoc = null;
-	$.ajax({ url: docURL,
+	SimileAjax.jQuery.ajax({ url: docURL,
 		     type: 'GET',
 		     dataType: 'xml',
 		     async: false, //Need this due to failure of getting XMLDoc from server
@@ -29,9 +29,9 @@ Exhibit.XMLImporter.appendUserPropertyToArray = function(node,configuration,obje
 	// check if property list has been initialized
 	if  (typeof objectToAppend[configuration.propertyNames[referenceIndex]] == 'string') {
 		array = [array];
-		array.push($(node).text());
+		array.push(SimileAjax.jQuery(node).text());
 	} else {
-	    array.push($(node).text());
+	    array.push(SimileAjax.jQuery(node).text());
 	}
 	return array;
 }
@@ -42,9 +42,9 @@ Exhibit.XMLImporter.appendPropertyToArray = function(node,configuration,objectTo
 
 	if (typeof array == 'string') {
 		array = [array];
-		array.push($(node).text());
+		array.push(SimileAjax.jQuery(node).text());
 	} else {
-	    array.push($(node).text());
+	    array.push(SimileAjax.jQuery(node).text());
 	}
 	return array;
 }
@@ -52,16 +52,16 @@ Exhibit.XMLImporter.appendPropertyToArray = function(node,configuration,objectTo
 //GETS ALL ITEMS OF CONFIGURATION.ITEMTAG[INDEX]
 Exhibit.XMLImporter.getItems = function(xmlDoc, object,index,configuration) {
 	var self = this;
-	$(configuration.itemTag[index],xmlDoc).each(function() {
+	SimileAjax.jQuery(configuration.itemTag[index],xmlDoc).each(function() {
         var propertyList = [];
         var queue = [];
-        $(this).children().each(function() { queue.push(this); });								  
+        SimileAjax.jQuery(this).children().each(function() { queue.push(this); });								  
         objectToAppend = {};
         
         while (queue.length > 0) {
             var node = queue.pop();
 
-	    if ($(node).text().length <= 0) continue; //don't include empty strings as values of properties
+	    if (SimileAjax.jQuery(node).text().length <= 0) continue; //don't include empty strings as values of properties
             var nodeType = self.determineType(node,configuration);
         
             if (nodeType == 'property') {
@@ -80,10 +80,10 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, object,index,configuration) {
                     // APPLY USER SPECIFIED PROPERTY NAMES
                     if (configuration.propertyTags.indexOf(node.nodeName)>=0) {
                         var referenceIndex = configuration.propertyTags.indexOf(node.nodeName);
-                        objectToAppend[configuration.propertyNames[referenceIndex]] = $(node).text();
+                        objectToAppend[configuration.propertyNames[referenceIndex]] = SimileAjax.jQuery(node).text();
                     } else {
                         //ELSE, USE TAG NODENAME
-                        objectToAppend[node.nodeName] = $(node).text();
+                        objectToAppend[node.nodeName] = SimileAjax.jQuery(node).text();
                     }
                 }
                 
@@ -94,7 +94,7 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, object,index,configuration) {
         
                 objectToAppend[tempObject.type] = tempObject.label;
             } else if (nodeType == 'fakeItem') {
-                $(node).children().each(function() { queue.push(this); } );																				
+                SimileAjax.jQuery(node).children().each(function() { queue.push(this); } );																				
             } else {
                 alert('error: nodetype not understood');
             }
@@ -121,11 +121,11 @@ Exhibit.XMLImporter.getParentItem = function(itemNode,configuration) {
 
 // SETS LABEL, TYPE, AND PARENT RELATION
 Exhibit.XMLImporter.configureItem = function(myItem, object,configuration,index) {
-	if (!(object.label) && configuration.propertyLabel[index]!=null) {
-	    object['label'] = $(configuration.propertyLabel[index],myItem).eq(0).text();
+	if (!(object.label) && configuration.labelTag[index]!=null) {
+	    object['label'] = SimileAjax.jQuery(configuration.labelTag[index],myItem).eq(0).text();
 	} else {
 	    //DEFAULT TO FIRST PROPERTY
-	    object['label'] = $(myItem).children().eq(0).text();
+	    object['label'] = SimileAjax.jQuery(myItem).children().eq(0).text();
 	}
 	
 	if (!(object.type) && configuration.itemType[index]!=null) {
@@ -148,25 +148,24 @@ Exhibit.XMLImporter.configureItem = function(myItem, object,configuration,index)
 }
 	
 
-Exhibit.XMLImporter.configure = function() {
+Exhibit.XMLImporter.configure = function(link) {
 	var configuration = {
 		'itemTag': [],
-		'propertyLabel': [],
+		'labelTag': [],
 		'itemType': [],
 		'parentRelation': [],
 		'propertyTags': [],
 		'propertyNames': []
 	}
 
-	// get itemTag, propertyLabel, itemType, and parentRelation
-	$('link').each(function() {
-            configuration.itemTag = Exhibit.getAttribute(this,'ex:itemTags',',') || [];
-            configuration.propertyLabel = Exhibit.getAttribute(this,'ex:propertyLabels',',') || [];
-            configuration.itemType = Exhibit.getAttribute(this,'ex:itemTypes',',') || [];
-            configuration.parentRelation = Exhibit.getAttribute(this,'ex:parentRelations',',') || [];
-            configuration.propertyNames = Exhibit.getAttribute(this,'ex:propertyNames',',') || [];
-            configuration.propertyTags = Exhibit.getAttribute(this,'ex:propertyTags',',') || [];
-	    });
+
+	// get itemTag, labelTag, itemType, and parentRelation
+	configuration.itemTag = Exhibit.getAttribute(link,'ex:itemTags',',') || [];
+	configuration.labelTag = Exhibit.getAttribute(link,'ex:labelTags',',') || [];
+	configuration.itemType = Exhibit.getAttribute(link,'ex:itemTypes',',') || [];
+	configuration.parentRelation = Exhibit.getAttribute(link,'ex:parentRelations',',') || [];
+	configuration.propertyNames = Exhibit.getAttribute(link,'ex:propertyNames',',') || [];
+	configuration.propertyTags = Exhibit.getAttribute(link,'ex:propertyTags',',') || [];
 	
 	return configuration;
 }
@@ -174,7 +173,7 @@ Exhibit.XMLImporter.configure = function() {
 Exhibit.XMLImporter.determineType = function(node,configuration) {
 	if (configuration.itemTag.indexOf(node.nodeName)>=0) {
         return "Item";
-    } else if ($(node).children().length == 0) {
+    } else if (SimileAjax.jQuery(node).children().length == 0) {
 		return 'property';
 	} else {
 		return 'fakeItem';
@@ -182,29 +181,29 @@ Exhibit.XMLImporter.determineType = function(node,configuration) {
 }
 																		
 Exhibit.XMLImporter.load = function (link,database,cont) {
-	var self = this;
-	var url = typeof link == "string" ? link : link.href;
-	url = Exhibit.Persistence.resolveURL(url);
+    var self = this;
+    var url = typeof link == "string" ? link : link.href;
+    url = Exhibit.Persistence.resolveURL(url);
+
     var fError = function(statusText, status, xmlhttp) {
         Exhibit.UI.hideBusyIndicator();
         Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
         if (cont) cont();
     };
 	
-	var fDone = function() {
+    var fDone = function() {
         Exhibit.UI.hideBusyIndicator();
         try {
             var o = null;
             try {
-				xmlDoc = Exhibit.XMLImporter.getXMLDocument(url);
-				var configuration = self.configure();
+		xmlDoc = Exhibit.XMLImporter.getXMLDocument(url);
+		var configuration = self.configure(link);
                 o = { 
-					'items': []
-					};
-		for (index=0; index < configuration.itemTag.length; index++)
-				{
-					o = Exhibit.XMLImporter.getItems(xmlDoc,o,index,configuration);
-				}
+		    'items': []
+		};
+		for (index=0; index < configuration.itemTag.length; index++)		    {
+		    o = Exhibit.XMLImporter.getItems(xmlDoc,o,index,configuration);
+		}
 				
             } catch (e) {
                 Exhibit.UI.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url, e), url);
@@ -222,7 +221,7 @@ Exhibit.XMLImporter.load = function (link,database,cont) {
         }
     };
 	
-	Exhibit.UI.showBusyIndicator();
+    Exhibit.UI.showBusyIndicator();
     SimileAjax.XmlHttp.get(url, fError, fDone);
 }	
 						  
