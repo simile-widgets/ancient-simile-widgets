@@ -261,7 +261,23 @@ Exhibit.SliderFacet.prototype._buildRangeIndex = function() {
 //clear
 Exhibit.SliderFacet.prototype.changeRange = function(range) {
     this._range = range;
+
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._notifyCollection();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"Slider", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"changeRange", 
+        max:range.max, 
+        min:range.min,
+        exhibitSize:totalSize,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize        
+    });
+    
 };
 //clear
 Exhibit.SliderFacet.prototype._notifyCollection = function() {
@@ -269,7 +285,20 @@ Exhibit.SliderFacet.prototype._notifyCollection = function() {
 };
 //clear
 Exhibit.SliderFacet.prototype.clearAllRestrictions = function() {
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._slider.resetSliders();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"Slider", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"clearAllRestrictions",
+        exhibitSize:totalSize,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize        
+    });
+ 
     this._range = this._maxRange;
 };
 //clear
