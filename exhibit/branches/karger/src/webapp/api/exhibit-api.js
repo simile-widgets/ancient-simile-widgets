@@ -13,6 +13,7 @@
     var useLocalResources = false;
     var noAuthentication = false;
     
+
     if (document.location.search.length > 0) {
         var params = document.location.search.substr(1).split("&");
         for (var i = 0; i < params.length; i++) {
@@ -22,10 +23,9 @@
             if (params[i] == 'exhibit-no-authentication') {
                 noAuthentication = true;
             }
-            
         }
     }
-    
+
     var loadMe = function() {
         if (typeof window.Exhibit != "undefined") {
             return;
@@ -168,6 +168,23 @@
             SimileAjax.parseURLParameters(url, Exhibit.params, paramTypes);
         }
         
+        /*
+         * Enable logging
+         */
+        if (Exhibit.params.log) {
+            SimileAjax.RemoteLog.logActive = true;
+            SimileAjax.RemoteLog.url = SimileAjax.RemoteLog.defaultURL;
+            if (Exhibit.params.logServer) {
+                SimileAjax.RemoteLog.url = Exhibit.params.logServer;                
+            }
+
+            var dat = {"action":"ExhibitLoad"};
+            for (k in Exhibit.params) {
+                dat[k] = "" + Exhibit.params[k];
+            }
+            SimileAjax.RemoteLog.possiblyLog(dat);
+        }
+        
         if (useLocalResources) {
             Exhibit.urlPrefix = "http://127.0.0.1:8888/exhibit/api/";
         }
@@ -188,7 +205,7 @@
         if (Exhibit.params.views) {
             var views = Exhibit.params.views.split(",");
             for (var j = 0; j < views.length; j++) {
-                var view = views[j];
+                var view = views[j];                
                 if (view == "timeline") {
                     includeTimeline = true;
                 } else if (view == "map") {

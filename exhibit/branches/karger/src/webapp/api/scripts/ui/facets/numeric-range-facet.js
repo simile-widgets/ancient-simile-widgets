@@ -121,14 +121,42 @@ Exhibit.NumericRangeFacet.prototype.clearAllRestrictions = function() {
     if (this._ranges.length > 0) {
         restrictions = restrictions.concat(this._ranges);
         this._ranges = [];
+
+        var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
         this._notifyCollection();
+        var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+        var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+        SimileAjax.RemoteLog.possiblyLog({
+            facetType:"NumericRange", 
+            facetLabel:this._settings.facetLabel, 
+            operation:"clearAllRestrictions",
+            exhibitSize:totalSize,
+            preUpdateSize:preUpdateSize,
+            postUpdateSize:postUpdateSize        
+        });
+        
     }
     return restrictions;
 };
 
 Exhibit.NumericRangeFacet.prototype.applyRestrictions = function(restrictions) {
     this._ranges = restrictions;
+
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._notifyCollection();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"NumericRange", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"applyRestrictions",
+        exhibitSize:totalSize,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize        
+    });
+
 };
 
 Exhibit.NumericRangeFacet.prototype.setRange = function(from, to, selected) {
@@ -149,7 +177,23 @@ Exhibit.NumericRangeFacet.prototype.setRange = function(from, to, selected) {
             }
         }
     }
+
+    var preUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
     this._notifyCollection();
+    var postUpdateSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countRestrictedItems() : 0;
+    var totalSize = SimileAjax.RemoteLog.logActive ? this._uiContext.getCollection().countAllItems() : 0;
+
+    SimileAjax.RemoteLog.possiblyLog({
+        facetType:"NumericRange", 
+        facetLabel:this._settings.facetLabel, 
+        operation:"setRange", 
+        from:from, 
+        to:to, 
+        selected:selected,
+        exhibitSize:totalSize,
+        preUpdateSize:preUpdateSize,
+        postUpdateSize:postUpdateSize        
+    });
 }
 
 Exhibit.NumericRangeFacet.prototype.restrict = function(items) {
