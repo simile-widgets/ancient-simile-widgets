@@ -509,13 +509,13 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
             sortingFunction = tieBreaker ? numericTieBreakerFunction : numericFunction;
             coersion = function(v) {
                 if (v == null) {
-                    return Number.NEGATIVE_INFINITY;
+                    return Number.MAX_VALUE;
                 } else if (typeof v == "number") {
                     return v;
                 } else {
                     var n = parseFloat(v);
                     if (isNaN(n)) {
-                        return Number.NEGATIVE_INFINITY;
+                        return Number.MAX_VALUE;
                     } else {
                         return n;
                     }
@@ -525,14 +525,14 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
             sortingFunction = tieBreaker ? numericTieBreakerFunction : numericFunction;
             coersion = function(v) {
                 if (v == null) {
-                    return Number.NEGATIVE_INFINITY;
+                    return Number.MAX_VALUE;
                 } else if (v instanceof Date) {
                     return v.getTime();
                 } else {
                     try {
                         return SimileAjax.DateTime.parseIso8601DateTime(v).getTime();
                     } catch (e) {
-                        return Number.NEGATIVE_INFINITY;
+                        return Number.MAX_VALUE;
                     }
                 }
             }
@@ -540,7 +540,7 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
             sortingFunction = tieBreaker ? numericTieBreakerFunction : numericFunction;
             coersion = function(v) {
                 if (v == null) {
-                    return Number.NEGATIVE_INFINITY;
+                    return Number.MAX_VALUE;
                 } else if (typeof v == "boolean") {
                     return v ? 1 : 0;
                 } else {

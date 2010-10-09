@@ -573,6 +573,8 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
     );
     
     var node = job.div.tagName.toLowerCase() == "table" ? job.div.rows[job.div.rows.length - 1] : job.div.lastChild;
+    SimileAjax.jQuery(node).show();
+/*
     var tagName = node.tagName.toLowerCase();
     switch (tagName) {
     case "span":
@@ -587,7 +589,7 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
     default:
         node.style.display = "block";
     }
-    
+  */  
     node.setAttribute("ex:itemID", job.itemID);
     
     if (!Exhibit.params.safe) {
