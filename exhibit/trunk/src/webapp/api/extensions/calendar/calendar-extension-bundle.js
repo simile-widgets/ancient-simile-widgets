@@ -284,7 +284,7 @@ try{var I=Exhibit.getAttribute(A,"beginDate");
 if(I!==null&&I.length>0){B._beginDate=Exhibit.ExpressionParser.parse(I);
 }var F=Exhibit.getAttribute(A,"endDate");
 if(F!==null&&F.length>0){B._endDate=Exhibit.ExpressionParser.parse(F);
-}if(B._endDate===null){B._endDate=B.beginDate;
+}if(B._endDate===null){B._endDate=B._beginDate;
 }var E=Exhibit.getAttribute(A,"timerLimit");
 if(E!==null&&E.length>0){B._datePickerTimerLimit=E;
 }var J=Exhibit.getAttribute(A,"dragSelection");
