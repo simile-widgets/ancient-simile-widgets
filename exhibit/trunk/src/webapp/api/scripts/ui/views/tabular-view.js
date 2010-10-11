@@ -492,7 +492,7 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
             }
 	}
     } else if (coercedValueType == "boolean") {
-	sortingFunction = tieBreaker ? numericTieBreakerFunction : numericFunction;
+	sortingFunction = numericFunction;
 	coersion = function(v) {
 	    if (v == null) {
 		return Number.MAX_VALUE;
