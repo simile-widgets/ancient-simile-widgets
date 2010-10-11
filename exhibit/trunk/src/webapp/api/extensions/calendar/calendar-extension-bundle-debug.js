@@ -284,7 +284,7 @@ try{var beginDateExpressionString=Exhibit.getAttribute(configElmt,"beginDate");
 if(beginDateExpressionString!==null&&beginDateExpressionString.length>0){facet._beginDate=Exhibit.ExpressionParser.parse(beginDateExpressionString);
 }var endDateExpressionString=Exhibit.getAttribute(configElmt,"endDate");
 if(endDateExpressionString!==null&&endDateExpressionString.length>0){facet._endDate=Exhibit.ExpressionParser.parse(endDateExpressionString);
-}if(facet._endDate===null){facet._endDate=facet.beginDate;
+}if(facet._endDate===null){facet._endDate=facet._beginDate;
 }var timerLimit=Exhibit.getAttribute(configElmt,"timerLimit");
 if(timerLimit!==null&&timerLimit.length>0){facet._datePickerTimerLimit=timerLimit;
 }var dragSelection=Exhibit.getAttribute(configElmt,"dragSelection");
