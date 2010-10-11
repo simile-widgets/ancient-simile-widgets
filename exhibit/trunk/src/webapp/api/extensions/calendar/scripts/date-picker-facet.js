@@ -56,7 +56,7 @@ Exhibit.DatePickerFacet.createFromDOM = function(configElmt, containerElmt, uiCo
         }
         
         if (facet._endDate === null) {
-          facet._endDate = facet.beginDate;
+          facet._endDate = facet._beginDate;
         }
         
         var timerLimit = Exhibit.getAttribute(configElmt, "timerLimit");
