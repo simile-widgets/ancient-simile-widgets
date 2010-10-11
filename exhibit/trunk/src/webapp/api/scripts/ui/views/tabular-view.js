@@ -7,7 +7,7 @@ Exhibit.TabularView = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
     
-    this._settings = { rowStyler: null, tableStyler: null };
+    this._settings = { rowStyler: null, tableStyler: null, indexMap: {} };
     this._columns = [];
     this._rowTemplate = null;
 
@@ -269,8 +269,15 @@ Exhibit.TabularView.prototype._reconstruct = function() {
          *  Sort the items
          */
         var sortColumn = this._columns[this._settings.sortColumn];
-        items.sort(this._createSortFunction(items, sortColumn.expression, this._settings.sortAscending));
+	var sorter = this._createSortFunction(items, sortColumn.expression, this._settings.sortAscending);
+        items.sort(this._stabilize(sorter,
+				   this._settings.indexMap, originalSize+1));
     
+	//preserve order for next time
+	for (i=0; i<items.length; i++) {
+	    this._settings.indexMap[items[i].id]=i;
+	}
+
         /*
          *  Style the table
          */
@@ -419,6 +426,31 @@ Exhibit.TabularView.prototype._getColumnLabel = function(expression) {
         return propertyID;
     }
 };
+
+/*
+Stablize converts an arbitrary sorting function into one that breaks ties 
+in that function according to item indices stored in indexMap.  Thus if
+indexMap contains the indices of items under a previous order, then the
+sort will preserve that previous order in the case of ties.
+
+If sorting is interleaved with faceting, items that go out-of and back-into 
+view will not be stabilized as their past index will be forgotten while they
+are out of view.
+*/
+Exhibit.TabularView.prototype._stabilize = function(f, indexMap)  {
+    var stable = function(item1, item2) {
+	var cmp=f(item1, item2);
+	if (cmp) {
+	    return cmp;
+	}
+	else {
+	    i1 = item1.id in indexMap ? indexMap[item1.id] : -1;
+	    i2 = item2.id in indexMap ? indexMap[item2.id] : -1;
+	    return i1-i2;
+	}
+    }
+    return stable;
+}
 
 Exhibit.TabularView.prototype._createSortFunction = function(items, expression, ascending) {
     var database = this._uiContext.getDatabase();
