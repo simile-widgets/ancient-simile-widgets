@@ -6,22 +6,6 @@
 Exhibit.XMLImporter = { };
 Exhibit.importers["application/xml"] = Exhibit.XMLImporter;
 
-Exhibit.XMLImporter.getXMLDocument = function (docURL) {
-	var xmlDoc = null;
-	SimileAjax.jQuery.ajax({ url: docURL,
-		     type: 'GET',
-		     dataType: 'xml',
-		     async: false, //Need this due to failure of getting XMLDoc from server
-		     success: function (data) { xmlDoc = data; }
-	});
-	if (xmlDoc) {
-		return xmlDoc;
-	} else {
-		alert('Error finding xml doc ' + docURL);
-		return;
-	}
-}
-
 //APPENDS PROPERTIES (NAME SPECIFIED BY USER) TO ARRAY
 Exhibit.XMLImporter.appendUserPropertyToArray = function(node,configuration,objectToAppend) {
 	var referenceIndex = configuration.propertyTags.indexOf(node.nodeName);
@@ -160,68 +144,72 @@ Exhibit.XMLImporter.configure = function(link) {
 
 
 	// get itemTag, labelTag, itemType, and parentRelation
-	configuration.itemTag = Exhibit.getAttribute(link,'ex:itemTags',',') || [];
-	configuration.labelTag = Exhibit.getAttribute(link,'ex:labelTags',',') || [];
-	configuration.itemType = Exhibit.getAttribute(link,'ex:itemTypes',',') || [];
-	configuration.parentRelation = Exhibit.getAttribute(link,'ex:parentRelations',',') || [];
-	configuration.propertyNames = Exhibit.getAttribute(link,'ex:propertyNames',',') || [];
-	configuration.propertyTags = Exhibit.getAttribute(link,'ex:propertyTags',',') || [];
+    configuration.itemTag = Exhibit.getAttribute(link,'ex:itemTags',',') || ["item","items"];
+    configuration.labelTag = Exhibit.getAttribute(link,'ex:labelTags',',') || ["label"];
+    configuration.itemType = Exhibit.getAttribute(link,'ex:itemTypes',',') || ["item","item"];
+    configuration.parentRelation = Exhibit.getAttribute(link,'ex:parentRelations',',') || [];
+    configuration.propertyNames = Exhibit.getAttribute(link,'ex:propertyNames',',') || [];
+    configuration.propertyTags = Exhibit.getAttribute(link,'ex:propertyTags',',') || [];
 	
-	return configuration;
+    return configuration;
 }
 
 Exhibit.XMLImporter.determineType = function(node,configuration) {
-	if (configuration.itemTag.indexOf(node.nodeName)>=0) {
+    if (configuration.itemTag.indexOf(node.nodeName)>=0) {
         return "Item";
     } else if (SimileAjax.jQuery(node).children().length == 0) {
-		return 'property';
-	} else {
-		return 'fakeItem';
-	}
+	return 'property';
+    } else {
+	return 'fakeItem';
+    }
 }
 																		
 Exhibit.XMLImporter.load = function (link,database,cont) {
     var self = this;
     var url = typeof link == "string" ? link : link.href;
-    url = Exhibit.Persistence.resolveURL(url);
+    var configuration;
 
-    var fError = function(statusText, status, xmlhttp) {
+    try {
+	configuration = self.configure(link);
+	url = Exhibit.Persistence.resolveURL(url);
+    } catch(e) {
+	SimileAjax.Debug.exception(e, "Error configuring XML importer for " + url);
+	return;
+    }
+
+    var fError = function(xmlhttp, statusText, error) {
         Exhibit.UI.hideBusyIndicator();
-        Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
+	if (statusText == "parsererror") {
+	    Exhibit.UI.showHelp("Invalid XML at " + url);
+	}
+	else {
+            Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
+	}
         if (cont) cont();
     };
-	
-    var fDone = function() {
-        Exhibit.UI.hideBusyIndicator();
-        try {
-            var o = null;
-            try {
-		xmlDoc = Exhibit.XMLImporter.getXMLDocument(url);
-		var configuration = self.configure(link);
-                o = { 
-		    'items': []
-		};
-		for (index=0; index < configuration.itemTag.length; index++)		    {
-		    o = Exhibit.XMLImporter.getItems(xmlDoc,o,index,configuration);
-		}
-				
-            } catch (e) {
-                Exhibit.UI.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url, e), url);
-            }
-            
-            if (o != null) {
-                database.loadData(o, Exhibit.Persistence.getBaseURL(url));
-            }
-        } catch (e) {
-            SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
-        } 
 
-		finally {
+    var fDone = function(xmlDoc) {
+        try {
+            var o = { 'items': [] };
+	    for (index=0; index < configuration.itemTag.length; index++)		    {
+		o = Exhibit.XMLImporter.getItems(xmlDoc,o,index,configuration);
+	    }
+            database.loadData(o, Exhibit.Persistence.getBaseURL(url));
+        } catch (e) {
+            SimileAjax.Debug.exception(e, "Error loading data from " + url);
+        } finally {
+            Exhibit.UI.hideBusyIndicator();
             if (cont) cont();
         }
     };
 	
     Exhibit.UI.showBusyIndicator();
-    SimileAjax.XmlHttp.get(url, fError, fDone);
+    SimileAjax.jQuery.ajax({ url: url,
+			     type: 'GET',
+			     dataType: 'xml',
+			     async: false, //Need this due to failure of getting XMLDoc from server
+			     success: fDone,
+			     error: fError
+			  });
 }	
 						  
