@@ -270,7 +270,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
          *  Sort the items
          */
         var sortColumn = this._columns[this._settings.sortColumn];
-        items.sort(this._createSortFunction(items, sortColumn.expression, this._settings.sortAscending));
+	items.sort(this._createSortFunction(items, sortColumn.expression, this._settings.sortAscending));
     
         /*
          *  Style the table
@@ -284,7 +284,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             table.cellPadding = this._settings.cellPadding;
             table.border = this._settings.border;
         }
-        
         /*
          *  Create the column headers
          */
@@ -310,7 +309,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         for (var i = 0; i < this._columns.length; i++) {
             createColumnHeader(i);
         }
-
         /*
          *  Create item rows
          */
@@ -319,7 +317,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             renderItem = function(i) {
                 var item = items[i];
                 var tr = Exhibit.Lens.constructFromLensTemplate(item.id, self._rowTemplate, table, self._uiContext);
-                
                 if (self._settings.rowStyler != null) {
                     self._settings.rowStyler(item.id, database, tr, i);
                 }
@@ -328,7 +325,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             renderItem = function(i) {
                 var item = items[i];
                 var tr = table.insertRow(table.rows.length);
-                
+
                 for (var c = 0; c < self._columns.length; c++) {
                     var column = self._columns[c];
                     var td = tr.insertCell(c);
@@ -373,7 +370,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         for (var i = start; i < end; i++) {
             renderItem(i);
         }
-
         bodyDiv.appendChild(table);
         
         if (generatePagingControls) {
@@ -424,7 +420,6 @@ Exhibit.TabularView.prototype._getColumnLabel = function(expression) {
 Exhibit.TabularView.prototype._createSortFunction = function(items, expression, ascending) {
     var database = this._uiContext.getDatabase();
     var multiply = ascending ? 1 : -1;
-    
     /* Maintain order of sorted columns to implement stable sort */
     for (var i = 0; i < this._sortState.length; i++) {
         if ([expression, multiply] == this._sortState[i]) {
@@ -453,12 +448,12 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
     
     var me = this;
     var numericTieBreakerFunction = function(item1, item2, i) {
-        return me._sortState[i][1] * (item1.extraSortKeys[i].value - item2.extraSortKeys[i].value);    
+        var val = me._sortState[i][1] * (item1.extraSortKeys[i].value - item2.extraSortKeys[i].value);    //may be NaN if vals are infinity
+	return isNaN(val) ? 0 : val;
     };
     var textTieBreakerFunction = function(item1, item2, i) {
         return me._sortState[i][1] * item1.extraSortKeys[i].value.localeCompare(item2.extraSortKeys[i].value);    
     };
-
     var valueTypes = [];
     var valueTypeMap = {};
     for (var i = 0; i < items.length; i++) {
@@ -494,7 +489,6 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
             valueTypes.push(r.valueType);
         }
     }    
-    
     var getCoersionAndSortingFunction = function(valueTypes, tieBreaker) {
         var coercedValueType = "text"
         if (valueTypes.length == 1) {
@@ -502,7 +496,6 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
         } else {
             coercedValueType = "text";
         }
-
         var coersion;
         var sortingFunction;
         if (coercedValueType == "number") {
@@ -529,10 +522,12 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
                 } else if (v instanceof Date) {
                     return v.getTime();
                 } else {
+		    //		    console.log("nondate");
+		    //		    console.log(v);
                     try {
                         return SimileAjax.DateTime.parseIso8601DateTime(v).getTime();
                     } catch (e) {
-                        return Number.NEGATIVE_INFINITY;
+                        return Number.NEGATIVE_INFINITY;;
                     }
                 }
             }
@@ -576,7 +571,6 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
         var item = items[i];
         item.sortKey = sortHelpers.coersion(item.sortKey);
     }
-    
     return sortHelpers.sortingFunction;
 };
 

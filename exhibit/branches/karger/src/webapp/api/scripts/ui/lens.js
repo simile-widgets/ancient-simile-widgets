@@ -579,7 +579,9 @@ Exhibit.Lens._performConstructFromLensTemplateJob = function(job) {
         node.style.display = "inline";
         break;
     case "tr":
+	try {
         node.style.display = "table-row";
+	} catch(e) {};
         break;
     case "td":
         node.style.display = "table-cell";
