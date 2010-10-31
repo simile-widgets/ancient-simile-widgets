@@ -269,7 +269,7 @@
         
         var url = useLocalResources ?
             "http://127.0.0.1:8888/ajax/api/simile-ajax-api.js?bundle=false" :
-            "http://api.simile-widgets.org/ajax/2.2.1/simile-ajax-api.js";
+            "http://api.simile-widgets.org/ajax/2.2.2/simile-ajax-api.js";
             
         var createScriptElement = function() {
             var script = document.createElement("script");

@@ -167,16 +167,17 @@ Exhibit.JSONImporter.configure = function() {
 }
 
 Exhibit.JSONImporter.load = function (link,database,cont) {
-	var self = this;
-	var url = typeof link == "string" ? link : link.href;
-	url = Exhibit.Persistence.resolveURL(url);
+    var self = this;
+    var url = typeof link == "string" ? link : link.href;
+    url = Exhibit.Persistence.resolveURL(url);
+
     var fError = function(statusText, status, xmlhttp) {
         Exhibit.UI.hideBusyIndicator();
         Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
         if (cont) cont();
     };
 	
-	var fDone = function() {
+    var fDone = function() {
         Exhibit.UI.hideBusyIndicator();
         try {
             var o = null;
@@ -200,12 +201,11 @@ Exhibit.JSONImporter.load = function (link,database,cont) {
         } catch (e) {
             SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
         } 
-
-		finally {
+	finally {
             if (cont) cont();
         }
     };
 	
-	Exhibit.UI.showBusyIndicator();
+    Exhibit.UI.showBusyIndicator();
     SimileAjax.XmlHttp.get(url, fError, fDone);
 }

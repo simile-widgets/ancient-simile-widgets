@@ -3,225 +3,169 @@
  *==================================================
  */
 
+
+/*
+An XML node can represent three things:
+* an item
+* a relationship between a parent node (item) and child node (item)
+* both, ie the node represents and item that is implicitly related to the containing node
+
+ex:itemTags specifies tags that represent items
+By default, the type of an item equals its itemTag
+ex:itemTypes overrides this default
+If an item C is a descendant of another item A, C becomes the value of some property of A
+By default:
+* if the (immediate) parent of C is NOT an item tag, then that tag names the property
+* if the (immediate) parent of C IS an item tag, then C's tag names the property (even while it might also name C's type)
+ex:parentRelations overrides this default.  It specifies, for each item tag, the property whose value is items with that tag
+in other words, if I see that tag, I infer it is the value of that property of the ancestor item
+
+After items have been constructed, labelProperty specify which property of an item should become the item's label
+Note that this property might not be a direct tag; it might have bubbled up from some far descendant
+
+
+*/
+
 Exhibit.XMLImporter = { };
 Exhibit.importers["application/xml"] = Exhibit.XMLImporter;
 
-Exhibit.XMLImporter.getXMLDocument = function (docURL) {
-	var xmlDoc = null;
-	SimileAjax.jQuery.ajax({ url: docURL,
-		     type: 'GET',
-		     dataType: 'xml',
-		     async: false, //Need this due to failure of getting XMLDoc from server
-		     success: function (data) { xmlDoc = data; }
-	});
-	if (xmlDoc) {
-		return xmlDoc;
-	} else {
-		alert('Error finding xml doc ' + docURL);
-		return;
-	}
-}
-
-//APPENDS PROPERTIES (NAME SPECIFIED BY USER) TO ARRAY
-Exhibit.XMLImporter.appendUserPropertyToArray = function(node,configuration,objectToAppend) {
-	var referenceIndex = configuration.propertyTags.indexOf(node.nodeName);
-	var array = objectToAppend[configuration.propertyNames[referenceIndex]];
-	// check if property list has been initialized
-	if  (typeof objectToAppend[configuration.propertyNames[referenceIndex]] == 'string') {
-		array = [array];
-		array.push(SimileAjax.jQuery(node).text());
-	} else {
-	    array.push(SimileAjax.jQuery(node).text());
-	}
-	return array;
-}
-
-// APPENDS PROPERTIES (NAME NOT SPECIFIED BY USER) TO ARRAY
-Exhibit.XMLImporter.appendPropertyToArray = function(node,configuration,objectToAppend) {
-	var array = objectToAppend[node.nodeName];
-
-	if (typeof array == 'string') {
-		array = [array];
-		array.push(SimileAjax.jQuery(node).text());
-	} else {
-	    array.push(SimileAjax.jQuery(node).text());
-	}
-	return array;
-}
-
-//GETS ALL ITEMS OF CONFIGURATION.ITEMTAG[INDEX]
-Exhibit.XMLImporter.getItems = function(xmlDoc, object,index,configuration) {
-	var self = this;
-	SimileAjax.jQuery(configuration.itemTag[index],xmlDoc).each(function() {
-        var propertyList = [];
-        var queue = [];
-        SimileAjax.jQuery(this).children().each(function() { queue.push(this); });								  
-        objectToAppend = {};
-        
-        while (queue.length > 0) {
-            var node = queue.pop();
-
-	    if (SimileAjax.jQuery(node).text().length <= 0) continue; //don't include empty strings as values of properties
-            var nodeType = self.determineType(node,configuration);
-        
-            if (nodeType == 'property') {
-                // IF MULTIPLE PROPERTIES OF SAME NODENAME, APPEND TO ARRAY
-                if (propertyList.indexOf(node.nodeName)>=0) {
-                    // check if user specified property name
-                    if (configuration.propertyTags.indexOf(node.nodeName)>=0) {
-                        objectToAppend[configuration.propertyNames[index]]= self.appendUserPropertyToArray(node,configuration,objectToAppend);
-                    } else {	
-                        // Use tag name as property name
-                        objectToAppend[node.nodeName]= self.appendPropertyToArray(node,configuration,objectToAppend);
-                    }
-                } else {
-                    //IF SINGLE VALUE APPEND TO STRING VALUE
-                    
-                    // APPLY USER SPECIFIED PROPERTY NAMES
-                    if (configuration.propertyTags.indexOf(node.nodeName)>=0) {
-                        var referenceIndex = configuration.propertyTags.indexOf(node.nodeName);
-                        objectToAppend[configuration.propertyNames[referenceIndex]] = SimileAjax.jQuery(node).text();
-                    } else {
-                        //ELSE, USE TAG NODENAME
-                        objectToAppend[node.nodeName] = SimileAjax.jQuery(node).text();
-                    }
-                }
-                
-                propertyList.push(node.nodeName);
-            } else if (nodeType == 'Item') {
-                var referenceIndex = configuration.itemTag.indexOf(node.nodeName);
-                var tempObject = self.configureItem(node,{},configuration,referenceIndex);
-        
-                objectToAppend[tempObject.type] = tempObject.label;
-            } else if (nodeType == 'fakeItem') {
-                SimileAjax.jQuery(node).children().each(function() { queue.push(this); } );																				
-            } else {
-                alert('error: nodetype not understood');
-            }
-        }
-        
-        objectToAppend = self.configureItem(this, objectToAppend,configuration,index);
-        object.items.push(objectToAppend);
-    });
-    
-    return object;
-}
-
-//FINDS THE CLOSEST PARENT NODE THAT'S IN CONFIGURATION.ITEMTAG
-Exhibit.XMLImporter.getParentItem = function(itemNode,configuration) {
-	if (itemNode.parentNode==null) {
-		return null;
-	} else if (configuration.itemTag.indexOf(itemNode.parentNode.nodeName)>=0) {
-		var referenceIndex = configuration.itemTag.indexOf(itemNode.parentNode.nodeName);
-		return this.configureItem(itemNode.parentNode,{},configuration,referenceIndex);
-	} else {
-		this.getParentItem(itemNode.parentNode,configuration);
-	}
-}
-
-// SETS LABEL, TYPE, AND PARENT RELATION
-Exhibit.XMLImporter.configureItem = function(myItem, object,configuration,index) {
-	if (!(object.label) && configuration.labelTag[index]!=null) {
-	    object['label'] = SimileAjax.jQuery(configuration.labelTag[index],myItem).eq(0).text();
-	} else {
-	    //DEFAULT TO FIRST PROPERTY
-	    object['label'] = SimileAjax.jQuery(myItem).children().eq(0).text();
-	}
-	
-	if (!(object.type) && configuration.itemType[index]!=null) {
-		object['type'] = configuration.itemType[index];
-	} else {
-		//DEFAULT TO NODENAME
-		object['type'] = myItem.nodeName;
-	}
-	
-	var parentItem = this.getParentItem(myItem,configuration);
-	if (parentItem) {
-		if (configuration.parentRelation[index]) {
-			object[configuration.parentRelation[index]] = parentItem.label;
-		} else {
-			//DEFAULT TO "IS A CHILD OF"
-			object['isChildOf'] = parentItem.label;
+Exhibit.XMLImporter.getItems = function(xmlDoc, configuration) {
+    var items=[];
+    var visit = function(node,parentItem,parentProperty) { 
+	//gather data from node into parentItem 
+	//associated by parentProperty
+	var tag=node.tagName;
+	var jQ=SimileAjax.jQuery(node);
+	var children = jQ.children();
+	if (tag in configuration.itemType) {
+	    //found a new item
+	    var item={type: configuration.itemType[tag]};
+	    items.push(item);
+	    parentProperty = configuration.parentRelation[tag] || parentProperty;
+	    if (children.length == 0) {
+		//strange to have item with no children (no properties)
+		//hopefully there is text and that can be item's label
+		item.label=jQ.text();
+	    }
+	    else {
+		children.each(function() {
+		    visit(this, item, null);
+		});
+		if (configuration.labelProperty[tag] != "label") {
+		    var label=item[configuration.labelProperty[tag]] || [];
+		    if (label.length > 0)
+			item.label = label[0];
 		}
+		if (parentItem) {
+		    if (parentItem[parentProperty]) {
+			parentItem[parentProperty].push(item.label);
+		    }
+		    else {
+			parentItem[parentProperty] = [item.label];
+		    }
+		}
+	    }
 	}
-	return object;
-}
-	
+	else {
+	    //non item tag
+	    if (children.length == 0) {
+		//no children; look for text
+		if (parentItem && (jQ.text().length >= 0))  {
+		    var property=configuration.propertyNames[tag] || tag;
+		    if (parentItem[tag]) {
+			parentItem[tag].push(jQ.text());
+		    }
+		    else {
+		    parentItem[configuration.propertyNames[tag] || tag] = [jQ.text()];
+		    }
+		}
+	    }
+	    else {
+		children.each(function() {
+		    visit(this,parentItem,tag);
+		});
+	    }
+	}
+    }
+
+    visit(xmlDoc,null,null);
+    return items;
+}	
 
 Exhibit.XMLImporter.configure = function(link) {
-	var configuration = {
-		'itemTag': [],
-		'labelTag': [],
-		'itemType': [],
-		'parentRelation': [],
-		'propertyTags': [],
-		'propertyNames': []
-	}
+    var configuration = {
+	'labelProperty': [],
+	'itemType': [],
+	'parentRelation': [],
+	'propertyNames': {}
+    }
 
 
 	// get itemTag, labelTag, itemType, and parentRelation
-	configuration.itemTag = Exhibit.getAttribute(link,'ex:itemTags',',') || [];
-	configuration.labelTag = Exhibit.getAttribute(link,'ex:labelTags',',') || [];
-	configuration.itemType = Exhibit.getAttribute(link,'ex:itemTypes',',') || [];
-	configuration.parentRelation = Exhibit.getAttribute(link,'ex:parentRelations',',') || [];
-	configuration.propertyNames = Exhibit.getAttribute(link,'ex:propertyNames',',') || [];
-	configuration.propertyTags = Exhibit.getAttribute(link,'ex:propertyTags',',') || [];
-	
-	return configuration;
-}
+    var itemTag = Exhibit.getAttribute(link,'ex:itemTags',',') || ["item"];
+    var labelProperty = Exhibit.getAttribute(link,'ex:labelProperties',',') || [];
+    var itemType = Exhibit.getAttribute(link,'ex:itemTypes',',') || [];
+    var parentRelation = Exhibit.getAttribute(link,'ex:parentRelations',',') || [];
 
-Exhibit.XMLImporter.determineType = function(node,configuration) {
-	if (configuration.itemTag.indexOf(node.nodeName)>=0) {
-        return "Item";
-    } else if (SimileAjax.jQuery(node).children().length == 0) {
-		return 'property';
-	} else {
-		return 'fakeItem';
-	}
+    for (i=0; i<itemTag.length; i++) {
+	var tag=itemTag[i];
+	configuration.itemType[tag] = itemType[i] || tag;
+	configuration.labelProperty[tag] = labelProperty[i] || "label";
+	configuration.parentRelation[tag] = parentRelation[i] || "child";
+    }
+
+    var propertyNames = Exhibit.getAttribute(link,'ex:propertyNames',',') || [];
+    var propertyTags = Exhibit.getAttribute(link,'ex:propertyTags',',') || [];
+    for (i=0; i< propertyTags.length; i++) {
+	configuration.propertyNames[propertyTags[i]] = (i < propertyNames.length) ? propertyNames[i] : propertyTags[i];
+    }
+	
+    return configuration;
 }
 																		
 Exhibit.XMLImporter.load = function (link,database,cont) {
     var self = this;
     var url = typeof link == "string" ? link : link.href;
-    url = Exhibit.Persistence.resolveURL(url);
+    var configuration;
 
-    var fError = function(statusText, status, xmlhttp) {
+    try {
+	configuration = self.configure(link);
+	url = Exhibit.Persistence.resolveURL(url);
+    } catch(e) {
+	SimileAjax.Debug.exception(e, "Error configuring XML importer for " + url);
+	return;
+    }
+
+    var fError = function(xmlhttp, statusText, error) {
         Exhibit.UI.hideBusyIndicator();
-        Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
+	if (statusText == "parsererror") {
+	    Exhibit.UI.showHelp("Invalid XML at " + url);
+	}
+	else {
+            Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
+	}
         if (cont) cont();
     };
-	
-    var fDone = function() {
-        Exhibit.UI.hideBusyIndicator();
-        try {
-            var o = null;
-            try {
-		xmlDoc = Exhibit.XMLImporter.getXMLDocument(url);
-		var configuration = self.configure(link);
-                o = { 
-		    'items': []
-		};
-		for (index=0; index < configuration.itemTag.length; index++)		    {
-		    o = Exhibit.XMLImporter.getItems(xmlDoc,o,index,configuration);
-		}
-				
-            } catch (e) {
-                Exhibit.UI.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url, e), url);
-            }
-            
-            if (o != null) {
-                database.loadData(o, Exhibit.Persistence.getBaseURL(url));
-            }
-        } catch (e) {
-            SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
-        } 
 
-		finally {
+    var fDone = function(xmlDoc) {
+        try {
+	    var o = Exhibit.XMLImporter.getItems(xmlDoc,configuration);
+            database.loadData({items: o}, Exhibit.Persistence.getBaseURL(url));
+        } catch (e) {
+            SimileAjax.Debug.exception(e, "Error loading data from " + url);
+        } finally {
+            Exhibit.UI.hideBusyIndicator();
             if (cont) cont();
         }
     };
 	
     Exhibit.UI.showBusyIndicator();
-    SimileAjax.XmlHttp.get(url, fError, fDone);
+    SimileAjax.jQuery.ajax({ url: url,
+			     type: 'GET',
+			     dataType: 'xml',
+			     async: false, //Need this due to failure of getting XMLDoc from server
+			     success: fDone,
+			     error: fError
+			  });
 }	
 						  
