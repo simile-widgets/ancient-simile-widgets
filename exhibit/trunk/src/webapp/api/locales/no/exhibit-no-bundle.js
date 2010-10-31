@@ -24,7 +24,7 @@ if(!("l10n" in Exhibit)){Exhibit.l10n={};
 Exhibit.l10n.missingSortKey="(mangler)";
 Exhibit.l10n.notApplicableSortKey="(n/a)";
 Exhibit.l10n.itemLinkLabel="lenke";
-Exhibit.l10n.busyIndicatorMessage="SÃ¸ker...";
+Exhibit.l10n.busyIndicatorMessage="Søker...";
 Exhibit.l10n.showDocumentationMessage="Vi vil vise dokumentasjon etter denne meldinga.";
 Exhibit.l10n.showJavascriptValidationMessage="Vi vil forklare feilen etter denne meldinga.";
 Exhibit.l10n.showJsonValidationMessage="Vi vil forklare feilen etter denne meldinga.";
@@ -36,7 +36,7 @@ Exhibit.l10n.failedToLoadDataFileMessage=function(A){return"Vi kan ikke finne fi
 Exhibit.l10n.exportButtonLabel="Eksporter";
 Exhibit.l10n.exportAllButtonLabel="Eksporter alle";
 Exhibit.l10n.exportDialogBoxCloseButtonLabel="Lukk";
-Exhibit.l10n.exportDialogBoxPrompt="Kopier koden til utklippstavlen. Trykk ESC for Ã¥ fjerne denne dialogboksen.";
+Exhibit.l10n.exportDialogBoxPrompt="Kopier koden til utklippstavlen. Trykk ESC for å fjerne denne dialogboksen.";
 Exhibit.l10n.focusDialogBoxCloseButtonLabel="Lukk";
 Exhibit.l10n.rdfXmlExporterLabel="RDF/XML";
 Exhibit.l10n.smwExporterLabel="Semantisk wikitext";
@@ -176,5 +176,5 @@ Exhibit.FacetUtilities.l10n.missingThisField="(mangler dette feltet)";
 /* views-l10n.js */
 if(!("l10n" in Exhibit.ViewUtilities)){Exhibit.ViewUtilities.l10n={};
 }Exhibit.ViewUtilities.l10n.unplottableMessageFormatter=function(B,A,C){var D=A.length;
-return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> av <class class='exhibit-views-totalCount'>%1</span> kunne ikke vises pÃ¥ kart.",[D==1?(D+" treff"):(D+" treff"),B]);
+return String.substitute("<a class='exhibit-action exhibit-views-unplottableCount' href='javascript:void' id='unplottableCountLink'>%0</a> av <class class='exhibit-views-totalCount'>%1</span> kunne ikke vises på kart.",[D==1?(D+" treff"):(D+" treff"),B]);
 };
