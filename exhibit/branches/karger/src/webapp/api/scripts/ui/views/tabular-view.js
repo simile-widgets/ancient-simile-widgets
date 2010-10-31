@@ -7,9 +7,8 @@ Exhibit.TabularView = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
     
-    this._settings = { rowStyler: null, tableStyler: null };
+    this._settings = { rowStyler: null, tableStyler: null, indexMap: {} };
     this._columns = [];
-    this._sortState = [];
     this._rowTemplate = null;
 
     var view = this;
@@ -264,14 +263,21 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         var currentSet = collection.getRestrictedItems();
         currentSet.visit(function(itemID) { items.push({ id: itemID, sortKey: "" }); });
     }
-        
+    
     if (items.length > 0) {
         /*
          *  Sort the items
          */
         var sortColumn = this._columns[this._settings.sortColumn];
-	items.sort(this._createSortFunction(items, sortColumn.expression, this._settings.sortAscending));
+	var sorter = this._createSortFunction(items, sortColumn.expression, this._settings.sortAscending);
+        items.sort(this._stabilize(sorter,
+				   this._settings.indexMap, originalSize+1));
     
+	//preserve order for next time
+	for (i=0; i<items.length; i++) {
+	    this._settings.indexMap[items[i].id]=i;
+	}
+
         /*
          *  Style the table
          */
@@ -284,6 +290,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             table.cellPadding = this._settings.cellPadding;
             table.border = this._settings.border;
         }
+        
         /*
          *  Create the column headers
          */
@@ -309,6 +316,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         for (var i = 0; i < this._columns.length; i++) {
             createColumnHeader(i);
         }
+
         /*
          *  Create item rows
          */
@@ -317,6 +325,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             renderItem = function(i) {
                 var item = items[i];
                 var tr = Exhibit.Lens.constructFromLensTemplate(item.id, self._rowTemplate, table, self._uiContext);
+                
                 if (self._settings.rowStyler != null) {
                     self._settings.rowStyler(item.id, database, tr, i);
                 }
@@ -325,7 +334,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
             renderItem = function(i) {
                 var item = items[i];
                 var tr = table.insertRow(table.rows.length);
-
+                
                 for (var c = 0; c < self._columns.length; c++) {
                     var column = self._columns[c];
                     var td = tr.insertCell(c);
@@ -370,6 +379,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
         for (var i = start; i < end; i++) {
             renderItem(i);
         }
+
         bodyDiv.appendChild(table);
         
         if (generatePagingControls) {
@@ -417,43 +427,43 @@ Exhibit.TabularView.prototype._getColumnLabel = function(expression) {
     }
 };
 
+/*
+Stablize converts an arbitrary sorting function into one that breaks ties 
+in that function according to item indices stored in indexMap.  Thus if
+indexMap contains the indices of items under a previous order, then the
+sort will preserve that previous order in the case of ties.
+
+If sorting is interleaved with faceting, items that go out-of and back-into 
+view will not be stabilized as their past index will be forgotten while they
+are out of view.
+*/
+Exhibit.TabularView.prototype._stabilize = function(f, indexMap)  {
+    var stable = function(item1, item2) {
+	var cmp=f(item1, item2);
+	if (cmp) {
+	    return cmp;
+	}
+	else {
+	    i1 = item1.id in indexMap ? indexMap[item1.id] : -1;
+	    i2 = item2.id in indexMap ? indexMap[item2.id] : -1;
+	    return i1-i2;
+	}
+    }
+    return stable;
+}
+
 Exhibit.TabularView.prototype._createSortFunction = function(items, expression, ascending) {
     var database = this._uiContext.getDatabase();
     var multiply = ascending ? 1 : -1;
-    /* Maintain order of sorted columns to implement stable sort */
-    for (var i = 0; i < this._sortState.length; i++) {
-        if ([expression, multiply] == this._sortState[i]) {
-            this._sortState = this._sortState.slice(0,i).concat(this._sortState.slice(i+1));
-        }
-    }
-    this._sortState.unshift([expression, multiply]);
     
     var numericFunction = function(item1, item2) {
-        return breakTie(item1, item2, multiply * (item1.sortKey - item2.sortKey));
-    };
-    var textFunction = function(item1, item2) {
-        return breakTie(item1, item2, multiply * item1.sortKey.localeCompare(item2.sortKey));
-    };
-    
-    var breakTie = function(item1, item2, output) {
-        /* if there's a tie, look at other sort keys for stable sorting */
-        for (var i = 0; output == 0 && i < item1.extraSortKeys.length; i++) {
-            var sortHelpers = getCoersionAndSortingFunction([item1.extraSortKeys[i].type], true);
-            item1.extraSortKeys[i].value = sortHelpers.coersion(item1.extraSortKeys[i].value);
-            item2.extraSortKeys[i].value = sortHelpers.coersion(item2.extraSortKeys[i].value);
-            output = sortHelpers.sortingFunction(item1, item2, i);
-        }
-        return output;
-    };
-    
-    var me = this;
-    var numericTieBreakerFunction = function(item1, item2, i) {
-        var val = me._sortState[i][1] * (item1.extraSortKeys[i].value - item2.extraSortKeys[i].value);    //may be NaN if vals are infinity
+        var val = multiply * (item1.sortKey - item2.sortKey);
 	return isNaN(val) ? 0 : val;
     };
-    var textTieBreakerFunction = function(item1, item2, i) {
-        return me._sortState[i][1] * item1.extraSortKeys[i].value.localeCompare(item2.extraSortKeys[i].value);    
+    var textFunction = function(item1, item2) {
+        return multiply * item1.sortKey.localeCompare(item2.sortKey);
     };
+    
     var valueTypes = [];
     var valueTypeMap = {};
     for (var i = 0; i < items.length; i++) {
@@ -468,110 +478,90 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
             item.sortKey = value;
         });
         
-        /* use sortState expressions to break ties to maintain stable sort */
-        for (var j = 0; j < this._sortState.length; j++) {    
-            var q = this._sortState[j][0].evaluate(
-                { "value" : item.id }, 
-                { "value" : "item" }, 
-                "value",
-                database
-            );
-            if (!item.extraSortKeys) {
-                item.extraSortKeys = [];
-            }
-            q.values.visit(function(value) {
-                item.extraSortKeys.push({ "value": value, "type": q.valueType });
-            });
-        }
-        
         if (!(r.valueType in valueTypeMap)) {
             valueTypeMap[r.valueType] = true;
             valueTypes.push(r.valueType);
         }
-    }    
-    var getCoersionAndSortingFunction = function(valueTypes, tieBreaker) {
-        var coercedValueType = "text"
-        if (valueTypes.length == 1) {
-            coercedValueType = valueTypes[0];
-        } else {
-            coercedValueType = "text";
-        }
-        var coersion;
-        var sortingFunction;
-        if (coercedValueType == "number") {
-            sortingFunction = tieBreaker ? numericTieBreakerFunction : numericFunction;
-            coersion = function(v) {
-                if (v == null) {
-                    return Number.NEGATIVE_INFINITY;
-                } else if (typeof v == "number") {
-                    return v;
-                } else {
-                    var n = parseFloat(v);
-                    if (isNaN(n)) {
-                        return Number.NEGATIVE_INFINITY;
-                    } else {
-                        return n;
-                    }
-                }
-            }
-        } else if (coercedValueType == "date") {
-            sortingFunction = tieBreaker ? numericTieBreakerFunction : numericFunction;
-            coersion = function(v) {
-                if (v == null) {
-                    return Number.NEGATIVE_INFINITY;
-                } else if (v instanceof Date) {
-                    return v.getTime();
-                } else {
-		    //		    console.log("nondate");
-		    //		    console.log(v);
-                    try {
-                        return SimileAjax.DateTime.parseIso8601DateTime(v).getTime();
-                    } catch (e) {
-                        return Number.NEGATIVE_INFINITY;;
-                    }
-                }
-            }
-        } else if (coercedValueType == "boolean") {
-            sortingFunction = tieBreaker ? numericTieBreakerFunction : numericFunction;
-            coersion = function(v) {
-                if (v == null) {
-                    return Number.NEGATIVE_INFINITY;
-                } else if (typeof v == "boolean") {
-                    return v ? 1 : 0;
-                } else {
-                    return v.toString().toLowerCase() == "true";
-                }
-            }
-        } else if (coercedValueType == "item") {
-            sortingFunction = tieBreaker ? textTieBreakerFunction : textFunction;
-            coersion = function(v) {
-                if (v == null) {
-                    return Exhibit.l10n.missingSortKey;
-                } else {
-                    var label = database.getObject(v, "label");
-                    return (label == null) ? v : label;
-                }
-            }
-        } else {
-            sortingFunction = tieBreaker ? textTieBreakerFunction : textFunction;
-            coersion = function(v) {
-                if (v == null) {
-                    return Exhibit.l10n.missingSortKey;
-                } else {
-                    return v.toString();
-                }
-            }
-        }
-        return { "sortingFunction": sortingFunction, "coersion": coersion };
     }
     
-    var sortHelpers = getCoersionAndSortingFunction(valueTypes, false);
-        
+    var coercedValueType = "text"
+    if (valueTypes.length == 1) {
+        coercedValueType = valueTypes[0];
+    } else {
+        coercedValueType = "text";
+    }
+    
+    var coersion;
+    var sortingFunction;
+    if (coercedValueType == "number") {
+        sortingFunction = numericFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Number.NEGATIVE_INFINITY;
+            } else if (typeof v == "number") {
+                return v;
+            } else {
+                var n = parseFloat(v);
+                if (isNaN(n)) {
+                    return Number.MAX_VALUE;
+                } else {
+                    return n;
+                }
+            }
+        }
+    } else if (coercedValueType == "date") {
+        sortingFunction = numericFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Number.NEGATIVE_INFINITY;
+            } else if (v instanceof Date) {
+                return v.getTime();
+            } else {
+                try {
+                    return SimileAjax.DateTime.parseIso8601DateTime(v).getTime();
+                } catch (e) {
+                    return Number.MAX_VALUE;
+                }
+            }
+	}
+    } else if (coercedValueType == "boolean") {
+	sortingFunction = numericFunction;
+	coersion = function(v) {
+	    if (v == null) {
+		return Number.MAX_VALUE;
+	    } else if (typeof v == "boolean") {
+		return v ? 1 : 0;
+	    } else {
+		return v.toString().toLowerCase() == "true";
+	    }
+	}
+    } else if (coercedValueType == "item") {
+        sortingFunction = textFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Exhibit.l10n.missingSortKey;
+            } else {
+                var label = database.getObject(v, "label");
+                return (label == null) ? v : label;
+            }
+        }
+    } else {
+        sortingFunction = textFunction;
+        coersion = function(v) {
+            if (v == null) {
+                return Exhibit.l10n.missingSortKey;
+            } else {
+                return v.toString();
+            }
+        }
+    }
+    
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
-        item.sortKey = sortHelpers.coersion(item.sortKey);
+        item.sortKey = coersion(item.sortKey);
     }
-    return sortHelpers.sortingFunction;
+    
+    return sortingFunction;
 };
 
 Exhibit.TabularView.prototype._doSort = function(columnIndex) {
