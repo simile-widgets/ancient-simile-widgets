@@ -97,7 +97,7 @@ Exhibit.XMLImporter.configure = function(link) {
 	'labelProperty': [],
 	'itemType': [],
 	'parentRelation': [],
-	'propertyNames': {},
+	'propertyNames': {}
     }
 
 

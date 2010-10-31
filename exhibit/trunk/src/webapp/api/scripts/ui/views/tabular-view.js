@@ -457,7 +457,8 @@ Exhibit.TabularView.prototype._createSortFunction = function(items, expression, 
     var multiply = ascending ? 1 : -1;
     
     var numericFunction = function(item1, item2) {
-        return multiply * (item1.sortKey - item2.sortKey);
+        var val = multiply * (item1.sortKey - item2.sortKey);
+	return isNaN(val) ? 0 : val;
     };
     var textFunction = function(item1, item2) {
         return multiply * item1.sortKey.localeCompare(item2.sortKey);
