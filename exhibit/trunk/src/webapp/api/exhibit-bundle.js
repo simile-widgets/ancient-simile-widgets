@@ -6173,8 +6173,8 @@ Exhibit.UI._stringToObject=function(name,suffix){if(!name.startsWith("Exhibit.")
 }catch(e){}}try{return eval(name);
 }catch(e){}throw new Error("Unknown class "+name);
 };
-Exhibit.UI.docRoot="http://simile.mit.edu/wiki/";
-Exhibit.UI.validator="http://simile.mit.edu/babel/validator";
+Exhibit.UI.docRoot="http://simile-widgets.org/wiki/";
+Exhibit.UI.validator="http://widgets.org/babel/validator";
 Exhibit.UI.showHelp=function(B,A,C){C=(C)?C:"_blank";
 if(A!=null){if(window.confirm(B+"\n\n"+Exhibit.l10n.showDocumentationMessage)){window.open(A,C);
 }}else{window.alert(B);
