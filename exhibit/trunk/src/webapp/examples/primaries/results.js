@@ -980,12 +980,12 @@
 		  
 	    "label" :                   "Obama",
 	    "Name" :                    "Barack Obama",
-	    "type" :                    "Candidate",
+	    "type" :                    "Candidate"
 	  },
 	  {
 	    "label" :                   "Clinton",
 	    "Name" :                    "Hillary Clinton",
-	    "type" :                    "Candidate",
-	  },
+	    "type" :                    "Candidate"
+	  }
 	]
 }

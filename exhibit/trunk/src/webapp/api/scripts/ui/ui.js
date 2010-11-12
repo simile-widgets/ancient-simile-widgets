@@ -241,8 +241,8 @@ Exhibit.UI._stringToObject = function(name, suffix) {
  *  Help and Debugging
  *----------------------------------------------------------------------
  */
-Exhibit.UI.docRoot = "http://simile-widgets.org/wiki/";
-Exhibit.UI.validator = "http://simile-widgets.org/babel/validator";
+Exhibit.UI.docRoot = "http://service.simile-widgets.org/wiki/";
+Exhibit.UI.validator = "http://service.simile-widgets.org/babel/validator";
 
 Exhibit.UI.showHelp = function(message, url, target) {
     target = (target) ? target : "_blank";
