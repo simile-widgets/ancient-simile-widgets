@@ -15,7 +15,10 @@ SimileAjax.RemoteLog = {
 SimileAjax.RemoteLog.possiblyLog = function(vals) {
     if ((SimileAjax.RemoteLog.logActive) && (SimileAjax.RemoteLog.url != null)) {
         vals["url"] = window.location.href;
+	try {
         SimileAjax.jQuery.ajax({type:'POST',url:SimileAjax.RemoteLog.url,data:vals});        
+	}
+	catch (e) {}
     }
 };
 
