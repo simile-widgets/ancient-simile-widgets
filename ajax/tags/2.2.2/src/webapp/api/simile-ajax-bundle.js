@@ -3111,8 +3111,8 @@ SimileAjax.JSON.parseJSON=function(){try{return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n
 /* remoteLog.js */
 SimileAjax.RemoteLog={defaultURL:"http://groups.csail.mit.edu/haystack/facetlog/logger.php",url:null,logActive:false};
 SimileAjax.RemoteLog.possiblyLog=function(A){if((SimileAjax.RemoteLog.logActive)&&(SimileAjax.RemoteLog.url!=null)){A["url"]=window.location.href;
-SimileAjax.jQuery.ajax({type:"POST",url:SimileAjax.RemoteLog.url,data:A});
-}};
+try{SimileAjax.jQuery.ajax({type:"POST",url:SimileAjax.RemoteLog.url,data:A});
+}catch(B){}}};
 
 
 /* string.js */
