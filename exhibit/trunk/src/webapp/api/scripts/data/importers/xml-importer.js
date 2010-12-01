@@ -17,10 +17,11 @@ If an item C is a descendant of another item A, C becomes the value of some prop
 By default:
 * if the (immediate) parent of C is NOT an item tag, then that tag names the property
 * if the (immediate) parent of C IS an item tag, then C's tag names the property (even while it might also name C's type)
-ex:parentRelations overrides this default.  It specifies, for each item tag, the property whose value is items with that tag
-in other words, if I see that tag, I infer it is the value of that property of the ancestor item
+ex:parentRelation (one per itemTag) overrides this default.  It specifies, for each item tag, 
+the property whose value is items with that tag.  In other words, if I see that tag, 
+I infer it is the value of that property of the ancestor item 
 
-After items have been constructed, labelProperty specify which property of an item should become the item's label
+After items have been constructed, labelProperty specifies which property of an item should become the item's label
 Note that this property might not be a direct tag; it might have bubbled up from some far descendant
 
 
@@ -31,7 +32,17 @@ Exhibit.importers["application/xml"] = Exhibit.XMLImporter;
 
 Exhibit.XMLImporter.getItems = function(xmlDoc, configuration) {
     var items=[];
-    var visit = function(node,parentItem,parentProperty) { 
+    function maybeAdd(item, property, value) {
+	if (item && property.length > 0 && value.length > 0) {
+	    if (item[property]) {
+		item[property].push(value);
+	    }
+	    else {
+		item[property]=[value];
+	    }
+	}
+    }
+    function visit(node,parentItem,parentProperty) { 
 	//gather data from node into parentItem 
 	//associated by parentProperty
 	var tag=node.tagName;
@@ -56,34 +67,33 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, configuration) {
 		    if (label.length > 0)
 			item.label = label[0];
 		}
-		if (parentItem) {
-		    if (parentItem[parentProperty]) {
-			parentItem[parentProperty].push(item.label);
-		    }
-		    else {
-			parentItem[parentProperty] = [item.label];
-		    }
-		}
+		maybeAdd(parentItem,parentProperty,item.label);
 	    }
+	    parentItem=item; //for incorporating attributes
 	}
 	else {
 	    //non item tag
 	    if (children.length == 0) {
 		//no children; look for text
-		if (parentItem && (jQ.text().length >= 0))  {
+		if ((parentItem != null) && (jQ.text().length >= 0))  {
 		    var property=configuration.propertyNames[tag] || tag;
-		    if (parentItem[tag]) {
-			parentItem[tag].push(jQ.text());
-		    }
-		    else {
-		    parentItem[configuration.propertyNames[tag] || tag] = [jQ.text()];
-		    }
+		    maybeAdd(parentItem, property, jQ.text());
 		}
 	    }
 	    else {
 		children.each(function() {
 		    visit(this,parentItem,tag);
 		});
+	    }
+	}
+	//now process attributes
+	var attrMap=node.attributes;
+	if (attrMap) {
+	    for (i=0; i<attrMap.length; i++) {
+		var attr=attrMap[i].nodeName;
+		maybeAdd(parentItem, 
+			 configuration.propertyNames[attr] || attr, 
+			 jQ.attr(attr));
 	    }
 	}
     }

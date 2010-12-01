@@ -11,7 +11,7 @@
         <name>Billy Jones</name>
         <other_novels>
           <book>
-            <title>Haystack: The Story</title>
+            <title language="English">Haystack: The Story</title>
             <copyright>2001</copyright>
           </book>
         </other_novels>
@@ -19,7 +19,7 @@
       <copyright>1999</copyright>
     </book>
     <book>
-      <title>Surely You're Joking, Mr. Feynman!</title>
+      <title language="English">Surely You're Joking, Mr. Feynman!</title>
       <author>
         <name>Richard Feynman</name>
         <other_novels>

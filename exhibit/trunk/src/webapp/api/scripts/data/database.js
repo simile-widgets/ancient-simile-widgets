@@ -470,7 +470,8 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
     if (!("label" in itemEntry) && !("id" in itemEntry)) {
         SimileAjax.Debug.warn("Item entry has no label and no id: " +
                               SimileAjax.JSON.toJSONString( itemEntry ));
-        return;
+//        return;
+	itemEntry.label="item" + Math.ceil(Math.random()*1000000);
     }
     
     var id;
