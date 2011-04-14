@@ -67,8 +67,8 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, configuration) {
 		    if (label.length > 0)
 			item.label = label[0];
 		}
-		maybeAdd(parentItem,parentProperty,item.label);
 	    }
+	    maybeAdd(parentItem,parentProperty,item.label);
 	    parentItem=item; //for incorporating attributes
 	}
 	else {
