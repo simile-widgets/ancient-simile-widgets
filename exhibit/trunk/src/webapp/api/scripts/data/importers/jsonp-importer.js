@@ -122,16 +122,17 @@ Exhibit.JSONPImporter.transformJSON = function(json, index, mapping, converters)
     for (var i = 0, object; object = objects[i]; i++) {
         var item = {};
         for (var name in mapping) {
-            var index = mapping[name];
-            if (!mapping.hasOwnProperty(name) || // gracefully handle poisoned
-                !object.hasOwnProperty(index)) continue; // Object.prototype
-            var property = object[index];
-            if (converters && converters.hasOwnProperty(name)) {
-                property = converters[name](property, object, i, objects, json);
-            }
-            if (typeof property != "undefined") {
-                item[name] = property;
-            }
+	    if (mapping.hasOwnProperty(name)) { // gracefully handle poisoned
+		var index = mapping[name].split(".");      // Object.prototype
+		for (var property=object; index.length && property;
+		     property=property[index.shift()]) {}
+		if (property && converters && converters.hasOwnProperty(name)) {
+                    property = converters[name](property, object, i, objects, json);
+		}
+		if (typeof property != "undefined") {
+                    item[name] = property;
+		}
+	    }
         }
         items.push(item);
     }
