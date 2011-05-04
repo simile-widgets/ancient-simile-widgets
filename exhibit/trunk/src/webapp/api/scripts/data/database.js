@@ -136,7 +136,7 @@ Exhibit.Database._Impl.prototype.removeListener = function(listener) {
 };
 
 Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
-    var links = SimileAjax.jQuery('head > link[rel=exhibit/data]').get();
+    var links = SimileAjax.jQuery('link[rel=exhibit/data]').get();
     this._loadLinks(links, this, fDone);
 };
 
@@ -185,6 +185,35 @@ Exhibit.Database._Impl.prototype.loadSubmissionLinks = function(fDone) {
     this._loadLinks(links, dbProxy, fDone);
 };
 
+
+Exhibit.Database._Impl.defaultFetch = function(link, database, cont, parser) {
+    var url = typeof link == "string" ? link : link.href;
+    url = Exhibit.Persistence.resolveURL(url);
+
+    var fError = function(statusText, status, xmlhttp) {
+        Exhibit.UI.hideBusyIndicator();
+        Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
+        if (cont) cont();
+    };
+    
+    var fDone = function(xmlhttp) {
+        Exhibit.UI.hideBusyIndicator();
+	var o = parser(link, database, xmlhttp.responseText, url)
+	if (o != null) {
+	    try {
+		database.loadData(o, Exhibit.Persistence.getBaseURL(url));
+ 	    } catch (e) {
+		SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
+	    }
+	}
+        if (cont) cont();
+    };
+
+    Exhibit.UI.showBusyIndicator();
+    SimileAjax.XmlHttp.get(url, fError, fDone);
+};
+
+
 Exhibit.Database._Impl.prototype._loadLinks = function(links, database, fDone) {
     links = [].concat(links);
     var fNext = function() {
@@ -197,8 +226,11 @@ Exhibit.Database._Impl.prototype._loadLinks = function(links, database, fDone) {
 
             var importer = Exhibit.importers[type];
             if (importer) {
-                importer.load(link, database, fNext);
+		if (importer.parse) {
+		    (importer.fetch || Exhibit.Database._Impl.defaultFetch)(
+			link, database, fNext, importer.parse);
                 return;
+		}
             } else {
                 SimileAjax.Debug.log("No importer for data of type " + type);
             }

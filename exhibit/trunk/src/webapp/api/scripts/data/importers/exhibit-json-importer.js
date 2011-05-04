@@ -7,6 +7,16 @@ Exhibit.ExhibitJSONImporter = {
 };
 Exhibit.importers["application/json"] = Exhibit.ExhibitJSONImporter;
 
+Exhibit.ExhibitJSONImporter.parse= function(link, database, content, url) {
+    var o = null;
+    try {
+        o = eval("(" + content + ")");
+    } catch (e) {
+        Exhibit.UI.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url, e), url);
+    }
+    return o;
+}
+
 Exhibit.ExhibitJSONImporter.load = function(link, database, cont) {
     var url = typeof link == "string" ? link : link.href;
     url = Exhibit.Persistence.resolveURL(url);
@@ -19,22 +29,16 @@ Exhibit.ExhibitJSONImporter.load = function(link, database, cont) {
     
     var fDone = function(xmlhttp) {
         Exhibit.UI.hideBusyIndicator();
-        try {
-            var o = null;
-            try {
-                o = eval("(" + xmlhttp.responseText + ")");
-            } catch (e) {
-                Exhibit.UI.showJsonFileValidation(Exhibit.l10n.badJsonMessage(url, e), url);
-            }
-            
-            if (o != null) {
-                database.loadData(o, Exhibit.Persistence.getBaseURL(url));
-            }
-        } catch (e) {
-            SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
-        } finally {
-            if (cont) cont();
-        }
+	var o=Exhibit.JSONImporter.parse(link, database, xmlhttp.responseText, url);
+	if (o != null) {
+	    try {
+		database.loadData(o, Exhibit.Persistence.getBaseURL(url));
+ 	    } catch (e) {
+		SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
+	    }
+	}
+
+        if (cont) cont();
     };
 
     Exhibit.UI.showBusyIndicator();
