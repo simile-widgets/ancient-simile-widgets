@@ -4714,7 +4714,7 @@ this._selection={min:null,max:null};
 this._range={min:null,max:null};
 this._maxRange={min:null,max:null};
 };
-Exhibit.SliderFacet._settingsSpecs={"facetLabel":{type:"text"},"scroll":{type:"boolean",defaultValue:true},"height":{type:"text"},"precision":{type:"float",defaultValue:1},"histogram":{type:"boolean",defaultValue:true},"height":{type:"int",defaultValue:false},"width":{type:"int",defaultValue:false},"horizontal":{type:"boolean",defaultValue:true},"inputText":{type:"boolean",defaultValue:true},"showMissing":{type:"boolean",defaultValue:true}};
+Exhibit.SliderFacet._settingsSpecs={"facetLabel":{type:"text"},"scroll":{type:"boolean",defaultValue:true},"height":{type:"text"},"precision":{type:"float",defaultValue:1},"histogram":{type:"boolean",defaultValue:true},"height":{type:"int",defaultValue:false},"width":{type:"int",defaultValue:false},"horizontal":{type:"boolean",defaultValue:true},"inputText":{type:"boolean",defaultValue:true},"showMissing":{type:"boolean",defaultValue:true},"selection":{type:"float",dimensions:2}};
 Exhibit.SliderFacet.create=function(configuration,containerElmt,uiContext){var uiContext=Exhibit.UIContext.create(configuration,uiContext);
 var facet=new Exhibit.SliderFacet(containerElmt,uiContext);
 Exhibit.SliderFacet._configure(facet,configuration);
