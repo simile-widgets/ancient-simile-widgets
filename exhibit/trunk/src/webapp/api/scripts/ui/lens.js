@@ -486,7 +486,7 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
             Exhibit.Lens._processStyle(templateNode, value);
         } else if (name != "id") {
             if (name == "class") {
-                if (SimileAjax.Platform.browser.isIE) {
+                if (SimileAjax.Platform.browser.isIE && SimileAjax.Platform.browser.majorVersion < 8) {
                     name = "className";
                 }
             } else if (name == "cellspacing") {
