@@ -92,7 +92,7 @@ Exhibit.SliderFacet._configure = function(facet, configuration) {
     }
     if ("selection" in configuration) {
         var selection = configuration.selection;
-        facet._selection = {min: selection[0], max: selection[1]};
+        facet._range = {min: selection[0], max: selection[1]};
     }
     
     if ("showMissing" in configuration){
