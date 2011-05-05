@@ -229,8 +229,11 @@ Exhibit.Database._Impl.prototype._loadLinks = function(links, database, fDone) {
 		if (importer.parse) {
 		    (importer.fetch || Exhibit.Database._Impl.defaultFetch)(
 			link, database, fNext, importer.parse);
-                return;
 		}
+		else {
+		    importer.load(link, database, fNext);
+		}
+		return;
             } else {
                 SimileAjax.Debug.log("No importer for data of type " + type);
             }
