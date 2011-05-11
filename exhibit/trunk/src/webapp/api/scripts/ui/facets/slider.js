@@ -313,7 +313,8 @@ Exhibit.SliderFacet.slider.prototype.updateHistogram = function(data) {
 	histogram.innerHTML = ''; //clear histogram
 	
 	for (var i=0; i<n; i++){ // create new bars
-	    var height = Math.round(data[i]*ratio);
+	    var height = Math.ceil(data[i]*ratio); //ceil instead of round
+	    //ensures any nonzero bar will show something
 	    
 	    var bar = document.createElement('div');
 	    histogram.appendChild(bar);

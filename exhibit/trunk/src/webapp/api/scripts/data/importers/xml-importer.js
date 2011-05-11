@@ -8,7 +8,7 @@
 An XML node can represent three things:
 * an item
 * a relationship between a parent node (item) and child node (item)
-* both, ie the node represents and item that is implicitly related to the containing node
+* both, ie the node represents an item that is implicitly related to the containing node
 
 ex:itemTags specifies tags that represent items
 By default, the type of an item equals its itemTag
