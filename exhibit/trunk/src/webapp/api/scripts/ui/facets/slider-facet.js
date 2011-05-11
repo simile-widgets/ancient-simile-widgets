@@ -11,7 +11,7 @@ Exhibit.SliderFacet = function(containerElmt, uiContext) {
     this._expression = null;
     this._settings = {};
 
-	this._selection = {min: null, max: null};
+//  this._selection = {min: null, max: null};
     this._range = {min: null, max: null}; //currently selected range
     this._maxRange = {min: null, max: null}; //total range of slider
 };
@@ -70,6 +70,11 @@ Exhibit.SliderFacet.createFromDOM = function(configElmt, containerElmt, uiContex
             facet._showMissing = (showMissing == "true");
         }
         else{facet._showMissing=true;}
+
+    if ("selection" in facet._settings) {
+        var selection = facet._settings.selection;
+        facet._range = {min: selection[0], max: selection[1]};
+    }
 
     } catch (e) {
         SimileAjax.Debug.exception(e, "SliderFacet: Error processing configuration of slider facet");
@@ -179,7 +184,8 @@ Exhibit.SliderFacet.prototype.update = function(items) {
 		
 		this._slider.updateHistogram(data);
     }
-    
+    this._slider._setMin(this._range.min);
+    this._slider._setMax(this._range.max);
 };
 //[items] used by other function
 Exhibit.SliderFacet.prototype.restrict = function(items) {
@@ -315,7 +321,7 @@ Exhibit.SliderFacet.prototype.dispose = function() {
     this._expression = null;
     this._settings = null;
     
-    this._selection = null;
+//  this._selection = null;
     this._range = null; //currently selected range
     this._maxRange = null; //total range of slider
 };
