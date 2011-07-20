@@ -318,6 +318,7 @@ public class ExhibitJsonLoadingUtil {
         SailConnection      metaConnection, 
         Map<String, String> itemIDToURI
     ) throws SailException {
+        if (valueO == null) return;
         String valueType = _getObjectString(predicate, ExhibitOntology.VALUE_TYPE, metaConnection);
         Value object = null;
         
