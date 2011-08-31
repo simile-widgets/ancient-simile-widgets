@@ -1,7 +1,33 @@
 #title-area {
-      padding:        1em 2em;
-      background:     #BCB79E;
-  }
+    padding:        1em 2em;
+    background:     #BCB79E;
+}
+
 #content-area {
-      padding:        2em;
+    padding:        2em;
+}
+
+.blurb {
+    font-size: 120%;
+    padding: 0.5em 0.5em 0.5em 1.0em;
+}
+
+.credit {
+    padding: 1em 1em 1em inherit;
+    text-align: center;
+    font-style: italic;
+}
+
+p, ul {
+ 	line-height: 150%;
+}
+
+table.spaced-table td { 
+    padding: 20px; 
+}     
+
+.focus {
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    padding: 0 10px;
 }
