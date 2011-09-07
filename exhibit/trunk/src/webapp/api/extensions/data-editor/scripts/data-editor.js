@@ -9,7 +9,7 @@
 /* ========================================================================
  * Includes
  * ======================================================================== */
-var __DATAEDITOR_BASE__ = null;
+/*var __DATAEDITOR_BASE__ = null;
 $("script").each(function(idx) {
 	var el = $(this).get()[0];
 	var reg = /\/dataeditor.js$/;
@@ -20,8 +20,6 @@ $("script").each(function(idx) {
 if(__DATAEDITOR_BASE__ == null) { SimileAjax.Debug.warn("Cannot find base location for scripts."); }
 // jQuery
 SimileAjax.includeJavascriptFile(document,__DATAEDITOR_BASE__+"jquery_ui/js/jquery-1.6.2.min.js");  // Apparently this version is needed!
-/*SimileAjax.includeJavascriptFile(document,__DATAEDITOR_BASE__+"jquery_ui/js/jquery-ui-1.8.15.custom.min.js");
-SimileAjax.includeCssFile(document,__DATAEDITOR_BASE__+"jquery_ui/css/ui-lightness/jquery-ui-1.8.15.custom.css");*/
 SimileAjax.includeJavascriptFile(document,__DATAEDITOR_BASE__+"jquery_ui/js/jquery-ui-1.8.16.custom.min.js");
 SimileAjax.includeCssFile(document,__DATAEDITOR_BASE__+"jquery_ui/css/overcast/jquery-ui-1.8.16.custom.css");
 // DataEdit
@@ -31,7 +29,7 @@ SimileAjax.includeJavascriptFile(document,__DATAEDITOR_BASE__+"NumberField.js");
 SimileAjax.includeJavascriptFile(document,__DATAEDITOR_BASE__+"EnumField.js");
 SimileAjax.includeJavascriptFile(document,__DATAEDITOR_BASE__+"ListField.js");
 SimileAjax.includeCssFile(document,__DATAEDITOR_BASE__+"dataedit.css");
-delete __DATAEDITOR_BASE__;
+delete __DATAEDITOR_BASE__;*/
 
 
 /* ========================================================================
