@@ -89,6 +89,11 @@
       <param name="obfuscate" value="${obfuscate}" />
       <param name="suffix" value="${suffix}" />
     </antcall>
+    <antcall target="bundle-extension">
+      <param name="extension" value="data-editor" />
+      <param name="obfuscate" value="${obfuscate}" />
+      <param name="suffix" value="${suffix}" />
+    </antcall>
   </target>
   
   <target name="bundle-ajax" depends="tasks">
