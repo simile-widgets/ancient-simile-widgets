@@ -8,32 +8,31 @@
  *  autoCreate=false when you include exhibit-api.js.
  *======================================================================
  */
-SimileAjax.jQuery(document).ready(function() {     
-    var fDone = function() {
-        window.exhibit = Exhibit.create();
-        window.exhibit.configureFromDOM();
-    };
-    
-    try {
-        var s = Exhibit.getAttribute(document.body, "ondataload");
-        if (s != null && typeof s == "string" && s.length > 0) {
-            fDone = function() {
-                var f = eval(s);
-                if (typeof f == "function") {
-                    f.call();
-                }
+
+Exhibit.autoCreate = function() {     
+    if (Exhibit.params.autoCreate) {
+	var fDone = function() {
+            window.exhibit = Exhibit.create();
+            window.exhibit.configureFromDOM();
+	};
+	
+	try {
+            var s = Exhibit.getAttribute(document.body, "ondataload");
+            if (s != null && typeof s == "string" && s.length > 0) {
+		fDone = function() {
+                    var f = eval(s);
+                    if (typeof f == "function") {
+			f.call();
+                    }
+		}
             }
-        }
-    } catch (e) {
-        // silent
+	} catch (e) {
+            // silent
+	}
+	
+	window.database = Exhibit.Database.create();
+	window.database.loadDataLinks(fDone);
     }
+}
 
-    var fLoadSubmissions = function() {
-        window.database.loadSubmissionLinks(fDone);
-    };
-    
-    Exhibit.Authentication.authenticate();
-    window.database = Exhibit.Database.create();
-    window.database.loadDataLinks(fLoadSubmissions);
-});
-
+SimileAjax.jQuery(document).ready(Exhibit.autoCreate);
