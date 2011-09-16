@@ -120,10 +120,21 @@ SimileAjax.DOM.getEventRelativeCoordinates = function(evt, elmt) {
 
 SimileAjax.DOM.getEventPageCoordinates = function(evt) {
     if (SimileAjax.Platform.browser.isIE) {
-        return {
-            x: evt.clientX + document.body.scrollLeft,
-            y: evt.clientY + document.body.scrollTop
-        };
+
+        var scrOfY = 0;
+        var scrOfX = 0;
+
+        if (document.body && (document.body.scrollLeft || document.body.scrollTop)) {
+            //DOM compliant
+            scrOfY = document.body.scrollTop;
+            scrOfX = document.body.scrollLeft;
+        } else if (document.documentElement && (document.documentElement.scrollLeft || document.documentElement.scrollTop)) {
+            //IE6 standards compliant mode
+            scrOfY = document.documentElement.scrollTop;
+            scrOfX = document.documentElement.scrollLeft;
+        }
+
+        return { x: evt.clientX + scrOfX, y: evt.clientY + scrOfY }; 
     } else {
         return {
             x: evt.pageX,
