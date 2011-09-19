@@ -370,7 +370,7 @@ Exhibit.Database._Impl.prototype.addListener=function(A){this._listeners.add(A);
 };
 Exhibit.Database._Impl.prototype.removeListener=function(A){this._listeners.remove(A);
 };
-Exhibit.Database._Impl.prototype.loadDataLinks=function(B){var A=SimileAjax.jQuery("link[rel=exhibit/data]").get();
+Exhibit.Database._Impl.prototype.loadDataLinks=function(B){var A=SimileAjax.jQuery('link[rel="exhibit/data"]').get();
 this._loadLinks(A,this,B);
 };
 Exhibit.Database._Impl.prototype.loadLinks=function(A,B){this._loadLinks(A,this,B);
