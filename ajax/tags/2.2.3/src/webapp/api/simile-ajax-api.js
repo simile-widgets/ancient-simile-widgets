@@ -188,7 +188,6 @@ if (typeof SimileAjax == "undefined") {
             ];
             if (!("jQuery" in window) && !("$" in window)) {
 //                javascriptFiles.unshift("jquery-1.4.2.min.js");
-		SimileAjax.loadingScriptsCount++;
 		SimileAjax.includeJavascriptFile(document, "http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js");
             }
             
