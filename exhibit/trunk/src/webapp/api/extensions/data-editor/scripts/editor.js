@@ -20,7 +20,7 @@ Exhibit.DataEdit.LensSpec.prototype.getHTML = function() { return this._lensHTML
 
 /** Bootstrap. */
 $(document).ready(function() {
-	var filter = function(idx) { return $(this).attr("ex:role")=="editor"; }
+	var filter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_LENS; }
 	if(window.console && Exhibit.DataEdit.LensSpec._DEBUG_) { console.log("Searching for editor lenses"); }
 	$('*').filter(filter).each(function(idx) {
 		try {
@@ -47,6 +47,8 @@ Exhibit.DataEdit.Editor = function(itemId,jqThis) {
 	this._itemId = itemId;
 	this._jqThis = jqThis;
 	this._fields = {};  // Field componentns stored here
+	this._hasSaveButton = false;
+	this._hasCancelButton = false;
 }
 
 /** Debug mode? */
@@ -79,12 +81,27 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 	var self = this;
 	// Get rid of existing display lens, replace with edit lens raw HTML
 	$(self._jqThis).html(lens._lensHTML);
+
+	// Look for ex:role="editorSaveButton" and ex:role="editorCancelButton"
+	var saveFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_SAVE; }
+	$('*',self._jqThis).filter(saveFilter).each(function(idx) {
+		$(this).click(function() { Exhibit.DataEdit.save(self._itemId); });
+		self._hasSaveButton = true;
+	});
+	var cancelFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_CANCEL; }
+	$('*',self._jqThis).filter(cancelFilter).each(function(idx) {
+		$(this).click(function() { Exhibit.DataEdit.cancel(); });
+		self._hasCancelButton = true;
+	});
+
 	// Array of functions to run after each component has been rendered.
 	var onShow = [];
 	// Walk raw HTML, injecting field editor components
+	// For each type of component (text, number ...)
 	for(var i=0;i<Exhibit.DataEdit.Editor._COMPONENTS_.length;i++) {
 		var c = Exhibit.DataEdit.Editor._COMPONENTS_[i];
 		self.log("Scanning for "+c);
+		// Scan edit lens looking for this type of component using its domFilter()
 		Exhibit.DataEdit.Editor[c].domFilter(self._jqThis,function(idx) {
 			var prop,val,f;
 			try {
@@ -94,9 +111,8 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 				// Get value (object) and build editor
 				val = (self._exists(prop)) ? self._getValues(prop) : undefined ;
 				try { 
-					f = new Exhibit.DataEdit.Editor[c](this,self._itemId,prop,val);
-					f._validators = $(this).attr("ex:validators");
-					f._undefined = (val==undefined);
+					f = new Exhibit.DataEdit.Editor[c](this,self._itemId,prop,val,false);
+					f._saveOnChange = (!self._hasSaveButton);  // No [SAVE]?  Switch on field saving mode
 				} catch(err) { 
 					self.log(err,prop,val,this); 
 					SimileAjax.Debug.warn(err);
@@ -130,9 +146,8 @@ Exhibit.DataEdit.Editor.prototype.applyWithoutLens = function() {
 				val = self._getValues(prop); // DB vals, scalar or array
 				try {
 					var t = self._guessFieldType(exp,val);
-					f = new Exhibit.DataEdit.Editor[t](this,self._itemId,prop,val);
-					f._undefined = (val==undefined);
-					f._matchDisplayLens = true;
+					f = new Exhibit.DataEdit.Editor[t](this,self._itemId,prop,val,true);
+					f._saveOnChange = true;  // Switch on field saving mode
 				} catch(err) {
 					self.log(err,prop,val,self);
 					SimileAjax.Debug.warn(err);
@@ -196,11 +211,24 @@ Exhibit.DataEdit.Editor._uniqueObjects = function(itemType,predicate) {
 	return list.sort();
 }
 /** Text is true or false. */
-Exhibit.DataEdit.Editor._isTrueFalse = function(s,def) {
+Exhibit.DataEdit.Editor._parseTrueFalse = function(s,def) {
 	def = (def==undefined) ? false : def;
 	if(!s) { return def; }
 	s=s.toLowerCase();
 	return (s==='true' || s==='yes');
+}
+/** Returns flags, edit or add. */
+Exhibit.DataEdit.Editor._parseDisabledFor = function(s) {
+	var flags = { edit:true , add:true }
+	if(s) {
+		var arr = s.split(',');
+		for(var i=0;i<arr.length;i++) {
+			var a = arr[i].toLowerCase();
+			if(a=='edit' || a=='all') { flags.edit=true; }
+			else if(a=='add' || a=='all') { flags.add=true; }
+		}
+	}
+	return flags;
 }
 /** Create opening <tag>, using list of attrs and source element. */
 Exhibit.DataEdit.Editor._htmlTag = function(elName,attr,srcEl,closed) {

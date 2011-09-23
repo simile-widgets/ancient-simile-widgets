@@ -7,6 +7,8 @@
  * ex:type="text" 
  * ex:content=".<prop>"
  * ex:validators="<list>"
+ * ex:disabledFor="edit|add|all"
+ * ex:useDisplayStyle="true|false"
  * ex:large="true"  [optional]
  * ex:rows="v" [optional, if ex:large set]
  * ex:cols="v" [optional, if ex:large set]
@@ -17,16 +19,19 @@
 /* ========================================================================
  * Constructor
  * ======================================================================== */
-Exhibit.DataEdit.Editor.TextField = function(jq,iid,pid,val) {
+Exhibit.DataEdit.Editor.TextField = function(jq,iid,pid,val,noLens) {
 	this._jqThis = jq;			// jQuery for original DOM element <input>
 	this._itemId = iid;			// Database item (subject) id
 	this._propId = pid;			// Database property (predicate)
 	this._value = val;			// <string>
 	this._divId = '__DATAEDITOR__'+this._propId;
-	this._validators = null;
-	this._matchDisplayLens = false; // No editor lens?  Try to find into display lens
+	this._validators = $(jq).attr("ex:validators");
+	this._disabledFor = Exhibit.DataEdit.Editor._parseDisabledFor($(jq).attr("ex:disableFor"));
+	this._noEditorLens = noLens;	// No editor lens?
+	this._matchDisplayLens = Exhibit.DataEdit.Editor._parseTrueFalse($(jq).attr("ex:useDisplayStyle"));  // Try to find into display lens
+	this._saveOnChange = false;
 	// For this component only
-	this._largeText = Exhibit.DataEdit.Editor._isTrueFalse($(jq).attr("ex:large"));  // Use <textarea> ?
+	this._largeText = Exhibit.DataEdit.Editor._parseTrueFalse($(jq).attr("ex:large"));  // Use <textarea> ?
 	this._rows = parseInt($(jq).attr("ex:rows"));
 	this._cols = parseInt($(jq).attr("ex:cols"));
 	
@@ -39,7 +44,7 @@ Exhibit.DataEdit.Editor.TextField = function(jq,iid,pid,val) {
 /** Create component HTML. */
 Exhibit.DataEdit.Editor.TextField.prototype.getHTML = function(onShow) {
 	var style = null;
-	if(this._matchDisplayLens) {
+	if(this._noEditorLens || this._matchDisplayLens) {
 		style = Exhibit.DataEdit.Editor._extractStyle(this._jqThis) +
 			'border-width: 0px; '+
 			'width: '+$(this._jqThis).width()+'px; height: '+$(this._jqThis).height()+'px; ';
@@ -55,12 +60,13 @@ Exhibit.DataEdit.Editor.TextField.prototype.getHTML = function(onShow) {
 			this._largeText = ((h1/h2) >= 2);
 		}
 	}
+	var onChange = (this._saveOnChange) ? "Exhibit.DataEdit.onChange('"+this._itemId+"','"+this._propId+"')" : "";
 	if(this._largeText) {
 		var c = this._cols ? this._cols : null;
 		var r = this._rows ? this._rows : null;
 		var tag = Exhibit.DataEdit.Editor._htmlTag(
 			'textarea',
-			{ 'id':this._divId , 'style':style , 'class':'exhibitDataEditTextArea' , 'rows':r , 'cols':c } ,
+			{ 'id':this._divId , 'style':style , 'class':'exhibitDataEditTextArea' , 'rows':r , 'cols':c , 'onchange':onChange } ,
 			$(this._jqThis).get()[0] , 
 			false
 		);
@@ -68,7 +74,7 @@ Exhibit.DataEdit.Editor.TextField.prototype.getHTML = function(onShow) {
 	} else {
 		var tag = Exhibit.DataEdit.Editor._htmlTag(
 			'input' ,
-			{ 'id':this._divId , 'style':style , 'class':'exhibitDataEditTextField' , 'type':'Text' , 'value':this._value } ,
+			{ 'id':this._divId , 'style':style , 'class':'exhibitDataEditTextField' , 'type':'Text' , 'value':this._value , 'onchange':onChange } ,
 			$(this._jqThis).get()[0] ,
 			true
 		);

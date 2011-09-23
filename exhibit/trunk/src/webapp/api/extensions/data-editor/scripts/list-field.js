@@ -5,7 +5,9 @@
  * ex:type="text" 
  * ex:content=".<prop>"
  * ex:validators="<list>"
- * ex:allowNew="<true>|<false>"
+ * ex:disabledFor="edit|add|all"
+ * ex:useDisplayStyle="true|false"
+ * ex:allowNew="true|false"
  *
  * css class: exhibitDataEditEnumField
  *            exhibitDataEditEnumFieldOption
@@ -14,17 +16,20 @@
  /* ========================================================================
   * Constructor
   * ======================================================================== */
-Exhibit.DataEdit.Editor.ListField = function(jq,iid,pid,val) {
+Exhibit.DataEdit.Editor.ListField = function(jq,iid,pid,val,noLens) {
 	this._jqThis = jq;			// jQuery for original DOM element <input>
 	this._itemId = iid;			// Database item (subject) id
 	this._propId = pid;			// Database property (predicate)
 	this._value = val;			// <Array>
 	this._divId = '__DATAEDITOR__'+this._propId;
-	this._validators = null;
-	this._matchDisplayLens = false; // No editor lens?  Try to find into display lens
+	this._validators = $(jq).attr("ex:validators");
+	this._disabledFor = Exhibit.DataEdit.Editor._parseDisabledFor($(jq).attr("ex:disableFor"));
+	this._noEditorLens = noLens;	// No editor lens?
+	this._matchDisplayLens = Exhibit.DataEdit.Editor._parseTrueFalse($(jq).attr("ex:useDisplayStyle"));  // Try to find into display lens
+	this._saveOnChange = false;
 	// For this component only
 	this._options = [];
-	this._allowNew = Exhibit.DataEdit.Editor._isTrueFalse($(jq).attr("ex:allowNew") , true);
+	this._allowNew = Exhibit.DataEdit.Editor._parseTrueFalse($(jq).attr("ex:allowNew") , true);
 	
 	var self = this;
 	// Find <option>s
@@ -83,10 +88,13 @@ Exhibit.DataEdit.Editor.ListField.prototype.getHTML = function(onShow) {
 				return false;
 			}
 		});
+		if(this._saveOnChange) {
+			ip.bind('change',function(ev) { Exhibit.DataEdit.onChange(self._itemId,self._propId); });
+		}
 	});
 
 	var style = null;
-	if(this._matchDisplayLens) {
+	if(this._noEditorLens || this._matchDisplayLens) {
 		style = Exhibit.DataEdit.Editor._extractStyle(this._jqThis) +
 			'border-width: 0px; '+
 			'width: '+$(this._jqThis).width()+'px; height: '+$(this._jqThis).height()+'px; ';
