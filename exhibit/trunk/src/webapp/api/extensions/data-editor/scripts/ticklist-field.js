@@ -91,10 +91,8 @@ Exhibit.DataEdit.Editor.TickListField._add = function(divId,txDivId,itemId) {
 		var val2 = val.toLowerCase();
 		var a1 = '#'+divId;
 		var a2 = 'input[name="_TICKLIST_'+itemId+'"]';
-		console.log(a1,a2);
 		$(a1+' '+a2).each(function(idx) {
 			var c = $(this).get()[0];
-			console.log(c,(c.value.toLowerCase()===val2));
 			if(c.value.toLowerCase()===val2) {
 				c.checked=true;  cnt++;  // Match!
 			}
