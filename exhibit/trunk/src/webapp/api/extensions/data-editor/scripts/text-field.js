@@ -66,7 +66,7 @@ Exhibit.DataEdit.Editor.TextField.prototype.getHTML = function(onShow) {
 		var r = this._rows ? this._rows : null;
 		var tag = Exhibit.DataEdit.Editor._htmlTag(
 			'textarea',
-			{ 'id':this._divId , 'style':style , 'class':'exhibitDataEditTextArea' , 'rows':r , 'cols':c , 'onchange':onChange } ,
+			{ 'id':this._divId , 'style':style , 'class':'exhibitDataEditTextAreaField' , 'rows':r , 'cols':c , 'onchange':onChange } ,
 			$(this._jqThis).get()[0] , 
 			false
 		);

@@ -49,6 +49,7 @@ Exhibit.DataEdit.Editor = function(itemId,jqThis) {
 	this._fields = {};  // Field componentns stored here
 	this._hasSaveButton = false;
 	this._hasCancelButton = false;
+	this._hasStatus = false;
 }
 
 /** Debug mode? */
@@ -58,7 +59,7 @@ Exhibit.DataEdit.Editor._DEBUG_ = false;
 Exhibit.DataEdit.Editor._BGCOL_ = '#dddddd';
 Exhibit.DataEdit.Editor._ERRCOL_ = '#ff8888';
 /** Components. */
-Exhibit.DataEdit.Editor._COMPONENTS_ = [ 'TextField','NumberField','EnumField','ListField' ];
+Exhibit.DataEdit.Editor._COMPONENTS_ = [ 'TextField','NumberField','EnumField','ListField','TickListField' ];
 
 
 /** Apply this editor lens. */
@@ -82,7 +83,7 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 	// Get rid of existing display lens, replace with edit lens raw HTML
 	$(self._jqThis).html(lens._lensHTML);
 
-	// Look for ex:role="editorSaveButton" and ex:role="editorCancelButton"
+	// Look for ex:role="editorSaveButton", ex:role="editorCancelButton" and ex:role="editorStatus"
 	var saveFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_SAVE; }
 	$('*',self._jqThis).filter(saveFilter).each(function(idx) {
 		$(this).click(function() { Exhibit.DataEdit.save(self._itemId); });
@@ -92,6 +93,11 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 	$('*',self._jqThis).filter(cancelFilter).each(function(idx) {
 		$(this).click(function() { Exhibit.DataEdit.cancel(); });
 		self._hasCancelButton = true;
+	});
+	var statusFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_STATUS; }
+	$('*',self._jqThis).filter(statusFilter).each(function(idx) {
+		$(this).attr('id',Exhibit.DataEdit.EDIT_MESSAGE);
+		self._hasStatus = true;
 	});
 
 	// Array of functions to run after each component has been rendered.

@@ -36,11 +36,16 @@
  * Components
  */
 .exhibitDataEditTextField ,
-.exhibitDataEditTextArea , 
+.exhibitDataEditTextAreaField , 
 .exhibitDataEditEnumField ,
 .exhibitDataEditListField ,
-.exhibitDataEditNumberField {
+.exhibitDataEditNumberField ,
+.exhibitDataEditTickListField {
 	background-color: #dddddd;
+}
+
+.exhibitDataEditTickListField {
+	border-style: Inset;  border-color: #ece9d8;  border-width: 2px;
 }
 
 /*
