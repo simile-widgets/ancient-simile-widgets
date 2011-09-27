@@ -13,6 +13,7 @@
   *   <div ex:role="editorEditButton">               Button to acitvate an individual edit lens
   *   <div ex:role="editorSaveButton">               Button to save
   *   <div ex:role="editorCancelButton">             Button to cancel
+  *   <div ex:role="editorStatus">                   Validator messages, etc.
   *
   * *** FIXME: The below is not yet fully implemented. ***
   * Lifecycle
@@ -72,6 +73,7 @@ Exhibit.DataEdit.EDIT_ROLE_ACTIVATE = "editorActivateButton";
 Exhibit.DataEdit.EDIT_ROLE_EDIT = "editorEditButton";
 Exhibit.DataEdit.EDIT_ROLE_SAVE = "editorSaveButton";
 Exhibit.DataEdit.EDIT_ROLE_CANCEL = "editorCancelButton";
+Exhibit.DataEdit.EDIT_ROLE_STATUS = "editorStatus";
 
 /** Database mutation modes. */
 Exhibit.DataEdit.CREATE_MODE = 1;
@@ -166,22 +168,6 @@ Exhibit.DataEdit.edit = function(itemId) {
 			var editor = new Exhibit.DataEdit.Editor(itemId,this);
 			Exhibit.DataEdit._editors_[itemId] = editor;
 			editor.apply();
-			// If the edit lens didn't explicitly define a [SAVE] button, add [SAVE] and [CANCEL]
-			/*if(!editor._hasSaveButton) {
-				$(this).append(
-					'<div class="'+Exhibit.DataEdit.EDIT_DIV+' '+Exhibit.DataEdit.EDIT_INJECT_MARKER+'">'+
-					'<span class="'+Exhibit.DataEdit.EDIT_BUTTON+'">'+
-					'<a href="javascript:Exhibit.DataEdit.save(\''+itemId+'\')">Save</a>'+
-					'</span>'+
-					'&nbsp;&nbsp;'+
-					'<span class="'+Exhibit.DataEdit.EDIT_BUTTON+'">'+
-					'<a href="javascript:Exhibit.DataEdit.cancel()">Cancel</a>'+
-					'</span>'+
-					'&nbsp;&nbsp;'+
-					'<span id="'+Exhibit.DataEdit.EDIT_MESSAGE+'"></span>'+
-					'</div>'
-				);
-			}*/
 		}
 	});
 
@@ -200,56 +186,10 @@ Exhibit.DataEdit.save = function(itemId) {
 
 	// Reset all error indicators
 	for(var fieldId in fields) { fields[fieldId].setError(false); }
-	// Check fields
+	// Save fields
 	for(var fieldId in fields) {
 		var f = fields[fieldId];
-		var val = f.getValue();
-		var validators = f._validators;
-		// Perform validation
-		if(validators) {
-			var _vNames = validators.split(',');
-			for(var i=0;i<_vNames.length;i++) {
-				var err = null;
-				var v = _vNames[i];
-				// Check internal validators first
-				var found = false;
-				var vl = v.toLowerCase();
-				for(var k in Exhibit.DataEdit._internalValidators) {
-					if(vl==k) { 
-						Exhibit.DataEdit._internalValidators[k](val);
-						found = true;
-					}
-				}
-				if(!found && (window[v]) && (typeof window[v]=='function')) {
-					window[v](val);
-					found = true;
-				}
-				if(!found) {} // FIXME: Do something useful!
-				// Did we get an error?
-				if(err!=null) {
-					$('#'+Exhibit.DataEdit.EDIT_MESSAGE).html(err);
-					f.setError(true);
-					return; // Exit function
-				}
-			}
-		}
-		// Perform save
-		if((mode==Exhibit.DataEdit.UPDATE_MODE) && (val!=undefined)) {
-			database.removeObjects(itemId,fieldId);
-			if(val instanceof Array) {
-				Exhibit.DataEdit.log("Updating(array)",fieldId,val);
-				for(var j=0;j<val.length;j++) { database.addStatement(itemId,fieldId,val[j]); }
-			} else {
-				Exhibit.DataEdit.log("Updating(scalar)",fieldId,val);
-				database.addStatement(itemId,fieldId,val);
-			}
-		} else if((mode==Exhibit.DataEdit.CREATE_MODE) && (val!=undefined)) {
-			Exhibit.DataEdit.log("Creating",fieldId,val);
-			//database.loadData( { items:[item] } );
-		} else if(mode == Exhibit.DataEdit.DELETE_MODE) {
-			Exhibit.DataEdit.log("Deleting",fieldId,val);
-			database.removeObjects(itemId,fieldId);
-		}
+		if( Exhibit.DataEdit._saveField(itemId,fieldId,f) ) { return; }
 	}
 	// Cause Exhibit to re-eval its views/facets, and close edit window
 	database._listeners.fire("onAfterLoadingItems",[]);
@@ -284,7 +224,10 @@ Exhibit.DataEdit.onChange = function(itemId,fieldId) {
 	var editor = Exhibit.DataEdit._editors_[itemId];
 	var fields = editor.getFields();
 	var f = fields[fieldId];
-	Exhibit.DataEdit._saveField(itemId,fieldId,f);
+	if( Exhibit.DataEdit._saveField(itemId,fieldId,f) ) {
+		// Find status element, if exists, and display error message
+		$('.'+Exhibit.DataEdit.STATUS_CLASS).each(function(idx) { $(this).html(err); });
+	}
 	//console.log("ok",itemId,fieldId);
 }
 
@@ -313,22 +256,26 @@ Exhibit.DataEdit._saveField = function(itemId,fieldId,f) {
 			// Check internal validators first
 			var found = false;
 			var vl = v.toLowerCase();
-			for(var k in Exhibit.DataEdit._internalValidators) {
-				if(vl==k) { 
-					Exhibit.DataEdit._internalValidators[k](val);
-					found = true;
-				}
+			if(Exhibit.DataEdit._internalValidators[vl]) { 
+				err = Exhibit.DataEdit._internalValidators[vl](val);
+				found = true;
 			}
 			if(!found && (window[v]) && (typeof window[v]=='function')) {
-				window[v](val);
+				err = window[v](val);
 				found = true;
 			}
 			if(!found) {} // FIXME: Do something useful!
 			// Did we get an error?
 			if(err!=null) {
-				$('#'+Exhibit.DataEdit.EDIT_MESSAGE).html(err);
+				// Find status element, if exists, and display error message
+				if($('#'+Exhibit.DataEdit.EDIT_MESSAGE).length) {
+					$('#'+Exhibit.DataEdit.EDIT_MESSAGE).html(err);
+				} else {
+					alert(err);
+				}
+				// Change field itself
 				f.setError(true);
-				return; // Exit function
+				return true; // Exit wirh error
 			}
 		}
 	}
@@ -349,6 +296,7 @@ Exhibit.DataEdit._saveField = function(itemId,fieldId,f) {
 		Exhibit.DataEdit.log("Deleting",fieldId,val);
 		database.removeObjects(itemId,fieldId);
 	}
+	return false;
 }
 
 
