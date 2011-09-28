@@ -132,11 +132,18 @@ Exhibit.DataEdit.activate = function() {
 			var xy = $(this).offset();
 			var w = $(this).outerWidth(true);  // Width / height inc. margins and padding. 
 			var h = $(this).outerHeight(true);
-			var overlay = '<div class="'+Exhibit.DataEdit.EDIT_INJECT_MARKER+'" '+
-				'onMouseOver="Exhibit.DataEdit._rollIn_(this)" onMouseOut="Exhibit.DataEdit._rollOut_(this)" '+
-				'onclick="Exhibit.DataEdit.edit(\''+id+'\')" '+
-				'style="position:Absolute ; top:'+xy.top+'px ; left:'+xy.left+'px ; width:'+w+'px ; height:'+h+'px ; '+
-					'cursor:Help ; border:2px #dddddd Dotted">'+
+			// Due to limitations with the way IE7/8 handles mouse events, we need to create
+			// an invisible (but 'painted', as in it is filled with a bg col) inner <div>
+			var overlay = 
+				'<div class="'+Exhibit.DataEdit.EDIT_INJECT_MARKER+'" '+
+					'onMouseOver="Exhibit.DataEdit._rollIn_(this)" onMouseOut="Exhibit.DataEdit._rollOut_(this)" '+
+					'style="position:Absolute ; top:'+xy.top+'px ; left:'+xy.left+'px ; width:'+w+'px ; height:'+h+'px ; '+
+						'cursor:Help ; border:2px #dddddd Dotted;">'+
+					'<div '+
+						'onclick="Exhibit.DataEdit.edit(\''+id+'\')" '+
+						'style="width:'+w+'px ; height:'+h+'px ; '+
+							'background:Black; opacity:0.0; filter:alpha(opacity=0); -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0);">'+
+					'</div>'+
 				'</div>';
 			$(this).append(overlay);
 		}
@@ -371,7 +378,7 @@ Exhibit.DataEdit._setup_injectActivateButton = function() {
 		var buttonHTML = 
 			'<div style="position:Fixed; right:1em;  top:1em;">'+
 			'<div class="'+Exhibit.DataEdit.EDIT_BUTTON+'">'+
-			'<a href="javascript:Exhibit.DataEdit.activate();"><span id="symbol"><span class="off">&#10006;</span></span>&nbsp;Editor</a>'+
+			'<a href="javascript:Exhibit.DataEdit.activate();"><div><span id="symbol"><span class="off">&#10006;</span></span>&nbsp;Editor</div></a>'+
 			'</div>'+
 			'</div>';
 		var body = $('body').first().append(buttonHTML);	
