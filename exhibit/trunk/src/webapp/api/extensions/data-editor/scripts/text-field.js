@@ -62,8 +62,8 @@ Exhibit.DataEdit.Editor.TextField.prototype.getHTML = function(onShow) {
 		 * inject a <span> into the start of the element, ask for it's height, then remove it!! */ 
 		var contH = $(this._jqThis).height();
 		$(this._jqThis).prepend('<span id="__SIZE_GUESSER__">M</span>');
-		var textH = $('#__SIZE_GUESSER__').height();
-		$('#__SIZE_GUESSER__').remove();
+		var textH = $('#__SIZE_GUESSER__',this._jqThis).height();
+		$('#__SIZE_GUESSER__',this._jqThis).remove();
 		this._largeText = ((contH/textH) >= 2);
 	}
 	var onChange = (this._saveOnChange) ? "Exhibit.DataEdit.onChange('"+this._itemId+"','"+this._propId+"')" : "";
