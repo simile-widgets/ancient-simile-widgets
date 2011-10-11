@@ -18,7 +18,8 @@
   * *** FIXME: The below is not yet fully implemented. ***
   * Lifecycle
   *   Various events are fired during the lifecycle of an edit, paired as before and after an
-  *   action.  The onBeforeX events may return true to cancel the action.  
+  *   action.  The onBeforeX events may return false to cancel the action, meaning the
+  *   corresponding onX event will never happen.  
   *
   *   The editor can either save individual fields after each is edited, or the whole item if
   *   a [SAVE] button is employed.  onSave's field and value parameters are null if the whole
@@ -27,14 +28,17 @@
   *
   *   Multiple event handlers may be registered with addEventhandler(), each as an object with 
   *   functions mapped to properties of the event name, thus:
-  *     Exhibit.DataEdit.AddEventHandler({
+  *     Exhibit.DataEdit.addEventHandler({
   *       onBeforeInit : function() { ... return false; } ,
   *       onInit : function() { ... }
   *     });
   *   For each event, each handler object is consulted, and if an appropriate property is found its
   *   function is called.  In the case of onBeforeX and onSave events, *all* handlers are called,
-  *   and the aggregate return value is determined by OR'ing each individual return (thus: 'true'
-  *   if any of the handlers returned true).
+  *   and an aggregate return value is determined by AND'ing each individual return -- this 
+  *   aggregate return is then used to determine whether the event action should abort (false==abort).
+  *
+  *   The onSave event also returns an aggregate -- each handler should return true if the persistence
+  *   operation went well, and false if it failed.
   *
   *   onBeforeInit : boolean ()                      Run at start of $(document).ready() 
   *   onInit : void ()                               Run at end of $(document).ready()
@@ -42,10 +46,10 @@
   *   onActivate : void ()                           Run at end of Exhibit.DataEdit.activate
   *   onBeforeActivateClose : boolean ()             Run if [Editor] toggle clicked to abort edit
   *   onActivateClose : void ()                      Run if [Editor] toggle clicked to abort edit
-  *   onBeforeEdit : boolean (item_id)               Run at start of Exhibit.DataEdit.edit
-  *   onEdit : void (item_id)                        Run at end of Exhibit.DataEdit.edit
-  *   onBeforeSave : boolean (item_id<,field,value>) Run at start of Exhibit.DataEdit.save
-  *   onSave : boolean (item_id,<,field,value>)      Run at end of Exhibit.DataEdit.save
+  *   onBeforeEdit : boolean (itemId)                Run at start of Exhibit.DataEdit.edit
+  *   onEdit : void (itemId)                         Run at end of Exhibit.DataEdit.edit
+  *   onBeforeSave : boolean (itemId,item)           Run at start of Exhibit.DataEdit.save
+  *   onSave : boolean (itemId,item)                 Run at end of Exhibit.DataEdit.save
   *   onBeforeCancel : boolean ()                    Run at start of Exhibit.DataEdit.cancel
   *   onCancel : void ()                             Run at end of Exhibit.DataEdit.cancel
   */
@@ -100,14 +104,14 @@ Exhibit.DataEdit.activate = function() {
 	var self = this;
 	// Locked?  Cancel.
 	if(Exhibit.DataEdit._lock_) { 
-		Exhibit.DataEdit._invokeEventHandlers('onBeforeActivateClose');
+		if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeActivateClose')) { return; }
 		Exhibit.DataEdit.cancel();
 		Exhibit.DataEdit._setEditLock(false);
 		Exhibit.DataEdit._invokeEventHandlers('onActivateClose');
 		return;
 	}
 
-	Exhibit.DataEdit._invokeEventHandlers('onBeforeActivate');
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeActivate')) { return; }
 	Exhibit.DataEdit._setEditLock(true);
 	//Exhibit.UI.showBusyIndicator();
 	// Editors
@@ -157,10 +161,11 @@ Exhibit.DataEdit._rollOut_ = function(div) { $(div).css('border',"2px #dddddd Do
 
 /** STEP2: Click on [edit] link. */
 Exhibit.DataEdit.edit = function(itemId) {
-	Exhibit.DataEdit._invokeEventHandlers('onBeforeEdit');
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeEdit',itemId)) { return; }
 
 	var self = this;	
 	var filter = function(idx) { return ($(this).attr("ex:itemid")); }
+	// FIXME: Can we be more efficient than '*' ?
 	$('*').filter(filter).each(function(idx) {
 		// Hide user defined <div ex:role="editorEditButton"> (if they exist)
 		var filterEdit = function(idx) { return $(this).attr("_ex:role")==Exhibit.DataEdit.EDIT_ROLE_EDIT; }
@@ -178,18 +183,23 @@ Exhibit.DataEdit.edit = function(itemId) {
 		}
 	});
 
-	Exhibit.DataEdit._invokeEventHandlers('onEdit');
+	Exhibit.DataEdit._invokeEventHandlers('onEdit',itemId);
 }
 
 /** STEP3a: Click on [save] link. */
 Exhibit.DataEdit.save = function(itemId) {
-	Exhibit.DataEdit._invokeEventHandlers('onBeforeSave');
-
 	var self = this;
 
 	var mode = Exhibit.DataEdit.UPDATE_MODE;
 	var editor = Exhibit.DataEdit._editors_[itemId];
 	var fields = editor.getFields();
+
+	Exhibit.DataEdit._onSaveMessages = [];
+	
+	// Build an item dictionary
+	var item = {};
+	for(var fieldId in fields) { item[fieldId] = fields[fieldId].getValue(); }
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeSave',itemId,item)) { return; }
 
 	// Reset all error indicators
 	for(var fieldId in fields) { fields[fieldId].setError(false); }
@@ -201,13 +211,14 @@ Exhibit.DataEdit.save = function(itemId) {
 	// Cause Exhibit to re-eval its views/facets, and close edit window
 	database._listeners.fire("onAfterLoadingItems",[]);
 	Exhibit.DataEdit._setEditLock(false);  // FIXME try/catch/*finally*
-
-	Exhibit.DataEdit._invokeEventHandlers('onSave');	
+	
+	var success = Exhibit.DataEdit._invokeEventHandlers('onSave',itemId,item);
+	Exhibit.DataEdit._checkForSaveFailure(success);
 }
 
 /** STEP3b: Click on [cancel] link. */
 Exhibit.DataEdit.cancel = function() {
-	Exhibit.DataEdit._invokeEventHandlers('onBeforeCancel');
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeCancel')) { return; }
 
 	//var self = this;
 	database._listeners.fire("onAfterLoadingItems",[]);
@@ -220,6 +231,7 @@ Exhibit.DataEdit.cancel = function() {
 Exhibit.DataEdit._setEditLock = function(b) {
 	Exhibit.DataEdit._lock_ = b;
 	// Alter the global button
+	// FIXME: For speed, cache result from selector?
 	$('.exhibitDataEditButton #symbol').html(
 		Exhibit.DataEdit._lock_ ? '<span class="on">&#10004;</span>' : '<span class="off">&#10006;</span>');
 }
@@ -231,11 +243,20 @@ Exhibit.DataEdit.onChange = function(itemId,fieldId) {
 	var editor = Exhibit.DataEdit._editors_[itemId];
 	var fields = editor.getFields();
 	var f = fields[fieldId];
+	
+	var item = {};
+	item[fieldId] = f.getValue();
+	
+	Exhibit.DataEdit._onSaveMessages = [];
+	
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeSave',itemId,item)) { return; }
 	if( Exhibit.DataEdit._saveField(itemId,fieldId,f) ) {
 		// Find status element, if exists, and display error message
+		// FIXME: For speed, cache result from selector?
 		$('.'+Exhibit.DataEdit.STATUS_CLASS).each(function(idx) { $(this).html(err); });
 	}
-	//console.log("ok",itemId,fieldId);
+	var success = Exhibit.DataEdit._invokeEventHandlers('onSave',itemId,item);
+	Exhibit.DataEdit._checkForSaveFailure(success);
 }
 
 /** Varargs log function, using special array 'arguments', and apply() */
@@ -243,6 +264,22 @@ Exhibit.DataEdit.log = function() {
 	if(window.console && Exhibit.DataEdit._DEBUG_) { console.log.apply(this,arguments); }
 }
 
+/* Convenience */
+Exhibit.DataEdit._checkForSaveFailure = function(success) {
+	if(!success) { 
+		if(Exhibit.DataEdit.onSaveFailed) {
+			// Call user defined error handler.
+			Exhibit.DataEdit.onSaveFailed(Exhibit.DataEdit._onSaveMessages)
+		} else if(Exhibit.DataEdit._onSaveMessages.length>0) {
+			// If there are messages to show, and no error handler, alert().
+			var s = "";
+			for(var i=0;i<Exhibit.DataEdit._onSaveMessages.length;i++) { 
+				s=s+Exhibit.DataEdit._onSaveMessages[i]+'\n';
+			}
+			alert(s);
+		}
+	}
+}
 
 /* ========================================================================
  * Database
@@ -275,6 +312,7 @@ Exhibit.DataEdit._saveField = function(itemId,fieldId,f) {
 			// Did we get an error?
 			if(err!=null) {
 				// Find status element, if exists, and display error message
+				// FIXME: For speed, cache result from selector?
 				if($('#'+Exhibit.DataEdit.EDIT_MESSAGE).length) {
 					$('#'+Exhibit.DataEdit.EDIT_MESSAGE).html(err);
 				} else {
@@ -317,11 +355,28 @@ Exhibit.DataEdit.addEventHandler = function(h) {
 	if(h) { Exhibit.DataEdit._lifeCycleEventHandlers_.push(h); }
 }
 /** Called interally, to fire events for given type. */
-Exhibit.DataEdit._invokeEventHandlers = function(type) {
-	for(var h in Exhibit.DataEdit._lifeCycleEventHandlers_) {
-		if(h[type]) { h[type](); }
+Exhibit.DataEdit._invokeEventHandlers = function(type,id,item) {
+	// Iterate over handlers
+	var ret = true;
+	for(var i=0;i<Exhibit.DataEdit._lifeCycleEventHandlers_.length;i++) {
+		var handler = Exhibit.DataEdit._lifeCycleEventHandlers_[i];
+		if(handler[type]) { 
+			ret = ret && handler[type](id,item);
+		}
 	}
+	return ret;
 }
+
+/* Error, warning messages, from onSave failures. */
+Exhibit.DataEdit._onSaveMessages = [];
+/** Called by external code to add a failure message for onSave action. */
+Exhibit.DataEdit.addOnSaveFailedMessage = function(m) {
+	Exhibit.DataEdit._onSaveMessages.push(m);
+}
+
+/** Override this to handle persistence fails. */
+Exhibit.DataEdit.onSaveFailed = null;  // function(arr)
+
 
 
 /* ========================================================================
@@ -401,7 +456,7 @@ Exhibit.DataEdit._setup_scanForEditButtonInDisplayLens = function() {
 
 /** Bootstrap. */
 $(document).ready(function() {
-	Exhibit.DataEdit._invokeEventHandlers('onBeforeInit');
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeInit')) { return; }
 	
 	Exhibit.DataEdit._setup_injectActivateButton();
 	/*Exhibit.DataEdit._setup_scanForEditButtonInDisplayLens();*/ // See FIXME [1] below

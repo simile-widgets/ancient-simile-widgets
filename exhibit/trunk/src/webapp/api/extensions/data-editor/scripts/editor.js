@@ -371,7 +371,7 @@ Exhibit.DataEdit.Editor.prototype.getFields = function() {
 }
 /** Varargs log function, using special array 'arguments', and apply() */
 Exhibit.DataEdit.Editor.prototype.log = function() {
-	if(window.console && Exhibit.DataEdit.Editor._DEBUG_) { console.log.apply(this,arguments); }
+	if(window['console'] && Exhibit.DataEdit.Editor._DEBUG_) { console.log.apply(this,arguments); }
 }		
 
 
