@@ -34,7 +34,12 @@ Exhibit.Persistence.resolveURL = function(url) {
         var url2 = Exhibit.Persistence.getBaseURL(document.location.href);
         if (url.substr(0,1) == "/") {
             url = url2.substr(0, url2.indexOf("/", url2.indexOf("://") + 3)) + url;
-        } else {
+        } else if (url.substr(0,1) == "#") {
+	    url2=document.location.href;
+	    index=(url2+'#').indexOf("#");
+	    url = url2.substr(0,index)+url;
+	}
+	else {
             url = url2 + url;
         }
     }
