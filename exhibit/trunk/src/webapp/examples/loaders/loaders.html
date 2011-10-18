@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>
+Data Import Test
+</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"></script>
+<script src="http://localhost:8888/ajax/api/simile-ajax-api.js?bundle=false"></script>
+<script src="http://localhost:8888/exhibit/api/exhibit-api.js?bundle=false"></script>
+<link rel="exhibit/data" href="#json" type="application/json"/>
+<link rel="exhibit/data" href="#xml" type="application/xml" ex:itemTags="item" ex:itemTypes="example"/>
+</head>
+<body>
+<H1>Data Import Test</H1>
+<table>
+<tr>
+<td  style="vertical-align:top">
+This file exists to test various data loading functionalities in
+exhibit.  The table on the right should have no blank entries aside from "should be blank".  A blank entry means something didn't load.
+<p>
+The page exercises both the inline data functionality (triggered by a
+ex:role=data tag in a body element, along with an ex:type to specify
+the data type) and links to data (described by link[rel=exhibit/data]
+elements in the head and a[rel="exhibit/data"] elements in the body).
+It involves data in json, xml, html table, and csv formats.
+<p>
+How you embed data depends on the type.  html/xml syntax data can safely be placed inside any element.  Other data needs to be protected from the html parser; one way to do this is to use a script tag, giving a type <em>distinct</em> from text/javascript so it knows it isn't an executable script.
+
+<td width="500px">
+<div ex:role="viewPanel">
+<div ex:role="view" ex:viewClass="Tabular" ex:columns=".type,.label,.syntax,.getter,.loc"></div>
+<div ex:role="view" ex:label="Raw"></div>
+</div>
+</tr>
+</table>
+
+<script ex:role="data" type="application/json">
+{items: [
+{label: "inline JSON data", type: "example"},
+{label: "link to XML data", type: "example"},
+{label: "link to JSON data", type: "example"},
+{label: "link to CSV", type: "example"},
+{label: "link to HTML table", type: "example"},
+{label: "inline JSON data", type: "example"},
+{label: "inline XML data", type: "example"},
+{label: "inline HTML table", type: "example"},
+{label: "should be blank"}
+]
+}
+</script>
+
+
+<a rel="exhibit/data" href="#csv" type="text/csv" ex:properties="label,type,syntax,getter,loc"></a>
+
+<a rel="exhibit/data" href="#html" type="text/html" ex:itemType="example" ex:headerRow="true"></a>
+
+<script ex:role="data" type="application/json">
+{items: [
+{label: "inline JSON data",
+type: "example",
+syntax: "json",
+getter: "inline",
+loc: "body"}
+]
+}
+</script>
+
+<script id="json" type="application/json">
+{items: [
+{label: "link to JSON data",
+type: "example",
+syntax: "json",
+getter: "link",
+loc: "head"}
+]
+}
+</script>
+
+<script ex:role="data" ex:type="text/csv" type="text/csv">
+label,type,syntax,getter,loc
+"inline CSV",example,"csv",inline,body
+</script>
+
+<script id="csv" type="text/tsv">
+"link to CSV",example,"csv",link,body
+</script>
+
+
+<div ex:role="data" ex:type="application/xml" ex:itemTags="item" ex:itemTypes="example">
+<xml>
+<item>
+<label>inline XML data</label>
+<syntax>XML</syntax>
+<getter>inline</getter>
+<loc>body</loc>
+</item>
+</xml>
+</div>
+
+<div id="xml" style="display:none">
+<xml>
+<item>
+<label>link to XML data</label>
+<syntax>XML</syntax>
+<getter>link</getter>
+<loc>head</loc>
+</item>
+</xml>
+</div>
+
+<table ex:role="data" ex:type="text/html" id="test2" ex:itemType="example" ex:headerRow="true">
+<col ex:property="label"></col>
+<col ex:property="syntax" ex:hrefProperty="link"></col>
+<col ex:property="getter"></col>
+<col ex:property="loc"></col>
+<tbody>
+<tr><th>title</th><th>title2</th><th>title3</th></tr>
+<tr><td>inline HTML table</td><td><a href="mylink">html</a></td><td>inline</td><td>body</td></tr>
+</tbody>
+
+</table>
+
+<table id="html"  style="display:none">
+<col ex:property="label"></col>
+<col ex:property="syntax" ex:hrefProperty="link"></col>
+<col ex:property="getter"></col>
+<col ex:property="loc"></col>
+<tbody>
+<tr><th>title</th><th>title2</th><th>title3</th></tr>
+<tr><td>link to HTML table</td><td><a href="mylink">html</a></td><td>link</td><td>body</td></tr>
+</tbody>
+</table>
+
+</body>
+</html>
+
