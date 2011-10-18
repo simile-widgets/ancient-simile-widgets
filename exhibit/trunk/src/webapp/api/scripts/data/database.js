@@ -136,13 +136,106 @@ Exhibit.Database._Impl.prototype.removeListener = function(listener) {
 };
 
 Exhibit.Database._Impl.prototype.loadDataLinks = function(fDone) {
-    var links = SimileAjax.jQuery('link[rel="exhibit/data"]').get();
-    this._loadLinks(links, this, fDone);
+    var links = SimileAjax.jQuery('link[rel="exhibit/data"]').add('a[rel="exhibit/data"]').get();
+    var self=this;
+    var fDone2 = function () {
+	self.loadDataElements(self, fDone);
+	if (fDone) fDone();
+    }
+    this._loadLinks(links, this, fDone2);
 };
 
 Exhibit.Database._Impl.prototype.loadLinks = function(links, fDone) {
     this._loadLinks(links, this, fDone);
 };
+
+Exhibit.Database._Impl.prototype.loadDataElements = function(database, fDone) {
+//to load inline exhibit data
+    var findFunction = function (s) {
+	//redundant with loadlinks, but I don't want to mess with that yet
+	if (typeof (s)  == "string") {
+	    if (s in Exhibit) {
+		s = Exhibit[s];
+            } else {
+		try {
+                    s = eval(s);
+		} catch (e) {
+                    s = null;
+                    // silent
+		}
+	    }
+	}
+	return s;
+    }
+
+    var url=window.location.href;
+
+    var loadElement = function(element) {
+	var e=SimileAjax.jQuery(element);
+	var content=e.html();
+	if (content) {
+	    if (!e.attr('href')) {e.attr('href',url)} //some parsers check this
+            var type = Exhibit.getAttribute(element,"type");
+            if (type == null || type.length == 0) {
+		type = "application/json";
+            }
+            var importer = Exhibit.importers[type];
+
+	    var parser=findFunction(Exhibit.getAttribute(element,'parser'))
+		|| (importer && importer.parse);
+	    if (parser) {
+		var o=null;
+		try {
+		o=parser(content,element,url);
+		} catch(e) {
+			SimileAjax.Debug.exception(e, "Error parsing Exhibit data from " + url);
+		}
+		if (o != null) {
+		    try {
+			database.loadData(o, Exhibit.Persistence.getBaseURL(url));
+			e.hide(); //if imported, don't want original
+ 		    } catch (e) {
+			SimileAjax.Debug.exception(e, "Error loading Exhibit data from " + url);
+		    }
+		}
+	    } else {
+		SimileAjax.Debug.log("No parser for data of type " + type);
+            }
+	}
+    }
+
+    var safeLoadElement = function () {
+	//so one bad data element won't prevent others loading.
+	try {
+	    loadElement(this);
+	}
+	catch (e) {
+	}
+    }
+
+    var elements;
+    try {
+	elements=SimileAjax.jQuery('[ex\\:role="data"]');
+    } catch (e) {
+	//jquery in IE7 can't handle a namespaced attribute
+	//so find data elements by brute force
+	elements=$('*').filter(function(){
+	    var attrs = this.attributes;
+	    for (i=0; i<attrs.length; i++) {
+		if ((attrs[i].nodeName=='ex:role') &&
+		    (attrs[i].nodeValue=='data'))
+		    return true;
+	    }
+	    return false;
+	});
+    }
+
+    elements.each(safeLoadElement);
+    
+    if (fDone != null) {
+        fDone();
+    }
+}
 
 Exhibit.Database._Impl.prototype.loadSubmissionLinks = function(fDone) {
     var db = this;
@@ -186,35 +279,109 @@ Exhibit.Database._Impl.prototype.loadSubmissionLinks = function(fDone) {
 };
 
 
-Exhibit.Database._Impl.defaultFetch = function(link, database, cont, parser) {
+Exhibit.Database._Impl.defaultGetter = function(link, database, parser, cont) {
     var url = typeof link == "string" ? link : link.href;
     url = Exhibit.Persistence.resolveURL(url);
 
-    var fError = function(statusText, status, xmlhttp) {
+    var fError = function() {
         Exhibit.UI.hideBusyIndicator();
         Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
         if (cont) cont();
     };
-    
-    var fDone = function(xmlhttp) {
+
+    var fDone = function(content) {
         Exhibit.UI.hideBusyIndicator();
-	var o = parser(link, database, xmlhttp.responseText, url)
+
+	if (url.indexOf('#') >= 0) {
+	    //the fragment is assumed to _contain_ the data
+	    //so we return what is _inside_ the fragment tag
+	    //which might not be html
+	    //this simplifies parsing for non-html formats 
+	    var fragment=url.match(/(#.*)/)[1];
+	    content=SimileAjax.jQuery("<div>" + content + "</div>").find(fragment).html(); 
+	}
+
+	var o;
+	try {
+	    o=parser(content, link, url);
+	} catch(e) {
+	    SimileAjax.Debug.log(e, "Error parsing Exhibit data from " + url);
+	    //absorb the error but continue
+	}
 	if (o != null) {
 	    try {
 		database.loadData(o, Exhibit.Persistence.getBaseURL(url));
  	    } catch (e) {
-		SimileAjax.Debug.exception(e, "Error loading Exhibit JSON data from " + url);
+		SimileAjax.Debug.log(e, "Error loading Exhibit data from " + url);
+		//absorb the rror but continue
 	    }
 	}
         if (cont) cont();
     };
 
     Exhibit.UI.showBusyIndicator();
-    SimileAjax.XmlHttp.get(url, fError, fDone);
+//    SimileAjax.XmlHttp.get(url, fError, fDone);
+    SimileAjax.jQuery.ajax({url: url, dataType: "text",
+			    success: fDone, error: fError});
 };
 
+Exhibit.Database._Impl.prototype.findLoader =function(elt) {
+    var findFunction = function (s) {
+	if (typeof (s)  == "string") {
+	    if (s in Exhibit) {
+		s = Exhibit[s];
+            } else {
+		try {
+                    s = eval(s);
+		} catch (e) {
+                    s = null;
+                    // silent
+		}
+	    }
+	}
+	return s;
+    }
+    var type = Exhibit.getAttribute(link,'type');
+    if (type == null || type.length == 0) {
+        type = "application/json";
+    }
+
+    var importer = Exhibit.importers[type];
+    var parser=findFunction(Exhibit.getAttribute(link,'parser'))
+	|| (importer && importer.parse);
+    var getter=findFunction(Exhibit.getAttribute(link,'getter'))
+	|| (importer && importer.getter)
+	|| Exhibit.Database._Impl.defaultGetter;
+    if (parser) {
+	return function(link, database, fNext) {
+	    (getter)(link, database, parser, fNext);
+	}
+    }
+    else if (importer) {
+	return importer.load;
+    }
+    else {
+	return null
+    }
+}
 
 Exhibit.Database._Impl.prototype._loadLinks = function(links, database, fDone) {
+    var findFunction = function (s) {
+	if (typeof (s)  == "string") {
+	    if (s in Exhibit) {
+		s = Exhibit[s];
+            } else {
+		try {
+                    s = eval(s);
+		} catch (e) {
+                    s = null;
+                    // silent
+		}
+	    }
+	}
+	return s;
+    }
+
     links = [].concat(links);
     var fNext = function() {
         while (links.length > 0) {
@@ -225,14 +392,17 @@ Exhibit.Database._Impl.prototype._loadLinks = function(links, database, fDone) {
             }
 
             var importer = Exhibit.importers[type];
-            if (importer) {
-		if (importer.parse) {
-		    (importer.fetch || Exhibit.Database._Impl.defaultFetch)(
-			link, database, fNext, importer.parse);
-		}
-		else {
-		    importer.load(link, database, fNext);
-		}
+	    var parser=findFunction(Exhibit.getAttribute(link,'parser'))
+		|| (importer && importer.parse);
+	    var getter=findFunction(Exhibit.getAttribute(link,'getter'))
+		|| (importer && importer.getter)
+		|| Exhibit.Database._Impl.defaultGetter;
+            if (parser) {
+		(getter)(link, database, parser, fNext);
+		return;
+	    }
+	    else if (importer) {
+		importer.load(link, database, fNext);
 		return;
             } else {
                 SimileAjax.Debug.log("No importer for data of type " + type);
@@ -524,7 +694,7 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
         
         
         var isArray = function(obj) {
-           if (obj.constructor.toString().indexOf("Array") == -1)
+            if (!obj || (obj.constructor.toString().indexOf("Array") == -1))
               return false;
            else
               return true;

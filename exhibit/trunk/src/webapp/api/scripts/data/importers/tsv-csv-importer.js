@@ -39,14 +39,14 @@ Exhibit.importers["text/csv"] = Exhibit.CsvImporter;
 Exhibit.importers["text/tab-separated-values"] = Exhibit.TsvImporter;
 Exhibit.importers["text/tsv"] = Exhibit.TsvImporter;
 
-Exhibit.TsvImporter.parse = function(link, database, content, url) {
-    return Exhibit.TsvCsvImporter.parse(link, database, content, url, "\t")
+Exhibit.TsvImporter.parse = function(content, link, url) {
+    return Exhibit.TsvCsvImporter.parse(content, link, url, "\t")
 }
-Exhibit.CsvImporter.parse = function(link, database, content, url) {
-    return Exhibit.TsvCsvImporter.parse(link, database, content, url, ",")
+Exhibit.CsvImporter.parse = function(content, link, url) {
+    return Exhibit.TsvCsvImporter.parse(content, link, url, ",")
 }
 
-Exhibit.TsvCsvImporter.parse = function(link, database, content, url, separator) {
+Exhibit.TsvCsvImporter.parse = function(content, link, url, separator) {
     var url=link;
     var hasColumnTitles=true;
     var expressionString=null;
@@ -60,17 +60,18 @@ Exhibit.TsvCsvImporter.parse = function(link, database, content, url, separator)
 	    hasColumnTitles = Exhibit.getAttribute(link, "hasColumnTitles");
 	}
     }
+    var valueSeparator=Exhibit.getAttribute(link,"valueSeparator");
 
     var o = null;
     try {
-        o = Exhibit.TsvCsvImporter._parseInternal(content, separator, expressionString, hasColumnTitles); //text is converted to Exhibit JSON
+        o = Exhibit.TsvCsvImporter._parseInternal(content, separator, expressionString, hasColumnTitles, valueSeparator); //text is converted to Exhibit JSON
     } catch (e) {
 	SimileAjax.Debug.exception(e, "Error parsing tsv/csv from " + url);
     }
     return o;
 }
 
-Exhibit.TsvCsvImporter._parseInternal = function(text, separator, expressionString, hasColumnTitles) {
+Exhibit.TsvCsvImporter._parseInternal = function(text, separator, expressionString, hasColumnTitles, valueSeparator) {
     var data = Exhibit.TsvCsvImporter.CsvToArray(text, separator);
     var exprs= null;
     var propNames = [];
@@ -97,8 +98,11 @@ Exhibit.TsvCsvImporter._parseInternal = function(text, separator, expressionStri
     for (i=0; i<data.length; i++) {
 	var row=data[i];
 	var item={};
-	var len=row.length > exprs.length ? rows.length : exprs.length;
+	var len=row.length > exprs.length ? row.length : exprs.length;
 	for (j=0; j<len; j++) {
+	    if (valueSeparator && (row[j].indexOf(valueSeparator) >= 0)) {
+		row[j]=row[j].split(valueSeparator);
+	    }
 	    item[propNames[j]]=row[j];
 	}
 	items.push(item);
@@ -109,10 +113,11 @@ Exhibit.TsvCsvImporter._parseInternal = function(text, separator, expressionStri
 
 Exhibit.TsvCsvImporter.CsvToArray =function(text,separator){
     var i;
+    text = text.replace(/\r\n/g,"\n"); //handle IE newline convention
     if (text.indexOf('"') < 0) { 
 	//fast case: no quotes
 	var lines=text.split('\n');
-	for (i=1; i<lines.length; i++) {
+	for (i=0; i<lines.length; i++) {
 	    lines[i]=lines[i].split(separator);
 	} 
 	return lines;
@@ -189,140 +194,4 @@ Exhibit.TsvCsvImporter.CsvToArray =function(text,separator){
 	records.push(fields);
     }
 return records;
-}
-
-
-//OLD CODE; not in use
-
-
-Exhibit.TsvCsvImporter._parseInternalOld = function(text, separator, expressionString, hasColumnTitles) {
-    var lines = text.split("\n");
-    var rest; //array containing the data excluding the column titles
-    
-    var hasPropertyListAttribute = expressionString!=null; //boolean that is false unless the ex:properties attribute is specified
-    var exString;
-    var propertyRow;
-    
-    if (hasPropertyListAttribute){ //if the data is in tsv format, the comma-separated list of the ex:properties attribute must become a tab-separated string 
-	exString = Exhibit.TsvCsvImporter.replaceAll(expressionString, ",", separator)
-    }
-    
-    if (hasPropertyListAttribute){ //if the ex:properties attribute is specified, the string becomes the column header row
-        propertyRow = exString.split(separator);
-        if(hasColumnTitles=="false"){ 
-	    rest = lines;
-	}else{ //if there is a header row in the data file, the first row must be removed and the list of property names given in ex:properties will override it
-            rest = lines.slice(1);
-        }
-    }else{
-        if (hasColumnTitles=="false"){ //if there is no header row in the file and no ex:properties attribute is specified, the user is notified that the column names are required
-	    alert("No header row was given for the property names. Either specify them in the ex:properties attribute or add a header row to the file.");
-            return;
-	}
-	else{
-            propertyRow = lines[0].split(separator);
-            rest = lines.slice(1);
-        }
-    }
-    
-    while (rest[rest.length-1]==""){ //removes empty rows at the end
-	rest = rest.slice(0,rest.length-1);
-    } 
-    var properties = Exhibit.TsvCsvImporter.getProperties(propertyRow);
-    var items = Exhibit.TsvCsvImporter.getItems(separator, rest, propertyRow);
-
-    var json = {"properties":properties, "items":items}; //data converted to Exhibit JSON
-    return json; 
-}
-
-Exhibit.TsvCsvImporter.getProperties = function(propertyRow) { //function that parses the array of properties and returns the properties in Exhibit JSON format
-    var properties = {};
-    var valueTypes = { "text" : true, "number" : true, "item" : true, "url" : true, "boolean" : true, "date" : true };  //possible value types for the properties
-    
-    for (i = 0; i<propertyRow.length; i++){
-	var prop = propertyRow[i];
-	var type = "";
-
-	if (prop.match(":")){
-	    var t = prop.substring(prop.lastIndexOf(":") + 1);
-	    prop = prop.substring(0, prop.lastIndexOf(":"));
-	    if (t in valueTypes){
-		type = t;
-	    }else{
-		type = "text"; //if the value type that is specified is not contained in valueTypes, it is set to text
-	    }
-	}else{
-	    type = "text"; //the default value type is text
-	}
-	properties[prop] = {"valueType":type}; //each property and its corresponding valueType are added to properties object
-    }
-    return properties
-}
-
-
-Exhibit.TsvCsvImporter.getItems = function(separator, rest, propertyRow){
-    var items = [];
-    var listSeparator = ";";
-    
-    for (i = 0; i<rest.length; i++){
-	var row = rest[i].split(separator);
-	
-	if (separator==","){ //in csv data, commas within the data are escaped using double-quote characters, for example "Boston, MA" should not be split at the comma
-	    var quotes = false; //boolean that is set to true when the first double-quote is encountered
-	    for (var j = 0; j < row.length; j++){ //this for loop fixes each row if the elements were separated incorrectly due to presences of commas in the text
-		if (row[j].indexOf('"')==0 && row[j][row[j].length-1]!='"'){
-		    quotes = true;
-		    var x = j
-		    while (quotes){
-			joined = [row[x] + "," + row[x+1]];
-			row = row.slice(0,x).concat(joined, row.slice(x+2));
-			if (row[x][row[x].length-1]=='"'){
-			    quotes=false; //boolean is set to false when the ending double-quote character is found
-			}
-		    }		
-		}
-		
-	    }
-	}
-	
-	
-	if (row.length < propertyRow.length){ 
-	    while (row.length!=propertyRow.length){
-		row.push(""); //adds empty strings to the row if some of the ending property fields are missing
-	    }
-	} 
-	var item = {}; // variable that stores each item's property values
-	
-	for (var j = 0; j < propertyRow.length; j++){ 
-	    var values = row[j];
-	    
-	    values = Exhibit.TsvCsvImporter.replaceAll(values, '""', '"'); 
-	    if(values[0]=='"'){
-		values = values.slice(1);
-	    }
-	    if(values[values.length-1]=='"'){
-		values = values.slice(0,values.length-1);
-	    }
-	    
-	    var fieldValues = values.split(listSeparator); // array of field values for each property
-	    if (fieldValues.length > 1){
-		for (var k = 0; k < fieldValues.length; k++){
-		    while (fieldValues[k][0]==" "){ //removes leading white spaces from each field value
-			fieldValues[k] = fieldValues[k].slice(1);
-		    }
-		}
-	    }
-	    var property = propertyRow[j]; //retrieves the corresponding property name
-	    var fieldname = property.match(":") ? property.substring(0, property.lastIndexOf(":")): property;
-	    item[fieldname]= fieldValues; //stores the field values associated with the corresponding property in the item object
-	}
-	items.push(item); //current item is added to the end of the items array
-    }
-    return items;
-}
-
-
-Exhibit.TsvCsvImporter.replaceAll = function(string, toBeReplaced, replaceWith)	{ //function that replaces all the occurrences of "toBeReplaced" in the string with "replacedWith"
-    var regex = "/"+toBeReplaced+"/g";
-    return string.replace(eval(regex),replaceWith);
 }

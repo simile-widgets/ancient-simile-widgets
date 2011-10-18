@@ -132,50 +132,25 @@ Exhibit.XMLImporter.configure = function(link) {
 	
     return configuration;
 }
-																		
-Exhibit.XMLImporter.load = function (link,database,cont) {
+
+Exhibit.XMLImporter.parse = function(content, link, url) {
     var self = this;
-    var url = typeof link == "string" ? link : link.href;
     var configuration;
 
     try {
-	configuration = self.configure(link);
+	configuration = Exhibit.XMLImporter.configure(link);
 	url = Exhibit.Persistence.resolveURL(url);
     } catch(e) {
 	SimileAjax.Debug.exception(e, "Error configuring XML importer for " + url);
 	return;
     }
 
-    var fError = function(xmlhttp, statusText, error) {
-        Exhibit.UI.hideBusyIndicator();
-	if (statusText == "parsererror") {
-	    Exhibit.UI.showHelp("Invalid XML at " + url);
-	}
-	else {
-            Exhibit.UI.showHelp(Exhibit.l10n.failedToLoadDataFileMessage(url));
-	}
-        if (cont) cont();
-    };
-
-    var fDone = function(xmlDoc) {
-        try {
-	    var o = Exhibit.XMLImporter.getItems(xmlDoc,configuration);
-            database.loadData({items: o}, Exhibit.Persistence.getBaseURL(url));
-        } catch (e) {
-            SimileAjax.Debug.exception(e, "Error loading data from " + url);
-        } finally {
-            Exhibit.UI.hideBusyIndicator();
-            if (cont) cont();
-        }
-    };
-	
-    Exhibit.UI.showBusyIndicator();
-    SimileAjax.jQuery.ajax({ url: url,
-			     type: 'GET',
-			     dataType: 'xml',
-			     async: false, //Need this due to failure of getting XMLDoc from server
-			     success: fDone,
-			     error: fError
-			  });
-}	
-						  
+    try {
+	var xmlDoc=SimileAjax.jQuery.parseXML(content);
+	var o = Exhibit.XMLImporter.getItems(xmlDoc,configuration);
+	return {items: o};
+    } catch (e) {
+        SimileAjax.Debug.exception(e, "Error parsing XML data from " + url);
+	return null;
+    }	
+}
