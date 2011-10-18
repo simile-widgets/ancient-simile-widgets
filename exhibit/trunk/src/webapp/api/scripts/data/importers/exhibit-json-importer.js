@@ -7,7 +7,7 @@ Exhibit.ExhibitJSONImporter = {
 };
 Exhibit.importers["application/json"] = Exhibit.ExhibitJSONImporter;
 
-Exhibit.ExhibitJSONImporter.parse= function(link, database, content, url) {
+Exhibit.ExhibitJSONImporter.parse= function(content, link, url) {
     var o = null;
     try {
         o = eval("(" + content + ")");
@@ -29,7 +29,7 @@ Exhibit.ExhibitJSONImporter.load = function(link, database, cont) {
     
     var fDone = function(xmlhttp) {
         Exhibit.UI.hideBusyIndicator();
-	var o=Exhibit.JSONImporter.parse(link, database, xmlhttp.responseText, url);
+	var o=Exhibit.JSONImporter.parse(xmlhttp.responseText, link, url);
 	if (o != null) {
 	    try {
 		database.loadData(o, Exhibit.Persistence.getBaseURL(url));

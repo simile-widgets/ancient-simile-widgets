@@ -14,6 +14,14 @@ Exhibit.importers["application/jsonp"] = Exhibit.JSONPImporter;
 // so that even partial static JSONP implementations (with a fixed callback
 // name) can assign that variable with the return value, and things will
 // work out, as much as they can (i e concurrent requests can get mixed up).
+
+Exhibit.JSONPImporter.getter = function(link, database, parser, cont) {
+    var fConvert=function(json,url,link) {
+	parser(json,link,url);
+    }
+    Exhibit.JSONPImporter.load(link, database, cont, fConvert);
+}
+
 Exhibit.JSONPImporter.load = function(
     link, database, cont, fConvert, staticJSONPCallback, charset
 ) {
