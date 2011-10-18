@@ -46,14 +46,9 @@
     var scriptURLs = [];
     var cssURLs = [];
         
-    if (Exhibit.MapExtension.params.service == "google") {
-        if (Exhibit.params.gmapkey) {
-            scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.params.gmapkey);
-        } else if (Exhibit.MapExtension.params.gmapkey) {
-            scriptURLs.push("http://maps.google.com/maps?file=api&v=2&key=" + Exhibit.MapExtension.params.gmapkey);
-        } else if (!("GMap2" in window)) {
-            scriptURLs.push("http://maps.google.com/maps?file=api&v=2");
-        }
+    if ((Exhibit.MapExtension.params.service == "google") &&
+	!("google" in window && "maps" in window.google)) {
+	scriptURLs.push("http://maps.googleapis.com/maps/api/js?sensor=false");
     } else if (Exhibit.MapExtension.params.service == "openlayers") {
 	scriptURLs.push("http://www.openlayers.org/api/OpenLayers.js");
         scriptURLs.push("http://www.openstreetmap.org/openlayers/OpenStreetMap.js");
