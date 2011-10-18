@@ -9,6 +9,7 @@ Exhibit.MapView = function(containerElmt, uiContext) {
     this._div = containerElmt;
     this._uiContext = uiContext;
 
+    this._overlays=[];
     this._settings = {};
     this._accessors = {
         getProxy:    function(itemID, database, visitor) { visitor(itemID); },
@@ -267,6 +268,7 @@ Exhibit.MapView.lookupLatLng = function(set, addressExpressionString, outputProp
 Exhibit.MapView.prototype.dispose = function() {
     this._uiContext.getCollection().removeListener(this._listener);
     
+    this._clearOverlays();
     this._map = null;
     
     if (this._selectListener != null) {
@@ -365,38 +367,45 @@ Exhibit.MapView.prototype._constructGMap = function(mapDiv) {
     if (settings.mapConstructor != null) {
         return settings.mapConstructor(mapDiv);
     } else {
-        var map = new GMap2(mapDiv);
+	var mapOptions={
+	    center: new google.maps.LatLng(settings.center[0],settings.center[1]),
+	    zoom: settings.zoom,
+	    panControl: true,
+	    zoomControl: {style: google.maps.ZoomControlStyle.DEFAULT},
+	    mapTypeId: google.maps.MapTypeId.ROADMAP,
+	}
+	if (settings.size == "small")
+	    mapOptions.zoomControl.style = google.maps.ZoomControlStyle.SMALL;
+	else if (settings.size == "large")
+	    mapOptions.zoomControl.style = google.maps.ZoomControlStyle.LARGE;
 
-        map.setCenter(new GLatLng(settings.center[0], settings.center[1]), settings.zoom);
+	if ("overviewControl" in settings)
+	    mapOptions.overviewControl = settings.overviewControl;
+
+	if ("scaleControl" in settings)
+	    mapOptions.scaleControl = settings.scaleControl;
+	    
+
+
+   
+	if ("scrollWheelZoom" in settings && !settings.scrollWheelZoom)
+	    mapOptions.scrollWheel=false;
         
-        map.addControl(settings.size == "small" ? new GSmallMapControl() : new GLargeMapControl());
-        if (settings.overviewControl) {
-            map.addControl(new GOverviewMapControl);
-        }
-        if (settings.scaleControl) {
-            map.addControl(new GScaleControl());
-        }
-        
-        map.enableDoubleClickZoom();
-        map.enableContinuousZoom();
-        if (settings.scrollWheelZoom) {
-            map.enableScrollWheelZoom();
-        }
-        
-        map.addControl(new GMapTypeControl());
         switch (settings.type) {
-        case "normal":
-            map.setMapType(G_NORMAL_MAP);
-            break;
         case "satellite":
-            map.setMapType(G_SATELLITE_MAP);
+            mapOptions.mapTypeId=goole.maps.MapTypeId.SATELLITE;
             break;
         case "hybrid":
-            map.setMapType(G_HYBRID_MAP);
+            mapOptions.mapTypeId=goole.maps.MapTypeId.HYBRID;
+            break;
+        case "terrain":
+            mapOptions.mapTypeId=goole.maps.MapTypeId.TERRAIN;
             break;
         }
-        
-        GEvent.addListener(map, "click", function() {
+
+        var map = new google.maps.Map(mapDiv,mapOptions);
+
+        google.maps.event.addListener(map, "click", function() {
             SimileAjax.WindowManager.cancelPopups();
         });
         
@@ -442,8 +451,18 @@ Exhibit.MapView.prototype._createIconMarkerGenerator = function() {
     };
 };
 
+Exhibit.MapView.prototype._clearOverlays = function() {
+    if (this._infoWindow) {
+	this._infoWindow.setMap(null);
+    }
+    for (var i=0; i<this._overlays.length; i++) {
+	this._overlays[i].setMap(null);
+    }
+    this._overlays=[];
+}
+
 Exhibit.MapView.prototype._reconstruct = function() {
-    this._map.clearOverlays();
+    this._clearOverlays();
     this._dom.legendWidget.clear();
     this._itemIDToMarker = {};
     
@@ -475,8 +494,8 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
     var hasPolylines = (accessors.getPolyline != null);
     
     var makeLatLng = settings.latlngOrder == "latlng" ? 
-        function(first, second) { return new GLatLng(first, second); } :
-        function(first, second) { return new GLatLng(second, first); };
+        function(first, second) { return new google.maps.LatLng(first, second); } :
+        function(first, second) { return new google.maps.LatLng(second, first); };
     
     currentSet.visit(function(itemID) {
         var latlngs = [];
@@ -555,7 +574,7 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
     var addMarkerAtLocation = function(locationData) {
         var itemCount = locationData.items.length;
         if (!bounds) {
-            bounds = new GLatLngBounds();
+            bounds = new google.maps.LatLngBounds();
         }
         
         var shape = self._settings.shape;
@@ -578,8 +597,10 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         if (hasIconKey) {
             icon = self._iconCoder.translateSet(locationData.iconKeys, iconCodingFlags);
         }
-        
-        var icon = Exhibit.MapView._makeIcon(
+      
+	var point= new google.maps.LatLng(locationData.latlng.lat, locationData.latlng.lng);
+        var marker = Exhibit.MapView._makeMarker(
+	    point,
             shape, 
             color, 
             iconSize,
@@ -587,21 +608,21 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
             icon,
             self._settings
         );
-        
-        var point = new GLatLng(locationData.latlng.lat, locationData.latlng.lng);
-        var marker = new GMarker(point, icon);
+        marker.setMap(self._map);
+	self._overlays.push(marker);
+	
         if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
             maxAutoZoom = locationData.latlng.maxAutoZoom;
         }
         bounds.extend(point);
         
-        GEvent.addListener(marker, "click", function() { 
-            marker.openInfoWindow(self._createInfoWindow(locationData.items));
+        google.maps.event.addListener(marker, "click", function() { 
+	    self._showInfoWindow(locationData.items,null,marker)
+	    
             if (self._selectListener != null) {
                 self._selectListener.fire({ itemIDs: locationData.items });
             }
         });
-        self._map.addOverlay(marker);
         
         for (var x = 0; x < locationData.items.length; x++) {
             self._itemIDToMarker[locationData.items[x]] = marker;
@@ -720,7 +741,15 @@ Exhibit.MapView.prototype._plotPolygon = function(itemID, polygonString, color, 
     if (coords.length > 1) {
         var settings = this._settings;
         var borderColor = settings.borderColor != null ? settings.borderColor : color;
-        var polygon = new GPolygon(coords, borderColor, settings.borderWidth, settings.borderOpacity, color, settings.opacity);
+	
+	var polygon = new google.maps.Polygon({
+	    paths: coords,
+	    strokeColor: borderColor,
+	    strokeWeight: settings.borderWidth,
+	    strokeOpacity: settings.borderOpacity,
+	    fillColor: color,
+	    fillOpacity: opacity
+	});
         
         return this._addPolygonOrPolyline(itemID, polygon);
     }
@@ -732,26 +761,31 @@ Exhibit.MapView.prototype._plotPolyline = function(itemID, polylineString, color
     if (coords.length > 1) {
         var settings = this._settings;
         var borderColor = settings.borderColor != null ? settings.borderColor : color;
-        var polyline = new GPolyline(coords, borderColor, settings.borderWidth, settings.borderOpacity);
+	var polyline = new google.maps.Polyline({
+	    path: coords,
+	    strokeColor: borderColor,
+	    strokeWidth: settings.borderWidth,
+	    strokeOpacity: settings.borderOpacity
+	});
+
         return this._addPolygonOrPolyline(itemID, polyline);
     }
     return null;
 };
 
 Exhibit.MapView.prototype._addPolygonOrPolyline = function(itemID, poly) {
-    this._map.addOverlay(poly);
+    poly.setMap(this._map);
+    this._overlays.push(poly);
     
     var self = this;
     var onclick = function(latlng) {
-        self._map.openInfoWindow(
-            latlng,
-            self._createInfoWindow([itemID])
-        );
+	self._showInfoWindow([itemID],latlng);
+
         if (self._selectListener != null) {
             self._selectListener.fire({ itemIDs: [itemID] });
         }
     }
-    GEvent.addListener(poly, "click", onclick);
+    google.maps.event.addListener(poly, "click", onclick);
     
     this._itemIDToMarker[itemID] = poly;
     
@@ -774,9 +808,20 @@ Exhibit.MapView.prototype._select = function(selection) {
     var itemID = selection.itemIDs[0];
     var marker = this._itemIDToMarker[itemID];
     if (marker) {
-        marker.openInfoWindow(this._createInfoWindow([ itemID ]));
+	this._showInfoWindow([itemID],null,marker)
     }
 };
+
+Exhibit.MapView.prototype._showInfoWindow = function(items, pos, marker) {
+    if (this._infoWindow) 
+	this._infoWindow.setMap(null);
+    var window = new google.maps.InfoWindow({
+	content: this._createInfoWindow(items)
+    });
+    if (pos) window.setPosition(pos);
+    window.open(this._map, marker);
+    this._infoWindow = window;
+}
 
 Exhibit.MapView.prototype._createInfoWindow = function(items) {
     return Exhibit.ViewUtilities.fillBubbleWithItems(
@@ -790,7 +835,7 @@ Exhibit.MapView._iconData = null;
 Exhibit.MapView._markerUrlPrefix = "http://service.simile-widgets.org/painter/painter?";
 Exhibit.MapView._defaultMarkerShape = "circle";
 
-Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, settings) {
+Exhibit.MapView._makeMarker = function(position, shape, color, iconSize, label, iconURL, settings) {
     var extra = label.length * 3;
     var halfWidth = Math.ceil(settings.shapeWidth / 2) + extra;
     var bodyHeight = settings.shapeHeight;
@@ -803,7 +848,6 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
         bodyHeight = iconSize;
         settings.pin = false;
     }   
-    var icon = new GIcon();
     var imageParameters = [
         "renderer=map-marker",
         "shape=" + shape,
@@ -836,6 +880,12 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
             imageParameters.push("iconY=" + settings.iconOffsetY);
         }
     }
+
+    var size = new google.maps.Size(width, height);
+    var scaledSize = new google.maps.Size(width*1.5, height-2);
+    var markerShape={type: 'poly'};
+    var markerImage={size:size};
+    var shadowImage={size:size, scaledSize: scaledSize};
     
     if (settings.pin) {
         var pinHeight = settings.pinHeight;
@@ -846,8 +896,8 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
         pinParameters.push("pinHeight=" + pinHeight);
         pinParameters.push("pinWidth=" + (pinHalfWidth * 2));
         
-        icon.iconAnchor = new GPoint(halfWidth, height);
-        icon.imageMap = [ 
+        markerImage.anchor = new google.maps.Point(halfWidth, height);
+	markerShape.coords = [
             0, 0, 
             0, bodyHeight, 
             halfWidth - pinHalfWidth, bodyHeight,
@@ -856,25 +906,27 @@ Exhibit.MapView._makeIcon = function(shape, color, iconSize, label, iconURL, set
             width, bodyHeight,
             width, 0
         ];
-        icon.shadowSize = new GSize(width * 1.5, height - 2);
-        icon.infoWindowAnchor = (settings.bubbleTip == "bottom") ? new GPoint(halfWidth, height) : new GPoint(halfWidth, 0);
     } else {
         pinParameters.push("pin=false");
         
-        icon.iconAnchor = new GPoint(halfWidth, Math.ceil(height / 2));
-        icon.imageMap = [ 
+        markerImage.anchor = new google.maps.Point(halfWidth, Math.ceil(height / 2));
+        markerShape.coords = [ 
             0, 0, 
             0, bodyHeight, 
             width, bodyHeight,
             width, 0
         ];
-        icon.infoWindowAnchor = new GPoint(halfWidth, 0);
     }
     
-    icon.image = Exhibit.MapView._markerUrlPrefix + imageParameters.concat(pinParameters).join("&") + "&.png";
-    if (iconSize == 0) { icon.shadow = Exhibit.MapView._markerUrlPrefix + shadowParameters.concat(pinParameters).join("&") + "&.png"; }
-    icon.iconSize = new GSize(width, height);
-    icon.shadowSize = new GSize(width * 1.5, height - 2);
+    markerImage.url = Exhibit.MapView._markerUrlPrefix + imageParameters.concat(pinParameters).join("&") + "&.png";
+    if (iconSize == 0) { shadowImage.url = Exhibit.MapView._markerUrlPrefix + shadowParameters.concat(pinParameters).join("&") + "&.png"; }
     
-    return icon;
+
+    var marker = new google.maps.Marker(
+	{icon: markerImage,
+	 shape: markerShape,
+	 shadow: shadowImage,
+	 position: position
+	});
+    return marker;
 };
