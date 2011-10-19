@@ -70,6 +70,7 @@
                 <div ex:role="coordinator" id="president"></div>
                 
                 <div ex:role="view"
+                    ex:formats="date { mode: medium; show: date }"
                     ex:viewClass="Timeline"
                     ex:label="Terms"
                     ex:proxy=".presidency"
@@ -85,15 +86,18 @@
                     >
                 </div>
                     
-                <div ex:role="viewPanel" ex:initialView="0">
+                <div ex:role="viewPanel" ex:initialView="0"                         ex:formats="date { mode: medium; show: date }"
+>
                     <div class="map-lens" ex:role="lens" style="display: none;">
                         <div><img ex:src-content=".imageURL" /></div>
-                        <span ex:content=".label"></span><br/>
-                        <span ex:content=".birthPlace"></span>, <span ex:content=".birth"></span>
+                        <div ex:content=".label"></div>
+                        <div ex:content=".birthPlace"></div>
+			<div ex:content=".birth"></div>
                     </div>
                     <div ex:role="view"
                         ex:viewClass="Map"
                         ex:label="Birth Places with Photos"
+			ex:mapHeight="430"
                         ex:latlng=".birthLatLng"
                         ex:center="38.479394673276445, -115.361328125"
                         ex:zoom="3"
