@@ -379,7 +379,7 @@ this._loadLinks(links,this,fDone2);
 };
 Exhibit.Database._Impl.prototype.loadLinks=function(links,fDone){this._loadLinks(links,this,fDone);
 };
-Exhibit.Database._Impl.prototype.loadDataElements=function(database,fDone){var findFunction=function(s){if(typeof (s)=="string"){if(s in Exhibit){s=Exhibit[s];
+Exhibit.Database._Impl.prototype.loadDataElements=function(database){var findFunction=function(s){if(typeof (s)=="string"){if(s in Exhibit){s=Exhibit[s];
 }else{try{s=eval(s);
 }catch(e){s=null;
 }}}return s;
@@ -411,8 +411,7 @@ i++){if((attrs[i].nodeName=="ex:role")&&(attrs[i].nodeValue=="data")){return tru
 }}return false;
 });
 }elements.each(safeLoadElement);
-if(fDone!=null){fDone();
-}};
+};
 Exhibit.Database._Impl.prototype.loadSubmissionLinks=function(fDone){var db=this;
 var dbProxy={loadData:function(o,baseURI){if("types" in o){db.loadTypes(o.types,baseURI);
 }if("properties" in o){db.loadProperties(o.properties,baseURI);
