@@ -149,8 +149,9 @@ Exhibit.Database._Impl.prototype.loadLinks = function(links, fDone) {
     this._loadLinks(links, this, fDone);
 };
 
-Exhibit.Database._Impl.prototype.loadDataElements = function(database, fDone) {
+Exhibit.Database._Impl.prototype.loadDataElements = function(database) {
 //to load inline exhibit data
+//unlike loadlinks, this is synchronous, so no fDone continuation.
     var findFunction = function (s) {
 	//redundant with loadlinks, but I don't want to mess with that yet
 	if (typeof (s)  == "string") {
@@ -232,9 +233,6 @@ Exhibit.Database._Impl.prototype.loadDataElements = function(database, fDone) {
 
     elements.each(safeLoadElement);
     
-    if (fDone != null) {
-        fDone();
-    }
 }
 
 Exhibit.Database._Impl.prototype.loadSubmissionLinks = function(fDone) {
