@@ -370,7 +370,7 @@ Exhibit.MapView.prototype._constructGMap = function(mapDiv) {
 	    zoom: settings.zoom,
 	    panControl: true,
 	    zoomControl: {style: google.maps.ZoomControlStyle.DEFAULT},
-	    mapTypeId: google.maps.MapTypeId.ROADMAP,
+	    mapTypeId: google.maps.MapTypeId.ROADMAP
 	}
 	if (settings.size == "small")
 	    mapOptions.zoomControl.style = google.maps.ZoomControlStyle.SMALL;
@@ -391,13 +391,13 @@ Exhibit.MapView.prototype._constructGMap = function(mapDiv) {
         
         switch (settings.type) {
         case "satellite":
-            mapOptions.mapTypeId=goole.maps.MapTypeId.SATELLITE;
+            mapOptions.mapTypeId=google.maps.MapTypeId.SATELLITE;
             break;
         case "hybrid":
-            mapOptions.mapTypeId=goole.maps.MapTypeId.HYBRID;
+            mapOptions.mapTypeId=google.maps.MapTypeId.HYBRID;
             break;
         case "terrain":
-            mapOptions.mapTypeId=goole.maps.MapTypeId.TERRAIN;
+            mapOptions.mapTypeId=google.maps.MapTypeId.TERRAIN;
             break;
         }
 
