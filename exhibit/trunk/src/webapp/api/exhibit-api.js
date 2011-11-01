@@ -27,18 +27,18 @@
     }
 
     var loadMe = function() {
-        if (typeof window.Exhibit != "undefined") {
+        if (window.Exhibit && window.Exhibit.loaded) {
             return;
         }
-    
-        window.Exhibit = {
-            version:    "2.3.0",
-            loaded:     false,
-            params:     { bundle: !useLocalResources, authenticated: !noAuthentication, autoCreate: true, safe: false },
-            namespace:  "http://simile.mit.edu/2006/11/exhibit#",
-            importers:  {},
-            locales:    [ "en" ]
-        };
+	
+	window.Exhibit = window.Exhibit || {};
+        
+        window.Exhibit.version =    "2.3.0",
+        window.Exhibit.loaded =     false,
+        window.Exhibit.params =     { bundle: !useLocalResources, authenticated: !noAuthentication, autoCreate: true, safe: false },
+        window.Exhibit.namespace =  "http://simile.mit.edu/2006/11/exhibit#",
+        window.Exhibit.importers =  {},
+        window.Exhibit.locales =    [ "en" ]
     
         var javascriptFiles = [
             "exhibit.js",
