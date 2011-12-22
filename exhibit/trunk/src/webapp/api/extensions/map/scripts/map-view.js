@@ -32,6 +32,8 @@ Exhibit.MapView = function(containerElmt, uiContext) {
         }
     };
     uiContext.getCollection().addListener(this._listener);
+
+
 };
 
 Exhibit.MapView._settingSpecs = {
@@ -67,9 +69,10 @@ Exhibit.MapView._settingSpecs = {
     "pinHeight":        { type: "int",      defaultValue: 6         },
     "pinWidth":         { type: "int",      defaultValue: 6         },
     
+//settings for polygons
     "borderOpacity":    { type: "float",    defaultValue: 0.5       },
     "borderWidth":      { type: "int",      defaultValue: 1         },
-    "borderColor":      { type: "text",     defaultValue: null      },
+    "borderColor":      { type: "text",     defaultValue: "black"   },
     "opacity":          { type: "float",    defaultValue: 0.7       },
     
     "sizeLegendLabel":  { type: "text",     defaultValue: null      },
@@ -148,7 +151,10 @@ Exhibit.MapView._accessorSpecs = [
     }
 ];
 
+
+
 Exhibit.MapView._initialize = function() {
+    
     var links = [];
     var heads = document.documentElement.getElementsByTagName("head");
     for (var h = 0; h < heads.length; h++) {
@@ -160,8 +166,13 @@ Exhibit.MapView._initialize = function() {
             }
         }
     }
+
+    var canvas=document.createElement("canvas");
+    Exhibit.MapView._hasCanvas=(canvas.getContext && canvas.getContext("2d"));
+
     Exhibit.MapView._initialize = function() {};    
 };
+
 
 Exhibit.MapView.create = function(configuration, containerElmt, uiContext) {
     var view = new Exhibit.MapView(
@@ -342,7 +353,7 @@ Exhibit.MapView.prototype._initializeUI = function() {
         this._uiContext, 
         this._settings.showSummary && this._settings.showHeader,
         {   onResize: function() { 
-                self._map.checkResize(); 
+	    google.maps.event.trigger(self._map, 'resize');
             } 
         },
         legendWidgetSettings
@@ -382,9 +393,6 @@ Exhibit.MapView.prototype._constructGMap = function(mapDiv) {
 
 	if ("scaleControl" in settings)
 	    mapOptions.scaleControl = settings.scaleControl;
-	    
-
-
    
 	if ("scrollWheelZoom" in settings && !settings.scrollWheelZoom)
 	    mapOptions.scrollWheel=false;
@@ -493,7 +501,14 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
     
     var makeLatLng = settings.latlngOrder == "latlng" ? 
         function(first, second) { return new google.maps.LatLng(first, second); } :
-        function(first, second) { return new google.maps.LatLng(second, first); };
+    function(first, second) { return new google.maps.LatLng(second, first); };
+
+    var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+    var sizeCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+    var iconCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
+    var bounds, maxAutoZoom = Infinity;
+
+
     
     currentSet.visit(function(itemID) {
         var latlngs = [];
@@ -565,10 +580,6 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         }
     });
     
-    var colorCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
-    var sizeCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
-    var iconCodingFlags = { mixed: false, missing: false, others: false, keys: new Exhibit.Set() };
-    var bounds, maxAutoZoom = Infinity;
     var addMarkerAtLocation = function(locationData) {
         var itemCount = locationData.items.length;
         if (!bounds) {
@@ -595,15 +606,20 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         if (hasIconKey) {
             icon = self._iconCoder.translateSet(locationData.iconKeys, iconCodingFlags);
         }
-      
+	
 	var point= new google.maps.LatLng(locationData.latlng.lat, locationData.latlng.lng);
+        if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
+            maxAutoZoom = locationData.latlng.maxAutoZoom;
+        }
+        bounds.extend(point);
+
         var marker = Exhibit.MapView._makeMarker(
 	    point,
             shape, 
             color, 
             iconSize,
-            itemCount == 1 ? "" : itemCount.toString(),
             icon,
+            itemCount == 1 ? "" : itemCount.toString(),
             self._settings
         );
 
@@ -614,23 +630,24 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
                 self._selectListener.fire({ itemIDs: locationData.items });
             }
         });
-
         marker.setMap(self._map);
 	self._overlays.push(marker);
 	
-        if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
-            maxAutoZoom = locationData.latlng.maxAutoZoom;
-        }
-        bounds.extend(point);
         
         for (var x = 0; x < locationData.items.length; x++) {
             self._itemIDToMarker[locationData.items[x]] = marker;
         }
     }
 
-    for (var latlngKey in locationToData) {
-        addMarkerAtLocation(locationToData[latlngKey]);
+    try {
+	for (var latlngKey in locationToData) {
+	    addMarkerAtLocation(locationToData[latlngKey]);
+	}
+    } catch(e) {
+	alert(e);
     }
+
+//create all legends for the map, one each for icons, colors, and sizes
 
     if (hasColorKey) {
         var legendWidget = this._dom.legendWidget;
@@ -678,7 +695,7 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
                 var size = sizeCoder.translate(key);
                 legendWidget.addEntry(size, key, 'size');
             }
-           } else {       
+        } else {       
             for (var k = 0; k < keys.length; k++) {
                 var key = keys[k];
                 var size = sizeCoder.translate(key);
@@ -718,6 +735,8 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
             legendWidget.addEntry(iconCoder.getMissingIcon(), iconCoder.getMissingLabel(), 'icon');
         }
     }  
+
+//recenter/zoom map on data points
     
     if (bounds  && (! settings.autoposition) && typeof settings.zoom == "undefined") {
         var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
@@ -749,7 +768,7 @@ Exhibit.MapView.prototype._plotPolygon = function(itemID, polygonString, color, 
 	    strokeWeight: settings.borderWidth,
 	    strokeOpacity: settings.borderOpacity,
 	    fillColor: color,
-	    fillOpacity: opacity
+	    fillOpacity: settings.opacity
 	});
         
         return this._addPolygonOrPolyline(itemID, polygon);
@@ -837,41 +856,163 @@ Exhibit.MapView.prototype._createInfoWindow = function(items) {
     );
 };
 
-Exhibit.MapView._iconData = null;
-Exhibit.MapView._markerUrlPrefix = "http://service.simile-widgets.org/painter/painter?";
-Exhibit.MapView._defaultMarkerShape = "circle";
 
-Exhibit.MapView._makeMarker = function(position, shape, color, iconSize, label, iconURL, settings) {
-    var extra = label.length * 3;
-    var halfWidth = Math.ceil(settings.shapeWidth / 2) + extra;
-    var bodyHeight = settings.shapeHeight;
-    var width = halfWidth * 2;
-    var height = bodyHeight;
-    if (iconSize > 0) {
-        width = iconSize;
-        halfWidth = Math.ceil(iconSize / 2);
-        height = iconSize;
-        bodyHeight = iconSize;
-        settings.pin = false;
-    }   
+Exhibit.MapView.makeCanvasIcon = function(width,height,color,label,iconImg,iconSize,settings) {
+    var drawShadow=function(icon) {
+	var width=icon.width;
+	var height=icon.height;
+	var shadowWidth=width+height;
+	var canvas=document.createElement("canvas");
+	canvas.width=shadowWidth;
+	canvas.height=height;
+	var context=canvas.getContext("2d");
+	
+	context.scale(1,1/2);
+	context.translate(height/2,height);
+	context.transform(1,0,-1/2,1,0,0);  //shear the shadow diagonally
+	context.fillRect(0,0,width,height);
+	context.globalAlpha=settings.shapeAlpha;
+	context.globalCompositeOperation="destination-in";
+	context.drawImage(icon,0,0);
+	return canvas;
+    }
+
+    var pin=settings.pin;
+    var pinWidth=settings.pinWidth;
+    var pinHeight=settings.pinHeight;
+    var lineWidth=settings.borderWidth;
+    var lineColor=settings.borderColor;
+    var alpha=settings.shapeAlpha;
+    var bodyWidth=width-lineWidth; //stroke is half outside circle on both sides
+    var bodyHeight=height-lineWidth;
+    var markerHeight=height+(pin? pinHeight:0);
+    var radius;
+
+    var canvas=document.createElement("canvas");
+    canvas.width=width;
+    canvas.height=markerHeight;
+    var context=canvas.getContext("2d");
+    context.clearRect(0,0,width,markerHeight);
+
+    context.beginPath();
+    if (settings && (settings.shape == "circle")) {
+	radius = bodyWidth/2.0;
+	if (!pin) {
+	    context.arc(width/2.0,height/2.0,radius,0,2*Math.PI);
+	}
+	else {
+	    var meetAngle = Math.atan2(pinWidth/2.0, bodyHeight/2.0);
+	    context.arc(width/2.0,height/2.0,radius,Math.PI/2+meetAngle,Math.PI/2-meetAngle);
+	    context.lineTo(width/2.0,height+pinHeight-lineWidth/2); //pin base
+	}
+    }
+    else { //"square"
+	radius = bodyWidth/4.0;
+	var topY = leftX = lineWidth/2.0;
+	var botY = height - lineWidth/2.0;
+	var rightX = width - lineWidth/2.0
+
+	context.moveTo(rightX - radius, topY);
+	context.arcTo(rightX, topY, rightX, topY + radius, radius);
+	context.lineTo(rightX, botY-radius);
+	context.arcTo(rightX, botY, rightX-radius, botY, radius);
+	if (pin) { 
+	    context.lineTo(width/2.0+pinWidth/2.0, botY);
+	    context.lineTo(width/2.0, height+pinHeight-lineWidth/2);
+	    context.lineTo(width/2.0-pinWidth/2.0, botY);
+	   }
+	context.lineTo(leftX+radius, botY);
+	context.arcTo(leftX, botY, leftX, botY-radius, radius);
+	context.lineTo(leftX, topY+radius);
+	context.arcTo(leftX, topY, leftX+radius, topY, radius);
+    }
+    context.closePath();
+
+
+    context.fillStyle=color;
+    context.globalAlpha=alpha;
+    context.fill();
+
+    if (iconImg) {
+	context.save();
+	context.clip();
+	context.globalAlpha=1;
+	context.translate(width/2+settings.iconOffsetX, 
+			  height/2+settings.iconOffsetY);
+	var scale;
+	var heightScale = 1.0*height/iconImg.naturalHeight;
+	var widthScale = 1.0* width/iconImg.naturalWidth;
+	switch(settings.iconFit) {
+	case "width":
+	    scale = widthScale;
+	    break;
+	case "height":
+	    scale = heightScale;
+	    break;
+	case "both":
+	case "larger":
+	    scale = Math.min(heightScale, widthScale);
+	    break;
+	case "smaller":
+	    scale = Math.max(heightScale, widthScale);
+	    break;
+	}	
+	context.scale(scale,scale);
+	context.scale(settings.iconScale,settings.iconScale);
+	context.drawImage(iconImg,
+			  -iconImg.naturalWidth/2.0, -iconImg.naturalHeight/2.0);
+	context.restore();
+    }
+
+    context.strokeStyle=lineColor;
+    context.lineWidth=lineWidth;
+    context.stroke();
+
+//now we have what we need to make its shadow
+    var shadow=drawShadow(canvas);
+
+//now decorate the marker's inside
+    if (label) {
+	context.font="bold 12pt Arial";
+	context.textBaseline="middle";
+	context.textAlign="center";
+	context.globalAlpha=1;
+	context.fillStyle=lineColor;
+	context.fillText(label,width/2.0,height/2.0,width/1.4);
+    }
+
+
+    return {iconURL: canvas.toDataURL(), shadowURL: shadow.toDataURL()};
+} //end MakeCanvasIcon
+
+Exhibit.MapView.makePainterIcon = function(width, height, color, label, iconURL, iconSize, settings) {
     var imageParameters = [
         "renderer=map-marker",
-        "shape=" + shape,
+        "shape=" + settings.shape,
         "alpha=" + settings.shapeAlpha,
         "width=" + width,
-        "height=" + bodyHeight,
+        "height=" + height,
         "background=" + color.substr(1),
         "label=" + label
     ];
     var shadowParameters = [
         "renderer=map-marker-shadow",
-//        "alpha=" + settings.shapeAlpha,
-        "shape=" + shape,
+        "shape=" + settings.shape,
         "width=" + width,
-        "height=" + bodyHeight
+        "height=" + height
     ];
     var pinParameters = [];
-    
+    if (settings.pin && !(iconSize > 0)) {
+        var pinHeight = settings.pinHeight;
+        var pinHalfWidth = Math.ceil(settings.pinWidth / 2);
+        
+        pinParameters.push("pinHeight=" + pinHeight);
+        pinParameters.push("pinWidth=" + (pinHalfWidth * 2));
+    }
+    else {
+	pinParameters.push("pin=false");
+    }
+
     if (iconURL != null) {
         imageParameters.push("icon=" + iconURL);
         if (settings.iconFit != "smaller") {
@@ -888,57 +1029,143 @@ Exhibit.MapView._makeMarker = function(position, shape, color, iconSize, label, 
         }
     }
 
+
+    return {
+	iconURL: Exhibit.MapView._markerUrlPrefix + imageParameters.concat(pinParameters).join("&") + "&.png",
+	shadowURL: Exhibit.MapView._markerUrlPrefix + shadowParameters.concat(pinParameters).join("&") + "&.png" 
+    }
+
+}
+
+Exhibit.MapView._markerUrlPrefix = "http://service.simile-widgets.org/painter/painter?";
+
+Exhibit.MapView.markerCache={};
+
+/*
+Two cases here are easy.  
+* If canvas isn't implemented, we need to use painter
+* If canvas is implemented and there is no image, we can easily use canvas
+
+It gets more complicated if we have canvas but need to include images.  Most of the time we can use canvas, fetching the image and drawing it on the canvas.  But if the image is from a different site, html's XSS protections may prevent us from extracting the resulting drawing.  In which case we need to revert to painter.
+
+Even worse is the need to fetch images asynchronously and only add them to the marker after they arrive.  I also want to assure that _some_ marker gets plotted even if the image is not available.  To support this, the code will start by plotting the marker without the image, but place a callback that adds the image to the marker if it is successfully fetched.  We also want to cache the resulting icon so we don't have to fetch again.
+
+*/
+
+Exhibit.MapView._makeMarker = function(position, shape, color, iconSize, iconURL, label, settings) {
+    var key = "#"+shape+"#"+color+"#"+iconSize+"#"+iconURL+"#"+label;
+    var cached = Exhibit.MapView.markerCache[key];
+    if (cached && (cached.settings == settings)) {
+	return  new google.maps.Marker(
+	{icon: cached.markerImage,
+	 shadow: cached.shadowImage,
+	 shape: cached.markerShape,
+	 position: position
+	});
+    }
+
+
+    var extra =  label.length * 3;
+    var halfWidth = Math.ceil(settings.shapeWidth / 2) + extra;
+    var bodyHeight = settings.shapeHeight+2*extra; //try to keep circular
+    var width = halfWidth * 2;
+    var height = bodyHeight;
+    var pin=settings.pin;
+
+    if (iconSize > 0) {
+        width = iconSize;
+        halfWidth = Math.ceil(iconSize / 2);
+        height = iconSize;
+        bodyHeight = iconSize;
+    }   
     var markerImage={};
     var markerShape={type: 'poly'};
     var shadowImage={};
 
-    if (settings.pin) {
+    if (pin) {
         var pinHeight = settings.pinHeight;
         var pinHalfWidth = Math.ceil(settings.pinWidth / 2);
         
         height += pinHeight;
-        
-        pinParameters.push("pinHeight=" + pinHeight);
-        pinParameters.push("pinWidth=" + (pinHalfWidth * 2));
-        
+
         markerImage.anchor = new google.maps.Point(halfWidth, height);
         shadowImage.anchor = new google.maps.Point(halfWidth, height);
 	
 	markerShape.coords = [
-            0, 0, 
-            0, bodyHeight, 
-            halfWidth - pinHalfWidth, bodyHeight,
-            halfWidth, height,
-            halfWidth + pinHalfWidth, bodyHeight,
-            width, bodyHeight,
-            width, 0
+	    0, 0, 
+	    0, bodyHeight, 
+	    halfWidth - pinHalfWidth, bodyHeight,
+	    halfWidth, height,
+	    halfWidth + pinHalfWidth, bodyHeight,
+	    width, bodyHeight,
+	    width, 0
         ];
     } else {
-        pinParameters.push("pin=false");
         
         markerImage.anchor = new google.maps.Point(halfWidth, Math.ceil(height / 2));
         shadowImage.anchor = new google.maps.Point(halfWidth, Math.ceil(height / 2));
 
         markerShape.coords = [ 
-            0, 0, 
-            0, bodyHeight, 
-            width, bodyHeight,
-            width, 0
+	    0, 0, 
+	    0, bodyHeight, 
+	    width, bodyHeight,
+	    width, 0
         ];
     }
 
     markerImage.size = new google.maps.Size(width, height);
-    shadowImage.size = new google.maps.Size(width*1.5, height);
-    
-    markerImage.url = Exhibit.MapView._markerUrlPrefix + imageParameters.concat(pinParameters).join("&") + "&.png";
-    if (iconSize == 0) { shadowImage.url = Exhibit.MapView._markerUrlPrefix + shadowParameters.concat(pinParameters).join("&") + "&.png"; }
-    
+    shadowImage.size = new google.maps.Size(width+height/2, height);
+   
+    var markerPair;
+    if ((!Exhibit.MapView._hasCanvas) || (iconURL == null)) {
+	//easy cases
+	if (!Exhibit.MapView._hasCanvas) {
+	    markerPair=Exhibit.MapView.makePainterIcon(width,bodyHeight,color,label,iconURL,iconSize,settings);
+	}
+	else {
+	    markerPair=Exhibit.MapView.makeCanvasIcon(width,bodyHeight,color,label,null,iconSize,settings);
+	}
+	markerImage.url=markerPair.iconURL;
+	shadowImage.url=markerPair.shadowURL;
 
-    var marker = new google.maps.Marker(
-	{icon: markerImage,
-	 shape: markerShape,
-	 shadow: shadowImage,
-	 position: position
-	});
-    return marker;
+	cached = Exhibit.MapView.markerCache[key] = 
+	    {markerImage: markerImage, shadowImage: shadowImage,
+	     markerShape: markerShape};
+
+    
+	return  new google.maps.Marker(
+	    {icon: cached.markerImage,
+	     shadow: cached.shadowImage,
+	     shape: cached.markerShape,
+	     position: position
+	    });
+    }
+    else {
+	//hard case: canvas needs to fetch image
+	//return a marker without the image
+	//add a callback that adds the image when available.
+	var marker = Exhibit.MapView._makeMarker(position, shape, color, iconSize, null, label, settings);
+	cached = {
+	    markerImage: marker.getIcon(),
+	    shadowImage: marker.getShadow(),
+	    markerShape: marker.getShape(),
+	    settings: settings
+	}
+	var image = new Image();
+	image.onload = function() {
+	    try {
+		cached.markerImage.url=Exhibit.MapView.makeCanvasIcon(width,bodyHeight,color,label,image,iconSize,settings).iconURL;
+	    } 
+	    catch(e) {
+		//remote icon fetch caused canvas tainting
+		cached.markerImage.url=Exhibit.MapView.makePainterIcon(width,bodyHeight,color,label,iconURL,iconSize,settings).iconURL;
+	    }
+
+	    Exhibit.MapView.markerCache[key] = cached;
+	    marker.setIcon(cached.markerImage);
+            }
+	image.src = iconURL;
+	
+	return marker;
+    }
 };

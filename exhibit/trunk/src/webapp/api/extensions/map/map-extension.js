@@ -4,9 +4,12 @@
  */
 
 (function() {
+    if (typeof(Exhibit)=="undefined") 
+	alert("cannot load extensions before Exhibit");
+
     var isCompiled = ("Exhibit_MapExtension_isCompiled" in window) && 
                     window.Exhibit_MapExtension_isCompiled;
-                    
+                
     Exhibit.MapExtension = {
         params: {
             bundle:     true,
