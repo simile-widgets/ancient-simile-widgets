@@ -4,19 +4,25 @@
 <title>
 Data Import Test
 </title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"></script>
-<script src="http://localhost:8888/ajax/api/simile-ajax-api.js?bundle=false"></script>
-<script src="http://localhost:8888/exhibit/api/exhibit-api.js?bundle=false"></script>
 <link rel="exhibit/data" href="#json" type="application/json"/>
 <link rel="exhibit/data" href="#xml" type="application/xml" ex:itemTags="item" ex:itemTypes="example"/>
 </head>
 <body>
+<script>
+//var l='http://localhost:8888/exhibit/api/exhibit-api.js?bundle=false';
+var l='http://trunk.simile-widgets.org/exhibit/api/exhibit-api.js?bundle=false';
+var s=document.createElement("script");
+s.src=l;
+document.getElementsByTagName("head")[0].appendChild(s);
+
+</script>
+
 <H1>Data Import Test</H1>
 <table>
 <tr>
 <td  style="vertical-align:top">
 This file exists to test various data loading functionalities in
-exhibit.  The table on the right should have no blank entries aside from "should be blank".  A blank entry means something didn't load.
+exhibit.  As well as experimenting with loading exhibit from the document body instead of the head.  The table on the right should have no blank entries aside from "should be blank".  A blank entry means something didn't load.
 <p>
 The page exercises both the inline data functionality (triggered by a
 ex:role=data tag in a body element, along with an ex:type to specify
