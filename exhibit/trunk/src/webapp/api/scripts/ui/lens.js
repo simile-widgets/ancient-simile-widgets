@@ -312,13 +312,14 @@ Exhibit.Lens._processTemplateNode = function(node, isXML, uiContext) {
     if (node.nodeType == 1) {
         return Exhibit.Lens._processTemplateElement(node, isXML, uiContext);
     } else {
-        return node.nodeValue;
+        return node.nodeValue || "";
     }
 };
 
 Exhibit.Lens._processTemplateElement = function(elmt, isXML, uiContext) {
     var templateNode = {
-        tag:                    elmt.tagName.toLowerCase(),
+        tag:                    elmt.tagName.toLowerCase() || "span", 
+	//a weird IE9 bug creates elements with no tag, so make one 
         uiContext:              uiContext,
         control:                null,
         condition:              null,
