@@ -26,6 +26,15 @@ if (typeof SimileAjax == "undefined") {
     };
     
     SimileAjax.findScript = function(doc, substring) {
+	var scripts=doc.documentElement.getElementsByTagName("script");
+	for (s=0; s<scripts.length;s++) {
+            var url = scripts[s].src;
+            var i = url.indexOf(substring);
+            if (i >= 0) {
+                return url;
+            }
+	}
+
         var heads = doc.documentElement.getElementsByTagName("head");
         for (var h = 0; h < heads.length; h++) {
             var node = heads[h].firstChild;
