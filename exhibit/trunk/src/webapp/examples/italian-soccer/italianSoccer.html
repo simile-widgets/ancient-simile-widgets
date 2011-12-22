@@ -1,4 +1,5 @@
- <html>
+<!DOCTYPE html>
+<html>
  <head>
     <title>Italian Soccer - Serie A Champions</title>
   
@@ -38,6 +39,11 @@
             <td ex:role="viewPanel" align="center">
 				<div ex:role="view"
 				   ex:viewClass="Map"
+				     ex:shapeWidth="50"
+				     ex:shapeHeight="50"
+				     ex:pinHeight="10"
+				     ex:iconFit="larger"
+				     ex:color="#FFFFFF"
 				   ex:latlng=".latlng"
 				   ex:center = "42,12.5"
 				   ex:zoom = "5"
@@ -51,7 +57,7 @@
 							<tr class="thumbnail"><td align="center" style="font-weight: bold" ex:content=".label"></td></tr>
 							<tr class="thumbnail"><td align="center" style="font-weight: italic; color: #888" ex:content=".City"></td></tr>
 							<tr class="thumbnail"><td  align="center" style="font-weight: italic; color: #888" ex:content=".Region"></td></tr>
-							<br>
+							<br/>
 					
 						</table>
 					</div>
