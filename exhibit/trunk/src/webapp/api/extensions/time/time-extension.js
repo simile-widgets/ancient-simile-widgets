@@ -4,9 +4,12 @@
  */
 
 (function() {
+    if (typeof(Exhibit)=="undefined") 
+	alert("cannot load extensions before Exhibit");
+
     var isCompiled = ("Exhibit_TimeExtension_isCompiled" in window) && 
                     window.Exhibit_TimeExtension_isCompiled;
-                    
+
     Exhibit.TimeExtension = {
         params: {
             bundle: true
