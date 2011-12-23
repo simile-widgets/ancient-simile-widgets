@@ -8,7 +8,7 @@ SimileAjax.HTML = new Object();
 SimileAjax.HTML._e2uHash = {};
 (function() {
     var e2uHash = SimileAjax.HTML._e2uHash;
-    e2uHash['nbsp']= '\u00A0[space]';
+    e2uHash['nbsp']= '\u00A0';
     e2uHash['iexcl']= '\u00A1';
     e2uHash['cent']= '\u00A2';
     e2uHash['pound']= '\u00A3';
