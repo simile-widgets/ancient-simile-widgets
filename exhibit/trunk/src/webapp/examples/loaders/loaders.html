@@ -9,11 +9,14 @@ Data Import Test
 </head>
 <body>
 <script>
-var l='../../api/exhibit-api.js';
-var s=document.createElement("script");
-s.src=l;
-document.getElementsByTagName("head")[0].appendChild(s);
-
+function putScript(l) {
+   var s = document.createElement("script");
+   s.src=l;
+   document.getElementsByTagName("head")[0].appendChild(s);
+}
+putScript("http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+putScript("http://trunk.simile-widgets.org/ajax/api/ajax-api.js");
+putScript("../../api/exhibit-api.js");
 </script>
 
 <H1>Exhibit Data Loading Demonstration</H1>
