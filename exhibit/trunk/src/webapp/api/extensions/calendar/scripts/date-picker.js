@@ -130,7 +130,7 @@ Exhibit.DatePickerFacet.DatePicker.prototype.buildCal = function(){
   // Build table contents
   var tr = null;
   var x, dayNum, curDate, cssClass;
-  for(i=1;i<=42;i++){
+  for(i=1;i<=35;i++){
   
     x = i - bom.start_dow;
     // Pxrevious month days
@@ -195,11 +195,15 @@ Exhibit.DatePickerFacet.DatePicker.prototype.buildCell = function(date, cssClass
   try {
   var self = this;
   var dom = SimileAjax.DOM.createDOMFromString('td', date.getDate());
+  var hasItems = this._facet._activeDates[date.getFullYear() + "#" + 
+					  date.getMonth() + "#" + 
+					  date.getDate()];
+
   dom.elmt.className = [cssClass, 
                         'day', 
                         (this._facet.dateInCurrentRange(date) ? 'selected' : ''), 
                         ((date.getDay() === 0 || date.getDay() == 6) ? 'weekend' : ''), 
-                        (this._facet.dateHasItems(date) ? 'has-items' : '')].join(' ');
+                        (hasItems ? 'has-items' : '')].join(' ');
   dom.elmt.id = Exhibit.DateUtil.formatDate(date, self._facet._dateFormat).replace(/[^a-zA-Z 0-9]+/g,'');
   dom.elmt.setAttribute("ex:date", Exhibit.DateUtil.formatDate(date, self._facet._dateFormat));
   if (self._facet._enableDragSelection){
