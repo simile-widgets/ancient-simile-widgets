@@ -197,7 +197,7 @@ if (typeof SimileAjax == "undefined") {
             ];
             if (!("jQuery" in window) && !("$" in window)) {
 //                javascriptFiles.unshift("jquery-1.4.2.min.js");
-		SimileAjax.includeJavascriptFile(document, "http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js");
+		SimileAjax.includeJavascriptFile(document, "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
             }
             
             if (typeof SimileAjax_urlPrefix == "string") {
