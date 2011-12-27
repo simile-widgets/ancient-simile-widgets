@@ -14,7 +14,10 @@ Exhibit.getAttribute = function(elmt, name, splitOn) {
         if (value == null || value.length == 0) {
             value = elmt.getAttribute("ex:" + name);
             if (value == null || value.length == 0) {
-                return null;
+		value = elmt.getAttribute("data-ex-" + name);
+		if (value == null || value.length == 0) {
+                    return null;
+		}
             }
         }
         if (splitOn == null) {
