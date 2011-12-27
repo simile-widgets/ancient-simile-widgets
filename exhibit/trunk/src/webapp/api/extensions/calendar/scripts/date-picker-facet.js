@@ -15,6 +15,7 @@ Exhibit.DatePickerFacet = function(containerElmt, uiContext) {
     this._datePickerTimerLimit = null;
     this._datePickerTimer = null;
     this._enableDragSelection = null;
+    this._activeDates = [];
     
     this._range = {min: null, max: null}; //currently selected range
     this._dateFormat = 'y-MM-dd';
@@ -22,7 +23,8 @@ Exhibit.DatePickerFacet = function(containerElmt, uiContext) {
 
 Exhibit.DatePickerFacet._settingsSpecs = {
     "facetLabel":       { type: "text" },
-    "dateFormat":       { type: "text" }
+    "dateFormat":       { type: "text" },
+    "displayDate":      { type: "text" }
 };
 
 Exhibit.DatePickerFacet.create = function(configuration, containerElmt, uiContext) {
@@ -107,8 +109,11 @@ Exhibit.DatePickerFacet.prototype._initializeUI = function() {
         this._dom.range_min.value = this._range.min;
         this._dom.range_max.value = this._range.max;
     }
-    
-    this._datePicker = Exhibit.DatePickerFacet.DatePicker.create(this._dom.DatePicker, this, new Date());
+
+    var displayDate = ("displayDate" in this._settings) ? 
+	SimileAjax.DateTime.parseIso8601DateTime(this._settings.displayDate)
+	: new Date();
+    this._datePicker = Exhibit.DatePickerFacet.DatePicker.create(this._dom.DatePicker, this, displayDate);
     
     SimileAjax.WindowManager.registerEvent(this._dom.range_min, "keyup",
         function(elmt, evt, target) { self._onDateFieldChange(elmt, evt); });
@@ -186,15 +191,12 @@ Exhibit.DatePickerFacet.prototype.restrict = function(items) {
         var endDateExpression = this._endDate;
         
         var set = new Exhibit.Set();
-        var allItems = this._uiContext.getCollection().getAllItems();
         
         // Round max up a day
         SimileAjax.DateTime.incrementByInterval(max, SimileAjax.DateTime.DAY);
         
         // Check each item in the db
-        allItems.visit(function(item) {
-            // flag to indicate whether we've already added this item;
-            var added = false;
+        items.visit(function(item) {
             
             // Capture the date values
             var beginDateVal = beginDateExpression.evaluateOnItem(item, database);
@@ -202,23 +204,15 @@ Exhibit.DatePickerFacet.prototype.restrict = function(items) {
             
             // Check the date to see if they are in range, add them to the set if so
             if (beginDateVal.size > 0) {
-              var beginDate = SimileAjax.DateTime.parseIso8601DateTime(beginDateVal.values.toArray()[0]);
-              if (beginDate >= min && beginDate <= max) {
-                set.add(item);
-                added = true;
-              }
-            }
-            if (endDateVal.size > 0) {
-              var endDate = SimileAjax.DateTime.parseIso8601DateTime(endDateVal.values.toArray()[0]);
-              if (endDate >= min && endDate <= max && !added) {
-                set.add(item);
-                added = true;
-              }
-            }
-            if (beginDate && endDate && !added) {
-              if ((min >= beginDate && min <= endDate) || (max >= beginDate && max <= endDate)) {
-                set.add(item);
-              }
+		var beginDate = SimileAjax.DateTime.parseIso8601DateTime(beginDateVal.values.toArray()[0]);
+
+		var endDate = (endDateVal.size > 0)?
+		    SimileAjax.DateTime.parseIso8601DateTime(endDateVal.values.toArray()[0]) 
+		    : beginDate;
+
+		//add if data interval overlaps query interval
+		if ((beginDate <= max) && (endDate >= min))
+                    set.add(item);
             }
         });
         
@@ -243,7 +237,31 @@ Exhibit.DatePickerFacet.prototype._clearSelections = function() {
 };
 
 Exhibit.DatePickerFacet.prototype.update = function(items) {
-  // Nothing to do here
+    var activeDates={};
+    beginDateExp = this._beginDate;
+    endDateExp=this._endDate || beginDate;
+    
+    items.visit(function(item) {
+	var beginDateVal = beginDateExp.evaluateOnItem(item, database);
+	if (beginDateVal) {
+	    var beginDate = SimileAjax.DateTime.parseIso8601DateTime(beginDateVal.values.toArray()[0]);
+	    var endDateVal = endDateExp.evaluateOnItem(item, database);
+	    var endDate = SimileAjax.DateTime.parseIso8601DateTime(endDateVal.values.toArray()[0]);
+	    
+	    while (beginDate <= endDate) {
+		var year = beginDate.getFullYear();
+		var month = beginDate.getMonth();
+		var date = beginDate.getDate();
+		activeDates[year+"#"+month+"#"+date] = true;
+		SimileAjax.DateTime.incrementByInterval(beginDate, SimileAjax.DateTime.DAY);
+	    }
+	}
+    }
+	       );
+    this._activeDates = activeDates;
+
+  // redraw
+    this._datePicker.update();
 };
 
 Exhibit.DatePickerFacet.prototype._onDateFieldChange = function(elmt, evt) {
@@ -350,57 +368,6 @@ Exhibit.DatePickerFacet.prototype.selectRange = function(fromDate, toDate) {
   this._dom.range_min.value = fromDate;
   this._dom.range_max.value = toDate;
   this._onDateFieldChange();
-};
-
-Exhibit.DatePickerFacet.prototype.dateHasItems = function(date) {
-  var database = this._uiContext.getDatabase();
-  var items = database.getAllItems();
-  
-  // Create to date to be next day from given date
-  var toDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  SimileAjax.DateTime.incrementByInterval(toDate, SimileAjax.DateTime.DAY);
-  
-  // Check if we're setup for single date or a range
-  if (this._beginDate !== null && this._endDate !== null) {
-    // Using date range
-    var beginDateExpression = this._beginDate;
-    var endDateExpression = this._endDate;
-    
-    itemsFound = false;
-    // Check each item in the db
-    items.visit(function(item) {
-      if (itemsFound) {
-        return;
-      }
-      // Capture the date values
-      var beginDateVal = beginDateExpression.evaluateOnItem(item, database);
-      var endDateVal = endDateExpression.evaluateOnItem(item, database);
-      
-      // Check the date to see if they are in range, add them to the set if so
-      if (beginDateVal.size > 0) {
-        var beginDate = SimileAjax.DateTime.parseIso8601DateTime(beginDateVal.values.toArray()[0]);
-        if (beginDate >= date && beginDate <= toDate) {
-          itemsFound = true;
-        }
-      }
-      if (endDateVal.size > 0) {
-        var endDate = SimileAjax.DateTime.parseIso8601DateTime(endDateVal.values.toArray()[0]);
-        if (endDate >= date && endDate <= toDate && !itemsFound) {
-          itemsFound = true;
-        }
-      }
-      if (beginDate && endDate && !itemsFound) {
-        if ((date >= beginDate && date <= endDate) || (toDate >= beginDate && toDate <= endDate)) {
-          itemsFound = true;
-        }
-      }
-    });
-    return itemsFound;
-  }
-  else {
-    var path = this._beginDate.getPath();
-    return path.rangeBackward(date, toDate, false, items, database).count > 0; 
-  }
 };
 
 Exhibit.DatePickerFacet.prototype.exportFacetSelection = function() { 
