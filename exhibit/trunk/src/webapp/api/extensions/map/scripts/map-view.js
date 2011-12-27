@@ -72,7 +72,7 @@ Exhibit.MapView._settingSpecs = {
 //settings for polygons
     "borderOpacity":    { type: "float",    defaultValue: 0.5       },
     "borderWidth":      { type: "int",      defaultValue: 1         },
-    "borderColor":      { type: "text",     defaultValue: "black"   },
+    "borderColor":      { type: "text",     defaultValue: null      },
     "opacity":          { type: "float",    defaultValue: 0.7       },
     
     "sizeLegendLabel":  { type: "text",     defaultValue: null      },
