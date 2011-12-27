@@ -12,7 +12,7 @@ Exhibit.ProxyGetter = function(link, database, parser, cont) {
     if (typeof link != "string") {
         var xpath = link.getAttribute('ex:xpath'); 
     }
-    var babelURL = "http://simile.mit.edu/babel/html-extractor?" +
+    var babelURL = "http://service.simile-widgets.org/babel/html-extractor?" +
         "url=" + encodeURIComponent(url);
     if (xpath) babelURL += "xpath=" + xpath;
     var fConvert = function(string) {
