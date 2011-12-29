@@ -989,7 +989,7 @@ return SimileAjax.History._actions[A];
 SimileAjax.HTML=new Object();
 SimileAjax.HTML._e2uHash={};
 (function(){var A=SimileAjax.HTML._e2uHash;
-A["nbsp"]="\u00A0[space]";
+A["nbsp"]="\u00A0";
 A["iexcl"]="\u00A1";
 A["cent"]="\u00A2";
 A["pound"]="\u00A3";

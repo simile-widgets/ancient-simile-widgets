@@ -469,7 +469,10 @@ Exhibit.MapView.prototype._clearOverlays = function() {
 
 Exhibit.MapView.prototype._reconstruct = function() {
     this._clearOverlays();
-    this._dom.legendWidget.clear();
+    if (this._dom.legendWidget)
+	this._dom.legendWidget.clear();
+    if (this._dom.legendGradientWidget)
+	this._dom.legendGradientWidget.clear();
     this._itemIDToMarker = {};
     
     var currentSize = this._uiContext.getCollection().countRestrictedItems();
@@ -516,7 +519,9 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         var polylines = [];
         
         if (hasPoints) {
-            self._getLatlng(itemID, database, function(v) { if (v != null && "lat" in v && "lng" in v) latlngs.push(v); });
+            self._getLatlng(itemID, database, function(v) { 
+		if (v != null && "lat" in v && "lng" in v) 
+		    latlngs.push(v); });
         }
         if (hasPolygons) {
             accessors.getPolygon(itemID, database, function(v) { if (v != null) polygons.push(v); });
@@ -623,6 +628,7 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
             self._settings
         );
 
+//	marker=new google.maps.Marker({position: point, map: self._map});
         google.maps.event.addListener(marker, "click", function() { 
 	    self._showInfoWindow(locationData.items,null,marker)
 	    
@@ -657,7 +663,7 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
             legendWidget.addLegendLabel(settings.colorLegendLabel, 'color');
         }
         if (colorCoder._gradientPoints != null) {
-            var legendGradientWidget = this._dom.legendWidget;
+            var legendGradientWidget = this._dom.legendGradientWidget;
             legendGradientWidget.addGradient(this._colorCoder._gradientPoints);
         } else {
             for (var k = 0; k < keys.length; k++) {
@@ -670,7 +676,7 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         if (colorCodingFlags.others) {
             legendWidget.addEntry(colorCoder.getOthersColor(), colorCoder.getOthersLabel());
         }
-        if (colorCodingFlags.mixed) {
+        if (colorCodingFlags.mixed && legendWidget) {
             legendWidget.addEntry(colorCoder.getMixedColor(), colorCoder.getMixedLabel());
         }
         if (colorCodingFlags.missing) {
