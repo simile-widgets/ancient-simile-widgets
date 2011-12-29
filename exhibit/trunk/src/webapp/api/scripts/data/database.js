@@ -1137,19 +1137,6 @@ Exhibit.Database._Property.prototype._buildRangeIndex = function() {
     var p = this._id;
     
     switch (this.getValueType()) {
-    case "currency":
-    case "number":
-        getter = function(item, f) {
-            database.getObjects(item, p, null, null).visit(function(value) {
-                if (typeof value != "number") {
-                    value = parseFloat(value);
-                }
-                if (!isNaN(value)) {
-                    f(value);
-                }
-            });
-        };
-        break;
     case "date":
         getter = function(item, f) {
             database.getObjects(item, p, null, null).visit(function(value) {
@@ -1163,7 +1150,17 @@ Exhibit.Database._Property.prototype._buildRangeIndex = function() {
         };
         break;
     default:
-        getter = function(item, f) {};
+        getter = function(item, f) {
+            database.getObjects(item, p, null, null).visit(function(value) {
+                if (typeof value != "number") {
+                    value = parseFloat(value);
+                }
+                if (!isNaN(value)) {
+                    f(value);
+                }
+            });
+        };
+        break;
     }
     
     this._rangeIndex = new Exhibit.Database._RangeIndex(
