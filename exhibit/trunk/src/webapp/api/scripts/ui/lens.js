@@ -460,7 +460,8 @@ Exhibit.Lens._processTemplateAttribute = function(uiContext, templateNode, setti
                 templateNode.contentAttributes.push({
                     name:       name.substr(0, x),
                     expression: Exhibit.ExpressionParser.parse(value),
-                    isStyle:    isStyle
+                    isStyle:    isStyle,
+		    isSingle:   name.substr(0,x) in {href: 1, src: 1}
                 });
             } else {
                 x = name.indexOf("-style-subcontent");
@@ -705,7 +706,7 @@ Exhibit.Lens._constructFromLensTemplateNode = function(
                 database
             ).values.visit(function(v) { values.push(v); });
             
-            var value = values.join(";");
+            var value = attribute.isSingle? values[0] || "" : values.join(";");
             if (attribute.isStyle) {
                 elmt.style[attribute.name] = value;
             } else if ("class" == attribute.name) {
