@@ -76,19 +76,20 @@ Exhibit.ViewUtilities.constructPlottingViewDom = function(
         uiContext
     );
     dom.plotContainer = dom.resizableDivWidget.getContentDiv();
+
+    dom.legendWidget = Exhibit.LegendWidget.create(
+        legendWidgetSettings,
+        dom.legendDiv, 
+        uiContext
+    );
     
     if (legendWidgetSettings.colorGradient == true) {
         dom.legendGradientWidget = Exhibit.LegendGradientWidget.create(
             dom.legendDiv,
             uiContext
         );
-    } else {
-        dom.legendWidget = Exhibit.LegendWidget.create(
-            legendWidgetSettings,
-            dom.legendDiv, 
-            uiContext
-        );
-    }
+    } 
+
     
     dom.setUnplottableMessage = function(totalCount, unplottableItems) {
         Exhibit.ViewUtilities._setUnplottableMessage(dom, totalCount, unplottableItems, uiContext);
@@ -97,8 +98,10 @@ Exhibit.ViewUtilities.constructPlottingViewDom = function(
         if (showSummary) {
             dom.collectionSummaryWidget.dispose();
         }
-        dom.resizableDivWidget.dispose();
-        dom.legendWidget.dispose();
+	if (dom.resizableDivWidget)
+            dom.resizableDivWidget.dispose();
+        if (dom.legendWidget)
+	    dom.legendWidget.dispose();
     };
 
     return dom;

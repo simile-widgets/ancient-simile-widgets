@@ -51,7 +51,8 @@ if (typeof SimileAjax == "undefined") {
         }
         return null;
     };
-    SimileAjax.includeJavascriptFile = function(doc, url, onerror, charset) {
+
+    SimileAjax.includeJavascriptFile = function(doc, url, onerror, charset, callback) {
         onerror = onerror || "";
         if (doc.body == null) {
             try {
@@ -65,26 +66,76 @@ if (typeof SimileAjax == "undefined") {
             }
         }
 
+	var calledBack = false;
+	var callbackOnce = function() {
+	    if (callback && !calledBack) {
+		calledBack=true;
+		callback();
+	    }
+	}
         var script = doc.createElement("script");
         if (onerror) {
-            try { script.innerHTML = onerror; } catch(e) {}
-            script.setAttribute("onerror", onerror);
+            try { script.innerHTML = onerror; } catch(e) {};
+            script.onerror = function () {onerror(); callbackOnce()};
         }
+	else {
+	    script.onerror = callbackOnce;
+	}
         if (charset) {
             script.setAttribute("charset", charset);
         }
         script.type = "text/javascript";
         script.language = "JavaScript";
         script.src = url;
+	if (callback) 
+	    script.onload = script.onreadystatechange = function() {
+		if (!this.readyState || this.readyState == "loaded" || 
+		    this.readyState == "complete") 
+		    callbackOnce();
+	    }       
         return getHead(doc).appendChild(script);
     };
-    SimileAjax.includeJavascriptFiles = function(doc, urlPrefix, filenames) {
-        for (var i = 0; i < filenames.length; i++) {
-            SimileAjax.includeJavascriptFile(doc, urlPrefix + filenames[i]);
+
+    function includeJavascriptList(doc, urlPrefix, filenames, included, index, callback) {
+        if (!included[index]) { // avoid duplicate callback
+            included[index] = true;
+            if (index<filenames.length) { 
+		var nextCall=function(){
+		    includeJavascriptList(doc, urlPrefix, filenames, 
+					  included, index+1, callback);
+		}
+                SimileAjax.
+		includeJavascriptFile(doc, 
+				      urlPrefix + filenames[index], null, null, 
+				      nextCall);
+	    }
+            else if (callback != null) callback();
         }
-        SimileAjax.loadingScriptsCount += filenames.length;
-        SimileAjax.includeJavascriptFile(doc, SimileAjax.urlPrefix + "scripts/signal.js?" + filenames.length);
+    }
+    
+    SimileAjax.includeJavascriptFiles = function(doc, urlPrefix, filenames) {
+	if (doc.body == null) {
+            for (var i = 0; i < filenames.length; i++) {
+                SimileAjax.includeJavascriptFile(doc, urlPrefix + filenames[i]);
+            }
+            SimileAjax.loadingScriptsCount += filenames.length;
+            SimileAjax.includeJavascriptFile(doc, SimileAjax.urlPrefix + "scripts/signal.js?" + filenames.length);
+        }
+        else {
+            var included = new Array();
+            for (var i = 0; i < filenames.length; i++) 
+		included[i] = false; 
+
+            if (typeof window.SimileAjax_onLoad == "string") 
+		f = eval(window.SimileAjax_onLoad);
+            else if (typeof window.SimileAjax_onLoad == "function") 
+		f = window.SimileAjax_onLoad;
+
+            window.SimileAjax_onLoad = null;
+            includeJavascriptList(doc, urlPrefix, filenames, included, 0, f);
+        }
     };
+
     SimileAjax.includeCssFile = function(doc, url) {
         if (doc.body == null) {
             try {
@@ -200,6 +251,7 @@ if (typeof SimileAjax == "undefined") {
 		SimileAjax.includeJavascriptFile(document, "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
             }
             
+
             if (typeof SimileAjax_urlPrefix == "string") {
                 SimileAjax.urlPrefix = SimileAjax_urlPrefix;
             } else {
@@ -212,6 +264,8 @@ if (typeof SimileAjax == "undefined") {
                 SimileAjax.urlPrefix = url.substr(0, url.indexOf("simile-ajax-api.js"));
                 SimileAjax.parseURLParameters(url, SimileAjax.params, { bundle: Boolean });
             }
+
+
 
             if (!isCompiled) {
                 if (SimileAjax.params.bundle) {
