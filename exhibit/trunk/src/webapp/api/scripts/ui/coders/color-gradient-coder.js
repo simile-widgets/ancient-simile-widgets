@@ -102,10 +102,7 @@ Exhibit.ColorGradientCoder.prototype._addEntry = function(kase, key, color) {
 Exhibit.ColorGradientCoder.prototype.translate = function(key, flags) {
 	var gradientPoints = this._gradientPoints;
 	var getColor = function(key) {
-		if (key.constructor != Number) {
-			key = parseFloat(key);
-		}
-		for (j = 0; j < gradientPoints.length; j++) {
+		for (var j = 0; j < gradientPoints.length; j++) {
 			if (key == gradientPoints[j].value) {
 				return rgbToHex(gradientPoints[j].red, gradientPoints[j].green, gradientPoints[j].blue);
 			} else if (gradientPoints[j+1] != null) {
@@ -122,12 +119,16 @@ Exhibit.ColorGradientCoder.prototype.translate = function(key, flags) {
 
 	var rgbToHex = function(r, g, b) {
 		var decToHex = function(n) {
-			if (n == 0) {return "00"}
-			else {return n.toString(16)}
+		    if (n == 0) {return "00"}
+		    else if (n < 16) {return "0"+n.toString(16)}
+		    else {return n.toString(16)}
 		}
 		return "#" + decToHex(r) + decToHex(g) + decToHex(b);
 	}
 	
+    if (key.constructor != Number) {
+	key = parseFloat(key);
+    }
     if (key >= gradientPoints[0].value & key <= gradientPoints[gradientPoints.length-1].value) {
         if (flags) flags.keys.add(key);
         return getColor(key);
