@@ -33,7 +33,7 @@ Exhibit.importers["application/xml"] = Exhibit.XMLImporter;
 Exhibit.XMLImporter.getItems = function(xmlDoc, configuration) {
     var items=[];
     function maybeAdd(item, property, value) {
-	if (item && property.length > 0 && value.length > 0) {
+	if (item && property && property.length > 0 && value && value.length > 0) {
 	    if (item[property]) {
 		item[property].push(value);
 	    }
@@ -48,43 +48,22 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, configuration) {
 	var tag=node.tagName;
 	var jQ=SimileAjax.jQuery(node);
 	var children = jQ.children();
+	var oldParentItem = parentItem;
 	if (tag in configuration.itemType) {
 	    //found a new item
-	    var item={type: configuration.itemType[tag]};
+	    var item={type: [configuration.itemType[tag]]};
 	    items.push(item);
-	    parentProperty = configuration.parentRelation[tag] || parentProperty;
-	    if (children.length == 0) {
-		//strange to have item with no children (no properties)
-		//hopefully there is text and that can be item's label
-		item.label=jQ.text();
-	    }
-	    else {
-		children.each(function() {
-		    visit(this, item, null);
-		});
-		if (configuration.labelProperty[tag] != "label") {
-		    var label=item[configuration.labelProperty[tag]] || [];
-		    if (label.length > 0)
-			item.label = label[0];
-		}
-	    }
-	    maybeAdd(parentItem,parentProperty,item.label);
 	    parentItem=item; //for incorporating attributes
 	}
+	if (children.length == 0) {
+	    //no children; look for text
+	    var property=configuration.propertyNames[tag] || tag;
+	    maybeAdd(parentItem, property, jQ.text().trim());
+	}
 	else {
-	    //non item tag
-	    if (children.length == 0) {
-		//no children; look for text
-		if ((parentItem != null) && (jQ.text().length >= 0))  {
-		    var property=configuration.propertyNames[tag] || tag;
-		    maybeAdd(parentItem, property, jQ.text());
-		}
-	    }
-	    else {
-		children.each(function() {
-		    visit(this,parentItem,tag);
-		});
-	    }
+	    children.each(function() {
+		visit(this,parentItem,tag);
+	    });
 	}
 	//now process attributes
 	var attrMap=node.attributes;
@@ -95,6 +74,17 @@ Exhibit.XMLImporter.getItems = function(xmlDoc, configuration) {
 			 configuration.propertyNames[attr] || attr, 
 			 jQ.attr(attr));
 	    }
+	}
+	if (tag in configuration.itemType) {
+	    //try to infer a label
+	    if (configuration.labelProperty[tag] != "label") {
+		var label=item[configuration.labelProperty[tag]] || [];
+		if (label.length > 0)
+		    item.label = label[0];
+	    }
+	    //current node is a new item
+	    parentProperty = configuration.parentRelation[tag] || parentProperty;
+	    maybeAdd(oldParentItem,parentProperty,item.label);
 	}
     }
 
@@ -121,7 +111,7 @@ Exhibit.XMLImporter.configure = function(link) {
 	var tag=itemTag[i];
 	configuration.itemType[tag] = itemType[i] || tag;
 	configuration.labelProperty[tag] = labelProperty[i] || "label";
-	configuration.parentRelation[tag] = parentRelation[i] || "child";
+	configuration.parentRelation[tag] = parentRelation[i] || tag;
     }
 
     var propertyNames = Exhibit.getAttribute(link,'ex:propertyNames',',') || [];
