@@ -613,7 +613,8 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         }
 	
 	var point= new google.maps.LatLng(locationData.latlng.lat, locationData.latlng.lng);
-        if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
+
+	if (maxAutoZoom > locationData.latlng.maxAutoZoom) {
             maxAutoZoom = locationData.latlng.maxAutoZoom;
         }
         bounds.extend(point);
@@ -742,24 +743,15 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
         }
     }  
 
-//recenter/zoom map on data points
-    
-    if (bounds  && (! settings.autoposition) && typeof settings.zoom == "undefined") {
-        var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
-        zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);
-        self._map.setZoom(zoom);
+
+//on first show, allow map to position itself based on content    
+    if (bounds && settings.autoposition && !this._shown) {
+	self._map.fitBounds(bounds);
+	if (self._map.getZoom > maxAutoZoom) {
+	    self._map_setZoom(maxAutoZoom);
+	}
     }
-    if (bounds && (! settings.autoposition) && typeof settings.center == "undefined") {
-        self._map.setCenter(bounds.getCenter());
-    }    
-    else if (bounds && settings.autoposition) {
-        var zoom = Math.max(0, self._map.getBoundsZoomLevel(bounds) - 1);
-        if (settings.maxAutoZoom && maxAutoZoom) {
-            zoom = Math.min(zoom, maxAutoZoom, settings.maxAutoZoom);            
-        }
-        self._map.setCenter(bounds.getCenter());
-        self._map.setZoom(zoom);   
-    }
+    this._shown=true; //don't reposition map again
 };
 
 Exhibit.MapView.prototype._plotPolygon = function(itemID, polygonString, color, makeLatLng) {
