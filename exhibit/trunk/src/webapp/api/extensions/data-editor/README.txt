@@ -86,30 +86,30 @@ JavaScript object with functions assigned to appropriate properties, passing it
 to Exhibit.DataEdit.addEventHandler(), like so:
 
 <script type="text/javascript">
-	if(window['console']) {
-		var t = 'Event';
-		Exhibit.DataEdit.addEventHandler({
-			onBeforeInit :			function() { console.log(t,'onBeforeInit'); return true; } ,
-			onInit :				function() { console.log(t,'onInit'); } ,
-			onBeforeActivate : 		function() { console.log(t,'onBeforeActivate'); return true; } ,
-			onActivate : 			function() { console.log(t,'onActivate'); } ,
-			onBeforeActivateClose : function() { console.log(t,'onBeforeActivateClose'); return true; } ,
-			onActivateClose : 		function() { console.log(t,'onActivateClose'); } ,
-			onBeforeEdit : 			function(id) { console.log(t,'onBeforeEdit',id); return true; } ,
-			onEdit : 				function(id) { console.log(t,'onEdit',id); } ,
-			onBeforeSave : 			function(id,item) { console.log(t,'onBeforeSave',id,item); return true; } ,
-			onSave : 				function(id,item) { 
-				console.log(t,'onSave',id,item);
-				Exhibit.DataEdit.addOnSaveFailedMessage("Something bad happened!");
-				return false;  // Failure!
-			} ,
-			onBeforeCancel : 		function() { console.log(t,'onBeforeCancel'); return true; } ,
-			onCancel : 				function() { console.log(t,'onCancel'); } 
-		});
-		Exhibit.DataEdit.onSaveFailed = function(msgs) { 
-			for(var i=0;i<msgs.length;i++) { console.log("ERROR: "+msgs[i]); } 
-		}
-	}
+  if(window['console']) {
+    var t = 'Event';
+    Exhibit.DataEdit.addEventHandler({
+      onBeforeInit :          function() { console.log(t,'onBeforeInit'); return true; } ,
+      onInit :                function() { console.log(t,'onInit'); } ,
+      onBeforeActivate :      function() { console.log(t,'onBeforeActivate'); return true; } ,
+      onActivate :            function() { console.log(t,'onActivate'); } ,
+      onBeforeActivateClose : function() { console.log(t,'onBeforeActivateClose'); return true; } ,
+      onActivateClose :       function() { console.log(t,'onActivateClose'); } ,
+      onBeforeEdit :          function(id) { console.log(t,'onBeforeEdit',id); return true; } ,
+      onEdit :                function(id) { console.log(t,'onEdit',id); } ,
+      onBeforeSave :          function(id,item) { console.log(t,'onBeforeSave',id,item); return true; } ,
+      onSave :                function(id,item) { 
+        console.log(t,'onSave',id,item);
+        Exhibit.DataEdit.addOnSaveFailedMessage("Something bad happened!");
+        return false;  // Failure!
+      } ,
+      onBeforeCancel :        function() { console.log(t,'onBeforeCancel'); return true; } ,
+      onCancel :              function() { console.log(t,'onCancel'); } 
+    });
+    Exhibit.DataEdit.onSaveFailed = function(msgs) { 
+      for(var i=0;i<msgs.length;i++) { console.log("ERROR: "+msgs[i]); } 
+    }
+  }
 </script>
 
 The above code registers a handler for every event type, logging each call to 
