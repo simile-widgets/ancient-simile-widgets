@@ -48,6 +48,10 @@
   *   onActivateClose : void ()                      Run if [Editor] toggle clicked to abort edit
   *   onBeforeEdit : boolean (itemId)                Run at start of Exhibit.DataEdit.edit
   *   onEdit : void (itemId)                         Run at end of Exhibit.DataEdit.edit
+  *   onBeforeDelete : boolean (itemId)              Run at start of Exhibit.DataEdit.delete
+  *   onDelete : void (itemId)                       Run at end of Exhibit.DataEdit.delete
+  *   onBeforeClone : boolean (itemId)               Run at start of Exhibit.DataEdit.clone
+  *   onClone : void (itemId)                        Run at end of Exhibit.DataEdit.clone
   *   onBeforeSave : boolean (itemId,item)           Run at start of Exhibit.DataEdit.save
   *   onSave : boolean (itemId,item)                 Run at end of Exhibit.DataEdit.save
   *   onBeforeCancel : boolean ()                    Run at start of Exhibit.DataEdit.cancel
@@ -75,6 +79,8 @@ Exhibit.DataEdit.EDIT_MESSAGE = "exhibitDataEditError";
 Exhibit.DataEdit.EDIT_ROLE_LENS = "editor";
 Exhibit.DataEdit.EDIT_ROLE_ACTIVATE = "editorActivateButton";
 Exhibit.DataEdit.EDIT_ROLE_EDIT = "editorEditButton";
+Exhibit.DataEdit.EDIT_ROLE_DELETE = "editorDeleteButton";
+Exhibit.DataEdit.EDIT_ROLE_CLONE = "editorCloneButton";
 Exhibit.DataEdit.EDIT_ROLE_SAVE = "editorSaveButton";
 Exhibit.DataEdit.EDIT_ROLE_CANCEL = "editorCancelButton";
 Exhibit.DataEdit.EDIT_ROLE_STATUS = "editorStatus";
@@ -116,7 +122,7 @@ Exhibit.DataEdit.activate = function() {
 	//Exhibit.UI.showBusyIndicator();
 	// Editors
 	Exhibit.DataEdit._editors_ = {};
-	// Go through each ex:itemid, appending an [Edit] button
+	// Go through each ex:itemid, making <div> selectable for editing
 	var filter = function(idx) { return $(this).attr("ex:itemid"); }
 	$('*').filter(filter).each(function(idx) {  // See http://bugs.jquery.com/ticket/3729
 		var id = $(this).attr("ex:itemid");
@@ -128,7 +134,18 @@ Exhibit.DataEdit.activate = function() {
 			// Yes: display user's <div>
 			l.each(function(idx) {
 				$(this).css('display','Block');
-				$(this).click(function() { Exhibit.DataEdit.edit(id); });
+				$(this).click(function() { Exhibit.DataEdit.edit(id); });  // Attach onclick
+			});
+			// Now look for delete/clone buttons
+			var filterDelete = function(idx) { return $(this).attr("_ex:role")==Exhibit.DataEdit.EDIT_ROLE_DELETE; }
+			$('*',this).filter(filterDelete).each(function(idx) {
+				$(this).css('display','Block');
+				$(this).click(function() { Exhibit.DataEdit.de1ete(id); });  // Attach onclick
+			});
+			var filterClone = function(idx) { return $(this).attr("_ex:role")==Exhibit.DataEdit.EDIT_ROLE_CLONE; }
+			$('*',this).filter(filterClone).each(function(idx) {
+				$(this).css('display','Block');
+				$(this).click(function() { Exhibit.DataEdit.clone(id); });  // Attach onclick
 			});
 		} else {
 			// No: add overlay to display <div>
@@ -148,6 +165,12 @@ Exhibit.DataEdit.activate = function() {
 						'style="width:'+w+'px ; height:'+h+'px ; '+
 							'background:Black; opacity:0.0; filter:alpha(opacity=0); -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0);">'+
 					'</div>'+
+					'<div class="__buttonBar__" style="position:Absolute ; top:4px ; right: 2px ; display:None;">'+
+						'<span onclick="Exhibit.DataEdit.clone(\''+id+'\')" '+
+							'style="background:Red ; color:White ; padding:0.25em 0.5em ; cursor:Pointer ; margin-right:10px;">Clone</span>'+
+						'<span onclick="Exhibit.DataEdit.de1ete(\''+id+'\')" '+
+							'style="background:Red ; color:White ; padding:0.25em 0.5em ; cursor:Pointer ;">Delete</span>'+
+					'</div>'+
 				'</div>';
 			$(this).append(overlay);
 		}
@@ -156,10 +179,16 @@ Exhibit.DataEdit.activate = function() {
 	//Exhibit.UI.hideBusyIndicator();
 	Exhibit.DataEdit._invokeEventHandlers('onActivate');
 }
-Exhibit.DataEdit._rollIn_ = function(div) { $(div).css('border','2px Red Dotted'); }
-Exhibit.DataEdit._rollOut_ = function(div) { $(div).css('border',"2px #dddddd Dotted"); }
+Exhibit.DataEdit._rollIn_ = function(div) {
+	$(div).css('border','2px Red Dotted');  // Strong dotted band
+	$('.__buttonBar__',div).css('display','Block');  // Show buttons
+}
+Exhibit.DataEdit._rollOut_ = function(div) { 
+	$(div).css('border',"2px #dddddd Dotted");  // Faint dotted band
+	$('.__buttonBar__',div).css('display','None');  // Hide buttons
+}
 
-/** STEP2: Click on [edit] link. */
+/** STEP2a: Click on [edit] link. */
 Exhibit.DataEdit.edit = function(itemId) {
 	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeEdit',itemId)) { return; }
 
@@ -184,6 +213,62 @@ Exhibit.DataEdit.edit = function(itemId) {
 	});
 
 	Exhibit.DataEdit._invokeEventHandlers('onEdit',itemId);
+}
+
+/** STEP2b: Click on [delete] link. */
+/* IMPORTANT: this function is named de-ONE-ete,  IE can't have functions named 'delete', apparently! */
+Exhibit.DataEdit.de1ete = function(itemId) {
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeDelete',itemId)) { return; }
+	
+	// Delete all objects relating to properties of this item?
+	if(confirm("Do you really want to delete this item?\nItem: "+itemId)) {
+		var item = database._spo[itemId];
+		for(p in item) {
+			database.removeObjects(itemId,p);
+		}
+	} else { 
+		return;
+	}
+	// Cause Exhibit to re-eval its views/facets, and close edit window
+	database._listeners.fire("onAfterLoadingItems",[]);
+	Exhibit.DataEdit._setEditLock(false);  // FIXME try/catch/*finally*
+	
+	Exhibit.DataEdit._invokeEventHandlers('onDelete',itemId);
+}
+
+/** STEP2c: Click on [clone] link. */
+Exhibit.DataEdit.clone = function(itemId) {
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeClone',itemId)) { return; }
+	
+	if(confirm("Do you really want to clone this item?\nItem: "+itemId)) {
+		// Label or id?
+		var prop = (database.getObject(itemId,'id')) ? 'id' : 'label';
+		var _id = database.getObject(itemId,prop);
+		if(!_id || _id!=itemId) { return; } // _id!=itemId should never fail!!
+		// If the id ends in digits, attempt to increment
+		if(_id.match(/\d+$/)) {
+			// Ends in digit, increment until we get unique id
+			var m = _id.match(/(.*?)(\d*)$/);  // m[1]=base m[2]=digits
+			var base = m[1];
+			var n = (m[2].length) ? parseInt(m[2]) : 0;  // Test should never be false!
+			do { n++; } while(database.containsItem(base+n));
+			_id = base+n;  // Now we have a unique id.
+		} else {
+			// Doesn't end in digit
+			_id = _id+'2';
+		}
+		// Save cloned item
+		var item = database._spo[itemId];
+		item[prop] = _id;
+		database.loadData( { items:[item] } );
+	} else {
+		return;
+	}
+	// Cause Exhibit to re-eval its views/facets, and close edit window
+	database._listeners.fire("onAfterLoadingItems",[]);
+	Exhibit.DataEdit._setEditLock(false);  // FIXME try/catch/*finally*
+	
+	Exhibit.DataEdit._invokeEventHandlers('onClone',itemId);
 }
 
 /** STEP3a: Click on [save] link. */
