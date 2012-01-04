@@ -3,6 +3,7 @@
  *==================================================
  */
 
+
 (function() {
     var isCompiled = ("Exhibit_DataEditorExtension_isCompiled" in window) && 
                     window.Exhibit_DataEditorExtension_isCompiled;
@@ -12,21 +13,22 @@
             bundle: true
         } 
     };
-
-    var javascriptFiles = [
+	
+	var javascriptFiles = [
         "data-editor.js" ,
 		"editor.js" ,
 		"jquery-ui-1.8.16.custom.min.js" ,
 		"text-field.js" ,
 		"number-field.js" ,
+		"enum-field.js" ,
 		"list-field.js" ,
-		"ticklist.js"
+		"ticklist-field.js"
     ];
     var cssFiles = [
         "data-editor.css" ,
 		"jquery-ui-1.8.16.custom.css"
     ];
-        
+	
     var paramTypes = { bundle: Boolean };
     if (typeof Exhibit_DataEditorExtension_urlPrefix == "string") {
         Exhibit.DataEditorExtension.urlPrefix = Exhibit_DataEditorExtension_urlPrefix;

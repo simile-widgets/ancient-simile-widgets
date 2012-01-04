@@ -186,12 +186,32 @@ Exhibit.DataEdit.Editor.prototype._getValues = function(prop) {
 	database.getObjects(this._itemId,prop).visit(function(val) { valArr.push(val); });
 	return (valArr.length>1) ? valArr : valArr[0];
 }
+// Does this element have an ex:content; if so, return target (minus dot)
 Exhibit.DataEdit.Editor.prototype._getContent = function(jq) {
 	var exp = $(jq).attr("ex:content");
 	if(!exp) { return null; }
 	var m = exp.match(/^\.(.+)?\.?/);
 	return (m && m.length>1) ? m[1] : null;
 }
+// Does this element have ***A SINGLE*** ex:???-subcontent, with ***A SINGLE*** property reference?; 
+// if so, return reference target (minus dot)
+/*Exhibit.DataEdit.Editor.prototype._getSubContent = function(jq) {
+	var attrs = $(jq).get(0).attributes;
+	if(!attrs) { return null; }
+	
+	var cnt = 0;
+	if(attrs.length) {
+		for(var i=0;i<attrs.length;i++) {
+			console.log(attrs[i].name);
+			if(attrs[i].specified && attrs[i].name.match(/^ex:(.+)-subcontent$/)) {
+				var subexp = attrs[i].value;
+				var m = subexp.match(/\{\{\.([^\}\.]+)\}\}/g);
+				console.log(m);
+				cnt++;
+			}
+		}
+	}
+}*/
 Exhibit.DataEdit.Editor.prototype._addFieldComponent = function(jq,prop,f,onShow) {
 	if(f) {
 		this._fields[prop] = f;
