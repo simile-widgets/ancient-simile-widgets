@@ -494,6 +494,15 @@ Exhibit.UI.createPopupMenuDom = function(element) {
 };
 
 Exhibit.UI.createBusyIndicator = function() {
+
+    var existing=SimileAjax.jQuery(".exhibit-busyIndicator");
+    if (existing.length > 0) {
+	var node= existing.eq(0);
+	node.detach();
+	node.show(); //in case author hid it
+	return node.get(0);
+    }
+
     var urlPrefix = Exhibit.urlPrefix + "images/";
     var containerDiv = document.createElement("div");
     if (SimileAjax.Graphics.pngIsTranslucent) {
