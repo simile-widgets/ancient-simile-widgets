@@ -24,12 +24,13 @@ Exhibit.DataEdit.Editor.TextField = function(jq,iid,pid,val,noLens) {
 	this._itemId = iid;			// Database item (subject) id
 	this._propId = pid;			// Database property (predicate)
 	this._value = val;			// <string>
-	this._divId = '__DATAEDITOR__'+this._propId;
+	this._divId = '__DATAEDITOR__'+this._propId+'_'+Exhibit.DataEdit.Editor._getUID();
 	this._validators = $(jq).attr("ex:validators");
 	this._disabledFor = Exhibit.DataEdit.Editor._parseDisabledFor($(jq).attr("ex:disableFor"));
 	this._noEditorLens = noLens;	// No editor lens?
 	this._matchDisplayLens = Exhibit.DataEdit.Editor._parseTrueFalse($(jq).attr("ex:useDisplayStyle"));  // Try to find into display lens
 	this._saveOnChange = false;
+	this._prefDimensions = null;
 	// For this component only
 	this._largeText = Exhibit.DataEdit.Editor._parseTrueFalse($(jq).attr("ex:large"));  // Use <textarea> ?
 	this._rows = parseInt($(jq).attr("ex:rows"));
@@ -43,28 +44,15 @@ Exhibit.DataEdit.Editor.TextField = function(jq,iid,pid,val,noLens) {
 
 /** Create component HTML. */
 Exhibit.DataEdit.Editor.TextField.prototype.getHTML = function(onShow) {
+	var textDim = Exhibit.DataEdit.Editor._getColRowDimensions(this._jqThis,1,1);
+	this._prefDimensions = { width:textDim.width*10 , height:textDim.height*1 };
 	var style = null;
 	if(this._noEditorLens || this._matchDisplayLens) {
 		style = Exhibit.DataEdit.Editor._extractStyle(this._jqThis) +
-			'border-width: 0px; '+
+			'border-width: 0px;  border-style: None; padding: 0px; '+
 			'width: '+$(this._jqThis).width()+'px; height: '+$(this._jqThis).height()+'px; ';
-		/* FIXME: The below junk is various attempts to detect whether the <div> content we're
-		 * editing spans multiple lines, so we can correctly use a <textarea> or <input>.  Seems
-		 * this isn't easy, so (in desperation more than anything else) always use <textarea>. */
-		// Switch to multiline?
-		/*var h1 = $(this._jqThis).height();
-		var h2 = $(this._jqThis).css('line-height');*/
-		//console.log( Exhibit.DataEdit.Editor._getComputedStyle($(this._jqThis).get()[0],'line-height') );
-		//console.log( Exhibit.DataEdit.Editor._getComputedStyle($(this._jqThis).get()[0],'font-size') );
-		//var el = $(this._jqThis).get()[0];
-		//console.log(Exhibit.DataEdit.Editor._getLineHeight(el));
-		/* Yeah, so apparently the only cross-browser way to get line height in pixels is to
-		 * inject a <span> into the start of the element, ask for it's height, then remove it!! */ 
 		var contH = $(this._jqThis).height();
-		$(this._jqThis).prepend('<span id="__SIZE_GUESSER__">M</span>');
-		var textH = $('#__SIZE_GUESSER__',this._jqThis).height();
-		$('#__SIZE_GUESSER__',this._jqThis).remove();
-		this._largeText = ((contH/textH) >= 2);
+		this._largeText = ((contH/textDim.height) >= 2);
 	}
 	var onChange = (this._saveOnChange) ? "Exhibit.DataEdit.onChange('"+this._itemId+"','"+this._propId+"')" : "";
 	if(this._largeText) {

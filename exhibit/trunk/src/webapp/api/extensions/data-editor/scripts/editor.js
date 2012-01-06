@@ -89,11 +89,13 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 		$(this).click(function() { Exhibit.DataEdit.save(self._itemId); });
 		self._hasSaveButton = true;
 	});
+	/* [CANCEL] no longer supported after multi item edit introduced.
 	var cancelFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_CANCEL; }
 	$('*',self._jqThis).filter(cancelFilter).each(function(idx) {
 		$(this).click(function() { Exhibit.DataEdit.cancel(); });
 		self._hasCancelButton = true;
 	});
+	*/
 	var statusFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_STATUS; }
 	$('*',self._jqThis).filter(statusFilter).each(function(idx) {
 		$(this).attr('id',Exhibit.DataEdit.EDIT_MESSAGE);
@@ -118,12 +120,12 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 				val = (self._exists(prop)) ? self._getValues(prop) : undefined ;
 				try { 
 					f = new Exhibit.DataEdit.Editor[c](this,self._itemId,prop,val,false);
-					f._saveOnChange = (!self._hasSaveButton);  // No [SAVE]?  Switch on field saving mode
+					f._saveOnChange = (!self._hasSaveButton);  // No [SAVE] button?  Switch on field saving mode
 				} catch(err) { 
 					self.log(err,prop,val,this); 
 					SimileAjax.Debug.warn(err);
 				}
-				self._addFieldComponent(this,prop,f,onShow);
+				self._addFieldComponent(this,prop,f,onShow,true);
 			}catch(err) { self.log(err,prop,val,this); }
 		});
 	}
@@ -158,7 +160,7 @@ Exhibit.DataEdit.Editor.prototype.applyWithoutLens = function() {
 					self.log(err,prop,val,self);
 					SimileAjax.Debug.warn(err);
 				}
-				self._addFieldComponent(this,prop,f,onShow); // jq = this
+				self._addFieldComponent(this,prop,f,onShow,false); // jq = this
 			}
 		}catch(err) { self.log(err,prop,val,self); }
 	});
@@ -212,10 +214,31 @@ Exhibit.DataEdit.Editor.prototype._getContent = function(jq) {
 		}
 	}
 }*/
-Exhibit.DataEdit.Editor.prototype._addFieldComponent = function(jq,prop,f,onShow) {
+Exhibit.DataEdit.Editor.prototype._addFieldComponent = function(jq,prop,f,onShow,usingLens) {
 	if(f) {
 		this._fields[prop] = f;
-		$(jq).replaceWith(f.getHTML(onShow));
+		var h = f.getHTML(onShow);
+		// Auto-resize?
+		var srcDim = { width:$(jq).width() , height:$(jq).height() };
+		var prefDim = f['_prefDimensions'];  // Has _prefDimensions..?
+		if(!usingLens && prefDim && ((srcDim.width<prefDim.width) || (srcDim.height<prefDim.height))) {
+			h = '<span style="display:Inline-Block; position:Relative; width:'+srcDim.width+'px; height:'+srcDim.height+'px;">'+h+'</span>';
+			$(jq).replaceWith(h);
+			$('#'+f._divId)
+				.mouseenter(function(ev) { // Mouse enter: upsize and raise
+					var pos = $(this).parent().position();
+					$(this).width(prefDim.width).height(prefDim.height).css('z-index','1000');
+				})
+				.mouseleave(function(ev) { // Mouse leave: downsize and lower
+					$(this).width(srcDim.width).height(srcDim.height).css('z-index','Auto');
+				})
+				.css('position','Absolute').css('top','0px').css('left','0px');
+			// Empty text may cause 0 sized fields.  10 pixels min seems sensible.
+			if(srcDim.width<=0) { srcDim.width=10;  $('#'+f._divId).width(srcDim.width); }
+			if(srcDim.height<=0) { srcDim.height=10;  $('#'+f._divId).height(srcDim.height); }
+		} else {
+			$(jq).replaceWith(h);
+		}
 	} else {
 		$(jq).replaceWith('<span style="color:Red;">Failed to initalise</span>');
 	}
@@ -301,36 +324,24 @@ Exhibit.DataEdit.Editor._extractStyle = function(jq) {
 		return null;
 	}
 }*/
-/** Return line height of element, as best it can be guessed. */
-Exhibit.DataEdit.Editor._getLineHeight = function(el) {
-	var h = null;
-	if(el.currentStyle) { 
-		h = el.currentStyle['lineHeight'];  // IE
-	} else if(document.defaultView!=undefined && document.defaultView.getComputedStyle!=undefined) {
-		h = document.defaultView.getComputedStyle(el,null).getPropertyValue('line-height');  // Moz/Chrome/W3C
-	}
-	// Parse
-	if(h) { 
-		if(h.indexOf('px')>=0) { return parseInt(h.replace(/px/,'')); }
-		else if(el.parentNode!=null) { return Exhibit.DataEdit.Editor._getLineHeight(el.parentNode); }
-		else { return 16; }
-	} else {
-		return 16;
-	}
+/** Using inherited font, how big in pixels would some text (cols x rows) be? */
+Exhibit.DataEdit.Editor._getColRowDimensions = function(jq,cols,rows) {
+	/* Yeah, so apparently the only cross-browser way to get line height in pixels is to
+	* inject a <span> into the start of the element, ask for it's height, then remove it!! */
+	$(jq).prepend('<span id="__SIZE_GUESSER__">M</span>');
+	var textW = $('#__SIZE_GUESSER__',jq).width();
+	var textH = $('#__SIZE_GUESSER__',jq).height();
+	$('#__SIZE_GUESSER__',jq).remove();
+	return { width:(cols*textW) , height:(rows*textH) };
 }
-/** Return line height of element, as best it can be guessed. */
-Exhibit.DataEdit.Editor._getLineHeight2 = function(el) {
-	var el2 = document.createElement('div');
-	el2.style.fontFamily = el.style.fontFamily;
-	el2.style.fontSize = el.style.fontSize;
-	el2.style.fontStyle = el.style.fontStyle;
-	el2.style.fontVariant = el.style.fontVariant;
-	el2.style.fontWeight = el.style.fontWeight;
-	el2.style.lineHeight = el.style.lineHeight;
-	el2.innerHTML = "Mj";
-	
-	return el2.offsetHeight;
+/** Unique ids -- handy! */
+Exhibit.DataEdit.Editor._uid = (new Date).getTime();
+Exhibit.DataEdit.Editor._getUID = function() {
+	// FIXME: Not thread safe!!
+	Exhibit.DataEdit.Editor._uid++;
+	return Exhibit.DataEdit.Editor._uid;
 }
+
 /** Return match, or closest match. */
 Exhibit.DataEdit.Editor.matchExactStringFromList = function(str,list) {
 	var lstr = str.toLowerCase();

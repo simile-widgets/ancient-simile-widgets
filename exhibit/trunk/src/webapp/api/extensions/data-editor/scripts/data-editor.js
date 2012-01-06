@@ -81,8 +81,9 @@ Exhibit.DataEdit.EDIT_ROLE_ACTIVATE = "editorActivateButton";
 Exhibit.DataEdit.EDIT_ROLE_EDIT = "editorEditButton";
 Exhibit.DataEdit.EDIT_ROLE_DELETE = "editorDeleteButton";
 Exhibit.DataEdit.EDIT_ROLE_CLONE = "editorCloneButton";
+Exhibit.DataEdit.EDIT_ROLE_CREATE = "editorCreateButton";
 Exhibit.DataEdit.EDIT_ROLE_SAVE = "editorSaveButton";
-Exhibit.DataEdit.EDIT_ROLE_CANCEL = "editorCancelButton";
+/*Exhibit.DataEdit.EDIT_ROLE_CANCEL = "editorCancelButton";*/
 Exhibit.DataEdit.EDIT_ROLE_STATUS = "editorStatus";
 
 /** Database mutation modes. */
@@ -111,7 +112,8 @@ Exhibit.DataEdit.activate = function() {
 	// Locked?  Cancel.
 	if(Exhibit.DataEdit._lock_) { 
 		if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeActivateClose')) { return; }
-		Exhibit.DataEdit.cancel();
+		/*Exhibit.DataEdit.cancel();*/
+		database._listeners.fire("onAfterLoadingItems",[]);
 		Exhibit.DataEdit._setEditLock(false);
 		Exhibit.DataEdit._invokeEventHandlers('onActivateClose');
 		return;
@@ -136,7 +138,7 @@ Exhibit.DataEdit.activate = function() {
 				$(this).css('display','Block');
 				$(this).click(function() { Exhibit.DataEdit.edit(id); });  // Attach onclick
 			});
-			// Now look for delete/clone buttons
+			// Now look for new/clone/delete buttons
 			var filterDelete = function(idx) { return $(this).attr("_ex:role")==Exhibit.DataEdit.EDIT_ROLE_DELETE; }
 			$('*',this).filter(filterDelete).each(function(idx) {
 				$(this).css('display','Block');
@@ -147,6 +149,11 @@ Exhibit.DataEdit.activate = function() {
 				$(this).css('display','Block');
 				$(this).click(function() { Exhibit.DataEdit.clone(id); });  // Attach onclick
 			});
+			var filterCreate = function(idx) { return $(this).attr("_ex:role")==Exhibit.DataEdit.EDIT_ROLE_CREATE; }
+			$('*',this).filter(filterCreate).each(function(idx) {
+				$(this).css('display','Block');
+				$(this).click(function() { Exhibit.DataEdit.create(id); });  // Attach onclick
+			});
 		} else {
 			// No: add overlay to display <div>
 			// Add clickable overlay onto display lens.
@@ -156,7 +163,8 @@ Exhibit.DataEdit.activate = function() {
 			// Due to limitations with the way IE7/8 handles mouse events, we need to create
 			// an invisible (but 'painted', as in it is filled with a bg col) inner <div>
 			var overlay = 
-				'<div class="'+Exhibit.DataEdit.EDIT_INJECT_MARKER+'" '+
+				'<div id="__MARKER__'+id+'" '+
+					'class="'+Exhibit.DataEdit.EDIT_INJECT_MARKER+'" '+
 					'onMouseOver="Exhibit.DataEdit._rollIn_(this)" onMouseOut="Exhibit.DataEdit._rollOut_(this)" '+
 					'style="position:Absolute ; top:'+xy.top+'px ; left:'+xy.left+'px ; width:'+w+'px ; height:'+h+'px ; '+
 						'cursor:Help ; border:2px #dddddd Dotted;">'+
@@ -165,11 +173,15 @@ Exhibit.DataEdit.activate = function() {
 						'style="width:'+w+'px ; height:'+h+'px ; '+
 							'background:Black; opacity:0.0; filter:alpha(opacity=0); -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0);">'+
 					'</div>'+
-					'<div class="__buttonBar__" style="position:Absolute ; top:4px ; right: 2px ; display:None;">'+
+					'<div class="__buttonBar__" style="position:Absolute ; top:4px ; right: 2px ; display:None; background:Red ; color:White ; padding:0.25em 0.5em">'+
+						'<span onclick="Exhibit.DataEdit.create(\''+id+'\')" '+
+							'style="text-decoration:Underline ; cursor:Pointer ;">New</span>'+
+						'&nbsp;|&nbsp;'+
 						'<span onclick="Exhibit.DataEdit.clone(\''+id+'\')" '+
-							'style="background:Red ; color:White ; padding:0.25em 0.5em ; cursor:Pointer ; margin-right:10px;">Clone</span>'+
+							'style="text-decoration:Underline ; cursor:Pointer ;">Clone</span>'+
+						'&nbsp;|&nbsp;'+
 						'<span onclick="Exhibit.DataEdit.de1ete(\''+id+'\')" '+
-							'style="background:Red ; color:White ; padding:0.25em 0.5em ; cursor:Pointer ;">Delete</span>'+
+							'style="text-decoration:Underline ; cursor:Pointer ;">Delete</span>'+
 					'</div>'+
 				'</div>';
 			$(this).append(overlay);
@@ -196,19 +208,25 @@ Exhibit.DataEdit.edit = function(itemId) {
 	var filter = function(idx) { return ($(this).attr("ex:itemid")); }
 	// FIXME: Can we be more efficient than '*' ?
 	$('*').filter(filter).each(function(idx) {
-		// Hide user defined <div ex:role="editorEditButton"> (if they exist)
-		var filterEdit = function(idx) { return $(this).attr("_ex:role")==Exhibit.DataEdit.EDIT_ROLE_EDIT; }
-		$('*',this).filter(filterEdit).css('display','None');  // Important: see FIXME [1] at foot of code
-		// Strip away all edit overlays (if they exist)
-		$('.'+Exhibit.DataEdit.EDIT_INJECT_MARKER,this).remove();	
-		
-		// If this is the item/lens being edited, change to editor
-		if($(this).attr("ex:itemid") == itemId) {
-			// Get lens...
+		var id = $(this).attr("ex:itemid");
+		var markerId = '__MARKER__'+id;
+		// If this is the item/lens selected for editing, change to editor
+		if(id == itemId) {
+			// Hide user defined <div ex:role="editorEditButton"> (if they exist)
+			var filterEdit = function(idx) { return $(this).attr("_ex:role")==Exhibit.DataEdit.EDIT_ROLE_EDIT; }
+			$('*',this).filter(filterEdit).css('display','None');  // Important: see FIXME [1] at foot of code
+			// Strip away edit overlay (red dotted box) if exists
+			$('#'+markerId,this).remove();
+			// Display lens...
 			// var lens = new Exhibit.DataEdit.Lens(el);
-			var editor = new Exhibit.DataEdit.Editor(itemId,this);
+			var editor = new Exhibit.DataEdit.Editor(itemId,this); 
 			Exhibit.DataEdit._editors_[itemId] = editor;
 			editor.apply();
+		} else {
+			// Move the edit marker (red dotted box) if exists, to account for
+			// rejigging of page caused by editor.
+			var xy = $(this).offset();
+			$('#'+markerId,this).css('top',xy.top+'px').css('left',xy.left+'px');
 		}
 	});
 
@@ -216,7 +234,7 @@ Exhibit.DataEdit.edit = function(itemId) {
 }
 
 /** STEP2b: Click on [delete] link. */
-/* IMPORTANT: this function is named de-ONE-ete,  IE can't have functions named 'delete', apparently! */
+/* IMPORTANT: this function is named de-ONE-ete,  IE can't use keywords for functions names, apparently! */
 Exhibit.DataEdit.de1ete = function(itemId) {
 	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeDelete',itemId)) { return; }
 	
@@ -227,7 +245,7 @@ Exhibit.DataEdit.de1ete = function(itemId) {
 			database.removeObjects(itemId,p);
 		}
 	} else { 
-		return;
+		return;  // confirm() == false
 	}
 	// Cause Exhibit to re-eval its views/facets, and close edit window
 	database._listeners.fire("onAfterLoadingItems",[]);
@@ -240,10 +258,11 @@ Exhibit.DataEdit.de1ete = function(itemId) {
 Exhibit.DataEdit.clone = function(itemId) {
 	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeClone',itemId)) { return; }
 	
+	// Clone this item?
 	if(confirm("Do you really want to clone this item?\nItem: "+itemId)) {
-		// Label or id?
-		var prop = (database.getObject(itemId,'id')) ? 'id' : 'label';
-		var _id = database.getObject(itemId,prop);
+		// Item uses label or id as 'key'?
+		var keyProp = (database.getObject(itemId,'id')) ? 'id' : 'label';
+		var _id = database.getObject(itemId,keyProp);
 		if(!_id || _id!=itemId) { return; } // _id!=itemId should never fail!!
 		// If the id ends in digits, attempt to increment
 		if(_id.match(/\d+$/)) {
@@ -252,23 +271,74 @@ Exhibit.DataEdit.clone = function(itemId) {
 			var base = m[1];
 			var n = (m[2].length) ? parseInt(m[2]) : 0;  // Test should never be false!
 			do { n++; } while(database.containsItem(base+n));
-			_id = base+n;  // Now we have a unique id.
+			_id = base+n;
 		} else {
-			// Doesn't end in digit
+			// Doesn't end in digit, so add one
 			_id = _id+'2';
 		}
-		// Save cloned item
+		// Clone item, change id/label, call cloning callback
 		var item = database._spo[itemId];
-		item[prop] = _id;
+		item[keyProp] = _id;
+		var hType = 'onCloning';
+		for(var i=0;i<Exhibit.DataEdit._lifeCycleEventHandlers_.length;i++) {
+			var handler = Exhibit.DataEdit._lifeCycleEventHandlers_[i];
+			item = (handler[hType]) ? handler[hType](itemId,_id,item) : item;
+		}
+		// Save cloned item
 		database.loadData( { items:[item] } );
 	} else {
-		return;
+		return;  // confirm() == false
 	}
 	// Cause Exhibit to re-eval its views/facets, and close edit window
 	database._listeners.fire("onAfterLoadingItems",[]);
 	Exhibit.DataEdit._setEditLock(false);  // FIXME try/catch/*finally*
 	
 	Exhibit.DataEdit._invokeEventHandlers('onClone',itemId);
+}
+
+/** STEP2d: Click on [new] link. */
+Exhibit.DataEdit.create = function(itemId) {
+	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeCreate',itemId)) { return; }
+	
+	var item = {};
+	// Create empty item using source example
+	var srcItem = database._spo[itemId];
+	for(p in srcItem) {
+		var o = database.getObject(itemId,p);
+		if(typeof o=='number') {
+			item[p] = 0;
+		}
+		else if(typeof o=='boolean') {
+			item[p] = false;
+		}
+		else if(typeof o=='string') {
+			if(o.match(/^(\+|\-)?\d+(\.\d+)?$/)) { item[p]=0; }
+			else { item[p]=''; }
+		}
+		else {
+			item[p] = '';
+		}
+	}
+	// Clone source item's type
+	var type = database.getObject(itemId,'type');
+	item['type'] = (type) ? type : 'item';
+	// Key
+	var keyProp = (database.getObject(itemId,'id')) ? 'id' : 'label';
+	item[keyProp] = 'item' + (new Date().getTime());
+	// Call creating callback
+	var hType = 'onCreating';
+	for(var i=0;i<Exhibit.DataEdit._lifeCycleEventHandlers_.length;i++) {
+		var handler = Exhibit.DataEdit._lifeCycleEventHandlers_[i];
+		item = (handler[hType]) ? handler[hType](item[keyProp],item) : item;
+	}
+	// Save
+	database.loadData( { items:[item] } );
+
+	// Cause Exhibit to re-eval its views/facets, and close edit window
+	database._listeners.fire("onAfterLoadingItems",[]);
+	Exhibit.DataEdit._setEditLock(false);  // FIXME try/catch/*finally*
+	
+	Exhibit.DataEdit._invokeEventHandlers('onCreate',itemId);
 }
 
 /** STEP3a: Click on [save] link. */
@@ -294,14 +364,17 @@ Exhibit.DataEdit.save = function(itemId) {
 		if( Exhibit.DataEdit._saveField(itemId,fieldId,f) ) { return; }
 	}
 	// Cause Exhibit to re-eval its views/facets, and close edit window
+	/* Reloading Exhibit on save not supported after multi item edit introduced.
 	database._listeners.fire("onAfterLoadingItems",[]);
 	Exhibit.DataEdit._setEditLock(false);  // FIXME try/catch/*finally*
+	*/
 	
 	var success = Exhibit.DataEdit._invokeEventHandlers('onSave',itemId,item);
 	Exhibit.DataEdit._checkForSaveFailure(success);
 }
 
 /** STEP3b: Click on [cancel] link. */
+/*  [CANCEL] no longer supported after multi item edit introduced.
 Exhibit.DataEdit.cancel = function() {
 	if(!Exhibit.DataEdit._invokeEventHandlers('onBeforeCancel')) { return; }
 
@@ -311,14 +384,17 @@ Exhibit.DataEdit.cancel = function() {
 
 	Exhibit.DataEdit._invokeEventHandlers('onCancel');
 }
+*/
 
 /* Set up clear the edit lock (also set the edit button appearence). */
 Exhibit.DataEdit._setEditLock = function(b) {
 	Exhibit.DataEdit._lock_ = b;
 	// Alter the global button
 	// FIXME: For speed, cache result from selector?
-	$('.exhibitDataEditButton #symbol').html(
+	$('.exhibitDataEditButton #editorToggleSymbol').html(
 		Exhibit.DataEdit._lock_ ? '<span class="on">&#10004;</span>' : '<span class="off">&#10006;</span>');
+	$('.exhibitDataEditButton #editorToggleText').html(
+		Exhibit.DataEdit._lock_ ? 'Stop editing' : 'Start editing');
 }
 
 /* When in field saving mode (because [SAVE] button missing) each editing 
@@ -518,7 +594,7 @@ Exhibit.DataEdit._setup_injectActivateButton = function() {
 		var buttonHTML = 
 			'<div style="position:Fixed; right:1em;  top:1em;">'+
 			'<div class="'+Exhibit.DataEdit.EDIT_BUTTON+'">'+
-			'<a href="javascript:Exhibit.DataEdit.activate();"><div><span id="symbol"><span class="off">&#10006;</span></span>&nbsp;Editor</div></a>'+
+			'<a href="javascript:Exhibit.DataEdit.activate();"><div><span id="editorToggleSymbol"><span class="off">&#10006;</span></span>&nbsp;<span id="editorToggleText">Start editing</span></div></a>'+
 			'</div>'+
 			'</div>';
 		var body = $('body').first().append(buttonHTML);	
