@@ -56,6 +56,21 @@ void      onEdit(itemId)
   Runs at start/end of showing an edit lens (when in edit mode).  Param 
   'itemId' is the id of the selected item.  Return false from onBeforeEdit() 
   to cancel edit lens display for that item (editor UI will not be displayed).
+
+boolean   onBeforeDelete(itemId)
+void      onDelete(itemId)
+  Runs at start/end of deleting an item (when in edit mode).  Param 
+  'itemId' is the id of the selected item.  Return false from onBeforeDelete() 
+  to cancel deletion.
+
+boolean   onBeforeClone(src_itemId)
+item      onCloning(src_itemId,new_itemId,item)
+void      onClone(src_itemId)
+  Runs during item cloning (when in edit mode).  Param 'src_itemId' is the 
+  source item id.  Return false from onBeforeClone() to cancel the clone.
+  The onCloning() event gives access to the item object before it is
+  saved into the Exhibit database.  The item will have been assigned a 
+  unique id or label (new_itemId) based on the source item id or label.
   
 boolean   onBeforeSave(itemId,item)
 boolean   onSave(itemId,item)

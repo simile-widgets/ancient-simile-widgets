@@ -28,9 +28,9 @@
 	color: #000000;
 	background-color: #dddddd;
 }
-.exhibitDataEditButton #symbol { color: White; }
-.exhibitDataEditButton #symbol .on { background-color: Green; }
-.exhibitDataEditButton #symbol .off { background-color: #888888; }
+.exhibitDataEditButton #editorToggleSymbol { color: White; }
+.exhibitDataEditButton #editorToggleSymbol .on { background-color: Green; }
+.exhibitDataEditButton #editorToggleSymbol .off { background-color: #888888; }
 
 /*
  * Components
