@@ -221,7 +221,8 @@ Exhibit.DataEdit.Editor.prototype._addFieldComponent = function(jq,prop,f,onShow
 		// Auto-resize?
 		var srcDim = { width:$(jq).width() , height:$(jq).height() };
 		var prefDim = f['_prefDimensions'];  // Has _prefDimensions..?
-		if(!usingLens && prefDim && ((srcDim.width<prefDim.width) || (srcDim.height<prefDim.height))) {
+		// Disabled auto-resized (see false) for now
+		if(false && !usingLens && prefDim && ((srcDim.width<prefDim.width) || (srcDim.height<prefDim.height))) {
 			h = '<span style="display:Inline-Block; position:Relative; width:'+srcDim.width+'px; height:'+srcDim.height+'px;">'+h+'</span>';
 			$(jq).replaceWith(h);
 			$('#'+f._divId)
@@ -340,6 +341,20 @@ Exhibit.DataEdit.Editor._getUID = function() {
 	// FIXME: Not thread safe!!
 	Exhibit.DataEdit.Editor._uid++;
 	return Exhibit.DataEdit.Editor._uid;
+}
+/** Escape string */
+Exhibit.DataEdit.Editor._escapeString = function(str) {
+	var r = '';
+	for(var i=0;i<str.length;i++) {
+		var c = str.charCodeAt(i);
+		var isAlpha = ((c>=97&&c<=122) || (c>=65&&c<=90));
+		if(isAlpha) {
+			r = r + str.charAt(i);
+		} else {
+			r = r + ((c<16)?'0':'') + c.toString(16);			
+		}
+	}
+	return r;
 }
 
 /** Return match, or closest match. */

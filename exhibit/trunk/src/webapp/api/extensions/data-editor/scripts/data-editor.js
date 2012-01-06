@@ -162,8 +162,9 @@ Exhibit.DataEdit.activate = function() {
 			var h = $(this).outerHeight(true);
 			// Due to limitations with the way IE7/8 handles mouse events, we need to create
 			// an invisible (but 'painted', as in it is filled with a bg col) inner <div>
+			var markerId = '__MARKER__'+Exhibit.DataEdit.Editor._escapeString(id);
 			var overlay = 
-				'<div id="__MARKER__'+id+'" '+
+				'<div id="'+markerId+'" '+
 					'class="'+Exhibit.DataEdit.EDIT_INJECT_MARKER+'" '+
 					'onMouseOver="Exhibit.DataEdit._rollIn_(this)" onMouseOut="Exhibit.DataEdit._rollOut_(this)" '+
 					'style="position:Absolute ; top:'+xy.top+'px ; left:'+xy.left+'px ; width:'+w+'px ; height:'+h+'px ; '+
@@ -209,7 +210,7 @@ Exhibit.DataEdit.edit = function(itemId) {
 	// FIXME: Can we be more efficient than '*' ?
 	$('*').filter(filter).each(function(idx) {
 		var id = $(this).attr("ex:itemid");
-		var markerId = '__MARKER__'+id;
+		var markerId = '__MARKER__'+Exhibit.DataEdit.Editor._escapeString(id);
 		// If this is the item/lens selected for editing, change to editor
 		if(id == itemId) {
 			// Hide user defined <div ex:role="editorEditButton"> (if they exist)
@@ -276,16 +277,28 @@ Exhibit.DataEdit.clone = function(itemId) {
 			// Doesn't end in digit, so add one
 			_id = _id+'2';
 		}
-		// Clone item, change id/label, call cloning callback
-		var item = database._spo[itemId];
-		item[keyProp] = _id;
+		// Deep clone item
+		var srcItem = database._spo[itemId];
+		var destItem = {};
+		for(var p in srcItem) {
+			var sa = srcItem[p];
+			if(typeof sa == 'object') {
+				var da = [];
+				for(var i in sa) { da.push(sa[i]); }
+				destItem[p] = da;
+			} else {
+				destItem[p] = sa;
+			}
+		}
+		// Change id/label, call cloning callback
+		destItem[keyProp] = [_id];
 		var hType = 'onCloning';
 		for(var i=0;i<Exhibit.DataEdit._lifeCycleEventHandlers_.length;i++) {
 			var handler = Exhibit.DataEdit._lifeCycleEventHandlers_[i];
-			item = (handler[hType]) ? handler[hType](itemId,_id,item) : item;
+			destItem = (handler[hType]) ? handler[hType](itemId,_id,destItem) : destItem;
 		}
 		// Save cloned item
-		database.loadData( { items:[item] } );
+		database.loadData( { items:[destItem] } );
 	} else {
 		return;  // confirm() == false
 	}
