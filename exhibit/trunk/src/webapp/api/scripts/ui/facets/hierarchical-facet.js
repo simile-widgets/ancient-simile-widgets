@@ -235,6 +235,7 @@ Exhibit.HierarchicalFacet.prototype._internalAddSelection = function(selection) 
     var parentToClear = {};
     var childrenToClear = {};
     
+    this._buildCache();
     var cache = this._cache;
     var markClearAncestors = function(value) {
         if (value in cache.valueToParent) {
