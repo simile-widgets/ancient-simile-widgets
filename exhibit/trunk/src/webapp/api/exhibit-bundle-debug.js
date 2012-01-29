@@ -3747,6 +3747,7 @@ if(node){if(selection.selectOthers){Exhibit.Set.createIntersection(node.others,i
 };
 Exhibit.HierarchicalFacet.prototype._internalAddSelection=function(selection){var parentToClear={};
 var childrenToClear={};
+this._buildCache();
 var cache=this._cache;
 var markClearAncestors=function(value){if(value in cache.valueToParent){var parents=cache.valueToParent[value];
 for(var i=0;

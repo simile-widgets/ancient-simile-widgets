@@ -46,7 +46,7 @@ Exhibit.MapView._settingSpecs = {
     "size":             { type: "text",     defaultValue: "small"   },
     "scaleControl":     { type: "boolean",  defaultValue: true      },
     "overviewControl":  { type: "boolean",  defaultValue: false     },
-    "type":             { type: "enum",     defaultValue: "normal", choices: [ "normal", "satellite", "hybrid" ] },
+    "type":             { type: "enum",     defaultValue: "normal", choices: [ "normal", "satellite", "hybrid", "terrain" ] },
     "bubbleTip":        { type: "enum",     defaultValue: "top",    choices: [ "top", "bottom" ] },
     "mapHeight":        { type: "int",      defaultValue: 400       },
     "mapConstructor":   { type: "function", defaultValue: null      },
@@ -629,7 +629,6 @@ Exhibit.MapView.prototype._rePlotItems = function(unplottableItems) {
             self._settings
         );
 
-//	marker=new google.maps.Marker({position: point, map: self._map});
         google.maps.event.addListener(marker, "click", function() { 
 	    self._showInfoWindow(locationData.items,null,marker)
 	    
@@ -782,7 +781,7 @@ Exhibit.MapView.prototype._plotPolyline = function(itemID, polylineString, color
 	var polyline = new google.maps.Polyline({
 	    path: coords,
 	    strokeColor: borderColor,
-	    strokeWidth: settings.borderWidth,
+	    strokeWeight: settings.borderWidth,
 	    strokeOpacity: settings.borderOpacity
 	});
 
@@ -796,8 +795,8 @@ Exhibit.MapView.prototype._addPolygonOrPolyline = function(itemID, poly) {
     this._overlays.push(poly);
     
     var self = this;
-    var onclick = function(latlng) {
-	self._showInfoWindow([itemID],latlng);
+    var onclick = function(event) {
+	self._showInfoWindow([itemID],event.latLng);
 
         if (self._selectListener != null) {
             self._selectListener.fire({ itemIDs: [itemID] });
@@ -878,8 +877,8 @@ Exhibit.MapView.makeCanvasIcon = function(width,height,color,label,iconImg,iconS
     var pin=settings.pin;
     var pinWidth=settings.pinWidth;
     var pinHeight=settings.pinHeight;
-    var lineWidth=settings.borderWidth;
-    var lineColor=settings.borderColor;
+    var lineWidth=1; //maybe settings.borderWidth but may clash with polyline width usage
+    var lineColor=settings.borderColor || "black";
     var alpha=settings.shapeAlpha;
     var bodyWidth=width-lineWidth; //stroke is half outside circle on both sides
     var bodyHeight=height-lineWidth;
@@ -975,7 +974,7 @@ Exhibit.MapView.makeCanvasIcon = function(width,height,color,label,iconImg,iconS
 	context.textBaseline="middle";
 	context.textAlign="center";
 	context.globalAlpha=1;
-	context.fillStyle=lineColor;
+	context.fillStyle="black";
 	context.fillText(label,width/2.0,height/2.0,width/1.4);
     }
 
