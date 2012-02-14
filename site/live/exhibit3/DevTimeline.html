@@ -1,37 +1,87 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html> 
-  <head> 
-    <title>Exhibit 3.0 Development Timeline</title> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head> 
+<title>Exhibit 3.0</title> 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="../styles/common.css" type="text/css" />
     <link rel="stylesheet" href="exhibit3.css" type="text/css" />
   </head>
-<body>
-<h1>Development Schedule for Exhibit 3.0 Project</h1>
-<h3>August</h3>
-<ul>
-<li>Provide a server-side option for publishing large collections</li>
-<li>Support links to particular Exhibit states</li>
-<li>Initial version of method to move from small to large collections stored on the server</li>
-<li>API for result set pagination and/or summarization (scripted)</li>
-</ul>
-<h3>September</h3>
-<ul>
-<li>Improved embed-ability of Exhibits into external applicatins and Web pages</li>
-</ul>
-<h3>October</h3>
-<ul>
-<li>Scalabe to 1 million triples and 20,000 facet values</li>
-<li>Data export features enabling large-scale data editing in external applicatons (i.e. Google Refine)</li>
-</ul>
-<h3>November</h3>
-<ul>
-<li>API for result set pagination and/or summarization (staged)</li>
-</ul>
-<h3>December</h3>
-<ul>
-<li>Incremental updates of UI views supported</li>
-<li>Easier way to author new types of views, widgets, and facets</li>
-</ul>
-</body>
-</html> 
+
+  <body>
+    <ul id="path">
+      <li><a href="http://www.simile-widgets.org/">SIMILE Widgets</a></li>
+      <li><span>Exhibit 3.0</span></li>
+    </ul>
+
+    <div id="header">
+      <h1>Exhibit 3.0 Roadmap</h1>
+      <h2>Publishing Framework for Large-Scale Data-Rich Interactive Web Pages</h2>
+    </div>
+
+    <div id="content">
+
+      <table class="spaced-table">
+      <tbody>
+      <tr>
+      <td width="50%"><h1>Exhibit Developers</h1>
+
+      <p>This roadmap outlines future development of Exhibit 3.0 to spark community discussion about where the platform should go and point developers to tasks that need your help.</p>
+      <h2>Exhibit 3.0 Scripted Mode</h2>
+      <ul>
+        <li>Enhance documentation of the current API for writing new views and facets as more examples are authored for Exhibit 3.0 and patterns emerge.</li>
+  <li>Integrate with other third-party widgets such as the <a href="https://community.zepheira.com/wiki/exhibit3/JavaScript">JavaScript</a> <a href="https://community.zepheira.com/wiki/exhibit3/InfoViz">InfoViz</a> Toolkit (<a href="http://thejit.org/">http://thejit.org</a>). </li>
+  <li>Add a progress bar to appear while Exhibits are rendering to provide a visual indicator to users (also applicable to Staged mode).</li>
+  <li>Reach parity between features available in Exhibit 2 and Exhibit 3.0. See <a href="https://github.com/zepheira/exhibit3/wiki/Previous-Release-Comparison">https://github.com/zepheira/exhibit3/wiki/Previous-Release-Comparison</a>.</li>
+  </ul>
+      <p>&nbsp;</p>
+      <h2><em>General</em></h2>
+      <ul>
+        <li>Move all SIMILE projects over to a SIMILE <a href="https://community.zepheira.com/wiki/exhibit3/GitHub">GitHub</a> repository. </li>
+      </ul>
+<p class="spaced-table">&nbsp;</p>
+<p class="spaced-table">&nbsp;</p>
+      </td>
+
+	<td>
+	<h2>Exhibit 3.0 Staged Mode      </h2>
+	<ul>
+	  <li>Explore capacity: How many Exhibits can a Backstage instance support?</li>
+        <ol>
+          <li>With the limited number of ~100K item datasets we used, we observed a rule of thumb of approx 1.5G of RAM per dataset when using the in-memory database. At the current time, we don't have any capacity information for the on-disk database.</li>
+        </ol>
+        <li>Add bookmark UI feature for Staged.</li>
+        <li>Explore caching to help reduce processing latency:</li>
+        <ol>
+          <li>Consider pre-generating and then caching without expiration the first page response, which can take several minutes currently while waiting for data to completely load.</li>
+          <li>Caching query responses in general may speed up responsiveness.</li>
+        </ol>
+        <li>Reset Backstage session when exhibit HTML is edited after session is initialized.</li>
+        <li>Exportability of subsets of staged Exhibits</li>
+        <li>Testing of better or alternate means of associating the exported HTML+RDFa data with an exhibit should be evaluated and reevaluated over time as search engines adopt new conventions.</li>
+        <li>Export API:</li>
+        <ol>
+          <li>Provide a service that details which output formats are available in an installation.</li>
+          <li>Add more output format options.</li>
+          <li>Document for developers how to write more output formats.</li>
+        </ol>
+        <li>Import API:</li>
+        <ol>
+          <li>Lightly document where to find extension points in the code. Because input is a one-time operation, providing an input API seems less important.</li>
+        </ol>
+        <li>Make Backstage stateless.</li>
+        <li>Add pagination for Exhibit 3.0 Staged mode.</li>
+        <li>Reach parity between features available in Exhibit 3.0 Scripted and Staged modes. See <a href="https://github.com/zepheira/backstage/wiki/Staged-Compared-to-Scripted">https://github.com/zepheira/backstage/wiki/Staged-Compared-to-Scripted</a>.</li>
+    </ul>
+      <p>&nbsp;</p></td>
+	</tr>
+	</tbody>
+	</table>
+    </div>
+    
+    <div id="footer">
+      <p>Copyright © <a href="http://web.mit.edu/">Massachusetts Institute of Technology</a> and Contributors, 2010-2012 ~ Some rights reserved
+<a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width: 0pt; vertical-align: middle;" src="Exhibit%203.0_files/80x15.png"></a><br>
+<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">The Exhibit 3.0 Project Website</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.<br></p>
+    </div>
+  
+
+</body></html>

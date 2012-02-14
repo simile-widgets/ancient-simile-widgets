@@ -1,6 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html> 
-  <head> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head> 
     <title>Exhibit 3.0</title> 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="../styles/common.css" type="text/css" />
@@ -9,13 +8,13 @@
 
   <body>
     <ul id="path">
-      <li><a href="/">SIMILE Widgets</a></li>
+      <li><a href="http://www.simile-widgets.org/">SIMILE Widgets</a></li>
       <li><span>Exhibit 3.0</span></li>
     </ul>
 
     <div id="header">
       <h1>Exhibit 3.0</h1>
-      <h2>Publishing Framework for Large Scale Data-Rich Interactive Web Pages</h2>
+      <h2>Publishing Framework for Large-Scale Data-Rich Interactive Web Pages</h2>
     </div>
 
     <div id="content">
@@ -27,85 +26,88 @@
 
       <div class="focus">
     
-      <p class="blurb">Exhibit 3.0 is a publishing framework for <em>large scale</em> data-rich interactive Web pages, building on the success of the <a href="../exhibit/">original Exhibit</a>.</p>
+      <p class="blurb">Exhibit 3.0 is a publishing framework for <em>large-scale</em> data-rich interactive Web pages.</p>
 
-      <p class="bodycontent">The Exhibit 3.0 software is comprised of two separate components, <strong>Scripted</strong> for building in-browser Exhibits, and <strong>Staged</strong> for server-based Exhibits.  We are currently at a <strong>beta</strong> release for both pieces: most things work, but there are bugs and the packaging is a little rough around the edges.</p>
+      <p class="bodycontent">Exhibit lets you easily create Web pages with advanced text search and filtering functionalities, with interactive maps, timelines, and other visualizations. The Exhibit 3.0 software has two separate modes: <strong>Scripted</strong> for building smaller in-browser Exhibits, and <strong>Staged</strong> for bigger server-based Exhibits. </p>
+      <h3>Exhibit 3.0 Scripted (rc1)</h3>
 
-      <h3>Staged</h3>
-
-      <p>Our main implementation focus for Exhibit 3.0 Staged is <a href="https://github.com/zepheira/backstage/">Backstage, on GitHub</a>.  <a href="https://github.com/zepheira/backstage/issues">Bug reports</a> belong on GitHub.  You will need to build it yourself to test it out, and here is the <a href="https://github.com/zepheira/backstage/wiki/Building-backstage">documentation on how to do that</a>. You'll also find documentation on the new <a href="https://github.com/zepheira/backstage/wiki/Http-interface">HTTP interface</a>.</p>
-
-      <h3>Scripted</h3>
-
-      <p><a href="https://github.com/zepheira/exhibit3/">Exhibit 3.0 Scripted is on GitHub</a>.  <a href="https://github.com/zepheira/exhibit3/issues">Bug reports</a> belong on GitHub.  You can see some demos on the <a href="https://ci.zepheira.com/job/test_exhibit3/">continuous integrator</a>, along with documentation and code coverage reports.</p>
+      <p>Exhibit 3.0 Scripted mode is for building smaller in-browser exhibits:</p>
+      <ul>
+        <li>Code is <a href="https://github.com/zepheira/exhibit3/">available on GitHub</a>. </li>
+        <li>Technical documentation is on the <a href="https://github.com/zepheira/exhibit3/wiki">GitHub wiki</a>.</li>
+        <li>See the <a href="http://www.simile-widgets.org/wiki/Exhibit3">Exhibit user documentation</a> (as <a href="Exhibit3-Doc.pdf">PDF</a>).</li>
+        <li>File feature requests and <a href="https://github.com/zepheira/exhibit3/issues">bug reports</a> on GitHub.</li>
+        <li>See <a href="http://databench.zepheira.com/demos/">demos</a> of Exhibit 3.0 Scripted.</li>
+        <li>Find <a href="https://ci.zepheira.com/job/test_exhibit3/javadoc/?">documentation</a> and code coverage reports on the <a href="https://ci.zepheira.com/job/test_exhibit3/">continuous integration service site</a>.</li>
+        <li><a href="https://github.com/zepheira/exhibit3/wiki/Previous-Release-Comparison">Compare</a> features  of Exhibit 3.0 Scripted to Exhibit 2.2.</li>
+      </ul>
+      <h3>Exhibit 3.0 Staged (beta2)</h3>
+      <p>Exhibit 3.0 Staged is built on Backstage: </p>
+      <ul>
+        <li>Code is <a href="https://github.com/zepheira/backstage/">available on GitHub</a>. </li>
+        <li>Technical documentation is available on the <a href="https://github.com/zepheira/backstage/wiki">GitHub wiki</a>.</li>
+        <li>Get the <a href="http://www.simile-widgets.org/wiki/Exhibit3">Exhibit user documentation</a> (as <a href="Exhibit3-Doc.pdf">PDF</a>).</li>
+        <li>File feature requests and <a href="https://github.com/zepheira/backstage/issues">bug reports</a> on GitHub.</li>
+        <li>See <a href="http://databench.zepheira.com/">demos</a> showing Exhibit running with datasets of more than 10k items.</li>
+        <li>For installation instructions, see the <a href="https://github.com/zepheira/backstage/wiki/Building-backstage">documentation on building Exhibit 3.0 Staged</a>. </li>
+        <li><a href="https://github.com/zepheira/backstage/wiki/Staged-Compared-to-Scripted">Compare</a> features  of Exhibit 3.0 Scripted to Exhibit 3.0 Staged.      </li>
+      </ul>
+      <p>&nbsp;</p>
       </div>
 
       <h3>Getting Involved</h3>
 
-      <p>You can join us on IRC on <a href="irc://irc.freenode:6667/#exhibit3">freenode</a> or browse the <a href="http://groups.google.com/group/simile-widgets">SIMILE Widgets mailing list</a> archives and ask any questions you may have on the list.  The developers are all present and watching.  Chances are others may have similar questions, and the list is a great place to share answers. If you'd like to contact us directly, the following project leads are availabe to answer any specific questions you may have: </p>
-      <ul class="contacts">
-	    <li>Principal: <a href="mailto:kenzie@mit.edu">MacKenzie Smith</a> (Associate Director for Technology, MIT Libraries)</li>
-	    <li>Co-Principal: <a href="mailto:em@zepheira.com">Eric Miller</a> (President, Zepheira)</li>
-	    <li>Project Manager: <a href="mailto:kathy@zepheira.com">Kathy MacDougall</a> (Partner, Zepheira)</li>
-	  </ul>
-
-      <p>You can also see all of the <a href="team.html">people</a> behind the project.</p>
-
-      <p class="credit">This project is made possible by generous support from the <a href="http://www.loc.gov/">Library of Congress</a>.  It is a partnership among <a href="http://libraries.mit.edu/">MIT Libraries</a>, <a href="http://csail.mit.edu/">MIT CSAIL</a> and <a href="http://zepheira.com/">Zepheira</a>, including personnel who are <a href="http://simile.mit.edu/">SIMILE project</a> alumnus.</p>
-    </td>
+      <p>Join us on IRC on <a href="irc://irc.freenode:6667/#exhibit3">freenode</a> or browse the <a href="http://groups.google.com/group/simile-widgets">SIMILE Widgets mailing list</a>
+ archives to ask  questions about Exhibit.  Chances are others may have 
+similar questions, and the list is a great place to share answers. </p>
+      <h3>Background</h3>
+<p class="spaced-table">The Exhibit 3 project was supported by the <a href="http://www.loc.gov/">Library of Congress</a>.  It is a partnership among <a href="http://libraries.mit.edu/">MIT Libraries</a>, <a href="http://csail.mit.edu/">MIT CSAIL</a> and <a href="http://zepheira.com/">Zepheira</a>, including personnel from the original <a href="http://simile.mit.edu/">SIMILE project</a>. See the Exhibit 3.0 <a href="ExhibitPR.pdf">launch press release (PDF)</a>.</p>
+<p class="spaced-table">Exhibit 3.0 development work proceeds from the <a href="http://www.simile-widgets.org/exhibit3/Architecture.pdf">proposed architecture (PDF)</a> released in early 2011. See the <a href="http://www.simile-widgets.org/exhibit3/Simile%20Tools%20Workshop%20Summary.pdf">workshop summary (PDF)</a> that originally defined the new community requirements for Exhibit 3.0.</p>
+      </td>
 
 	<td>
 	<h2>Demos</h2>
-	<p>See <a href="http://databench.zepheira.com/">demos</a> of the new Exhibit 3.0 platform in action!</p>
+	<p>See the <a href="http://databench.zepheira.com/">new Exhibit 3.0 platform</a> in action!</p>
 
-      <h2>Beta Release!</h2>
+      <h2>Exhibit 3.0: What's New?</h2>
 
-      <p>Exhibit 3.0 Beta is ready for community input.  Highlighted features included in this release:</p>
+      <p>Exhibit 3.0 is available for community input.  Highlights include:</p>
+      <h3>Exhibit 3.0 Scripted (rc1):</h3>
       <ul>
-        <li>Scalability: Browse 100k items</li>
+        <li>New HTML5 configuration language, with backward compatibility for prior configuration language</li>
+        <li>New localization system (no more 404's)</li>
+        <li>New history system (no more __history__.html)</li>
+        <li>Updated libraries, including jQuery</li>
+        <li>Removal of external or unconfigurable service dependencies within the core</li>
+        <li>Most core views and facets and some popular extension views implemented</li>
+        <li>More developer-friendly, including a new event-driven API, basic tests, and documentation</li>
         <li>Persistence: Pick up where you left off browsing an Exhibit</li>
-        <li>Bookmarks: Share exactly what you see with others</li>
-        <li>jQuery: All Scripted code makes use of jQuery, resolving old browser-specific bugs</li>
-        <li>Result paging, bug fixes, documentation, tests, and more</li>
+        <li>Bookmarks: Share exactly what you see with others </li>
       </ul>
 
-      <p>What's still left:</p>
+      <h3>Exhibit 3.0 Staged (beta2):</h3>
       <ul>
-        <li>Adding more views to both Scripted and Staged</li>
-        <li>Adding more facets to both Scripted and Staged</li>
-        <li>Adding more importer formats to Scripted</li>
-        <li>Fixing known bugs and adding back prior features</li>
+        <li>Scalability: Browse hundreds of thousands of records</li>
+        <li>Persistence: Pick up where you left off browsing an Exhibit</li>
+        <li>Export data in HTML + RDFa format</li>
       </ul>
-	<a href="DevTimeline.html">See the complete development timeline for the Exhibit 3.0 project</a>
-      <p>Zepheira will provide a hosted server environment in the future for testing the new Exhibit platform in the near future. In the meantime, you can build it yourself.</p>
+      <p>&nbsp;</p>
 
-      <h3>Background</h3>
+      <h3>Community Involvement</h3>
 
-	  <p>Development work proceeds from the <a href="Architecture.pdf">proposed architecture (PDF)</a> plan released in early 2011.  You can also read the official <a href="Exhibit3%20press%20release.pdf">press release (PDF)</a> for background information and the <a href="Simile%20Tools%20Workshop%20Summary.pdf">workshop summary (PDF)</a> that originally defined new community requirements for Exhibit 3.0, including:</p>
-
-      <ul class="requirements">
-	   <li>Be scalable up to 1 million triples and 20,000 facet values</li>
-	   <li>Provide a server-side option for publishing large collections</li>
-	   <li>Include a simple way to move from small collections stored in the browser to larger collections stored on the server</li>
-	   <li>Support incremental updates of views in the UI</li>
-	   <li>Provide an API for result set pagination and/or summarization</li>
-	   <li>Make it easier to add new views, widgets and facets to the UI</li>
-	   <li>Improve embed-ability of Exhibits into external applications and Web pages</li>
-	   <li>Support links to particular Exhibit states</li>
-	   <li>Provide support for limited data and UI editing in the Exhibit UI via plug-ins or widgets</li>
-	   <li>Provide data export features to enable large-scale data editing in external applications (e.g. <a href="http://code.google.com/p/google-refine/">Google Refine</a>)</li>
-	   <li>For complex UI layout editing, provide extension hooks and reference implementations as examples</li>
-	  </ul>
-	</td>
+	  <p>Developers in the community are encouraged to contribute code. Review the <a href="http://www.simile-widgets.org/exhibit3/DevTimeline.html">proposed roadmap</a> of features to see where your help is needed most.</p>
+	  <p>We also encourage all members of the Exhibit community to share their ideas, suggestions, documentation, examples, and contributions in any other way you can think of!</p>
+	  <p>&nbsp;</p></td>
 	</tr>
 	</tbody>
 	</table>
     </div>
     
     <div id="footer">
-      <p>Copyright &copy; <a href="http://web.mit.edu/">Massachusetts Institute of Technology</a> and Contributors, 2010-2011 ~ Some rights reserved
-<a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width: 0; vertical-align: middle;" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a><br />
-<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">The Exhibit 3.0 Project Website</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.<br /></p>
+      <p>Copyright © <a href="http://web.mit.edu/">Massachusetts Institute of Technology</a> and Contributors, 2010-2012 ~ Some rights reserved
+<a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width: 0pt; vertical-align: middle;" src="Exhibit%203.0_files/80x15.png"></a><br>
+<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">The Exhibit 3.0 Project Website</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.<br></p>
     </div>
-  </body>
-</html>
+  
+
+</body></html>
