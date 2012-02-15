@@ -130,7 +130,9 @@ Exhibit.DataEdit.Editor.TickListField.prototype.setValue = function(v) {
 Exhibit.DataEdit.Editor.TickListField.prototype.setError = function(b) {
 	$('#'+this._divId).css('background-color' , b?Exhibit.DataEdit.Editor._ERRCOL_:Exhibit.DataEdit.Editor._BGCOL_);
 }
-
+/** Focus this field for input */
+Exhibit.DataEdit.Editor.TickListField.prototype.focus = function() {
+}
 
 /* ======================================================================== 
  * Statics

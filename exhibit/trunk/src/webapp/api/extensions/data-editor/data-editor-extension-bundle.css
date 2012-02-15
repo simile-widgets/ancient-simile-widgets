@@ -7,6 +7,8 @@
  */
 /*.exhibitDataEditButton { display: Inline-Block; }*/
 .exhibitDataEditButton div {
+	margin-bottom: 3px;
+	font-size: 10px;
 	padding: 0.25em 0.5em;
 	border-top: 1px #eeeeee Solid;
 	border-left: 1px #aaaaaa Solid;
@@ -14,23 +16,24 @@
 	border-bottom: 1px #999999 Solid;
 	text-decoration: None;
 	
-	-moz-box-shadow: 0px 0px 5px #888888;
-	-webkit-box-shadow: 0px 0px 5px #888888;
-	box-shadow: 0px 0px 5px #888888;
+	-moz-box-shadow: 0px 0px 2px #888888;
+	-webkit-box-shadow: 0px 0px 2px #888888;
+	box-shadow: 0px 0px 2px #888888;
 }
+.exhibitDataEditButton a { text-decoration: None;  outline:0; }
 .exhibitDataEditButton a:link div ,
 .exhibitDataEditButton a:active  div ,
 .exhibitDataEditButton a:visited  div {
-	color: #444444;
 	background-color: #cccccc;
 }
 .exhibitDataEditButton a:hover  div {
-	color: #000000;
 	background-color: #dddddd;
 }
-.exhibitDataEditButton #editorToggleSymbol { color: White; }
-.exhibitDataEditButton #editorToggleSymbol .on { background-color: Green; }
-.exhibitDataEditButton #editorToggleSymbol .off { background-color: #888888; }
+.exhibitDataEditButton a div .exhibitDataEditButtonText  .on { color: Green; }
+.exhibitDataEditButton a div .exhibitDataEditButtonText  .off { color: #888888; }
+.exhibitDataEditButton a div .exhibitDataEditButtonSymbol { color: White; }
+.exhibitDataEditButton a div .exhibitDataEditButtonSymbol .on { background-color: Green; }
+.exhibitDataEditButton a div .exhibitDataEditButtonSymbol .off { background-color: #888888; }
 
 /*
  * Components
@@ -50,6 +53,17 @@
 .exhibitDataEditTickListField {
 	border-style: Inset;  border-color: #ece9d8;  border-width: 2px;
 }
+.exhibitDataEditAutoResize {
+	z-index: 1000 !important;
+	/*left: 0px !important;  top: 0px !important;*/
+	border: 2px Red Dotted !important;
+}
+
+/*
+ * Red dotted selector
+ */
+.exhibitDataEditSelectorOff { cursor: Help;  border: 2px #dddddd Dotted; }
+.exhibitDataEditSelectorOn { cursor: Help;  border: 2px Red Dotted; }
 
 /*
  * Errors and stuff

@@ -1,10 +1,11 @@
 USING THE EVENT LIFECYCLE
-- 10th Oct 2011 - 
+
+v1 : 10th Oct 2011 
+v2 : 15th Feb 2012
 
 So you want to write some code to integrate into the editor extension,
 probably to save Exhibit's data into some exotic format like an SQL database
 or a triplestore?  This guide is for you...
-
 
 -----------------------------------------------------------------------
 1. Events
@@ -16,18 +17,17 @@ editor extension.  In order to work with the event lifecycle it is useful
 to know the lifecycle of the editor extension itself:
  - when a page loads featuring the editor extension, 'initialisation' scans 
    the markup looking for editor tags.
- - An editor toggle button (either added explicitly via 
-   ex:role="editorActivateButton" attributes, or placed by default during 
-   initialisation) switches between the normal Exhibit display mode and the 
-   editor mode.  When in the editor mode, item lens can be clicked on to be 
-   edited.
+ - Editor toggle buttons (either added explicitly via ex:role="editorButton" 
+   attributes, or placed by default during initialisation) switch between the 
+   normal Exhibit display mode and one of the editor modes.  When in an
+   editor mode, item lens can be clicked on to be edited, cloned and deleted.
  - When an item is clicked, it's HTML is translated into an edit lens.  If 
    the page did not define an edit lens, one is created from the display 
    lens markup.
- - If a ex:role="editorSaveButton" element is defined inside an edit lens, 
-   the editor extension saves the whole item in one go when said 'save' 
-   element is clicked; otherwise the item is saved field by field as the
-   input focus leave each UI element.
+ - If an ex:role="editorButton" element is defined inside an edit lens with
+   ex:type="save", the editor extension saves the whole item in one go when 
+   said 'save' element is clicked; otherwise the item is saved field by field 
+   as the input focus leave each UI element.
 
 Each event fires *after* the action it describes has happened.  So, onInit()
 is fired after initialisation.  A parallel set of events, onBeforeX, fire 
@@ -37,7 +37,7 @@ boolean  onBeforeInit()
 void     onInit()
   Runs at start/end of the initialisation phase, before and after the HTML
   is scanned for editor markup.  Return false from onBeforeInit() to cancel 
-  initalisation (page will not be editable).
+  initailisation (page will not be editable).
 
 boolean   onBeforeActivate()
 void      onActivate()
@@ -81,15 +81,6 @@ boolean   onSave(itemId,item)
   one property.  Return false from onBeforeSave() to cancel the save (data will 
   not be saved into Exhibit database).  Return false from onSave() to indicate
   a failure to save data, otherwise true if persistence was successful.
-  (See Exhibit.DataEdit.onSaveFailed() later).
-
-boolean   onBeforeCancel()
-void      onCancel()
-  Runs at start/end if [CANCEL] button being clicked (if edit lens containts
-  [CANCEL] button.  This event isn't all that useful at them moment, as the
-  editor extension only allows one item to be edited per activation, so the 
-  [CANCEL] button just switches back to display mode (causing the
-  onBeforeActivateClose()/onActivateClose() to run anyway).
   
 
 -----------------------------------------------------------------------
@@ -114,16 +105,12 @@ to Exhibit.DataEdit.addEventHandler(), like so:
       onEdit :                function(id) { console.log(t,'onEdit',id); } ,
       onBeforeSave :          function(id,item) { console.log(t,'onBeforeSave',id,item); return true; } ,
       onSave :                function(id,item) { 
-        console.log(t,'onSave',id,item);
-        Exhibit.DataEdit.addOnSaveFailedMessage("Something bad happened!");
-        return false;  // Failure!
+        Exhibit.DataEdit.onSaveErrors.push("Somethine bad happened!");
+		return false;  // Failure!
       } ,
       onBeforeCancel :        function() { console.log(t,'onBeforeCancel'); return true; } ,
       onCancel :              function() { console.log(t,'onCancel'); } 
     });
-    Exhibit.DataEdit.onSaveFailed = function(msgs) { 
-      for(var i=0;i<msgs.length;i++) { console.log("ERROR: "+msgs[i]); } 
-    }
   }
 </script>
 
@@ -147,19 +134,35 @@ concerning itself with the user interface and 'user experience', which is
 messy.
 
 I much cleaner solution is for the editor extension to provide a formal means
-of allowing onSave() failures to be reported, and to provide an API for the
-page author to display those errors.  This means the UI is entirely the domain
-of the editor extension, and any persistence extensions don't need to worry
-error reporting.
+of allowing onSave() failures to be reported, and report those errors via the
+editor UI.  The Exhibit.DataEdit.onSaveErrors array is used for this purpose.
+Simply add error messages (as strings) to this array, and the editor will
+display them.
 
-The editor extension does indeed maintain a formal mechanism to log errors, 
-and for page authors to 'collect' them.  If a persistence extension wishes to
-pass an error message back to the user (rather than just return false to
-indicate failure), it can use Exhibit.DataEdit.addOnSaveFailedMessage() to 
-record an error.  To 'collect' these errors the page author can implement a 
-function at Exhibit.DataEdit.onSaveFailed, with an array as its parameter.
+If the editing lens contains an ex:role="editorStatus", the editor will show 
+the success or otherwise of the save in that item's status element.  If the 
+lens does not contain an ex:role="editorStatus", and onSaveErrors is not empty 
+after an onSave call, the editor will use the browser's alert() function to 
+display errors.  So, providing the persist code populates onSaveErrors, the
+editor will ensure the end user gets to see its messages.
 
-Note: if Exhibit.DataEdit.onSaveFailed is not assigned, by default the editor 
-extension displays any onSave() messages using the JavaScript alert() dialog.
-(In future, the editor extension may come bundled with more sophisticated 
-options for error display, without authors requiring JavaScript knowledge.)
+
+-----------------------------------------------------------------------
+4. Markup ref
+-----------------------------------------------------------------------
+
+By default four mode buttons are placed in the top-right corner of the page.  
+If you wish to define your own HTML for these buttons you can use ex:role 
+and ex:type attributes, like so:
+<span ex:role="editorButton" ex:type="edit">Click me to toggle editor mode</span>
+<span ex:role="editorButton" ex:type="clone">Click me to clone an existing item</span>
+<span ex:role="editorButton" ex:type="create">Click me to create a blank item based on an existing type</span>
+<span ex:role="editorButton" ex:type="delete">Click me to delete an existing item</span>
+
+By default an editing lens will be created from your display lens.  If you wish 
+to define a separate editing lens, you can do so:
+<div ex:role="editor">
+  <!-- Editing components and other markup go here -->
+  <span ex:role="editorButton" ex:type="save">Save item button</span>
+  <span ex:role="editorStatus">Status messages will be displayed here</span>
+</div>

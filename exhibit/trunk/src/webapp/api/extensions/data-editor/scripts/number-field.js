@@ -93,6 +93,10 @@ Exhibit.DataEdit.Editor.NumberField.prototype.setValue = function(v) {
 Exhibit.DataEdit.Editor.NumberField.prototype.setError = function(b) {
 	$('#'+this._divId).css('background-color' , b?Exhibit.DataEdit.Editor._ERRCOL_:Exhibit.DataEdit.Editor._BGCOL_);
 }
+/** Focus this field for input */
+Exhibit.DataEdit.Editor.NumberField.prototype.focus = function() {
+	$('#'+this._divId).focus();
+}
 
 /* Attempt to format number (as string) */
 Exhibit.DataEdit.Editor.NumberField.prototype._format = function(v) {

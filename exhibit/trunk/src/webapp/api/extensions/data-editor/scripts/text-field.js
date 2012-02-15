@@ -44,8 +44,11 @@ Exhibit.DataEdit.Editor.TextField = function(jq,iid,pid,val,noLens) {
 
 /** Create component HTML. */
 Exhibit.DataEdit.Editor.TextField.prototype.getHTML = function(onShow) {
+	// NOTE: This next line breaks IE: in lensless mode _jqThis will be a <div> etc, 
+	// but in lens mode it'll be an <input>.  The font sizer injects then measures a
+	// <span>, and IE won't permit such a thing as the child of an <input>
 	var textDim = Exhibit.DataEdit.Editor._getColRowDimensions(this._jqThis,1,1);
-	this._prefDimensions = { width:textDim.width*10 , height:textDim.height*1 };
+	this._prefDimensions = { width:textDim.width*5 , height:textDim.height*1 };
 	var style = null;
 	if(this._noEditorLens || this._matchDisplayLens) {
 		style = Exhibit.DataEdit.Editor._extractStyle(this._jqThis) +
@@ -94,7 +97,10 @@ Exhibit.DataEdit.Editor.TextField.prototype.setValue = function(v) {
 Exhibit.DataEdit.Editor.TextField.prototype.setError = function(b) {
 	$('#'+this._divId).css('background-color' , b?Exhibit.DataEdit.Editor._ERRCOL_:Exhibit.DataEdit.Editor._BGCOL_);
 }
-
+/** Focus this field for input */
+Exhibit.DataEdit.Editor.TextField.prototype.focus = function() {
+	$('#'+this._divId).focus();
+}
 
 /* ======================================================================== 
  * Statics
