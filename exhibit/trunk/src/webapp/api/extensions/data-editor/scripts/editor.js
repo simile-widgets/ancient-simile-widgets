@@ -8,6 +8,9 @@ Exhibit.DataEdit.LensSpec = function(ty,html) {
 	this._lensHTML = html;
 }
 
+/** Experimental options */
+Exhibit.DataEdit.LensSpec.X_ENABLE_AUTO_RESIZE_UI = false;
+
 /** Lens registry. */
 Exhibit.DataEdit.LensSpec._lenses = [];
 /** Debug mode? */
@@ -20,7 +23,7 @@ Exhibit.DataEdit.LensSpec.prototype.getHTML = function() { return this._lensHTML
 
 /** Bootstrap. */
 $(document).ready(function() {
-	var filter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_LENS; }
+	var filter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.LENS_ROLE_ITEM_LENS; }
 	if(window.console && Exhibit.DataEdit.LensSpec._DEBUG_) { console.log("Searching for editor lenses"); }
 	$('*').filter(filter).each(function(idx) {
 		try {
@@ -43,13 +46,14 @@ $(document).ready(function() {
  *   this._fields             Array of field components.
  *   this._validator          Optional validator function
  * ======================================================================== */
-Exhibit.DataEdit.Editor = function(itemId,jqThis) {
+Exhibit.DataEdit.Editor = function(itemId,jqThis,clickEv) {
 	this._itemId = itemId;
 	this._jqThis = jqThis;
 	this._fields = {};  // Field componentns stored here
 	this._hasSaveButton = false;
 	this._hasCancelButton = false;
 	this._hasStatus = false;
+	this._clickEvent = clickEv;
 }
 
 /** Debug mode? */
@@ -61,6 +65,11 @@ Exhibit.DataEdit.Editor._ERRCOL_ = '#ff8888';
 /** Components. */
 Exhibit.DataEdit.Editor._COMPONENTS_ = [ 'TextField','NumberField','EnumField','ListField','TickListField' ];
 
+
+/** Updated target DOM element */
+Exhibit.DataEdit.Editor.prototype.updateTargetDOMElement = function(jq) {
+	this._jqThis = jq;
+}
 
 /** Apply this editor lens. */
 Exhibit.DataEdit.Editor.prototype.apply = function() {
@@ -83,27 +92,25 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 	// Get rid of existing display lens, replace with edit lens raw HTML
 	$(self._jqThis).html(lens._lensHTML);
 
-	// Look for ex:role="editorSaveButton", ex:role="editorCancelButton" and ex:role="editorStatus"
-	var saveFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_SAVE; }
+	// Look for ex:role="editorButton" ex:type="save"
+	var saveFilter = function(idx) { 
+		return ($(this).attr("ex:role")==Exhibit.DataEdit.LENS_ROLE_BUTTON)
+			&& ($(this).attr("ex:type")==Exhibit.DataEdit.LENS_BUTTON_LENS_SAVE);
+	}
 	$('*',self._jqThis).filter(saveFilter).each(function(idx) {
 		$(this).click(function() { Exhibit.DataEdit.save(self._itemId); });
 		self._hasSaveButton = true;
 	});
-	/* [CANCEL] no longer supported after multi item edit introduced.
-	var cancelFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_CANCEL; }
-	$('*',self._jqThis).filter(cancelFilter).each(function(idx) {
-		$(this).click(function() { Exhibit.DataEdit.cancel(); });
-		self._hasCancelButton = true;
-	});
-	*/
-	var statusFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.EDIT_ROLE_STATUS; }
+	// Does this item have an individual status message area?
+	var statusFilter = function(idx) { return $(this).attr("ex:role")==Exhibit.DataEdit.LENS_ROLE_ITEM_STATUS; }
 	$('*',self._jqThis).filter(statusFilter).each(function(idx) {
-		$(this).attr('id',Exhibit.DataEdit.EDIT_MESSAGE);
+		$(this).attr('id',Exhibit.DataEdit.EDIT_STATUS_ID+'_'+self._itemId);
 		self._hasStatus = true;
 	});
 
 	// Array of functions to run after each component has been rendered.
 	var onShow = [];
+	var firstField = null;
 	// Walk raw HTML, injecting field editor components
 	// For each type of component (text, number ...)
 	for(var i=0;i<Exhibit.DataEdit.Editor._COMPONENTS_.length;i++) {
@@ -121,6 +128,7 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 				try { 
 					f = new Exhibit.DataEdit.Editor[c](this,self._itemId,prop,val,false);
 					f._saveOnChange = (!self._hasSaveButton);  // No [SAVE] button?  Switch on field saving mode
+					if(!firstField) { firstField = f; }
 				} catch(err) { 
 					self.log(err,prop,val,this); 
 					SimileAjax.Debug.warn(err);
@@ -131,6 +139,8 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 	}
 	// Call each onShow function
 	for(var i=0;i<onShow.length;i++) { onShow[i](); }
+	// Focus?
+	if(firstField) { firstField.focus(); }
 }
 
 /* ======================================================================== */
@@ -138,8 +148,14 @@ Exhibit.DataEdit.Editor.prototype.applyWithLens = function(lens) {
 /** Apply with display lens HTML. */
 Exhibit.DataEdit.Editor.prototype.applyWithoutLens = function() {
 	var self = this;
+	// The original display lens may have been altered to add hidden <input>s
+	// top and tail, to permit tab navig. between items.  Remove them!
+	$('.__GRAB_TABS__',self._jqThis).remove();
 	// Array of functions to run after each component has been rendered.
 	var onShow = [];
+	// Focus
+	var focusedField = null;
+	var firstField = null;
 	// Walk over DOM looking for ex:content attributes
 	var filter = function(idx) { return $(this).attr("ex:content"); }
 	$('*',self._jqThis).filter(filter).each(function(idx) { // See http://bugs.jquery.com/ticket/3729
@@ -156,6 +172,8 @@ Exhibit.DataEdit.Editor.prototype.applyWithoutLens = function() {
 					var t = self._guessFieldType(exp,val);
 					f = new Exhibit.DataEdit.Editor[t](this,self._itemId,prop,val,true);
 					f._saveOnChange = true;  // Switch on field saving mode
+					if(self._inside(this)) { focusedField = f; }
+					if(!firstField) { firstField = f; }
 				} catch(err) {
 					self.log(err,prop,val,self);
 					SimileAjax.Debug.warn(err);
@@ -166,6 +184,9 @@ Exhibit.DataEdit.Editor.prototype.applyWithoutLens = function() {
 	});
 	// Call each onShow function
 	for(var i=0;i<onShow.length;i++) { onShow[i](); }
+	// Focus?
+	if(focusedField) { focusedField.focus(); }
+		else if(firstField) { firstField.focus(); }
 }
 /** exp = expression from ex:content, val = db value */
 Exhibit.DataEdit.Editor.prototype._guessFieldType = function(exp,val) {
@@ -221,22 +242,40 @@ Exhibit.DataEdit.Editor.prototype._addFieldComponent = function(jq,prop,f,onShow
 		// Auto-resize?
 		var srcDim = { width:$(jq).width() , height:$(jq).height() };
 		var prefDim = f['_prefDimensions'];  // Has _prefDimensions..?
+		//console.log(srcDim,prefDim);
 		// Disabled auto-resized (see false) for now
-		if(false && !usingLens && prefDim && ((srcDim.width<prefDim.width) || (srcDim.height<prefDim.height))) {
+		if(Exhibit.DataEdit.LensSpec.X_ENABLE_AUTO_RESIZE_UI &&
+			!usingLens && prefDim && ((srcDim.width<prefDim.width) || (srcDim.height<prefDim.height))) {
 			h = '<span style="display:Inline-Block; position:Relative; width:'+srcDim.width+'px; height:'+srcDim.height+'px;">'+h+'</span>';
-			$(jq).replaceWith(h);
-			$('#'+f._divId)
+			var newEl = $(h);
+			newEl
 				.mouseenter(function(ev) { // Mouse enter: upsize and raise
-					var pos = $(this).parent().position();
-					$(this).width(prefDim.width).height(prefDim.height).css('z-index','1000');
+					$(this).width(prefDim.width).height(prefDim.height)
+						.addClass('exhibitDataEditAutoResize');
 				})
 				.mouseleave(function(ev) { // Mouse leave: downsize and lower
-					$(this).width(srcDim.width).height(srcDim.height).css('z-index','Auto');
+					$(this).width(srcDim.width).height(srcDim.height)
+						.removeClass('exhibitDataEditAutoResize');
+				})
+				.css('position','Absolute').css('top','0px').css('left','0px');
+			// Empty text may cause 0 sized fields.  10 pixels min seems sensible.
+			if(srcDim.width<=0) { srcDim.width=10;  newEl.width(srcDim.width); }
+			if(srcDim.height<=0) { srcDim.height=10;  newEl.height(srcDim.height); }
+			$(jq).replaceWith(newEl);
+			/*$(jq).replaceWith(newEl);
+			$('#'+f._divId)
+				.mouseenter(function(ev) { // Mouse enter: upsize and raise
+					$(this).width(prefDim.width).height(prefDim.height)
+						.addClass('exhibitDataEditAutoResize');
+				})
+				.mouseleave(function(ev) { // Mouse leave: downsize and lower
+					$(this).width(srcDim.width).height(srcDim.height)
+						.removeClass('exhibitDataEditAutoResize');
 				})
 				.css('position','Absolute').css('top','0px').css('left','0px');
 			// Empty text may cause 0 sized fields.  10 pixels min seems sensible.
 			if(srcDim.width<=0) { srcDim.width=10;  $('#'+f._divId).width(srcDim.width); }
-			if(srcDim.height<=0) { srcDim.height=10;  $('#'+f._divId).height(srcDim.height); }
+			if(srcDim.height<=0) { srcDim.height=10;  $('#'+f._divId).height(srcDim.height); }*/
 		} else {
 			$(jq).replaceWith(h);
 		}
@@ -244,6 +283,16 @@ Exhibit.DataEdit.Editor.prototype._addFieldComponent = function(jq,prop,f,onShow
 		$(jq).replaceWith('<span style="color:Red;">Failed to initalise</span>');
 	}
 }
+Exhibit.DataEdit.Editor.prototype._inside = function(jq) {
+	if(!this._clickEvent) { return false; }
+	var j = $(jq);
+	var sx = j.offset().left;
+	var sy = j.offset().top;
+	var sw = j.width();
+	var sh = j.height();
+	return( (this._clickEvent.pageX>=sx) && (this._clickEvent.pageY>=sy) 
+		&& (this._clickEvent.pageX<sx+sw) && (this._clickEvent.pageY<sy+sh) );
+}		
 
 /* ======================================================================== */
 
@@ -327,12 +376,21 @@ Exhibit.DataEdit.Editor._extractStyle = function(jq) {
 }*/
 /** Using inherited font, how big in pixels would some text (cols x rows) be? */
 Exhibit.DataEdit.Editor._getColRowDimensions = function(jq,cols,rows) {
-	/* Yeah, so apparently the only cross-browser way to get line height in pixels is to
-	* inject a <span> into the start of the element, ask for it's height, then remove it!! */
-	$(jq).prepend('<span id="__SIZE_GUESSER__">M</span>');
-	var textW = $('#__SIZE_GUESSER__',jq).width();
-	var textH = $('#__SIZE_GUESSER__',jq).height();
-	$('#__SIZE_GUESSER__',jq).remove();
+	// Yeah, so apparently the only cross-browser way to get line height in pixels is to
+	// inject a <span> into the start of the element, ask for it's height, then remove it!!
+
+	var textW=0 , textH=0;
+	// IE won't let is inject HTML inside a <input> (which is what we'll be passed if
+	// measuring up using an actual edit lens), so make something appropriate up.
+	if(('canHaveHTML' in jq) && !jq.canHaveHMTL) { // canHaveHTML is IE property
+		textW = 10;
+		textH = 12;
+	} else {
+		$(jq).prepend('<span id="__SIZE_GUESSER__">M</span>');
+		textW = $('#__SIZE_GUESSER__',jq).width();
+		textH = $('#__SIZE_GUESSER__',jq).height();
+		$('#__SIZE_GUESSER__',jq).remove();
+	}
 	return { width:(cols*textW) , height:(rows*textH) };
 }
 /** Unique ids -- handy! */

@@ -108,6 +108,9 @@ Exhibit.DataEdit.Editor.EnumField.prototype.setValue = function(v) {
 Exhibit.DataEdit.Editor.EnumField.prototype.setError = function(b) {
 	$('#'+this._divId).css('background-color' , b?Exhibit.DataEdit.Editor._ERRCOL_:Exhibit.DataEdit.Editor._BGCOL_);
 }
+/** Focus this field for input */
+Exhibit.DataEdit.Editor.EnumField.prototype.focus = function() {
+}
 
 
 /* ======================================================================== 
