@@ -118,12 +118,12 @@ Exhibit.TsvCsvImporter.CsvToArray =function(text,separator){
     if (text.indexOf('"') < 0) { 
 	//fast case: no quotes
 	var lines=text.split(/\r?\n/);
-	var items;
+	var items=[];
 	for (i=0; i<lines.length; i++) {
 	    if (lines[i].length > 0)
-		output.push(lines[i].split(separator));
+		items.push(lines[i].split(separator));
 	} 
-	return output;
+	return items;
     }
 
     /*end of early return from simple case.  

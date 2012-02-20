@@ -2212,11 +2212,11 @@ j++){if(valueSeparator&&(row[j].indexOf(valueSeparator)>=0)){row[j]=row[j].split
 };
 Exhibit.TsvCsvImporter.CsvToArray=function(text,separator){var i;
 if(text.indexOf('"')<0){var lines=text.split(/\r?\n/);
-var items;
+var items=[];
 for(i=0;
 i<lines.length;
-i++){if(lines[i].length>0){output.push(lines[i].split(separator));
-}}return output;
+i++){if(lines[i].length>0){items.push(lines[i].split(separator));
+}}return items;
 }text=text.replace(/\r?\n/g,"\n");
 var lines=text.match(/([^"\n]|("[^"]*"))+?(?=\r?\n|$)/g);
 var records=[];
