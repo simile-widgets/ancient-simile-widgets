@@ -2202,7 +2202,7 @@ for(i=0;
 i<D.length;
 i++){var M=D[i];
 var L={};
-var F=M.length>G.length?M.length:G.length;
+var F=M.length<G.length?M.length:G.length;
 for(j=0;
 j<F;
 j++){if(C&&(M[j].indexOf(C)>=0)){M[j]=M[j].split(C);
