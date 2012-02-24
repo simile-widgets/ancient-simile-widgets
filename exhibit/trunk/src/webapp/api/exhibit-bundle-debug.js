@@ -2202,7 +2202,7 @@ for(i=0;
 i<data.length;
 i++){var row=data[i];
 var item={};
-var len=row.length>exprs.length?row.length:exprs.length;
+var len=row.length<exprs.length?row.length:exprs.length;
 for(j=0;
 j<len;
 j++){if(valueSeparator&&(row[j].indexOf(valueSeparator)>=0)){row[j]=row[j].split(valueSeparator);
