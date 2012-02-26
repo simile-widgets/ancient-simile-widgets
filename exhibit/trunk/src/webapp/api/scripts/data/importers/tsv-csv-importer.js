@@ -102,10 +102,12 @@ Exhibit.TsvCsvImporter._parseInternal = function(text, separator, expressionStri
 	var item={};
 	var len=row.length < exprs.length ? row.length : exprs.length;
 	for (j=0; j<len; j++) {
-	    if (valueSeparator && (row[j].indexOf(valueSeparator) >= 0)) {
-		row[j]=row[j].split(valueSeparator);
+	    if (row[j].length>0) {
+		if (valueSeparator && (row[j].indexOf(valueSeparator) >= 0)) {
+		    row[j]=row[j].split(valueSeparator);
+		}
+		item[propNames[j]]=row[j];
 	    }
-	    item[propNames[j]]=row[j];
 	}
 	items.push(item);
     }
