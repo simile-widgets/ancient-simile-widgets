@@ -247,24 +247,6 @@ Exhibit.Database._Impl.prototype.loadSubmissionLinks = function(fDone) {
             }
             if ("items" in o) {
                 db._listeners.fire("onBeforeLoadingItems", []);
-                o.items.forEach(function(item) {
-                    var oldID = item.id || item.label;
-                    var newID = oldID + Math.floor(Math.random() * 1000000);
-                    db._submissionRegistry[newID] = true;
-                    
-                    item.id = newID;
-                    item.changedItem = oldID;
-                    
-                    if (db.containsItem(oldID)) {
-                        item.change = 'modification';
-                        
-                        if (!item.type) {
-                            item.type = db.getObject(oldID, 'type');
-                        }
-                    } else {
-                        item.change = 'addition';
-                    }
-                });
                 db.loadItems(o.items, baseURI);
                 db._listeners.fire("onAfterLoadingItems", []);            
             }
@@ -714,9 +696,6 @@ Exhibit.Database._Impl.prototype._loadItem = function(itemEntry, indexFunction, 
         
         this._ensureTypeExists(type, baseURI);
     }
-    
-    // items default to not being modified
-    itemEntry.modified = itemEntry.modified || "no";
     
     for (var p in itemEntry) {
         if (typeof p != "string") {
