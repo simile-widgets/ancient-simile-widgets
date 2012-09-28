@@ -32,7 +32,7 @@
 				3
 			],
 			"dieInOffice": "no",
-			"imageURL": "http://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Johnadamsvp.flipped.jpg/100px-Johnadamsvp.flipped.jpg",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/US_Navy_031029-N-6236G-001_A_painting_of_President_John_Adams_%281735-1826%29%2C_2nd_president_of_the_United_States%2C_by_Asher_B._Durand_%281767-1845%29-crop.jpg/100px-US_Navy_031029-N-6236G-001_A_painting_of_President_John_Adams_%281735-1826%29%2C_2nd_president_of_the_United_States%2C_by_Asher_B._Durand_%281767-1845%29-crop.jpg",
 			"url": "http://en.wikipedia.org/wiki/John_Adams",
 			"party": "Federalist",
 			"birth": "1735-10-30",
@@ -53,7 +53,7 @@
 				5
 			],
 			"dieInOffice": "no",
-			"imageURL": "http://upload.wikimedia.org/wikipedia/en/thumb/4/46/T_Jefferson_by_Charles_Willson_Peale_1791_2.jpg/100px-T_Jefferson_by_Charles_Willson_Peale_1791_2.jpg",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Thomas_Jefferson_by_Rembrandt_Peale%2C_1800.jpg/100px-Thomas_Jefferson_by_Rembrandt_Peale%2C_1800.jpg",
 			"url": "http://en.wikipedia.org/wiki/Thomas_Jefferson",
 			"party": "Democratic-Republican",
 			"birth": "1743-04-13",
@@ -75,7 +75,7 @@
 				7
 			],
 			"dieInOffice": "no",
-			"imageURL": "http://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Jm4.gif/100px-Jm4.gif",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/James_Madison.jpg/100px-James_Madison.jpg",
 			"url": "http://en.wikipedia.org/wiki/James_Madison",
 			"party": "Democratic-Republican",
 			"birth": "1751-03-16",
@@ -137,7 +137,7 @@
 				12
 			],
 			"dieInOffice": "no",
-			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Andrew_Jackson.jpg/198px-Andrew_Jackson.jpg",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Andrew_Jackson.jpg/100px-Andrew_Jackson.jpg",
 			"url": "http://en.wikipedia.org/wiki/Andrew_Jackson",
 			"party": "Democratic",
 			"birth": "1767-03-15",
@@ -177,7 +177,7 @@
 				14
 			],
 			"dieInOffice": "yes",
-			"imageURL": "http://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/William_Henry_Harrison.png/100px-William_Henry_Harrison.png",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/William_Henry_Harrison_by_James_Reid_Lambdin%2C_1835.jpg/100px-William_Henry_Harrison_by_James_Reid_Lambdin%2C_1835.jpg",
 			"url": "http://en.wikipedia.org/wiki/William_Henry_Harrison",
 			"party": "Whig",
 			"birth": "1773-02-09",
@@ -218,7 +218,7 @@
 				15
 			],
 			"dieInOffice": "no",
-			"imageURL": "http://upload.wikimedia.org/wikipedia/en/thumb/b/be/Polkpolk.jpg/100px-Polkpolk.jpg",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/James_Polk_restored.jpg/100px-James_Polk_restored.jpg",
 			"url": "http://en.wikipedia.org/wiki/James_K._Polk",
 			"party": "Democratic",
 			"birth": "1795-11-02",
@@ -340,7 +340,7 @@
 				20
 			],
 			"dieInOffice": "no",
-			"imageURL": "http://upload.wikimedia.org/wikipedia/en/thumb/e/ee/Pres_andrew_johnson.jpg/100px-Pres_andrew_johnson.jpg",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/16_Andrew_Johnson_3x4-Edit1.jpg/100px-16_Andrew_Johnson_3x4-Edit1.jpg",
 			"url": "http://en.wikipedia.org/wiki/Andrew_Johnson",
 			"party": "Democratic",
 			"birth": "1808-12-29",
@@ -736,7 +736,7 @@
 				47
 			],
 			"dieInOffice": "no",
-			"imageURL": "http://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Nixon_30-0316a.gif/100px-Nixon_30-0316a.gif",
+			"imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Richard_Nixon.jpg/100px-Richard_Nixon.jpg",
 			"url": "http://en.wikipedia.org/wiki/Richard_Nixon",
 			"party": "Republican",
 			"birth": "1913-01-09",
