@@ -2086,15 +2086,6 @@ Exhibit.JSONPImporter.googleSpreadsheetsConverter.preprocessURL=function(url){re
 };
 
 
-/* microdata.js */
-Exhibit.MicrodataImporter={};
-Exhibit.MicrodataImporter.parse=function(content,link){var labelProp=Exhibit.getAttribute(link,"labelProperty");
-var $=SimileAjax.jQuery;
-var items=[];
-$("[itemscope]",content).each();
-};
-
-
 /* rdfa-importer.js */
 var RDFA=new Object();
 RDFA.url="http://www.w3.org/2006/07/SWD/RDFa/impl/js/20070301/rdfa.js";
