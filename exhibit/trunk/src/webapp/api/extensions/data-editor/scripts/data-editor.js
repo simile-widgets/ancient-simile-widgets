@@ -267,6 +267,7 @@ Exhibit.DataEdit._buildOverlayHTML = function(id,div) {
 		var overlay = $('#'+markerId);
 		if(overlay.attr('title')=='select') { return; }
 		var xy = jq.position();
+		// FIXME: 2012-04-26 : these two lines were commented out!  Weird!
 		var w = jq.outerWidth(true);  // Width / height inc. margins and padding. 
 		var h = jq.outerHeight(true);
 		overlay.removeClass('exhibitDataEditSelectorOff').addClass('exhibitDataEditSelectorOn')

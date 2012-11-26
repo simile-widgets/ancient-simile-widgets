@@ -1,0 +1,40 @@
+.exhibit-facet-animation-shaft-container {
+	border: 1px Solid #DDDDDD;
+	padding: 1px;
+}
+
+.exhibit-facet-animation-shaft-container .exhibit-facet-animation-shaft {
+	height: 15px;
+}
+
+.exhibit-facet-animation-shaft-container .exhibit-facet-animation-shaft-markers div {
+	background-color: #DDDDDD;
+	top: 2px;
+	height: 11px;
+}
+
+.exhibit-facet-animation-shaft-container .exhibit-facet-animation-shaft-thumb {
+	width: 10px;  height: 13px;
+	background-color: White;
+	border: 1px Solid Black;
+}
+
+.exhibit-facet-animation-labels {
+	/*font-size: 75%;*/
+	color: #AAAAAA;
+}
+
+.exhibit-facet-animation-bar-container {
+	width: 100%;
+	background-color: #DDDDDD;
+	margin-top: 0.25em;
+}
+
+.exhibit-facet-animation-bar-container .exhibit-facet-animation-bar {
+	height: 5px;
+	background-color: Black;
+}
+
+.exhibit-facet-animation-labels .exhibit-facet-animation-labels-time {
+	color: Black;
+}
